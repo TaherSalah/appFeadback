@@ -1,0 +1,2 @@
+D:/azkary/android/app/.cxx/RelWithDebInfo/1gd3c1b8/x86/CMakeFiles/edit_cache.dir
+D:/azkary/android/app/.cxx/RelWithDebInfo/1gd3c1b8/x86/CMakeFiles/rebuild_cache.dir
