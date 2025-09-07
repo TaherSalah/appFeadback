@@ -21,6 +21,7 @@ import '../../../features/prayer_view/post_prayer_azkar.dart';
 import '../../../features/quran/quranView.dart';
 
 import '../../../features/quran/view/widget/AyaSearchScreen.dart';
+import '../../../features/quran/view/widget/TafsirquranView.dart';
 import '../../../features/rokia_view/rokia.dart';
 import '../../../features/sabah_view/azkar_sabah.dart';
 import '../../../features/sleep_view/sleep_azkar.dart';
@@ -64,6 +65,7 @@ class Routes {
   static const String jozzaListScreenRoute = "/jozzaList";
   static const String packageInfoRoute = "/packageInfoView";
   static const String quranKhitamRoute = "/QuranKhitamView";
+  static const String tafsirQuranRoute = "/TafsirQuranView";
 }
 
 class RouteGenerator {
@@ -82,6 +84,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const HizbeListScreen());
         case Routes.jozzaListScreenRoute:
         return MaterialPageRoute(builder: (_) => const JozzsListScreen());
+        case Routes.tafsirQuranRoute:
+        return MaterialPageRoute(builder: (_) => const TafsirQuranView());
 
 
       case Routes.categoriesRoute:

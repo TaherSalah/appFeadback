@@ -53,16 +53,16 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       title: "انتقال الي العلامه",
       onTap: _goToBookmark,
     ),
-    DrawerModle(
-        icon: Icons.bookmarks_outlined,
-        title: "الايات المحفوظة",
-        route: "/ayaBookmarkScreen"),
+    // DrawerModle(
+    //     icon: Icons.bookmarks_outlined,
+    //     title: "الايات المحفوظة",
+    //     route: "/ayaBookmarkScreen"),
     DrawerModle(
         icon: Icons.info_outline,
         title: "دعاء ختم القران الكريم",
         route: Routes.quranKhitamRoute),
     DrawerModle(
-        icon: Icons.gpp_good_outlined, title: "التفسير", route: Routes.myCard),
+        icon: Icons.gpp_good_outlined, title: "التفسير", route: Routes.tafsirQuranRoute),
     DrawerModle(
         icon: Icons.dark_mode_outlined,
         title: "الوضع الليلي",

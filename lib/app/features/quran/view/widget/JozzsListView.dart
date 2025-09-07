@@ -52,7 +52,7 @@ class _JozzsListScreenState extends State<JozzsListScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
               child: GestureDetector(
                 onTap: () {
-                  QuranLibrary().jumpToHizb(index + 1);
+                  QuranLibrary().jumpToJoz(index + 1);
                   Navigator.pop(context);
                 },
                 child: Row(
