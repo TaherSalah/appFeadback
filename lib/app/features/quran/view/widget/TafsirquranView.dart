@@ -873,67 +873,67 @@ class _TafsirViewerScreenState extends State<TafsirViewerScreen> {
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
               child: Row(
                 children: [
-                  Expanded(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(color: Colors.black12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            isExpanded: true,
-                            value: _selectedTafsirIndex,
-                            icon: _downloading
-                                ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                                : const Icon(Icons.arrow_drop_down),
-                            items: List.generate(names.length, (i) {
-                              final n = names[i];
-                              final downloaded = _ql.getTafsirDownloaded(i);
-                              final label = n.name ?? n.bookName ?? 'تفسير #$i';
-                              return DropdownMenuItem<int>(
-                                value: i,
-                                child: Row(
-                                  children: [
-                                    Expanded(child: Text(label, overflow: TextOverflow.ellipsis)),
-                                    const SizedBox(width: 6),
-                                    Icon(
-                                      downloaded ? Icons.check_circle : Icons.download,
-                                      size: 18,
-                                      color: downloaded ? Colors.green : Colors.grey,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                            onChanged: (val) {
-                              if (val == null) return;
-                              _onChangeTafsir(val);
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: DecoratedBox(
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       borderRadius: BorderRadius.circular(12.r),
+                  //       border: Border.all(color: Colors.black12),
+                  //     ),
+                  //     child: Padding(
+                  //       padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  //       child: DropdownButtonHideUnderline(
+                  //         child: DropdownButton<int>(
+                  //           isExpanded: true,
+                  //           value: _selectedTafsirIndex,
+                  //           icon: _downloading
+                  //               ? const SizedBox(
+                  //             height: 20,
+                  //             width: 20,
+                  //             child: CircularProgressIndicator(strokeWidth: 2),
+                  //           )
+                  //               : const Icon(Icons.arrow_drop_down),
+                  //           items: List.generate(names.length, (i) {
+                  //             final n = names[i];
+                  //             final downloaded = _ql.getTafsirDownloaded(i);
+                  //             final label = n.name ?? n.bookName ?? 'تفسير #$i';
+                  //             return DropdownMenuItem<int>(
+                  //               value: i,
+                  //               child: Row(
+                  //                 children: [
+                  //                   Expanded(child: Text(label, overflow: TextOverflow.ellipsis)),
+                  //                   const SizedBox(width: 6),
+                  //                   Icon(
+                  //                     downloaded ? Icons.check_circle : Icons.download,
+                  //                     size: 18,
+                  //                     color: downloaded ? Colors.green : Colors.grey,
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //             );
+                  //           }),
+                  //           onChanged: (val) {
+                  //             if (val == null) return;
+                  //             _onChangeTafsir(val);
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   SizedBox(width: 10.w),
                   Row(
                     children: [
                       IconButton(
                         tooltip: 'الصفحة السابقة',
                         onPressed: () => _changePage(-1),
-                        icon: const Icon(Icons.chevron_right, size: 28),
+                        icon: const Icon(Icons.chevron_left, size: 28),
                       ),
                       SizedBox(
                         width: 80.w,
                         child: Center(
                           child: Text(
-                            'ص: $_pageNumber',
+                            'صفحة: $_pageNumber',
                             style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
                           ),
                         ),
@@ -941,7 +941,7 @@ class _TafsirViewerScreenState extends State<TafsirViewerScreen> {
                       IconButton(
                         tooltip: 'الصفحة التالية',
                         onPressed: () => _changePage(1),
-                        icon: const Icon(Icons.chevron_left, size: 28),
+                        icon: const Icon(Icons.chevron_right, size: 28),
                       ),
                     ],
                   ),
@@ -984,12 +984,12 @@ class _TafsirViewerScreenState extends State<TafsirViewerScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                     tileColor: Colors.white,
                     title: Text(
+                      style: TextStyle(fontFamily: "me"),
                       ayahText.isNotEmpty ? ayahText : ayahLabel,
                       textAlign: TextAlign.right,
-                      style: GoogleFonts.cairo(fontSize: 14.sp),
                     ),
                     subtitle: ayahText.isNotEmpty
-                        ? Text(ayahLabel, textAlign: TextAlign.right, style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.black54))
+                        ? Text(ayahLabel, textAlign: TextAlign.right, style: TextStyle(fontSize: 12.sp, color: Colors.black54,fontFamily: "me"))
                         : null,
                     trailing: const Icon(Icons.menu_book_outlined),
                     onTap: () => _openAyahTafsir(ayah),
