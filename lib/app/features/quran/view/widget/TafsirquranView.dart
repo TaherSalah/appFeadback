@@ -33,37 +33,74 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
     if (mounted) setState(() => _inited = true);
   }
 
+  // Future<void> _handleDownloadOrOpen(int index) async {
+  //   if (_downloading.contains(index)) return;
+  //
+  //   final isDownloaded = _ql.getTafsirDownloaded(index);
+  //
+  //   if (isDownloaded) {
+  //     // ✅ افتح شاشة العرض هنا
+  //     Navigator.of(context).push(
+  //       MaterialPageRoute(
+  //         builder: (_) =>  TafsirViewerScreen(initialPage: _ql.currentPageNumber),
+  //       ),
+  //     );
+  //     return;
+  //   }
+  //
+  //   // ⬇️ تحميل ثم فتح
+  //   setState(() => _downloading.add(index));
+  //   try {
+  //     await _ql.tafsirDownload(index);
+  //     _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
+  //
+  //     if (!mounted) return;
+  //     // ✅ افتح شاشة العرض بعد التحميل مباشرة
+  //     Navigator.of(context).push(
+  //       MaterialPageRoute(
+  //         builder: (_) => TafsirViewerScreen(
+  //           // افتح على الصفحة الحالية من المكتبة بدل رقم ثابت لو تحب
+  //           initialPage: _ql.currentPageNumber,
+  //         ),
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     if (!mounted) return;
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('تعذّر تنزيل التفسير: $e')),
+  //     );
+  //   } finally {
+  //     if (mounted) setState(() => _downloading.remove(index));
+  //   }
+  // }
   Future<void> _handleDownloadOrOpen(int index) async {
     if (_downloading.contains(index)) return;
 
     final isDownloaded = _ql.getTafsirDownloaded(index);
 
     if (isDownloaded) {
-      // ✅ افتح شاشة العرض هنا
-      Navigator.of(context).push(
+       _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
+      if (!mounted) return;
+      await Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => const TafsirViewerScreen(initialPage: 12),
+          builder: (_) => TafsirViewerScreen(initialPage: _ql.currentPageNumber),
         ),
       );
       return;
     }
 
-    // ⬇️ تحميل ثم فتح
     setState(() => _downloading.add(index));
     try {
       await _ql.tafsirDownload(index);
-      _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
-
-      if (!mounted) return;
-      // ✅ افتح شاشة العرض بعد التحميل مباشرة
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => TafsirViewerScreen(
-            // افتح على الصفحة الحالية من المكتبة بدل رقم ثابت لو تحب
-            initialPage: _ql.currentPageNumber,
+       _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
+      if (mounted) {
+        setState(() {}); // (اختياري لتحديث أيقونة التحميل/الفتح)
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => TafsirViewerScreen(initialPage: _ql.currentPageNumber),
           ),
-        ),
-      );
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -73,6 +110,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
       if (mounted) setState(() => _downloading.remove(index));
     }
   }
+
 
 
   @override
@@ -615,6 +653,7 @@ class _TafsirViewerScreenState extends State<TafsirViewerScreen> {
   Future<void> _init() async {
     // مهم: تهيئة التفسير مرة واحدة
     await _ql.initTafsir();
+    _selectedTafsirIndex = _ql.tafsirSelected; // موجودة عندك بالفعل
 
     // اضبط الصفحة المبدئية
     final startPage =
@@ -639,29 +678,89 @@ class _TafsirViewerScreenState extends State<TafsirViewerScreen> {
     setState(() {});
   }
 
-  Future<void> _onChangeTafsir(int newIndex) async {
-    // لو متحمّل خلاص — بدّله فورًا
-    if (_ql.getTafsirDownloaded(newIndex)) {
-      _ql.changeTafsirSwitch(newIndex, pageNumber: _pageNumber);
-      setState(() => _selectedTafsirIndex = newIndex);
-      return;
-    }
+  // Future<void> _onChangeTafsir(int newIndex) async {
+  //   // لو متحمّل خلاص — بدّله فورًا
+  //   if (_ql.getTafsirDownloaded(newIndex)) {
+  //     _ql.changeTafsirSwitch(newIndex, pageNumber: _pageNumber);
+  //     setState(() => _selectedTafsirIndex = newIndex);
+  //     return;
+  //   }
+  //
+  //   // نزّل التفسير ثم عيّنه
+  //   setState(() => _downloading = true);
+  //   try {
+  //     await _ql.tafsirDownload(newIndex);
+  //     _ql.changeTafsirSwitch(newIndex, pageNumber: _pageNumber);
+  //     setState(() => _selectedTafsirIndex = newIndex);
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('تم تنزيل التفسير وتفعيله')),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('تعذّر تنزيل التفسير: $e')),
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) setState(() => _downloading = false);
+  //   }
+  // }
 
-    // نزّل التفسير ثم عيّنه
+  //////////************///////////
+  // Future<void> _onChangeTafsir(int newIndex) async {
+  //   setState(() => _downloading = true);
+  //   try {
+  //     if (!_ql.getTafsirDownloaded(newIndex)) {
+  //       await _ql.tafsirDownload(newIndex);
+  //     }
+  //      _ql.changeTafsirSwitch(newIndex, pageNumber: _pageNumber);
+  //     setState(() => _selectedTafsirIndex = newIndex);
+  //
+  //     // ✅ بعد التفعيل، حدّث قائمة الآيات/النصوص المعروضة (لو بتتأثر بنوع التفسير)
+  //     await _loadPageAyahs();
+  //
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('تم تفعيل التفسير المختار')),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('تعذّر تفعيل التفسير: $e')),
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) setState(() => _downloading = false);
+  //   }
+  // }
+  Future<void> _onChangeTafsir(int newIndex) async {
     setState(() => _downloading = true);
     try {
-      await _ql.tafsirDownload(newIndex);
-      _ql.changeTafsirSwitch(newIndex, pageNumber: _pageNumber);
-      setState(() => _selectedTafsirIndex = newIndex);
+      if (!_ql.getTafsirDownloaded(newIndex)) {
+        await _ql.tafsirDownload(newIndex);
+      }
+
+       _ql.changeTafsirSwitch(newIndex, pageNumber: _pageNumber);
+
+      // ★ حدّث المؤشّر المحلي فورًا
+      _selectedTafsirIndex = newIndex;
+      setState(() {}); // ★ تحدّث الـ UI مباشرة
+
+      // (اختياري لكن مُستحسن) محدِّث آيات الصفحة لو بتتأثر بالنوع
+      await _loadPageAyahs();
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم تنزيل التفسير وتفعيله')),
+          const SnackBar(content: Text('تم تفعيل التفسير المختار')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('تعذّر تنزيل التفسير: $e')),
+          SnackBar(content: Text('تعذّر تفعيل التفسير: $e')),
         );
       }
     } finally {
@@ -726,11 +825,12 @@ class _TafsirViewerScreenState extends State<TafsirViewerScreen> {
       surahNum: surahNum,
       ayahNum: ayahNum,
       ayahText: text,
-      pageIndex: _pageNumber - 1, // غالبًا index-based
+      pageIndex: _pageNumber, // << المهم: صفر-مبني
       ayahTextN: text,
       ayahUQNum: ayahUQ,
       ayahNumber: ayahNum,
     );
+
   }
 
   @override
