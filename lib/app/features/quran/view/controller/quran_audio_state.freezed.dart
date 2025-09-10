@@ -106,9 +106,6 @@ class _$QuranAudioStateCopyWithImpl<$Res, $Val extends QuranAudioState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
-
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -127,9 +124,6 @@ class __$$QuranDetailsStateInitialImplCopyWithImpl<$Res>
       _$QuranDetailsStateInitialImpl _value,
       $Res Function(_$QuranDetailsStateInitialImpl) _then)
       : super(_value, _then);
-
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -269,9 +263,6 @@ class __$$QuranRecitersStateLoadingImplCopyWithImpl<$Res>
       _$QuranRecitersStateLoadingImpl _value,
       $Res Function(_$QuranRecitersStateLoadingImpl) _then)
       : super(_value, _then);
-
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -414,8 +405,6 @@ class __$$QuranRecitersStateErrorImplCopyWithImpl<$Res>
       $Res Function(_$QuranRecitersStateErrorImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -454,9 +443,7 @@ class _$QuranRecitersStateErrorImpl implements QuranRecitersStateError {
   @override
   int get hashCode => Object.hash(runtimeType, failure);
 
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$QuranRecitersStateErrorImplCopyWith<_$QuranRecitersStateErrorImpl>
@@ -565,10 +552,7 @@ abstract class QuranRecitersStateError implements QuranAudioState {
       _$QuranRecitersStateErrorImpl;
 
   String get failure;
-
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$QuranRecitersStateErrorImplCopyWith<_$QuranRecitersStateErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -592,8 +576,6 @@ class __$$QuranRecitersStateSuccessImplCopyWithImpl<$Res>
       $Res Function(_$QuranRecitersStateSuccessImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -633,9 +615,7 @@ class _$QuranRecitersStateSuccessImpl implements QuranRecitersStateSuccess {
   @override
   int get hashCode => Object.hash(runtimeType, quranAudioModal);
 
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$QuranRecitersStateSuccessImplCopyWith<_$QuranRecitersStateSuccessImpl>
@@ -745,10 +725,7 @@ abstract class QuranRecitersStateSuccess implements QuranAudioState {
       _$QuranRecitersStateSuccessImpl;
 
   QuranAudioModal? get quranAudioModal;
-
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$QuranRecitersStateSuccessImplCopyWith<_$QuranRecitersStateSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -769,9 +746,6 @@ class __$$QuranDetailsStateLoadingImplCopyWithImpl<$Res>
       _$QuranDetailsStateLoadingImpl _value,
       $Res Function(_$QuranDetailsStateLoadingImpl) _then)
       : super(_value, _then);
-
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -914,8 +888,6 @@ class __$$QuranDetailsStateSuccessImplCopyWithImpl<$Res>
       $Res Function(_$QuranDetailsStateSuccessImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -955,9 +927,7 @@ class _$QuranDetailsStateSuccessImpl implements QuranDetailsStateSuccess {
   @override
   int get hashCode => Object.hash(runtimeType, quranDetailsModal);
 
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$QuranDetailsStateSuccessImplCopyWith<_$QuranDetailsStateSuccessImpl>
@@ -1067,10 +1037,7 @@ abstract class QuranDetailsStateSuccess implements QuranAudioState {
       _$QuranDetailsStateSuccessImpl;
 
   QuranDetailsModal? get quranDetailsModal;
-
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$QuranDetailsStateSuccessImplCopyWith<_$QuranDetailsStateSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -1094,8 +1061,6 @@ class __$$QuranDetailsStateErrorImplCopyWithImpl<$Res>
       $Res Function(_$QuranDetailsStateErrorImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1134,9 +1099,7 @@ class _$QuranDetailsStateErrorImpl implements QuranDetailsStateError {
   @override
   int get hashCode => Object.hash(runtimeType, failure);
 
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$QuranDetailsStateErrorImplCopyWith<_$QuranDetailsStateErrorImpl>
@@ -1245,10 +1208,7 @@ abstract class QuranDetailsStateError implements QuranAudioState {
       _$QuranDetailsStateErrorImpl;
 
   String get failure;
-
-  /// Create a copy of QuranAudioState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$QuranDetailsStateErrorImplCopyWith<_$QuranDetailsStateErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

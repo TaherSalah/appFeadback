@@ -11,6 +11,10 @@ class QuranLoveView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String quranLoveReg = quranLove.replaceAllMapped(
+      RegExp(r"\(\((.*?)\)\)"),
+          (match) => "(${match.group(1)})",
+    );
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -38,7 +42,7 @@ class QuranLoveView extends StatelessWidget {
             padding:  EdgeInsets.symmetric(horizontal: 12.w),
             child: Column(
               children: [
-                Text(quranLove,textAlign: TextAlign.justify,style: TextStyle(fontSize: 14.sp),)
+                Text(quranLoveReg,textAlign: TextAlign.justify,style: TextStyle(fontSize: 14.sp,),)
               ],
             ),
           ),

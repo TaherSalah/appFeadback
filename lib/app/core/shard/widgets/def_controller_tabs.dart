@@ -263,6 +263,11 @@ String? verseName;
       "title": "عَنَّا",
       "icon": "assets/images/info (1).png",
       "navigate": "/about"
+    } ,
+    {
+      "title": "ختمتك",
+      "icon": "assets/images/info (1).png",
+      "navigate": "/KhatmahHome"
     }
   ];
 

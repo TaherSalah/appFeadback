@@ -1,8 +1,11 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quran_library/quran.dart';
@@ -14,6 +17,7 @@ import 'app/core/localization/localization_manager.dart';
 import 'app/core/utils/services_locator.dart';
 import 'app/core/utils/style/responsive_util.dart';
 import 'app/core/widgets/custom_text_widget.dart';
+import 'app/features/Khatmah/data/khatmah_model.dart';
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
 //   tz.initializeTimeZones();
@@ -68,6 +72,27 @@ void main() async {
   await SharedObj().init();
   QuranLibrary().init();
   QuranLibrary().initTafsir();
+  // Init Hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(KhatmahModelAdapter());
+  await Hive.openBox<KhatmahModel>('khatmahBox');
+  // await Hive.deleteBoxFromDisk('khatmahBox');
+
+  // Init Notifications
+  AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'khatmah_channel',
+        channelName: 'ختمتك',
+        channelDescription: 'إشعارات ختمتك اليومية',
+        defaultColor: Colors.green,
+        importance: NotificationImportance.High,
+        channelShowBadge: true,
+      )
+    ],
+    debug: true,
+  );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(

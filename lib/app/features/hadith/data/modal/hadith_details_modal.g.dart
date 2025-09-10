@@ -45,3 +45,8 @@ WordsMeaning _$WordsMeaningFromJson(Map<String, dynamic> json) => WordsMeaning(
       meaning: json['meaning'],
     );
 
+Map<String, dynamic> _$WordsMeaningToJson(WordsMeaning instance) =>
+    <String, dynamic>{
+      'word': instance.word,
+      'meaning': instance.meaning,
+    };

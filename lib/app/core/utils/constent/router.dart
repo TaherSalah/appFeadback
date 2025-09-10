@@ -1,4 +1,5 @@
 
+import 'package:muslimdaily/app/features/Khatmah/view/KhatmahView.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/AyaBookmarkScreen.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/JozzsListView.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/hezbListView.dart';
@@ -139,6 +140,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const RokiaScreen());
       case '/azkarOthers':
         return MaterialPageRoute(builder: (_) => const AzkarOthers());
+        case '/KhatmahHome':
+        return MaterialPageRoute(builder: (_) => const KhatmahDashboard());
 
       case '/about':
         return MaterialPageRoute(builder: (_) => const About());
