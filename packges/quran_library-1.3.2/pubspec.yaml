@@ -78,3 +78,9 @@ flutter:
     - family: hafs
       fonts:
         - asset: assets/fonts/UthmanicHafs_V20.ttf
+    - family: kufam
+      fonts:
+        - asset: assets/fonts/Kufam-Regular.ttf
+    - family: note
+      fonts:
+        - asset: assets/fonts/NotoNaskhArabic-VariableFont_wght.ttf

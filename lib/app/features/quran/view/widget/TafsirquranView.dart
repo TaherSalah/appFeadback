@@ -139,17 +139,27 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
       barrierDismissible: false,
       builder: (context) => WillPopScope(
         onWillPop: () async => false,
-        child: AlertDialog(
-          title: const Text("جاري التحميل"),
-          content: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextWidget(title: "برجاء الانتظار حتى يكتمل تنزيل التفسير",fontSize: ResponsiveUtil.isTablet(context)?8.sp:12.sp,),
-                SizedBox(height: 20),
-                KLoading.progressIOSIndicator(),
-              ],
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            title: Center(
+                child: TextWidget(
+              title: "جاري التحميل",
+              fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+            )),
+            content: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextWidget(
+                    title: "برجاء الانتظار حتى يكتمل تنزيل التفسير",
+                    fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                  ),
+                  SizedBox(height: 20),
+                  KLoading.progressIOSIndicator(),
+                ],
+              ),
             ),
           ),
         ),
@@ -315,8 +325,8 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                               child: InkWell(
                                 onTap: () => _handleDownloadOrOpen(index),
                                 child: CircleAvatar(
-                                  backgroundColor: AppStyle.primColors,
-                                  radius: 22,
+                                  backgroundColor: Colors.white,
+                                  radius: 25,
                                   child: Builder(
                                     builder: (_) {
                                       if (isBusy) {
@@ -337,14 +347,14 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                                         return const Icon(
                                           Icons.open_in_new,
                                           size: 26,
-                                          color: Colors.white,
+                                          color: Colors.black,
                                         );
                                       }
                                       // ⬇️ لم يُنزّل بعد — أيقونة تنزيل
                                       return const Icon(
                                         Icons.download,
                                         size: 28,
-                                        color: Colors.white,
+                                        color: Colors.greenAccent,
                                       );
                                     },
                                   ),

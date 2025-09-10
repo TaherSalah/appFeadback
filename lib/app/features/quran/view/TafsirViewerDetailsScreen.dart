@@ -7,6 +7,8 @@ import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:quran_library/quran.dart';
 
+import '../../../core/utils/style/responsive_util.dart';
+
 class TafsirViewerDetailsScreen extends StatefulWidget {
   /// ابدأ بصفحة معينة (١–٦٠٤). لو ما اتحطتش قيمة، هيبدأ بآخر صفحة محفوظة من المكتبة
   final int? initialPage;
@@ -275,7 +277,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
           leading: const CupertinoNavigationBarBackButton(color: Colors.black),
           centerTitle: true,
           title: Text(
-            "عارض التفسير",
+            "تفسير الايات",
             style: GoogleFonts.cairo(
               color: Colors.green,
               fontWeight: FontWeight.bold,
@@ -425,39 +427,43 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                           clipBehavior: Clip.none,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 8),
+                              padding:  EdgeInsets.symmetric(
+                                  vertical:ResponsiveUtil.isTablet(context)? 40:20, horizontal: 8),
                               width: MediaQuery.sizeOf(context).width,
                               decoration: const BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.all(Radius.circular(13))),
-                              child: Text.rich(
-                                textAlign: TextAlign.justify,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text.rich(
 
-                                TextSpan(
-                                  style: TextStyle(height: 1.6),
-                                    text: ayahText.isNotEmpty
-                                        ? ayahText
-                                        : ayahLabel,
-                                    children: [
-                                      TextSpan(
+                                  textAlign: TextAlign.justify,
 
-                                        style: TextStyle(color: Colors.green) ,
-                                        text: ayahText.isNotEmpty
-                                            ? ' ' "(${a.toString()})" ' '
-                                            : ayahLabel,
-                                      )
-                                    ]),
+                                  TextSpan(
+                                    style: TextStyle(height: 1.6,fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)?10.sp: 14.sp),
+                                      text: ayahText.isNotEmpty
+                                          ? ayahText
+                                          : ayahLabel,
+                                      children: [
+                                        TextSpan(
+
+                                          style: TextStyle(color: Colors.green) ,
+                                          text: ayahText.isNotEmpty
+                                              ? ' ' "(${a.toString()})" ' '
+                                              : ayahLabel,
+                                        )
+                                      ]),
+                                ),
                               ),
                             ),
                             Positioned(
-                              bottom: -17,
+                              bottom:  ResponsiveUtil.isTablet(context)?-20:-17,
                               right: 0,
                               left: 0,
                               child: InkWell(
                                 onTap: () => _openAyahTafsir(ayah),
                                 child: CircleAvatar(
-                                    radius: 20.r,
+                                    radius: ResponsiveUtil.isTablet(context)?15.r:20.r,
                                     backgroundColor: Colors.white,
                                     child: const Icon(
                                       Icons.menu_book_outlined,

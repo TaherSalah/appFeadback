@@ -113,11 +113,11 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                                 child: Text.rich(TextSpan(children: [
                                   TextSpan(
                                       text: ayah[index].ayaTextEmlaey,
-                                      style: TextStyle(fontFamily: "me")),
+                                      style: TextStyle(fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)?9.sp:14.sp,)),
                                   TextSpan(
                                       text:
-                                          "﴿${ayah[index].ayahNumber.toString()}﴾ ",
-                                      style: TextStyle(color: Colors.red)),
+                                          "(${ayah[index].ayahNumber.toString()}) ",
+                                      style: TextStyle(color: Colors.green)),
                                 ])),
                               ),
                             ),
@@ -136,6 +136,8 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 4),
                                   child: TextWidget(
+                                    fontSize: ResponsiveUtil.isTablet(context)?9.sp:14.sp,
+
                                     textAlign: TextAlign.center,
                                     title: "الصفحة ${ayah[index].page.toString()}",
                                     fontFamily: "me",
@@ -158,6 +160,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 4),
                                   child: TextWidget(
+                                    fontSize: ResponsiveUtil.isTablet(context)?9.sp:14.sp,
                                     textAlign: TextAlign.center,
                                     title: ayah[index].arabicName.toString(),
                                     fontFamily: "me",

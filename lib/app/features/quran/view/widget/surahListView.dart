@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart' as surahModel;
@@ -48,6 +49,9 @@ class _SurahListScreenState extends State<SurahListScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        backgroundColor: AppStyle.bgColors,
+
+
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
@@ -70,8 +74,9 @@ class _SurahListScreenState extends State<SurahListScreen> {
             ? Center(
                 child: KLoading.progressIOSIndicator(radius: 15.r),
               )
-            : ListView.builder(
-                physics: BouncingScrollPhysics(),
+            : ListView.separated(
+          separatorBuilder: (context, index) => Divider(),
+                physics: const BouncingScrollPhysics(),
                 itemCount: surahInfoList.length,
                 itemBuilder: (ctx, index) {
                   final surah = surahInfoList[index];
@@ -96,7 +101,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                               SvgPicture.asset("assets/icons/suraNum.svg"),
                               TextWidget(
                                 title: "${index + 1}",
-                                fontSize: 14.sp,
+                                fontSize:ResponsiveUtil.isTablet(context)?9.sp: 14.sp,
                               ),
                             ],
                           ),
@@ -107,14 +112,14 @@ class _SurahListScreenState extends State<SurahListScreen> {
                               children: [
                                 TextWidget(
                                     fontFamily: "me",
-                                    fontSize: 17.5.sp,
+                                    fontSize: ResponsiveUtil.isTablet(context)?9.sp: 17.5.sp,
                                     fontWeight: FontWeight.bold,
                                     title: surahs[index]),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: TextWidget(
                                       fontFamily: "me",
-                                      fontSize: 16.sp,
+                                      fontSize:ResponsiveUtil.isTablet(context)?10.sp: 16.sp,
                                       fontWeight: FontWeight.w500,
                                       title:
                                           " اياتها ${surah.totalVerses.toString()}"),
@@ -126,9 +131,14 @@ class _SurahListScreenState extends State<SurahListScreen> {
                             child: InkWell(
                               onTap: () {
                                 QuranLibrary().getSurahInfoBottomSheet(
-                                    surahNumber: index+1, context: context);
+                                    surahInfoStyle: SurahInfoStyle(
+                                      textColor: CupertinoColors.black,
+                                        backgroundColor: AppStyle.bgColors,
+                                      ),
+                                    surahNumber: index + 1,
+                                    context: context);
                               },
-                              child: Icon(Icons.info_outline),
+                              child: const Icon(Icons.info_outline),
                             ),
                           ),
                           Image.asset(

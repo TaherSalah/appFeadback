@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:quran_library/quran.dart';
 
@@ -33,6 +34,9 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        backgroundColor: AppStyle.bgColors,
+
+
         appBar: PreferredSize(
           preferredSize:
           Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
@@ -51,7 +55,9 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
             ),
           ),
         ),
-        body: ListView.builder(
+        body: ListView.separated(
+          separatorBuilder: (context, index) => Divider(),
+
           physics: BouncingScrollPhysics(),
           itemCount: hizb.length,
           itemBuilder: (ctx, index) {
@@ -75,7 +81,7 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
                         SvgPicture.asset("assets/icons/suraNum.svg"),
                         TextWidget(
                           title: "${index + 1}",
-                          fontSize: 14.sp,
+                          fontSize:ResponsiveUtil.isTablet(context)?9.sp: 14.sp,
                         ),
                       ],
                     ),
@@ -85,7 +91,7 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
                       children: [
                         TextWidget(
                             fontFamily: "me",
-                            fontSize: 15.sp,
+                            fontSize: ResponsiveUtil.isTablet(context)?9.sp: 14.sp,
                             fontWeight: FontWeight.bold,
                             title: hizb[index]),
 

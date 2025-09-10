@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:muslimdaily/app/core/localization/localization_manager.dart';
 import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 class DrawerModle {
   final IconData? icon;
@@ -97,7 +99,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     final item = widget.topBar[index];
     final isSelected = item?.route != null && item!.route == widget.selectItmeRoute;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
       child: GestureDetector(
         onTap: item == null
             ? null
@@ -121,8 +123,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         child: Center(
           child: widget.topBar[index] != null
               ? Container(
-            width: maxWidth ? 200 : 40,
-            height: 40,
+            width: maxWidth ? ResponsiveUtil.isTablet(context)? 215 :200 : 40,
+            height: ResponsiveUtil.isTablet(context)?50:40,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
@@ -130,37 +132,40 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ? KColors.backgroundD
                   : Colors.black26,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FaIcon(
-                  widget.topBar[index]!.icon,
-                  color:
-                  widget.topBar[index]?.route == widget.selectItmeRoute
-                      ? AppStyle.scondColors
-                      : Colors.white,
-                  size: 24,
-                ),
-                if (maxWidth) const SizedBox(width: 10),
-                if (maxWidth)
-                  Expanded(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Text(
-                        widget.topBar[index]!.title,
-                        style: theme.textTheme.titleSmall!.copyWith(
-                          fontSize: 16,
-                          fontFamily: "cairo",
-                          color:widget. topBar[index]?.route ==
-                              widget.selectItmeRoute
-                              ? KColors.actionBTNL
-                              : KColors.whiteColor,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FaIcon(
+                    widget.topBar[index]!.icon,
+                    color:
+                    widget.topBar[index]?.route == widget.selectItmeRoute
+                        ? AppStyle.scondColors
+                        : Colors.white,
+                    size: 24,
+                  ),
+                  if (maxWidth) const SizedBox(width: 10),
+                  if (maxWidth)
+                    Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          widget.topBar[index]!.title,
+                          style: theme.textTheme.titleSmall!.copyWith(
+                              fontSize: ResponsiveUtil.isTablet(context)?10.sp: 14.sp,
+                            fontFamily: "me",
+                            color:widget. topBar[index]?.route ==
+                                widget.selectItmeRoute
+                                ? KColors.actionBTNL
+                                : KColors.whiteColor,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           )
               : SizedBox(

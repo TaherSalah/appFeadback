@@ -1,0 +1,2 @@
+C:/Users/Taher Salah/Desktop/rafuiqElmuslim/android/app/.cxx/Debug/215g1026/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Taher Salah/Desktop/rafuiqElmuslim/android/app/.cxx/Debug/215g1026/x86_64/CMakeFiles/rebuild_cache.dir

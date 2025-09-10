@@ -6,7 +6,9 @@ import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/DrawerWidget.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart';
 import 'package:quran_library/quran.dart';
@@ -24,6 +26,11 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   var selectedFontSize;
 
   late List<DrawerModle?> topBar = [
+    DrawerModle(
+        icon: Icons.search,
+        title: "البحث بالاية",
+        route: "/ayaSearchScreen"),
+
     DrawerModle(
         icon: Icons.favorite_border,
         title: "فضل قرأه القران",
@@ -67,10 +74,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         icon: Icons.dark_mode_outlined,
         title: "الوضع الليلي",
         onTap: _changeMode),
-    DrawerModle(
-        icon: Icons.dark_mode_outlined,
-        title: "الوضع الافقي للقرأة",
-        onTap: _changesIVertical),
+
   ];
 
   int? _currentPage = 0;
@@ -110,9 +114,11 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     setState(() {
       _bookmarkedPage = page;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('✅ تم حفظ العلامة على الصفحة $page')),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(content: Text('✅ تم حفظ العلامة على الصفحة $page')),
+    // );
+    KHelper.showSuccess(message:' ✅ تم حفظ العلامة على الصفحة $page ');
+
   }
 
   void _delBookmark() async {
@@ -121,9 +127,10 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     setState(() {
       _bookmarkedPage = null;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('✅ تم ازالة العلامة')),
-    );
+    KHelper.showSuccess(message: "تم ازالة العلامة");
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(content: Text('✅ تم ازالة العلامة')),
+    // );
   }
 
   void _goToBookmark() {
@@ -134,7 +141,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('⚠️ لا توجد علامة محفوظة')),
+        const SnackBar(content: Text('⚠️ لا توجد علامة محفوظة')),
       );
     }
   }
@@ -152,16 +159,10 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   }
 
   bool isDark = false;
-  bool isVertical = false;
 
   void _changeMode() {
     setState(() {
       isDark = !isDark;
-    });
-  }
-  void _changesIVertical() {
-    setState(() {
-      isVertical = !isVertical;
     });
   }
 
@@ -186,8 +187,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                 onTap: () {
                   Navigator.pushNamed(context, "/ayaSearchScreen");
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Icon(
                     Icons.search,
                     size: 30,
@@ -211,7 +212,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
           padding: EdgeInsets.zero,
           decoration: BoxDecoration(
             color: isDark ? Colors.black : AppStyle.bgColors,
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [Colors.black, Colors.black87],
@@ -223,19 +224,16 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               padding: EdgeInsets.zero,
               child: _currentPage == null
                   ? Center(
-                      child: CircularProgressIndicator()) // لحد ما يجيب الصفحة
+                      child: KLoading.progressIOSIndicator()) // لحد ما يجيب الصفحة
                   : QuranLibraryScreen(
-                key: ValueKey(isVertical),
-                scrollDirection: isVertical == true ?Axis.vertical:Axis.horizontal,
                       ayaFontSize: double.parse(selectedFontSize),
                       isDark: isDark,
-                withPageView: isVertical == true ?true:false,
 
                       pageIndex: _currentPage!,
                       // يبدأ من آخر صفحة محفوظة
                       backgroundColor:
-                          isDark ? Colors.black : Color(0xffFFFFF0),
-                      topTitleChild: SizedBox(),
+                          isDark ? Colors.black : const Color(0xffFFFFF0),
+                      topTitleChild: const SizedBox(),
 
                       optimizeScrolling: false,
                       useDefaultAppBar: false,
