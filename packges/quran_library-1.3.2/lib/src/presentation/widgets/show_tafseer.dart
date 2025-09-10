@@ -85,7 +85,7 @@ class ShowTafseer extends StatelessWidget {
                         tafsirNameWidget,
                         Row(
                           children: [
-                            ChangeTafsir(tafsirStyle: tafsirStyle),
+                            // ChangeTafsir(tafsirStyle: tafsirStyle),
                             const SizedBox(width: 8),
                             Container(
                                 width: 1,
@@ -93,8 +93,10 @@ class ShowTafseer extends StatelessWidget {
                                 color: Colors.grey.shade300),
                             const SizedBox(width: 8),
                             Transform.translate(
+
                               offset: const Offset(0, 2),
                               child: fontSizeDropDown(
+
                                   height: 30.0, tafsirStyle: tafsirStyle),
                             ),
                           ],

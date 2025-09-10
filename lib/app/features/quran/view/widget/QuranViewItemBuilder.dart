@@ -67,6 +67,10 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         icon: Icons.dark_mode_outlined,
         title: "الوضع الليلي",
         onTap: _changeMode),
+    DrawerModle(
+        icon: Icons.dark_mode_outlined,
+        title: "الوضع الافقي للقرأة",
+        onTap: _changesIVertical),
   ];
 
   int? _currentPage = 0;
@@ -148,10 +152,16 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   }
 
   bool isDark = false;
+  bool isVertical = false;
 
   void _changeMode() {
     setState(() {
       isDark = !isDark;
+    });
+  }
+  void _changesIVertical() {
+    setState(() {
+      isVertical = !isVertical;
     });
   }
 
@@ -215,14 +225,18 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   ? Center(
                       child: CircularProgressIndicator()) // لحد ما يجيب الصفحة
                   : QuranLibraryScreen(
+                key: ValueKey(isVertical),
+                scrollDirection: isVertical == true ?Axis.vertical:Axis.horizontal,
                       ayaFontSize: double.parse(selectedFontSize),
                       isDark: isDark,
+                withPageView: isVertical == true ?true:false,
 
                       pageIndex: _currentPage!,
                       // يبدأ من آخر صفحة محفوظة
                       backgroundColor:
                           isDark ? Colors.black : Color(0xffFFFFF0),
                       topTitleChild: SizedBox(),
+
                       optimizeScrolling: false,
                       useDefaultAppBar: false,
                       onPageChanged: (page) {

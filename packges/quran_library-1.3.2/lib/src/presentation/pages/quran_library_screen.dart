@@ -21,6 +21,7 @@ class QuranLibraryScreen extends StatelessWidget {
     super.key,
     this.appBar,
     this.ayahIconColor,
+    this.scrollDirection,
     this.ayahSelectedBackgroundColor,
     this.ayahSelectedFontColor,
     this.bannerStyle,
@@ -66,6 +67,7 @@ class QuranLibraryScreen extends StatelessWidget {
   /// [ayahIconColor] You can pass the color of the Ayah icon
   final Color? ayahIconColor;
   final double? ayaFontSize;
+  final Axis? scrollDirection; // 👈 الاتجاه
 
   /// يمكنك تمرير لون خلفية الآية المحدد [ayahSelectedBackgroundColor]
   ///
@@ -310,6 +312,7 @@ class QuranLibraryScreen extends StatelessWidget {
                     body: SafeArea(
                       child: withPageView
                           ? PageView.builder(
+                        scrollDirection: scrollDirection??Axis.horizontal,
                         itemCount: 604,
                         controller: quranCtrl.getPageController(context),
                         padEnds: false,
