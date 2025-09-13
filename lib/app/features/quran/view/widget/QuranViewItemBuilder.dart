@@ -42,6 +42,10 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         title: "الاجزاء",
         route: Routes.jozzaListScreenRoute),
     DrawerModle(
+        icon: Icons.info_outline,
+        title: "انشاء ختمة جديدة",
+        route: "/KhatmahHome"),
+    DrawerModle(
         icon: Icons.category_outlined,
         title: "الاحزاب",
         route: Routes.hizbeListScreenRoute),
@@ -67,7 +71,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     DrawerModle(
         icon: Icons.info_outline,
         title: "دعاء ختم القران الكريم",
-        route: "/KhatmahHome"),
+        route: Routes.quranKhitamRoute),
     DrawerModle(
         icon: Icons.gpp_good_outlined, title: "التفسير", route: Routes.tafsirQuranRoute),
     DrawerModle(
