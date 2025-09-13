@@ -125,6 +125,9 @@ class _$KFailureCopyWithImpl<$Res, $Val extends KFailure>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -144,6 +147,8 @@ class __$$KFailureErrorImplCopyWithImpl<$Res>
       _$KFailureErrorImpl _value, $Res Function(_$KFailureErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -192,7 +197,9 @@ class _$KFailureErrorImpl
   @override
   int get hashCode => Object.hash(runtimeType, error);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$KFailureErrorImplCopyWith<_$KFailureErrorImpl> get copyWith =>
@@ -319,7 +326,10 @@ abstract class KFailureError implements KFailure {
   const factory KFailureError(final String error) = _$KFailureErrorImpl;
 
   String get error;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$KFailureErrorImplCopyWith<_$KFailureErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -338,6 +348,9 @@ class __$$KFailureServerImplCopyWithImpl<$Res>
   __$$KFailureServerImplCopyWithImpl(
       _$KFailureServerImpl _value, $Res Function(_$KFailureServerImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -505,6 +518,8 @@ class __$$KFailureOfflineImplCopyWithImpl<$Res>
       _$KFailureOfflineImpl _value, $Res Function(_$KFailureOfflineImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -553,7 +568,9 @@ class _$KFailureOfflineImpl
   @override
   int get hashCode => Object.hash(runtimeType, option);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$KFailureOfflineImplCopyWith<_$KFailureOfflineImpl> get copyWith =>
@@ -682,7 +699,10 @@ abstract class KFailureOffline implements KFailure {
       _$KFailureOfflineImpl;
 
   RequestOptions? get option;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$KFailureOfflineImplCopyWith<_$KFailureOfflineImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -701,6 +721,9 @@ class __$$KFailureUserNotFoundImplCopyWithImpl<$Res>
   __$$KFailureUserNotFoundImplCopyWithImpl(_$KFailureUserNotFoundImpl _value,
       $Res Function(_$KFailureUserNotFoundImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -868,6 +891,9 @@ class __$$KFailureLocationDeniedImplCopyWithImpl<$Res>
       _$KFailureLocationDeniedImpl _value,
       $Res Function(_$KFailureLocationDeniedImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1035,6 +1061,9 @@ class __$$KFailureLocationDisabledImplCopyWithImpl<$Res>
       _$KFailureLocationDisabledImpl _value,
       $Res Function(_$KFailureLocationDisabledImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1203,6 +1232,9 @@ class __$$KFailureLocationDeniedPermanentlyImplCopyWithImpl<$Res>
       _$KFailureLocationDeniedPermanentlyImpl _value,
       $Res Function(_$KFailureLocationDeniedPermanentlyImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1373,6 +1405,9 @@ class __$$KFailureSomeThingWrongPleaseTryAgainImplCopyWithImpl<$Res>
       _$KFailureSomeThingWrongPleaseTryAgainImpl _value,
       $Res Function(_$KFailureSomeThingWrongPleaseTryAgainImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1543,6 +1578,8 @@ class __$$KFailureError401ImplCopyWithImpl<$Res>
       $Res Function(_$KFailureError401Impl) _then)
       : super(_value, _then);
 
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1591,7 +1628,9 @@ class _$KFailureError401Impl
   @override
   int get hashCode => Object.hash(runtimeType, error);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$KFailureError401ImplCopyWith<_$KFailureError401Impl> get copyWith =>
@@ -1720,7 +1759,10 @@ abstract class KFailureError401 implements KFailure {
       _$KFailureError401Impl;
 
   String get error;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$KFailureError401ImplCopyWith<_$KFailureError401Impl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1742,6 +1784,8 @@ class __$$KFailureError422ImplCopyWithImpl<$Res>
       $Res Function(_$KFailureError422Impl) _then)
       : super(_value, _then);
 
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1791,7 +1835,9 @@ class _$KFailureError422Impl
   @override
   int get hashCode => Object.hash(runtimeType, error422model);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$KFailureError422ImplCopyWith<_$KFailureError422Impl> get copyWith =>
@@ -1920,7 +1966,10 @@ abstract class KFailureError422 implements KFailure {
       _$KFailureError422Impl;
 
   Error422Model get error422model;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of KFailure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$KFailureError422ImplCopyWith<_$KFailureError422Impl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -119,6 +119,9 @@ class _$HadithDetailsStateCopyWithImpl<$Res, $Val extends HadithDetailsState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -138,6 +141,9 @@ class __$$HadithDetailsStateInitialImplCopyWithImpl<$Res>
       _$HadithDetailsStateInitialImpl _value,
       $Res Function(_$HadithDetailsStateInitialImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -291,6 +297,9 @@ class __$$HadithDetailsStateLoadingImplCopyWithImpl<$Res>
       _$HadithDetailsStateLoadingImpl _value,
       $Res Function(_$HadithDetailsStateLoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -447,6 +456,8 @@ class __$$HadithDetailsStateSuccessImplCopyWithImpl<$Res>
       $Res Function(_$HadithDetailsStateSuccessImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -486,7 +497,9 @@ class _$HadithDetailsStateSuccessImpl implements HadithDetailsStateSuccess {
   @override
   int get hashCode => Object.hash(runtimeType, hadithDetailsModal);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HadithDetailsStateSuccessImplCopyWith<_$HadithDetailsStateSuccessImpl>
@@ -609,7 +622,10 @@ abstract class HadithDetailsStateSuccess implements HadithDetailsState {
       _$HadithDetailsStateSuccessImpl;
 
   HadithDetailsModal? get hadithDetailsModal;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HadithDetailsStateSuccessImplCopyWith<_$HadithDetailsStateSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -634,6 +650,8 @@ class __$$HadithDetailsListStateSuccessImplCopyWithImpl<$Res>
       $Res Function(_$HadithDetailsListStateSuccessImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -685,7 +703,9 @@ class _$HadithDetailsListStateSuccessImpl
   int get hashCode => Object.hash(
       runtimeType, const DeepCollectionEquality().hash(_hadithDetailsModal));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HadithDetailsListStateSuccessImplCopyWith<
@@ -809,7 +829,10 @@ abstract class HadithDetailsListStateSuccess implements HadithDetailsState {
       _$HadithDetailsListStateSuccessImpl;
 
   List<HadithDetailsModal>? get hadithDetailsModal;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HadithDetailsListStateSuccessImplCopyWith<
           _$HadithDetailsListStateSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -835,6 +858,8 @@ class __$$HadithDetailsStateErrorImplCopyWithImpl<$Res>
       $Res Function(_$HadithDetailsStateErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -873,7 +898,9 @@ class _$HadithDetailsStateErrorImpl implements HadithDetailsStateError {
   @override
   int get hashCode => Object.hash(runtimeType, failure);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HadithDetailsStateErrorImplCopyWith<_$HadithDetailsStateErrorImpl>
@@ -995,7 +1022,10 @@ abstract class HadithDetailsStateError implements HadithDetailsState {
       _$HadithDetailsStateErrorImpl;
 
   String get failure;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HadithDetailsStateErrorImplCopyWith<_$HadithDetailsStateErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -1017,6 +1047,9 @@ class __$$MoreHadithDetailsStateLoadingImplCopyWithImpl<$Res>
       _$MoreHadithDetailsStateLoadingImpl _value,
       $Res Function(_$MoreHadithDetailsStateLoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1175,6 +1208,8 @@ class __$$MoreHadithDetailsStateSuccessImplCopyWithImpl<$Res>
       $Res Function(_$MoreHadithDetailsStateSuccessImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1226,7 +1261,9 @@ class _$MoreHadithDetailsStateSuccessImpl
   int get hashCode => Object.hash(runtimeType,
       const DeepCollectionEquality().hash(_allHadithCategorieModal));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MoreHadithDetailsStateSuccessImplCopyWith<
@@ -1350,7 +1387,10 @@ abstract class MoreHadithDetailsStateSuccess implements HadithDetailsState {
       _$MoreHadithDetailsStateSuccessImpl;
 
   List<AllHadithCategorieModal>? get allHadithCategorieModal;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MoreHadithDetailsStateSuccessImplCopyWith<
           _$MoreHadithDetailsStateSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -1376,6 +1416,8 @@ class __$$MoreHadithDetailsStateErrorImplCopyWithImpl<$Res>
       $Res Function(_$MoreHadithDetailsStateErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1414,7 +1456,9 @@ class _$MoreHadithDetailsStateErrorImpl implements MoreHadithDetailsStateError {
   @override
   int get hashCode => Object.hash(runtimeType, failure);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MoreHadithDetailsStateErrorImplCopyWith<_$MoreHadithDetailsStateErrorImpl>
@@ -1536,7 +1580,10 @@ abstract class MoreHadithDetailsStateError implements HadithDetailsState {
       _$MoreHadithDetailsStateErrorImpl;
 
   String get failure;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HadithDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MoreHadithDetailsStateErrorImplCopyWith<_$MoreHadithDetailsStateErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

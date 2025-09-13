@@ -72,6 +72,9 @@ class _$ApiClientStateCopyWithImpl<$Res, $Val extends ApiClientState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of ApiClientState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -89,6 +92,9 @@ class __$$ApiClientStateInitialImplCopyWithImpl<$Res>
   __$$ApiClientStateInitialImplCopyWithImpl(_$ApiClientStateInitialImpl _value,
       $Res Function(_$ApiClientStateInitialImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of ApiClientState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -197,6 +203,8 @@ class __$$ApiClientStateErrorImplCopyWithImpl<$Res>
       $Res Function(_$ApiClientStateErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiClientState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -210,6 +218,8 @@ class __$$ApiClientStateErrorImplCopyWithImpl<$Res>
     ));
   }
 
+  /// Create a copy of ApiClientState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $KFailureCopyWith<$Res> get failure {
@@ -243,7 +253,9 @@ class _$ApiClientStateErrorImpl implements ApiClientStateError {
   @override
   int get hashCode => Object.hash(runtimeType, failure);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiClientState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiClientStateErrorImplCopyWith<_$ApiClientStateErrorImpl> get copyWith =>
@@ -318,7 +330,10 @@ abstract class ApiClientStateError implements ApiClientState {
       _$ApiClientStateErrorImpl;
 
   KFailure get failure;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiClientState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiClientStateErrorImplCopyWith<_$ApiClientStateErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

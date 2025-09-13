@@ -11,14 +11,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  quran:
   cupertino_icons:
   google_fonts:
   provider:
   dio:
   flutter_rating_bar:
   flutter_screenutil:
-  share_plus:
+  share_plus: ^11.0.0
   http:
   adhan:
   firebase_messaging: ^15.2.4
@@ -46,7 +46,7 @@ dependencies:
   hive:
   hive_flutter:
   path_provider:
-  awesome_notifications:
+#  awesome_notifications: ^0.9.3
   get_it: ^7.2.0
   get_storage:
   fluttertoast:

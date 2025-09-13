@@ -134,6 +134,9 @@ class _$CategoriesStateCopyWithImpl<$Res, $Val extends CategoriesState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -152,6 +155,9 @@ class __$$CategoriesStateInitialImplCopyWithImpl<$Res>
       _$CategoriesStateInitialImpl _value,
       $Res Function(_$CategoriesStateInitialImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -319,6 +325,9 @@ class __$$CategoriesStateLoadingImplCopyWithImpl<$Res>
       _$CategoriesStateLoadingImpl _value,
       $Res Function(_$CategoriesStateLoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -489,6 +498,8 @@ class __$$CategoriesStateSuccessImplCopyWithImpl<$Res>
       $Res Function(_$CategoriesStateSuccessImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -538,7 +549,9 @@ class _$CategoriesStateSuccessImpl implements CategoriesStateSuccess {
   int get hashCode => Object.hash(
       runtimeType, const DeepCollectionEquality().hash(_categoriesModal));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$CategoriesStateSuccessImplCopyWith<_$CategoriesStateSuccessImpl>
@@ -676,7 +689,10 @@ abstract class CategoriesStateSuccess implements CategoriesState {
       _$CategoriesStateSuccessImpl;
 
   List<CategoriesModal>? get categoriesModal;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CategoriesStateSuccessImplCopyWith<_$CategoriesStateSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -698,6 +714,8 @@ class __$$CategoriesStateErrorImplCopyWithImpl<$Res>
       $Res Function(_$CategoriesStateErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -736,7 +754,9 @@ class _$CategoriesStateErrorImpl implements CategoriesStateError {
   @override
   int get hashCode => Object.hash(runtimeType, failure);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$CategoriesStateErrorImplCopyWith<_$CategoriesStateErrorImpl>
@@ -874,7 +894,10 @@ abstract class CategoriesStateError implements CategoriesState {
       _$CategoriesStateErrorImpl;
 
   String get failure;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CategoriesStateErrorImplCopyWith<_$CategoriesStateErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -896,6 +919,9 @@ class __$$HadithCategoriesStateLoadingImplCopyWithImpl<$Res>
       _$HadithCategoriesStateLoadingImpl _value,
       $Res Function(_$HadithCategoriesStateLoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1069,6 +1095,8 @@ class __$$HadithCategoriesStateSuccessImplCopyWithImpl<$Res>
       $Res Function(_$HadithCategoriesStateSuccessImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1110,7 +1138,9 @@ class _$HadithCategoriesStateSuccessImpl
   @override
   int get hashCode => Object.hash(runtimeType, allHadithCategorieModal);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HadithCategoriesStateSuccessImplCopyWith<
@@ -1249,7 +1279,10 @@ abstract class HadithCategoriesStateSuccess implements CategoriesState {
       _$HadithCategoriesStateSuccessImpl;
 
   AllHadithCategorieModal? get allHadithCategorieModal;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HadithCategoriesStateSuccessImplCopyWith<
           _$HadithCategoriesStateSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -1275,6 +1308,8 @@ class __$$HadithCategoriesStateErrorImplCopyWithImpl<$Res>
       $Res Function(_$HadithCategoriesStateErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1313,7 +1348,9 @@ class _$HadithCategoriesStateErrorImpl implements HadithCategoriesStateError {
   @override
   int get hashCode => Object.hash(runtimeType, failure);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HadithCategoriesStateErrorImplCopyWith<_$HadithCategoriesStateErrorImpl>
@@ -1450,7 +1487,10 @@ abstract class HadithCategoriesStateError implements CategoriesState {
       _$HadithCategoriesStateErrorImpl;
 
   String get failure;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HadithCategoriesStateErrorImplCopyWith<_$HadithCategoriesStateErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -1471,6 +1511,9 @@ class __$$HadithSearchStateLoadingImplCopyWithImpl<$Res>
       _$HadithSearchStateLoadingImpl _value,
       $Res Function(_$HadithSearchStateLoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1641,6 +1684,8 @@ class __$$HadithSearchStateErrorImplCopyWithImpl<$Res>
       $Res Function(_$HadithSearchStateErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1679,7 +1724,9 @@ class _$HadithSearchStateErrorImpl implements HadithSearchStateError {
   @override
   int get hashCode => Object.hash(runtimeType, failure);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HadithSearchStateErrorImplCopyWith<_$HadithSearchStateErrorImpl>
@@ -1816,7 +1863,10 @@ abstract class HadithSearchStateError implements CategoriesState {
       _$HadithSearchStateErrorImpl;
 
   String get failure;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HadithSearchStateErrorImplCopyWith<_$HadithSearchStateErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -1840,6 +1890,8 @@ class __$$HadithSearchStateSuccessImplCopyWithImpl<$Res>
       $Res Function(_$HadithSearchStateSuccessImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1879,7 +1931,9 @@ class _$HadithSearchStateSuccessImpl implements HadithSearchStateSuccess {
   @override
   int get hashCode => Object.hash(runtimeType, searchResultModal);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HadithSearchStateSuccessImplCopyWith<_$HadithSearchStateSuccessImpl>
@@ -2017,7 +2071,10 @@ abstract class HadithSearchStateSuccess implements CategoriesState {
       _$HadithSearchStateSuccessImpl;
 
   SearchResultModal? get searchResultModal;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of CategoriesState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HadithSearchStateSuccessImplCopyWith<_$HadithSearchStateSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

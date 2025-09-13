@@ -1,4 +1,4 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
+// import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,46 +54,47 @@ import 'app/features/Khatmah/data/khatmah_model.dart';
 //   await AzkarNotificationService.scheduleAllAzkarNotifications();
 //   runApp(const MyApp());
 // }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // ← أول سطر دائمًا
 
-void main() async {
+  // SystemChrome و أي platform channels لازم بعد ensureInitialized
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
-  ),
-  );
+  ));
 
+  // لو عندك DI بيتعامل مع ملفات/قنوات منصة، خلّيه بعد ensureInitialized
   await Di.init();
-  WidgetsFlutterBinding.ensureInitialized();
-  //// for init date language
+
+  // Intl dates
   await initializeDateFormatting();
   await initializeDateFormatting('ar', null);
   await initializeDateFormatting('en', null);
+
   await SharedObj().init();
+
+  // مكتبتك
   QuranLibrary().init();
   QuranLibrary().initTafsir();
-  // Init Hive
-  await Hive.initFlutter();
-  Hive.registerAdapter(KhatmahModelAdapter());
-  await Hive.openBox<KhatmahModel>('khatmahBox');
-  // await Hive.deleteBoxFromDisk('khatmahBox');
 
-  // Init Notifications
-  AwesomeNotifications().initialize(
-    null,
-    [
-      NotificationChannel(
-        channelKey: 'khatmah_channel',
-        channelName: 'ختمتك',
-        channelDescription: 'إشعارات ختمتك اليومية',
-        defaultColor: Colors.green,
-        importance: NotificationImportance.High,
-        channelShowBadge: true,
-      )
-    ],
-    debug: true,
-  );
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+  // Hive
+  await Hive.initFlutter();
+
+  if (!Hive.isAdapterRegistered(0)) {
+    Hive.registerAdapter(KhatmahModelAdapter());
+  }
+
+  await Hive.openBox<KhatmahModel>('khatmahBox');
+
+  if (!Hive.isBoxOpen('khatmahBox')) {
+    await Hive.openBox<KhatmahModel>('khatmahBox');
+  }
+  if (!Hive.isBoxOpen('khatmahPlans')) {
+    await Hive.openBox('khatmahPlans');
+  }
+
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(
         // DevicePreview(
@@ -112,6 +113,66 @@ void main() async {
             )));
   });
 }
+
+// void main() async {
+//   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+//     statusBarColor: Colors.transparent,
+//     statusBarIconBrightness: Brightness.dark,
+//     systemNavigationBarColor: Colors.transparent,
+//   ),
+//   );
+//
+//   await Di.init();
+//   WidgetsFlutterBinding.ensureInitialized();
+//   //// for init date language
+//   await initializeDateFormatting();
+//   await initializeDateFormatting('ar', null);
+//   await initializeDateFormatting('en', null);
+//   await SharedObj().init();
+//   QuranLibrary().init();
+//   QuranLibrary().initTafsir();
+//   // Init Hive
+//   await Hive.initFlutter();
+//   Hive.registerAdapter(KhatmahModelAdapter());
+//   await Hive.openBox<KhatmahModel>('khatmahBox');
+//   await Hive.openBox('khatmahPlans'); // لو عندك خطط الأجزاء
+//
+//   // await Hive.deleteBoxFromDisk('khatmahBox');
+//
+//   // Init Notifications
+//   // AwesomeNotifications().initialize(
+//   //   null,
+//   //   [
+//   //     NotificationChannel(
+//   //       channelKey: 'khatmah_channel',
+//   //       channelName: 'ختمتك',
+//   //       channelDescription: 'إشعارات ختمتك اليومية',
+//   //       defaultColor: Colors.green,
+//   //       importance: NotificationImportance.High,
+//   //       channelShowBadge: true,
+//   //     )
+//   //   ],
+//   //   debug: true,
+//   // );
+//   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+//       .then((_) {
+//     runApp(
+//         // DevicePreview(
+//         //   enabled: !kReleaseMode,
+//         //   builder: (context) => YaqeesApp(), // Wrap your app
+//         // ),
+//
+//         BlocProvider<CentralizedCubit>(
+//             create: (context) =>
+//                 CentralizedCubit(sharedPreferences: Di.sharedPreferences)
+//                   ..localization(),
+//             child: BlocBuilder<CentralizedCubit, CentralizedState>(
+//               builder: (context, state) {
+//                 return const MashkahApp();
+//               },
+//             )));
+//   });
+// }
 
 class NoConnectionScreen extends StatelessWidget {
   const NoConnectionScreen({super.key});

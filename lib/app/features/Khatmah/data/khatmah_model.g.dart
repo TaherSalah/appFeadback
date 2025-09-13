@@ -23,10 +23,9 @@ class KhatmahModelAdapter extends TypeAdapter<KhatmahModel> {
       currentPage: fields[3] as int,
       startDate: fields[4] as DateTime,
       endDate: fields[5] as DateTime,
-      dailyPages: (fields[7] as int?) ?? 0,
-
-      progressDates: (fields[8] as List?)?.cast<DateTime>(),
+      dailyPages: fields[7] as int,
       isCompleted: fields[6] as bool,
+      progressDates: (fields[8] as List?)?.cast<DateTime>(),
     );
   }
 

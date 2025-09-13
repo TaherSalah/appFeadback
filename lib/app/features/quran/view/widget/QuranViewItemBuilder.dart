@@ -67,7 +67,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     DrawerModle(
         icon: Icons.info_outline,
         title: "دعاء ختم القران الكريم",
-        route: Routes.quranKhitamRoute),
+        route: "/KhatmahHome"),
     DrawerModle(
         icon: Icons.gpp_good_outlined, title: "التفسير", route: Routes.tafsirQuranRoute),
     DrawerModle(
