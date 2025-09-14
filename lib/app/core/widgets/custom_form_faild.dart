@@ -387,6 +387,7 @@ class KTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+
       inputFormatters: formatter,
       keyboardAppearance: Theme.of(context).brightness,
       keyboardType: keyboardType,
