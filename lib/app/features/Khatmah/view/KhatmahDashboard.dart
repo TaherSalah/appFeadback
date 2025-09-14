@@ -1,9 +1,15 @@
 // import 'package:awesome_notifications/awesome_notifications.dart';
+import 'dart:io';
+
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:muslimdaily/app/core/localization/localization_manager.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
+import 'package:muslimdaily/app/core/widgets/kButtons.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/PlanData.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/khatmah_model.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/CreateKhatmahView.dart';
@@ -365,14 +371,32 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
     final currentList = box.values.where((k) => !k.isCompleted).toList();
     if (currentList.isEmpty) {
       return Center(
-        child: ElevatedButton.icon(
-          onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const CreateKhatmahScreen())),
-          icon: const Icon(Icons.add),
-          label: const Text("ابدأ ختمة جديدة"),
+        child: SizedBox(
+          height: 60,
+          width: MediaQuery.sizeOf(context).width / 2,
+
+          child: CustomButton(
+            backgroundColor:KColors.primaryColor,
+            width: MediaQuery.sizeOf(context).width / 3,
+            title: "ابدأ وانشئ ختمة جديدة",
+            onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CreateKhatmahScreen())),
+          ),
         ),
+
+
+      // return Center(
+      //   child: ElevatedButton.icon(
+      //
+      //     onPressed: () => Navigator.push(
+      //         context,
+      //         MaterialPageRoute(
+      //             builder: (context) => const CreateKhatmahScreen())),
+      //     icon: const Icon(Icons.add),
+      //     label: const Text("ابدأ ختمة جديدة"),
+      //   ),
       );
     }
 
@@ -423,39 +447,45 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
   Widget build(BuildContext context) {
     // ملاحظة: السطر التالي كان ناقصه فاصلة منقوطة في كودك الأصلي
     // QuranLibrary();
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.red,
-        title: const Text("ختمتك"),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: "الحالية"),
-            Tab(text: "السابقة"),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppStyle.primColors,
+          title: const TextWidget(title: "ختمتك"),
+          bottom: TabBar(
+      
+            labelStyle: TextStyle(color: Colors.black,fontFamily: "cairo"),
+            controller: _tabController,
+            tabs: const [
+              Tab(text: "الحالية"),
+              Tab(text: "السابقة"),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const CreateKhatmahScreen())),
+            )
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const CreateKhatmahScreen())),
-          )
-        ],
-      ),
-      body: ValueListenableBuilder(
-        valueListenable: box.listenable(),
-        builder: (context, Box<KhatmahModel> b, _) {
-          return TabBarView(
-            controller: _tabController,
-            children: [
-              _buildCurrentTab(),
-              _buildCompletedTab(),
-            ],
-          );
-        },
+        body: ValueListenableBuilder(
+          valueListenable: box.listenable(),
+          builder: (context, Box<KhatmahModel> b, _) {
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                _buildCurrentTab(),
+                _buildCompletedTab(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 }
+

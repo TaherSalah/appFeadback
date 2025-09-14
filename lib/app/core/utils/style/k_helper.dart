@@ -176,7 +176,91 @@ class KHelper {
       },
     );
   }
+  static showBottomSheetCustomWidget2({
+    bool showDivider = true,
+    required BuildContext context,
+    bool? isDismissible = true,
+    Color? backgroundColor,
+    double? maxChildSize,
+    required Widget Function(BuildContext sheetContext) child,
+    double? titleSize,
+    double? minChildSize,
+    double? initialChildSize,
+    String? modelSheetTitle,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: backgroundColor ?? Colors.transparent,
+      isScrollControlled: true,                 // ✅ لازم
+      isDismissible: isDismissible ?? true,
+      useSafeArea: true,                        // ✅ يحترم الحواف
+      builder: (BuildContext sheetContext) {
+        final bottomInset = MediaQuery.of(sheetContext).viewInsets.bottom; // ✅ خُد ارتفاع الكيبورد
 
+        return AnimatedPadding(                 // ✅ يرفع الـsheet فوق الكيبورد
+          padding: EdgeInsets.only(bottom: bottomInset),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          child: DraggableScrollableSheet(
+            expand: false,                      // ✅ مهم مع الكيبورد
+            initialChildSize: initialChildSize ?? 0.6,
+            minChildSize: minChildSize ?? 0.3,
+            maxChildSize: maxChildSize ?? 0.95, // ✅ اسمح بارتفاع كبير
+            builder: (ctx, scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(sheetContext).cardColor,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(50)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.12),
+                      offset: const Offset(0, 3),
+                      blurRadius: 8,
+                      spreadRadius: 4,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 12),
+                    if (showDivider)
+                      Container(
+                        width: 70, height: 3,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: TextWidget(
+                        title: modelSheetTitle ?? "",
+                        fontSize: titleSize,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // ✅ خلي المحتوى قابل للتمرير ويقفل الكيبورد عند السحب
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag, // ✅
+                        padding: const EdgeInsets.symmetric(horizontal: 13),
+                        child: child(sheetContext), // ✅ مرّر sheetContext الصحيح
+                      ),
+                    ),
+
+                    const SizedBox(height: 12), // مسافة صغيرة أسفل
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
   ///***Cupertino Full Width Alert Dialog ***///
   static void showFullWidthAlertDialog({
     required BuildContext context,

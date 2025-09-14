@@ -43,8 +43,8 @@ dependencies:
   flutter_bloc: ^8.1.6
   font_awesome_flutter: ^10.6.0
   get: ^4.6.6
-  hive:
-  hive_flutter:
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
   path_provider:
 #  awesome_notifications: ^0.9.3
   get_it: ^7.2.0
