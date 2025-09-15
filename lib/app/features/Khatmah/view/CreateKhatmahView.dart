@@ -11,6 +11,7 @@ import 'package:muslimdaily/app/core/widgets/custom_form_faild.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/core/widgets/kButtons.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/khatmah_model.dart';
+import 'package:muslimdaily/app/features/Khatmah/view/KhatmahDashboard.dart';
 import 'package:share_plus/share_plus.dart';
 
 /// يبني خطة يومية من أرقام الأجزاء: [[1,2], [3], [4,5], ...]
@@ -144,6 +145,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
     // (اختياري) جدولة إشعار… نفس كودك المعلّق
 
     Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => KhatmahDashboard(),));
   }
 
   @override
@@ -169,7 +171,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
         appBar: AppBar(
           leading: const CupertinoNavigationBarBackButton(color: Colors.black),
           centerTitle: true,
-          title: TextDefaultWidget(title:
+          title: TextWidget(title:
           'إنشاء ختمة جديدة',
             // style: GoogleFonts.cairo(
             //   color: Colors.green,

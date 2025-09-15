@@ -6,7 +6,6 @@ import '../utils/style/k_color.dart';
 import '../utils/style/responsive_util.dart';
 import 'custom_text_widget.dart';
 
-
 class KButtons {
   static BuildContext? _context;
   static KButtons? _instance;
@@ -105,6 +104,49 @@ class KButtons {
             // ),
           )
         ],
+      ),
+    );
+  }
+
+  static Widget buttonIcon(ThemeData theme,
+      {required String text,
+      required IconData icon,
+      void Function()? onTap,
+      Color? bgColor,
+      fontColor,
+      double? borderRadius,
+      fontSize}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius:
+                BorderRadius.all(Radius.circular(borderRadius ?? 10.r)),
+            color: bgColor ?? Colors.grey),
+        child: Padding(
+          padding:  EdgeInsets.symmetric(horizontal: 5, vertical: 10.h),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 25,
+                color: fontColor,
+              ),
+              SizedBox(width: 10.w),
+              TextWidget(
+                title: text,
+                fontWeight: FontWeight.bold,
+                color: fontColor ?? Colors.black,
+                // style: theme.textTheme.bodySmall!.copyWith(
+                fontSize: fontSize ?? 11,
+                //   color: KColors.whiteDarkColor,
+                // ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -210,6 +252,7 @@ class KButtons {
     final int? notificationCount,
     final Function? onPressed,
     final double radius = 48.0,
+    final double? iconSize,
   }) {
     return Stack(
       clipBehavior: Clip.none,
@@ -223,8 +266,9 @@ class KButtons {
           ),
           child: IconButton(
             padding: EdgeInsets.zero,
-            splashRadius: radius / 2,
-            iconSize: radius / 2,
+            splashRadius: radius,
+
+            iconSize: iconSize ??25,
             icon: Icon(iconData, color: iconColor),
             splashColor: iconColor.withOpacity(.4),
             onPressed: onPressed as void Function()?,

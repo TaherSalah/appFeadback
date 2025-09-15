@@ -27,9 +27,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
 
   late List<DrawerModle?> topBar = [
     DrawerModle(
-        icon: Icons.search,
-        title: "البحث بالاية",
-        route: "/ayaSearchScreen"),
+        icon: Icons.search, title: "البحث بالاية", route: "/ayaSearchScreen"),
 
     DrawerModle(
         icon: Icons.favorite_border,
@@ -42,9 +40,13 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         title: "الاجزاء",
         route: Routes.jozzaListScreenRoute),
     DrawerModle(
-        icon: Icons.info_outline,
+        icon: Icons.chrome_reader_mode_outlined,
         title: "انشاء ختمة جديدة",
         route: "/KhatmahHome"),
+    DrawerModle(
+        icon: Icons.preview_outlined,
+        title: "الختمات المنجزه",
+        route: "/compplateKhatna"),
     DrawerModle(
         icon: Icons.category_outlined,
         title: "الاحزاب",
@@ -73,12 +75,13 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         title: "دعاء ختم القران الكريم",
         route: Routes.quranKhitamRoute),
     DrawerModle(
-        icon: Icons.gpp_good_outlined, title: "التفسير", route: Routes.tafsirQuranRoute),
+        icon: Icons.gpp_good_outlined,
+        title: "التفسير",
+        route: Routes.tafsirQuranRoute),
     DrawerModle(
         icon: Icons.dark_mode_outlined,
         title: "الوضع الليلي",
         onTap: _changeMode),
-
   ];
 
   int? _currentPage = 0;
@@ -121,8 +124,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     // ScaffoldMessenger.of(context).showSnackBar(
     //   SnackBar(content: Text('✅ تم حفظ العلامة على الصفحة $page')),
     // );
-    KHelper.showSuccess(message:' ✅ تم حفظ العلامة على الصفحة $page ');
-
+    KHelper.showSuccess(message: ' ✅ تم حفظ العلامة على الصفحة $page ');
   }
 
   void _delBookmark() async {
@@ -228,7 +230,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               padding: EdgeInsets.zero,
               child: _currentPage == null
                   ? Center(
-                      child: KLoading.progressIOSIndicator()) // لحد ما يجيب الصفحة
+                      child:
+                          KLoading.progressIOSIndicator()) // لحد ما يجيب الصفحة
                   : QuranLibraryScreen(
                       ayaFontSize: double.parse(selectedFontSize),
                       isDark: isDark,
