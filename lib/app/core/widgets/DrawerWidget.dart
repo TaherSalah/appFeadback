@@ -12,14 +12,15 @@ class DrawerModle {
   final IconData? icon;
   final String title;
   final String? route;
-  final bool loginRequiredShow;
+  final bool loginRequiredShow,isRepl;
   final VoidCallback? onTap;    // اختياري: لتنفيذ دالة مباشرة
 
 
-  DrawerModle( {
+  DrawerModle(  {
   this.onTap,
     required this.title,
     this.icon,
+     this.isRepl = false,
     this.route,
     this.loginRequiredShow = false,
   });
@@ -54,7 +55,8 @@ class DrawerModle {
 class DrawerWidget extends StatefulWidget {
   final String selectItmeRoute;
   final List<DrawerModle?> topBar;
-  const DrawerWidget(this.selectItmeRoute, {super.key, required this.topBar});
+  final bool isReplacement;
+  const DrawerWidget(this.selectItmeRoute, {super.key, required this.topBar,  this.isReplacement = false});
 
   @override
   State<DrawerWidget> createState() => _DrawerWidgetState();
@@ -85,7 +87,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 const SizedBox(height: 15),
                 ...List.generate(
                   widget.topBar.length,
-                      (index) => _buildDrawerItem(index, context, theme),
+                      (index) => _buildDrawerItem(index, context, theme,widget.isReplacement),
                 ),
               ],
             ),
@@ -95,9 +97,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     );
   }
 
-  Padding _buildDrawerItem(int index, BuildContext context, ThemeData theme) {
+  Padding _buildDrawerItem(int index, BuildContext context, ThemeData theme,bool isReplacement) {
     final item = widget.topBar[index];
     final isSelected = item?.route != null && item!.route == widget.selectItmeRoute;
+    final bool isReplacement = widget.isReplacement;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
       child: GestureDetector(
@@ -184,8 +187,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   void changePage(context, index) {
     Navigator.pop(context);
+if(widget.isReplacement== true){
+  Navigator.of(context).pushReplacementNamed(widget.topBar[index]?.route ?? "");
 
-    Navigator.of(context).pushNamed(widget.topBar[index]?.route ?? "");
+}else{
+  Navigator.of(context).pushNamed(widget.topBar[index]?.route ?? "");
+
+}
 
 
   }

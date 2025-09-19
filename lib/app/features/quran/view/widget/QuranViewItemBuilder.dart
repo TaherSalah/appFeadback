@@ -42,11 +42,14 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     DrawerModle(
         icon: Icons.chrome_reader_mode_outlined,
         title: "انشاء ختمة جديدة",
+        isRepl: true,
         route: "/KhatmahHome"),
     DrawerModle(
         icon: Icons.preview_outlined,
         title: "الختمات المنجزه",
+
         route: "/compplateKhatna"),
+
     DrawerModle(
         icon: Icons.category_outlined,
         title: "الاحزاب",
