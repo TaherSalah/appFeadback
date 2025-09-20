@@ -16,6 +16,11 @@
         <array>
        <string>audio</string>
        </array>
+       <key>NSAppTransportSecurity</key>
+       <dict>
+         <key>NSAllowsArbitraryLoads</key><true/>
+       </dict>
+
  <!-- الموقع - geolocator / geocoding / flutter_compass -->
 	    <key>NSLocationWhenInUseUsageDescription</key>
 	    <string>يحتاج رفيق المسلم اليومي إلى موقعك لحساب اتجاه القبلة.</string>

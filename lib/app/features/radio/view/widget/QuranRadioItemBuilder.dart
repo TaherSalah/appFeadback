@@ -1,0 +1,340 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
+import 'package:muslimdaily/app/features/radio/data/repo/QuranRadioRepoImmp.dart';
+import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioBloc.dart';
+import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioState.dart';
+
+import '../../../../core/cubit/centralized_cubit.dart';
+import '../../../../core/localization/localization_manager.dart';
+import '../../../../core/utils/constent/router.dart';
+import '../../../../core/utils/style/k_color.dart';
+import '../../../../core/utils/style/responsive_util.dart';
+import '../../../../core/widgets/KLoading.dart';
+import '../../../../core/widgets/custom_divider_widget.dart';
+import '../../../../core/widgets/custom_text_widget.dart';
+import '../../../../core/widgets/image_widget.dart';
+import '../../../../core/widgets/kButtons.dart';
+import '../../../categories/view/categories_details.dart';
+import '../../../categories/view/controller/categories_bloc.dart';
+import '../../../categories/view/controller/categories_state.dart';
+
+class QuranRadioItemBuilder extends StatefulWidget {
+  const QuranRadioItemBuilder({super.key});
+
+  @override
+  State<QuranRadioItemBuilder> createState() => _QuranRadioItemBuilderState();
+}
+
+class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
+  final _scrollCtrl = ScrollController();
+  static const int _pageSize = 30;
+  int _visibleCount = _pageSize;
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollCtrl.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollCtrl.removeListener(_onScroll);
+    _scrollCtrl.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    // قربنا من آخر السكروول؟ زوّد الدُفعة الجاية
+    if (_scrollCtrl.position.pixels >=
+        _scrollCtrl.position.maxScrollExtent - 200) {
+      _loadMore();
+    }
+  }
+
+  void _loadMore() {
+    if (_isLoadingMore) return;
+    setState(() => _isLoadingMore = true);
+
+    // مفيش API call هنا — مجرد زيادة العرض من اللي متخزن بالفعل
+    Future.microtask(() {
+      setState(() {
+        _visibleCount += _pageSize;
+        _isLoadingMore = false;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    int crossAxisCount;
+    double childAspectRatio;
+
+    if (screenWidth < 600) {
+      // Mobile
+      crossAxisCount = 2;
+      childAspectRatio = 2.50;
+    } else if (screenWidth < 1200) {
+      // Tablet
+      crossAxisCount = 3;
+      childAspectRatio = 1.70;
+    } else {
+      // Desktop
+      crossAxisCount = 4;
+      childAspectRatio = 0.7;
+    }
+
+    return BlocProvider<QuranRadioBloc>(
+      create: (context) =>
+      QuranRadioBloc(QuranRadioRepoImmp())..getQuranRadioData(),
+      child: BlocBuilder<QuranRadioBloc, QuranRadioState>(
+        builder: (context, state) {
+          final bloc = QuranRadioBloc.get(context);
+          final total = bloc.quranRadioModel?.radios.length ?? 0;
+
+          // حدّ أقصى لما نعرضه حسب الإجمالي
+          final itemCount = total == 0
+              ? 0
+              : (_visibleCount > total ? total : _visibleCount);
+
+          // لو لسه محمّل البيانات الأساسية
+          final isInitialLoading =
+              total == 0 && (state is QuranRadioStateLoading);
+
+          return CustomScrollView(
+            controller: _scrollCtrl,
+            slivers: [
+              SliverAppBar(
+                centerTitle: true,
+                title: Text(
+                  "موسوعة الاحاديث",
+                  style: GoogleFonts.cairo(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                    fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                  ),
+                ),
+                leading: const SizedBox(),
+                actions: [
+                  InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: SvgPicture.asset(
+                      "assets/icons/arrow.svg",
+                      color: Colors.black,
+                      height: 25,
+                    ),
+                  )
+                ],
+              ),
+
+              SliverToBoxAdapter(
+                child: SizedBox(height: ResponsiveUtil.isTablet(context) ? 20 : 15),
+              ),
+
+              if (isInitialLoading)
+                 SliverToBoxAdapter(
+                  child: Center(
+                    child: KLoading.progressIOSIndicator(),
+                  ),
+                ),
+
+              if (!isInitialLoading && itemCount == 0)
+                const SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: Text("لا توجد بيانات متاحة حالياً."),
+                    ),
+                  ),
+                ),
+
+              if (itemCount > 0)
+                SliverToBoxAdapter(
+                  child: GridView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: itemCount,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      childAspectRatio: childAspectRatio,
+                    ),
+                    itemBuilder: (context, index) {
+                      final item = bloc.quranRadioModel!.radios[index];
+                      return InkWell(
+                        onTap: () {
+                          // TODO: اكتب تنقلك هنا
+                          Navigator.pushNamed(context, "/QuranRadioPlayerView",arguments: QuranRadioPlayerArgs(title: bloc.quranRadioModel?.radios[index].name.toString()??"", streamUrl:  bloc.quranRadioModel?.radios[index].url.toString()??""));
+                        },
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset("assets/icons/radio.png",height: 80,),
+                                const Spacer(),
+
+                                TextWidget(
+                                  color: CentralizedCubit.isDarkMode
+                                      ? KColors.scoColor
+                                      : KColors.primary2Color,
+                                  fontWeight: FontWeight.w600,
+                                  maxLines: 2,
+                                  fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 10.sp,
+                                  title: item.name?.toString() ?? "",
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+              // Loader صغير تحت لما نزود الدُفعات
+              if (_isLoadingMore && itemCount > 0 && itemCount < total)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CardPackagesExamBuilderWidget extends StatelessWidget {
+  const CardPackagesExamBuilderWidget({
+    super.key,
+    this.cardImgUrl,
+    required this.cardTitle,
+    this.textAlign,
+    this.widget,
+    this.fontSize,
+    this.fontWight,
+    this.description,
+    this.titleSize,
+    this.desSize,
+    this.titleColor,
+    this.descColor,
+    this.cardImg,
+  });
+
+  final String? cardImgUrl;
+  final String? cardImg;
+  final String cardTitle;
+  final TextAlign? textAlign;
+  final Widget? widget;
+  final double? fontSize;
+  final double? titleSize;
+  final double? desSize;
+  final FontWeight? fontWight;
+  final String? description;
+  final Color? titleColor;
+  final Color? descColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      double calculatedHeight = ResponsiveHelper.calculateHeight(constraints);
+      return Padding(
+          padding: EdgeInsets.symmetric(vertical: 7.h, horizontal: 4.w),
+          child: Card(
+              elevation: 7,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).width > 600
+                          ? constraints.maxHeight * 0.65
+                          : calculatedHeight,
+                      child: cardImgUrl != null
+                          ? KImageWidget(imageUrl: cardImgUrl.toString())
+                          : Image.asset(
+                              width: double.infinity,
+                              cardImg.toString(),
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    Expanded(
+                        child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextWidget(
+                                title: cardTitle,
+                                color: titleColor,
+                                textAlign: textAlign,
+                                fontSize: titleSize,
+                                maxLines: 3,
+                                fontWeight: FontWeight.w700),
+                            TextWidget(
+                                title: description.toString(),
+                                textAlign: textAlign,
+                                fontSize: desSize,
+                                maxLines: 2,
+                                color: descColor,
+                                fontWeight: FontWeight.w400),
+                            customDividerWidget(
+                                color: KColors.greyColor.withOpacity(0.2),
+                                thickness: 1.5)
+                          ]),
+                    ))
+                  ])));
+    });
+  }
+}
+
+class ResponsiveHelper {
+  static int getCrossAxisCount(double screenWidth) {
+    if (screenWidth < 600) {
+      return 2; // Mobile
+    } else if (screenWidth < 1200) {
+      return 2; // Tablet
+    } else {
+      return 4; // Desktop
+    }
+  }
+
+  static double getChildAspectRatio(double screenWidth) {
+    if (screenWidth < 600) {
+      return 0.70; // Mobile
+    } else if (screenWidth < 1200) {
+      return 0.75; // Tablet
+    } else {
+      return 0.7; // Desktop
+    }
+  }
+
+  static double getFontSize(double screenWidth,
+      {double mobileSize = 11.5, double tabletSize = 14.0}) {
+    return screenWidth < 600 ? mobileSize : tabletSize;
+  }
+
+  static EdgeInsets getPadding(
+      {double mobilePadding = 10.0, double tabletPadding = 15.0}) {
+    return EdgeInsets.symmetric(
+        horizontal: mobilePadding, vertical: tabletPadding);
+  }
+
+  static double calculateHeight(BoxConstraints constraints) {
+    return constraints.maxHeight * 0.50;
+  }
+}

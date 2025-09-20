@@ -39,11 +39,42 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: customAppBar(
-          " البحث بالاية ",
-          color: Colors.black,
-          leading: CupertinoNavigationBarBackButton(color: Colors.black),
+        // appBar: customAppBar(
+        //
+        //   " البحث بالاية ",
+        //   color: Colors.black,
+        //   leading: CupertinoNavigationBarBackButton(color: Colors.black),
+        // ),
+        appBar: PreferredSize(
+          preferredSize:
+          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          child: AppBar(
+            leading: const CupertinoNavigationBarBackButton(
+              color: Colors.black,
+            ),
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => CreateKhatmahScreen(),
+            //       ),
+            //     ),
+            //     icon: const Icon(Icons.add),
+            //   )
+            // ],
+            centerTitle: true,
+            title: Text(
+              "البحث بالاية ",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
+          ),
         ),
+
         body: Column(
           children: [
             Padding(
@@ -83,14 +114,13 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
             if (ayah.isNotEmpty) ...[
               Expanded(
                 child: ListView.separated(
-                  separatorBuilder: (context, index) => SizedBox(
-                    height: 15,
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 15
                   ),
                   itemCount: ayah.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        print("ssss");
                         QuranLibrary().jumpToAyah(ayah[index].page, ayah[index].ayahUQNumber);
                         Navigator.pop(context);
                       },
@@ -117,7 +147,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                                   TextSpan(
                                       text:
                                           "(${ayah[index].ayahNumber.toString()}) ",
-                                      style: TextStyle(color: Colors.green)),
+                                      style: const TextStyle(color: Colors.green)),
                                 ])),
                               ),
                             ),

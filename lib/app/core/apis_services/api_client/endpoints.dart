@@ -11,6 +11,9 @@ abstract class KEndPoints {
   static String hadithBookMarks =
       'https://api.hadith-shareef.com/api/bookmarks/add';
 
+  static String getQuranRadioData =
+      'https://www.mp3quran.net/api/v3/radios?language=ar';
+
   static String getHadithFromCategories({dynamic categoryId}) =>
       // '$baseUrl/hadeeths/list/?language=${LocalizationManager.isEn ? "en" : "ar"}&category_id=$categoryId&page=1&per_page=5';
       '$baseUrl/hadeeths/list/?language=ar&category_id=$categoryId&page=1&per_page=1000';

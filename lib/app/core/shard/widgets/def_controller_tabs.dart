@@ -20,118 +20,118 @@ import '../../cubit/centralized_cubit.dart';
 import '../exports/all_exports.dart';
 
 
-class DefControllerTabs extends StatefulWidget {
-  const DefControllerTabs({super.key});
-
-  @override
-  State<DefControllerTabs> createState() => _DefControllerTabsState();
-}
-
-class _DefControllerTabsState extends State<DefControllerTabs> {
-  late String selectedFontSize;
-
-  @override
-  void initState() {
-    super.initState();
-    selectedFontSize = "20";
-  }
-  @override
-  Widget build(BuildContext context) {
-    final DateTime now = DateTime.now();
-    final String gregorian =
-        initl.DateFormat('EEEE, d MMMM yyyy', 'ar').format(now);
-    final HijriCalendar hijri = HijriCalendar.now();
-    final String hijriDate =
-        "${hijri.hDay} ${hijri.getLongMonthName()} ${hijri.hYear} هـ";
-    return Scaffold(
-      body: SafeArea(
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Icon(Icons.notifications_active_outlined,
-                        size: 35, color: CupertinoColors.activeGreen),
-                    TextDefaultWidget(
-                        title: "رفيق المسلم",
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xffbaa063),
-                        fontSize: MediaQuery.sizeOf(context).width > 600
-                            ? 16.sp
-                            : 25.sp),
-                    Image.asset(
-                      "assets/images/azkary_logo.png",
-                      height: 50,
-                    ),
-                  ],
-                ),
-                TextDefaultWidget(
-                  title: "يومك سعيد !",
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xffbaa063),
-                  fontSize: 25.sp,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                gregorian,
-                                style: const TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                hijriDate,
-                                style: const TextStyle(fontSize: 13),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Expanded(
-                      child: Card(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                "العصر بعد",
-                                style: TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "1:0:0",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+// class DefControllerTabs extends StatefulWidget {
+//   const DefControllerTabs({super.key});
+//
+//   @override
+//   State<DefControllerTabs> createState() => _DefControllerTabsState();
+// }
+//
+// class _DefControllerTabsState extends State<DefControllerTabs> {
+//   late String selectedFontSize;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     selectedFontSize = "20";
+//   }
+//   @override
+//   Widget build(BuildContext context) {
+//     final DateTime now = DateTime.now();
+//     final String gregorian =
+//         initl.DateFormat('EEEE, d MMMM yyyy', 'ar').format(now);
+//     final HijriCalendar hijri = HijriCalendar.now();
+//     final String hijriDate =
+//         "${hijri.hDay} ${hijri.getLongMonthName()} ${hijri.hYear} هـ";
+//     return Scaffold(
+//       body: SafeArea(
+//         child: Directionality(
+//           textDirection: TextDirection.rtl,
+//           child: Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     const Icon(Icons.notifications_active_outlined,
+//                         size: 35, color: CupertinoColors.activeGreen),
+//                     TextDefaultWidget(
+//                         title: "رفيق المسلم",
+//                         fontWeight: FontWeight.bold,
+//                         color: const Color(0xffbaa063),
+//                         fontSize: MediaQuery.sizeOf(context).width > 600
+//                             ? 16.sp
+//                             : 25.sp),
+//                     Image.asset(
+//                       "assets/images/azkary_logo.png",
+//                       height: 50,
+//                     ),
+//                   ],
+//                 ),
+//                 TextDefaultWidget(
+//                   title: "يومك سعيد !",
+//                   fontWeight: FontWeight.bold,
+//                   color: const Color(0xffbaa063),
+//                   fontSize: 25.sp,
+//                 ),
+//                 Row(
+//                   children: [
+//                     Expanded(
+//                       child: Card(
+//                         child: Padding(
+//                           padding: const EdgeInsets.symmetric(
+//                               horizontal: 8.0, vertical: 10),
+//                           child: Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               Text(
+//                                 gregorian,
+//                                 style: const TextStyle(
+//                                     fontSize: 15, fontWeight: FontWeight.bold),
+//                               ),
+//                               Text(
+//                                 hijriDate,
+//                                 style: const TextStyle(fontSize: 13),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     const Expanded(
+//                       child: Card(
+//                         child: Padding(
+//                           padding: EdgeInsets.symmetric(
+//                               horizontal: 8.0, vertical: 10),
+//                           child: Column(
+//                             crossAxisAlignment: CrossAxisAlignment.center,
+//                             children: [
+//                               Text(
+//                                 "العصر بعد",
+//                                 style: TextStyle(
+//                                     fontSize: 17, fontWeight: FontWeight.bold),
+//                               ),
+//                               Text(
+//                                 "1:0:0",
+//                                 style: TextStyle(fontSize: 16),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class HomeScreenBuilder extends StatefulWidget {
   const HomeScreenBuilder({super.key});
@@ -265,9 +265,9 @@ String? verseName;
       "navigate": "/about"
     } ,
     {
-      "title": "ختمتك",
+      "title": "راديو القران الكريم",
       "icon": "assets/images/info (1).png",
-      "navigate": "/KhatmahHome"
+      "navigate": "/QuranRadioView"
     }
   ];
 

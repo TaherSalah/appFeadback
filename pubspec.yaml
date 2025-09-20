@@ -25,6 +25,9 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   intl:
   flutter_svg:
+  just_audio: ^0.9.38
+  audio_session: ^0.1.19
+  rxdart: ^0.27.7
   url_launcher:
   timezone: ^0.9.2
   hijri: ^3.0.0

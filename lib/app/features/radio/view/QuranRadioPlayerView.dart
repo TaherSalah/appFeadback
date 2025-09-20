@@ -1,0 +1,408 @@
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
+import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/features/radio/view/widget/QuranRadioItemBuilder.dart';
+import 'package:muslimdaily/main.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:audio_session/audio_session.dart';
+import 'package:rxdart/rxdart.dart';
+
+
+class QuranRadioPlayerView extends StatefulWidget {
+  const QuranRadioPlayerView({super.key, required this.title, required this.streamUrl, this.accentColor, required this.compact});
+  final String title;
+  final String streamUrl;
+  final Color? accentColor;
+  final bool compact; // لو عايز نسخة صغيرة
+  @override
+  State<QuranRadioPlayerView> createState() => _QuranRadioPlayerViewState();
+}
+
+class _QuranRadioPlayerViewState extends State<QuranRadioPlayerView> {
+  late CentralizedCubit centralizedCubit;
+
+  @override
+  void initState() {
+    centralizedCubit = context.read<CentralizedCubit>();
+    centralizedCubit.checkConnectivity();
+    centralizedCubit.trackConnectivityChange();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    // centralizedCubit.dispose();
+  }
+  @override
+  Widget build(BuildContext context) {
+    GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
+
+    return BlocBuilder<CentralizedCubit, CentralizedState>(
+      builder: (context, state) {
+        return state is ConnectivityState &&
+            state.status == ConnectivityStatus.disconnected
+            ? const NoConnectionScreen():  PopScope(
+          child: Directionality(
+            textDirection:  TextDirection.rtl,
+            child: Scaffold(
+              backgroundColor: AppStyle.bgColors,
+              appBar: PreferredSize(
+                preferredSize:
+                Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+                child: AppBar(
+                  leading: const CupertinoNavigationBarBackButton(
+                    color: Colors.black,
+                  ),
+                  // actions: [
+                  //   IconButton(
+                  //     onPressed: () => Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => CreateKhatmahScreen(),
+                  //       ),
+                  //     ),
+                  //     icon: const Icon(Icons.add),
+                  //   )
+                  // ],
+                  centerTitle: true,
+                  title: Text(
+                    "اذاعة القران الكريم ",
+                    style: GoogleFonts.cairo(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    ),
+                  ),
+                ),
+              ),
+
+              key: scaffoldState,
+              // appBar: AppBar(
+              //     centerTitle: true,
+              //     title: Padding(
+              //       padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              //       child: Image.asset(
+              //         AssetsManager.logo,
+              //         height: 70.h,
+              //         width: 70.w,
+              //       ),
+              //     ),
+              //     leading: const SizedBox()),
+              body:  SafeArea(child: QuranRadioPlayer(title:widget.title,accentColor: widget.accentColor,compact: widget.compact,streamUrl: widget.streamUrl,)),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+
+class QuranRadioPlayer extends StatefulWidget {
+  const QuranRadioPlayer({
+    super.key,
+    this.title = "إذاعة القرآن",
+    this.streamUrl = "https://backup.qurango.net/radio/mohammad_alabdullah_albizi",
+    this.accentColor,
+    this.compact = false,
+  });
+
+  final String title;
+  final String streamUrl;
+  final Color? accentColor;
+  final bool compact; // لو عايز نسخة صغيرة
+
+  @override
+  State<QuranRadioPlayer> createState() => _QuranRadioPlayerState();
+}
+
+class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
+  late final AudioPlayer _player;
+  double _volume = 1.0;
+  Timer? _retryTimer;
+
+  Color get _accent => widget.accentColor ?? const Color(0xFF1B5E20);
+
+  // نجمع حالة التشغيل + التحميل لعرضها في الواجهة
+  Stream<PlayerState> get _playerStateStream => _player.playerStateStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _player = AudioPlayer();
+
+    _setup();
+
+    // Auto-retry لو حصل خطأ (انقطاع بث)
+    _player.playerStateStream.listen((state) {
+      final playing = state.playing;
+      final processing = state.processingState;
+      if (state.processingState == ProcessingState.idle ||
+          state.processingState == ProcessingState.completed) {
+        // تجاهل
+        _cancelRetry();
+      }
+
+      if (state.processingState == ProcessingState.ready && playing) {
+        _cancelRetry();
+      }
+
+      if (processing == ProcessingState.idle ||
+          processing == ProcessingState.buffering) {
+        _scheduleRetry();
+      }
+    });
+  }
+
+  Future<void> _setup() async {
+    try {
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.music());
+      await _player.setUrl(widget.streamUrl); // ستريم مباشر (بدون seek)
+      _player.setVolume(_volume);
+    } catch (e) {
+      _showSnack("تعذّر التحميل: $e");
+      _scheduleRetry();
+    }
+  }
+
+  void _scheduleRetry() {
+    _cancelRetry();
+    _retryTimer = Timer(const Duration(seconds: 3), () async {
+      try {
+        await _player.setUrl(widget.streamUrl);
+        await _player.play();
+      } catch (_) {
+        // لو فشل، جرّب تاني تلقائيًا
+        _scheduleRetry();
+      }
+    });
+  }
+
+  void _cancelRetry() {
+    _retryTimer?.cancel();
+    _retryTimer = null;
+  }
+
+  @override
+  void dispose() {
+    _cancelRetry();
+    _player.dispose();
+    super.dispose();
+  }
+
+  Future<void> _togglePlay() async {
+    if (_player.playing) {
+      await _player.pause();
+    } else {
+      // لو لسه مش جاهز، أعِد الضبط
+      if (_player.processingState == ProcessingState.idle ||
+          _player.processingState == ProcessingState.buffering) {
+        try {
+          await _player.setUrl(widget.streamUrl);
+        } catch (e) {
+          _showSnack("تعذّر إعادة التحميل: $e");
+          return;
+        }
+      }
+      await _player.play();
+    }
+  }
+
+  Future<void> _stop() async {
+    await _player.stop();
+  }
+
+  void _showSnack(String msg) {
+    final ctx = context;
+    if (!mounted) return;
+    ScaffoldMessenger.of(ctx).showSnackBar(
+      SnackBar(content: Text(msg)),
+    );
+  }
+
+  String _statusText(PlayerState s) {
+    switch (s.processingState) {
+      case ProcessingState.idle:
+        return "جاهز";
+      case ProcessingState.loading:
+        return "جارٍ التحميل…";
+      case ProcessingState.buffering:
+        return "جارٍ التخزين المؤقت…";
+      case ProcessingState.ready:
+        return s.playing ? "يعمل الآن" : "متوقّف مؤقتًا";
+      case ProcessingState.completed:
+        return "انتهى";
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cardPadding = widget.compact ? 12.0 : 16.0;
+    final iconSize = widget.compact ? 34.0 : 44.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Card(
+          elevation: 6,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          margin: const EdgeInsets.all(12),
+          child: Padding(
+            padding: EdgeInsets.all(cardPadding),
+            child: StreamBuilder<PlayerState>(
+              stream: _playerStateStream,
+              builder: (context, snapshot) {
+                final state = snapshot.data ?? _player.playerState;
+                final isBuffering = state.processingState == ProcessingState.loading ||
+                    state.processingState == ProcessingState.buffering;
+
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                        borderRadius:  BorderRadius.all(Radius.circular(20)),
+                        child: Image.asset("assets/images/unnamed.jpg",width: MediaQuery.sizeOf(context).width,fit: BoxFit.contain,)),
+                    // Header
+                    Row(
+                      children: [
+                        Container(
+                          width: 46,
+                          height: 46,
+                          decoration: BoxDecoration(
+                            color: _accent.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.radio, color: _accent),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            widget.title,
+                            style: TextStyle(
+                              fontSize: widget.compact ? 16 : 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: _accent.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            _statusText(state),
+                            style: TextStyle(
+                              color: _accent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: widget.compact ? 8 : 14),
+
+                    // Controls
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          tooltip: 'إيقاف',
+                          onPressed: _stop,
+                          icon: const Icon(Icons.stop_rounded),
+                          iconSize: iconSize - 8,
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _accent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: widget.compact ? 18 : 22,
+                              vertical: widget.compact ? 8 : 10,
+                            ),
+                            elevation: 0,
+                          ),
+                          onPressed: isBuffering ? null : _togglePlay,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isBuffering) ...[
+                                const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white),
+                                ),
+                                const SizedBox(width: 10),
+                                const Text("جارٍ التحميل…", style: TextStyle(color: Colors.white)),
+                              ] else ...[
+                                Icon(_player.playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                                    color: Colors.white, size: iconSize),
+                                const SizedBox(width: 6),
+                                Text(_player.playing ? "إيقاف مؤقت" : "تشغيل",
+                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                              ]
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: widget.compact ? 8 : 12),
+
+                    // Volume
+                    Row(
+                      children: [
+                        const Icon(Icons.volume_down_rounded),
+                        Expanded(
+                          child: Slider(
+                            value: _volume,
+                            min: 0,
+                            max: 1,
+                            onChanged: (v) {
+                              setState(() => _volume = v);
+                              _player.setVolume(v);
+                            },
+                            activeColor: _accent,
+                          ),
+                        ),
+                        const Icon(Icons.volume_up_rounded),
+                      ],
+                    ),
+
+                    // Tiny hint
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "بث مباشر – لا يدعم التقديم أو الترجيع",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

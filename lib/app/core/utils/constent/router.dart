@@ -6,6 +6,8 @@ import 'package:muslimdaily/app/features/quran/view/widget/JozzsListView.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/hezbListView.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/quranLoveView.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/surahListView.dart';
+import 'package:muslimdaily/app/features/radio/QuranRadioView.dart';
+import 'package:muslimdaily/app/features/radio/view/QuranRadioPlayerView.dart';
 
 import '../../../features/about_view/about.dart';
 import '../../../features/azan_view/timeingScreen.dart';
@@ -69,6 +71,16 @@ class Routes {
   static const String quranKhitamRoute = "/QuranKhitamView";
   static const String tafsirQuranRoute = "/TafsirQuranView";
 }
+class QuranRadioPlayerArgs {
+  final String title;
+  final String streamUrl;
+  final bool compact;
+  const QuranRadioPlayerArgs({
+    required this.title,
+    required this.streamUrl,
+    this.compact = false,
+  });
+}
 
 class RouteGenerator {
   static Route<dynamic> getRoute(
@@ -89,6 +101,20 @@ class RouteGenerator {
         case Routes.tafsirQuranRoute:
         return MaterialPageRoute(builder: (_) => const TafsirQuranView());
 
+    // ⬇️ الروت الجديد للبلاير
+      case "/QuranRadioPlayerView":
+        final args = arguments is QuranRadioPlayerArgs ? arguments : null;
+        if (args == null) {
+          return _badArgsRoute("QuranRadioPlayerArgs مفقودة");
+        }
+        return MaterialPageRoute(
+          builder: (_) => QuranRadioPlayerView(
+            title: args.title,
+            streamUrl: args.streamUrl,
+            compact: args.compact,
+
+          ),
+        );
 
       case Routes.categoriesRoute:
         return MaterialPageRoute(builder: (_) => const CategoriesView());
@@ -149,6 +175,8 @@ class RouteGenerator {
 
       case '/about':
         return MaterialPageRoute(builder: (_) => const About());
+        case '/QuranRadioView':
+        return MaterialPageRoute(builder: (_) => const QuranRadioView());
 
       default:
         return unDefinedRoute();
@@ -169,6 +197,14 @@ class RouteGenerator {
             child: Text("Page Not Found"),
           ),
         ),
+      ),
+    );
+  }
+  static Route _badArgsRoute(String msg) {
+    return MaterialPageRoute(
+      builder: (_) => Scaffold(
+        appBar: AppBar(title: const Text("Bad Arguments")),
+        body: Center(child: Text(msg)),
       ),
     );
   }
