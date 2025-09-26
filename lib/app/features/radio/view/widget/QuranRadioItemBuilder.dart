@@ -92,16 +92,15 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
 
     return BlocProvider<QuranRadioBloc>(
       create: (context) =>
-      QuranRadioBloc(QuranRadioRepoImmp())..getQuranRadioData(),
+          QuranRadioBloc(QuranRadioRepoImmp())..getQuranRadioData(),
       child: BlocBuilder<QuranRadioBloc, QuranRadioState>(
         builder: (context, state) {
           final bloc = QuranRadioBloc.get(context);
           final total = bloc.quranRadioModel?.radios.length ?? 0;
 
           // حدّ أقصى لما نعرضه حسب الإجمالي
-          final itemCount = total == 0
-              ? 0
-              : (_visibleCount > total ? total : _visibleCount);
+          final itemCount =
+              total == 0 ? 0 : (_visibleCount > total ? total : _visibleCount);
 
           // لو لسه محمّل البيانات الأساسية
           final isInitialLoading =
@@ -113,15 +112,29 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
               SliverAppBar(
                 centerTitle: true,
                 title: Text(
-                  "موسوعة الاحاديث",
+                  "اذاعة القران الكريم",
                   style: GoogleFonts.cairo(
                     color: Colors.green,
                     fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    fontSize:
+                        MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
                   ),
                 ),
-                leading: const SizedBox(),
+                leading:                   InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/ayaSearchScreen");
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Icon(
+                      Icons.search,
+                      size: 30,
+                    ),
+                  ),
+                ),
+
                 actions: [
+
                   InkWell(
                     onTap: () => Navigator.pop(context),
                     child: SvgPicture.asset(
@@ -134,11 +147,12 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
               ),
 
               SliverToBoxAdapter(
-                child: SizedBox(height: ResponsiveUtil.isTablet(context) ? 20 : 15),
+                child: SizedBox(
+                    height: ResponsiveUtil.isTablet(context) ? 20 : 15),
               ),
 
               if (isInitialLoading)
-                 SliverToBoxAdapter(
+                SliverToBoxAdapter(
                   child: Center(
                     child: KLoading.progressIOSIndicator(),
                   ),
@@ -170,7 +184,16 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                       return InkWell(
                         onTap: () {
                           // TODO: اكتب تنقلك هنا
-                          Navigator.pushNamed(context, "/QuranRadioPlayerView",arguments: QuranRadioPlayerArgs(title: bloc.quranRadioModel?.radios[index].name.toString()??"", streamUrl:  bloc.quranRadioModel?.radios[index].url.toString()??""));
+                          Navigator.pushNamed(context, "/QuranRadioPlayerView",
+                              arguments: QuranRadioPlayerArgs(
+                                  title: bloc
+                                          .quranRadioModel?.radios[index].name
+                                          .toString() ??
+                                      "",
+                                  streamUrl: bloc
+                                          .quranRadioModel?.radios[index].url
+                                          .toString() ??
+                                      ""));
                         },
                         child: Card(
                           child: Padding(
@@ -179,17 +202,24 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Image.asset("assets/icons/radio.png",height: 80,),
+                                Image.asset(
+                                  "assets/icons/radio.png",
+                                  height: ResponsiveUtil.isTablet(context)
+                                      ? 80
+                                      : 30,
+                                ),
                                 const Spacer(),
-
                                 TextWidget(
                                   color: CentralizedCubit.isDarkMode
                                       ? KColors.scoColor
                                       : KColors.primary2Color,
                                   fontWeight: FontWeight.w600,
                                   maxLines: 2,
-                                  fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 10.sp,
-                                  title: item.name?.toString() ?? "",
+                                  fontSize:
+                                      MediaQuery.sizeOf(context).width > 600
+                                          ? 6.sp
+                                          : 10.sp,
+                                  title: item.name.toString() ?? "",
                                 ),
                               ],
                             ),
@@ -216,125 +246,4 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
   }
 }
 
-class CardPackagesExamBuilderWidget extends StatelessWidget {
-  const CardPackagesExamBuilderWidget({
-    super.key,
-    this.cardImgUrl,
-    required this.cardTitle,
-    this.textAlign,
-    this.widget,
-    this.fontSize,
-    this.fontWight,
-    this.description,
-    this.titleSize,
-    this.desSize,
-    this.titleColor,
-    this.descColor,
-    this.cardImg,
-  });
 
-  final String? cardImgUrl;
-  final String? cardImg;
-  final String cardTitle;
-  final TextAlign? textAlign;
-  final Widget? widget;
-  final double? fontSize;
-  final double? titleSize;
-  final double? desSize;
-  final FontWeight? fontWight;
-  final String? description;
-  final Color? titleColor;
-  final Color? descColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      double calculatedHeight = ResponsiveHelper.calculateHeight(constraints);
-      return Padding(
-          padding: EdgeInsets.symmetric(vertical: 7.h, horizontal: 4.w),
-          child: Card(
-              elevation: 7,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).width > 600
-                          ? constraints.maxHeight * 0.65
-                          : calculatedHeight,
-                      child: cardImgUrl != null
-                          ? KImageWidget(imageUrl: cardImgUrl.toString())
-                          : Image.asset(
-                              width: double.infinity,
-                              cardImg.toString(),
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextWidget(
-                                title: cardTitle,
-                                color: titleColor,
-                                textAlign: textAlign,
-                                fontSize: titleSize,
-                                maxLines: 3,
-                                fontWeight: FontWeight.w700),
-                            TextWidget(
-                                title: description.toString(),
-                                textAlign: textAlign,
-                                fontSize: desSize,
-                                maxLines: 2,
-                                color: descColor,
-                                fontWeight: FontWeight.w400),
-                            customDividerWidget(
-                                color: KColors.greyColor.withOpacity(0.2),
-                                thickness: 1.5)
-                          ]),
-                    ))
-                  ])));
-    });
-  }
-}
-
-class ResponsiveHelper {
-  static int getCrossAxisCount(double screenWidth) {
-    if (screenWidth < 600) {
-      return 2; // Mobile
-    } else if (screenWidth < 1200) {
-      return 2; // Tablet
-    } else {
-      return 4; // Desktop
-    }
-  }
-
-  static double getChildAspectRatio(double screenWidth) {
-    if (screenWidth < 600) {
-      return 0.70; // Mobile
-    } else if (screenWidth < 1200) {
-      return 0.75; // Tablet
-    } else {
-      return 0.7; // Desktop
-    }
-  }
-
-  static double getFontSize(double screenWidth,
-      {double mobileSize = 11.5, double tabletSize = 14.0}) {
-    return screenWidth < 600 ? mobileSize : tabletSize;
-  }
-
-  static EdgeInsets getPadding(
-      {double mobilePadding = 10.0, double tabletPadding = 15.0}) {
-    return EdgeInsets.symmetric(
-        horizontal: mobilePadding, vertical: tabletPadding);
-  }
-
-  static double calculateHeight(BoxConstraints constraints) {
-    return constraints.maxHeight * 0.50;
-  }
-}

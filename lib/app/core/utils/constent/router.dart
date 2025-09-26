@@ -8,6 +8,7 @@ import 'package:muslimdaily/app/features/quran/view/widget/quranLoveView.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/surahListView.dart';
 import 'package:muslimdaily/app/features/radio/QuranRadioView.dart';
 import 'package:muslimdaily/app/features/radio/view/QuranRadioPlayerView.dart';
+import 'package:muslimdaily/app/features/radio/view/widget/RadioSearchScreen.dart';
 
 import '../../../features/about_view/about.dart';
 import '../../../features/azan_view/timeingScreen.dart';
@@ -149,6 +150,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const QuranView());
        case '/ListScreen':
         return MaterialPageRoute(builder: (_) =>  SurahListScreen());
+        case '/RadioSearchScreen':
+        return MaterialPageRoute(builder: (_) =>  RadioSearchScreen());
       case '/ayaSearchScreen':
         return MaterialPageRoute(builder: (_) =>  AyaSearchScreen());
         case '/ayaBookmarkScreen':

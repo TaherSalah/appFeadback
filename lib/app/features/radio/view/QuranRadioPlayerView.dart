@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/radio/view/widget/QuranRadioItemBuilder.dart';
 import 'package:muslimdaily/main.dart';
 import 'dart:async';
@@ -238,7 +239,7 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
       case ProcessingState.buffering:
         return "جارٍ التخزين المؤقت…";
       case ProcessingState.ready:
-        return s.playing ? "يعمل الآن" : "متوقّف مؤقتًا";
+        return s.playing ? "بث مباشر" : "متوقّف مؤقتًا";
       case ProcessingState.completed:
         return "انتهى";
     }
@@ -274,43 +275,50 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
                         borderRadius:  BorderRadius.all(Radius.circular(20)),
                         child: Image.asset("assets/images/unnamed.jpg",width: MediaQuery.sizeOf(context).width,fit: BoxFit.contain,)),
                     // Header
-                    Row(
-                      children: [
-                        Container(
-                          width: 46,
-                          height: 46,
-                          decoration: BoxDecoration(
-                            color: _accent.withOpacity(0.1),
-                            shape: BoxShape.circle,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 46,
+                            height: 46,
+                            decoration: BoxDecoration(
+                              color: _accent.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.radio, color: _accent),
                           ),
-                          child: Icon(Icons.radio, color: _accent),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            widget.title,
-                            style: TextStyle(
-                              fontSize: widget.compact ? 16 : 18,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextWidget(title:
+                              widget.title,
+
+                              fontSize: widget.compact ? 16 : 14.sp,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: _accent.withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            _statusText(state),
-                            style: TextStyle(
-                              color: _accent,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: _accent.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Row(
+                              spacing: 10,
+                              children: [
+                                const LiveIndicator(),
+                                TextWidget(title:
+                                  _statusText(state),
+                                  color: _accent,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
 
                     SizedBox(height: widget.compact ? 8 : 14),
@@ -319,12 +327,12 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        IconButton(
-                          tooltip: 'إيقاف',
-                          onPressed: _stop,
-                          icon: const Icon(Icons.stop_rounded),
-                          iconSize: iconSize - 8,
-                        ),
+                        // IconButton(
+                        //   tooltip: 'إيقاف',
+                        //   onPressed: _stop,
+                        //   icon: const Icon(Icons.stop_rounded),
+                        //   iconSize: iconSize - 8,
+                        // ),
                         const SizedBox(width: 8),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -349,13 +357,13 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
                                   child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white),
                                 ),
                                 const SizedBox(width: 10),
-                                const Text("جارٍ التحميل…", style: TextStyle(color: Colors.white)),
+                                const TextWidget(title:"جارٍ التحميل…",),
                               ] else ...[
                                 Icon(_player.playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
                                     color: Colors.white, size: iconSize),
                                 const SizedBox(width: 6),
-                                Text(_player.playing ? "إيقاف مؤقت" : "تشغيل",
-                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                                TextWidget(title:_player.playing ? "إيقاف مؤقت" : "تشغيل",color: Colors.white, fontWeight: FontWeight.w700,fontSize: 14.sp)
+
                               ]
                             ],
                           ),
@@ -388,12 +396,10 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
                     // Tiny hint
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
+                      child: TextWidget(title:
                         "بث مباشر – لا يدعم التقديم أو الترجيع",
-                        style: TextStyle(
                           fontSize: 12,
-                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
-                        ),
+                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)
                       ),
                     ),
                   ],
@@ -403,6 +409,48 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
           ),
         ),
       ],
+    );
+  }
+}
+class LiveIndicator extends StatefulWidget {
+  const LiveIndicator({super.key});
+
+  @override
+  State<LiveIndicator> createState() => _LiveIndicatorState();
+}
+
+class _LiveIndicatorState extends State<LiveIndicator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
+
+    _animation = Tween<double>(begin: 0.8, end: 1.4).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _animation,
+      child: CircleAvatar(
+        backgroundColor: Colors.green,
+        radius: 5,
+      ),
     );
   }
 }
