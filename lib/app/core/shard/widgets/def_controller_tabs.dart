@@ -260,15 +260,16 @@ String? verseName;
       "navigate": Routes.categoriesRoute,
     },
     {
+      "title": "راديو القران الكريم",
+      "icon": "assets/icons/radio.png",
+      "navigate": "/QuranRadioView"
+    },
+    {
       "title": "عَنَّا",
       "icon": "assets/images/info (1).png",
       "navigate": "/about"
     } ,
-    {
-      "title": "راديو القران الكريم",
-      "icon": "assets/images/info (1).png",
-      "navigate": "/QuranRadioView"
-    }
+
   ];
 
 

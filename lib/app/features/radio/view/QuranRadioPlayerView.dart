@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/radio/view/widget/QuranRadioItemBuilder.dart';
 import 'package:muslimdaily/main.dart';
@@ -250,165 +251,194 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
     final cardPadding = widget.compact ? 12.0 : 16.0;
     final iconSize = widget.compact ? 34.0 : 44.0;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Card(
-          elevation: 6,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          margin: const EdgeInsets.all(12),
-          child: Padding(
-            padding: EdgeInsets.all(cardPadding),
-            child: StreamBuilder<PlayerState>(
-              stream: _playerStateStream,
-              builder: (context, snapshot) {
-                final state = snapshot.data ?? _player.playerState;
-                final isBuffering = state.processingState == ProcessingState.loading ||
-                    state.processingState == ProcessingState.buffering;
-
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
+    return Padding(
+      padding:  EdgeInsets.all(cardPadding),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                        borderRadius:  BorderRadius.all(Radius.circular(20)),
-                        child: Image.asset("assets/images/unnamed.jpg",width: MediaQuery.sizeOf(context).width,fit: BoxFit.contain,)),
-                    // Header
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: _accent.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.radio, color: _accent),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TextWidget(title:
+                widget.title,
+                
+                  fontSize: widget.compact ? 8.sp : 14.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          Card(
+            elevation: 6,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            // margin: const EdgeInsets.all(12),
+            child: Padding(
+              padding: EdgeInsets.all(0),
+              child: StreamBuilder<PlayerState>(
+                stream: _playerStateStream,
+                builder: (context, snapshot) {
+                  final state = snapshot.data ?? _player.playerState;
+                  final isBuffering = state.processingState == ProcessingState.loading ||
+                      state.processingState == ProcessingState.buffering;
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+
+                      Stack(
+                        alignment: Alignment.topRight,
                         children: [
-                          Container(
-                            width: 46,
-                            height: 46,
-                            decoration: BoxDecoration(
-                              color: _accent.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(Icons.radio, color: _accent),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextWidget(title:
-                              widget.title,
 
-                              fontSize: widget.compact ? 16 : 14.sp,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: _accent.withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
+                          ClipRRect(
+
+                              borderRadius:  BorderRadius.all(Radius.circular(20)),
+                              child: Image.asset("assets/images/unnamed.jpg",width: MediaQuery.sizeOf(context).width,fit: BoxFit.contain,)),
+                          Positioned(
+                            top: 10,
+                            left: 10,
+
                             child: Row(
-                              spacing: 10,
                               children: [
-                                const LiveIndicator(),
-                                TextWidget(title:
-                                  _statusText(state),
-                                  color: _accent,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w600,
 
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Row(
+                                    spacing: 10,
+                                    children: [
+                                      LiveIndicator(),
+                                      TextWidget(title:
+                                      _statusText(state),
+                                        color: Colors.white,
+                                        fontSize:ResponsiveUtil.isTablet(context)?8.sp: 12.sp,
+                                        fontWeight: FontWeight.w600,
+
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                              ],
+                            ),
+                          ),
+
+                        ],
+                      ),
+                      // Header
+
+                      SizedBox(height: widget.compact ? 8 : 14),
+
+                      // Controls
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // IconButton(
+                          //   tooltip: 'إيقاف',
+                          //   onPressed: _stop,
+                          //   icon: const Icon(Icons.stop_rounded),
+                          //   iconSize: iconSize - 8,
+                          // ),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _accent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: widget.compact ? 18 : 22,
+                                vertical: widget.compact ? 8 : 10,
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: isBuffering ? null : _togglePlay,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (isBuffering) ...[
+                                  const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white),
+                                  ),
+                                  const SizedBox(width: 10),
+                                   TextWidget(title:"جارٍ التحميل…",fontSize: ResponsiveUtil.isTablet(context)?8.sp: 14.sp,),
+                                ] else ...[
+                                  Icon(_player.playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                                      color: Colors.white, size: iconSize),
+                                  const SizedBox(width: 6),
+                                  TextWidget(title:_player.playing ? "إيقاف مؤقت" : "تشغيل",color: Colors.white, fontWeight: FontWeight.w700,fontSize: ResponsiveUtil.isTablet(context)?8.sp: 14.sp)
+
+                                ]
                               ],
                             ),
                           ),
                         ],
                       ),
-                    ),
 
-                    SizedBox(height: widget.compact ? 8 : 14),
+                      SizedBox(height: widget.compact ? 8 : 12),
 
-                    // Controls
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // IconButton(
-                        //   tooltip: 'إيقاف',
-                        //   onPressed: _stop,
-                        //   icon: const Icon(Icons.stop_rounded),
-                        //   iconSize: iconSize - 8,
-                        // ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _accent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                      // Volume
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.volume_down_rounded),
+                            Expanded(
+                              child: Slider(
+                                value: _volume,
+                                min: 0,
+                                max: 1,
+                                onChanged: (v) {
+                                  setState(() => _volume = v);
+                                  _player.setVolume(v);
+                                },
+                                activeColor: _accent,
+                              ),
                             ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: widget.compact ? 18 : 22,
-                              vertical: widget.compact ? 8 : 10,
-                            ),
-                            elevation: 0,
-                          ),
-                          onPressed: isBuffering ? null : _togglePlay,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (isBuffering) ...[
-                                const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white),
-                                ),
-                                const SizedBox(width: 10),
-                                const TextWidget(title:"جارٍ التحميل…",),
-                              ] else ...[
-                                Icon(_player.playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                                    color: Colors.white, size: iconSize),
-                                const SizedBox(width: 6),
-                                TextWidget(title:_player.playing ? "إيقاف مؤقت" : "تشغيل",color: Colors.white, fontWeight: FontWeight.w700,fontSize: 14.sp)
-
-                              ]
-                            ],
-                          ),
+                            const Icon(Icons.volume_up_rounded),
+                          ],
                         ),
-                      ],
-                    ),
-
-                    SizedBox(height: widget.compact ? 8 : 12),
-
-                    // Volume
-                    Row(
-                      children: [
-                        const Icon(Icons.volume_down_rounded),
-                        Expanded(
-                          child: Slider(
-                            value: _volume,
-                            min: 0,
-                            max: 1,
-                            onChanged: (v) {
-                              setState(() => _volume = v);
-                              _player.setVolume(v);
-                            },
-                            activeColor: _accent,
-                          ),
-                        ),
-                        const Icon(Icons.volume_up_rounded),
-                      ],
-                    ),
-
-                    // Tiny hint
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextWidget(title:
-                        "بث مباشر – لا يدعم التقديم أو الترجيع",
-                          fontSize: 12,
-                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)
                       ),
-                    ),
-                  ],
-                );
-              },
+
+                      // Tiny hint
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: TextWidget(title:
+                            "بث مباشر – لا يدعم التقديم أو الترجيع",
+                              fontSize: 12,
+                              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.8)
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -448,7 +478,7 @@ class _LiveIndicatorState extends State<LiveIndicator>
     return ScaleTransition(
       scale: _animation,
       child: CircleAvatar(
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.redAccent,
         radius: 5,
       ),
     );
