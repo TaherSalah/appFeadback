@@ -4,7 +4,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
@@ -42,6 +43,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <service
+            android:name="de.julianassmann.flutter_background.IsolateHolderService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
     </application>
     <queries>
         <intent>

@@ -19,6 +19,14 @@ import '../../core/shard/widgets/def_text_widget.dart';
 
 
 
+import 'dart:async';
+import 'dart:convert';
+import 'package:adhan/adhan.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
+import 'dart:ui' as ui;
+
 class TimingScreen extends StatefulWidget {
   const TimingScreen({super.key});
 
@@ -27,26 +35,29 @@ class TimingScreen extends StatefulWidget {
 }
 
 class _TimingScreenState extends State<TimingScreen> {
+  AudioPlayer _audioPlayer = AudioPlayer();
   Map<String, dynamic> countries = {}; // لخزن الدول
   Map<String, dynamic> cities = {}; // لخزن المدن بناءً على الدولة
   String? selectedCountry; // لتخزين الدولة المختارة
   String? selectedCity; // لتخزين المدينة المختارة
   PrayerTimes? prayerTimes;
-  double progressValue = 0.0;
-  String remainingTimeText = "";
-  String nextPrayer = "";
   Timer? countdownTimer;
-  bool isIqamaCountdown = false;
   DateTime? previousTime;
   DateTime? targetTime;
-  List<String> images = [
-    "assets/images/fajr.png",
-    "assets/images/shrok.png",
-    "assets/images/dohr.png",
-    "assets/images/asr.png",
-    "assets/images/maghrab.png",
-    "assets/images/ihsaa.png",
-  ];
+
+  // المتغيرات الناقصة
+  String nextPrayer = "";
+  String remainingTimeText = "";
+  double progressValue = 0.0; // إضافة المتغير لحفظ التقدم في العد التنازلي
+
+  Map<String, String> adhanSounds = {
+    "الفجر": "assets/sounds/fajr_adhan.mp3",
+    "الظهر": "assets/sounds/dhuhr_adhan.mp3",
+    "العصر": "assets/sounds/asr_adhan.mp3",
+    "المغرب": "assets/sounds/maghrib_adhan.mp3",
+    "العشاء": "assets/sounds/isha_adhan.mp3",
+  };
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +66,7 @@ class _TimingScreenState extends State<TimingScreen> {
 
   Future<void> loadCountries() async {
     final String response =
-        await rootBundle.loadString('assets/images/egypt_governorates.json');
+    await rootBundle.loadString('assets/images/egypt_governorates.json');
     final data = json.decode(response) as Map<String, dynamic>;
     setState(() {
       countries = data;
@@ -109,6 +120,7 @@ class _TimingScreenState extends State<TimingScreen> {
     previousTime = DateTime.now();
     targetTime = next;
 
+    // بدء العد التنازلي للصلاة
     startCountdown(
       from: DateTime.now(),
       to: next,
@@ -131,11 +143,75 @@ class _TimingScreenState extends State<TimingScreen> {
       },
     );
 
+    // تشغيل صوت الأذان عند وقت الصلاة
+    scheduleAdhan(next, upcoming);
+
     setState(() {
       prayerTimes = times;
     });
   }
 
+  // دالة لتشغيل صوت الأذان
+  void playAdhanSound(DateTime prayerTime, String prayerName) {
+    final sound = adhanSounds[prayerName] ?? "assets/sounds/default_adhan.mp3";
+
+    // استخدام AudioPlayer من just_audio لتشغيل الصوت من الـ assets
+    _audioPlayer.setAsset(sound).then((_) {
+      _audioPlayer.play();
+    }).catchError((e) {
+      print("Error playing sound: $e");
+    });
+  }
+
+  // دالة لتجدول الأذان عند الصلاة
+  void scheduleAdhan(DateTime prayerTime, String prayerName) {
+    final now = DateTime.now();
+    final duration = prayerTime.difference(now);
+
+    if (duration.isNegative) {
+      // يعني الوقت فات بالفعل
+      print("وقت $prayerName فات خلاص");
+      return;
+    }
+
+    // نعمل Timer لحد ما ييجي وقت الصلاة
+    Future.delayed(duration, () {
+      playAdhanSound(prayerTime, prayerName);
+    });
+
+    print("هيشتغل أذان $prayerName بعد ${duration.inMinutes} دقيقة");
+  }
+  // void scheduleAdhan(DateTime prayerTime, String prayerName) {
+  //   // ضبط وقت الاختبار (الآن)
+  //   final now = DateTime.now();
+  //   final duration = Duration(seconds: 0); // يتم تشغيل الأذان فورًا
+  //
+  //   // نعمل Timer لحد ما ييجي وقت الصلاة
+  //   Future.delayed(duration, () {
+  //     playAdhanSound(prayerTime, prayerName);  // شغل الصوت مباشرة عند الاختبار
+  //   });
+  //
+  //   print("هيشتغل أذان $prayerName الآن مباشرة");
+  // }
+
+  DateTime getIqamaTime(String prayerName, DateTime adhanTime) {
+    switch (prayerName) {
+      case "الفجر":
+        return adhanTime.add(const Duration(minutes: 20));
+      case "المغرب":
+        return adhanTime.add(const Duration(minutes: 5));
+      case "الشروق":
+        return DateTime(0); // لا إقامة
+      default:
+        return adhanTime.add(const Duration(minutes: 10));
+    }
+  }
+
+  void stopAdhanSound() {
+    _audioPlayer.stop();
+  }
+
+  // دالة لبدء العد التنازلي
   void startCountdown({
     required DateTime from,
     required DateTime to,
@@ -143,11 +219,10 @@ class _TimingScreenState extends State<TimingScreen> {
     required VoidCallback onDone,
   }) {
     countdownTimer?.cancel();
-    isIqamaCountdown = isIqama;
 
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       final now = DateTime.now();
-      final total = to.difference(previousTime!).inSeconds;
+      final total = to.difference(from).inSeconds;
       final remaining = to.difference(now).inSeconds;
 
       if (remaining <= 0) {
@@ -162,11 +237,11 @@ class _TimingScreenState extends State<TimingScreen> {
       final s = remaining % 60;
 
       setState(() {
-        progressValue = progress.clamp(0.0, 1.0);
+        progressValue = progress.clamp(0.0, 1.0); // تحديث التقدم
         remainingTimeText =
-            "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
+        "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
         nextPrayer = isIqama
-            ? "الإقامة${getNextPrayerName(targetTime!)}"
+            ? "الإقامة ${getNextPrayerName(targetTime!)}"
             : getNextPrayerName(targetTime!);
       });
     });
@@ -194,19 +269,6 @@ class _TimingScreenState extends State<TimingScreen> {
     return DateFormat.jm().format(time);
   }
 
-  DateTime getIqamaTime(String prayerName, DateTime adhanTime) {
-    switch (prayerName) {
-      case "الفجر":
-        return adhanTime.add(const Duration(minutes: 20));
-      case "المغرب":
-        return adhanTime.add(const Duration(minutes: 5));
-      case "الشروق":
-        return DateTime(0); // لا إقامة
-      default:
-        return adhanTime.add(const Duration(minutes: 10));
-    }
-  }
-
   @override
   void dispose() {
     countdownTimer?.cancel();
@@ -217,9 +279,12 @@ class _TimingScreenState extends State<TimingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 80:50),
+        preferredSize:
+        Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
         child: AppBar(
-          leading:  const CupertinoNavigationBarBackButton(color: Colors.black,),
+          leading: const CupertinoNavigationBarBackButton(
+            color: Colors.black,
+          ),
           centerTitle: true,
           title: Text(
             "مواقيت الصلاة",
@@ -227,7 +292,7 @@ class _TimingScreenState extends State<TimingScreen> {
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
           ),
         ),
       ),
@@ -281,7 +346,7 @@ class _TimingScreenState extends State<TimingScreen> {
                                   color: Theme.of(context).cardColor,
                                   borderRadius: BorderRadius.circular(10.0)),
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
+                              const EdgeInsets.symmetric(horizontal: 16),
                               height: 50,
                               width: MediaQuery.of(context).size.width / 1.2,
                             ),
@@ -295,10 +360,7 @@ class _TimingScreenState extends State<TimingScreen> {
                               elevation: 1,
                               decoration: BoxDecoration(
                                 color: const Color(0xfffaedcd),
-
-                                // Set the background color for the dropdown menu
-                                borderRadius: BorderRadius.circular(
-                                    10.0), // Optional: rounded corners
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
                           ),
@@ -342,7 +404,7 @@ class _TimingScreenState extends State<TimingScreen> {
                                   color: Theme.of(context).canvasColor,
                                   borderRadius: BorderRadius.circular(10.0)),
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
+                              const EdgeInsets.symmetric(horizontal: 16),
                               height: 50,
                               width: MediaQuery.of(context).size.width / 1.2,
                             ),
@@ -356,10 +418,7 @@ class _TimingScreenState extends State<TimingScreen> {
                               elevation: 1,
                               decoration: BoxDecoration(
                                 color: const Color(0xfffaedcd),
-
-                                // Set the background color for the dropdown menu
-                                borderRadius: BorderRadius.circular(
-                                    10.0), // Optional: rounded corners
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
                           ),
@@ -383,54 +442,25 @@ class _TimingScreenState extends State<TimingScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 7),
-                      // child: Column(
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   children: [
-                      //     Text(
-                      //       prayerNames[index],
-                      //       style: GoogleFonts.cairo(
-                      //           color: const Color(0xffbc6c25),
-                      //           fontWeight: FontWeight.bold,
-                      //           fontSize: 17.sp),
-                      //     ),
-                      //     const SizedBox(height: 8),
-                      //     Text(
-                      //       DateFormat('h:mm')
-                      //           .format(prayerTimesList[index]),
-                      //       style: GoogleFonts.cairo(
-                      //           color: Colors.black,
-                      //           fontWeight: FontWeight.bold,
-                      //           fontSize: 18.sp),
-                      //     ),
-                      //     const SizedBox(height: 8),
-                      //     Text(
-                      //       "الإقامة: ${DateFormat('h:mm').format(iqamaTime)}", // استخدام تنسيق 24 ساعة
-                      //       style: GoogleFonts.cairo(
-                      //           color: Colors.grey,
-                      //           fontWeight: FontWeight.bold,
-                      //           fontSize: 10.sp),
-                      //     ),
-                      //   ],
-                      // ),
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             nextPrayer.isNotEmpty
                                 ? Text(
-                                    nextPrayer,
-                                    style: GoogleFonts.cairo(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.sizeOf(context).width >
-                                                    600
-                                                ? 14.sp
-                                                : 16.sp),
-                                  )
+                              nextPrayer,
+                              style: GoogleFonts.cairo(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                  MediaQuery.sizeOf(context).width >
+                                      600
+                                      ? 14.sp
+                                      : 16.sp),
+                            )
                                 : const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
+                              child: CircularProgressIndicator(),
+                            ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -440,9 +470,9 @@ class _TimingScreenState extends State<TimingScreen> {
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                   fontSize:
-                                      MediaQuery.sizeOf(context).width > 600
-                                          ? 14.sp
-                                          : 16.sp),
+                                  MediaQuery.sizeOf(context).width > 600
+                                      ? 14.sp
+                                      : 16.sp),
                             ),
                           ],
                         ),
@@ -453,18 +483,6 @@ class _TimingScreenState extends State<TimingScreen> {
               ),
               const SizedBox(height: 20),
               if (prayerTimes != null)
-                // Expanded(
-                //   child: ListView(
-                //     children: [
-                //       prayerRow("الفجر", prayerTimes!.fajr),
-                //       prayerRow("الشروق", prayerTimes!.sunrise),
-                //       prayerRow("الظهر", prayerTimes!.dhuhr),
-                //       prayerRow("العصر", prayerTimes!.asr),
-                //       prayerRow("المغرب", prayerTimes!.maghrib),
-                //       prayerRow("العشاء", prayerTimes!.isha),
-                //     ],
-                //   ),
-                // )
                 Expanded(
                   child: ListView.separated(
                     separatorBuilder: (context, index) => const SizedBox(
@@ -507,11 +525,6 @@ class _TimingScreenState extends State<TimingScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              // Image.asset(
-                              //   images[index],
-                              //   width: 35,
-                              //   color: isNext ? Colors.white : Colors.black,
-                              // ),
                               Text(
                                 prayerNames[index],
                                 style: GoogleFonts.cairo(
@@ -542,44 +555,5 @@ class _TimingScreenState extends State<TimingScreen> {
       ),
     );
   }
-
-  Widget prayerRow(String title, DateTime adhanTime) {
-    final iqama = getIqamaTime(title, adhanTime);
-    final isNext = nextPrayer.contains(title);
-
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      elevation: isNext ? 6 : 3,
-      color: isNext ? Colors.green.withOpacity(0.1) : Colors.white,
-      shape: RoundedRectangleBorder(
-        side: isNext
-            ? const BorderSide(color: Colors.green, width: 2)
-            : BorderSide.none,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        leading: Icon(
-          isNext ? Icons.access_alarm : Icons.access_time,
-          color: isNext ? Colors.green : Colors.grey[700],
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: isNext ? FontWeight.bold : FontWeight.normal,
-            color: isNext ? Colors.green[800] : Colors.black,
-          ),
-        ),
-        subtitle: iqama.year == 0
-            ? null
-            : Text("الإقامة: ${formatTime(iqama)}",
-                style: const TextStyle(fontSize: 14)),
-        trailing: Text(formatTime(adhanTime),
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isNext ? Colors.green : Colors.black)),
-      ),
-    );
-  }
 }
+
