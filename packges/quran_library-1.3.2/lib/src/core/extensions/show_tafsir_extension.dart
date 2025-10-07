@@ -174,6 +174,7 @@ extension ShowTafsirExtension on void {
                               'التفسير',
                               style: QuranLibrary().naskhStyle.copyWith(
                                     fontSize: 24,
+                                    fontFamily: "cairo",
                                     color: isDarkMode
                                         ? Colors.white
                                         : Colors.black,

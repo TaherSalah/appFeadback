@@ -259,7 +259,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                     crossAxisSpacing: 5,
                     mainAxisSpacing: 10,
                     childAspectRatio:
-                        ResponsiveUtil.isTablet(context) ? 1 / 1.3 : 1 / 2,
+                        ResponsiveUtil.isTablet(context) ? 1 / 1.3 : 1 / 1.8,
                   ),
                   itemBuilder: (context, index) {
                     final isDark = CentralizedCubit.isDarkMode;
@@ -298,7 +298,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                                         width: MediaQuery.sizeOf(context).width,
                                         height: ResponsiveUtil.isTablet(context)
                                             ? 360
-                                            : 310,
+                                            : 210,
                                       ),
                                       TextWidget(
                                         title: ayah[index].name,
@@ -309,7 +309,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                                         fontSize:
                                             ResponsiveUtil.isTablet(context)
                                                 ? 9.sp
-                                                : 15.sp,
+                                                : 13.sp,
                                       ),
                                     ],
                                   ),
@@ -326,7 +326,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                                 onTap: () => _handleDownloadOrOpen(index),
                                 child: CircleAvatar(
                                   backgroundColor: Colors.white,
-                                  radius: 25,
+                                  radius:ResponsiveUtil.isTablet(context)? 25:21,
                                   child: Builder(
                                     builder: (_) {
                                       if (isBusy) {
@@ -344,17 +344,17 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                                       }
                                       if (isDownloaded) {
                                         // ✅ تم التنزيل — أيقونة فتح
-                                        return const Icon(
+                                        return  Icon(
                                           Icons.open_in_new,
-                                          size: 26,
+                                          size:ResponsiveUtil.isTablet(context)? 28:22,
                                           color: Colors.black,
                                         );
                                       }
                                       // ⬇️ لم يُنزّل بعد — أيقونة تنزيل
-                                      return const Icon(
+                                      return  Icon(
                                         Icons.download,
-                                        size: 28,
-                                        color: Colors.greenAccent,
+                                        size:ResponsiveUtil.isTablet(context)? 28:22,
+                                        color: Colors.green,
                                       );
                                     },
                                   ),

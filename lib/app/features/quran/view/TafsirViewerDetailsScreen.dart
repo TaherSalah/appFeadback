@@ -163,73 +163,228 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     if (next == _pageNumber) return;
     setState(() => _pageNumber = next);
     await _loadPageAyahs();
-
   }
 
+  final _formKey = GlobalKey<FormState>();
+//   Future<void> _gotoPageDialog() async {
+//     final controller = TextEditingController(text: _pageNumber.toString());
+//     final result = await showDialog<int>(
+//       context: context,
+//       builder: (context) => Directionality(
+//         textDirection: TextDirection.rtl,
+//         child: AlertDialog(
+//           title: const Text('اذهب إلى صفحة',style: TextStyle(fontFamily: "me"),),
+//           content:Form(
+//             key: _formKey,
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 // زرار نقص
+//                 IconButton(
+//                   icon: const Icon(Icons.remove),
+//                   onPressed: () {
+//                     int current = int.tryParse(controller.text) ?? 1;
+//                     if (current > 1) {
+//                       controller.text = (current - 1).toString();
+//                     }
+//                   },
+//                 ),
+//
+//                   // خانة الكتابة
+//                   SizedBox(
+//                     width: 100,
+//                     child: TextFormField(
+//                       controller: controller,
+//                       keyboardType: TextInputType.number,
+//                       inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3),],
+//                       validator: (value) {
+//                         if (value == null || value.isEmpty) return 'مطلوب';
+//                         final n = int.tryParse(value);
+//                         if (n == null) return 'أرقام فقط';
+//                         if (n < 1 || n > 604) return 'الصفحة بين 1 و 604';
+//                         return null; // صحيح
+//                       },
+//                       textAlign: TextAlign.center,
+//                       decoration: const InputDecoration(
+//                         hintText: 'اكتب رقم الصفحة (1–604)',
+//                       ),
+//                     ),
+//                   ),
+//
+//                   // زرار زيادة
+//                 IconButton(
+//                   icon: const Icon(Icons.add),
+//                   onPressed: () {
+//                     final current = int.tryParse(controller.text) ?? 0;
+//                     if (current < 604) {
+//                       controller.text = (current + 1).toString();
+//                     }
+//                     // اعمل re-validate بعد التغيير
+//                     _formKey.currentState?.validate();
+//                   },
+//                 ),
+//               ],
+//             ),
+//           )
+// ,
+//             actions: [
+//             TextButton(
+//                 onPressed: () => Navigator.pop(context),
+//                 child: const Text('إلغاء')),
+//             ElevatedButton(
+//               onPressed: () {
+//                 final value = int.tryParse(controller.text) ?? _pageNumber;
+//                 Navigator.pop(context, value.clamp(1, 604));
+//                 _formKey.currentState?.validate();
+//               },
+//               child: const Text('اذهب'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//     if (result != null && result != _pageNumber) {
+//       setState(() => _pageNumber = result);
+//       await _loadPageAyahs();
+//     }
+//   }
   Future<void> _gotoPageDialog() async {
     final controller = TextEditingController(text: _pageNumber.toString());
+
     final result = await showDialog<int>(
       context: context,
       builder: (context) => Directionality(
         textDirection: TextDirection.rtl,
         child: AlertDialog(
-          title: const Text('اذهب إلى صفحة'),
-          content:Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // زرار نقص
-              IconButton(
-                icon: const Icon(Icons.remove),
-                onPressed: () {
-                  int current = int.tryParse(controller.text) ?? 1;
-                  if (current > 1) {
-                    controller.text = (current - 1).toString();
-                  }
-                },
-              ),
+          title:
+              const Text('اذهب إلى صفحة', style: TextStyle(fontFamily: "me")),
+          content: Form(
+            key: _formKey,
+            // مهم: خليه Column علشان الـ error تحت الـ TextFormField يلاقي مكان يظهر فيه
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // زرار نقص
+                    IconButton(
+                      icon: const Icon(Icons.remove),
+                      onPressed: () {
+                        final current = int.tryParse(controller.text) ?? 1;
+                        if (current > 1) {
+                          controller.text = (current - 1).toString();
+                        }
+                        _formKey.currentState?.validate();
+                      },
+                    ),
 
-              // خانة الكتابة
-              SizedBox(
-                width: 100,
-                child: TextField(
-                  controller: controller,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  textAlign: TextAlign.center,
-                  decoration: const InputDecoration(
-                    hintText: 'اكتب رقم الصفحة (1–604)',
-                  ),
+                    // خانة الكتابة
+                    SizedBox(
+                      width: 120,
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          hintText: 'اكتب رقم الصفحة (1–604)',
+                          // نص رسالة الخطأ
+                          errorStyle: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'me',
+                            height: 1.2, // للتحكم في تباعد السطور
+                          ),
+                          errorMaxLines: 2, // عدد أسطر الرسالة
+                          // حدود الحقل وقت الخطأ
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide:
+                                const BorderSide(width: 2, color: Colors.grey),
+                          ),
+                          // حدود الحقل وقت الخطأ وهو فوكس
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide:
+                                const BorderSide(width: 2, color: Colors.grey),
+                          ),
+                          // الحدود العادية (اختياري للمقارنة)
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          isDense: true, // يقلل الارتفاع
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                        ),
+                        controller: controller,
+                        autofocus: true,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        textAlign: TextAlign.center,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'رقم الصفحة مطلوب';
+                          }
+                          final n = int.tryParse(value);
+                          if (n == null) return 'أرقام فقط';
+                          if (n < 1 || n > 604) return 'الصفحة بين 1 و 604';
+                          return null;
+                        },
+                        onFieldSubmitted: (_) {
+                          // لو المستخدم ضغط Done من الكيبورد
+                          if (_formKey.currentState?.validate() ?? false) {
+                            Navigator.pop(context, int.parse(controller.text));
+                          }
+                        },
+                      ),
+                    ),
+
+                    // زرار زيادة
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        final current = int.tryParse(controller.text) ?? 0;
+                        if (current < 604) {
+                          controller.text = (current + 1).toString();
+                        }
+                        _formKey.currentState?.validate();
+                      },
+                    ),
+                  ],
                 ),
-              ),
-
-              // زرار زيادة
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () {
-                  int current = int.tryParse(controller.text) ?? 1;
-                  if (current < 604) { // الحد الأقصى
-                    controller.text = (current + 1).toString();
-                  }
-                },
-              ),
-            ],
-          )
-,
-            actions: [
+              ],
+            ),
+          ),
+          actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('إلغاء')),
+              onPressed: () => Navigator.pop(context),
+              child: const Text('إلغاء',style: TextStyle(fontFamily: "cairo"),),
+            ),
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor:WidgetStatePropertyAll(Colors.indigo) ,
+              ),
               onPressed: () {
-                final value = int.tryParse(controller.text) ?? _pageNumber;
-                Navigator.pop(context, value.clamp(1, 604));
+                // مهم: ما نقفلش غير لو Valid
+                if (_formKey.currentState?.validate() ?? false) {
+                  final value = int.parse(controller.text);
+                  Navigator.pop(context, value);
+                }
               },
-              child: const Text('اذهب'),
+              child: const Text('اذهب',style: TextStyle(fontFamily: "cairo"),),
             ),
           ],
         ),
       ),
     );
+
     if (result != null && result != _pageNumber) {
       setState(() => _pageNumber = result);
       await _loadPageAyahs();
@@ -362,7 +517,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                   ),
                   CircleAvatar(
                     foregroundColor: Colors.black,
-                    backgroundColor: AppStyle.primColors,
+                    backgroundColor: Colors.white,
                     radius: 30,
                     child: Column(
                       children: [
@@ -372,8 +527,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                         ),
                         Text(
                           _pageNumber.toString(),
-                            style: TextStyle(fontFamily: "me"),
-
+                          style: TextStyle(fontFamily: "me"),
                         ),
                       ],
                     ),
@@ -410,8 +564,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                       itemCount: _pageAyahs.length,
-                      // separatorBuilder: (_, __) => const Divider(height: 25),
-                      separatorBuilder: (_, __) => const SizedBox(height: 25),
+                      separatorBuilder: (_, __) => const Divider(height: 30),
+                      // separatorBuilder: (_, __) => const SizedBox(height: 10),
                       itemBuilder: (context, index) {
                         final AyahModel ayah = _pageAyahs[index];
 
@@ -426,51 +580,63 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                         return Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            Container(
-                              padding:  EdgeInsets.symmetric(
-                                  vertical:ResponsiveUtil.isTablet(context)? 40:20, horizontal: 8),
-                              width: MediaQuery.sizeOf(context).width,
-                              decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(13))),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text.rich(
-
-                                  textAlign: TextAlign.justify,
-
-                                  TextSpan(
-                                    style: TextStyle(height: 1.6,fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)?10.sp: 14.sp),
-                                      text: ayahText.isNotEmpty
-                                          ? ayahText
-                                          : ayahLabel,
-                                      children: [
-                                        TextSpan(
-
-                                          style: TextStyle(color: Colors.green) ,
-                                          text: ayahText.isNotEmpty
-                                              ? ' ' "(${a.toString()})" ' '
-                                              : ayahLabel,
-                                        )
-                                      ]),
+                            GestureDetector(
+                              onTap: () => _openAyahTafsir(ayah),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: ResponsiveUtil.isTablet(context)
+                                        ? 40
+                                        : 20,
+                                    horizontal: 8),
+                                width: MediaQuery.sizeOf(context).width,
+                                decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(13))),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Text.rich(
+                                    textAlign: TextAlign.justify,
+                                    TextSpan(
+                                        style: TextStyle(
+                                            height: 1.6,
+                                            fontFamily: "me",
+                                            fontSize:
+                                                ResponsiveUtil.isTablet(context)
+                                                    ? 10.sp
+                                                    : 14.sp),
+                                        text: ayahText.isNotEmpty
+                                            ? ayahText
+                                            : ayahLabel,
+                                        children: [
+                                          TextSpan(
+                                            style:
+                                                TextStyle(color: Colors.green),
+                                            text: ayahText.isNotEmpty
+                                                ? ' ' "(${a.toString()})" ' '
+                                                : ayahLabel,
+                                          )
+                                        ]),
+                                  ),
                                 ),
                               ),
                             ),
-                            Positioned(
-                              bottom:  ResponsiveUtil.isTablet(context)?-20:-17,
-                              right: 0,
-                              left: 0,
-                              child: InkWell(
-                                onTap: () => _openAyahTafsir(ayah),
-                                child: CircleAvatar(
-                                    radius: ResponsiveUtil.isTablet(context)?15.r:20.r,
-                                    backgroundColor: Colors.white,
-                                    child: const Icon(
-                                      Icons.menu_book_outlined,
-                                      color: Colors.black87,
-                                    )),
-                              ),
-                            ),
+                            // Positioned(
+                            //   bottom:  ResponsiveUtil.isTablet(context)?-20:-17,
+                            //   right: 0,
+                            //   left: 0,
+                            //   child: InkWell(
+                            //     onTap: () => _openAyahTafsir(ayah),
+                            //     child: CircleAvatar(
+                            //         radius: ResponsiveUtil.isTablet(context)?15.r:25.r,
+                            //         backgroundColor: Colors.white,
+                            //         child: const Icon(
+                            //           Icons.menu_book_outlined,
+                            //           color: Colors.black87,
+                            //         )),
+                            //   ),
+                            // ),
                           ],
                         );
                       },
