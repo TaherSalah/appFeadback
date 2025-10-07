@@ -4,6 +4,8 @@
 
 
 
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+
 import '../../../core/shard/exports/all_exports.dart';
 
 class GreetingWidget extends StatefulWidget {
@@ -26,15 +28,33 @@ class _GreetingWidgetState extends State<GreetingWidget> {
   }
 
   /// ترجع "مساء الخير" إذا كان الوقت >= 15:00 أو < 05:00، وإلا ترجع "صباح الخير"
+  // String _getHalalGreeting() {
+  //   final now = DateTime.now();
+  //   final hour = now.hour;
+  //
+  //   if (hour >= 5 && hour < 13) {
+  //     return 'أسعد الله صباحك بالخير والبركة 🌤️';
+  //   } else {
+  //     return 'أسعد الله مساك بالسكينة والرضا 🌙';
+  //   }
+  // }
+
   String _getHalalGreeting() {
     final now = DateTime.now();
     final hour = now.hour;
-    if (hour >= 15 || hour < 5) {
-      return 'مساء الخير 🌙';
+
+    if (hour >= 5 && hour < 13) {
+      return 'صباح الطاعة 🌤️';
+    } else if (hour >= 13 && hour < 23) {
+      return 'مساء الرحمة 🌙';
+    } else if (hour >= 23 || hour < 3) {
+      return 'وقت قيام الليل، نسأل الله القبول 🤲';
     } else {
-      return 'صباح الخير ☀';
+      return 'ليلة مباركة 🌌';
     }
   }
+
+
 
   /// نحسب متى نحتاج لتحديث التحية التالية (05:00 أو 15:00)
   void _scheduleNextGreetingUpdate() {
@@ -78,7 +98,7 @@ class _GreetingWidgetState extends State<GreetingWidget> {
       child: Text(
         greeting,
         style: GoogleFonts.cairo(
-            color: Colors.black, fontWeight: FontWeight.bold, fontSize:MediaQuery.sizeOf(context).width >600?14.sp: 18.sp),
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize:ResponsiveUtil.isTablet(context)?14.sp: 13.sp),
       ),
     );
   }

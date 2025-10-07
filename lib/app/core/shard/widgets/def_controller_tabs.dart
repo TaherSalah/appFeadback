@@ -264,6 +264,16 @@ String? verseName;
       "icon": "assets/icons/radio.png",
       "navigate": "/QuranRadioView"
     },
+    // {
+    //   "title": "قناة القران الكريم",
+    //   "icon": "assets/icons/radio.png",
+    //   "navigate": "/QuranChannalPlayerView"
+    // },
+    // {
+    //   "title": "قناة السنة النبوية",
+    //   "icon": "assets/icons/radio.png",
+    //   "navigate": "/QuranChannalPlayerView"
+    // },
     {
       "title": "عَنَّا",
       "icon": "assets/images/info (1).png",
@@ -308,117 +318,118 @@ String? verseName;
                    const Padding(
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: GreetingWidget()),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: AnimatedWrapper(
-                          type: UiAnimationType.slideLeft,
-                          child: SizedBox(
-                            width: MediaQuery.sizeOf(context).width / 1.8,
-                            height: MediaQuery.sizeOf(context).width > 600
-                                ? MediaQuery.sizeOf(context).width / 6
-                                : MediaQuery.sizeOf(context).width / 4,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              color: CupertinoColors.systemBackground,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 7),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Text(
-                                        con.gregorian ?? "",
-                                        style: GoogleFonts.cairo(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.sizeOf(context)
-                                                        .width >
-                                                    600
-                                                ? 17
-                                                : 13),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        con.hijriDate,
-                                        style: GoogleFonts.cairo(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 11.sp),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      con.nextPrayer.isNotEmpty
-                          ?  Expanded(
-                        child: AnimatedWrapper(
-                          type: UiAnimationType.slideRight,
-                          child: SizedBox(
-                            height: MediaQuery.sizeOf(context).width > 600
-                                ? MediaQuery.sizeOf(context).width / 6
-                                : MediaQuery.sizeOf(context).width / 4,
-                            width: MediaQuery.sizeOf(context).width / 1.8,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              color: CupertinoColors.systemBackground,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 7),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                    Text(
-                                              con.nextPrayer,
-                                              style: GoogleFonts.cairo(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize:
-                                                      MediaQuery.sizeOf(context)
-                                                                  .width >
-                                                              600
-                                                          ? 14.sp
-                                                          : 15.sp),
-                                            ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        con.remainingTimeText,
-                                        style: GoogleFonts.cairo(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.sizeOf(context)
-                                                        .width >
-                                                    600
-                                                ? 11.sp
-                                                : 13.sp),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ):const Expanded(child: Center(child: CircularProgressIndicator(),)),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       flex: 2,
+                  //       child: AnimatedWrapper(
+                  //         type: UiAnimationType.slideLeft,
+                  //         child: SizedBox(
+                  //           width: MediaQuery.sizeOf(context).width / 1.8,
+                  //           height: MediaQuery.sizeOf(context).width > 600
+                  //               ? MediaQuery.sizeOf(context).width / 6
+                  //               : MediaQuery.sizeOf(context).width / 4,
+                  //           child: Card(
+                  //             shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(10),
+                  //             ),
+                  //             color: CupertinoColors.systemBackground,
+                  //             child: Padding(
+                  //               padding: const EdgeInsets.symmetric(
+                  //                   horizontal: 10.0, vertical: 7),
+                  //               child: Center(
+                  //                 child: Column(
+                  //                   mainAxisAlignment:
+                  //                       MainAxisAlignment.spaceEvenly,
+                  //                   children: [
+                  //                     Text(
+                  //                       con.gregorian ?? "",
+                  //                       style: GoogleFonts.cairo(
+                  //                           color: Colors.black,
+                  //                           fontWeight: FontWeight.bold,
+                  //                           fontSize: MediaQuery.sizeOf(context)
+                  //                                       .width >
+                  //                                   600
+                  //                               ? 17
+                  //                               : 13),
+                  //                     ),
+                  //                     const SizedBox(
+                  //                       height: 10,
+                  //                     ),
+                  //                     Text(
+                  //                       con.hijriDate,
+                  //                       style: GoogleFonts.cairo(
+                  //                           color: Colors.black,
+                  //                           fontWeight: FontWeight.bold,
+                  //                           fontSize: 11.sp),
+                  //                     ),
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     con.nextPrayer.isNotEmpty
+                  //         ?  Expanded(
+                  //       child: AnimatedWrapper(
+                  //         type: UiAnimationType.slideRight,
+                  //         child: SizedBox(
+                  //           height: MediaQuery.sizeOf(context).width > 600
+                  //               ? MediaQuery.sizeOf(context).width / 6
+                  //               : MediaQuery.sizeOf(context).width / 4,
+                  //           width: MediaQuery.sizeOf(context).width / 1.8,
+                  //           child: Card(
+                  //             shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(10),
+                  //             ),
+                  //             color: CupertinoColors.systemBackground,
+                  //             child: Padding(
+                  //               padding: const EdgeInsets.symmetric(
+                  //                   horizontal: 10.0, vertical: 7),
+                  //               child: Center(
+                  //                 child: Column(
+                  //                   mainAxisAlignment:
+                  //                       MainAxisAlignment.spaceEvenly,
+                  //                   children: [
+                  //                   Text(
+                  //                             con.nextPrayer,
+                  //                             style: GoogleFonts.cairo(
+                  //                                 color: Colors.black,
+                  //                                 fontWeight: FontWeight.w600,
+                  //                                 fontSize:
+                  //                                     MediaQuery.sizeOf(context)
+                  //                                                 .width >
+                  //                                             600
+                  //                                         ? 14.sp
+                  //                                         : 15.sp),
+                  //                           ),
+                  //                     const SizedBox(
+                  //                       height: 10,
+                  //                     ),
+                  //                     Text(
+                  //                       con.remainingTimeText,
+                  //                       style: GoogleFonts.cairo(
+                  //                           color: Colors.black,
+                  //                           fontWeight: FontWeight.bold,
+                  //                           fontSize: MediaQuery.sizeOf(context)
+                  //                                       .width >
+                  //                                   600
+                  //                               ? 11.sp
+                  //                               : 13.sp),
+                  //                     ),
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ):const Expanded(child: Center(child: CircularProgressIndicator(),)),
+                  //   ],
+                  // ),
+                  IslamicHeaderWidget(gregorian: con.gregorian, hijriDate: con.hijriDate, nextPrayer: con.nextPrayer, remainingTimeText: con.remainingTimeText),
                   const SizedBox(height: 14),
                   // MediaQuery.sizeOf(context).width > 600
                   SizedBox(
@@ -454,49 +465,50 @@ String? verseName;
                                     : Navigator.pushNamed(
                                         context, item['navigate']!);
                               },
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  side: const BorderSide(
-                                      color: Colors.grey, width: 1),
-                                ),
-                                child: SizedBox(
-                                  width: 90,
-                                  height: 80,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Image.asset(
-                                          item["icon"]!,
-                                          width:
-                                              MediaQuery.sizeOf(context).width >
-                                                      600
-                                                  ? 90
-                                                  : 40,
-                                          height:
-                                              MediaQuery.sizeOf(context).width >
-                                                      600
-                                                  ? 75
-                                                  : 40,
-                                          fit: BoxFit.contain,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        // Text(
-                                        //   item["title"]!,
-                                        //   style: GoogleFonts.cairo(
-                                        //       color: Colors.black,
-                                        //       fontWeight: FontWeight.bold,
-                                        //       fontSize: 9.sp),
-                                        // ),
-                                        TextDefaultWidget(title:item["title"]! ,fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)? 10.sp : 11.5.sp,fontWeight: ResponsiveUtil.isTablet(context)?FontWeight.w500: FontWeight.bold,)
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // child: Card(
+                              //   shape: RoundedRectangleBorder(
+                              //     borderRadius: BorderRadius.circular(10),
+                              //     side: const BorderSide(
+                              //         color: Colors.grey, width: 1),
+                              //   ),
+                              //   child: SizedBox(
+                              //     width: 90,
+                              //     height: 80,
+                              //     child: Padding(
+                              //       padding: const EdgeInsets.all(8.0),
+                              //       child: Column(
+                              //         mainAxisAlignment:
+                              //             MainAxisAlignment.spaceBetween,
+                              //         children: [
+                              //           Image.asset(
+                              //             item["icon"]!,
+                              //             width:
+                              //                 MediaQuery.sizeOf(context).width >
+                              //                         600
+                              //                     ? 90
+                              //                     : 40,
+                              //             height:
+                              //                 MediaQuery.sizeOf(context).width >
+                              //                         600
+                              //                     ? 75
+                              //                     : 40,
+                              //             fit: BoxFit.contain,
+                              //           ),
+                              //           const SizedBox(height: 8),
+                              //           // Text(
+                              //           //   item["title"]!,
+                              //           //   style: GoogleFonts.cairo(
+                              //           //       color: Colors.black,
+                              //           //       fontWeight: FontWeight.bold,
+                              //           //       fontSize: 9.sp),
+                              //           // ),
+                              //           TextDefaultWidget(title:item["title"]! ,fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)? 10.sp : 11.5.sp,fontWeight: ResponsiveUtil.isTablet(context)?FontWeight.w500: FontWeight.bold,)
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                              child: IslamicCardWidget(title: item["title"]!, iconPath: item["icon"]!),
                             );
                           },
                         );
@@ -598,6 +610,266 @@ String? verseName;
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class IslamicHeaderWidget extends StatelessWidget {
+  final String? gregorian;
+  final String hijriDate;
+  final String nextPrayer;
+  final String remainingTimeText;
+
+  const IslamicHeaderWidget({
+    super.key,
+    required this.gregorian,
+    required this.hijriDate,
+    required this.nextPrayer,
+    required this.remainingTimeText,
+  });
+
+  String _getPrayerIcon(String prayer) {
+    switch (prayer) {
+      case 'الفجر':
+        return '🌅';
+      case 'الظهر':
+        return '☀️';
+      case 'العصر':
+        return '🌤️';
+      case 'المغرب':
+        return '🌇';
+      case 'العشاء':
+        return '🌙';
+      default:
+        return '🕌';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final isTablet = width > 600;
+
+    return Row(
+      children: [
+        // بطاقة التاريخ
+        Expanded(
+          flex: 2,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutBack,
+            margin: const EdgeInsets.symmetric(horizontal: 6),
+            height: isTablet ? width / 6 : width / 3.8,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xfffacf70),
+                  Color(0xfffaf38e),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.cyan.shade100.withOpacity(0.4),
+                  blurRadius: 8,
+                  offset: const Offset(2, 3),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Icon(
+                    Icons.calendar_month_rounded,
+                    color: Colors.teal.shade700,
+                    size: isTablet ? 36 : 28,
+                  ),
+                  Text(
+                    gregorian ?? '',
+                    style: GoogleFonts.cairo(
+                      color: Colors.teal.shade900,
+                      fontWeight: FontWeight.bold,
+                      fontSize: isTablet ? 17 : 14,
+                    ),
+                  ),
+                  Text(
+                    hijriDate,
+                    style: GoogleFonts.cairo(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: isTablet ? 14 : 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // بطاقة الصلاة القادمة
+        Expanded(
+          flex: 2,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutBack,
+            margin: const EdgeInsets.symmetric(horizontal: 6),
+            height: isTablet ? width / 6 : width / 3.8,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xFFede7f6),
+                  Color(0xFFd1c4e9),
+                ],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.deepPurple.shade100.withOpacity(0.4),
+                  blurRadius: 8,
+                  offset: const Offset(2, 3),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    '${_getPrayerIcon(nextPrayer)} $nextPrayer',
+                    style: GoogleFonts.cairo(
+                      color: Colors.deepPurple.shade900,
+                      fontWeight: FontWeight.bold,
+                      fontSize: isTablet ? 18 : 15,
+                    ),
+                  ),
+                  Text(
+                    'الوقت المتبقي:',
+                    style: GoogleFonts.cairo(
+                      color: Colors.deepPurple.shade700,
+                      fontWeight: FontWeight.w600,
+                      fontSize: isTablet ? 13 : 12,
+                    ),
+                  ),
+                  Text(
+                    remainingTimeText,
+                    style: GoogleFonts.cairo(
+                      color: Colors.deepPurple.shade900,
+                      fontWeight: FontWeight.bold,
+                      fontSize: isTablet ? 16 : 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+class IslamicCardWidget extends StatelessWidget {
+  final String title;
+  final String iconPath;
+  final VoidCallback? onTap;
+
+  const IslamicCardWidget({
+    super.key,
+    required this.title,
+    required this.iconPath,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isTablet = MediaQuery.sizeOf(context).width > 600;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: isTablet ? 130 : 95,
+        height: isTablet ? 120 : 90,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFFFAF3E0),
+              const Color(0xFFF1E5C3),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.brown.withOpacity(0.25),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          border: Border.all(
+            color: const Color(0xFFD4AF37), // لون ذهبي راقٍ
+            width: 1.2,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFFD4AF37),
+                      const Color(0xFFB58E1F),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.brown.withOpacity(0.3),
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Image.asset(
+                  iconPath,
+                  width: isTablet ? 45 : 32,
+                  height: isTablet ? 45 : 32,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.cairo(
+                  fontSize: isTablet ? 13 : 11,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF3E2723),
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 2,
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
