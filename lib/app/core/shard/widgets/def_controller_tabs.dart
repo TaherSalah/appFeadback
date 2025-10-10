@@ -230,12 +230,12 @@ String? verseName;
       "navigate": "/azkarMassa"
     },
     {
-      "title": "الْمِسْبَحَةُ الإِلِكْتْرُونِيَّةُ",
+      "title": "السبحة",
       "icon": "assets/images/tasbih.png",
       "navigate": "/azkarCounter"
     },
     {
-      "title": "الْقُرْآنُ الْكَرِيمُ",
+      "title": "المصحف",
       "icon": "assets/images/koran.png",
       "navigate": "/surahListScreen"
     },
@@ -250,7 +250,7 @@ String? verseName;
       "navigate": "/timingScreen"
     },
     {
-      "title": "اتِّجَاهُ الْقِبْلَةِ",
+      "title": "الْقِبْلَةِ",
       "icon": "assets/images/qibla-compass.png",
       "navigate": "/qiblaDirection"
     },
@@ -436,10 +436,10 @@ String? verseName;
                     child: GridView.count(
                       crossAxisCount: 3,
                       crossAxisSpacing:
-                          MediaQuery.sizeOf(context).width > 600 ? 18 : 9,
+                          MediaQuery.sizeOf(context).width > 600 ? 18 : 7,
                       mainAxisSpacing: 15,
                       childAspectRatio:
-                          MediaQuery.sizeOf(context).width > 600 ? 1.6 : 1.1,
+                          MediaQuery.sizeOf(context).width > 600 ? 1.6 : 01.02,
                       shrinkWrap: true,
 
                       physics: const NeverScrollableScrollPhysics(),
@@ -662,7 +662,7 @@ class IslamicHeaderWidget extends StatelessWidget {
             duration: const Duration(milliseconds: 600),
             curve: Curves.easeOutBack,
             margin: const EdgeInsets.symmetric(horizontal: 6),
-            height: isTablet ? width / 6 : width / 3.8,
+            height: isTablet ? width / 6 : width / 3.2,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               gradient: const LinearGradient(
@@ -696,7 +696,7 @@ class IslamicHeaderWidget extends StatelessWidget {
                     style: GoogleFonts.cairo(
                       color: Colors.teal.shade900,
                       fontWeight: FontWeight.bold,
-                      fontSize: isTablet ? 17 : 14,
+                      fontSize: isTablet ? 17 : 12,
                     ),
                   ),
                   Text(
@@ -720,7 +720,7 @@ class IslamicHeaderWidget extends StatelessWidget {
             duration: const Duration(milliseconds: 600),
             curve: Curves.easeOutBack,
             margin: const EdgeInsets.symmetric(horizontal: 6),
-            height: isTablet ? width / 6 : width / 3.8,
+            height: isTablet ? width / 6 : width / 3.2,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               gradient: const LinearGradient(
@@ -858,7 +858,7 @@ class IslamicCardWidget extends StatelessWidget {
                 title,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cairo(
-                  fontSize: isTablet ? 13 : 11,
+                  fontSize: isTablet ? 13 : 12.sp,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF3E2723),
                   shadows: [

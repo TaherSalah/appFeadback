@@ -79,7 +79,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
     if (screenWidth < 600) {
       // Mobile
       crossAxisCount = 2;
-      childAspectRatio = 2.50;
+      childAspectRatio = 2.40;
     } else if (screenWidth < 1200) {
       // Tablet
       crossAxisCount = 3;
