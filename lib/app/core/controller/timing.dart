@@ -33,6 +33,9 @@ class MainController extends ControllerMVC {
   String? gregorian;
   HijriCalendar? hijri;
   String upcomingPrayerName = "";
+  static const _arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+  String toArabicDigits(String s) =>
+      s.replaceAllMapped(RegExp(r'\d'), (m) => _arabicDigits[int.parse(m[0]!)]);
 
   List<String> images = [
     "assets/images/fajr.png",
@@ -42,28 +45,44 @@ class MainController extends ControllerMVC {
     "assets/images/maghrab.png",
     "assets/images/ihsaa.png",
   ];
-
   @override
   void initState() {
     super.initState();
-    HijriCalendar.setLocal("ar"); // ⬅️ يُفعِّل اللغة العربية
-
-    // 1) تهيئة فورمات التاريخ العربي
+    HijriCalendar.setLocal('ar');
     initializeDateFormatting('ar').then((_) {
       setState(() {
         now = DateTime.now();
-        gregorian = initl.DateFormat('EEEE, d MMMM yyyy', 'ar').format(now);
+        gregorian = toArabicDigits(initl.DateFormat('EEEE, d MMMM yyyy', 'ar').format(now));
         hijri = HijriCalendar.now();
       });
     });
-
-    // 2) تحميل الدول والـ JSON
     loadCountries();
   }
+  String get hijriDate => hijri == null
+      ? ''
+      : toArabicDigits('${hijri!.hDay} ${hijri!.getLongMonthName()} ${hijri!.hYear} هـ');
 
-  String get hijriDate => hijri != null
-      ? "${hijri!.hDay} ${hijri!.getLongMonthName()} ${hijri!.hYear} هـ"
-      : "";
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   HijriCalendar.setLocal("ar"); // ⬅️ يُفعِّل اللغة العربية
+  //
+  //   // 1) تهيئة فورمات التاريخ العربي
+  //   initializeDateFormatting('ar').then((_) {
+  //     setState(() {
+  //       now = DateTime.now();
+  //       gregorian = initl.DateFormat('EEEE, d MMMM yyyy', 'ar').format(now);
+  //       hijri = HijriCalendar.now();
+  //     });
+  //   });
+  //
+  //   // 2) تحميل الدول والـ JSON
+  //   loadCountries();
+  // }
+
+  // String get hijriDate => hijri != null
+  //     ? "${hijri!.hDay} ${hijri!.getLongMonthName()} ${hijri!.hYear} هـ"
+  //     : "";
 
   Future<void> loadCountries() async {
     try {
@@ -191,9 +210,11 @@ class MainController extends ControllerMVC {
     });
   }
 
-  String formatTime(DateTime time) {
-    return DateFormat.jm().format(time);
-  }
+  // String formatTime(DateTime time) {
+  //   return DateFormat.jm().format(time);
+  // }
+  String formatTime(DateTime t) =>
+      toArabicDigits(DateFormat('hh:mm a', 'ar').format(t));
 
   DateTime getIqamaTime(String prayerName, DateTime adhanTime) {
     switch (prayerName) {

@@ -126,7 +126,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
             ),
           ),
         ),
-        backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors,
+        // backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors,
         body:  Azkary.azkarSleepRepate.isEmpty? Center(
           child:  SingleChildScrollView(
             child: Column(

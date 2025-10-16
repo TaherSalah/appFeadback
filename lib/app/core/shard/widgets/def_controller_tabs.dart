@@ -5,6 +5,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart' as initl;
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart';
@@ -286,330 +287,417 @@ String? verseName;
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: AppStyle.bgColors,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: AppStyle.bgColors,
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.transparent,
     ),
     );
     return Scaffold(
-      backgroundColor: AppStyle.bgColors,
-      body: SafeArea(
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      body: Directionality(
+        textDirection: TextDirection.rtl,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+        Stack(
+          children: [
+            Image.asset("assets/images/30d_1c_ecer_background_5.webp"),
+            Positioned(
+              top: 40,
+                right: 10,
+                child:Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
-                        style: GoogleFonts.cairo(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.sizeOf(context).width > 600
-                                ? 10.sp
-                                : 16.sp),
+                      Row(
+
+                        children: [
+                          Icon(Icons.date_range,size: 33,color: AppColors.greyLightColor,),
+                          SizedBox(width: 5.w,),
+                          TextDefaultWidget(title: con.hijriDate ?? "",color: AppColors.greyLightColor,fontSize: 10.sp,),
+                        ],
+                      ),
+                      SizedBox(height: 4.h,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: TextDefaultWidget(title: con.gregorian ?? "",color: AppColors.greyLightColor,fontSize: 8.5.sp,),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                   const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: GreetingWidget()),
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       flex: 2,
-                  //       child: AnimatedWrapper(
-                  //         type: UiAnimationType.slideLeft,
-                  //         child: SizedBox(
-                  //           width: MediaQuery.sizeOf(context).width / 1.8,
-                  //           height: MediaQuery.sizeOf(context).width > 600
-                  //               ? MediaQuery.sizeOf(context).width / 6
-                  //               : MediaQuery.sizeOf(context).width / 4,
-                  //           child: Card(
-                  //             shape: RoundedRectangleBorder(
-                  //               borderRadius: BorderRadius.circular(10),
-                  //             ),
-                  //             color: CupertinoColors.systemBackground,
-                  //             child: Padding(
-                  //               padding: const EdgeInsets.symmetric(
-                  //                   horizontal: 10.0, vertical: 7),
-                  //               child: Center(
-                  //                 child: Column(
-                  //                   mainAxisAlignment:
-                  //                       MainAxisAlignment.spaceEvenly,
-                  //                   children: [
-                  //                     Text(
-                  //                       con.gregorian ?? "",
-                  //                       style: GoogleFonts.cairo(
-                  //                           color: Colors.black,
-                  //                           fontWeight: FontWeight.bold,
-                  //                           fontSize: MediaQuery.sizeOf(context)
-                  //                                       .width >
-                  //                                   600
-                  //                               ? 17
-                  //                               : 13),
-                  //                     ),
-                  //                     const SizedBox(
-                  //                       height: 10,
-                  //                     ),
-                  //                     Text(
-                  //                       con.hijriDate,
-                  //                       style: GoogleFonts.cairo(
-                  //                           color: Colors.black,
-                  //                           fontWeight: FontWeight.bold,
-                  //                           fontSize: 11.sp),
-                  //                     ),
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     con.nextPrayer.isNotEmpty
-                  //         ?  Expanded(
-                  //       child: AnimatedWrapper(
-                  //         type: UiAnimationType.slideRight,
-                  //         child: SizedBox(
-                  //           height: MediaQuery.sizeOf(context).width > 600
-                  //               ? MediaQuery.sizeOf(context).width / 6
-                  //               : MediaQuery.sizeOf(context).width / 4,
-                  //           width: MediaQuery.sizeOf(context).width / 1.8,
-                  //           child: Card(
-                  //             shape: RoundedRectangleBorder(
-                  //               borderRadius: BorderRadius.circular(10),
-                  //             ),
-                  //             color: CupertinoColors.systemBackground,
-                  //             child: Padding(
-                  //               padding: const EdgeInsets.symmetric(
-                  //                   horizontal: 10.0, vertical: 7),
-                  //               child: Center(
-                  //                 child: Column(
-                  //                   mainAxisAlignment:
-                  //                       MainAxisAlignment.spaceEvenly,
-                  //                   children: [
-                  //                   Text(
-                  //                             con.nextPrayer,
-                  //                             style: GoogleFonts.cairo(
-                  //                                 color: Colors.black,
-                  //                                 fontWeight: FontWeight.w600,
-                  //                                 fontSize:
-                  //                                     MediaQuery.sizeOf(context)
-                  //                                                 .width >
-                  //                                             600
-                  //                                         ? 14.sp
-                  //                                         : 15.sp),
-                  //                           ),
-                  //                     const SizedBox(
-                  //                       height: 10,
-                  //                     ),
-                  //                     Text(
-                  //                       con.remainingTimeText,
-                  //                       style: GoogleFonts.cairo(
-                  //                           color: Colors.black,
-                  //                           fontWeight: FontWeight.bold,
-                  //                           fontSize: MediaQuery.sizeOf(context)
-                  //                                       .width >
-                  //                                   600
-                  //                               ? 11.sp
-                  //                               : 13.sp),
-                  //                     ),
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ):const Expanded(child: Center(child: CircularProgressIndicator(),)),
-                  //   ],
-                  // ),
-                  IslamicHeaderWidget(gregorian: con.gregorian, hijriDate: con.hijriDate, nextPrayer: con.nextPrayer, remainingTimeText: con.remainingTimeText),
-                  const SizedBox(height: 14),
-                  // MediaQuery.sizeOf(context).width > 600
-                  SizedBox(
-                    child: GridView.count(
-                      crossAxisCount: 3,
-                      crossAxisSpacing:
-                          MediaQuery.sizeOf(context).width > 600 ? 18 : 7,
-                      mainAxisSpacing: 15,
-                      childAspectRatio:
-                          MediaQuery.sizeOf(context).width > 600 ? 1.6 : 01.02,
-                      shrinkWrap: true,
+                )
 
-                      physics: const NeverScrollableScrollPhysics(),
-                      // عشان المكون يكون جزء من ScrollView تانية
-                      children: iconsApp.map((item) {
-                        return BlocBuilder<CentralizedCubit, CentralizedState>(
-                          builder: (context, state) {
-                            return InkWell(
-                              onTap: () {
-
-
-                                bool needsInternet = item["navigate"] ==  Routes.categoriesRoute ||
-                                    item["navigate"] == "/qiblaDirection";
-
-                                (state is ConnectivityState &&
-                                                state.status ==
-                                                    ConnectivityStatus
-                                                        .disconnected) ==
-                                            true &&
-                                    needsInternet
-                                    ? Fluttertoast.showToast(
-                                        msg: "يرجي التحقق من اتصالك بالانترنت")
-                                    : Navigator.pushNamed(
-                                        context, item['navigate']!);
-                              },
-                              // child: Card(
-                              //   shape: RoundedRectangleBorder(
-                              //     borderRadius: BorderRadius.circular(10),
-                              //     side: const BorderSide(
-                              //         color: Colors.grey, width: 1),
-                              //   ),
-                              //   child: SizedBox(
-                              //     width: 90,
-                              //     height: 80,
-                              //     child: Padding(
-                              //       padding: const EdgeInsets.all(8.0),
-                              //       child: Column(
-                              //         mainAxisAlignment:
-                              //             MainAxisAlignment.spaceBetween,
-                              //         children: [
-                              //           Image.asset(
-                              //             item["icon"]!,
-                              //             width:
-                              //                 MediaQuery.sizeOf(context).width >
-                              //                         600
-                              //                     ? 90
-                              //                     : 40,
-                              //             height:
-                              //                 MediaQuery.sizeOf(context).width >
-                              //                         600
-                              //                     ? 75
-                              //                     : 40,
-                              //             fit: BoxFit.contain,
-                              //           ),
-                              //           const SizedBox(height: 8),
-                              //           // Text(
-                              //           //   item["title"]!,
-                              //           //   style: GoogleFonts.cairo(
-                              //           //       color: Colors.black,
-                              //           //       fontWeight: FontWeight.bold,
-                              //           //       fontSize: 9.sp),
-                              //           // ),
-                              //           TextDefaultWidget(title:item["title"]! ,fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)? 10.sp : 11.5.sp,fontWeight: ResponsiveUtil.isTablet(context)?FontWeight.w500: FontWeight.bold,)
-                              //         ],
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                              child: IslamicCardWidget(title: item["title"]!, iconPath: item["icon"]!),
-                            );
-                          },
-                        );
-                      }).toList(),
-                    ),
-                  )
-                  // : Wrap(
-                  //
-                  //     spacing: 50,
-                  //     runSpacing: 13,
-                  //     crossAxisAlignment: WrapCrossAlignment.center,
-                  //     alignment: WrapAlignment.center,
-                  //     children: iconsApp.map((item) {
-                  //       return InkWell(
-                  //         onTap: () {
-                  //           Navigator.pushNamed(context, item['navigate']!);
-                  //         },
-                  //         child: Card(
-                  //           shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(10),
-                  //             side: const BorderSide(
-                  //                 color: Colors.grey, width: 1),
-                  //           ),
-                  //           child: Padding(
-                  //             padding: const EdgeInsets.symmetric(
-                  //                 horizontal: 5.0, vertical: 12.0),
-                  //             child: SizedBox(
-                  //               width: 120,
-                  //               height: 80,
-                  //               child: Column(
-                  //                 mainAxisAlignment:
-                  //                     MainAxisAlignment.spaceBetween,
-                  //                 children: [
-                  //                   Image.asset(
-                  //                     item["icon"]!,
-                  //                     width: 40,
-                  //                     height: 40,
-                  //                     fit: BoxFit.contain,
-                  //                   ),
-                  //                   const SizedBox(height: 8),
-                  //                   Text(
-                  //                     item["title"]!,
-                  //                     style: GoogleFonts.cairo(
-                  //                         color: Colors.black,
-                  //                         fontWeight: FontWeight.bold,
-                  //                         fontSize: 13),
-                  //                   ),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       );
-                  //     }).toList(),
-                  //   ),
-                  ,
-                  SizedBox(
-                      height: MediaQuery.sizeOf(context).width > 600 ? 25 : 10),
-                  const AzkarQuranWidget(),
-                  const SizedBox(height: 10),
-                  const OtherAzkarWidget(),
-                  // const SizedBox(height: 10),
-                  //
-                  // Container(
-                  //   padding: const EdgeInsets.all(10),
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(10),
-                  //     border: const BorderDirectional(
-                  //       start: BorderSide(color: Color(0xffd6bb7a), width: 3),
-                  //     ),
-                  //     color: Theme.of(context).cardColor,
-                  //   ),
-                  //   width: MediaQuery.sizeOf(context).width,
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                  //     child: Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         Text(
-                  //           "وردك اليومي",
-                  //           style: GoogleFonts.cairo(
-                  //               fontWeight: FontWeight.bold, fontSize:MediaQuery.sizeOf(context).width >600?10.sp:  15.sp),
-                  //         ),
-                  //         const SizedBox(height: 10),
-                  //         verseName==null?   Text(
-                  //           "لايوجد",
-                  //           textAlign: TextAlign.justify,
-                  //           style: TextStyle(fontSize: MediaQuery.sizeOf(context).width >600?25: 16),
-                  //         ):  Text(
-                  //           "وِرْدُكَ الأَخِيرُ كَانَ فِي سُورَةِ $verseName",
-                  //           textAlign: TextAlign.justify,
-                  //           style: TextStyle(fontSize: MediaQuery.sizeOf(context).width >600?25: 16),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-
-                ],
-              ),
             ),
+            Positioned(
+              top: 40,
+                left: 10,
+                child:
+                InkWell(
+                    onTap: () => showThemeSheet(context) ,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Icon(Icons.settings,size: 33,color: AppColors.greyLightColor,),
+                  ),
+                )
+
+            ),
+            Positioned(
+              top: 100,
+                right: 300,
+                child:Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+
+                        children: [
+                          TextDefaultWidget(title: "الصلاة القادمة : ${con.nextPrayer}",color: AppColors.greyLightColor,fontSize: 10.sp,fontWeight: FontWeight.bold,),
+
+                    ]
+                      ),
+                    ],
+                  ),
+                )
+
+            ),
+            Positioned(
+              top: 150,
+                right: 350,
+                child:Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+
+                        children: [
+                          TextDefaultWidget(title: "${con.remainingTimeText}",color: AppColors.greyLightColor,fontSize: 10.sp,),
+
+                    ]
+                      ),
+                    ],
+                  ),
+                )
+
+            ),
+          ],
+        ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Text(
+              //       'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
+              //       style: GoogleFonts.cairo(
+              //           color: Colors.black,
+              //           fontWeight: FontWeight.bold,
+              //           fontSize: MediaQuery.sizeOf(context).width > 600
+              //               ? 10.sp
+              //               : 16.sp),
+              //     ),
+              //   ],
+              // ),
+               // const Padding(
+               //    padding: EdgeInsets.symmetric(vertical: 15),
+               //    child: GreetingWidget()),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       flex: 2,
+              //       child: AnimatedWrapper(
+              //         type: UiAnimationType.slideLeft,
+              //         child: SizedBox(
+              //           width: MediaQuery.sizeOf(context).width / 1.8,
+              //           height: MediaQuery.sizeOf(context).width > 600
+              //               ? MediaQuery.sizeOf(context).width / 6
+              //               : MediaQuery.sizeOf(context).width / 4,
+              //           child: Card(
+              //             shape: RoundedRectangleBorder(
+              //               borderRadius: BorderRadius.circular(10),
+              //             ),
+              //             color: CupertinoColors.systemBackground,
+              //             child: Padding(
+              //               padding: const EdgeInsets.symmetric(
+              //                   horizontal: 10.0, vertical: 7),
+              //               child: Center(
+              //                 child: Column(
+              //                   mainAxisAlignment:
+              //                       MainAxisAlignment.spaceEvenly,
+              //                   children: [
+              //                     Text(
+              //                       con.gregorian ?? "",
+              //                       style: GoogleFonts.cairo(
+              //                           color: Colors.black,
+              //                           fontWeight: FontWeight.bold,
+              //                           fontSize: MediaQuery.sizeOf(context)
+              //                                       .width >
+              //                                   600
+              //                               ? 17
+              //                               : 13),
+              //                     ),
+              //                     const SizedBox(
+              //                       height: 10,
+              //                     ),
+              //                     Text(
+              //                       con.hijriDate,
+              //                       style: GoogleFonts.cairo(
+              //                           color: Colors.black,
+              //                           fontWeight: FontWeight.bold,
+              //                           fontSize: 11.sp),
+              //                     ),
+              //                   ],
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //     con.nextPrayer.isNotEmpty
+              //         ?  Expanded(
+              //       child: AnimatedWrapper(
+              //         type: UiAnimationType.slideRight,
+              //         child: SizedBox(
+              //           height: MediaQuery.sizeOf(context).width > 600
+              //               ? MediaQuery.sizeOf(context).width / 6
+              //               : MediaQuery.sizeOf(context).width / 4,
+              //           width: MediaQuery.sizeOf(context).width / 1.8,
+              //           child: Card(
+              //             shape: RoundedRectangleBorder(
+              //               borderRadius: BorderRadius.circular(10),
+              //             ),
+              //             color: CupertinoColors.systemBackground,
+              //             child: Padding(
+              //               padding: const EdgeInsets.symmetric(
+              //                   horizontal: 10.0, vertical: 7),
+              //               child: Center(
+              //                 child: Column(
+              //                   mainAxisAlignment:
+              //                       MainAxisAlignment.spaceEvenly,
+              //                   children: [
+              //                   Text(
+              //                             con.nextPrayer,
+              //                             style: GoogleFonts.cairo(
+              //                                 color: Colors.black,
+              //                                 fontWeight: FontWeight.w600,
+              //                                 fontSize:
+              //                                     MediaQuery.sizeOf(context)
+              //                                                 .width >
+              //                                             600
+              //                                         ? 14.sp
+              //                                         : 15.sp),
+              //                           ),
+              //                     const SizedBox(
+              //                       height: 10,
+              //                     ),
+              //                     Text(
+              //                       con.remainingTimeText,
+              //                       style: GoogleFonts.cairo(
+              //                           color: Colors.black,
+              //                           fontWeight: FontWeight.bold,
+              //                           fontSize: MediaQuery.sizeOf(context)
+              //                                       .width >
+              //                                   600
+              //                               ? 11.sp
+              //                               : 13.sp),
+              //                     ),
+              //                   ],
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ):const Expanded(child: Center(child: CircularProgressIndicator(),)),
+              //   ],
+              // ),
+              // IslamicHeaderWidget(gregorian: con.gregorian, hijriDate: con.hijriDate, nextPrayer: con.nextPrayer, remainingTimeText: con.remainingTimeText),
+              const SizedBox(height: 10),
+              // MediaQuery.sizeOf(context).width > 600
+              SizedBox(
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  crossAxisSpacing:
+                      MediaQuery.sizeOf(context).width > 600 ? 18 : 7,
+                  mainAxisSpacing: 15,
+                  childAspectRatio:
+                      MediaQuery.sizeOf(context).width > 600 ? 1.6 : 01.02,
+                  shrinkWrap: true,
+
+                  physics: const NeverScrollableScrollPhysics(),
+                  // عشان المكون يكون جزء من ScrollView تانية
+                  children: iconsApp.map((item) {
+                    return BlocBuilder<CentralizedCubit, CentralizedState>(
+                      builder: (context, state) {
+                        return InkWell(
+                          onTap: () {
+
+
+                            bool needsInternet = item["navigate"] ==  Routes.categoriesRoute ||
+                                item["navigate"] == "/qiblaDirection";
+
+                            (state is ConnectivityState &&
+                                            state.status ==
+                                                ConnectivityStatus
+                                                    .disconnected) ==
+                                        true &&
+                                needsInternet
+                                ? Fluttertoast.showToast(
+                                    msg: "يرجي التحقق من اتصالك بالانترنت")
+                                : Navigator.pushNamed(
+                                    context, item['navigate']!);
+                          },
+                          // child: Card(
+                          //   shape: RoundedRectangleBorder(
+                          //     borderRadius: BorderRadius.circular(10),
+                          //     side: const BorderSide(
+                          //         color: Colors.grey, width: 1),
+                          //   ),
+                          //   child: SizedBox(
+                          //     width: 90,
+                          //     height: 80,
+                          //     child: Padding(
+                          //       padding: const EdgeInsets.all(8.0),
+                          //       child: Column(
+                          //         mainAxisAlignment:
+                          //             MainAxisAlignment.spaceBetween,
+                          //         children: [
+                          //           Image.asset(
+                          //             item["icon"]!,
+                          //             width:
+                          //                 MediaQuery.sizeOf(context).width >
+                          //                         600
+                          //                     ? 90
+                          //                     : 40,
+                          //             height:
+                          //                 MediaQuery.sizeOf(context).width >
+                          //                         600
+                          //                     ? 75
+                          //                     : 40,
+                          //             fit: BoxFit.contain,
+                          //           ),
+                          //           const SizedBox(height: 8),
+                          //           // Text(
+                          //           //   item["title"]!,
+                          //           //   style: GoogleFonts.cairo(
+                          //           //       color: Colors.black,
+                          //           //       fontWeight: FontWeight.bold,
+                          //           //       fontSize: 9.sp),
+                          //           // ),
+                          //           TextDefaultWidget(title:item["title"]! ,fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)? 10.sp : 11.5.sp,fontWeight: ResponsiveUtil.isTablet(context)?FontWeight.w500: FontWeight.bold,)
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          child: IslamicCardWidget(title: item["title"]!, iconPath: item["icon"]!),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
+              )
+              // : Wrap(
+              //
+              //     spacing: 50,
+              //     runSpacing: 13,
+              //     crossAxisAlignment: WrapCrossAlignment.center,
+              //     alignment: WrapAlignment.center,
+              //     children: iconsApp.map((item) {
+              //       return InkWell(
+              //         onTap: () {
+              //           Navigator.pushNamed(context, item['navigate']!);
+              //         },
+              //         child: Card(
+              //           shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(10),
+              //             side: const BorderSide(
+              //                 color: Colors.grey, width: 1),
+              //           ),
+              //           child: Padding(
+              //             padding: const EdgeInsets.symmetric(
+              //                 horizontal: 5.0, vertical: 12.0),
+              //             child: SizedBox(
+              //               width: 120,
+              //               height: 80,
+              //               child: Column(
+              //                 mainAxisAlignment:
+              //                     MainAxisAlignment.spaceBetween,
+              //                 children: [
+              //                   Image.asset(
+              //                     item["icon"]!,
+              //                     width: 40,
+              //                     height: 40,
+              //                     fit: BoxFit.contain,
+              //                   ),
+              //                   const SizedBox(height: 8),
+              //                   Text(
+              //                     item["title"]!,
+              //                     style: GoogleFonts.cairo(
+              //                         color: Colors.black,
+              //                         fontWeight: FontWeight.bold,
+              //                         fontSize: 13),
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       );
+              //     }).toList(),
+              //   ),
+              ,
+              SizedBox(
+                  height: MediaQuery.sizeOf(context).width > 600 ? 25 : 10),
+              const AzkarQuranWidget(),
+              const SizedBox(height: 10),
+              const OtherAzkarWidget(),
+              // const SizedBox(height: 10),
+              //
+              // Container(
+              //   padding: const EdgeInsets.all(10),
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(10),
+              //     border: const BorderDirectional(
+              //       start: BorderSide(color: Color(0xffd6bb7a), width: 3),
+              //     ),
+              //     color: Theme.of(context).cardColor,
+              //   ),
+              //   width: MediaQuery.sizeOf(context).width,
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Text(
+              //           "وردك اليومي",
+              //           style: GoogleFonts.cairo(
+              //               fontWeight: FontWeight.bold, fontSize:MediaQuery.sizeOf(context).width >600?10.sp:  15.sp),
+              //         ),
+              //         const SizedBox(height: 10),
+              //         verseName==null?   Text(
+              //           "لايوجد",
+              //           textAlign: TextAlign.justify,
+              //           style: TextStyle(fontSize: MediaQuery.sizeOf(context).width >600?25: 16),
+              //         ):  Text(
+              //           "وِرْدُكَ الأَخِيرُ كَانَ فِي سُورَةِ $verseName",
+              //           textAlign: TextAlign.justify,
+              //           style: TextStyle(fontSize: MediaQuery.sizeOf(context).width >600?25: 16),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+
+            ],
           ),
         ),
       ),
@@ -776,6 +864,7 @@ class IslamicHeaderWidget extends StatelessWidget {
       ],
     );
   }
+
 }
 
 
@@ -875,4 +964,40 @@ class IslamicCardWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+void showThemeSheet(BuildContext ctx) {
+  final cubit = CentralizedCubit.get(ctx);
+  final current = cubit.themeMode();
+
+  showModalBottomSheet(
+    context: ctx,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (bc) {
+      ListTile tile(String title, IconData icon, ThemeMode mode) => ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        trailing: current == mode ? const Icon(Icons.check) : null,
+        onTap: () async {
+          await cubit.setThemeMode(mode);
+          Navigator.pop(bc);
+        },
+      );
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            const Text('اختر النمط', style: TextStyle(fontSize: 18)),
+            tile('فاتح', Icons.light_mode, ThemeMode.light),
+            tile('داكن', Icons.dark_mode, ThemeMode.dark),
+            tile('حسب النظام', Icons.phone_android, ThemeMode.system),
+            const SizedBox(height: 8),
+          ],
+        ),
+      );
+    },
+  );
 }

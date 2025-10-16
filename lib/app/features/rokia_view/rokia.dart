@@ -125,7 +125,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
           ),
         ),
       ),
-      backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors,
+      // backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors,
       body: Azkary.rokiaQuranRepe.isEmpty? Center(
         child:  SingleChildScrollView(
           child: Column(

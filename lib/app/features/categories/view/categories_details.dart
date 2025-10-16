@@ -33,7 +33,7 @@ class CategoriesDetailsView extends StatelessWidget {
                 ? TextDirection.ltr
                 : TextDirection.rtl,
             child: Scaffold(
-                backgroundColor: AppStyle.bgColors,
+                // backgroundColor: AppStyle.bgColors,
                 body: SafeArea(
                     child: CategoriesDetailsItemBuilder(
                         categoriesDetailsPrams: categoriesDetailsPrams)))));

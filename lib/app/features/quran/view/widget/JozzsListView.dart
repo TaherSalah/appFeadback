@@ -27,7 +27,7 @@ class _JozzsListScreenState extends State<JozzsListScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppStyle.bgColors,
+        // backgroundColor: AppStyle.bgColors,
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
@@ -48,7 +48,6 @@ class _JozzsListScreenState extends State<JozzsListScreen> {
         ),
         body: ListView.separated(
           separatorBuilder: (context, index) => Divider(),
-
           physics: const BouncingScrollPhysics(),
           itemCount: jozzs.length,
           itemBuilder: (ctx, index) {
@@ -72,7 +71,8 @@ class _JozzsListScreenState extends State<JozzsListScreen> {
                         ),
                         TextWidget(
                           title: "${index + 1}",
-                          fontSize: ResponsiveUtil.isTablet(context)?9.sp: 14.sp,
+                          fontSize:
+                              ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
                         ),
                       ],
                     ),
@@ -82,7 +82,8 @@ class _JozzsListScreenState extends State<JozzsListScreen> {
                       children: [
                         TextWidget(
                             fontFamily: "me",
-                            fontSize: ResponsiveUtil.isTablet(context)?9.sp: 14.sp,
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
                             fontWeight: FontWeight.bold,
                             title: jozzs[index]),
                       ],

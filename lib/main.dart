@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -14,6 +15,7 @@ import 'app.dart';
 import 'app/core/cache/shard_pref/shardpref_obj.dart';
 import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/localization/localization_manager.dart';
+import 'app/core/shard/widgets/def_controller_tabs.dart';
 import 'app/core/utils/services_locator.dart';
 import 'app/core/utils/style/responsive_util.dart';
 import 'app/core/widgets/custom_text_widget.dart';
@@ -54,15 +56,16 @@ import 'app/features/Khatmah/data/khatmah_model.dart';
 //   await AzkarNotificationService.scheduleAllAzkarNotifications();
 //   runApp(const MyApp());
 // }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // ← أول سطر دائمًا
-
   // SystemChrome و أي platform channels لازم بعد ensureInitialized
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
   ));
+  HijriCalendar.setLocal('ar_SA');
 
   // لو عندك DI بيتعامل مع ملفات/قنوات منصة، خلّيه بعد ensureInitialized
   await Di.init();

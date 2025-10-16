@@ -22,7 +22,7 @@ class QuranDetailsView extends StatelessWidget {
                 ? TextDirection.ltr
                 : TextDirection.rtl,
             child: Scaffold(
-                backgroundColor: AppStyle.bgColors,
+                // backgroundColor: AppStyle.bgColors,
                 body: SafeArea(
                     child:
                     QuranDetailsViewItemBuilder(recitersId: recitersId,index: index,)))));

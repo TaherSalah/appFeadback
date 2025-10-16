@@ -27,25 +27,38 @@ class CentralizedCubit extends Cubit<CentralizedState> {
 
   static bool isDarkMode = false;
 
-  ThemeMode themeMode() {
-    ThemeMode theme = ThemeMode.system;
-    bool? value = sharedPreferences.getBool("isDark");
-    if (value != null) {
-      if (value) {
-        theme = ThemeMode.dark;
-        isDarkMode = true;
-      } else {
-        theme = ThemeMode.light;
-        isDarkMode = false;
-      }
-    } else {
-      theme = ThemeMode.system;
-      var brightness = SchedulerBinding.instance.window.platformBrightness;
-      isDarkMode = brightness == Brightness.dark;
-    }
-    return theme;
+  // ThemeMode themeMode() {
+  //   ThemeMode theme = ThemeMode.system;
+  //   bool? value = sharedPreferences.getBool("isDark");
+  //   if (value != null) {
+  //     if (value) {
+  //       theme = ThemeMode.dark;
+  //       isDarkMode = true;
+  //     } else {
+  //       theme = ThemeMode.light;
+  //       isDarkMode = false;
+  //     }
+  //   } else {
+  //     theme = ThemeMode.system;
+  //     var brightness = SchedulerBinding.instance.window.platformBrightness;
+  //     isDarkMode = brightness == Brightness.dark;
+  //   }
+  //   return theme;
+  // }
+  static const _kThemeKey = 'themeMode'; // 0 system, 1 light, 2 dark
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    final v = mode == ThemeMode.light ? 1 : mode == ThemeMode.dark ? 2 : 0;
+    await sharedPreferences.setInt(_kThemeKey, v);
+    emit(ThemeState());
   }
 
+  ThemeMode themeMode() {
+    final v = sharedPreferences.getInt(_kThemeKey);
+    if (v == 1) return ThemeMode.light;
+    if (v == 2) return ThemeMode.dark;
+    return ThemeMode.system;
+  }
   void changeThemeMode() async {
     isDarkMode = !isDarkMode;
     await sharedPreferences.setBool("isDark", isDarkMode);

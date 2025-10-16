@@ -31,7 +31,6 @@ class _PrayerCounterState extends State<PrayerCounter> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(AppStyle.primaryColor),
         appBar: customAppBar(AppString.KPrayerAppBar),
         body: SingleChildScrollView(
           child: Stack(

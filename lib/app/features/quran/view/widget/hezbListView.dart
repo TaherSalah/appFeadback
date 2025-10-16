@@ -34,7 +34,7 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppStyle.bgColors,
+        // backgroundColor: AppStyle.bgColors,
 
 
         appBar: PreferredSize(

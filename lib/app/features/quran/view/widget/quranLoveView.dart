@@ -18,7 +18,7 @@ class QuranLoveView extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppStyle.bgColors,
+        // backgroundColor: AppStyle.bgColors,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 80:50),
           child: AppBar(
@@ -60,7 +60,7 @@ class QuranKhitamView extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppStyle.bgColors,
+        // backgroundColor: AppStyle.bgColors,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 80:50),
           child: AppBar(

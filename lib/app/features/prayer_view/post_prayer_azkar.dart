@@ -133,7 +133,7 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
           ),
         ),
 
-        backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors,
+        // backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors,
         body:Azkary.azkarPrayerRepate.isEmpty? Center(
           child:  SingleChildScrollView(
             child: Column(

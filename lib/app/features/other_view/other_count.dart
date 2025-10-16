@@ -31,7 +31,6 @@ class _OtherCounterState extends State<OtherCounter> {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor: const Color(AppStyle.primaryColor),
           appBar: customAppBar('أدعية وأذكار مختارة', actions: [
             IconButton(
               onPressed: () {

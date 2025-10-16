@@ -222,8 +222,8 @@ class _AzkarSabahState extends State<AzkarSabah> {
       //     color: Color(AppStyle.whiteColor),
       //   ),
       // ),
-      backgroundColor:
-          Azkary.azkarMassaRepate.isEmpty ? Colors.white : AppStyle.bgColors,
+      // backgroundColor:
+      //     Azkary.azkarMassaRepate.isEmpty ? Colors.white : AppStyle.bgColors,
       body: Azkary.azkarSabahRepate.isEmpty
           ? Center(
               child: SingleChildScrollView(

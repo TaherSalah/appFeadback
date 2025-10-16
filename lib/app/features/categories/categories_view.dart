@@ -24,7 +24,7 @@ class CategoriesView extends StatelessWidget {
                 ? TextDirection.ltr
                 : TextDirection.rtl,
             child: Scaffold(
-                backgroundColor: AppStyle.bgColors,
+                // backgroundColor: AppStyle.bgColors,
 
                 key: scaffoldState,
                 body: CategoriesViewItemBuilder())));

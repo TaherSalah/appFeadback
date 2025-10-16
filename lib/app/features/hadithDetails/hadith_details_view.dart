@@ -34,7 +34,7 @@ class HadithDetailsView extends StatelessWidget {
                 ? TextDirection.ltr
                 : TextDirection.rtl,
             child: Scaffold(
-                backgroundColor: AppStyle.bgColors,
+                // backgroundColor: AppStyle.bgColors,
                 floatingActionButtonLocation: ExpandableFab.location,
                 floatingActionButton:
                     BlocBuilder<HadithDetailsBloc, HadithDetailsState>(

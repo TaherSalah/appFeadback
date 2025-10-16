@@ -36,7 +36,9 @@ class _MashkahAppState extends State<MashkahApp> {
                 providers: provider,
                 child: BlocBuilder<CentralizedCubit, CentralizedState>(
                     builder: (context, state) {
-                  return MaterialApp(
+                      final cubit = CentralizedCubit.get(context);
+
+                      return MaterialApp(
 
                       // useInheritedMediaQuery: true,
                       // locale: DevicePreview.locale(context),
@@ -47,9 +49,13 @@ class _MashkahAppState extends State<MashkahApp> {
                       onGenerateRoute: (settings) =>
                           RouteGenerator.getRoute(settings, context),
                       initialRoute: Routes.splashRoute,
-                      theme: AppTheme.light,
+                    theme: AppTheme.light,
+                    darkTheme: AppTheme.dark,            // فعّل ثيم داكنك
+                    themeMode: cubit.themeMode(),
+                    // theme: AppTheme.light,
                       // darkTheme: AppTheme.dark,
-                      themeMode:  ThemeMode.light);
+                      // themeMode:  ThemeMode.light
+                  );
                 }));
           }),
     );

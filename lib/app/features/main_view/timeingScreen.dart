@@ -210,7 +210,7 @@ class _TimingScreenState extends State<TimingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppStyle.bgColors,
+      // backgroundColor: AppStyle.bgColors,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         child: Directionality(

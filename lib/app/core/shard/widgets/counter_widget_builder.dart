@@ -179,7 +179,7 @@ class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
                   },
                   child: CircleAvatar(
                       radius:isTablate?50: 35,
-                      backgroundColor: AppStyle.bgColors,
+                      // backgroundColor: AppStyle.bgColors,
                       child: Text(AppString.KSabhText,
                           style: GoogleFonts.cairo(
                               fontSize: isTablate ? 17.sp :23.sp, color: Colors.black))),

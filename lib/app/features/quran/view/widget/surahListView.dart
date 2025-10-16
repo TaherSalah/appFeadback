@@ -49,7 +49,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppStyle.bgColors,
+        // backgroundColor: AppStyle.bgColors,
 
 
         appBar: PreferredSize(
@@ -133,7 +133,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                                 QuranLibrary().getSurahInfoBottomSheet(
                                     surahInfoStyle: SurahInfoStyle(
                                       textColor: CupertinoColors.black,
-                                        backgroundColor: AppStyle.bgColors,
+                                        // backgroundColor: AppStyle.bgColors,
                                       ),
                                     surahNumber: index + 1,
                                     context: context);

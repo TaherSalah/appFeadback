@@ -30,7 +30,6 @@ class _MassaCounterState extends State<MassaCounter> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(AppStyle.primaryColor),
         appBar: customAppBar(AppString.KMessa, actions: [
           IconButton(
             onPressed: () {

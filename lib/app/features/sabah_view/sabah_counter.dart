@@ -32,7 +32,6 @@ class _SabahCounterState extends State<SabahCounter> {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor: const Color(AppStyle.primaryColor),
           appBar: customAppBar(AppString.Ksabah, actions: [
             IconButton(
               onPressed: () {

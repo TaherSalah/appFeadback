@@ -45,7 +45,7 @@ class _HadithViewState extends State<HadithView> {
           child: Directionality(
             textDirection:  TextDirection.rtl,
             child: Scaffold(
-              backgroundColor: AppStyle.bgColors,
+              // backgroundColor: AppStyle.bgColors,
 
               key: scaffoldState,
               // appBar: AppBar(

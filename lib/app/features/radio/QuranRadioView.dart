@@ -47,7 +47,7 @@ class _QuranRadioViewState extends State<QuranRadioView> {
           child: Directionality(
             textDirection:  TextDirection.rtl,
             child: Scaffold(
-              backgroundColor: AppStyle.bgColors,
+              // backgroundColor: AppStyle.bgColors,
 
               key: scaffoldState,
               // appBar: AppBar(

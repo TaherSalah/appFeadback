@@ -220,7 +220,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         body: Container(
           padding: EdgeInsets.zero,
           decoration: BoxDecoration(
-            color: isDark ? Colors.black : AppStyle.bgColors,
+            // color: isDark ? Colors.black : AppStyle.bgColors,
             gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,

@@ -32,7 +32,6 @@ class _SleepCounterState extends State<SleepCounter> {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor: const Color(AppStyle.primaryColor),
           appBar: customAppBar('أذكار النوم', actions: [
             IconButton(
                 onPressed: () {

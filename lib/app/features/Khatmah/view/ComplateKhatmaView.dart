@@ -64,7 +64,7 @@ class _ComplateKhatmaViewState extends State<ComplateKhatmaView> {
             ),
           ),
         ),
-        backgroundColor: AppStyle.bgColors,
+        // backgroundColor: AppStyle.bgColors,
         body: completed.isEmpty
             ? Center(
             child: Column(

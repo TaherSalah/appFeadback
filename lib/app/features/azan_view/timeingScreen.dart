@@ -296,7 +296,7 @@ class _TimingScreenState extends State<TimingScreen> {
           ),
         ),
       ),
-      backgroundColor: AppStyle.bgColors,
+      // backgroundColor: AppStyle.bgColors,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         child: Directionality(

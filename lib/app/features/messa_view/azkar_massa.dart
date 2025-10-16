@@ -131,8 +131,8 @@ class _AzkarMassaState extends State<AzkarMassa> {
         ),
 
         // backgroundColor: Colors.black.withOpacity(0.1),
-        backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors
-      ,
+        // backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors
+      // ,
         body:Azkary.azkarMassaRepate.isEmpty? Center(
           child:  SingleChildScrollView(
             child: Column(

@@ -225,7 +225,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppStyle.bgColors,
+        // backgroundColor: AppStyle.bgColors,
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),

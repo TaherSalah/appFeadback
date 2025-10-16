@@ -11,7 +11,7 @@ abstract class AppStyle{
   static const String fontFamily='maja';
 
   static const Color textColors=Color(0xff1A1A1A);
-  static const Color bgColors=Color(0xfffefae0);
+  // static const Color bgColors=Color(0xfffefae0);
   static const Color primColors=Color(0xffe9edc9);
   static const Color scondColors=Color(0xffccd5ae);
 

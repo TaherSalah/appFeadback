@@ -427,7 +427,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppStyle.bgColors,
+        // backgroundColor: AppStyle.bgColors,
         appBar: AppBar(
           leading: const CupertinoNavigationBarBackButton(color: Colors.black),
           centerTitle: true,

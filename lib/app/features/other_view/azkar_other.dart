@@ -124,7 +124,7 @@ class _AzkarOthersState extends State<AzkarOthers> {
           ),
         ),
       ),
-      backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors,
+      // backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors,
       body:Azkary.azkarRepate.isEmpty? Center(
         child:  SingleChildScrollView(
           child: Column(

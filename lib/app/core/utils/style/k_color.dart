@@ -239,3 +239,55 @@ class ColorsGetter extends KColors {
         : KColors.primary;
   }
 }
+
+class AppColors {
+  // Primary (Green)
+  static const Color primary        = Color(0xFF006754);
+  static const Color primaryDark    = Color(0xFF065446);
+  static const Color primaryAlt     = Color(0xFF158467);
+  static const Color primaryLight   = Color(0xFF87D1A4);
+  static Color greyLightColor = const Color(0xffF9F9F9);
+  // Secondary (Gray/Purple scale)
+  static const Color secondary      = Color(0xFF827D89);
+  static const Color secondaryDark  = Color(0xFF180E25);
+  static const Color secondaryAlt   = Color(0xFFC8C5CB);
+  static const Color secondaryLight = Color(0xFFEFEEF0);
+
+  // Neutrals (اختياري)
+  static const Color bg     = secondaryLight;
+  static const Color text   = secondaryDark;
+}
+
+const ColorScheme appColorScheme = ColorScheme(
+  brightness: Brightness.light,
+  primary: AppColors.primary,
+  onPrimary: Colors.white,
+  secondary: AppColors.secondary,
+  onSecondary: Colors.white,
+  surface: AppColors.secondaryLight,
+  onSurface: AppColors.secondaryDark,
+  background: AppColors.bg,
+  onBackground: AppColors.text,
+  error: Color(0xFFB00020),
+  onError: Colors.white,
+);
+
+final ThemeData appTheme = ThemeData(
+  colorScheme: appColorScheme,
+  primaryColor: AppColors.primary,
+  scaffoldBackgroundColor: AppColors.bg,
+  appBarTheme: const AppBarTheme(
+    backgroundColor: AppColors.primary,
+    foregroundColor: Colors.white,
+  ),
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: AppColors.primary,
+    foregroundColor: Colors.white,
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.primary,
+      foregroundColor: Colors.white,
+    ),
+  ),
+);

@@ -31,7 +31,6 @@ class _RokiaCounterState extends State<RokiaCounter> {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor: const Color(AppStyle.primaryColor),
           appBar: customAppBar('الرقية الشرعية من الكتاب والسنة', actions: [
               IconButton(
               onPressed: () {
