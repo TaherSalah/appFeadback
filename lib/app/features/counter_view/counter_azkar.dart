@@ -23,26 +23,26 @@ class _AzkarCounterState extends State<AzkarCounter> {
 
   @override
   Widget build(BuildContext context) {
-    return  Directionality(
+    return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
+ child: Scaffold(
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 80:50),
-            child: AppBar(
+            preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+ child: AppBar(
               leading: const CupertinoNavigationBarBackButton(color: Colors.black,),
-              centerTitle: true,
-              title: Text(
+ centerTitle: true,
+ title: Text(
                 AppString.KCounter,
-                style: GoogleFonts.cairo(
+ style: GoogleFonts.cairo(
                     color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                    fontSize:
+ fontWeight: FontWeight.bold,
+ fontSize:
                     MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
               ),
             ),
           ),
       
-          body: const CounterWidgetBuilder()),
+ body: const CounterWidgetBuilder()),
     );
   }
 }

@@ -4,9 +4,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:muslimdaily/app/core/localization/localization_manager.dart';
 import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
+import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 
 class DrawerModle {
   final IconData? icon;
@@ -74,7 +76,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       child: Drawer(
         
         width: maxWidth ? 219 : 64,
-        backgroundColor: Colors.black12,
+        // backgroundColor: Colors.black12,
         child: SafeArea(
           child: GestureDetector(
             onTap: () {
@@ -99,8 +101,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   Padding _buildDrawerItem(int index, BuildContext context, ThemeData theme,bool isReplacement) {
     final item = widget.topBar[index];
-    final isSelected = item?.route != null && item!.route == widget.selectItmeRoute;
-    final bool isReplacement = widget.isReplacement;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
       child: GestureDetector(
@@ -130,10 +130,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             height: ResponsiveUtil.isTablet(context)?50:40,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
-              color: widget.topBar[index]?.route == widget.selectItmeRoute
-                  ? KColors.backgroundD
-                  : Colors.black26,
+              border: Border.symmetric(horizontal: BorderSide(color:  Theme.of(context).brightness == Brightness.dark ?Colors.white:Colors.black)),
+              // color: widget.topBar[index]?.route == widget.selectItmeRoute
+              //     ? KColors.backgroundD
+              //     : Colors.black26,
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -142,10 +142,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 children: [
                   FaIcon(
                     widget.topBar[index]!.icon,
-                    color:
-                    widget.topBar[index]?.route == widget.selectItmeRoute
-                        ? AppStyle.scondColors
-                        : Colors.white,
+                    // color:
+                    // widget.topBar[index]?.route == widget.selectItmeRoute
+                    //     ? AppStyle.scondColors
+                    //     : Colors.white,
                     size: 24,
                   ),
                   if (maxWidth) const SizedBox(width: 10),
@@ -154,17 +154,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: AlignmentDirectional.centerStart,
-                        child: Text(
-                          widget.topBar[index]!.title,
-                          style: theme.textTheme.titleSmall!.copyWith(
-                              fontSize: ResponsiveUtil.isTablet(context)?10.sp: 14.sp,
-                            fontFamily: "me",
-                            color:widget. topBar[index]?.route ==
-                                widget.selectItmeRoute
-                                ? KColors.actionBTNL
-                                : KColors.whiteColor,
-                          ),
-                        ),
+                        child: TextWidget(title: widget.topBar[index]!.title,fontSize: 16.sp,),
+                        // child: Text(
+                        //   widget.topBar[index]!.title,
+                        //   style: theme.textTheme.titleSmall!.copyWith(
+                        //       fontSize: ResponsiveUtil.isTablet(context)?10.sp: 14.sp,
+                        //     fontFamily: "me",
+                        //     color:widget. topBar[index]?.route ==
+                        //         widget.selectItmeRoute
+                        //         ? KColors.actionBTNL
+                        //         : KColors.whiteColor,
+                        //   ),
+                        // ),
                       ),
                     ),
                 ],

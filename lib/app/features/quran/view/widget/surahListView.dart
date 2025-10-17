@@ -56,8 +56,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
           child: AppBar(
-            leading: const CupertinoNavigationBarBackButton(
-              color: Colors.black,
+            leading:  CupertinoNavigationBarBackButton(
+              color: Theme.of(context).brightness == Brightness.dark? Colors.white:Colors.black,
             ),
             centerTitle: true,
             title: Text(
@@ -86,7 +86,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                   return Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
-                    child: GestureDetector(
+                    child: InkWell(
                       onTap: () {
                         QuranLibrary().jumpToSurah(index + 1);
                         Navigator.pop(context);
@@ -132,7 +132,12 @@ class _SurahListScreenState extends State<SurahListScreen> {
                               onTap: () {
                                 QuranLibrary().getSurahInfoBottomSheet(
                                     surahInfoStyle: SurahInfoStyle(
-                                      textColor: CupertinoColors.black,
+                                            primaryColor: Theme.of(context).brightness == Brightness.dark? Colors.black12:Colors.green,
+                                      indicatorColor: Theme.of(context).brightness == Brightness.dark? Colors.greenAccent:Colors.green,
+                                      surahNumberColor: Theme.of(context).brightness == Brightness.dark? Colors.greenAccent:Colors.green,
+                                      titleColor: Theme.of(context).brightness == Brightness.dark? Colors.greenAccent:Colors.green,
+                                      backgroundColor:  Theme.of(context).brightness == Brightness.dark?Theme.of(context).cardColor:Theme.of(context).cardColor,
+                                      textColor:Theme.of(context).brightness == Brightness.dark?Colors.white: CupertinoColors.black,
                                         // backgroundColor: AppStyle.bgColors,
                                       ),
                                     surahNumber: index + 1,

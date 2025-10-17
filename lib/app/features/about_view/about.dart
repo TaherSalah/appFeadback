@@ -21,7 +21,9 @@ class About extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 80:50),
         child: AppBar(
-          leading: const CupertinoNavigationBarBackButton(color: Colors.black,),
+          leading:CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black,),
           centerTitle: true,
           title: Text(
             AppString.KAbout,

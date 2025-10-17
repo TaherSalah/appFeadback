@@ -87,7 +87,9 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
               return CustomScrollView(
                 slivers: [
                   SliverAppBar(
-                      leading:  const CupertinoNavigationBarBackButton(color: Colors.black,),
+                      leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,),
                       title: TextWidget(
                         title: categoriesDetailsPrams?.subCategoriesName,
                         color: CentralizedCubit.isDarkMode

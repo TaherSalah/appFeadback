@@ -105,7 +105,9 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                 //     ),
                 //   ),
                 // ),
-                leading:  const CupertinoNavigationBarBackButton(color: Colors.black,),
+                leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,),
      actions: [
        Directionality(
          textDirection: ui.TextDirection.rtl,

@@ -219,9 +219,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
 
         body: Container(
           padding: EdgeInsets.zero,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             // color: isDark ? Colors.black : AppStyle.bgColors,
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [Colors.black, Colors.black87],
@@ -238,11 +238,10 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   : QuranLibraryScreen(
                       ayaFontSize: double.parse(selectedFontSize),
                       isDark: isDark,
-
                       pageIndex: _currentPage!,
-                      // يبدأ من آخر صفحة محفوظة
-                      backgroundColor:
-                          isDark ? Colors.black : const Color(0xffFFFFF0),
+                      // // يبدأ من آخر صفحة محفوظة
+                      // backgroundColor:
+                      //     isDark ? Colors.black : const Color(0xffFFFFF0),
                       topTitleChild: const SizedBox(),
 
                       optimizeScrolling: false,

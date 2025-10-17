@@ -1,21 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hijri/hijri_calendar.dart';
-import 'package:intl/intl.dart' as initl;
-import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart';
-import 'package:muslimdaily/app/features/quran/view/SurahDetailScreen.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
-import 'package:quran_library/quran.dart' as sr;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../features/main_view/widget/AzkarQuranWidget.dart';
 import '../../../features/main_view/widget/OtherAzkarWidget.dart';
-import '../../../features/main_view/widget/morningWidget.dart';
 import '../../controller/timing.dart';
 import '../../cubit/centralized_cubit.dart';
 import '../exports/all_exports.dart';
@@ -307,43 +300,43 @@ String? verseName;
               right: 0,
               left:0 ,
               child: Container(
-                color: AppColors.primary.withOpacity(0.4),
+                color: AppColors.primary.withOpacity(0.6),
               )),
-            // Positioned(
-            //   top: 40,
-            //     right: 10,
-            //     child:Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            //       child: Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         mainAxisAlignment: MainAxisAlignment.start,
-            //         children: [
-            //           Row(
-            //
-            //             children: [
-            //               // Icon(Icons.date_range,size: isTab?33:20,color: AppColors.greyLightColor,),
-            //               // SizedBox(width: 5.w,),
-            //               TextDefaultWidget(title: con.hijriDate ?? "",color: AppColors.greyLightColor,fontSize: 10.sp,),
-            //             ],
-            //           ),
-            //           SizedBox(height: 4.h,),
-            //           Row(
-            //             crossAxisAlignment: CrossAxisAlignment.center,
-            //             mainAxisAlignment: MainAxisAlignment.center,
-            //             children: [
-            //               Padding(
-            //                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            //                 child: TextDefaultWidget(title: con.gregorian ?? "",color: AppColors.greyLightColor,fontSize: 8.5.sp,),
-            //               ),
-            //             ],
-            //           ),
-            //         ],
-            //       ),
-            //     )
-            //
-            // ),
             Positioned(
-              top: 40, left: 10,
+              top: 45,
+                right: 10,
+                child:Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+
+                        children: [
+                          // Icon(Icons.date_range,size: isTab?33:20,color: AppColors.greyLightColor,),
+                          // SizedBox(width: 5.w,),
+                          TextDefaultWidget(title: con.hijriDate ?? "",color: AppColors.greyLightColor,fontSize: 16.sp,),
+                        ],
+                      ),
+                      SizedBox(height: 4.h,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: TextDefaultWidget(title: con.gregorian ?? "",color: AppColors.greyLightColor,fontSize: 15.sp,),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+
+            ),
+            Positioned(
+              top: 45, left: 10,
               child: InkWell(
                 onTap: () => showThemeSheet(context),
                 child: Padding(
@@ -355,7 +348,7 @@ String? verseName;
                           ? Icons.dark_mode
                           : Icons.light_mode,
                       key: ValueKey(Theme.of(context).brightness),
-                      size: isTab?33:18,
+                      size: isTab?33:25,
                       color: AppColors.greyLightColor,
                     ),
                   ),
@@ -365,16 +358,16 @@ String? verseName;
 
             Positioned(
               top: 100,
-                right: isTab? 300:150,
+                right: isTab? 300:130,
                 child:Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextDefaultWidget(title: "الصلاة القادمة",color: AppColors.greyLightColor,fontSize: 10.sp,fontWeight: FontWeight.bold,fontFamily: "cairo",),
-                      TextDefaultWidget(title: con.nextPrayer,color:CupertinoColors.systemYellow,fontSize: 10.sp,fontWeight: FontWeight.bold,fontFamily: "cairo",),
-                      TextDefaultWidget(title: con.remainingTimeText,color: AppColors.greyLightColor,fontSize: 15.sp,fontFamily: "cairo",fontWeight: FontWeight.bold,),
+                      TextDefaultWidget(title: "الصلاة القادمة",color: AppColors.greyLightColor,fontSize: 25.sp,fontWeight: FontWeight.bold,fontFamily: "me",),
+                      TextDefaultWidget(title: con.nextPrayer,color:AppColors.greyLightColor,fontSize: 25.sp,fontWeight: FontWeight.bold,fontFamily: "me",),
+                      TextDefaultWidget(title: con.remainingTimeText,color: AppColors.greyLightColor,fontSize: 20.sp,fontFamily: "cairo",fontWeight: FontWeight.bold,),
 
                     ],
                   ),
