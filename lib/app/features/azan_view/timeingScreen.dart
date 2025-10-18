@@ -12,6 +12,9 @@ import 'dart:ui' as ui;
 
 import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/shard/widgets/def_text_widget.dart';
 
@@ -26,6 +29,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'dart:ui' as ui;
+import 'package:geolocator/geolocator.dart';
+import 'dart:math' as math;
+
 
 class TimingScreen extends StatefulWidget {
   const TimingScreen({super.key});
@@ -35,6 +41,33 @@ class TimingScreen extends StatefulWidget {
 }
 
 class _TimingScreenState extends State<TimingScreen> {
+  static const _kCountryKey = 'selected_country';
+  static const _kCityKey = 'selected_city';
+
+  Future<void> _saveSelection() async {
+    final p = await SharedPreferences.getInstance();
+    if (selectedCountry != null) await p.setString(_kCountryKey, selectedCountry!);
+    if (selectedCity != null) await p.setString(_kCityKey, selectedCity!);
+  }
+
+  Future<void> _loadSelection() async {
+    final p = await SharedPreferences.getInstance();
+    final savedCountry = p.getString(_kCountryKey);
+    final savedCity = p.getString(_kCityKey);
+
+    // إذا وُجدت "مصر" اجعلها الافتراض، وإلا استخدم المحفوظ أو أول دولة
+    final defaultCountry = countries.keys.contains('مصر') ? 'مصر' : countries.keys.first;
+
+    selectedCountry = savedCountry != null && countries.keys.contains(savedCountry)
+        ? savedCountry
+        : defaultCountry;
+
+    cities = (countries[selectedCountry!] as Map<String, dynamic>)..removeWhere((k, v) => v == null);
+
+    selectedCity = (savedCity != null && cities.keys.contains(savedCity))
+        ? savedCity
+        : cities.keys.first;
+  }
   AudioPlayer _audioPlayer = AudioPlayer();
   Map<String, dynamic> countries = {}; // لخزن الدول
   Map<String, dynamic> cities = {}; // لخزن المدن بناءً على الدولة
@@ -63,18 +96,95 @@ class _TimingScreenState extends State<TimingScreen> {
     super.initState();
     loadCountries();
   }
+  Future<bool> _ensureLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return false;
 
-  Future<void> loadCountries() async {
-    final String response =
-    await rootBundle.loadString('assets/images/egypt_governorates.json');
-    final data = json.decode(response) as Map<String, dynamic>;
-    setState(() {
-      countries = data;
-      selectedCountry = countries.keys.first;
-      cities = countries[selectedCountry!] ?? {};
-      selectedCity = cities.keys.first;
-      calculatePrayerTimes();
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      return false;
+    }
+    return true;
+  }
+
+  double _haversine(double lat1, double lon1, double lat2, double lon2) {
+    const R = 6371.0;
+    final dLat = (lat2 - lat1) * (math.pi / 180);
+    final dLon = (lon2 - lon1) * (math.pi / 180);
+    final a = math.sin(dLat/2)*math.sin(dLat/2) +
+        math.cos(lat1*math.pi/180)*math.cos(lat2*math.pi/180) *
+            math.sin(dLon/2)*math.sin(dLon/2);
+    final c = 2 * math.asin(math.sqrt(a));
+    return R * c;
+  }
+
+
+
+
+  Future<void> _selectByLocation() async {
+    final ok = await _ensureLocationPermission();
+    if (!ok) return;
+
+    final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    final userLat = pos.latitude;
+    final userLng = pos.longitude;
+
+    // ابحث عن أقرب مدينة عبر جميع الدول/المدن في ملفك
+    String? bestCountry;
+    String? bestCity;
+    double bestDist = double.infinity;
+
+    countries.forEach((country, cityMap) {
+      final Map<String, dynamic> m = cityMap ?? {};
+      m.forEach((cityName, v) {
+        final lat = (v?['lat'])?.toDouble();
+        final lng = (v?['lng'])?.toDouble();
+        if (lat == null || lng == null) return;
+        final d = _haversine(userLat, userLng, lat, lng);
+        if (d < bestDist) {
+          bestDist = d;
+          bestCountry = country;
+          bestCity = cityName;
+        }
+      });
     });
+
+    KHelper.showSuccess(message:' تم تحديد الموقع: $bestCountry - $bestCity');
+
+    if (bestCountry != null && bestCity != null) {
+      setState(() {
+        selectedCountry = bestCountry;
+        cities = countries[selectedCountry!] ?? {};
+        selectedCity = bestCity;
+      });
+      await _saveSelection();
+      calculatePrayerTimes();
+    }
+  }
+
+  // Future<void> loadCountries() async {
+  //   final String response =
+  //   await rootBundle.loadString('assets/images/egypt_governorates.json');
+  //   final data = json.decode(response) as Map<String, dynamic>;
+  //   setState(() {
+  //     countries = data;
+  //     selectedCountry = countries.keys.first;
+  //     cities = countries[selectedCountry!] ?? {};
+  //     selectedCity = cities.keys.first;
+  //     calculatePrayerTimes();
+  //   });
+  // }
+  Future<void> loadCountries() async {
+    final String response = await rootBundle.loadString('assets/images/egypt_governorates.json');
+    final data = json.decode(response) as Map<String, dynamic>;
+
+    countries = data;
+    await _loadSelection();   // يحدد selectedCountry و selectedCity ويجهّز cities
+    setState(() {});          // لتحديث القوائم
+    calculatePrayerTimes();   // احسب المواقيت بعد التثبيت
   }
 
   void calculatePrayerTimes() {
@@ -280,10 +390,10 @@ class _TimingScreenState extends State<TimingScreen> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize:
-        Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+        Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
         child: AppBar(
-          leading: const CupertinoNavigationBarBackButton(
-            color: Colors.black,
+          leading:  CupertinoNavigationBarBackButton(
+            color: Theme.of(context).brightness == Brightness.dark ?Colors.white:Colors.black,
           ),
           centerTitle: true,
           title: Text(
@@ -302,6 +412,7 @@ class _TimingScreenState extends State<TimingScreen> {
         child: Directionality(
           textDirection: ui.TextDirection.rtl,
           child: Column(
+
             children: [
               Directionality(
                 textDirection: ui.TextDirection.rtl,
@@ -323,14 +434,27 @@ class _TimingScreenState extends State<TimingScreen> {
                             items: countries.keys.map((country) {
                               return DropdownMenuItem(
                                 value: country,
-                                child: TextDefaultWidget(
-                                  textAlign: TextAlign.right,
-                                  title: country,
-                                  fontSize: 12.5,
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextDefaultWidget(
+                                    textAlign: TextAlign.right,
+                                    title: country,
+                                    fontSize: 12.5,
+                                    color: Theme.of(context).brightness == Brightness.dark ?Colors.white:Colors.black,
+
+                                  ),
                                 ),
                               );
                             }).toList(),
                             value: selectedCountry,
+                            // onChanged: (value) {
+                            //   setState(() {
+                            //     selectedCountry = value!;
+                            //     cities = countries[selectedCountry!] ?? {};
+                            //     selectedCity = cities.keys.first;
+                            //     calculatePrayerTimes();
+                            //   });
+                            // },
                             onChanged: (value) {
                               setState(() {
                                 selectedCountry = value!;
@@ -338,7 +462,9 @@ class _TimingScreenState extends State<TimingScreen> {
                                 selectedCity = cities.keys.first;
                                 calculatePrayerTimes();
                               });
+                              _saveSelection();
                             },
+
                             buttonStyleData: ButtonStyleData(
                               decoration: BoxDecoration(
                                   border: Border.all(
@@ -359,7 +485,7 @@ class _TimingScreenState extends State<TimingScreen> {
                             dropdownStyleData: DropdownStyleData(
                               elevation: 1,
                               decoration: BoxDecoration(
-                                color: const Color(0xfffaedcd),
+                                // color: const Color(0xfffaedcd),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
@@ -383,20 +509,34 @@ class _TimingScreenState extends State<TimingScreen> {
                             ),
                             items: cities.keys.map((cities) {
                               return DropdownMenuItem(
+
                                 value: cities,
-                                child: TextDefaultWidget(
-                                  title: cities,
-                                  fontSize: 12.5,
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextDefaultWidget(
+                                    textAlign: TextAlign.right,
+                                    title: cities,
+                                    fontSize: 12.5,
+                                    color: Theme.of(context).brightness == Brightness.dark ?Colors.white:Colors.black,
+                                  ),
                                 ),
                               );
                             }).toList(),
                             value: selectedCity,
+                            // onChanged: (value) {
+                            //   setState(() {
+                            //     selectedCity = value!;
+                            //     calculatePrayerTimes();
+                            //   });
+                            // },
                             onChanged: (value) {
                               setState(() {
                                 selectedCity = value!;
                                 calculatePrayerTimes();
                               });
+                              _saveSelection();
                             },
+
                             buttonStyleData: ButtonStyleData(
                               decoration: BoxDecoration(
                                   border: Border.all(
@@ -417,7 +557,7 @@ class _TimingScreenState extends State<TimingScreen> {
                             dropdownStyleData: DropdownStyleData(
                               elevation: 1,
                               decoration: BoxDecoration(
-                                color: const Color(0xfffaedcd),
+                                // color: const Color(0xfffaedcd),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
@@ -425,12 +565,41 @@ class _TimingScreenState extends State<TimingScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 10),
+                    IconButton(
+                      tooltip: 'تحديد موقعي',
+                      onPressed: _selectByLocation,
+                      icon: const Icon(Icons.my_location),
+                    ),
+
                   ],
                 ),
               ),
               const SizedBox(height: 12),
+              if (selectedCountry != null && selectedCity != null)
+                Padding(
+                  padding:  EdgeInsets.symmetric(vertical: 10.h),
+                  child: Center(
+                    child: Directionality(
+                      textDirection: ui.TextDirection.rtl,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,            // خليه بعرض المحتوى فقط
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.place, size: 18),
+                          const SizedBox(width: 6),
+                          Text(
+                            'الموقع الحالي: ${selectedCountry!} - ${selectedCity!}',
+                            style: GoogleFonts.cairo(fontSize: 10.sp, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
               AnimatedWrapper(
-                type: UiAnimationType.slideOpacityLoop,
+                type: UiAnimationType.crossFade,
                 child: SizedBox(
                   width: MediaQuery.sizeOf(context).width / 1.8,
                   child: Card(
@@ -438,7 +607,7 @@ class _TimingScreenState extends State<TimingScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     elevation: 1,
-                    color: AppStyle.primColors,
+                    color: AppColors.secondaryLight,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 7),
@@ -455,7 +624,7 @@ class _TimingScreenState extends State<TimingScreen> {
                                   fontSize:
                                   MediaQuery.sizeOf(context).width >
                                       600
-                                      ? 14.sp
+                                      ? 10.sp
                                       : 16.sp),
                             )
                                 : const Center(
@@ -471,7 +640,7 @@ class _TimingScreenState extends State<TimingScreen> {
                                   fontWeight: FontWeight.bold,
                                   fontSize:
                                   MediaQuery.sizeOf(context).width > 600
-                                      ? 14.sp
+                                      ? 10.sp
                                       : 16.sp),
                             ),
                           ],
@@ -513,7 +682,7 @@ class _TimingScreenState extends State<TimingScreen> {
                       final isNext = nextPrayer.contains(prayerNames[index]);
                       return Card(
                         color: isNext
-                            ? AppStyle.textColors
+                            ? Colors.grey
                             : CupertinoColors.systemBackground,
                         child: Padding(
                           padding: EdgeInsets.symmetric(
@@ -530,7 +699,9 @@ class _TimingScreenState extends State<TimingScreen> {
                                 style: GoogleFonts.cairo(
                                     color: isNext ? Colors.white : Colors.black,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 17.sp),
+                                    fontSize:  MediaQuery.sizeOf(context).width > 600
+                                        ? 10.sp
+                                        : 17,),
                               ),
                               Text(
                                 DateFormat('h:mm a')

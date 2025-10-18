@@ -40,14 +40,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         title: "الاجزاء",
         route: Routes.jozzaListScreenRoute),
     DrawerModle(
-        icon: Icons.favorite_border,
-        title: "فضل قرأه القران",
-        route: Routes.quranLoveRoute),
-    DrawerModle(
         icon: Icons.category_outlined,
         title: "الاحزاب",
         route: Routes.hizbeListScreenRoute),
-
     DrawerModle(
         icon: Icons.chrome_reader_mode_outlined,
         title: "انشاء ختمة جديدة",
@@ -82,6 +77,11 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         icon: Icons.info_outline,
         title: "دعاء ختم القران الكريم",
         route: Routes.quranKhitamRoute),
+    DrawerModle(
+        icon: Icons.favorite_border,
+        title: "فضل قرأه القران",
+        route: Routes.quranLoveRoute),
+
     // DrawerModle(
     //     icon: Icons.dark_mode_outlined,
     //     title: "الوضع الليلي",
