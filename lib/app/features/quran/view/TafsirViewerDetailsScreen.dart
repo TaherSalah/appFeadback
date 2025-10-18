@@ -403,15 +403,19 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     final String text = (ayah.text ?? '').toString();
 
     await QuranLibrary().showTafsir(
+
       context: context,
       surahNum: surahNum,
       ayahNum: ayahNum,
       ayahText: text,
       pageIndex: _pageNumber,
+
+
       // << المهم: صفر-مبني
       ayahTextN: text,
       ayahUQNum: ayahUQ,
       ayahNumber: ayahNum,
+
     );
   }
 
@@ -427,9 +431,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        // backgroundColor: AppStyle.bgColors,
         appBar: AppBar(
-          leading: const CupertinoNavigationBarBackButton(color: Colors.black),
+          leading:  CupertinoNavigationBarBackButton(color: Theme.of(context).brightness == Brightness.dark ?Colors.white :Colors.black),
           centerTitle: true,
           title: Text(
             "تفسير الايات",
@@ -443,7 +446,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
             IconButton(
               tooltip: 'اذهب إلى صفحة',
               onPressed: _gotoPageDialog,
-              icon: const Icon(Icons.find_in_page),
+              icon:  Icon(Icons.find_in_page,size: ResponsiveUtil.isTablet(context)?15.sp:20.sp,),
             ),
           ],
         ),
@@ -589,8 +592,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                         : 20,
                                     horizontal: 8),
                                 width: MediaQuery.sizeOf(context).width,
-                                decoration: const BoxDecoration(
-                                    color: Colors.white,
+                                decoration:  BoxDecoration(
+                                    color: Theme.of(context).cardColor,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(13))),
                                 child: Padding(

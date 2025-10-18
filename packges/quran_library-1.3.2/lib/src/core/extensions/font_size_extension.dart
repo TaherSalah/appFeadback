@@ -12,7 +12,7 @@ extension FontSizeExtension on Widget {
         label: 'Change Font Size',
         child: tafsirStyle.fontSizeWidget,
       ),
-      color: Colors.blue.withValues(alpha: .8),
+      color: Colors.black,
       iconSize: height ?? 35.0,
       itemBuilder: (context) => [
         PopupMenuItem(

@@ -43,7 +43,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
     ];
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 80:50),
+        preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
         child: AppBar(
           leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
               ? Colors.white

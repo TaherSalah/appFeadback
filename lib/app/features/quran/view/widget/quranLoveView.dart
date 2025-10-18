@@ -20,7 +20,7 @@ class QuranLoveView extends StatelessWidget {
       child: Scaffold(
         // backgroundColor: AppStyle.bgColors,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 80:50),
+          preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
           child: AppBar(
 
             leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
@@ -64,7 +64,7 @@ class QuranKhitamView extends StatelessWidget {
       child: Scaffold(
         // backgroundColor: AppStyle.bgColors,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 80:50),
+          preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
           child: AppBar(
 
             leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark

@@ -273,7 +273,7 @@ class _TimingScreenState extends State<TimingScreen> {
                             dropdownStyleData: DropdownStyleData(
                               elevation: 1,
                               decoration: BoxDecoration(
-                                color: const Color(0xfffaedcd),
+                                // color: const Color(0xfffaedcd),
 
                                 // Set the background color for the dropdown menu
                                 borderRadius: BorderRadius.circular(
@@ -318,7 +318,7 @@ class _TimingScreenState extends State<TimingScreen> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color: AppStyle.scondColors, width: 1.5),
-                                  color: Theme.of(context).canvasColor,
+                                  // color: Theme.of(context).canvasColor,
                                   borderRadius: BorderRadius.circular(10.0)),
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
@@ -334,7 +334,7 @@ class _TimingScreenState extends State<TimingScreen> {
                             dropdownStyleData: DropdownStyleData(
                               elevation: 1,
                               decoration: BoxDecoration(
-                                color: const Color(0xfffaedcd),
+                                // color: const Color(0xfffaedcd),
 
                                 // Set the background color for the dropdown menu
                                 borderRadius: BorderRadius.circular(
@@ -358,7 +358,7 @@ class _TimingScreenState extends State<TimingScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     elevation: 1,
-                    color: AppStyle.primColors,
+                    // color: AppStyle.primColors,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 7),

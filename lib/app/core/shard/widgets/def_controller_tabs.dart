@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive/hive.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
@@ -7,12 +8,12 @@ import 'package:muslimdaily/app/features/quran/SurahModel.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../features/Khatmah/data/khatmah_model.dart';
 import '../../../features/main_view/widget/AzkarQuranWidget.dart';
 import '../../../features/main_view/widget/OtherAzkarWidget.dart';
 import '../../controller/timing.dart';
 import '../../cubit/centralized_cubit.dart';
 import '../exports/all_exports.dart';
-
 
 // class DefControllerTabs extends StatefulWidget {
 //   const DefControllerTabs({super.key});
@@ -143,9 +144,11 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
   late MainController con;
 
   late CentralizedCubit centralizedCubit;
-int? verseId;
-String? verseName;
+  int? verseId;
+  String? verseName;
   List<SurahModel>? surahModel;
+  late final Box<KhatmahModel> box;
+  late final Box plansBox; // khatmahPlans
   @override
   void initState() {
     centralizedCubit = context.read<CentralizedCubit>();
@@ -157,17 +160,22 @@ String? verseName;
     loadVerseName();
     loadSurahs();
     loadBookmark();
+    box = Hive.box<KhatmahModel>('khatmahBox'); // نفس الاسم اللي بتفتحه في main
+    plansBox = Hive.box('khatmahPlans');
   }
+
   void loadBookmark() async {
     final id = await getBookmark();
     setState(() {
       // bookmarkId = id;
     });
   }
+
   Future<int?> getBookmark() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('bookmark_verseId');
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -181,22 +189,27 @@ String? verseName;
       verseId = id;
     });
   }
+
   void loadVerseName() async {
     final name = await getVerseName();
     setState(() {
       verseName = name;
     });
   }
+
   Future<String?> getVerseName() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('bookmark_verseName');
   }
+
   Future<int?> getVerseId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('bookmark_verseId');
   }
+
   void loadSurahs() async {
-    final loadedSurahs = await loadSurahList(); // تحميل القائمة من SharedPreferences
+    final loadedSurahs =
+        await loadSurahList(); // تحميل القائمة من SharedPreferences
     setState(() {
       surahModel = loadedSurahs; // تخزينها في المتغير
     });
@@ -208,11 +221,12 @@ String? verseName;
 
     if (jsonList == null) return [];
 
-    return jsonList.map((jsonStr) => SurahModel.fromJson(jsonDecode(jsonStr))).toList();
+    return jsonList
+        .map((jsonStr) => SurahModel.fromJson(jsonDecode(jsonStr)))
+        .toList();
   }
 
-  final List<Map<String, String>> iconsApp =
-  [
+  final List<Map<String, String>> iconsApp = [
     {
       "title": "أَذْكَارُ الصَّبَاحِ",
       "icon": "assets/images/contrast.png",
@@ -258,6 +272,11 @@ String? verseName;
       "icon": "assets/icons/radio.png",
       "navigate": "/QuranRadioView"
     },
+    {
+      "title": "الختمات المنجزه",
+      "icon": "assets/icons/radio.png",
+      "navigate": "/compplateKhatna"
+    },
     // {
     //   "title": "قناة القران الكريم",
     //   "icon": "assets/icons/radio.png",
@@ -272,19 +291,20 @@ String? verseName;
       "title": "عَنَّا",
       "icon": "assets/images/info (1).png",
       "navigate": "/about"
-    } ,
-
+    },
   ];
-
 
   @override
   Widget build(BuildContext context) {
-    bool isTab =ResponsiveUtil.isTablet(context);
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Colors.transparent,
-    ),
+    final completed = box.values.where((k) => k.isCompleted).toList();
+
+    bool isTab = ResponsiveUtil.isTablet(context);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+      ),
     );
     return Scaffold(
       body: Directionality(
@@ -292,90 +312,127 @@ String? verseName;
         child: SingleChildScrollView(
           child: Column(
             children: [
-        Stack(
-          children: [
-            Image.asset("assets/images/pattern.webp"),
-            Positioned.fill(
-              top: 0,
-              right: 0,
-              left:0 ,
-              child: Container(
-                color: AppColors.primary.withOpacity(0.6),
-              )),
-            Positioned(
-              top: 45,
-                right: 10,
-                child:Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-
-                        children: [
-                          // Icon(Icons.date_range,size: isTab?33:20,color: AppColors.greyLightColor,),
-                          // SizedBox(width: 5.w,),
-                          TextDefaultWidget(title: con.hijriDate ?? "",color: AppColors.greyLightColor,fontSize: 16.sp,),
-                        ],
-                      ),
-                      SizedBox(height: 4.h,),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: TextDefaultWidget(title: con.gregorian ?? "",color: AppColors.greyLightColor,fontSize: 15.sp,),
+              Stack(
+                children: [
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: isTab
+                          ? MediaQuery.of(context).size.height / 3.5
+                          : MediaQuery.of(context).size.height,
+                      child: Image.asset(
+                        "assets/images/pattern.webp",
+                        height: isTab
+                            ? MediaQuery.of(context).size.height / 3.5
+                            : MediaQuery.of(context).size.height,
+                        fit: BoxFit.cover,
+                      )),
+                  Positioned.fill(
+                      top: 0,
+                      right: 0,
+                      left: 0,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: isTab
+                            ? MediaQuery.of(context).size.height / 3.5
+                            : MediaQuery.of(context).size.height,
+                        color:Theme.of(context).brightness == Brightness.dark ?Colors.black.withOpacity(0.7) : AppColors.primaryAlt.withOpacity(0.5),
+                      )),
+                  Positioned(
+                      top: 45,
+                      right: 10,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                // Icon(Icons.date_range,size: isTab?33:20,color: AppColors.greyLightColor,),
+                                // SizedBox(width: 5.w,),
+                                TextDefaultWidget(
+                                  title: con.hijriDate,
+                                  color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
+                                  fontSize:isTab ? 12.sp: 16.sp,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 4.h,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: TextDefaultWidget(
+                                    title: con.gregorian ?? "",
+                                    color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
+                                    fontSize:isTab ? 9.sp: 15.sp,                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )),
+                  Positioned(
+                    top: 45,
+                    left: 10,
+                    child: InkWell(
+                      onTap: () => showThemeSheet(context),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Icons.dark_mode
+                                : Icons.light_mode,
+                            key: ValueKey(Theme.of(context).brightness),
+                            size: isTab ? 33 : 25,
+                            color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
                           ),
-                        ],
+                        ),
                       ),
-                    ],
-                  ),
-                )
-
-            ),
-            Positioned(
-              top: 45, left: 10,
-              child: InkWell(
-                onTap: () => showThemeSheet(context),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Icons.dark_mode
-                          : Icons.light_mode,
-                      key: ValueKey(Theme.of(context).brightness),
-                      size: isTab?33:25,
-                      color: AppColors.greyLightColor,
                     ),
                   ),
-                ),
+                  Positioned(
+                      top: isTab ? 180 : 100,
+                      right: isTab ? 330 : 130,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextDefaultWidget(
+                              title: "الصلاة القادمة",
+                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
+                              fontSize: isTab ? 12.sp : 25.sp,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "me",
+                            ),
+                            TextDefaultWidget(
+                              title: con.nextPrayer,
+                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
+                              fontSize: isTab ? 12.sp : 25.sp,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "me",
+                            ),
+                            TextDefaultWidget(
+                              title: con.remainingTimeText,
+                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
+                              fontSize: isTab ? 12.sp : 25.sp,
+                              fontFamily: "cairo",
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ],
+                        ),
+                      )),
+                ],
               ),
-            ),
-
-            Positioned(
-              top: 100,
-                right: isTab? 300:130,
-                child:Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextDefaultWidget(title: "الصلاة القادمة",color: AppColors.greyLightColor,fontSize: 25.sp,fontWeight: FontWeight.bold,fontFamily: "me",),
-                      TextDefaultWidget(title: con.nextPrayer,color:AppColors.greyLightColor,fontSize: 25.sp,fontWeight: FontWeight.bold,fontFamily: "me",),
-                      TextDefaultWidget(title: con.remainingTimeText,color: AppColors.greyLightColor,fontSize: 20.sp,fontFamily: "cairo",fontWeight: FontWeight.bold,),
-
-                    ],
-                  ),
-                )
-
-            ),
-          ],
-        ),
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.center,
               //   children: [
@@ -390,9 +447,9 @@ String? verseName;
               //     ),
               //   ],
               // ),
-               // const Padding(
-               //    padding: EdgeInsets.symmetric(vertical: 15),
-               //    child: GreetingWidget()),
+              // const Padding(
+              //    padding: EdgeInsets.symmetric(vertical: 15),
+              //    child: GreetingWidget()),
               // Row(
               //   children: [
               //     Expanded(
@@ -508,15 +565,15 @@ String? verseName;
               const SizedBox(height: 10),
               // MediaQuery.sizeOf(context).width > 600
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                padding:  EdgeInsets.symmetric(horizontal: isTab?10.w: 5.0),
                 child: SizedBox(
                   child: GridView.count(
                     crossAxisCount: 3,
                     crossAxisSpacing:
-                        MediaQuery.sizeOf(context).width > 600 ? 18 : 7,
-                    mainAxisSpacing: 15,
+                    isTab ? 30 : 7,
+                    mainAxisSpacing:isTab? 20:15,
                     childAspectRatio:
-                        MediaQuery.sizeOf(context).width > 600 ? 1.6 : 01.20,
+                    isTab?  1.9 : 01.20,
                     shrinkWrap: true,
 
                     physics: const NeverScrollableScrollPhysics(),
@@ -526,17 +583,15 @@ String? verseName;
                         builder: (context, state) {
                           return InkWell(
                             onTap: () {
-
-
-                              bool needsInternet = item["navigate"] ==  Routes.categoriesRoute ||
-                                  item["navigate"] == "/qiblaDirection";
+                              bool needsInternet = item["navigate"] == Routes.categoriesRoute ||
+                                      item["navigate"] == "/qiblaDirection";
 
                               (state is ConnectivityState &&
                                               state.status ==
                                                   ConnectivityStatus
                                                       .disconnected) ==
                                           true &&
-                                  needsInternet
+                                      needsInternet
                                   ? Fluttertoast.showToast(
                                       msg: "يرجي التحقق من اتصالك بالانترنت")
                                   : Navigator.pushNamed(
@@ -585,7 +640,8 @@ String? verseName;
                             //     ),
                             //   ),
                             // ),
-                            child: IslamicCardWidget(title: item["title"]!, iconPath: item["icon"]!),
+                            child: IslamicCardWidget(
+                                title: item["title"]!, iconPath: item["icon"]!),
                           );
                         },
                       );
@@ -684,7 +740,6 @@ String? verseName;
               //     ),
               //   ),
               // ),
-
             ],
           ),
         ),
@@ -852,9 +907,7 @@ class IslamicHeaderWidget extends StatelessWidget {
       ],
     );
   }
-
 }
-
 
 class IslamicCardWidget extends StatelessWidget {
   final String title;
@@ -872,21 +925,18 @@ class IslamicCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.sizeOf(context).width > 600;
 
-    return GestureDetector(
+    return  GestureDetector(
       onTap: onTap,
       child: Container(
-        width: isTablet ? 130 : 95,
-        height: isTablet ? 120 : 90,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          // gradient: LinearGradient(
-          //   colors: [
-          //     const Color(0xFFFAF3E0),
-          //     const Color(0xFFF1E5C3),
-          //   ],
-          //   begin: Alignment.topLeft,
-          //   end: Alignment.bottomRight,
-          // ),
+          image: const DecorationImage(
+            opacity: 0.4,
+            image: AssetImage("assets/images/8180jjj00005.webp"),
+            fit: BoxFit.cover, // مهم عشان الصورة تغطي الخلفية كلها
+          ),
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).cardColor,
@@ -895,7 +945,7 @@ class IslamicCardWidget extends StatelessWidget {
             ),
           ],
           border: Border.all(
-            color: const Color(0xFFD4AF37), // لون ذهبي راقٍ
+            color: const Color(0xFFD4AF37),
             width: 1.2,
           ),
         ),
@@ -904,34 +954,11 @@ class IslamicCardWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  // shape: BoxShape.circle,
-                  // gradient: LinearGradient(
-                  //   colors:  [
-                  //     Theme.of(context).brightness == Brightness.dark ?  Color(
-                  //         0xFF272725):KColors.whiteGrayColor,
-                  //     Theme.of(context).brightness == Brightness.dark ?  Color(
-                  //         0xFF191816):KColors.whiteGrayColor,
-                  //   ],
-                  //   begin: Alignment.topLeft,
-                  //   end: Alignment.bottomRight,
-                  // ),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Colors.brown.withOpacity(0.3),
-                  //     blurRadius: 5,
-                  //     offset: const Offset(0, 3),
-                  //   ),
-                  // ],
-                ),
-                child: Image.asset(
-                  iconPath,
-                  width: isTablet ? 45 : 25,
-                  height: isTablet ? 45 : 25,
-                  fit: BoxFit.fill,
-                ),
+              Image.asset(
+                iconPath,
+                width: isTablet ? 45 : 25,
+                height: isTablet ? 45 : 25,
+                fit: BoxFit.fill,
               ),
               Text(
                 title,
@@ -952,6 +979,7 @@ class IslamicCardWidget extends StatelessWidget {
         ),
       ),
     );
+
   }
 }
 
@@ -966,14 +994,14 @@ void showThemeSheet(BuildContext ctx) {
     ),
     builder: (bc) {
       ListTile tile(String title, IconData icon, ThemeMode mode) => ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        trailing: current == mode ? const Icon(Icons.check) : null,
-        onTap: () async {
-          await cubit.setThemeMode(mode);
-          Navigator.pop(bc);
-        },
-      );
+            leading: Icon(icon),
+            title: Text(title),
+            trailing: current == mode ? const Icon(Icons.check) : null,
+            onTap: () async {
+              await cubit.setThemeMode(mode);
+              Navigator.pop(bc);
+            },
+          );
       return SafeArea(
         child: Directionality(
           textDirection: TextDirection.rtl,
@@ -981,7 +1009,8 @@ void showThemeSheet(BuildContext ctx) {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 8),
-              const Text('اختر النمط', style: TextStyle(fontSize: 18,fontFamily: "cairo")),
+              const Text('اختر النمط',
+                  style: TextStyle(fontSize: 18, fontFamily: "cairo")),
               tile('فاتح', Icons.light_mode, ThemeMode.light),
               tile('داكن', Icons.dark_mode, ThemeMode.dark),
               tile('حسب النظام', Icons.phone_android, ThemeMode.system),

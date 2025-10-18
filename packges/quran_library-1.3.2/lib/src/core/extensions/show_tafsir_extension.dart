@@ -91,7 +91,7 @@ extension ShowTafsirExtension on void {
 
     // تحديد قيمة isDark مبدئيًا إذا لم يتم تمريرها
     // Set default value for isDark if not passed
-    final bool isDarkMode = isDark ?? false;
+    // final bool isDarkMode = isDark ?? false;
 
     // التحقق من صحة السياق
     // Check context validity
@@ -137,9 +137,9 @@ extension ShowTafsirExtension on void {
                   child: Container(
                     height: MediaQuery.of(modalContext).size.height * 0.9,
                     decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? const Color(0xff1E1E1E)
-                          : const Color(0xfffaf7f3),
+                      // color: isDarkMode
+                      //     ? const Color(0xff1E1E1E)
+                      //     : const Color(0xfffaf7f3),
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(16),
                       ),
@@ -161,21 +161,27 @@ extension ShowTafsirExtension on void {
                     body: Column(
                       children: [
                         ShowTafseer(
+
                           context: modalContext,
                           ayahUQNumber: ayahUQNum,
                           ayahNumber: ayahNumber,
                           pageIndex: pageIndex,
-                          isDark: isDarkMode,
+                          isDark:  Theme.of(modalContext).brightness == Brightness.dark?true:false,
                           tafsirStyle: TafsirStyle(
-                            backgroundColor: isDarkMode
-                                ? const Color(0xff1E1E1E)
-                                : const Color(0xfffaf7f3),
+
+                            textColor: Theme.of(modalContext).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
+
+
+                            backgroundColor:Theme.of(modalContext).brightness == Brightness.dark ?Theme.of(context).cardColor:Theme.of(context).cardColor,
                             tafsirNameWidget: Text(
                               'التفسير',
                               style: QuranLibrary().naskhStyle.copyWith(
+
                                     fontSize: 24,
                                     fontFamily: "cairo",
-                                    color: isDarkMode
+                                    color: Theme.of(modalContext).brightness == Brightness.dark
                                         ? Colors.white
                                         : Colors.black,
                                   ),
@@ -183,7 +189,9 @@ extension ShowTafsirExtension on void {
                             fontSizeWidget: Icon(
                               Icons.text_format_outlined,
                               size: 34,
-                              color: isDarkMode ? Colors.white : Colors.black,
+                              color: Theme.of(modalContext).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
                             ),
                           ),
                         ),

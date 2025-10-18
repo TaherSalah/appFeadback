@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/style/k_color.dart';
+import '../../../core/utils/style/k_helper.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import '../../../core/widgets/custom_text_widget.dart';
 
@@ -103,39 +104,45 @@ class _OtherAzkarWidgetState extends State<OtherAzkarWidget> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: const BorderDirectional(
-              start: BorderSide(color: Color(0xffd6bb7a), width: 3),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Container(
+            // height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              image: DecorationImage(image: AssetImage("assets/images/pattern.webp",),fit: BoxFit.cover,opacity: 0.2),
+
+              borderRadius: BorderRadius.circular(10),
+              border: const BorderDirectional(
+                start: BorderSide(color: Color(0xffd6bb7a), width: 3),
+              ),
+              color: Theme.of(context).cardColor,
             ),
-            color: Theme.of(context).cardColor,
-          ),
-          width: MediaQuery.sizeOf(context).width,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "أدعية مختارة",
-                  style: GoogleFonts.cairo(
-                      fontWeight: FontWeight.bold, fontSize:MediaQuery.sizeOf(context).width >600?10.sp:  15.sp),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  azkar[currentIndex],
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(fontSize: MediaQuery.sizeOf(context).width >600?25: 16),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "أدعية مختارة",
+                    style: GoogleFonts.cairo(
+                        fontWeight: FontWeight.bold, fontSize:MediaQuery.sizeOf(context).width >600?10.sp:  15.sp),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    azkar[currentIndex],
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(fontSize: MediaQuery.sizeOf(context).width >600?25: 16),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
         Positioned(
-            top: 10,
-            left: 45,
+            top: 15,
+            left: 55,
             child: InkWell(
               onTap: () {
                 Share.share(
@@ -150,23 +157,25 @@ class _OtherAzkarWidgetState extends State<OtherAzkarWidget> {
               ),
             )),
         Positioned(
-            top: 10,
-            left: 10,
+            top: 15,
+            left: 20,
             child: InkWell(
               onTap: () {
                 Clipboard.setData(ClipboardData(text: azkar[currentIndex]));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      backgroundColor: CentralizedCubit.isDarkMode
-                          ? KColors.blackColor
-                          : KColors.whiteColor,
-                      content: TextWidget(
-                          fontSize: ResponsiveUtil.isTablet(context)
-                              ? 10.sp
-                              : 12.sp,
-                          textAlign: TextAlign.right,
-                          title: '! تم نسخ الدعاء إلى الحافظة')),
-                );
+                KHelper.showSuccess(message:  'تم نسخ الدعاء إلى الحافظة !');
+
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   SnackBar(
+                //       backgroundColor: CentralizedCubit.isDarkMode
+                //           ? KColors.blackColor
+                //           : KColors.whiteColor,
+                //       content: TextWidget(
+                //           fontSize: ResponsiveUtil.isTablet(context)
+                //               ? 10.sp
+                //               : 12.sp,
+                //           textAlign: TextAlign.right,
+                //           title: '! تم نسخ الدعاء إلى الحافظة')),
+                // );
               },
               child: Icon(
                 Icons.copy,

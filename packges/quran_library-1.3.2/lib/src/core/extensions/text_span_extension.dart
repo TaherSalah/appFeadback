@@ -59,12 +59,12 @@ extension _TextSpanExtension on String {
               fontFamily: 'uthmanic2',
               package: "quran_library");
         } else if (isSquareBracketMatch) {
-          matchedTextStyle = const TextStyle(color: Color(0xff814714));
+          matchedTextStyle = const TextStyle(color: Color(0xffe4c000));
         } else if (isDashMatch) {
-          matchedTextStyle = const TextStyle(color: Color(0xff814714));
+          matchedTextStyle = const TextStyle(color: Color(0xffe4c000));
         } else {
           matchedTextStyle = const TextStyle(
-              color: Color(0xffa24308),
+              color: Color(0xffe4c000),
               fontFamily: 'naskh',
               package: "quran_library");
         }

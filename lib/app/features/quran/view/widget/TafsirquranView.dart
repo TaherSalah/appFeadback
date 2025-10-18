@@ -231,10 +231,10 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
           child: AppBar(
             leading:
-                const CupertinoNavigationBarBackButton(color: Colors.black),
+                 CupertinoNavigationBarBackButton(color: Theme.of(context).brightness == Brightness.dark ? Colors.white:Colors.black),
             centerTitle: true,
             title: Text(
-              "تفسير القرآن الكريم",
+              "كتب تفسير القرآن الكريم",
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
@@ -279,7 +279,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                             SizedBox(
                               width: double.infinity,
                               child: Card(
-                                color: const Color(0xFFFFFFFF),
+                                // color: const Color(0xFFFFFFFF),
                                 shadowColor:
                                     KColors.whiteColor.withOpacity(0.6),
                                 elevation: 2,
@@ -302,9 +302,9 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                                       ),
                                       TextWidget(
                                         title: ayah[index].name,
-                                        color: isDark
-                                            ? KColors.scoColor
-                                            : KColors.primary2Color,
+                                        // color: isDark
+                                        //     ? KColors.scoColor
+                                        //     : KColors.primary2Color,
                                         fontWeight: FontWeight.w600,
                                         fontSize:
                                             ResponsiveUtil.isTablet(context)
@@ -325,7 +325,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                               child: InkWell(
                                 onTap: () => _handleDownloadOrOpen(index),
                                 child: CircleAvatar(
-                                  backgroundColor: Colors.white,
+                                  // backgroundColor: Colors.white,
                                   radius:ResponsiveUtil.isTablet(context)? 25:21,
                                   child: Builder(
                                     builder: (_) {
@@ -347,14 +347,14 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                                         return  Icon(
                                           Icons.open_in_new,
                                           size:ResponsiveUtil.isTablet(context)? 28:22,
-                                          color: Colors.black,
+                                          // color: Colors.black,
                                         );
                                       }
                                       // ⬇️ لم يُنزّل بعد — أيقونة تنزيل
                                       return  Icon(
                                         Icons.download,
                                         size:ResponsiveUtil.isTablet(context)? 28:22,
-                                        color: Colors.green,
+                                        // color: Colors.green,
                                       );
                                     },
                                   ),

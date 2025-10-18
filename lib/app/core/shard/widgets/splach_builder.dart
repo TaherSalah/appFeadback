@@ -16,7 +16,7 @@ class _SplashItemBuilderState extends State<SplashItemBuilder> {
     return Container(
       width: double.infinity.w,
       height: double.infinity.h,
-      color: Colors.white,
+      // color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,

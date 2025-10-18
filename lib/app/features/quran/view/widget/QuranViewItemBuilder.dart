@@ -28,17 +28,26 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   late List<DrawerModle?> topBar = [
     DrawerModle(
         icon: Icons.search, title: "البحث بالاية", route: "/ayaSearchScreen"),
-
     DrawerModle(
-        icon: Icons.favorite_border,
-        title: "فضل قرأه القران",
-        route: Routes.quranLoveRoute),
+        icon: Icons.gpp_good_outlined,
+        title: "التفسير",
+        route: Routes.tafsirQuranRoute),
+
     DrawerModle(
         icon: Icons.list, title: "فهرس القران الكريم", route: "/ListScreen"),
     DrawerModle(
         icon: Icons.dashboard_customize_outlined,
         title: "الاجزاء",
         route: Routes.jozzaListScreenRoute),
+    DrawerModle(
+        icon: Icons.favorite_border,
+        title: "فضل قرأه القران",
+        route: Routes.quranLoveRoute),
+    DrawerModle(
+        icon: Icons.category_outlined,
+        title: "الاحزاب",
+        route: Routes.hizbeListScreenRoute),
+
     DrawerModle(
         icon: Icons.chrome_reader_mode_outlined,
         title: "انشاء ختمة جديدة",
@@ -50,10 +59,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
 
         route: "/compplateKhatna"),
 
-    DrawerModle(
-        icon: Icons.category_outlined,
-        title: "الاحزاب",
-        route: Routes.hizbeListScreenRoute),
     DrawerModle(
       icon: Icons.bookmark_add_outlined,
       title: "اضافة علامة للصفحة",
@@ -69,22 +74,18 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       title: "انتقال الي العلامه",
       onTap: _goToBookmark,
     ),
-    // DrawerModle(
-    //     icon: Icons.bookmarks_outlined,
-    //     title: "الايات المحفوظة",
-    //     route: "/ayaBookmarkScreen"),
+    DrawerModle(
+        icon: Icons.bookmarks_outlined,
+        title: "الايات المحفوظة",
+        route: "/ayaBookmarkScreen"),
     DrawerModle(
         icon: Icons.info_outline,
         title: "دعاء ختم القران الكريم",
         route: Routes.quranKhitamRoute),
-    DrawerModle(
-        icon: Icons.gpp_good_outlined,
-        title: "التفسير",
-        route: Routes.tafsirQuranRoute),
-    DrawerModle(
-        icon: Icons.dark_mode_outlined,
-        title: "الوضع الليلي",
-        onTap: _changeMode),
+    // DrawerModle(
+    //     icon: Icons.dark_mode_outlined,
+    //     title: "الوضع الليلي",
+    //     onTap: _changeMode),
   ];
 
   int? _currentPage = 0;
@@ -218,6 +219,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         ),
 
         body: Container(
+          width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.zero,
           decoration: const BoxDecoration(
             // color: isDark ? Colors.black : AppStyle.bgColors,
@@ -236,8 +238,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       child:
                           KLoading.progressIOSIndicator()) // لحد ما يجيب الصفحة
                   : QuranLibraryScreen(
-                      ayaFontSize: double.parse(selectedFontSize),
-                      isDark: isDark,
+
+                      // ayaFontSize: double.parse(selectedFontSize),
+                      isDark:   Theme.of(context).brightness == Brightness.dark?true:false,
                       pageIndex: _currentPage!,
                       // // يبدأ من آخر صفحة محفوظة
                       // backgroundColor:

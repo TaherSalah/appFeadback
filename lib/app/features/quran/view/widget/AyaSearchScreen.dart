@@ -80,6 +80,11 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 12, left: 8, top: 10),
               child: CupertinoSearchTextField(
+                itemColor: Theme.of(context).brightness == Brightness.dark?Colors.white: Colors.black,
+style: TextStyle(
+  color: Theme.of(context).brightness == Brightness.dark?Colors.white: Colors.black,
+
+),
                 onSuffixTap: () {
                   searchKey.clear();
                   setState(() {
@@ -158,7 +163,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                             child: Center(
                               child: Card(
                                 elevation: 3,
-                                color: Colors.white,
+                                // color: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -182,7 +187,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                             child: Center(
                               child: Card(
                                 elevation: 3,
-                                color: Colors.white,
+                                // color: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
