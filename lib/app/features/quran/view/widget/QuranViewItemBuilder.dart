@@ -204,6 +204,29 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                     size: 30,
                   ),
                 ),
+
+              ),
+              FontsDownloadDialog(
+                downloadFontsDialogStyle: DownloadFontsDialogStyle(
+                  title: 'الخطوط',
+                  titleColor: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                  notes: 'لجعل مظهر المصحف مطابقًا لمصحف المدينة قم بتحميل الخطوط.',
+                  notesColor: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                  linearProgressBackgroundColor: Colors.blue.shade100,
+                  linearProgressColor: Colors.blue,
+                  downloadButtonBackgroundColor: Colors.blue,
+                  downloadingText: 'جارِ التحميل',
+                  backgroundColor: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xff1E1E1E)
+                      : const Color(0xFFF7EFE0),
+                ),
+                languageCode: 'ar',
+                isFontsLocal: false, // تحميل من النت
+                isDark: Theme.of(context).brightness == Brightness.dark,
               ),
             ],
             centerTitle: true,
