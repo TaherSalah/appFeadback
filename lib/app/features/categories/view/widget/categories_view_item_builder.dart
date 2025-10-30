@@ -62,7 +62,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: SvgPicture.asset("assets/icons/arrow.svg",color: Colors.black,height: 25,))
+                child: SvgPicture.asset("assets/icons/arrow.svg",color: Theme.of(context).brightness == Brightness.dark ?Colors.white:Colors.black,height: 25,))
           ],
         ),
 
@@ -304,6 +304,8 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                 error: (value) => TextWidget(title: value.failure),
                 loading: (value) => KLoading.progressIOSIndicator(radius: 15),
                 success: (value) {
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+
                   return GridView.builder(
                       padding: EdgeInsets.zero,
                       itemCount: value.categoriesModal?.length,
@@ -318,6 +320,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                               vertical: 2, horizontal: 2),
                           child: InkWell(
                               onTap: () {
+                                // print(value.categoriesModal?[index].id);
                                 Navigator.pushNamed(
                                     context, Routes.cateDetailsRoute,
                                     arguments: CategoriesDetailsPrams(
@@ -331,9 +334,9 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                                     ));
                               },
                               child: Card(
-                                shadowColor:
-                                    KColors.whiteColor.withOpacity(0.6),
-                                elevation: 2,
+                                // shadowColor:
+                                //     KColors.whiteColor.withOpacity(0.6),
+                                // elevation: 2,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 8, horizontal: 10),
@@ -347,8 +350,8 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                                                 .categoriesModal?[index].title
                                                 .toString() ??
                                             "",
-                                        color: CentralizedCubit.isDarkMode
-                                            ? KColors.scoColor
+                                        color: isDark
+                                            ? KColors.whiteColor
                                             : KColors.blackColor,
                                         fontWeight: FontWeight.w600,
 
@@ -368,7 +371,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                                                 600
                                                 ? 5.5.sp
                                                 : 10.sp,
-                                            color: CentralizedCubit.isDarkMode
+                                            color: isDark
                                                 ? KColors.circularPercentBg
                                                 : KColors.greyColor,
                                             fontWeight: FontWeight.bold,
@@ -382,8 +385,8 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                                                 600
                                                 ? 5.5.sp
                                                 : 10.sp,
-                                            color: CentralizedCubit.isDarkMode
-                                                ? KColors.circularPercentBg
+                                            color: isDark
+                                                ? KColors.accentColorD
                                                 : KColors.greyColor,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -445,7 +448,7 @@ class CardPackagesExamBuilderWidget extends StatelessWidget {
       return Padding(
           padding: EdgeInsets.symmetric(vertical: 7.h, horizontal: 4.w),
           child: Card(
-              elevation: 7,
+              // elevation: 7,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -70,6 +70,7 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Stack(
       children: [
         Padding(
@@ -77,7 +78,7 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
           child: Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage("assets/images/pattern.webp",),fit: BoxFit.cover,opacity: 0.2),
+              image:isDark?null: const DecorationImage(image: AssetImage("assets/images/pattern.webp",),fit: BoxFit.cover,opacity: 0.2),
 
               borderRadius: BorderRadius.circular(10),
               border: const BorderDirectional(
@@ -119,7 +120,7 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
               },
               child: Icon(
                 Icons.share,
-                color: CupertinoColors.darkBackgroundGray,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.white: CupertinoColors.darkBackgroundGray,
                 size: MediaQuery.sizeOf(context).width>600?25: 20,
               ),
             )),
@@ -147,7 +148,8 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
               },
               child: Icon(
                 Icons.copy,
-                color: CupertinoColors.systemRed,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.deepOrangeAccent: CupertinoColors.systemRed,
+
                 size: MediaQuery.sizeOf(context).width>600?25: 20,
               ),
             )),

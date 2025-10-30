@@ -101,6 +101,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
           // حدّ أقصى لما نعرضه حسب الإجمالي
           final itemCount =
               total == 0 ? 0 : (_visibleCount > total ? total : _visibleCount);
+          final isDark = Theme.of(context).brightness == Brightness.dark;
 
           // لو لسه محمّل البيانات الأساسية
           final isInitialLoading =
@@ -120,26 +121,26 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                         MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
                   ),
                 ),
-                leading:                   InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, "/ayaSearchScreen");
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Icon(
-                      Icons.search,
-                      size: 30,
-                    ),
-                  ),
-                ),
-
+                // leading:                   InkWell(
+                //   onTap: () {
+                //     Navigator.pushNamed(context, "/ayaSearchScreen");
+                //   },
+                //   child: const Padding(
+                //     padding: EdgeInsets.symmetric(horizontal: 10),
+                //     child: Icon(
+                //       Icons.search,
+                //       size: 30,
+                //     ),
+                //   ),
+                // ),
+leading: SizedBox(),
                 actions: [
 
                   InkWell(
                     onTap: () => Navigator.pop(context),
                     child: SvgPicture.asset(
                       "assets/icons/arrow.svg",
-                      color: Colors.black,
+                      color:isDark? Colors.white :Colors.black,
                       height: 25,
                     ),
                   )
@@ -210,7 +211,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                                 ),
                                 const Spacer(),
                                 TextWidget(
-                                  color: CentralizedCubit.isDarkMode
+                                  color: isDark
                                       ? KColors.scoColor
                                       : KColors.primary2Color,
                                   fontWeight: FontWeight.w600,
@@ -232,10 +233,10 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
 
               // Loader صغير تحت لما نزود الدُفعات
               if (_isLoadingMore && itemCount > 0 && itemCount < total)
-                const SliverToBoxAdapter(
+                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child: CircularProgressIndicator()),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child:KLoading.progressIOSIndicator() ),
                   ),
                 ),
             ],

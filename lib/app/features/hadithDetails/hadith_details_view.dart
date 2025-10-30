@@ -23,6 +23,8 @@ class HadithDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
     final key = GlobalKey<ExpandableFabState>();
     return BlocProvider<HadithDetailsBloc>(
@@ -51,7 +53,7 @@ class HadithDetailsView extends StatelessWidget {
                           // Show a snackbar to indicate that the text has been copied
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                backgroundColor: CentralizedCubit.isDarkMode
+                                backgroundColor: isDark
                                     ? KColors.blackColor
                                     : KColors.whiteColor,
                                 content: TextWidget(

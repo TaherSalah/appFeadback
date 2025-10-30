@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'dart:math' as math;
 import 'package:vector_math/vector_math.dart' as vector;
@@ -112,16 +113,16 @@ print("permission ${permission == LocationPermission.denied}");
     if (_heading != null && _qiblaDirection != null) {
       angle = (_qiblaDirection! - _heading!) % 360;
     }
-
+final isDark = Theme.of(context).brightness == Brightness.dark;
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         // backgroundColor: AppStyle.bgColors,
         appBar: PreferredSize(
           preferredSize:
-              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
-            leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
+            leading:  CupertinoNavigationBarBackButton(color:  isDark
                 ? Colors.white
                 : Colors.black,),
             centerTitle: true,
@@ -146,7 +147,7 @@ print("permission ${permission == LocationPermission.denied}");
                       ? const CircularProgressIndicator()
                       : Transform.rotate(
                           angle: vector.radians(angle),
-                          child: Image.asset("assets/images/qibla-compass.png"),
+                          child: Image.asset("assets/images/qibla-compass.png",color:isDark ?Colors.white:Colors.black,),
                         )),
               const SizedBox(height: 20),
               Stack(
@@ -167,13 +168,14 @@ print("permission ${permission == LocationPermission.denied}");
                                   textAlign: TextAlign.center,
                                   title: "الموقع الحالي: $_locationName",
                                   fontSize: 15,
-                                  color: Colors.indigo,
+                                  color:isDark? Colors.amberAccent:Colors.indigo,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: TextWidget(
+                                fontSize: ResponsiveUtil.isTablet(context)?9.sp:13.sp,
                                 title:
                                     "زاوية القبلة: ${_qiblaDirection?.toStringAsFixed(2) ?? "0.0"}°",
                               ),
@@ -181,13 +183,14 @@ print("permission ${permission == LocationPermission.denied}");
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: TextWidget(
+                                fontSize: ResponsiveUtil.isTablet(context)?9.sp:13.sp,
                                 title:
                                     "اتجاه الجهاز: ${_heading?.toStringAsFixed(2) ?? "0.0"}°",
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8.0),                              child: TextWidget(
-
+                              fontSize: ResponsiveUtil.isTablet(context)?9.sp:13.sp,
                                   title:
                                       "الفرق: ${angle?.toStringAsFixed(2) ?? "0.0"}°",
                                   ),
@@ -195,7 +198,7 @@ print("permission ${permission == LocationPermission.denied}");
                             TextWidget(
                               title:
                               angle == null ? '' : _getDirectionMessage(angle),
-                              fontSize: 20,
+                              fontSize: ResponsiveUtil.isTablet(context)?10.sp:20,
                               fontFamily: "maja",
                               color:
                               (angle != null && (angle < 10 || angle > 350))

@@ -239,7 +239,7 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
     },
     {
       "title": "السبحة",
-      "icon": "assets/images/tasbih.png",
+      "icon": "assets/images/tasbih21.png",
       "navigate": "/azkarCounter"
     },
     {
@@ -259,7 +259,7 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
     },
     {
       "title": "الْقِبْلَةِ",
-      "icon": "assets/images/qibla-compass.png",
+      "icon": "assets/images/qibla (1).png",
       "navigate": "/qiblaDirection"
     },
     {
@@ -274,6 +274,11 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
     },
     {
       "title": "الختمات المنجزه",
+      "icon": "assets/icons/radio.png",
+      "navigate": "/compplateKhatna"
+    },
+    {
+      "title": " اورادك من الذكر",
       "icon": "assets/icons/radio.png",
       "navigate": "/compplateKhatna"
     },
@@ -313,12 +318,13 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
           child: Column(
             children: [
               Stack(
+                alignment: Alignment.bottomCenter,
                 children: [
                   SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: isTab
                           ? MediaQuery.of(context).size.height / 3.5
-                          : MediaQuery.of(context).size.height,
+                          : MediaQuery.of(context).size.height/2.8,
                       child: Image.asset(
                         "assets/images/pattern.webp",
                         height: isTab
@@ -335,7 +341,9 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
                         height: isTab
                             ? MediaQuery.of(context).size.height / 3.5
                             : MediaQuery.of(context).size.height,
-                        color:Theme.of(context).brightness == Brightness.dark ?Colors.black.withOpacity(0.7) : AppColors.primaryAlt.withOpacity(0.5),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withOpacity(0.8)
+                            : AppColors.secondaryLight.withOpacity(0.6),
                       )),
                   Positioned(
                       top: 45,
@@ -352,8 +360,11 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
                                 // SizedBox(width: 5.w,),
                                 TextDefaultWidget(
                                   title: con.hijriDate,
-                                  color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
-                                  fontSize:isTab ? 12.sp: 16.sp,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? AppColors.greyLightColor
+                                      : Colors.black,
+                                  fontSize: isTab ? 12.sp : 14.sp,
                                 ),
                               ],
                             ),
@@ -369,8 +380,12 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
                                       horizontal: 8.0),
                                   child: TextDefaultWidget(
                                     title: con.gregorian ?? "",
-                                    color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
-                                    fontSize:isTab ? 9.sp: 15.sp,                                  ),
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppColors.greyLightColor
+                                        : Colors.black,
+                                    fontSize: isTab ? 9.sp : 12.sp,
+                                  ),
                                 ),
                               ],
                             ),
@@ -378,7 +393,7 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
                         ),
                       )),
                   Positioned(
-                    top: 45,
+                    top: 50,
                     left: 10,
                     child: InkWell(
                       onTap: () => showThemeSheet(context),
@@ -391,46 +406,94 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
                                 ? Icons.dark_mode
                                 : Icons.light_mode,
                             key: ValueKey(Theme.of(context).brightness),
-                            size: isTab ? 33 : 25,
-                            color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
+                            size: isTab ? 33 : 20,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.greyLightColor
+                                    : Colors.black,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  Positioned(
-                      top: isTab ? 180 : 100,
-                      right: isTab ? 330 : 130,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextDefaultWidget(
-                              title: "الصلاة القادمة",
-                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
-                              fontSize: isTab ? 12.sp : 25.sp,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "me",
-                            ),
-                            TextDefaultWidget(
-                              title: con.nextPrayer,
-                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
-                              fontSize: isTab ? 12.sp : 25.sp,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "me",
-                            ),
-                            TextDefaultWidget(
-                              title: con.remainingTimeText,
-                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.greyLightColor:Colors.black,
-                              fontSize: isTab ? 12.sp : 25.sp,
-                              fontFamily: "cairo",
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextDefaultWidget(
+                          title: "الصلاة القادمة",
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.greyLightColor
+                              : Colors.black,
+                          fontSize: isTab ? 12.sp : 20.sp,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "me",
                         ),
-                      )),
+                        TextDefaultWidget(
+                          title: con.nextPrayer,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.greyLightColor
+                              : Colors.black,
+                          fontSize: isTab ? 12.sp : 20.sp,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "me",
+                        ),
+                        TextDefaultWidget(
+                          title: con.remainingTimeText,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.greyLightColor
+                              : Colors.black,
+                          fontSize: isTab ? 12.sp : 20.sp,
+                          fontFamily: "cairo",
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Positioned(
+                  //     top: isTab ? 180 : 120,
+                  //     right: isTab ? 330 : 125,
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.center,
+                  //         mainAxisAlignment: MainAxisAlignment.center,
+                  //         children: [
+                  //           TextDefaultWidget(
+                  //             title: "الصلاة القادمة",
+                  //             color: Theme.of(context).brightness ==
+                  //                     Brightness.dark
+                  //                 ? AppColors.greyLightColor
+                  //                 : Colors.black,
+                  //             fontSize: isTab ? 12.sp : 20.sp,
+                  //             fontWeight: FontWeight.bold,
+                  //             fontFamily: "me",
+                  //           ),
+                  //           TextDefaultWidget(
+                  //             title: con.nextPrayer,
+                  //             color: Theme.of(context).brightness ==
+                  //                     Brightness.dark
+                  //                 ? AppColors.greyLightColor
+                  //                 : Colors.black,
+                  //             fontSize: isTab ? 12.sp : 20.sp,
+                  //             fontWeight: FontWeight.bold,
+                  //             fontFamily: "me",
+                  //           ),
+                  //           TextDefaultWidget(
+                  //             title: con.remainingTimeText,
+                  //             color: Theme.of(context).brightness ==
+                  //                     Brightness.dark
+                  //                 ? AppColors.greyLightColor
+                  //                 : Colors.black,
+                  //             fontSize: isTab ? 12.sp : 20.sp,
+                  //             fontFamily: "cairo",
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     )),
                 ],
               ),
               // Row(
@@ -565,15 +628,13 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
               const SizedBox(height: 10),
               // MediaQuery.sizeOf(context).width > 600
               Padding(
-                padding:  EdgeInsets.symmetric(horizontal: isTab?10.w: 5.0),
+                padding: EdgeInsets.symmetric(horizontal: isTab ? 10.w : 5.0),
                 child: SizedBox(
                   child: GridView.count(
                     crossAxisCount: 3,
-                    crossAxisSpacing:
-                    isTab ? 30 : 7,
-                    mainAxisSpacing:isTab? 20:15,
-                    childAspectRatio:
-                    isTab?  1.9 : 01.20,
+                    crossAxisSpacing: isTab ? 30 : 7,
+                    mainAxisSpacing: isTab ? 20 : 15,
+                    childAspectRatio: isTab ? 1.9 : 01.20,
                     shrinkWrap: true,
 
                     physics: const NeverScrollableScrollPhysics(),
@@ -583,7 +644,8 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
                         builder: (context, state) {
                           return InkWell(
                             onTap: () {
-                              bool needsInternet = item["navigate"] == Routes.categoriesRoute ||
+                              bool needsInternet =
+                                  item["navigate"] == Routes.categoriesRoute ||
                                       item["navigate"] == "/qiblaDirection";
 
                               (state is ConnectivityState &&
@@ -924,62 +986,58 @@ class IslamicCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.sizeOf(context).width > 600;
-
-    return  GestureDetector(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          image: const DecorationImage(
-            opacity: 0.4,
-            image: AssetImage("assets/images/8180jjj00005.webp"),
-            fit: BoxFit.cover, // مهم عشان الصورة تغطي الخلفية كلها
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).cardColor,
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-          border: Border.all(
-            color: const Color(0xFFD4AF37),
-            width: 1.2,
-          ),
+      child:
+
+    Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        // لون خلفية عند الوضع المظلم (اختياري)
+        color: isDark ? Theme.of(context).scaffoldBackgroundColor : null,
+        image: isDark
+            ? null
+            : const DecorationImage(
+          opacity: 0.4,
+          image: AssetImage("assets/images/8180jjj00005.webp"),
+          fit: BoxFit.cover,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Image.asset(
-                iconPath,
-                width: isTablet ? 45 : 25,
-                height: isTablet ? 45 : 25,
-                fit: BoxFit.fill,
-              ),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
-                  fontSize: isTablet ? 13 : 12.sp,
-                  fontWeight: FontWeight.w600,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 2,
-                    )
-                  ],
-                ),
-              ),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).cardColor,
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
+        ],
+        border: Border.all(
+          color: isDark ? Colors.white : const Color(0xFFD4AF37),
+          width: 1.2,
         ),
       ),
-    );
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset(iconPath, width: isTablet ? 22.w : 40.w, height: isTablet ? 22.w : 40.w, fit: BoxFit.fill),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: isTablet ? 13 : 12.sp,
+                fontWeight: FontWeight.w600,
+                shadows: [Shadow(color: Colors.black.withOpacity(0.1), blurRadius: 2)],
+              ),
+            ),
+          ],
+        ),
+      ),
+    )
 
+    );
   }
 }
 

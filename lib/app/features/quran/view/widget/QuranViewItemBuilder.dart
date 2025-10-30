@@ -238,7 +238,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       child:
                           KLoading.progressIOSIndicator()) // لحد ما يجيب الصفحة
                   : QuranLibraryScreen(
-
                       // ayaFontSize: double.parse(selectedFontSize),
                       isDark:   Theme.of(context).brightness == Brightness.dark?true:false,
                       pageIndex: _currentPage!,
@@ -246,7 +245,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       // backgroundColor:
                       //     isDark ? Colors.black : const Color(0xffFFFFF0),
                       topTitleChild: const SizedBox(),
-
                       optimizeScrolling: false,
                       useDefaultAppBar: false,
                       onPageChanged: (page) {

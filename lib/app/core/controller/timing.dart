@@ -205,7 +205,7 @@ class MainController extends ControllerMVC {
         remainingTimeText =
             "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
         nextPrayer =
-            isIqama ? "الإقامة $upcomingPrayerName" : upcomingPrayerName;
+            isIqama ? " الإقامة لصلاة $upcomingPrayerName" : upcomingPrayerName;
       });
     });
   }

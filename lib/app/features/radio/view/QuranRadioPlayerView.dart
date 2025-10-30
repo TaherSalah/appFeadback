@@ -49,6 +49,8 @@ class _QuranRadioPlayerViewState extends State<QuranRadioPlayerView> {
 
     return BlocBuilder<CentralizedCubit, CentralizedState>(
       builder: (context, state) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
         return state is ConnectivityState &&
             state.status == ConnectivityStatus.disconnected
             ? const NoConnectionScreen():  PopScope(
@@ -58,10 +60,10 @@ class _QuranRadioPlayerViewState extends State<QuranRadioPlayerView> {
               // backgroundColor: AppStyle.bgColors,
               appBar: PreferredSize(
                 preferredSize:
-                Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+                Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
                 child: AppBar(
-                  leading: const CupertinoNavigationBarBackButton(
-                    color: Colors.black,
+                  leading:  CupertinoNavigationBarBackButton(
+                    color:isDark? Colors.white :Colors.black,
                   ),
                   // actions: [
                   //   IconButton(

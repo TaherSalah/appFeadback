@@ -228,7 +228,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
         // backgroundColor: AppStyle.bgColors,
         appBar: PreferredSize(
           preferredSize:
-              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
             leading:
                  CupertinoNavigationBarBackButton(color: Theme.of(context).brightness == Brightness.dark ? Colors.white:Colors.black),

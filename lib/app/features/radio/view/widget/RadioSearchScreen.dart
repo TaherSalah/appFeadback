@@ -35,6 +35,7 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final query = searchKey.text.trim();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -47,10 +48,10 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
         // ),
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
-            leading: const CupertinoNavigationBarBackButton(
-              color: Colors.black,
+            leading:  CupertinoNavigationBarBackButton(
+              color:isDark? Colors.white :Colors.black,
             ),
             // actions: [
             //   IconButton(

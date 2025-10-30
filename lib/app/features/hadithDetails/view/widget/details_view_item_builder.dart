@@ -60,6 +60,8 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
         if (state is HadithDetailsStateSuccess ||
             state is MoreHadithDetailsStateSuccess) {
           HadithDetailsBloc bloc = HadithDetailsBloc.get(context);
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+
           return CustomScrollView(
             slivers: [
               SliverAppBar(
@@ -245,7 +247,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: CentralizedCubit.isDarkMode
+                              color: isDark
                                   ? KColors.blackColor
                                   : Theme.of(context).cardColor,
                               borderRadius: BorderRadius.only(
@@ -287,7 +289,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: CentralizedCubit.isDarkMode
+                              color: isDark
                                   ? KColors.blackColor
                                   : Theme.of(context).cardColor,
                               borderRadius: BorderRadius.only(
@@ -329,7 +331,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: CentralizedCubit.isDarkMode
+                              color: isDark
                                   ? KColors.blackColor
                                   : Theme.of(context).cardColor,
                               borderRadius: BorderRadius.only(
@@ -373,7 +375,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: CentralizedCubit.isDarkMode
+                              color: isDark
                                   ? KColors.blackColor
                                   : Theme.of(context).cardColor,
                               borderRadius: BorderRadius.only(
@@ -426,7 +428,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                         decoration: BoxDecoration(
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(10)),
-                                          color: CentralizedCubit.isDarkMode
+                                          color:isDark
                                               ? KColors.blackColor
                                               : Theme.of(context).cardColor,
                                         ),
@@ -505,7 +507,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: CentralizedCubit.isDarkMode
+                              color:isDark
                                   ? KColors.blackColor
                                   : Theme.of(context).cardColor,
                               borderRadius: BorderRadius.only(
@@ -553,7 +555,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                 width: double.infinity,
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                    color: CentralizedCubit.isDarkMode
+                                    color: isDark
                                         ? KColors.blackColor
                                         : Theme.of(context).cardColor,
                                     borderRadius: BorderRadius.only(
@@ -631,7 +633,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                             title:
                                                 '- ${data.title.toString().replaceAll("،", "").replaceAll("؛", "").replaceAll("؟", "")}',
                                             height: 2,
-                                            color: CentralizedCubit.isDarkMode
+                                            color: isDark
                                                 ? KColors.scoColor
                                                 : KColors.greyColor,
                                             fontFamily: "me",

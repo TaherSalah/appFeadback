@@ -70,6 +70,8 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
       },
       child: BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (BuildContext context, state) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+
           return state.maybeMap(
             orElse: () {
               return const TextWidget(title: 'other error ');
@@ -92,7 +94,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                           : Colors.black,),
                       title: TextWidget(
                         title: categoriesDetailsPrams?.subCategoriesName,
-                        color: CentralizedCubit.isDarkMode
+                        color: isDark
                             ? KColors.whiteColor
                             : KColors.blackColor,
                         fontWeight: FontWeight.bold,
@@ -108,7 +110,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                                     borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(5),
                                         bottomLeft: Radius.circular(5))),
-                                color: CentralizedCubit.isDarkMode
+                                color: isDark
                                     ? KColors.blackColor
                                     : KColors.lightYellowColor,
                                 child: Padding(
@@ -116,7 +118,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                                     child: TextWidget(
                                         title:
                                             '${LocalizationManager.call("count-hadiths")} : ${categoriesDetailsPrams?.subCategoriesCount}',
-                                        color: KColors.blackColor,
+                                        color: isDark? Colors.white:KColors.blackColor,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: "me",
                                         fontSize:
@@ -166,7 +168,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 8, horizontal: 10),
                                         child: TextWidget(
-                                            color: CentralizedCubit.isDarkMode
+                                            color: isDark
                                                 ? KColors.whiteColor
                                                 : KColors.blackColor,
                                             maxLines: 2,

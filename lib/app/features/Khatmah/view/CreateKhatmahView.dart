@@ -163,23 +163,55 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
     final source2 = 'البخاري (5054) ومسلم (1159)';
 
 // داخل الواجهة:
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         // backgroundColor: AppStyle.bgColors,
-        appBar: AppBar(
-          leading: const CupertinoNavigationBarBackButton(color: Colors.black),
-          centerTitle: true,
-          title: TextWidget(title:
-          'إنشاء ختمة جديدة',
-            // style: GoogleFonts.cairo(
-            //   color: Colors.green,
-            //   fontWeight: FontWeight.bold,
-            //   fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
-            // ),
+        // appBar: AppBar(
+        //   leading: const CupertinoNavigationBarBackButton(color: Colors.black),
+        //   centerTitle: true,
+        //   title: TextWidget(title:
+        //   'إنشاء ختمة جديدة',
+        //     // style: GoogleFonts.cairo(
+        //     //   color: Colors.green,
+        //     //   fontWeight: FontWeight.bold,
+        //     //   fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+        //     // ),
+        //   ),
+        // ),
+          appBar: PreferredSize(
+            preferredSize:
+            Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+            child: AppBar(
+              leading:  CupertinoNavigationBarBackButton(
+                color:isDark? Colors.white :Colors.black,
+
+              ),
+              // actions: [
+              //   IconButton(
+              //     onPressed: () => Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => CreateKhatmahScreen(),
+              //       ),
+              //     ),
+              //     icon: const Icon(Icons.add),
+              //   )
+              // ],
+              centerTitle: true,
+              title: Text(
+                'إنشاء ختمة جديدة',
+                style: GoogleFonts.cairo(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                ),
+              ),
+            ),
           ),
-        ),
+
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: Form(
@@ -292,6 +324,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                         backgroundColor: KColors.primaryColor,
                         width: MediaQuery.sizeOf(context).width / 3,
                         title: "ابدأ الختمة",
+
                         onTap: () {
                           if (_formKey.currentState?.validate() ?? false) {
                             _saveKhatmah();
