@@ -229,6 +229,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                     TextFormField(
                       controller: _titleController,
                       decoration: InputDecoration(
+                        fillColor: Theme.of(context).cardColor,
                         labelText: "اسم الختمة",
                         focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: AppStyle.scondColors)),
@@ -247,9 +248,9 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             DropdownMenu<int>(
-                              menuStyle: const MenuStyle(
+                              menuStyle:  MenuStyle(
                                   backgroundColor:
-                                  WidgetStatePropertyAll(Colors.white)),
+                                  WidgetStatePropertyAll(Theme.of(context).cardColor)),
                               hintText: "اختر عدد الايام",
                               width: MediaQuery.sizeOf(context).width,
                               label: const Text("مدة الختمة بالأيام"),
@@ -292,9 +293,9 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                               hintText: "اختر طريقة التوزيع",
                               width: MediaQuery.sizeOf(context).width,
                               initialSelection: null,
-                              menuStyle: const MenuStyle(
+                              menuStyle:  MenuStyle(
                                   backgroundColor:
-                                  WidgetStatePropertyAll(Colors.white)),
+                                  WidgetStatePropertyAll(Theme.of(context).cardColor)),
                               label: const Text("طريقة التوزيع"),
                               menuHeight: 260,
                               dropdownMenuEntries: const [
@@ -321,6 +322,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                     // زرار الحفظ
                     Center(
                       child: CustomButton(
+                        borderColor: Theme.of(context).cardColor,
                         backgroundColor: KColors.primaryColor,
                         width: MediaQuery.sizeOf(context).width / 3,
                         title: "ابدأ الختمة",

@@ -202,6 +202,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   child: Icon(
                     Icons.search,
                     size: 30,
+
                   ),
                 ),
 
@@ -276,6 +277,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       onPageChanged: (page) {
                         setState(() {
                           _currentPage = page;
+                          KHelper.showSuccess(message: " الصفحة رقم ${page+1} ",backgroundColor: Colors.black);
+
                         });
                         _saveCurrentPage(page); // تحديث التخزين
                       },

@@ -74,7 +74,8 @@ class _ComplateKhatmaViewState extends State<ComplateKhatmaView> {
                   Lottie.asset("assets/json/QuranPers.json"),
                   TextWidget(
                     title: "لم تُنجز أي ختمة بعد.",
-                    fontSize: 20.sp,
+                    fontSize:ResponsiveUtil.isTablet(context)? 20.sp:25.sp,
+                    fontFamily: "me",
                     fontWeight: FontWeight.bold,
                   ),
                 ],
@@ -88,21 +89,66 @@ class _ComplateKhatmaViewState extends State<ComplateKhatmaView> {
                   return Directionality(
                     textDirection: TextDirection.rtl,
                     child: Card(
+
                       margin: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 16),
-                      child: ListTile(
-                        leading: Icon(Icons.check_circle_outline),
-                        title: TextWidget(
-                          title: k.title,
-                          fontFamily: "me",
-                          fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
-                        ),
-                        subtitle: Text(
-                            "انتهت في: ${k.endDate.toLocal().toString().split(' ').first}"),
-                        trailing: IconButton(
+                      // child: ListTile(
+                      //   leading: const Icon(Icons.check_circle_outline),
+                      //   title: TextWidget(
+                      //     title: k.title,
+                      //     fontFamily: "me",
+                      //     fontSize:
+                      //         ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
+                      //   ),
+                      //   subtitle: Column(
+                      //     children: [
+                      //       Text(
+                      //           "البداية في: ${k.startDate.toLocal().toString().split(' ').first}"),
+                      //       Text(
+                      //           "انتهت في: ${k.endDate.toLocal().toString().split(' ').first}"),
+                      //     ],
+                      //   ),
+                      //   trailing: IconButton(
+                      //     icon: const Icon(Icons.delete),
+                      //     onPressed: () => _deleteKhatmah(index),
+                      //   ),
+                      // ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.check_circle_outline,color: Colors.green,size: 30,),
+                            SizedBox(width: 25,),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextWidget(
+                                      title: k.title,
+                                      fontFamily: "cairo",
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          ResponsiveUtil.isTablet(context) ? 10.sp : 15.sp,
+                                    ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  child: Text(
+                                              "البداية في :- ${k.startDate.toLocal().toString().split(' ').first}"),
+                                ),
+                                        Text(
+                                            "انتهت في :- ${k.endDate.toLocal().toString().split(' ').first}"),
+                              ],
+
+                            ),
+                        Spacer(),
+                        IconButton(
+
+                          color: Colors.redAccent,
                           icon: const Icon(Icons.delete),
                           onPressed: () => _deleteKhatmah(index),
+                        ),
+
+                          ],
                         ),
                       ),
                     ),

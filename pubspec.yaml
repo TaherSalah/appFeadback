@@ -80,6 +80,7 @@ dependencies:
   redacted: ^1.0.12
   toggle_switch: ^2.3.0
   slide_to_act: ^2.0.2
+  rate_my_app: ^2.3.2
   animate_do: ^3.3.4
   flutter_expandable_fab: ^2.3.0
   flutter_widget_from_html: ^0.16.0

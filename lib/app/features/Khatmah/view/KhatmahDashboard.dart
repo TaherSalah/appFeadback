@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/core/widgets/kButtons.dart';
@@ -715,6 +716,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
       plansBox.delete(k.id);
     }
     box.deleteAt(index);
+    KHelper.showSuccess(message: "تم حذف ${k?.title} بنجاح");
     setState(() {});
   }
 
@@ -769,12 +771,18 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(height: 15,),
                             TextWidget(
                               title: k.title,
                               fontWeight: FontWeight.bold,
+                              fontSize: 16.sp,
                             ),
                             const SizedBox(height: 6),
-                            Text("ورد اليوم: $todayWirdText"),
+                            TextWidget(
+                              title: "ورد اليوم: $todayWirdText",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13.5.sp,
+                            ),
                             const SizedBox(height: 6),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -804,7 +812,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                             bgColor: KColors.primaryColor,
                             fontSize: 13.sp,
                             fontColor: Colors.white,
-                            icon: Icons.check,
+                            icon: Icons.checklist_rtl,
                             onTap: k.isCompleted
                                 ? null
                                 : () => _markTodayRead(index),
@@ -917,6 +925,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                       newMap['currentDayIndex'] = 0;
                       plansBox.put(k.id, newMap);
                     }
+                    KHelper.showSuccess(message: "تم اعاده التعيين ${k?.title} بنجاح");
 
                     setState(() {});
                   },
@@ -946,10 +955,10 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
             ),
             actions: [
               IconButton(
-                onPressed: () => Navigator.push(
+                onPressed: () => Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CreateKhatmahScreen(),
+                    builder: (context) => const CreateKhatmahScreen(),
                   ),
                 ),
                 icon: const Icon(Icons.add),

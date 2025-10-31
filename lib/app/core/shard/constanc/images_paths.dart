@@ -18,3 +18,6 @@ const String facebook = 'assets/images/icons8-facebook (1).svg';
 const String insta = 'assets/images/icons8-instagram.svg';
 const String twitter = 'assets/images/icons8-twitterx.svg';
 const String whatsApp = 'assets/icons/whatsapp.png';
+const String googlePlay = 'assets/images/playstore.png';
+const String appleStore = 'assets/images/app-store.png';
+const String huaweiGallary = 'assets/images/huawei.png';

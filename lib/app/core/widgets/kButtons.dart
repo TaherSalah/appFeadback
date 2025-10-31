@@ -135,14 +135,17 @@ class KButtons {
                 color: fontColor,
               ),
               SizedBox(width: 10.w),
-              TextWidget(
-                title: text,
-                fontWeight: FontWeight.bold,
-                color: fontColor ?? Colors.black,
-                // style: theme.textTheme.bodySmall!.copyWith(
-                fontSize: fontSize ?? 11,
-                //   color: KColors.whiteDarkColor,
-                // ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: TextWidget(
+                  title: text,
+                  fontWeight: FontWeight.bold,
+                  color: fontColor ?? Colors.black,
+                  // style: theme.textTheme.bodySmall!.copyWith(
+                  fontSize: fontSize ?? 11,
+                  //   color: KColors.whiteDarkColor,
+                  // ),
+                ),
               )
             ],
           ),
