@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'app/core/cache/storage.dart';
 import 'app/core/cubit/centralized_cubit.dart';
@@ -41,6 +42,78 @@ class _MashkahAppState extends State<MashkahApp> {
       }
     });
   }
+  Future<void> _openStore() async {
+    if (Platform.isAndroid) {
+      // 🔹 تحقق أولاً إذا كان على Huawei أم لا
+      try {
+        final bool isHuawei = await _isHuaweiDevice();
+        if (isHuawei) {
+          await launchUrl(Uri.parse('https://appgallery.huawei.com/app/C123456789')); // رابط تطبيقك في AppGallery
+          return;
+        }
+      } catch (_) {}
+
+      // 🔹 غير Huawei → Google Play
+      await launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.yourcompany.yourapp'));
+    } else if (Platform.isIOS) {
+      // 🔹 App Store
+      await launchUrl(Uri.parse('https://apps.apple.com/app/id1234567890'));
+    }
+  }
+
+// فحص هل الجهاز Huawei
+  Future<bool> _isHuaweiDevice() async {
+    try {
+      // إذا الجهاز بيحتوي على خدمات Huawei
+      return await File('/system/app/HwOUC').exists();
+    } catch (_) {
+      return false;
+    }
+  }
+  void _showRateDialog() {
+    rateMyApp.showStarRateDialog(
+      context,
+      title: '⭐ قيّم تطبيقنا',
+      message: 'ساعدنا بتقييمك لتطوير التطبيق أكثر 🙏',
+      starRatingOptions: const StarRatingOptions(initialRating: 5),
+      actionsBuilder: (context, stars) {
+        return [
+          TextButton(
+            child: const Text('لاحقًا'),
+            onPressed: () {
+              rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
+              Navigator.pop<RateMyAppDialogButton>(context, RateMyAppDialogButton.later);
+            },
+          ),
+          ElevatedButton(
+            child: const Text('إرسال'),
+            onPressed: () async {
+              final rating = (stars ?? 0).round();
+              if (rating >= 4) {
+                await rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
+                await _openStore(); // ← افتح المتجر المناسب
+              } else {
+                // لو التقييم منخفض افتح صفحة ملاحظات أو تجاهل
+                await rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
+              }
+              Navigator.pop<RateMyAppDialogButton>(context, RateMyAppDialogButton.rate);
+            },
+          ),
+        ];
+      },
+      ignoreNativeDialog: false,
+      dialogStyle: const DialogStyle(
+        titleAlign: TextAlign.center,
+        messageAlign: TextAlign.center,
+      ),
+      onDismissed: () => rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed),
+    );
+  }
+  // ListTile(
+  // leading: const Icon(Icons.star, color: Colors.amber),
+  // title: const Text('تقييم التطبيق'),
+  // onTap: _showRateDialog,
+  // ),
 
   void _showRatingDialog() {
     rateMyApp.showStarRateDialog(
