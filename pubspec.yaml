@@ -17,6 +17,7 @@ dependencies:
   provider:
   dio:
   flutter_rating_bar:
+  in_app_review: ^2.0.8
   flutter_screenutil:
   share_plus: ^11.0.0
   http:

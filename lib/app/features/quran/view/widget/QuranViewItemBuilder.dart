@@ -272,7 +272,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       //     isDark ? Colors.black : const Color(0xffFFFFF0),
                       topTitleChild: const SizedBox(),
                       optimizeScrolling: false,
-                      useDefaultAppBar: true,
+                      useDefaultAppBar: false,
 
                       onPageChanged: (page) {
                         setState(() {
