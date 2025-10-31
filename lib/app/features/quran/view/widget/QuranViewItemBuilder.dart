@@ -208,11 +208,13 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               ),
               FontsDownloadDialog(
                 downloadFontsDialogStyle: DownloadFontsDialogStyle(
-                  title: 'الخطوط',
+                  title: 'الخطوط المتاحة',
                   titleColor: Theme.of(context).brightness == Brightness.dark
                       ? Colors.white
                       : Colors.black,
-                  notes: 'لجعل مظهر المصحف مطابقًا لمصحف المدينة قم بتحميل الخطوط.',
+                  notes:  'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خط مصحف المدينة من اسفل وتفعيله بدلا من الخط الاساسي',
+
+                  // notes: 'لجعل مظهر المصحف مطابقًا لمصحف المدينة قم بتحميل خط مصحف المدينة.',
                   notesColor: Theme.of(context).brightness == Brightness.dark
                       ? Colors.white
                       : Colors.black,
@@ -270,6 +272,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       topTitleChild: const SizedBox(),
                       optimizeScrolling: false,
                       useDefaultAppBar: false,
+
                       onPageChanged: (page) {
                         setState(() {
                           _currentPage = page;

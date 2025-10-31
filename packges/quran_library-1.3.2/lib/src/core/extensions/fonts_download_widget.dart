@@ -21,7 +21,7 @@ extension FontsDownloadWidgetExtension on QuranCtrl {
 
     List<String> titleList = [
       downloadFontsDialogStyle?.defaultFontText ?? 'الخط الأساسي',
-      downloadFontsDialogStyle?.downloadedFontsText ?? 'خط المصحف',
+      downloadFontsDialogStyle?.downloadedFontsText ?? 'خط مصحف المدينة',
     ];
     // List<String> tajweedList = [
     //   downloadFontsDialogStyle?.withTajweedText ?? 'مع التجويد',
@@ -31,15 +31,16 @@ extension FontsDownloadWidgetExtension on QuranCtrl {
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            downloadFontsDialogStyle?.title ?? 'الخطوط',
+            downloadFontsDialogStyle?.title ?? 'الخطوط المتاحة',
             style: downloadFontsDialogStyle?.titleStyle ??
                 TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'kufi',
+                  fontFamily: 'me',
                   color: downloadFontsDialogStyle?.titleColor ??
                       (isDark ? Colors.white : Colors.black),
                   package: 'quran_library',
@@ -53,102 +54,110 @@ extension FontsDownloadWidgetExtension on QuranCtrl {
           ),
           const SizedBox(height: 8.0),
           Text(
+            textAlign:TextAlign.right,
             downloadFontsDialogStyle?.notes ??
                 'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خطوط المصحف',
             style: downloadFontsDialogStyle?.notesStyle ??
                 TextStyle(
                     fontSize: 16.0,
-                    fontFamily: 'naskh',
+                    fontFamily: 'me',
                     color: downloadFontsDialogStyle?.notesColor ??
                         (isDark ? Colors.white : Colors.black),
                     package: 'quran_library'),
           ),
           const SizedBox(
-            height: 100,
+            height: 10,
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(
               titleList.length,
-              (i) => Container(
-                margin: EdgeInsets.symmetric(vertical: 2.0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: downloadFontsDialogStyle
-                                ?.downloadButtonBackgroundColor !=
-                            null
-                        ? downloadFontsDialogStyle!
-                            .downloadButtonBackgroundColor!
-                            .withValues(alpha: .2)
-                        : isDark
-                            ? Colors.blue.withValues(alpha: .4)
-                            : Colors.blue.withValues(alpha: .2),
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+              (i) => Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  height: 50,
-                  margin: EdgeInsets.symmetric(vertical: 4.0),
-                  color: quranCtrl.state.fontsSelected.value == i
-                      ? downloadFontsDialogStyle?.linearProgressColor != null
-                          ? downloadFontsDialogStyle?.linearProgressColor!
-                              .withValues(alpha: .05)
-                          : Colors.blue.withValues(alpha: .05)
-                      : null,
-                  child: CheckboxListTile(
-                    value: (quranCtrl.state.fontsSelected.value == i)
-                        ? true
-                        : false,
-                    activeColor:
-                        downloadFontsDialogStyle?.linearProgressColor ??
-                            Colors.blue,
-                    secondary: i == 0
-                        ? const SizedBox.shrink()
-                        : isFontsLocal!
-                            ? const SizedBox.shrink()
-                            : IconButton(
-                                onPressed: () async {
-                                  quranCtrl.state.isDownloadedV2Fonts.value
-                                      ? await quranCtrl.deleteFonts()
-                                      : quranCtrl.state.isDownloadingFonts.value
-                                          ? null
-                                          : await quranCtrl
-                                              .downloadAllFontsZipFile(i);
-                                  log('fontIndex: $i');
-                                },
-                                icon: downloadFontsDialogStyle?.iconWidget ??
-                                    Icon(
-                                      quranCtrl.state.isDownloadedV2Fonts.value
-                                          ? Icons.delete_forever
-                                          : Icons.downloading_outlined,
-                                      color:
-                                          downloadFontsDialogStyle?.iconColor ??
-                                              Colors.blue,
-                                      size: downloadFontsDialogStyle?.iconSize,
-                                    ),
-                              ),
-                    title: Text(
-                      titleList[i],
-                      style: downloadFontsDialogStyle?.fontNameStyle ??
-                          TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'naskh',
-                            color: downloadFontsDialogStyle?.titleColor ??
-                                (isDark ? Colors.white : Colors.black),
-                            package: 'quran_library',
-                          ),
+                  margin: EdgeInsets.symmetric(vertical: 2.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: downloadFontsDialogStyle
+                                  ?.downloadButtonBackgroundColor !=
+                              null
+                          ? downloadFontsDialogStyle!
+                              .downloadButtonBackgroundColor!
+                              .withValues(alpha: .2)
+                          : isDark
+                              ? Colors.blue.withValues(alpha: .4)
+                              : Colors.blue.withValues(alpha: .2),
+                      width: 1.0,
                     ),
-                    onChanged: isFontsLocal! ||
-                            quranCtrl.state.isDownloadedV2Fonts.value
-                        ? (_) {
-                            quranCtrl.state.fontsSelected.value = i;
-                            GetStorage()
-                                .write(_StorageConstants().fontsSelected, i);
-                            log('fontsSelected: $i');
-                            Get.forceAppUpdate();
-                          }
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Container(
+                    height: 50,
+                    margin: EdgeInsets.symmetric(vertical: 4.0),
+                    color: quranCtrl.state.fontsSelected.value == i
+                        ? downloadFontsDialogStyle?.linearProgressColor != null
+                            ? downloadFontsDialogStyle?.linearProgressColor!
+                                .withValues(alpha: .05)
+                            : Colors.blue.withValues(alpha: .05)
                         : null,
+                    child: CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+
+                      value: (quranCtrl.state.fontsSelected.value == i)
+                          ? true
+                          : false,
+
+                      activeColor:
+                          downloadFontsDialogStyle?.linearProgressColor ??
+                              Colors.blue.withValues(alpha: .09),
+                      secondary: i == 0
+                          ? const SizedBox.shrink()
+                          : isFontsLocal!
+                              ? const SizedBox.shrink()
+                              : IconButton(
+                                  onPressed: () async {
+                                    quranCtrl.state.isDownloadedV2Fonts.value
+                                        ? await quranCtrl.deleteFonts()
+                                        : quranCtrl.state.isDownloadingFonts.value
+                                            ? null
+                                            : await quranCtrl
+                                                .downloadAllFontsZipFile(i);
+                                    log('fontIndex: $i');
+                                  },
+                                  icon: downloadFontsDialogStyle?.iconWidget ??
+                                      Icon(
+                                        quranCtrl.state.isDownloadedV2Fonts.value
+                                            ? Icons.delete_forever
+                                            : Icons.downloading_outlined,
+                                        color:
+                                            downloadFontsDialogStyle?.iconColor ??
+                                                Colors.blue,
+                                        size: downloadFontsDialogStyle?.iconSize,
+                                      ),
+                                ),
+                      title: Text(
+                        textAlign: TextAlign.right,
+                        titleList[i],
+                        style: downloadFontsDialogStyle?.fontNameStyle ??
+                            TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'naskh',
+                              color: downloadFontsDialogStyle?.titleColor ??
+                                  (isDark ? Colors.white : Colors.black),
+                              package: 'quran_library',
+                            ),
+                      ),
+                      onChanged: isFontsLocal! ||
+                              quranCtrl.state.isDownloadedV2Fonts.value
+                          ? (_) {
+                              quranCtrl.state.fontsSelected.value = i;
+                              GetStorage()
+                                  .write(_StorageConstants().fontsSelected, i);
+                              log('fontsSelected: $i');
+                              Get.forceAppUpdate();
+                            }
+                          : null,
+                    ),
                   ),
                 ),
               ),

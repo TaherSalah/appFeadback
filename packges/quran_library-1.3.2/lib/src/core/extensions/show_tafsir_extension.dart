@@ -175,9 +175,22 @@ extension ShowTafsirExtension on void {
 
 
                             backgroundColor:Theme.of(modalContext).brightness == Brightness.dark ?Theme.of(context).cardColor:Theme.of(context).cardColor,
-                            tafsirNameWidget: Text(
-                              'التفسير',
-                              style: QuranLibrary().naskhStyle.copyWith(
+                            tafsirNameWidget: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+Navigator.pop(context);
+                                  },
+                                 icon:  Icon(Icons.close,
+                                   size: 34,
+                                   color: Theme.of(modalContext).brightness == Brightness.dark
+                                       ? Colors.white
+                                       : Colors.black,
+                                 ),),
+                                SizedBox(width: 55,),
+                                Text(
+                                  'تفسير الاية',
+                                  style: QuranLibrary().naskhStyle.copyWith(
 
                                     fontSize: 24,
                                     fontFamily: "cairo",
@@ -185,6 +198,8 @@ extension ShowTafsirExtension on void {
                                         ? Colors.white
                                         : Colors.black,
                                   ),
+                                )
+                              ],
                             ),
                             fontSizeWidget: Icon(
                               Icons.text_format_outlined,

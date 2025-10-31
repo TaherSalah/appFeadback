@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:quran_library/quran.dart';
@@ -422,7 +423,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     if (!_inited) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return  Scaffold(body: Center(child: KLoading.progressIOSIndicator()));
     }
 
     final names = _ql.tafsirAndTraslationCollection; // List<TafsirNameModel>
@@ -603,12 +604,12 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                     textAlign: TextAlign.justify,
                                     TextSpan(
                                         style: TextStyle(
-                                            height: 1.6,
+                                            height: ResponsiveUtil.isTablet(context)? 1.6:1.9,
                                             fontFamily: "me",
                                             fontSize:
                                                 ResponsiveUtil.isTablet(context)
                                                     ? 10.sp
-                                                    : 14.sp),
+                                                    : 19.sp),
                                         text: ayahText.isNotEmpty
                                             ? ayahText
                                             : ayahLabel,

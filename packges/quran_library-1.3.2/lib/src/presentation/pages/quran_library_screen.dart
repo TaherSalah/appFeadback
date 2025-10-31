@@ -285,7 +285,7 @@ class QuranLibraryScreen extends StatelessWidget {
                                         ? Colors.white
                                         : Colors.black,
                                     notes:
-                                    'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خطوط المصحف',
+                                    'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خط مصحف المدينة من اسفل وتفعيله بدلا من الخط الاساسي',
                                     notesColor: isDark
                                         ? Colors.white
                                         : Colors.black,
@@ -302,7 +302,8 @@ class QuranLibraryScreen extends StatelessWidget {
                               languageCode: languageCode,
                               isFontsLocal: isFontsLocal,
                               isDark: isDark,
-                            )
+                            ),
+
                           ],
                         )
                             : null),
