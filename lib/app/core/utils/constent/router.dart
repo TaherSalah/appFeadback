@@ -27,6 +27,7 @@ import '../../../features/prayer_view/post_prayer_azkar.dart';
 import '../../../features/quran/quranView.dart';
 
 import '../../../features/quran/view/widget/AyaSearchScreen.dart';
+import '../../../features/quran/view/widget/QuranViewItemBuilder.dart';
 import '../../../features/quran/view/widget/TafsirquranView.dart';
 import '../../../features/rokia_view/rokia.dart';
 import '../../../features/sabah_view/azkar_sabah.dart';
@@ -138,7 +139,7 @@ class RouteGenerator {
       case "/QuranChannalPlayerView":
 
         return MaterialPageRoute(
-          builder: (_) => QuranChannalPlayerView(
+          builder: (_) => const QuranChannalPlayerView(
           ),
         );
 
@@ -150,6 +151,9 @@ class RouteGenerator {
         case '/compplateKhatna':
         return MaterialPageRoute(builder: (_) => const ComplateKhatmaView());
 
+      case '/WirdHomeScreen':
+        return MaterialPageRoute(builder: (_) =>  WirdHomeScreen());
+
       case '/azkarMassa':
         return MaterialPageRoute(builder: (_) => const AzkarMassa());
       case '/prayerAzkar':
@@ -157,13 +161,13 @@ class RouteGenerator {
       case '/surahListScreen':
         return MaterialPageRoute(builder: (_) => const QuranView());
        case '/ListScreen':
-        return MaterialPageRoute(builder: (_) =>  SurahListScreen());
+        return MaterialPageRoute(builder: (_) =>  const SurahListScreen());
         case '/RadioSearchScreen':
-        return MaterialPageRoute(builder: (_) =>  RadioSearchScreen());
+        return MaterialPageRoute(builder: (_) =>  const RadioSearchScreen());
       case '/ayaSearchScreen':
-        return MaterialPageRoute(builder: (_) =>  AyaSearchScreen());
+        return MaterialPageRoute(builder: (_) =>  const AyaSearchScreen());
         case '/ayaBookmarkScreen':
-        return MaterialPageRoute(builder: (_) =>  AyaBookmarkScreen());
+        return MaterialPageRoute(builder: (_) =>  const AyaBookmarkScreen());
       case '/timingScreen':
         return MaterialPageRoute(builder: (_) => const TimingScreen());
 

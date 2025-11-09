@@ -59,6 +59,8 @@ import 'app/features/Khatmah/data/khatmah_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // ← أول سطر دائمًا
+  await QuranLibrary.init();
+
   // SystemChrome و أي platform channels لازم بعد ensureInitialized
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -78,8 +80,7 @@ Future<void> main() async {
   await SharedObj().init();
 
   // مكتبتك
-  QuranLibrary().init();
-  QuranLibrary().initTafsir();
+  // QuranLibrary().initTafsir();
 
   // Hive
   await Hive.initFlutter();

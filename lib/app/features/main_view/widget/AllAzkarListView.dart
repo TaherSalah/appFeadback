@@ -34,14 +34,16 @@ class Allazkarlistview extends StatelessWidget {
         "navigate": "/azkarOthers",
       },
     ];
+    bool isTab = ResponsiveUtil.isTablet(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: PreferredSize(
         preferredSize:
             Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
         child: AppBar(
-          leading: const CupertinoNavigationBarBackButton(
-            color: Colors.black,
+          leading:  CupertinoNavigationBarBackButton(
+            color: isDark?Colors.white: Colors.black,
           ),
           centerTitle: true,
           title: Text(
@@ -63,16 +65,13 @@ class Allazkarlistview extends StatelessWidget {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15),
                   child: SizedBox(
                     child: GridView.count(
-                      crossAxisCount: 2, // عنصرين في كل سطر
-                      crossAxisSpacing:
-                          MediaQuery.sizeOf(context).width > 600 ? 18 : 9,
-                      mainAxisSpacing: 15,
-                      childAspectRatio: MediaQuery.sizeOf(context).width > 600
-                          ? 1.9
-                          : 2 / 1.6,
+                      crossAxisCount: 2,
+                      crossAxisSpacing: isTab ? 30 : 15,
+                      mainAxisSpacing: isTab ? 20 : 25,
+                      childAspectRatio: isTab ? 1.9 : 01.80,
                       shrinkWrap: true,
                       physics:
                           const NeverScrollableScrollPhysics(), // عشان المكون يكون جزء من ScrollView تانية
@@ -81,34 +80,36 @@ class Allazkarlistview extends StatelessWidget {
                           onTap: () {
                             Navigator.pushNamed(context, item['navigate']!);
                           },
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: const BorderSide(
-                                  color: Colors.grey, width: 1),
-                            ),
-                            child: SizedBox(
-                              width: 90,
-                              height: 75,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Image.asset(
-                                      item["icon"]!,
-                                      width: 90,
-                                      height: 75,
-                                      fit: BoxFit.contain,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextDefaultWidget(title:item["title"]! ,fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)? 11.sp : 11.5.sp,fontWeight: ResponsiveUtil.isTablet(context)?FontWeight.w500: FontWeight.bold,)
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          // child: Card(
+                          //   shape: RoundedRectangleBorder(
+                          //     borderRadius: BorderRadius.circular(10),
+                          //     side: const BorderSide(
+                          //         color: Colors.grey, width: 1),
+                          //   ),
+                          //   child: SizedBox(
+                          //     width: 90,
+                          //     height: 75,
+                          //     child: Padding(
+                          //       padding: const EdgeInsets.all(8.0),
+                          //       child: Column(
+                          //         mainAxisAlignment:
+                          //             MainAxisAlignment.spaceBetween,
+                          //         children: [
+                          //           Image.asset(
+                          //             item["icon"]!,
+                          //             width: 90,
+                          //             height: 75,
+                          //             fit: BoxFit.contain,
+                          //           ),
+                          //           const SizedBox(height: 8),
+                          //           TextDefaultWidget(title:item["title"]! ,fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)? 11.sp : 11.5.sp,fontWeight: ResponsiveUtil.isTablet(context)?FontWeight.w500: FontWeight.bold,)
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          child: IslamicCardWidget(
+                              title: item["title"]!, iconPath: item["icon"]!),
                         );
                       }).toList(),
                     ),

@@ -15,8 +15,8 @@ class SurahListScreen extends StatefulWidget {
 }
 
 class _SurahListScreenState extends State<SurahListScreen> {
-  final List<String> surahs = QuranLibrary().getAllSurahs();
-  final List<String> surahss = QuranLibrary().getAllSurahsArtPath();
+  final List<String> surahs = QuranLibrary.getAllSurahs();
+  // final List<String> surahss = QuranLibrary().getAllSurahsArtPath();
 
   final List<BookmarkModel> bookmark = QuranLibrary().usedBookmarks;
 
@@ -45,7 +45,6 @@ class _SurahListScreenState extends State<SurahListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("surahss $surahss");
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(

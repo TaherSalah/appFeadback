@@ -17,7 +17,7 @@ class HizbeListScreen extends StatefulWidget {
 
 class _HizbeListScreenState extends State<HizbeListScreen> {
 
-  final List<String> hizb = QuranLibrary().allHizb;
+  final List<String> hizb = QuranLibrary.allHizb;
 
   final List<BookmarkModel> bookmark = QuranLibrary().usedBookmarks;
 

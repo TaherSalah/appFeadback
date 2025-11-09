@@ -274,13 +274,13 @@ class _HomeScreenBuilderState extends StateMVC<HomeScreenBuilder> {
     },
     {
       "title": "الختمات المنجزه",
-      "icon": "assets/icons/radio.png",
+      "icon": "assets/icons/achivement.png",
       "navigate": "/compplateKhatna"
     },
     {
       "title": " اورادك من الذكر",
       "icon": "assets/icons/radio.png",
-      "navigate": "/compplateKhatna"
+      "navigate": "/WirdHomeScreen"
     },
     // {
     //   "title": "قناة القران الكريم",

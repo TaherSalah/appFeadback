@@ -40,8 +40,10 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
 
   Future<void> _init() async {
     // مهم: تهيئة التفسير مرة واحدة
-    await _ql.initTafsir();
-    _selectedTafsirIndex = _ql.tafsirSelected; // موجودة عندك بالفعل
+    // await _ql().;
+   // _selectedTafsirIndex = _ql.tafsirSelected; // موجودة عندك بالفعل
+    final names = _ql.tafsirAndTraslationsCollection; // قائمة التفسيرات
+     _selectedTafsirIndex = 0; // ابتدائيًا مثلا 0
 
     // اضبط الصفحة المبدئية
     final startPage = (widget.initialPage != null &&
@@ -53,7 +55,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
             : 1);
 
     // اضبط التفسير الحالي من المكتبة
-    _selectedTafsirIndex = _ql.tafsirSelected;
+    // _selectedTafsirIndex = _ql.tafsirSelected;
 
     _pageNumber = startPage;
     await _loadPageAyahs();
@@ -63,10 +65,9 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
 
   Future<void> _loadPageAyahs() async {
     // NOTE: الميثود تحت بتتوقع رقم صفحة (١–٦٠٤) حسب تعريف مكتبتك
-    final list = _ql.getPageAyahsByPageNumber(pageNumber: _pageNumber);
-    // ✅ تأكد إننا List<AyahModel>
+    final list = _ql.getPageAyahsByPageNumber(pageNumber: _pageNumber); // ✅ لازم await
     _pageAyahs = List<AyahModel>.from(list);
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   // Future<void> _onChangeTafsir(int newIndex) async {
@@ -393,30 +394,20 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
   }
 
   Future<void> _openAyahTafsir(AyahModel ayah) async {
-    // ✅ استخدم الحقول اللي موجودة في AyahModel عندك
     final int surahNum = ayah.surahNumber ?? 1;
     final int ayahNum = ayah.ayahNumber ?? 1;
-
-    // اختياري: الرقم الفريد لو موجود—لو مش موجود سيبه 0
-    final int ayahUQ = (ayah.ayahUQNumber ?? 0);
-
-    // لو نص الآية عندك باسم مختلف (uthmani / ayahText) غيّر السطر ده
-    final String text = (ayah.text ?? '').toString();
+    final int ayahUQ = ayah.ayahUQNumber ?? 0; // ✅ بدل ayahUQNumber
+    final String text = ayah.text ?? ''; // ✅ بدل text
 
     await QuranLibrary().showTafsir(
-
       context: context,
-      surahNum: surahNum,
+      // surahNum: surahNum,
       ayahNum: ayahNum,
-      ayahText: text,
+      // ayahText: text,
       pageIndex: _pageNumber,
-
-
-      // << المهم: صفر-مبني
       ayahTextN: text,
       ayahUQNum: ayahUQ,
       ayahNumber: ayahNum,
-
     );
   }
 
@@ -426,7 +417,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
       return  Scaffold(body: Center(child: KLoading.progressIOSIndicator()));
     }
 
-    final names = _ql.tafsirAndTraslationCollection; // List<TafsirNameModel>
+    final names = _ql.tafsirAndTraslationsCollection; // List<TafsirNameModel>
     final isDownloaded = _ql.getTafsirDownloaded(_selectedTafsirIndex);
 
     return Directionality(

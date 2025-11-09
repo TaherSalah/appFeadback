@@ -32,7 +32,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
   }
 
   Future<void> _initTafsirOnce() async {
-    await _ql.initTafsir();
+    // await _ql.initTafsir();
     if (mounted) setState(() => _inited = true);
   }
 
@@ -206,7 +206,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
     }
     String imagePath = "assets/images";
     // مفضّل ناخد الريفرانس مرة
-    final ayah = _ql.tafsirAndTraslationCollection;
+    final ayah = _ql.tafsirAndTraslationsCollection;
     List<String> tafsirImage = [
       "$imagePath/1.jpg",
       "$imagePath/2.jpg",

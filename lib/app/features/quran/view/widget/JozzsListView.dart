@@ -13,7 +13,7 @@ class JozzsListScreen extends StatefulWidget {
 }
 
 class _JozzsListScreenState extends State<JozzsListScreen> {
-  final List<String> jozzs = QuranLibrary().allJoz;
+  final List<String> jozzs = QuranLibrary.allJoz;
 
   final List<BookmarkModel> bookmark = QuranLibrary().usedBookmarks;
 
