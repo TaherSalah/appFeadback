@@ -690,6 +690,13 @@ class Wird {
   DateTime? lastCompletedDate;
   String? reminderTime;
   String category;
+  List<DateTime> completionHistory;
+  bool isCompleted;
+
+
+  // ✅ إضافة حفظ التقدم الحالي
+  int currentDhikrIndex;
+  bool isInProgress;
 
   Wird({
     required this.id,
@@ -700,7 +707,13 @@ class Wird {
     this.lastCompletedDate,
     this.reminderTime,
     this.category = 'عام',
-  });
+    List<DateTime>? completionHistory,
+    this.currentDhikrIndex = 0,
+    this.isInProgress = false,
+
+    this.isCompleted = false, // ✅ افتراضيًا الورد غير منجز
+
+  }) : completionHistory = completionHistory ?? [];
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -711,9 +724,16 @@ class Wird {
     'lastCompletedDate': lastCompletedDate?.toIso8601String(),
     'reminderTime': reminderTime,
     'category': category,
+    'completionHistory': completionHistory.map((d) => d.toIso8601String()).toList(),
+    'currentDhikrIndex': currentDhikrIndex, // ✅ حفظ
+    'isInProgress': isInProgress, // ✅ حفظ
+    'isCompleted': isCompleted,
+
   };
 
   factory Wird.fromJson(Map<String, dynamic> json) => Wird(
+    isCompleted: json['isCompleted'] ?? false,
+
     id: json['id'],
     name: json['name'],
     adhkar: (json['adhkar'] as List).map((d) => Dhikr.fromJson(d)).toList(),
@@ -724,9 +744,15 @@ class Wird {
         : null,
     reminderTime: json['reminderTime'],
     category: json['category'] ?? 'عام',
+    completionHistory: (json['completionHistory'] as List?)
+        ?.map((d) => DateTime.parse(d))
+        .toList() ??
+        [],
+    currentDhikrIndex: json['currentDhikrIndex'] ?? 0, // ✅ استرجاع
+    isInProgress: json['isInProgress'] ?? false, // ✅ استرجاع
+
   );
 }
-
 class UserStats {
   int totalTasbihat;
   int currentStreak;
@@ -735,10 +761,13 @@ class UserStats {
   List<String> achievements;
   Map<String, int> dailyCompletions;
 
+
+
   UserStats({
     this.totalTasbihat = 0,
     this.currentStreak = 0,
     this.longestStreak = 0,
+
     this.level = 1,
     List<String>? achievements,
     Map<String, int>? dailyCompletions,
@@ -752,6 +781,7 @@ class UserStats {
     'level': level,
     'achievements': achievements,
     'dailyCompletions': dailyCompletions,
+
   };
 
   factory UserStats.fromJson(Map<String, dynamic> json) => UserStats(
@@ -908,7 +938,6 @@ class WirdManager {
 }
 
 // =============== الشاشة الرئيسية ===============
-
 class WirdHomeScreen extends StatefulWidget {
   @override
   _WirdHomeScreenState createState() => _WirdHomeScreenState();
@@ -916,10 +945,10 @@ class WirdHomeScreen extends StatefulWidget {
 
 class _WirdHomeScreenState extends State<WirdHomeScreen> {
   List<Wird> awrad = [];
+  List<Wird> completedAwrad = [];
   UserStats stats = UserStats();
   final WirdManager manager = WirdManager();
   bool isLoading = true;
-  String currentTheme = 'light';
   String selectedCategory = 'الكل';
 
   @override
@@ -931,11 +960,11 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
   Future<void> loadData() async {
     final data = await manager.loadAwrad();
     final statsData = await manager.loadStats();
-    final theme = await manager.getTheme();
+
     setState(() {
-      awrad = data;
+      awrad = data.where((w) => !w.isCompleted).toList();
+      completedAwrad = data.where((w) => w.isCompleted).toList();
       stats = statsData;
-      currentTheme = theme;
       isLoading = false;
     });
   }
@@ -952,12 +981,12 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = currentTheme == 'dark';
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: isDark ? Colors.grey.shade900 : Colors.grey.shade50,
       appBar: AppBar(
-        title: Text('أورادي اليومية'),
+        title: Text('أورادك اليومية'),
         centerTitle: true,
         backgroundColor: isDark ? Colors.grey.shade800 : Colors.teal,
         elevation: 0,
@@ -973,23 +1002,6 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
               );
             },
           ),
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingsScreen(
-                    currentTheme: currentTheme,
-                    onThemeChanged: (theme) {
-                      setState(() => currentTheme = theme);
-                      manager.saveTheme(theme);
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
         ],
       ),
       body: isLoading
@@ -997,216 +1009,32 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
           : Column(
         children: [
           // بطاقة الإحصائيات السريعة
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: isDark
-                    ? [Colors.grey.shade800, Colors.grey.shade700]
-                    : [Colors.teal, Colors.teal.shade300],
-              ),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildStatCard(
-                      '🔥',
-                      '${stats.currentStreak}',
-                      'يوم متتالي',
-                      isDark,
-                    ),
-                    _buildStatCard(
-                      '⭐',
-                      'المستوى ${stats.level}',
-                      '${stats.totalTasbihat} تسبيحة',
-                      isDark,
-                    ),
-                    _buildStatCard(
-                      '🏆',
-                      '${stats.achievements.length}',
-                      'إنجاز',
-                      isDark,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          _buildStatsCard(isDark),
 
           // فلتر الفئات
           if (categories.length > 1)
-            Container(
-              height: 50,
-              margin: EdgeInsets.symmetric(vertical: 8),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final cat = categories[index];
-                  final isSelected = cat == selectedCategory;
-                  return GestureDetector(
-                    onTap: () => setState(() => selectedCategory = cat),
-                    child: Container(
-                      margin: EdgeInsets.only(left: 8),
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Colors.teal
-                            : (isDark ? Colors.grey.shade800 : Colors.white),
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(
-                          color: isSelected ? Colors.teal : Colors.grey.shade300,
-                        ),
-                      ),
-                      child: Text(
-                        cat,
-                        style: TextStyle(
-                          color: isSelected
-                              ? Colors.white
-                              : (isDark ? Colors.white : Colors.black87),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+            _buildCategoryFilter(isDark),
 
           // قائمة الأوراد
           Expanded(
-            child: filteredAwrad.isEmpty
-                ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.book,
-                    size: 80,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    selectedCategory == 'الكل'
-                        ? 'لا توجد أوراد بعد'
-                        : 'لا توجد أوراد في هذه الفئة',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            )
-                : ListView.builder(
+            child: ListView(
               padding: EdgeInsets.all(16),
-              itemCount: filteredAwrad.length,
-              itemBuilder: (context, index) {
-                final wird = filteredAwrad[index];
-                final totalCount = wird.adhkar.fold<int>(
-                  0,
-                      (sum, dhikr) => sum + dhikr.targetCount,
-                );
-
-                return Card(
-                  elevation: 3,
-                  margin: EdgeInsets.only(bottom: 12),
-                  color: isDark ? Colors.grey.shade800 : Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(15),
-                    onTap: () async {
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TasbihScreen(
-                            wird: wird,
-                            isDark: isDark,
-                          ),
-                        ),
-                      );
-                      if (result == true) {
-                        await manager.saveAwrad(awrad);
-                        await loadData();
-                      }
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.teal.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '📿',
-                                style: TextStyle(fontSize: 30),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  wird.name,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: isDark ? Colors.white : Colors.black87,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '${wird.adhkar.length} ذكر • $totalCount تسبيحة',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.check_circle,
-                                      size: 16,
-                                      color: Colors.green,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'أكملته ${wird.completedCount} مرة',
-                                      style: TextStyle(
-                                        color: Colors.green,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                            color: Colors.grey,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
+              children: [
+                ExpansionTile(
+                  initiallyExpanded: true,
+                  title: Text('الأوراد الجارية (${filteredAwrad.length})'),
+                  children: filteredAwrad
+                      .map((wird) => _buildWirdCard(wird, isDark: isDark))
+                      .toList(),
+                ),
+                ExpansionTile(
+                  initiallyExpanded: false,
+                  title: Text('الأوراد المنجزة (${completedAwrad.length})'),
+                  children: completedAwrad
+                      .map((wird) => _buildWirdCard(wird, isDark: isDark, completed: true))
+                      .toList(),
+                ),
+              ],
             ),
           ),
         ],
@@ -1221,7 +1049,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
           );
           if (newWird != null) {
             setState(() => awrad.add(newWird));
-            await manager.saveAwrad(awrad);
+            await manager.saveAwrad([...awrad, ...completedAwrad]);
           }
         },
         icon: Icon(Icons.add),
@@ -1231,37 +1059,579 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
     );
   }
 
-  Widget _buildStatCard(String emoji, String value, String label, bool isDark) {
+  Widget _buildStatsCard(bool isDark) {
     return Container(
-      padding: EdgeInsets.all(12),
+      width: double.infinity,
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: isDark
+              ? [Colors.grey.shade800, Colors.grey.shade700]
+              : [Colors.teal, Colors.teal.shade300],
+        ),
       ),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(emoji, style: TextStyle(fontSize: 24)),
-          SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.white70,
-            ),
-          ),
+          _buildStatItem('🔥', '${stats.currentStreak}', 'يوم متتالي', isDark),
+          _buildStatItem('⭐', 'المستوى ${stats.level}', '${stats.totalTasbihat} تسبيحة', isDark),
+          _buildStatItem('🏆', '${stats.achievements.length}', 'إنجاز', isDark),
         ],
       ),
     );
   }
+
+  Widget _buildStatItem(String emoji, String value, String label, bool isDark) {
+    return Column(
+      children: [
+        Text(emoji, style: TextStyle(fontSize: 24)),
+        SizedBox(height: 4),
+        Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.white70)),
+      ],
+    );
+  }
+
+  Widget _buildCategoryFilter(bool isDark) {
+    return Container(
+      height: 50,
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          final cat = categories[index];
+          final isSelected = cat == selectedCategory;
+          return GestureDetector(
+            onTap: () => setState(() => selectedCategory = cat),
+            child: Container(
+              margin: EdgeInsets.only(left: 8),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? Colors.teal
+                    : (isDark ? Colors.grey.shade800 : Colors.white),
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: isSelected ? Colors.teal : Colors.grey.shade300,
+                ),
+              ),
+              child: Text(
+                cat,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : (isDark ? Colors.white : Colors.black87),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildWirdCard(Wird wird, {required bool isDark, bool completed = false}) {
+    final totalCount = wird.adhkar.fold<int>(0, (sum, dhikr) => sum + dhikr.targetCount);
+
+    return Card(
+      elevation: 3,
+      margin: EdgeInsets.only(bottom: 12),
+      color: isDark ? Colors.grey.shade800 : Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onTap: completed
+            ? null
+            : () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TasbihScreen(
+                wird: wird,
+                isDark: isDark,
+              ),
+            ),
+          );
+
+          if (result == 'completed') {
+            setState(() {
+              wird.isCompleted = true;
+              awrad.remove(wird);
+              completedAwrad.add(wird);
+            });
+            await manager.saveAwrad([...awrad, ...completedAwrad]);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('✅ تم نقل الورد إلى قائمة الأوراد المنجزة')),
+            );
+          } else if (result == true) {
+            await manager.saveAwrad([...awrad, ...completedAwrad]);
+            await loadData();
+          }
+        },
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.teal.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(child: Text('📿', style: TextStyle(fontSize: 30))),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      wird.name,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      '${wird.adhkar.length} ذكر • $totalCount تسبيحة',
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.check_circle, size: 16, color: Colors.green),
+                        SizedBox(width: 4),
+                        Text(
+                          'أكملته ${wird.completedCount} مرة',
+                          style: TextStyle(color: Colors.green, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              if (!completed)
+                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
+//////////*******************//////////
+// class WirdHomeScreen extends StatefulWidget {
+//   @override
+//   _WirdHomeScreenState createState() => _WirdHomeScreenState();
+// }
+//
+// class _WirdHomeScreenState extends State<WirdHomeScreen> {
+//   List<Wird> awrad = [];
+//   UserStats stats = UserStats();
+//   List<Wird> completedAwrad = [];
+//
+//   final WirdManager manager = WirdManager();
+//   bool isLoading = true;
+//   // String currentTheme = 'light';
+//   String selectedCategory = 'الكل';
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     loadData();
+//   }
+//
+//   // Future<void> loadData() async {
+//   //   final data = await manager.loadAwrad();
+//   //   final statsData = await manager.loadStats();
+//   //   // final theme = await manager.getTheme();
+//   //   setState(() {
+//   //     awrad = data;
+//   //     stats = statsData;
+//   //     // currentTheme = theme;
+//   //     isLoading = false;
+//   //   });
+//   // }
+//   Future<void> loadData() async {
+//     final data = await manager.loadAwrad();
+//     final statsData = await manager.loadStats();
+//
+//     setState(() {
+//       awrad = data.where((w) => !w.isCompleted).toList();
+//       completedAwrad = data.where((w) => w.isCompleted).toList();
+//       stats = statsData;
+//       isLoading = false;
+//     });
+//   }
+//
+//   List<String> get categories {
+//     final cats = awrad.map((w) => w.category).toSet().toList();
+//     return ['الكل', ...cats];
+//   }
+//
+//   List<Wird> get filteredAwrad {
+//     if (selectedCategory == 'الكل') return awrad;
+//     return awrad.where((w) => w.category == selectedCategory).toList();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     bool isDark = Theme.of(context).brightness == Brightness.dark;
+//
+//     return Scaffold(
+//       backgroundColor: isDark ? Colors.grey.shade900 : Colors.grey.shade50,
+//       appBar: AppBar(
+//         title: Text('أورادك اليومية'),
+//         centerTitle: true,
+//         backgroundColor: isDark ? Colors.grey.shade800 : Colors.teal,
+//         elevation: 0,
+//         actions: [
+//           IconButton(
+//             icon: Icon(Icons.bar_chart),
+//             onPressed: () {
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => StatisticsScreen(stats: stats),
+//                 ),
+//               );
+//             },
+//           ),
+//           // IconButton(
+//           //   icon: Icon(Icons.settings),
+//           //   onPressed: () async {
+//           //     await Navigator.push(
+//           //       context,
+//           //       MaterialPageRoute(
+//           //         builder: (context) => SettingsScreen(
+//           //           currentTheme: currentTheme,
+//           //           onThemeChanged: (theme) {
+//           //             setState(() => currentTheme = theme);
+//           //             manager.saveTheme(theme);
+//           //           },
+//           //         ),
+//           //       ),
+//           //     );
+//           //   },
+//           // ),
+//         ],
+//       ),
+//       body: isLoading
+//           ? Center(child: CircularProgressIndicator())
+//           : Column(
+//         children: [
+//           // بطاقة الإحصائيات السريعة
+//           Container(
+//             width: double.infinity,
+//             padding: EdgeInsets.all(20),
+//             decoration: BoxDecoration(
+//               gradient: LinearGradient(
+//                 colors: isDark
+//                     ? [Colors.grey.shade800, Colors.grey.shade700]
+//                     : [Colors.teal, Colors.teal.shade300],
+//               ),
+//             ),
+//             child: Column(
+//               children: [
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                   children: [
+//                     _buildStatCard(
+//                       '🔥',
+//                       '${stats.currentStreak}',
+//                       'يوم متتالي',
+//                       isDark,
+//                     ),
+//                     _buildStatCard(
+//                       '⭐',
+//                       'المستوى ${stats.level}',
+//                       '${stats.totalTasbihat} تسبيحة',
+//                       isDark,
+//                     ),
+//                     _buildStatCard(
+//                       '🏆',
+//                       '${stats.achievements.length}',
+//                       'إنجاز',
+//                       isDark,
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//
+//           // فلتر الفئات
+//           if (categories.length > 1)
+//             Container(
+//               height: 50,
+//               margin: EdgeInsets.symmetric(vertical: 8),
+//               child: ListView.builder(
+//                 scrollDirection: Axis.horizontal,
+//                 padding: EdgeInsets.symmetric(horizontal: 16),
+//                 itemCount: categories.length,
+//                 itemBuilder: (context, index) {
+//                   final cat = categories[index];
+//                   final isSelected = cat == selectedCategory;
+//                   return GestureDetector(
+//                     onTap: () => setState(() => selectedCategory = cat),
+//                     child: Container(
+//                       margin: EdgeInsets.only(left: 8),
+//                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+//                       decoration: BoxDecoration(
+//                         color: isSelected
+//                             ? Colors.teal
+//                             : (isDark ? Colors.grey.shade800 : Colors.white),
+//                         borderRadius: BorderRadius.circular(25),
+//                         border: Border.all(
+//                           color: isSelected ? Colors.teal : Colors.grey.shade300,
+//                         ),
+//                       ),
+//                       child: Text(
+//                         cat,
+//                         style: TextStyle(
+//                           color: isSelected
+//                               ? Colors.white
+//                               : (isDark ? Colors.white : Colors.black87),
+//                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+//                         ),
+//                       ),
+//                     ),
+//                   );
+//                 },
+//               ),
+//             ),
+//
+//           // قائمة الأوراد
+//           Expanded(
+//             child: filteredAwrad.isEmpty
+//                 ? Center(
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Icon(
+//                     Icons.book,
+//                     size: 80,
+//                     color: Colors.grey,
+//                   ),
+//                   SizedBox(height: 16),
+//                   Text(
+//                     selectedCategory == 'الكل'
+//                         ? 'لا توجد أوراد بعد'
+//                         : 'لا توجد أوراد في هذه الفئة',
+//                     style: TextStyle(
+//                       fontSize: 18,
+//                       color: Colors.grey,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             )
+//                 : ListView.builder(
+//               padding: EdgeInsets.all(16),
+//               itemCount: filteredAwrad.length,
+//               itemBuilder: (context, index) {
+//                 final wird = filteredAwrad[index];
+//                 final totalCount = wird.adhkar.fold<int>(
+//                   0,
+//                       (sum, dhikr) => sum + dhikr.targetCount,
+//                 );
+//
+//                 return Card(
+//                   elevation: 3,
+//                   margin: EdgeInsets.only(bottom: 12),
+//                   color: isDark ? Colors.grey.shade800 : Colors.white,
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius: BorderRadius.circular(15),
+//                   ),
+//                   child: InkWell(
+//                     borderRadius: BorderRadius.circular(15),
+//                     onTap: () async {
+//                       final result = await Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => TasbihScreen(
+//                             wird: wird,
+//                             isDark: isDark,
+//                           ),
+//                         ),
+//                       );
+//
+//                       if (result == 'completed') {
+//                         setState(() {
+//                           wird.isCompleted = true;
+//                           awrad.remove(wird);
+//                           completedAwrad.add(wird);
+//                         });
+//                         await manager.saveAwrad([...awrad, ...completedAwrad]);
+//                         ScaffoldMessenger.of(context).showSnackBar(
+//                           SnackBar(content: Text('✅ تم نقل الورد إلى قائمة الأوراد المنجزة')),
+//                         );
+//                       } else if (result == true) {
+//                         await manager.saveAwrad([...awrad, ...completedAwrad]);
+//                         await loadData();
+//                       }
+//                     },
+//                     child: Padding(
+//                       padding: EdgeInsets.all(16),
+//                       child: Row(
+//                         children: [
+//                           Container(
+//                             width: 60,
+//                             height: 60,
+//                             decoration: BoxDecoration(
+//                               color: Colors.teal.withOpacity(0.1),
+//                               borderRadius: BorderRadius.circular(12),
+//                             ),
+//                             child: Center(
+//                               child: Text(
+//                                 '📿',
+//                                 style: TextStyle(fontSize: 30),
+//                               ),
+//                             ),
+//                           ),
+//                           SizedBox(width: 16),
+//                           Expanded(
+//                             child: Column(
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 Text(
+//                                   wird.name,
+//                                   style: TextStyle(
+//                                     fontSize: 18,
+//                                     fontWeight: FontWeight.bold,
+//                                     color: isDark ? Colors.white : Colors.black87,
+//                                   ),
+//                                 ),
+//                                 SizedBox(height: 4),
+//                                 Text(
+//                                   '${wird.adhkar.length} ذكر • $totalCount تسبيحة',
+//                                   style: TextStyle(
+//                                     color: Colors.grey,
+//                                     fontSize: 14,
+//                                   ),
+//                                 ),
+//                                 SizedBox(height: 4),
+//                                 Row(
+//                                   children: [
+//                                     Icon(
+//                                       Icons.check_circle,
+//                                       size: 16,
+//                                       color: Colors.green,
+//                                     ),
+//                                     SizedBox(width: 4),
+//                                     Text(
+//                                       'أكملته ${wird.completedCount} مرة',
+//                                       style: TextStyle(
+//                                         color: Colors.green,
+//                                         fontSize: 12,
+//                                       ),
+//                                     ),
+//                                   ],
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                           Row(
+//                             mainAxisSize: MainAxisSize.min,
+//                             children: [
+//                               IconButton(
+//                                 icon: Icon(Icons.delete, color: Colors.redAccent),
+//                                 onPressed: () async {
+//                                   final confirm = await showDialog<bool>(
+//                                     context: context,
+//                                     builder: (context) => AlertDialog(
+//                                       title: Text('تأكيد الحذف'),
+//                                       content: Text('هل أنت متأكد أنك تريد حذف هذا الورد؟'),
+//                                       actions: [
+//                                         TextButton(
+//                                           child: Text('إلغاء'),
+//                                           onPressed: () => Navigator.pop(context, false),
+//                                         ),
+//                                         TextButton(
+//                                           child: Text('حذف', style: TextStyle(color: Colors.red)),
+//                                           onPressed: () => Navigator.pop(context, true),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   );
+//
+//                                   if (confirm == true) {
+//                                     setState(() {
+//                                       awrad.removeAt(index);
+//                                     });
+//                                     await manager.saveAwrad(awrad);
+//                                     ScaffoldMessenger.of(context).showSnackBar(
+//                                       SnackBar(content: Text('تم حذف الورد بنجاح')),
+//                                     );
+//                                   }
+//                                 },
+//                               ),
+//                               Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+//                             ],
+//                           ),
+//
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//       floatingActionButton: FloatingActionButton.extended(
+//         onPressed: () async {
+//           final newWird = await Navigator.push(
+//             context,
+//             MaterialPageRoute(
+//               builder: (context) => AddWirdScreen(isDark: isDark),
+//             ),
+//           );
+//           if (newWird != null) {
+//             setState(() => awrad.add(newWird));
+//             await manager.saveAwrad(awrad);
+//           }
+//         },
+//         icon: Icon(Icons.add),
+//         label: Text('ورد جديد'),
+//         backgroundColor: Colors.teal,
+//       ),
+//     );
+//   }
+//
+//   Widget _buildStatCard(String emoji, String value, String label, bool isDark) {
+//     return Container(
+//       padding: EdgeInsets.all(12),
+//       decoration: BoxDecoration(
+//         color: Colors.white.withOpacity(0.2),
+//         borderRadius: BorderRadius.circular(12),
+//       ),
+//       child: Column(
+//         children: [
+//           Text(emoji, style: TextStyle(fontSize: 24)),
+//           SizedBox(height: 4),
+//           Text(
+//             value,
+//             style: TextStyle(
+//               fontSize: 20,
+//               fontWeight: FontWeight.bold,
+//               color: Colors.white,
+//             ),
+//           ),
+//           Text(
+//             label,
+//             style: TextStyle(
+//               fontSize: 12,
+//               color: Colors.white70,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 // =============== شاشة إضافة ورد ===============
 
@@ -1525,10 +1895,9 @@ class TasbihScreen extends StatefulWidget {
 }
 
 class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMixin {
-  int currentDhikrIndex = 0;
+  late int currentDhikrIndex;
   bool isFocusMode = false;
   bool hapticEnabled = true;
-  bool soundEnabled = true;
   late AnimationController _pulseController;
   late AnimationController _scaleController;
   final WirdManager manager = WirdManager();
@@ -1536,7 +1905,12 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
+    // ✅ ابدأ من آخر ذكر كان المستخدم فيه
+    currentDhikrIndex = widget.wird.currentDhikrIndex;
+    widget.wird.isInProgress = true;
+
     loadSettings();
+
     _pulseController = AnimationController(
       duration: Duration(milliseconds: 1000),
       vsync: this,
@@ -1548,20 +1922,33 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
     );
   }
 
-  Future<void> loadSettings() async {
-    final h = await manager.isHapticEnabled();
-    final s = await manager.isSoundEnabled();
-    setState(() {
-      hapticEnabled = h;
-      soundEnabled = s;
-    });
-  }
-
   @override
   void dispose() {
+    // ✅ احفظ التقدم قبل الخروج
+    _saveProgress();
     _pulseController.dispose();
     _scaleController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveProgress() async {
+    widget.wird.currentDhikrIndex = currentDhikrIndex;
+    widget.wird.isInProgress = true;
+
+    // احفظ البيانات
+    final awrad = await manager.loadAwrad();
+    final index = awrad.indexWhere((w) => w.id == widget.wird.id);
+    if (index != -1) {
+      awrad[index] = widget.wird;
+      await manager.saveAwrad(awrad);
+    }
+  }
+
+  Future<void> loadSettings() async {
+    final h = await manager.isHapticEnabled();
+    setState(() {
+      hapticEnabled = h;
+    });
   }
 
   void incrementCount() async {
@@ -1581,26 +1968,120 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
             HapticFeedback.mediumImpact();
           }
 
+          // الانتقال للذكر التالي تلقائياً
           if (currentDhikrIndex < widget.wird.adhkar.length - 1) {
             Future.delayed(Duration(milliseconds: 800), () {
-              setState(() => currentDhikrIndex++);
+              _goToNextDhikr();
             });
           } else {
-            widget.wird.completedCount++;
-            widget.wird.lastCompletedDate = DateTime.now();
-
-            final totalTasbihat = widget.wird.adhkar.fold<int>(
-              0,
-                  (sum, d) => sum + d.targetCount,
-            );
-            manager.updateStats(totalTasbihat);
-
-            Future.delayed(Duration(milliseconds: 500), () {
-              showCompletionDialog();
-            });
+            // إكمال الورد
+            _completeWird();
           }
         }
+
+        // ✅ احفظ التقدم بعد كل تسبيحة
+        _saveProgress();
       }
+    });
+  }
+
+  // ✅ دالة الانتقال للذكر التالي
+  void _goToNextDhikr() {
+    if (currentDhikrIndex < widget.wird.adhkar.length - 1) {
+      setState(() {
+        currentDhikrIndex++;
+      });
+      _saveProgress();
+    }
+  }
+
+  // ✅ دالة الرجوع للذكر السابق
+  void _goToPreviousDhikr() {
+    if (currentDhikrIndex > 0) {
+      setState(() {
+        currentDhikrIndex--;
+      });
+      _saveProgress();
+    }
+  }
+
+  // ✅ دالة تخطي الذكر الحالي
+  void _skipCurrentDhikr() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
+        title: Text(
+          'تخطي الذكر؟',
+          style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
+        ),
+        content: Text(
+          'هل تريد تخطي هذا الذكر والانتقال للتالي؟',
+          style: TextStyle(color: widget.isDark ? Colors.white70 : Colors.black87),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // ضع العداد على الحد الأقصى وانتقل
+              widget.wird.adhkar[currentDhikrIndex].currentCount =
+                  widget.wird.adhkar[currentDhikrIndex].targetCount;
+
+              if (currentDhikrIndex < widget.wird.adhkar.length - 1) {
+                _goToNextDhikr();
+              } else {
+                _completeWird();
+              }
+              Navigator.pop(context);
+            },
+            child: Text('تخطي'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // void _completeWird() {
+  //   widget.wird.completedCount++;
+  //   widget.wird.lastCompletedDate = DateTime.now();
+  //   widget.wird.isInProgress = false;
+  //
+  //   final totalTasbihat = widget.wird.adhkar.fold<int>(
+  //     0,
+  //         (sum, d) => sum + d.targetCount,
+  //   );
+  //   manager.updateStats(totalTasbihat);
+  //
+  //   Future.delayed(Duration(milliseconds: 500), () {
+  //     showCompletionDialog();
+  //   });
+  // }
+  void _completeWird() async {
+    widget.wird.completedCount++;
+    widget.wird.lastCompletedDate = DateTime.now();
+    widget.wird.isInProgress = false;
+    widget.wird.isCompleted = true; // ✅ أضف هذا السطر لتعليم الورد أنه منجز
+
+    final totalTasbihat = widget.wird.adhkar.fold<int>(
+      0,
+          (sum, d) => sum + d.targetCount,
+    );
+    manager.updateStats(totalTasbihat);
+
+    // ✅ حفظ الحالة الجديدة (المنجزة) داخل قائمة الأوراد
+    final awrad = await manager.loadAwrad();
+    final index = awrad.indexWhere((w) => w.id == widget.wird.id);
+    if (index != -1) {
+      awrad[index] = widget.wird;
+      await manager.saveAwrad(awrad);
+    }
+
+    Future.delayed(Duration(milliseconds: 500), () {
+      showCompletionDialog();
     });
   }
 
@@ -1617,9 +2098,7 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
             SizedBox(height: 8),
             Text(
               'أحسنت!',
-              style: TextStyle(
-                color: widget.isDark ? Colors.white : Colors.black87,
-              ),
+              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
             ),
           ],
         ),
@@ -1655,10 +2134,14 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
         actions: [
           TextButton.icon(
             onPressed: () {
+              // إعادة تعيين كل شيء
               for (var dhikr in widget.wird.adhkar) {
                 dhikr.currentCount = 0;
               }
+              widget.wird.currentDhikrIndex = 0;
+              widget.wird.isInProgress = false;
               setState(() => currentDhikrIndex = 0);
+              _saveProgress();
               Navigator.pop(context);
             },
             icon: Icon(Icons.refresh),
@@ -1666,14 +2149,21 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
           ),
           ElevatedButton.icon(
             onPressed: () {
+              // إعادة تعيين عند الخروج
+              for (var dhikr in widget.wird.adhkar) {
+                dhikr.currentCount = 0;
+              }
+              widget.wird.currentDhikrIndex = 0;
+              widget.wird.isInProgress = false;
+              _saveProgress();
               Navigator.pop(context);
-              Navigator.pop(context, true);
+              // Navigator.pop(context, true);
+              Navigator.pop(context, 'completed');
+
             },
             icon: Icon(Icons.check),
             label: Text('إنهاء'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
           ),
         ],
       ),
@@ -1686,187 +2176,273 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
     final progress = dhikr.currentCount / dhikr.targetCount;
     final isCompleted = dhikr.currentCount == dhikr.targetCount;
 
-    return Scaffold(
-      backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
-      appBar: isFocusMode
-          ? null
-          : AppBar(
-        title: Text(widget.wird.name),
-        backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.teal,
-        actions: [
-          IconButton(
-            icon: Icon(isFocusMode ? Icons.visibility : Icons.visibility_off),
-            onPressed: () => setState(() => isFocusMode = !isFocusMode),
-            tooltip: 'وضع التركيز',
-          ),
-        ],
-      ),
-      body: GestureDetector(
-        onTap: isCompleted ? null : incrementCount,
-        child: Container(
-          color: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
-          child: Column(
-            children: [
-              if (!isFocusMode) ...[
-                LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 8,
-                  backgroundColor: Colors.grey.shade300,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    isCompleted ? Colors.green : Colors.teal,
+    return WillPopScope(
+      // ✅ احفظ التقدم عند الضغط على زر الرجوع
+      onWillPop: () async {
+        await _saveProgress();
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+        appBar: isFocusMode
+            ? null
+            : AppBar(
+          title: Text(widget.wird.name),
+          backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.teal,
+          actions: [
+            IconButton(
+              icon: Icon(isFocusMode ? Icons.visibility : Icons.visibility_off),
+              onPressed: () => setState(() => isFocusMode = !isFocusMode),
+              tooltip: 'وضع التركيز',
+            ),
+          ],
+        ),
+        body: GestureDetector(
+          onTap: isCompleted ? null : incrementCount,
+          child: Container(
+            color: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+            child: Column(
+              children: [
+                if (!isFocusMode) ...[
+                  LinearProgressIndicator(
+                    value: progress,
+                    minHeight: 8,
+                    backgroundColor: Colors.grey.shade300,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isCompleted ? Colors.green : Colors.teal,
+                    ),
                   ),
-                ),
-                SizedBox(height: 16),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'الذكر ${currentDhikrIndex + 1} من ${widget.wird.adhkar.length}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: widget.isDark ? Colors.white70 : Colors.grey.shade700,
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.teal.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          '${((dhikr.currentCount / dhikr.targetCount) * 100).toInt()}%',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.teal,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(32),
-                        child: AnimatedDefaultTextStyle(
-                          duration: Duration(milliseconds: 300),
-                          style: TextStyle(
-                            fontSize: isFocusMode ? 40 : 32,
-                            fontWeight: FontWeight.bold,
-                            height: 2,
-                            color: widget.isDark ? Colors.white : Colors.black87,
-                          ),
-                          textAlign: TextAlign.center,
-                          child: Text(dhikr.text),
-                        ),
-                      ),
-                      SizedBox(height: 40),
-                      ScaleTransition(
-                        scale: Tween<double>(begin: 1.0, end: 0.95).animate(
-                          CurvedAnimation(
-                            parent: _scaleController,
-                            curve: Curves.easeInOut,
-                          ),
-                        ),
-                        child: AnimatedBuilder(
-                          animation: _pulseController,
-                          builder: (context, child) {
-                            return Container(
-                              width: isFocusMode ? 220 : 200,
-                              height: isFocusMode ? 220 : 200,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.teal.withOpacity(
-                                      0.3 + (_pulseController.value * 0.2),
-                                    ),
-                                    blurRadius: 30,
-                                    spreadRadius: 10,
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '${dhikr.currentCount}',
-                                    style: TextStyle(
-                                      fontSize: isFocusMode ? 72 : 64,
-                                      fontWeight: FontWeight.bold,
-                                      color: isCompleted ? Colors.green : Colors.teal,
-                                    ),
-                                  ),
-                                  if (!isFocusMode)
-                                    Text(
-                                      'من ${dhikr.targetCount}',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      if (!isFocusMode) ...[
-                        SizedBox(height: 40),
+                  SizedBox(height: 16),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         Text(
-                          'اضغط في أي مكان للتسبيح',
+                          'الذكر ${currentDhikrIndex + 1} من ${widget.wird.adhkar.length}',
                           style: TextStyle(
                             fontSize: 16,
-                            color: widget.isDark ? Colors.white60 : Colors.grey.shade600,
+                            color: widget.isDark ? Colors.white70 : Colors.grey.shade700,
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.teal.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${((dhikr.currentCount / dhikr.targetCount) * 100).toInt()}%',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.teal,
+                            ),
                           ),
                         ),
                       ],
-                    ],
+                    ),
+                  ),
+                ],
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(32),
+                          child: AnimatedDefaultTextStyle(
+                            duration: Duration(milliseconds: 300),
+                            style: TextStyle(
+                              fontSize: isFocusMode ? 40 : 32,
+                              fontWeight: FontWeight.bold,
+                              height: 2,
+                              color: widget.isDark ? Colors.white : Colors.black87,
+                            ),
+                            textAlign: TextAlign.center,
+                            child: Text(dhikr.text),
+                          ),
+                        ),
+                        SizedBox(height: 40),
+                        ScaleTransition(
+                          scale: Tween<double>(begin: 1.0, end: 0.95).animate(
+                            CurvedAnimation(
+                              parent: _scaleController,
+                              curve: Curves.easeInOut,
+                            ),
+                          ),
+                          child: AnimatedBuilder(
+                            animation: _pulseController,
+                            builder: (context, child) {
+                              return Container(
+                                width: isFocusMode ? 220 : 200,
+                                height: isFocusMode ? 220 : 200,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.teal.withOpacity(
+                                        0.3 + (_pulseController.value * 0.2),
+                                      ),
+                                      blurRadius: 30,
+                                      spreadRadius: 10,
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${dhikr.currentCount}',
+                                      style: TextStyle(
+                                        fontSize: isFocusMode ? 72 : 64,
+                                        fontWeight: FontWeight.bold,
+                                        color: isCompleted ? Colors.green : Colors.teal,
+                                      ),
+                                    ),
+                                    if (!isFocusMode)
+                                      Text(
+                                        'من ${dhikr.targetCount}',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        if (!isFocusMode) ...[
+                          SizedBox(height: 40),
+                          Text(
+                            'اضغط في أي مكان للتسبيح',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: widget.isDark ? Colors.white60 : Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              if (!isFocusMode)
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          setState(() => dhikr.currentCount = 0);
-                        },
-                        icon: Icon(Icons.refresh),
-                        label: Text('إعادة'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+
+                // ✅ أزرار التحكم الجديدة
+                if (!isFocusMode)
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Column(
+                      children: [
+                        // أزرار التنقل (السابق / التالي)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // زر السابق
+                            ElevatedButton.icon(
+                              onPressed: currentDhikrIndex > 0 ? _goToPreviousDhikr : null,
+                              icon: Icon(Icons.arrow_back),
+                              label: Text('السابق'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            // زر التخطي
+                            ElevatedButton.icon(
+                              onPressed: _skipCurrentDhikr,
+                              icon: Icon(Icons.skip_next),
+                              label: Text('تخطي'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            // زر التالي
+                            ElevatedButton.icon(
+                              onPressed: currentDhikrIndex < widget.wird.adhkar.length - 1
+                                  ? _goToNextDhikr
+                                  : null,
+                              icon: Icon(Icons.arrow_forward),
+                              label: Text('التالي'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          for (var d in widget.wird.adhkar) {
-                            d.currentCount = 0;
-                          }
-                          setState(() => currentDhikrIndex = 0);
-                        },
-                        icon: Icon(Icons.restart_alt),
-                        label: Text('إعادة الكل'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        SizedBox(height: 8),
+                        // أزرار الإعادة
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                setState(() => dhikr.currentCount = 0);
+                                _saveProgress();
+                              },
+                              icon: Icon(Icons.refresh),
+                              label: Text('إعادة الحالي'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey.shade600,
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
+                                    title: Text(
+                                      'إعادة الورد؟',
+                                      style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
+                                    ),
+                                    content: Text(
+                                      'هل تريد إعادة الورد من البداية؟',
+                                      style: TextStyle(color: widget.isDark ? Colors.white70 : Colors.black87),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('إلغاء'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          for (var d in widget.wird.adhkar) {
+                                            d.currentCount = 0;
+                                          }
+                                          widget.wird.currentDhikrIndex = 0;
+                                          widget.wird.isInProgress = false;
+                                          setState(() => currentDhikrIndex = 0);
+                                          _saveProgress();
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('إعادة الكل'),
+                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              icon: Icon(Icons.restart_alt),
+                              label: Text('إعادة الكل'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -2098,123 +2674,123 @@ class StatisticsScreen extends StatelessWidget {
 
 // =============== شاشة الإعدادات ===============
 
-class SettingsScreen extends StatefulWidget {
-  final String currentTheme;
-  final Function(String) onThemeChanged;
-
-  SettingsScreen({required this.currentTheme, required this.onThemeChanged});
-
-  @override
-  _SettingsScreenState createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  final WirdManager manager = WirdManager();
-  bool soundEnabled = true;
-  bool hapticEnabled = true;
-
-  @override
-  void initState() {
-    super.initState();
-    loadSettings();
-  }
-
-  Future<void> loadSettings() async {
-    final s = await manager.isSoundEnabled();
-    final h = await manager.isHapticEnabled();
-    setState(() {
-      soundEnabled = s;
-      hapticEnabled = h;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = widget.currentTheme == 'dark';
-
-    return Scaffold(
-      backgroundColor: isDark ? Colors.grey.shade900 : Colors.white,
-      appBar: AppBar(
-        title: Text('الإعدادات'),
-        backgroundColor: isDark ? Colors.grey.shade800 : Colors.teal,
-      ),
-      body: ListView(
-        children: [
-          ListTile(
-            leading: Icon(Icons.dark_mode, color: isDark ? Colors.white : null),
-            title: Text(
-              'الوضع الليلي',
-              style: TextStyle(color: isDark ? Colors.white : Colors.black),
-            ),
-            trailing: Switch(
-              value: isDark,
-              onChanged: (value) {
-                widget.onThemeChanged(value ? 'dark' : 'light');
-              },
-            ),
-          ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.volume_up, color: isDark ? Colors.white : null),
-            title: Text(
-              'الأصوات',
-              style: TextStyle(color: isDark ? Colors.white : Colors.black),
-            ),
-            trailing: Switch(
-              value: soundEnabled,
-              onChanged: (value) {
-                setState(() => soundEnabled = value);
-                manager.setSoundEnabled(value);
-              },
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.vibration, color: isDark ? Colors.white : null),
-            title: Text(
-              'الاهتزاز',
-              style: TextStyle(color: isDark ? Colors.white : Colors.black),
-            ),
-            trailing: Switch(
-              value: hapticEnabled,
-              onChanged: (value) {
-                setState(() => hapticEnabled = value);
-                manager.setHapticEnabled(value);
-              },
-            ),
-          ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.file_download, color: isDark ? Colors.white : null),
-            title: Text(
-              'تصدير البيانات',
-              style: TextStyle(color: isDark ? Colors.white : Colors.black),
-            ),
-            onTap: () async {
-              final data = await manager.exportData();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('تم تصدير البيانات بنجاح')),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.info, color: isDark ? Colors.white : null),
-            title: Text(
-              'عن التطبيق',
-              style: TextStyle(color: isDark ? Colors.white : Colors.black),
-            ),
-            onTap: () {
-              showAboutDialog(
-                context: context,
-                applicationName: 'أورادي',
-                applicationVersion: '2.0',
-                applicationIcon: Text('📿', style: TextStyle(fontSize: 40)),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class SettingsScreen extends StatefulWidget {
+//   final String currentTheme;
+//   final Function(String) onThemeChanged;
+//
+//   SettingsScreen({required this.currentTheme, required this.onThemeChanged});
+//
+//   @override
+//   _SettingsScreenState createState() => _SettingsScreenState();
+// }
+//
+// class _SettingsScreenState extends State<SettingsScreen> {
+//   final WirdManager manager = WirdManager();
+//   bool soundEnabled = true;
+//   bool hapticEnabled = true;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     loadSettings();
+//   }
+//
+//   Future<void> loadSettings() async {
+//     final s = await manager.isSoundEnabled();
+//     final h = await manager.isHapticEnabled();
+//     setState(() {
+//       soundEnabled = s;
+//       hapticEnabled = h;
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final isDark = widget.currentTheme == 'dark';
+//
+//     return Scaffold(
+//       backgroundColor: isDark ? Colors.grey.shade900 : Colors.white,
+//       appBar: AppBar(
+//         title: Text('الإعدادات'),
+//         backgroundColor: isDark ? Colors.grey.shade800 : Colors.teal,
+//       ),
+//       body: ListView(
+//         children: [
+//           ListTile(
+//             leading: Icon(Icons.dark_mode, color: isDark ? Colors.white : null),
+//             title: Text(
+//               'الوضع الليلي',
+//               style: TextStyle(color: isDark ? Colors.white : Colors.black),
+//             ),
+//             trailing: Switch(
+//               value: isDark,
+//               onChanged: (value) {
+//                 widget.onThemeChanged(value ? 'dark' : 'light');
+//               },
+//             ),
+//           ),
+//           Divider(),
+//           ListTile(
+//             leading: Icon(Icons.volume_up, color: isDark ? Colors.white : null),
+//             title: Text(
+//               'الأصوات',
+//               style: TextStyle(color: isDark ? Colors.white : Colors.black),
+//             ),
+//             trailing: Switch(
+//               value: soundEnabled,
+//               onChanged: (value) {
+//                 setState(() => soundEnabled = value);
+//                 manager.setSoundEnabled(value);
+//               },
+//             ),
+//           ),
+//           ListTile(
+//             leading: Icon(Icons.vibration, color: isDark ? Colors.white : null),
+//             title: Text(
+//               'الاهتزاز',
+//               style: TextStyle(color: isDark ? Colors.white : Colors.black),
+//             ),
+//             trailing: Switch(
+//               value: hapticEnabled,
+//               onChanged: (value) {
+//                 setState(() => hapticEnabled = value);
+//                 manager.setHapticEnabled(value);
+//               },
+//             ),
+//           ),
+//           Divider(),
+//           ListTile(
+//             leading: Icon(Icons.file_download, color: isDark ? Colors.white : null),
+//             title: Text(
+//               'تصدير البيانات',
+//               style: TextStyle(color: isDark ? Colors.white : Colors.black),
+//             ),
+//             onTap: () async {
+//               final data = await manager.exportData();
+//               ScaffoldMessenger.of(context).showSnackBar(
+//                 SnackBar(content: Text('تم تصدير البيانات بنجاح')),
+//               );
+//             },
+//           ),
+//           ListTile(
+//             leading: Icon(Icons.info, color: isDark ? Colors.white : null),
+//             title: Text(
+//               'عن التطبيق',
+//               style: TextStyle(color: isDark ? Colors.white : Colors.black),
+//             ),
+//             onTap: () {
+//               showAboutDialog(
+//                 context: context,
+//                 applicationName: 'أورادي',
+//                 applicationVersion: '2.0',
+//                 applicationIcon: Text('📿', style: TextStyle(fontSize: 40)),
+//               );
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 // =============== نقطة البداية ===============

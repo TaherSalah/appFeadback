@@ -1,35 +1,12 @@
-import 'dart:io';
-import 'dart:ui' as ui;
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
-import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/DrawerWidget.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
-import 'package:muslimdaily/app/features/quran/SurahModel.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:quran_library/quran.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/rendering.dart';
-import 'dart:convert';
-import 'dart:ui' as ui;
-import 'dart:math' as math;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:share_plus/share_plus.dart';
-// import 'package:home_widget/home_widget.dart';
-import 'package:timezone/timezone.dart';
-
-import '../../../main_view/home.dart';
 
 class QuranViewItemBuilder extends StatefulWidget {
   const QuranViewItemBuilder({super.key});
@@ -196,137 +173,140 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     QuranLibrary().currentPageNumber;
-    return Scaffold(
-      backgroundColor: Colors.black, // خلفية السكافولد
-      drawer: DrawerWidget(
-        "/surahListScreen",
-        topBar: topBar,
-      ), // <<< هنا بتحط الـ Drawer
-
-      appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
-        child: AppBar(
-          actions: [
-            InkWell(
-              onTap: () {
-                Navigator.pushNamed(context, "/ayaSearchScreen");
-              },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Icon(
-                  Icons.search,
-                  size: 30,
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: Colors.black, // خلفية السكافولد
+        drawer: DrawerWidget(
+          "/surahListScreen",
+          topBar: topBar,
+        ), // <<< هنا بتحط الـ Drawer
+      
+        appBar: PreferredSize(
+          preferredSize:
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          child: AppBar(
+            actions: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, "/ayaSearchScreen");
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Icon(
+                    Icons.search,
+                    size: 30,
+                  ),
                 ),
               ),
-            ),
-            FontsDownloadDialog(
-              topBarStyle: QuranTopBarStyle(
-                  iconColor: isDark ? Colors.white : AppColors.primary),
-              downloadFontsDialogStyle: DownloadFontsDialogStyle(
-                iconColor: isDark ? Colors.white : Colors.blueAccent,
-                headerTitle: 'الخطوط المتاحة',
-                titleColor: isDark ? Colors.white : Colors.black,
-                notes:
-                    'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خط مصحف المدينة من اسفل وتفعيله بدلا من الخط الاساسي',
-
-                // notes: 'لجعل مظهر المصحف مطابقًا لمصحف المدينة قم بتحميل خط مصحف المدينة.',
-                notesColor: isDark ? Colors.white : Colors.black,
-                linearProgressBackgroundColor: Colors.blue.shade100,
-                linearProgressColor: Colors.blue,
-                downloadButtonBackgroundColor: Colors.blue,
-                downloadingText: 'جارِ التحميل',
-                backgroundColor: isDark
-                    ? const Color(0xff1E1E1E)
-                    : const Color(0xFFF7EFE0),
-              ),
-              languageCode: 'ar',
-              isFontsLocal: false, // تحميل من النت
-              isDark: isDark,
-            ),
-          ],
-          centerTitle: true,
-          title: Text(
-            "القران الكريم",
-            style: GoogleFonts.cairo(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
-          ),
-        ),
-      ),
-
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.zero,
-        decoration: const BoxDecoration(
-          // color: isDark ? Colors.black : AppStyle.bgColors,
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.black, Colors.black87],
-          ),
-        ),
-        child: Align(
-          alignment: Alignment.center,
-          child: Padding(
-            padding: EdgeInsets.zero,
-            child: _currentPage == null
-                ? Center(
-                    child:
-                        KLoading.progressIOSIndicator()) // لحد ما يجيب الصفحة
-                : QuranLibraryScreen(
-              topBottomQuranStyle: TopBottomQuranStyle.defaults(
+              FontsDownloadDialog(
+                topBarStyle: QuranTopBarStyle(
+                    iconColor: isDark ? Colors.white : AppColors.primary),
+                downloadFontsDialogStyle: DownloadFontsDialogStyle(
+                  iconColor: isDark ? Colors.white : Colors.blueAccent,
+                  headerTitle: 'الخطوط المتاحة',
+                  titleColor: isDark ? Colors.white : Colors.black,
+                  notes:
+                      'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خط مصحف المدينة من اسفل وتفعيله بدلا من الخط الاساسي',
+      
+                  // notes: 'لجعل مظهر المصحف مطابقًا لمصحف المدينة قم بتحميل خط مصحف المدينة.',
+                  notesColor: isDark ? Colors.white : Colors.black,
+                  linearProgressBackgroundColor: Colors.blue.shade100,
+                  linearProgressColor: Colors.blue,
+                  downloadButtonBackgroundColor: Colors.blue,
+                  downloadingText: 'جارِ التحميل',
+                  backgroundColor: isDark
+                      ? const Color(0xff1E1E1E)
+                      : const Color(0xFFF7EFE0),
+                ),
+                languageCode: 'ar',
+                isFontsLocal: false, // تحميل من النت
                 isDark: isDark,
-                context: context,
-              ).copyWith(
-                pageNumberColor:isDark ? Colors.white : Colors.black ,
-                surahNameColor: isDark ? Colors.white : Colors.black,
-                hizbTextColor: isDark ? Colors.white : Colors.black,
-                juzTextColor: isDark ? Colors.white : Colors.black,
               ),
-              ayahMenuStyle:
-              AyahMenuStyle.defaults(isDark: isDark, context: context),
-                    isDark: isDark,
-                    surahInfoStyle: SurahInfoStyle(
-                        primaryColor: Colors.red,
-                        indicatorColor: Colors.red,
-                        textColor: Colors.red,
-                        surahNameColor: Colors.red,
-                        surahNumberColor: Colors.red,
-                        titleColor: Colors.red),
-                    pageIndex: _currentPage!,
-                    topTitleChild: const SizedBox(),
-                    useDefaultAppBar: false,
-
-                    indexTabStyle: IndexTabStyle(
-                      labelColor: isDark ? Colors.white : Colors.black,
-                      accentColor: isDark ? Colors.white : Colors.black,
+            ],
+            centerTitle: true,
+            title: Text(
+              "القران الكريم",
+              style: GoogleFonts.cairo(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                      MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+            ),
+          ),
+        ),
+      
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          padding: EdgeInsets.zero,
+          decoration: const BoxDecoration(
+            // color: isDark ? Colors.black : AppStyle.bgColors,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.black, Colors.black87],
+            ),
+          ),
+          child: Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: EdgeInsets.zero,
+              child: _currentPage == null
+                  ? Center(
+                      child:
+                          KLoading.progressIOSIndicator()) // لحد ما يجيب الصفحة
+                  : QuranLibraryScreen(
+                topBottomQuranStyle: TopBottomQuranStyle.defaults(
+                  isDark: isDark,
+                  context: context,
+                ).copyWith(
+                  pageNumberColor:isDark ? Colors.white : Colors.black ,
+                  surahNameColor: isDark ? Colors.white : Colors.black,
+                  hizbTextColor: isDark ? Colors.white : Colors.black,
+                  juzTextColor: isDark ? Colors.white : Colors.black,
+                ),
+                ayahMenuStyle:
+                AyahMenuStyle.defaults(isDark: isDark, context: context),
+                      isDark: isDark,
+                      surahInfoStyle: SurahInfoStyle(
+                          primaryColor: Colors.red,
+                          indicatorColor: Colors.red,
+                          textColor: Colors.red,
+                          surahNameColor: Colors.red,
+                          surahNumberColor: Colors.red,
+                          titleColor: Colors.red),
+                      pageIndex: _currentPage!,
+                      topTitleChild: const SizedBox(),
+                      useDefaultAppBar: false,
+      
+                      indexTabStyle: IndexTabStyle(
+                        labelColor: isDark ? Colors.white : Colors.black,
+                        accentColor: isDark ? Colors.white : Colors.black,
+                      ),
+      
+      
+                      // surahNameStyle: SurahNameStyle(
+                      //
+                      //   surahNameSize: 150,
+                      //
+                      //   surahNameColor:isDark?Colors.white: Colors.black, // اسم السورة
+                      //
+                      // ),
+      
+                      onPageChanged: (page) {
+                        setState(() {
+                          _currentPage = page;
+                          KHelper.showSuccess(
+                            message: "الصفحة رقم ${page + 1}",
+                            backgroundColor: Colors.black,
+                          );
+                        });
+                        _saveCurrentPage(page);
+                      },
+      
+                      parentContext: context,
                     ),
-
-
-                    // surahNameStyle: SurahNameStyle(
-                    //
-                    //   surahNameSize: 150,
-                    //
-                    //   surahNameColor:isDark?Colors.white: Colors.black, // اسم السورة
-                    //
-                    // ),
-
-                    onPageChanged: (page) {
-                      setState(() {
-                        _currentPage = page;
-                        KHelper.showSuccess(
-                          message: "الصفحة رقم ${page + 1}",
-                          backgroundColor: Colors.black,
-                        );
-                      });
-                      _saveCurrentPage(page);
-                    },
-
-                    parentContext: context,
-                  ),
+            ),
           ),
         ),
       ),
