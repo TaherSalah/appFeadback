@@ -1,3 +1,7 @@
+import 'package:flutter/cupertino.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
+
 import '../../core/shard/exports/all_exports.dart';
 
 import 'package:flutter/material.dart';
@@ -9,7 +13,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:convert';
 import 'dart:ui' as ui;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:fl_chart/fl_chart.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -833,7 +837,7 @@ class WirdManager {
     final stats = await loadStats();
     stats.totalTasbihat += tasbihatCount;
 
-    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final today = intl.DateFormat('yyyy-MM-dd').format(DateTime.now());
     stats.dailyCompletions[today] = (stats.dailyCompletions[today] ?? 0) + 1;
 
     // تحديث المستوى
@@ -849,8 +853,8 @@ class WirdManager {
   }
 
   void _updateStreak(UserStats stats) {
-    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final yesterday = DateFormat('yyyy-MM-dd')
+    final today = intl.DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final yesterday = intl.DateFormat('yyyy-MM-dd')
         .format(DateTime.now().subtract(Duration(days: 1)));
 
     if (stats.dailyCompletions.containsKey(today)) {
@@ -985,98 +989,140 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? Colors.grey.shade900 : Colors.grey.shade50,
-      appBar: AppBar(
-        title: Text('أورادك اليومية'),
-        centerTitle: true,
-        backgroundColor: isDark ? Colors.grey.shade800 : Colors.teal,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.bar_chart),
-            onPressed: () {
-              Navigator.push(
+      // appBar: AppBar(
+      //   title: Text('أورادك اليومية'),
+      //   centerTitle: true,
+      //   backgroundColor: isDark ? Colors.grey.shade800 : Colors.teal,
+      //   elevation: 0,
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(Icons.bar_chart),
+      //       onPressed: () {
+      //         Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //             builder: (context) => StatisticsScreen(stats: stats),
+      //           ),
+      //         );
+      //       },
+      //     ),
+      //   ],
+      // ),
+      appBar: PreferredSize(
+        preferredSize:
+        Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+        child: AppBar(
+          leading:  CupertinoNavigationBarBackButton(
+            color:isDark? Colors.white :Colors.black,
+          ),
+          actions: [
+            IconButton(
+              onPressed: () => Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => StatisticsScreen(stats: stats),
                 ),
-              );
-            },
+              ),
+              icon: const Icon(Icons.bar_chart),
+            )
+          ],
+          centerTitle: true,
+          title: Text(
+            "أورادك من الأذكار اليومية",
+            style: GoogleFonts.cairo(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+            ),
           ),
-        ],
+        ),
       ),
+
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-          // بطاقة الإحصائيات السريعة
-          _buildStatsCard(isDark),
+          ? Center(child: KLoading.progressIOSIndicator())
+          :  Directionality(
+        textDirection: TextDirection.rtl,
+            child: Column(
+                    children: [
+            // بطاقة الإحصائيات السريعة
+            _buildStatsCard(isDark),
 
-          // فلتر الفئات
-          if (categories.length > 1)
-            _buildCategoryFilter(isDark),
+            // فلتر الفئات
+            if (categories.length > 1)
+              _buildCategoryFilter(isDark),
 
-          // قائمة الأوراد
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(16),
-              children: [
-                ExpansionTile(
-                  initiallyExpanded: true,
-                  title: Text('الأوراد الجارية (${filteredAwrad.length})'),
-                  children: filteredAwrad
-                      .map((wird) => _buildWirdCard(wird, isDark: isDark))
-                      .toList(),
-                ),
-                ExpansionTile(
-                  initiallyExpanded: false,
-                  title: Text('الأوراد المنجزة (${completedAwrad.length})'),
-                  children: completedAwrad
-                      .map((wird) => _buildWirdCard(wird, isDark: isDark, completed: true))
-                      .toList(),
-                ),
-              ],
+            // قائمة الأوراد
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.all(16),
+                children: [
+                  ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text('الأوراد الجارية (${filteredAwrad.length})',style: TextStyle(fontFamily: "me",fontSize: 20.sp),),
+                    children: filteredAwrad
+                        .map((wird) => _buildWirdCard(wird, isDark: isDark))
+                        .toList(),
+                  ),
+                  ExpansionTile(
+                    initiallyExpanded: false,
+                    title: Text('الأوراد المنجزة (${completedAwrad.length})',style: TextStyle(fontFamily: "me",fontSize: 20.sp),),
+                    children: completedAwrad
+                        .map((wird) => _buildWirdCard(wird, isDark: isDark, completed: true))
+                        .toList(),
+                  ),
+                ],
+              ),
             ),
+                    ],
+                  ),
           ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final newWird = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddWirdScreen(isDark: isDark),
-            ),
-          );
-          if (newWird != null) {
-            setState(() => awrad.add(newWird));
-            await manager.saveAwrad([...awrad, ...completedAwrad]);
-          }
-        },
-        icon: Icon(Icons.add),
-        label: Text('ورد جديد'),
-        backgroundColor: Colors.teal,
+      floatingActionButton: Directionality(
+        textDirection: TextDirection.rtl,
+        child: FloatingActionButton.extended(
+        
+          onPressed: () async {
+            final newWird = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddWirdScreen(isDark: isDark),
+              ),
+            );
+            if (newWird != null) {
+              setState(() => awrad.add(newWird));
+              await manager.saveAwrad([...awrad, ...completedAwrad]);
+            }
+          },
+          icon: Icon(Icons.add),
+          label: const TextDefaultWidget(title: 'إضافة ورد جديد',fontWeight: FontWeight.bold,fontFamily: "cairo",color: Colors.white,),
+          backgroundColor:Colors.green,
+          foregroundColor: Colors.white,
+        
+        ),
       ),
     );
   }
 
   Widget _buildStatsCard(bool isDark) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [Colors.grey.shade800, Colors.grey.shade700]
-              : [Colors.teal, Colors.teal.shade300],
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isDark
+                ? [Colors.grey.shade900, Colors.grey.shade700]
+                : [Colors.teal, Colors.teal.shade300],
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildStatItem('🔥', '${stats.currentStreak}', 'يوم متتالي', isDark),
-          _buildStatItem('⭐', 'المستوى ${stats.level}', '${stats.totalTasbihat} تسبيحة', isDark),
-          _buildStatItem('🏆', '${stats.achievements.length}', 'إنجاز', isDark),
-        ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildStatItem('🔥', '${stats.currentStreak}', 'يوم متتالي', isDark),
+            _buildStatItem('⭐', 'المستوى ${stats.level}', '${stats.totalTasbihat} تسبيحة', isDark),
+            _buildStatItem('🏆', '${stats.achievements.length}', 'إنجاز', isDark),
+          ],
+        ),
       ),
     );
   }
@@ -1086,47 +1132,50 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
       children: [
         Text(emoji, style: TextStyle(fontSize: 24)),
         SizedBox(height: 4),
-        Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.white70)),
+        Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white,fontFamily: "me")),
+        Text(label, style: TextStyle(fontSize: 20, color: Colors.white70,fontFamily: "me",fontWeight: FontWeight.bold)),
       ],
     );
   }
 
   Widget _buildCategoryFilter(bool isDark) {
-    return Container(
-      height: 50,
-      margin: EdgeInsets.symmetric(vertical: 8),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final cat = categories[index];
-          final isSelected = cat == selectedCategory;
-          return GestureDetector(
-            onTap: () => setState(() => selectedCategory = cat),
-            child: Container(
-              margin: EdgeInsets.only(left: 8),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? Colors.teal
-                    : (isDark ? Colors.grey.shade800 : Colors.white),
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                  color: isSelected ? Colors.teal : Colors.grey.shade300,
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Container(
+        height: 50,
+        margin: EdgeInsets.symmetric(vertical: 15),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          itemCount: categories.length,
+          itemBuilder: (context, index) {
+            final cat = categories[index];
+            final isSelected = cat == selectedCategory;
+            return GestureDetector(
+              onTap: () => setState(() => selectedCategory = cat),
+              child: Container(
+                margin: EdgeInsets.only(left: 8),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? KColors.primaryColor
+                      : (isDark ? Colors.grey.shade800 : Colors.white),
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: isSelected ? Colors.teal : Colors.grey.shade300,
+                  ),
+                ),
+                child: Text(
+                  cat,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : (isDark ? Colors.white : Colors.black87),
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
                 ),
               ),
-              child: Text(
-                cat,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : (isDark ? Colors.white : Colors.black87),
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -1134,86 +1183,129 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
   Widget _buildWirdCard(Wird wird, {required bool isDark, bool completed = false}) {
     final totalCount = wird.adhkar.fold<int>(0, (sum, dhikr) => sum + dhikr.targetCount);
 
-    return Card(
-      elevation: 3,
-      margin: EdgeInsets.only(bottom: 12),
-      color: isDark ? Colors.grey.shade800 : Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(15),
-        onTap: completed
-            ? null
-            : () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TasbihScreen(
-                wird: wird,
-                isDark: isDark,
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Card(
+        elevation: 3,
+        margin: EdgeInsets.only(bottom: 12),
+        color: isDark ? Colors.grey.shade800 : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(15),
+          onTap: completed
+              ? null
+              : () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TasbihScreen(
+                  wird: wird,
+                  isDark: isDark,
+                ),
               ),
-            ),
-          );
-
-          if (result == 'completed') {
-            setState(() {
-              wird.isCompleted = true;
-              awrad.remove(wird);
-              completedAwrad.add(wird);
-            });
-            await manager.saveAwrad([...awrad, ...completedAwrad]);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('✅ تم نقل الورد إلى قائمة الأوراد المنجزة')),
             );
-          } else if (result == true) {
-            await manager.saveAwrad([...awrad, ...completedAwrad]);
-            await loadData();
-          }
-        },
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.teal.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+      
+            if (result == 'completed') {
+              setState(() {
+                wird.isCompleted = true;
+                awrad.remove(wird);
+                completedAwrad.add(wird);
+              });
+              await manager.saveAwrad([...awrad, ...completedAwrad]);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('✅ تم نقل الورد إلى قائمة الأوراد المنجزة')),
+              );
+            } else if (result == true) {
+              await manager.saveAwrad([...awrad, ...completedAwrad]);
+              await loadData();
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.teal.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(child: Text('📿', style: TextStyle(fontSize: 30))),
                 ),
-                child: Center(child: Text('📿', style: TextStyle(fontSize: 30))),
-              ),
-              SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      wird.name,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      '${wird.adhkar.length} ذكر • $totalCount تسبيحة',
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
-                    ),
-                    SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(Icons.check_circle, size: 16, color: Colors.green),
-                        SizedBox(width: 4),
-                        Text(
-                          'أكملته ${wird.completedCount} مرة',
-                          style: TextStyle(color: Colors.green, fontSize: 12),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        wird.name,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        '${wird.adhkar.length} ذكر • $totalCount تسبيحة',
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                      SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.check_circle, size: 16, color: Colors.green),
+                          SizedBox(width: 4),
+                          Text(
+                            'أكملته ${wird.completedCount} مرة',
+                            style: TextStyle(color: Colors.green, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-
-              if (!completed)
-                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-            ],
+                // أيقونة الحذف إذا كان الورد منجز أو لتسهيل الحذف
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.redAccent),
+                  onPressed: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('تأكيد الحذف'),
+                        content: Text('هل أنت متأكد أنك تريد حذف هذا الورد؟'),
+                        actions: [
+                          TextButton(
+                            child: Text('إلغاء'),
+                            onPressed: () => Navigator.pop(context, false),
+                          ),
+                          TextButton(
+                            child: Text('حذف', style: TextStyle(color: Colors.red)),
+                            onPressed: () => Navigator.pop(context, true),
+                          ),
+                        ],
+                      ),
+                    );
+      
+                    if (confirm == true) {
+                      setState(() {
+                        if (completed) {
+                          completedAwrad.remove(wird);
+                        } else {
+                          awrad.remove(wird);
+                        }
+                      });
+                      await manager.saveAwrad([...awrad, ...completedAwrad]);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('تم حذف الورد بنجاح')),
+                      );
+                    }
+                  },
+                ),
+                if (!completed)
+                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              ],
+            ),
           ),
         ),
       ),
@@ -1649,19 +1741,84 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
   List<Dhikr> selectedAdhkar = [];
   String selectedCategory = 'صباح';
 
-  final List<String> categories = ['صباح', 'مساء', 'نوم', 'عام', 'مخصص'];
+  // final List<String> categories = ['صباح', 'مساء', 'نوم', 'عام', 'مخصص'];
+  final List<String> categories = [
+    'صَبَاح',                   // صباح
+    'مَسَاء',                   // مساء
+    'نَوْم',                     // نوم
+    'عَام',                      // عام
+    'مُخَصَّص',                  // مخصص
+    'بَعْدَ الصَّلَاة',           // بعد الصلاة
+    'قَبْلَ الطَّعَام',           // قبل الطعام
+    'بَعْدَ الطَّعَام',           // بعد الطعام
+    'عِنْدَ الضِّيق',             // عند الضيق
+    'عِنْدَ القَلَق',             // عند القلق
+    'عِنْدَ النَّوْم',             // عند النوم
+    'عِنْدَ الاسْتِيقاظ',          // عند الاستيقاظ
+    'أَيَّام الْعِيد',            // أيام العيد
+    'رَمَضَان',                   // رمضان
+    'ذِكْرٌ عَامّ',                // ذكر عام
+    'ذِكْرٌ مُنْفَرِد',             // ذكر منفرد
+    'بَعْدَ الوُضُوء',             // بعد الوضوء
+    'قَبْلَ الوُضُوء',             // قبل الوضوء
+    'عِنْدَ السَّفَر',             // عند السفر
+    'عِنْدَ الْوُجُودِ فِي المَسْجِد', // عند وجودك في المسجد
+    'فِي الطَّرِيق',               // في الطريق
+    'فِي الْمَدْرَسَة',            // في المدرسة
+    'فِي الْعَمَل',               // في العمل
+    'عِنْدَ الشِّدَّة',             // عند الشدة
+    'عِنْدَ الْفَرَح',             // عند الفرح
+    'عِنْدَ الْحُزْن',             // عند الحزن
+    'عِنْدَ الْمَرَض',             // عند المرض
+    'فِي الْجَمَاعَة',            // في الجماعة
+    'خِصّ بِاللَّيْل',             // خص بالليل
+    'خِصّ بِالنَّهَار',             // خص بالنهار
+    'أَيَّام الجُمُعَة',           // أيام الجمعة
+    'أَيَّام الشَّهْر الحَرَام',     // أيام الشهر الحرام
+    'أَيَّام رَمَضَان',            // أيام رمضان
+    'أَيَّام الْحَجّ',             // أيام الحج
+    'فِي الْبَيْت',               // في البيت
+    'فِي السُّوق',                 // في السوق
+    'فِي الْحَقْل',               // في الحقل
+    'عِنْدَ الْوِلَادَة',          // عند الولادة
+    'أَيَّام مُخْتَلِفَة',          // أيام مختلفة
+  ];
+
+
+  // final List<Map<String, dynamic>> suggestedAdhkar = [
+  //   {'text': 'سبحان الله', 'count': 33},
+  //   {'text': 'الحمد لله', 'count': 33},
+  //   {'text': 'الله أكبر', 'count': 34},
+  //   {'text': 'لا إله إلا الله', 'count': 100},
+  //   {'text': 'استغفر الله', 'count': 100},
+  //   {'text': 'سبحان الله وبحمده', 'count': 100},
+  //   {'text': 'لا حول ولا قوة إلا بالله', 'count': 50},
+  //   {'text': 'اللهم صل على محمد', 'count': 100},
+  //   {'text': 'سبحان الله العظيم', 'count': 50},
+  //   {'text': 'أستغفر الله العظيم', 'count': 70},
+  // ];
+
 
   final List<Map<String, dynamic>> suggestedAdhkar = [
-    {'text': 'سبحان الله', 'count': 33},
-    {'text': 'الحمد لله', 'count': 33},
-    {'text': 'الله أكبر', 'count': 34},
-    {'text': 'لا إله إلا الله', 'count': 100},
-    {'text': 'استغفر الله', 'count': 100},
-    {'text': 'سبحان الله وبحمده', 'count': 100},
-    {'text': 'لا حول ولا قوة إلا بالله', 'count': 50},
-    {'text': 'اللهم صل على محمد', 'count': 100},
-    {'text': 'سبحان الله العظيم', 'count': 50},
-    {'text': 'أستغفر الله العظيم', 'count': 70},
+    {'text': 'سُبْحَانَ اللهِ', 'count': 33},
+    {'text': 'الْحَمْدُ لِلّهِ', 'count': 33},
+    {'text': 'اللهُ أَكْبَرُ', 'count': 34},
+    {'text': 'أَسْتَغْفِرُ اللهَ الْعَظِيمَ', 'count': 70},
+    {'text': 'لَا إِلَهَ إِلَّا اللهُ', 'count': 100},
+    {'text': 'أَسْتَغْفِرُ اللهَ', 'count': 100},
+    {'text': 'سُبْحَانَ اللهِ وَبِحَمْدِهِ', 'count': 100},
+    {'text': 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ', 'count': 50},
+    {'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ', 'count': 100},
+    {'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ وَآلِ مُحَمَّدٍ', 'count': 100},
+    {'text': 'اللّهُـمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', 'count': 100},
+    {'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِهِ وَأَصْحَابِهِ', 'count': 100},
+    {'text': 'سُبْحَانَ اللهِ الْعَظِيمِ', 'count': 50},
+    {'text': 'اللّهُـمَّ صَلِّ عَلَى النَّبِيِّ وَسَلِّمْ', 'count': 100},
+    {'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ وَبَارِكْ عَلَيْهِ', 'count': 100},
+    {'text': 'اللّهُـمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ', 'count': 100},
+    {'text': 'سُبْحَانَ اللهِ وَالْحَمْدُ لِلّهِ وَاللهُ أَكْبَرُ', 'count': 100},
+    {'text': 'لَا إِلَهَ إِلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ', 'count': 100},
+    {'text': 'سُبْحَانَ اللهِ وَالْحَمْدُ لِلّهِ وَاللهُ أَكْبَرُ وَلا حَوْلَ وَلا قُوَّةَ إِلَّا بِاللهِ', 'count': 100},
   ];
 
   void addCustomDhikr() {
@@ -1670,58 +1827,61 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       builder: (context) {
         final textController = TextEditingController();
         final countController = TextEditingController(text: '33');
-        return AlertDialog(
-          backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
-          title: Text(
-            'إضافة ذكر مخصص',
-            style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: textController,
-                style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
-                decoration: InputDecoration(
-                  labelText: 'نص الذكر',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
+            title: Text(
+              'إضافة ذكر مخصص',
+              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: textController,
+                  style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+                  decoration: InputDecoration(
+                    labelText: 'نص الذكر',
+                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
+                  ),
                 ),
+                SizedBox(height: 12),
+                TextField(
+                  controller: countController,
+                  style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+                  decoration: InputDecoration(
+                    labelText: 'عدد التكرارات',
+                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('إلغاء'),
               ),
-              SizedBox(height: 12),
-              TextField(
-                controller: countController,
-                style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
-                decoration: InputDecoration(
-                  labelText: 'عدد التكرارات',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
-                ),
-                keyboardType: TextInputType.number,
+              TextButton(
+                onPressed: () {
+                  if (textController.text.isNotEmpty) {
+                    setState(() {
+                      selectedAdhkar.add(Dhikr(
+                        id: DateTime.now().toString(),
+                        text: textController.text,
+                        targetCount: int.tryParse(countController.text) ?? 33,
+                      ));
+                    });
+                  }
+                  Navigator.pop(context);
+                },
+                child: Text('إضافة'),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('إلغاء'),
-            ),
-            TextButton(
-              onPressed: () {
-                if (textController.text.isNotEmpty) {
-                  setState(() {
-                    selectedAdhkar.add(Dhikr(
-                      id: DateTime.now().toString(),
-                      text: textController.text,
-                      targetCount: int.tryParse(countController.text) ?? 33,
-                    ));
-                  });
-                }
-                Navigator.pop(context);
-              },
-              child: Text('إضافة'),
-            ),
-          ],
         );
       },
     );
@@ -1729,92 +1889,32 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.white,
-      appBar: AppBar(
-        title: Text('إضافة ورد جديد'),
-        backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.teal,
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: nameController,
-              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
-              decoration: InputDecoration(
-                labelText: 'اسم الورد',
-                hintText: 'مثال: ورد الصباح',
-                border: OutlineInputBorder(),
-                labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.white,
+        appBar: AppBar(
+          title: Text('إضافة ورد جديد'),
+          backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.teal,
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: nameController,
+                style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+                decoration: InputDecoration(
+                  labelText: 'اسم الورد',
+                  hintText: 'مثال: ورد الصباح',
+                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'الفئة:',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: widget.isDark ? Colors.white : Colors.black87,
-              ),
-            ),
-            SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: categories.map((cat) {
-                return ChoiceChip(
-                  label: Text(cat),
-                  selected: selectedCategory == cat,
-                  onSelected: (selected) {
-                    if (selected) setState(() => selectedCategory = cat);
-                  },
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 24),
-            Text(
-              'اختر الأذكار:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: widget.isDark ? Colors.white : Colors.black87,
-              ),
-            ),
-            SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: suggestedAdhkar.map((dhikr) {
-                return FilterChip(
-                  label: Text('${dhikr['text']} (${dhikr['count']})'),
-                  selected: selectedAdhkar.any((d) => d.text == dhikr['text']),
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        selectedAdhkar.add(Dhikr(
-                          id: DateTime.now().toString(),
-                          text: dhikr['text'],
-                          targetCount: dhikr['count'],
-                        ));
-                      } else {
-                        selectedAdhkar.removeWhere((d) => d.text == dhikr['text']);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: addCustomDhikr,
-              icon: Icon(Icons.add),
-              label: Text('إضافة ذكر مخصص'),
-            ),
-            if (selectedAdhkar.isNotEmpty) ...[
-              SizedBox(height: 24),
+              SizedBox(height: 16),
               Text(
-                'الأذكار المختارة (${selectedAdhkar.length}):',
+                'الفئة:',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -1822,60 +1922,123 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                 ),
               ),
               SizedBox(height: 8),
-              ...selectedAdhkar.asMap().entries.map((entry) {
-                final idx = entry.key;
-                final dhikr = entry.value;
-                return Card(
-                  color: widget.isDark ? Colors.grey.shade800 : Colors.white,
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text('${idx + 1}'),
-                      backgroundColor: Colors.teal,
-                    ),
-                    title: Text(
-                      dhikr.text,
-                      style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
-                    ),
-                    subtitle: Text('${dhikr.targetCount} مرة'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        setState(() => selectedAdhkar.remove(dhikr));
-                      },
-                    ),
-                  ),
-                );
-              }),
-            ],
-            SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: selectedAdhkar.isEmpty
-                  ? null
-                  : () {
-                if (nameController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('الرجاء إدخال اسم الورد')),
+              Wrap(
+                spacing: 8,
+                children: categories.map((cat) {
+                  return ChoiceChip(
+                    label: Text(cat),
+                    selected: selectedCategory == cat,
+                    onSelected: (selected) {
+                      if (selected) setState(() => selectedCategory = cat);
+                    },
                   );
-                  return;
-                }
-                final wird = Wird(
-                  id: DateTime.now().toString(),
-                  name: nameController.text,
-                  adhkar: selectedAdhkar,
-                  createdAt: DateTime.now(),
-                  category: selectedCategory,
-                );
-                Navigator.pop(context, wird);
-              },
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Text('حفظ الورد', style: TextStyle(fontSize: 16)),
+                }).toList(),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
+              SizedBox(height: 24),
+              Text(
+                'اختر الأذكار:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: widget.isDark ? Colors.white : Colors.black87,
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: suggestedAdhkar.map((dhikr) {
+                  return FilterChip(
+                    label: Text('${dhikr['text']} (${dhikr['count']})'),
+                    selected: selectedAdhkar.any((d) => d.text == dhikr['text']),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          selectedAdhkar.add(Dhikr(
+                            id: DateTime.now().toString(),
+                            text: dhikr['text'],
+                            targetCount: dhikr['count'],
+                          ));
+                        } else {
+                          selectedAdhkar.removeWhere((d) => d.text == dhikr['text']);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: addCustomDhikr,
+                icon: Icon(Icons.add),
+                label: Text('إضافة ذكر مخصص'),
+              ),
+              if (selectedAdhkar.isNotEmpty) ...[
+                SizedBox(height: 24),
+                Text(
+                  'الأذكار المختارة (${selectedAdhkar.length}):',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: widget.isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 8),
+                ...selectedAdhkar.asMap().entries.map((entry) {
+                  final idx = entry.key;
+                  final dhikr = entry.value;
+                  return Card(
+                    color: widget.isDark ? Colors.grey.shade800 : Colors.white,
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Text('${idx + 1}'),
+                        backgroundColor: Colors.teal,
+                      ),
+                      title: Text(
+                        dhikr.text,
+                        style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+                      ),
+                      subtitle: Text('${dhikr.targetCount} مرة'),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          setState(() => selectedAdhkar.remove(dhikr));
+                        },
+                      ),
+                    ),
+                  );
+                }),
+              ],
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: selectedAdhkar.isEmpty
+                    ? null
+                    : () {
+                  if (nameController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('الرجاء إدخال اسم الورد')),
+                    );
+                    return;
+                  }
+                  final wird = Wird(
+                    id: DateTime.now().toString(),
+                    name: nameController.text,
+                    adhkar: selectedAdhkar,
+                    createdAt: DateTime.now(),
+                    category: selectedCategory,
+                  );
+                  Navigator.pop(context, wird);
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text('حفظ الورد', style: TextStyle(fontSize: 16)),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -2092,15 +2255,18 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
       builder: (context) => AlertDialog(
         backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Column(
-          children: [
-            Text('🎉', style: TextStyle(fontSize: 50)),
-            SizedBox(height: 8),
-            Text(
-              'أحسنت!',
-              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
-            ),
-          ],
+        title: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Column(
+            children: [
+              Text('🎉', style: TextStyle(fontSize: 50)),
+              SizedBox(height: 8),
+              Text(
+                'أحسنت!',
+                style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
+              ),
+            ],
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2182,266 +2348,269 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
         await _saveProgress();
         return true;
       },
-      child: Scaffold(
-        backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
-        appBar: isFocusMode
-            ? null
-            : AppBar(
-          title: Text(widget.wird.name),
-          backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.teal,
-          actions: [
-            IconButton(
-              icon: Icon(isFocusMode ? Icons.visibility : Icons.visibility_off),
-              onPressed: () => setState(() => isFocusMode = !isFocusMode),
-              tooltip: 'وضع التركيز',
-            ),
-          ],
-        ),
-        body: GestureDetector(
-          onTap: isCompleted ? null : incrementCount,
-          child: Container(
-            color: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
-            child: Column(
-              children: [
-                if (!isFocusMode) ...[
-                  LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 8,
-                    backgroundColor: Colors.grey.shade300,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      isCompleted ? Colors.green : Colors.teal,
+      child:  Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+          appBar: isFocusMode
+              ? null
+              : AppBar(
+            title: Text(widget.wird.name),
+            backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.teal,
+            actions: [
+              IconButton(
+                icon: Icon(isFocusMode ? Icons.visibility : Icons.visibility_off),
+                onPressed: () => setState(() => isFocusMode = !isFocusMode),
+                tooltip: 'وضع التركيز',
+              ),
+            ],
+          ),
+          body: GestureDetector(
+            onTap: isCompleted ? null : incrementCount,
+            child: Container(
+              color: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+              child: Column(
+                children: [
+                  if (!isFocusMode) ...[
+                    LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 8,
+                      backgroundColor: Colors.grey.shade300,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isCompleted ? Colors.green : Colors.teal,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 16),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'الذكر ${currentDhikrIndex + 1} من ${widget.wird.adhkar.length}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: widget.isDark ? Colors.white70 : Colors.grey.shade700,
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.teal.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '${((dhikr.currentCount / dhikr.targetCount) * 100).toInt()}%',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.teal,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(32),
-                          child: AnimatedDefaultTextStyle(
-                            duration: Duration(milliseconds: 300),
-                            style: TextStyle(
-                              fontSize: isFocusMode ? 40 : 32,
-                              fontWeight: FontWeight.bold,
-                              height: 2,
-                              color: widget.isDark ? Colors.white : Colors.black87,
-                            ),
-                            textAlign: TextAlign.center,
-                            child: Text(dhikr.text),
-                          ),
-                        ),
-                        SizedBox(height: 40),
-                        ScaleTransition(
-                          scale: Tween<double>(begin: 1.0, end: 0.95).animate(
-                            CurvedAnimation(
-                              parent: _scaleController,
-                              curve: Curves.easeInOut,
-                            ),
-                          ),
-                          child: AnimatedBuilder(
-                            animation: _pulseController,
-                            builder: (context, child) {
-                              return Container(
-                                width: isFocusMode ? 220 : 200,
-                                height: isFocusMode ? 220 : 200,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.teal.withOpacity(
-                                        0.3 + (_pulseController.value * 0.2),
-                                      ),
-                                      blurRadius: 30,
-                                      spreadRadius: 10,
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '${dhikr.currentCount}',
-                                      style: TextStyle(
-                                        fontSize: isFocusMode ? 72 : 64,
-                                        fontWeight: FontWeight.bold,
-                                        color: isCompleted ? Colors.green : Colors.teal,
-                                      ),
-                                    ),
-                                    if (!isFocusMode)
-                                      Text(
-                                        'من ${dhikr.targetCount}',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        if (!isFocusMode) ...[
-                          SizedBox(height: 40),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
                           Text(
-                            'اضغط في أي مكان للتسبيح',
+                            'الذكر ${currentDhikrIndex + 1} من ${widget.wird.adhkar.length}',
                             style: TextStyle(
                               fontSize: 16,
-                              color: widget.isDark ? Colors.white60 : Colors.grey.shade600,
+                              color: widget.isDark ? Colors.white70 : Colors.grey.shade700,
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.teal.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '${((dhikr.currentCount / dhikr.targetCount) * 100).toInt()}%',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.teal,
+                              ),
                             ),
                           ),
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-
-                // ✅ أزرار التحكم الجديدة
-                if (!isFocusMode)
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Column(
-                      children: [
-                        // أزرار التنقل (السابق / التالي)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // زر السابق
-                            ElevatedButton.icon(
-                              onPressed: currentDhikrIndex > 0 ? _goToPreviousDhikr : null,
-                              icon: Icon(Icons.arrow_back),
-                              label: Text('السابق'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ],
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(32),
+                            child: AnimatedDefaultTextStyle(
+                              duration: Duration(milliseconds: 300),
+                              style: TextStyle(
+                                fontSize: isFocusMode ? 40 : 32,
+                                fontWeight: FontWeight.bold,
+                                height: 2,
+                                color: widget.isDark ? Colors.white : Colors.black87,
+                              ),
+                              textAlign: TextAlign.center,
+                              child: Text(dhikr.text),
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          ScaleTransition(
+                            scale: Tween<double>(begin: 1.0, end: 0.95).animate(
+                              CurvedAnimation(
+                                parent: _scaleController,
+                                curve: Curves.easeInOut,
                               ),
                             ),
-                            SizedBox(width: 12),
-                            // زر التخطي
-                            ElevatedButton.icon(
-                              onPressed: _skipCurrentDhikr,
-                              icon: Icon(Icons.skip_next),
-                              label: Text('تخطي'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            // زر التالي
-                            ElevatedButton.icon(
-                              onPressed: currentDhikrIndex < widget.wird.adhkar.length - 1
-                                  ? _goToNextDhikr
-                                  : null,
-                              icon: Icon(Icons.arrow_forward),
-                              label: Text('التالي'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        // أزرار الإعادة
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                setState(() => dhikr.currentCount = 0);
-                                _saveProgress();
-                              },
-                              icon: Icon(Icons.refresh),
-                              label: Text('إعادة الحالي'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey.shade600,
-                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                              ),
-                            ),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
-                                    title: Text(
-                                      'إعادة الورد؟',
-                                      style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
-                                    ),
-                                    content: Text(
-                                      'هل تريد إعادة الورد من البداية؟',
-                                      style: TextStyle(color: widget.isDark ? Colors.white70 : Colors.black87),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text('إلغاء'),
+                            child: AnimatedBuilder(
+                              animation: _pulseController,
+                              builder: (context, child) {
+                                return Container(
+                                  width: isFocusMode ? 220 : 200,
+                                  height: isFocusMode ? 220 : 200,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.teal.withOpacity(
+                                          0.3 + (_pulseController.value * 0.2),
+                                        ),
+                                        blurRadius: 30,
+                                        spreadRadius: 10,
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          for (var d in widget.wird.adhkar) {
-                                            d.currentCount = 0;
-                                          }
-                                          widget.wird.currentDhikrIndex = 0;
-                                          widget.wird.isInProgress = false;
-                                          setState(() => currentDhikrIndex = 0);
-                                          _saveProgress();
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('إعادة الكل'),
-                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '${dhikr.currentCount}',
+                                        style: TextStyle(
+                                          fontSize: isFocusMode ? 72 : 64,
+                                          fontWeight: FontWeight.bold,
+                                          color: isCompleted ? Colors.green : Colors.teal,
+                                        ),
                                       ),
+                                      if (!isFocusMode)
+                                        Text(
+                                          'من ${dhikr.targetCount}',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 );
                               },
-                              icon: Icon(Icons.restart_alt),
-                              label: Text('إعادة الكل'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            ),
+                          ),
+                          if (!isFocusMode) ...[
+                            SizedBox(height: 40),
+                            Text(
+                              'اضغط في أي مكان للتسبيح',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: widget.isDark ? Colors.white60 : Colors.grey.shade600,
                               ),
                             ),
                           ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-              ],
+
+                  // ✅ أزرار التحكم الجديدة
+                  if (!isFocusMode)
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Column(
+                        children: [
+                          // أزرار التنقل (السابق / التالي)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // زر السابق
+                              ElevatedButton.icon(
+                                onPressed: currentDhikrIndex > 0 ? _goToPreviousDhikr : null,
+                                icon: Icon(Icons.arrow_back),
+                                label: Text('السابق'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              // زر التخطي
+                              ElevatedButton.icon(
+                                onPressed: _skipCurrentDhikr,
+                                icon: Icon(Icons.skip_next),
+                                label: Text('تخطي'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.orange,
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              // زر التالي
+                              ElevatedButton.icon(
+                                onPressed: currentDhikrIndex < widget.wird.adhkar.length - 1
+                                    ? _goToNextDhikr
+                                    : null,
+                                icon: Icon(Icons.arrow_forward),
+                                label: Text('التالي'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          // أزرار الإعادة
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  setState(() => dhikr.currentCount = 0);
+                                  _saveProgress();
+                                },
+                                icon: Icon(Icons.refresh),
+                                label: Text('إعادة الحالي'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey.shade600,
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                ),
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
+                                      title: Text(
+                                        'إعادة الورد؟',
+                                        style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
+                                      ),
+                                      content: Text(
+                                        'هل تريد إعادة الورد من البداية؟',
+                                        style: TextStyle(color: widget.isDark ? Colors.white70 : Colors.black87),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: Text('إلغاء'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            for (var d in widget.wird.adhkar) {
+                                              d.currentCount = 0;
+                                            }
+                                            widget.wird.currentDhikrIndex = 0;
+                                            widget.wird.isInProgress = false;
+                                            setState(() => currentDhikrIndex = 0);
+                                            _saveProgress();
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('إعادة الكل'),
+                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                icon: Icon(Icons.restart_alt),
+                                label: Text('إعادة الكل'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -2461,157 +2630,160 @@ class StatisticsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final last7Days = List.generate(7, (i) {
       final date = DateTime.now().subtract(Duration(days: 6 - i));
-      final key = DateFormat('yyyy-MM-dd').format(date);
+      final key = intl.DateFormat('yyyy-MM-dd').format(date);
       return {
-        'date': DateFormat('E', 'ar').format(date),
+        'date': intl.DateFormat('E', 'ar').format(date),
         'count': stats.dailyCompletions[key] ?? 0,
       };
     });
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('الإحصائيات'),
-        backgroundColor: Colors.teal,
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Card(
-              elevation: 4,
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Text(
-                      'إجمالي التسبيحات',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      '${stats.totalTasbihat}',
-                      style: TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
+    return  Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('الإحصائيات'),
+          backgroundColor: Colors.teal,
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Card(
+                elevation: 4,
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Text(
+                        'إجمالي التسبيحات',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          Icon(Icons.local_fire_department, size: 40, color: Colors.orange),
-                          SizedBox(height: 8),
-                          Text(
-                            '${stats.currentStreak}',
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
-                          Text('يوم متتالي', style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          Icon(Icons.emoji_events, size: 40, color: Colors.amber),
-                          SizedBox(height: 8),
-                          Text(
-                            '${stats.longestStreak}',
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
-                          Text('أطول سلسلة', style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 24),
-            Text(
-              'نشاط آخر 7 أيام',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Container(
-              height: 200,
-              child: BarChart(
-                BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: (last7Days.map((d) => d['count'] as int).reduce((a, b) => a > b ? a : b) + 5).toDouble(),
-                  barTouchData: BarTouchData(enabled: true),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          if (value.toInt() >= 0 && value.toInt() < last7Days.length) {
-                            return Text(
-                              last7Days[value.toInt()]['date'] as String,
-                              style: TextStyle(fontSize: 12),
-                            );
-                          }
-                          return Text('');
-                        },
-                      ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                  ),
-                  gridData: FlGridData(show: false),
-                  borderData: FlBorderData(show: false),
-                  barGroups: last7Days.asMap().entries.map((entry) {
-                    return BarChartGroupData(
-                      x: entry.key,
-                      barRods: [
-                        BarChartRodData(
-                          toY: (entry.value['count'] as int).toDouble(),
+                      SizedBox(height: 8),
+                      Text(
+                        '${stats.totalTasbihat}',
+                        style: TextStyle(
+                          fontSize: 48,
+                          fontWeight: FontWeight.bold,
                           color: Colors.teal,
-                          width: 20,
-                          borderRadius: BorderRadius.circular(4),
                         ),
-                      ],
-                    );
-                  }).toList(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 24),
-            Text(
-              'الإنجازات (${stats.achievements.length})',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: _buildAchievements(stats),
-            ),
-          ],
+              SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            Icon(Icons.local_fire_department, size: 40, color: Colors.orange),
+                            SizedBox(height: 8),
+                            Text(
+                              '${stats.currentStreak}',
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            Text('يوم متتالي', style: TextStyle(color: Colors.grey)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            Icon(Icons.emoji_events, size: 40, color: Colors.amber),
+                            SizedBox(height: 8),
+                            Text(
+                              '${stats.longestStreak}',
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            Text('أطول سلسلة', style: TextStyle(color: Colors.grey)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 24),
+              Text(
+                'نشاط آخر 7 أيام',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
+              Container(
+                height: 200,
+                child: BarChart(
+                  BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY: (last7Days.map((d) => d['count'] as int).reduce((a, b) => a > b ? a : b) + 5).toDouble(),
+                    barTouchData: BarTouchData(enabled: true),
+                    titlesData: FlTitlesData(
+                      show: true,
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            if (value.toInt() >= 0 && value.toInt() < last7Days.length) {
+                              return Text(
+                                last7Days[value.toInt()]['date'] as String,
+                                style: TextStyle(fontSize: 12),
+                              );
+                            }
+                            return Text('');
+                          },
+                        ),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                    ),
+                    gridData: FlGridData(show: false),
+                    borderData: FlBorderData(show: false),
+                    barGroups: last7Days.asMap().entries.map((entry) {
+                      return BarChartGroupData(
+                        x: entry.key,
+                        barRods: [
+                          BarChartRodData(
+                            toY: (entry.value['count'] as int).toDouble(),
+                            color: Colors.teal,
+                            width: 20,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              SizedBox(height: 24),
+              Text(
+                'الإنجازات (${stats.achievements.length})',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: _buildAchievements(stats),
+              ),
+            ],
+          ),
         ),
       ),
     );
