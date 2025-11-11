@@ -398,8 +398,11 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     final int ayahNum = ayah.ayahNumber ?? 1;
     final int ayahUQ = ayah.ayahUQNumber ?? 0; // ✅ بدل ayahUQNumber
     final String text = ayah.text ?? ''; // ✅ بدل text
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     await QuranLibrary().showTafsir(
+
+      isDark:true ,
       context: context,
       // surahNum: surahNum,
       ayahNum: ayahNum,

@@ -6,6 +6,7 @@ import 'package:muslimdaily/app/core/widgets/DrawerWidget.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:quran_library/quran.dart';
+import 'package:quran_library/quran_library.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranViewItemBuilder extends StatefulWidget {
@@ -19,66 +20,154 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     with SingleTickerProviderStateMixin {
   var selectedFontSize;
 
-  late List<DrawerModle?> topBar = [
-    DrawerModle(
-        icon: Icons.search, title: "البحث بالاية", route: "/ayaSearchScreen"),
-    DrawerModle(
-        icon: Icons.gpp_good_outlined,
-        title: "التفسير",
-        route: Routes.tafsirQuranRoute),
-
-    DrawerModle(
-        icon: Icons.list, title: "فهرس القران الكريم", route: "/ListScreen"),
-    DrawerModle(
-        icon: Icons.dashboard_customize_outlined,
-        title: "الاجزاء",
-        route: Routes.jozzaListScreenRoute),
-    DrawerModle(
-        icon: Icons.category_outlined,
-        title: "الاحزاب",
-        route: Routes.hizbeListScreenRoute),
-    DrawerModle(
-        icon: Icons.chrome_reader_mode_outlined,
-        title: "انشاء ختمة جديدة",
-        isRepl: true,
-        route: "/KhatmahHome"),
-    DrawerModle(
-        icon: Icons.preview_outlined,
-        title: "الختمات المنجزه",
-        route: "/compplateKhatna"),
-
-    DrawerModle(
-      icon: Icons.bookmark_add_outlined,
-      title: "اضافة علامة للصفحة",
-      onTap: () => _saveBookmark(_currentPage!),
+  // late List<DrawerModle?> topBar = [
+  //   DrawerModle(
+  //       icon: Icons.search, title: "البحث بالاية", route: "/ayaSearchScreen"),
+  //   DrawerModle(
+  //       icon: Icons.gpp_good_outlined,
+  //       title: "التفسير",
+  //       route: Routes.tafsirQuranRoute),
+  //
+  //   DrawerModle(
+  //       icon: Icons.list, title: "فهرس القران الكريم", route: "/ListScreen"),
+  //   DrawerModle(
+  //       icon: Icons.dashboard_customize_outlined,
+  //       title: "الاجزاء",
+  //       route: Routes.jozzaListScreenRoute),
+  //   DrawerModle(
+  //       icon: Icons.category_outlined,
+  //       title: "الاحزاب",
+  //       route: Routes.hizbeListScreenRoute),
+  //   DrawerModle(
+  //       icon: Icons.chrome_reader_mode_outlined,
+  //       title: "انشاء ختمة جديدة",
+  //       isRepl: true,
+  //       route: "/KhatmahHome"),
+  //   DrawerModle(
+  //       icon: Icons.preview_outlined,
+  //       title: "الختمات المنجزه",
+  //       route: "/compplateKhatna"),
+  //
+  //   DrawerModle(
+  //     icon: Icons.bookmark_add_outlined,
+  //     title: "اضافة علامة للصفحة",
+  //     onTap: () => _saveBookmark(_currentPage!),
+  //   ),
+  //   DrawerModle(
+  //     icon: Icons.bookmark_remove_outlined,
+  //     title: " ازالة العلامه",
+  //     onTap: _delBookmark,
+  //   ),
+  //   DrawerModle(
+  //     icon: Icons.navigation_outlined,
+  //     title: "انتقال الي العلامه",
+  //     onTap: _goToBookmark,
+  //   ),
+  //   DrawerModle(
+  //       icon: Icons.bookmarks_outlined,
+  //       title: "الايات المحفوظة",
+  //       route: "/ayaBookmarkScreen"),
+  //   DrawerModle(
+  //       icon: Icons.info_outline,
+  //       title: "دعاء ختم القران الكريم",
+  //       route: Routes.quranKhitamRoute),
+  //   DrawerModle(
+  //       icon: Icons.favorite_border,
+  //       title: "فضل قرأه القران",
+  //       route: Routes.quranLoveRoute),
+  //
+  //   // DrawerModle(
+  //   //     icon: Icons.dark_mode_outlined,
+  //   //     title: "الوضع الليلي",
+  //   //     onTap: _changeMode),
+  // ];
+  late List<DrawerSection> drawerSections = [
+    DrawerSection(
+      title: "بحث وتفسير",
+      items: [
+        DrawerModle(
+            icon: Icons.search,
+            title: "البحث بالاية",
+            route: "/ayaSearchScreen"),
+        DrawerModle(
+            icon: Icons.gpp_good_outlined,
+            title: "التفسير",
+            route: Routes.tafsirQuranRoute),
+      ],
     ),
-    DrawerModle(
-      icon: Icons.bookmark_remove_outlined,
-      title: " ازالة العلامه",
-      onTap: _delBookmark,
+    DrawerSection(
+      title: "فهرس القرآن",
+      items: [
+        DrawerModle(
+            icon: Icons.list,
+            title: "فهرس القران الكريم",
+            route: "/ListScreen"),
+        DrawerModle(
+            icon: Icons.dashboard_customize_outlined,
+            title: "الأجزاء",
+            route: Routes.jozzaListScreenRoute),
+        DrawerModle(
+            icon: Icons.category_outlined,
+            title: "الأحزاب",
+            route: Routes.hizbeListScreenRoute),
+      ],
     ),
-    DrawerModle(
-      icon: Icons.navigation_outlined,
-      title: "انتقال الي العلامه",
-      onTap: _goToBookmark,
+    DrawerSection(
+      title: "الختمات",
+      items: [
+        DrawerModle(
+            icon: Icons.chrome_reader_mode_outlined,
+            title: "إنشاء ختمة جديدة",
+            isRepl: true,
+            route: "/KhatmahHome"),
+        DrawerModle(
+            icon: Icons.preview_outlined,
+            title: "الختمات المنجزة",
+            route: "/compplateKhatna"),
+      ],
     ),
-    DrawerModle(
-        icon: Icons.bookmarks_outlined,
-        title: "الايات المحفوظة",
-        route: "/ayaBookmarkScreen"),
-    DrawerModle(
-        icon: Icons.info_outline,
-        title: "دعاء ختم القران الكريم",
-        route: Routes.quranKhitamRoute),
-    DrawerModle(
-        icon: Icons.favorite_border,
-        title: "فضل قرأه القران",
-        route: Routes.quranLoveRoute),
-
-    // DrawerModle(
-    //     icon: Icons.dark_mode_outlined,
-    //     title: "الوضع الليلي",
-    //     onTap: _changeMode),
+    DrawerSection(
+      title: "العلامات",
+      items: [
+        DrawerModle(
+          icon: Icons.bookmark_add_outlined,
+          title: "إضافة علامة للصفحة",
+          onTap: () => _saveBookmark(_currentPage!),
+        ),
+        DrawerModle(
+          icon: Icons.bookmark_remove_outlined,
+          title: "إزالة العلامة",
+          onTap: _delBookmark,
+        ),
+        DrawerModle(
+          icon: Icons.navigation_outlined,
+          title: "انتقال إلى العلامة",
+          onTap: _goToBookmark,
+        ),
+        DrawerModle(
+            icon: Icons.bookmarks_outlined,
+            title: "الآيات المحفوظة",
+            route: "/ayaBookmarkScreen"),
+      ],
+    ),
+    DrawerSection(
+      title: "معلومات عامة",
+      items: [
+        DrawerModle(
+            icon: Icons.info_outline,
+            title: "دعاء ختم القرآن الكريم",
+            route: Routes.quranKhitamRoute),
+        DrawerModle(
+            icon: Icons.favorite_border,
+            title: "فضل قراءة القرآن",
+            route: Routes.quranLoveRoute),
+        // DrawerModle(
+        //   icon: Icons.dark_mode_outlined,
+        //   title: "الوضع الليلي",
+        //   onTap: _changeMode,
+        // ),
+      ],
+    ),
   ];
 
   int? _currentPage = 0;
@@ -177,11 +266,23 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Colors.black, // خلفية السكافولد
-        drawer: DrawerWidget(
-          "/surahListScreen",
-          topBar: topBar,
-        ), // <<< هنا بتحط الـ Drawer
-      
+        // drawer: DrawerWidget(
+        //   "/surahListScreen",
+        //   topBar: topBar,
+        // ), // <<< هنا بتحط الـ Drawer
+drawer: Padding(
+  padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+  child: Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(25)
+    ),
+    child: DrawerWidget(
+      "/surahListScreen",
+      sections: drawerSections,
+    ),
+  ),
+)
+        ,
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
@@ -199,6 +300,18 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   ),
                 ),
               ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SurahAudioScreen(isDark: isDark),));
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Icon(
+                    Icons.cloud_done_outlined,
+                    size: 30,
+                  ),
+                ),
+              ),
               FontsDownloadDialog(
                 topBarStyle: QuranTopBarStyle(
                     iconColor: isDark ? Colors.white : AppColors.primary),
@@ -208,7 +321,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   titleColor: isDark ? Colors.white : Colors.black,
                   notes:
                       'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خط مصحف المدينة من اسفل وتفعيله بدلا من الخط الاساسي',
-      
+
                   // notes: 'لجعل مظهر المصحف مطابقًا لمصحف المدينة قم بتحميل خط مصحف المدينة.',
                   notesColor: isDark ? Colors.white : Colors.black,
                   linearProgressBackgroundColor: Colors.blue.shade100,
@@ -235,7 +348,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             ),
           ),
         ),
-      
+
         body: Container(
           width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.zero,
@@ -256,10 +369,12 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       child:
                           KLoading.progressIOSIndicator()) // لحد ما يجيب الصفحة
                   : QuranLibraryScreen(
+                ayahIconColor: isDark?AppStyle.scondColors: AppColors.primary,
                 topBottomQuranStyle: TopBottomQuranStyle.defaults(
                   isDark: isDark,
                   context: context,
                 ).copyWith(
+
                   pageNumberColor:isDark ? Colors.white : Colors.black ,
                   surahNameColor: isDark ? Colors.white : Colors.black,
                   hizbTextColor: isDark ? Colors.white : Colors.black,
@@ -268,23 +383,17 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                 ayahMenuStyle:
                 AyahMenuStyle.defaults(isDark: isDark, context: context),
                       isDark: isDark,
-                      surahInfoStyle: SurahInfoStyle(
-                          primaryColor: Colors.red,
-                          indicatorColor: Colors.red,
-                          textColor: Colors.red,
-                          surahNameColor: Colors.red,
-                          surahNumberColor: Colors.red,
-                          titleColor: Colors.red),
                       pageIndex: _currentPage!,
+
                       topTitleChild: const SizedBox(),
                       useDefaultAppBar: false,
-      
+
                       indexTabStyle: IndexTabStyle(
                         labelColor: isDark ? Colors.white : Colors.black,
                         accentColor: isDark ? Colors.white : Colors.black,
                       ),
-      
-      
+
+
                       // surahNameStyle: SurahNameStyle(
                       //
                       //   surahNameSize: 150,
@@ -292,7 +401,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       //   surahNameColor:isDark?Colors.white: Colors.black, // اسم السورة
                       //
                       // ),
-      
+
                       onPageChanged: (page) {
                         setState(() {
                           _currentPage = page;
@@ -303,7 +412,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                         });
                         _saveCurrentPage(page);
                       },
-      
+
                       parentContext: context,
                     ),
             ),
