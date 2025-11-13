@@ -11,7 +11,8 @@ import 'package:muslimdaily/app/features/radio/QuranRadioView.dart';
 import 'package:muslimdaily/app/features/radio/view/QuranRadioPlayerView.dart';
 import 'package:muslimdaily/app/features/radio/view/widget/RadioSearchScreen.dart';
 
-import '../../../features/about_view/about.dart';
+import '../../../features/WirdView/WirdHomeScreen.dart';
+import '../../../features/aboutView/about.dart';
 import '../../../features/azan_view/timeingScreen.dart';
 import '../../../features/categories/categories_view.dart';
 import '../../../features/categories/view/categories_details.dart';
@@ -27,7 +28,6 @@ import '../../../features/prayer_view/post_prayer_azkar.dart';
 import '../../../features/quran/quranView.dart';
 
 import '../../../features/quran/view/widget/AyaSearchScreen.dart';
-import '../../../features/quran/view/widget/QuranViewItemBuilder.dart';
 import '../../../features/quran/view/widget/TafsirquranView.dart';
 import '../../../features/rokia_view/rokia.dart';
 import '../../../features/sabah_view/azkar_sabah.dart';

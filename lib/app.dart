@@ -2,15 +2,13 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'app/core/cache/storage.dart';
 import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/shard/exports/all_exports.dart';
 import 'app/core/utils/app_theme/app_theme.dart';
 import 'app/core/utils/constent/router.dart';
 import 'app/core/utils/services_locator.dart';
-import 'app/features/about_view/RateService.dart';
+import 'app/features/aboutView/RateService.dart';
 import 'app/features/categories/data/repo/categories_repo_immp.dart';
 import 'app/features/categories/view/controller/categories_bloc.dart';
 import 'package:rate_my_app/rate_my_app.dart';

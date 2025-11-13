@@ -417,7 +417,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     if (!_inited) {
-      return  Scaffold(body: Center(child: KLoading.progressIOSIndicator()));
+      return  Scaffold(body: Center(child: KLoading.progressIOSIndicator(context: context)));
     }
 
     final names = _ql.tafsirAndTraslationsCollection; // List<TafsirNameModel>

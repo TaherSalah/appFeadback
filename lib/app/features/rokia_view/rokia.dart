@@ -37,6 +37,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
   @override
   Widget build(BuildContext context) {
     final con = Provider.of<AzkarProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
@@ -74,6 +75,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                                     textAlign: TextAlign.right,
                                     title: e,
                                     fontSize: 12.5,
+                                    color: isDark? Colors.white:Colors.black,
                                   ));
                             }).toList(),
                             value: selectedFontSize,
@@ -101,7 +103,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                             dropdownStyleData: DropdownStyleData(
                               elevation: 1,
                               decoration: BoxDecoration(
-                                color: const Color(0xfffaedcd),
+                                color:isDark? Theme.of(context).cardColor :  Color(0xfffaedcd),
 
                                 // Set the background color for the dropdown menu
                                 borderRadius: BorderRadius.circular(

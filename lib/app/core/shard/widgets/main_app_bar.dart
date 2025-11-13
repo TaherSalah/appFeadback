@@ -23,6 +23,7 @@ PreferredSizeWidget mainAppBarWidget(
     "90",
     "100",
   ];
+  final isDark = Theme.of(context).brightness == Brightness.dark;
   return AppBar(
     systemOverlayStyle: const SystemUiOverlayStyle(
       // statusBarColor: Color(0xffE1ECC8),
@@ -64,6 +65,7 @@ PreferredSizeWidget mainAppBarWidget(
                               textAlign: TextAlign.right,
                               title: e,
                               fontSize: 12.5,
+                              color: isDark? Colors.white:Colors.black,
                             ));
                       }).toList(),
                       value: selectedFontSize,
@@ -87,7 +89,7 @@ PreferredSizeWidget mainAppBarWidget(
                       dropdownStyleData: DropdownStyleData(
                         elevation: 1,
                         decoration: BoxDecoration(
-                          color: const Color(0xfffaedcd),
+                          color:isDark? Theme.of(context).cardColor :  Color(0xfffaedcd),
 
                           // Set the background color for the dropdown menu
                           borderRadius: BorderRadius.circular(
@@ -98,88 +100,6 @@ PreferredSizeWidget mainAppBarWidget(
                   ),
                 ),
               ),
-              // const SizedBox(
-              //   width: 5,
-              // ),
-              // SizedBox(
-              //   width: 80,
-              //
-              //   child: AnimatedWrapper(
-              //     type: UiAnimationType.slideRight,
-              //     duration: const Duration(seconds: 1),
-              //     child: DropdownButtonHideUnderline(
-              //       child: DropdownButton2<String>(
-              //         isExpanded: true,
-              //         hint:  TextDefaultWidget(
-              //           textAlign: TextAlign.right,
-              //           title:selectedFontSize ,
-              //           fontSize: 15,
-              //           color: Color(0xff1A1A1A),
-              //         ),
-              //         items: const [
-              //           DropdownMenuItem(
-              //               value: "30",
-              //               child: TextDefaultWidget(
-              //                 textAlign: TextAlign.right,
-              //                 title: "30",
-              //                 fontSize: 12.5,
-              //               )),
-              //           DropdownMenuItem(
-              //               value: "15",
-              //
-              //               child: TextDefaultWidget(
-              //                 textAlign: TextAlign.right,
-              //                 title: "20",
-              //                 fontSize: 12.5,
-              //               )),
-              //           DropdownMenuItem(
-              //               value: "25",
-              //
-              //
-              //               child: TextDefaultWidget(
-              //                 textAlign: TextAlign.right,
-              //                 title: "25",
-              //                 fontSize: 12.5,
-              //               )),
-              //         ],
-              //         value: selectedFontSize,
-              //         // onChanged: (value) {
-              //         //   setState(() {
-              //         //     selectedFontSize = value!;
-              //         //   });
-              //         // },
-              //         onChanged: onChanged,
-              //         buttonStyleData: ButtonStyleData(
-              //           decoration: BoxDecoration(
-              //               border: Border.all(
-              //                   color: AppStyle.scondColors, width: 1.5),
-              //               color: Theme.of(context).cardColor,
-              //               borderRadius: BorderRadius.circular(10.0)),
-              //           padding:
-              //           const EdgeInsets.symmetric(horizontal: 16),
-              //           height: 50,
-              //           width: MediaQuery.of(context).size.width / 1.2,
-              //         ),
-              //         menuItemStyleData: MenuItemStyleData(
-              //           overlayColor: MaterialStateProperty.all(
-              //             Colors.grey.withOpacity(0.5),
-              //           ), // Use MaterialStateProperty
-              //           height: 50,
-              //         ),
-              //         dropdownStyleData: DropdownStyleData(
-              //           elevation: 1,
-              //           decoration: BoxDecoration(
-              //             color: const Color(0xfffaedcd),
-              //
-              //             // Set the background color for the dropdown menu
-              //             borderRadius: BorderRadius.circular(
-              //                 10.0), // Optional: rounded corners
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),

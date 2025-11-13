@@ -155,7 +155,7 @@ leading: SizedBox(),
               if (isInitialLoading)
                 SliverToBoxAdapter(
                   child: Center(
-                    child: KLoading.progressIOSIndicator(),
+                    child: KLoading.progressIOSIndicator(context: context),
                   ),
                 ),
 
@@ -215,7 +215,7 @@ leading: SizedBox(),
                                       ? KColors.scoColor
                                       : KColors.primary2Color,
                                   fontWeight: FontWeight.w600,
-                                  maxLines: 2,
+                                  maxLines: 1,
                                   fontSize:
                                       MediaQuery.sizeOf(context).width > 600
                                           ? 6.sp
@@ -236,7 +236,7 @@ leading: SizedBox(),
                  SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child:KLoading.progressIOSIndicator() ),
+                    child: Center(child:KLoading.progressIOSIndicator(context: context) ),
                   ),
                 ),
             ],

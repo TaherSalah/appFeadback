@@ -154,7 +154,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
               if (isInitialLoading)
                 SliverToBoxAdapter(
                   child: Center(
-                    child: KLoading.progressIOSIndicator(),
+                    child: KLoading.progressIOSIndicator(context: context),
                   ),
                 ),
 

@@ -1505,10 +1505,10 @@ packages:
     dependency: "direct main"
     description:
       name: quran_library
-      sha256: "7d1e00382d765702080f9946c6292ef02e1b110bfd5c983bc8685b1f265b0b4a"
+      sha256: "143f9d51630e0db261a5d78b65bc5d3dd643dab76584c7b5476bff30808cc31e"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.4"
+    version: "2.2.5"
   rate_my_app:
     dependency: "direct main"
     description:

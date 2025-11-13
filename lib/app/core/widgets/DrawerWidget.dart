@@ -126,19 +126,23 @@ class _DrawerWidgetState extends State<DrawerWidget> with SingleTickerProviderSt
               topLeft: Radius.circular(20),
               bottomLeft: Radius.circular(20),
             ),
-            child: Drawer(
-              width: _widthAnimation.value,
-              backgroundColor: isDark
-                  ? theme.colorScheme.surface
-                  : Colors.white,
-              elevation: 0,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  bottomLeft: Radius.circular(20),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Drawer(
+                width: _widthAnimation.value,
+                backgroundColor: isDark
+                    ? Colors.black
+                    : Colors.white,
+                elevation: 0,
+                shape:  RoundedRectangleBorder(
+                  side: BorderSide(color:isDark
+                    ? Colors.blue
+                    : Colors.white,),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(50.r),
+                    bottomLeft: Radius.circular(50.r),
+                  ),
                 ),
-              ),
-              child: SafeArea(
                 child: Column(
                   children: [
                     // Header مع زر التوسيع/الطي
@@ -168,7 +172,7 @@ class _DrawerWidgetState extends State<DrawerWidget> with SingleTickerProviderSt
 
   Widget _buildHeader(BuildContext context, ThemeData theme, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical:30, horizontal: 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
@@ -190,20 +194,30 @@ class _DrawerWidgetState extends State<DrawerWidget> with SingleTickerProviderSt
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "رفيق المسلم اليومي",
-                    style: theme.textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary,
-                    ),
+                  TextDefaultWidget(title:
+                  'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.sp,
+                    fontFamily: "me",
+                    color: isDark?Colors.white:AppColors.primary,
+                    // style: theme.textTheme.titleLarge!.copyWith(
+                    //   fontWeight: FontWeight.bold,
+                      // color: theme.colorScheme.primary,
+                    // ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "اقرأ وتدبّر",
-                    style: theme.textTheme.bodySmall!.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
-                    ),
+                  const SizedBox(height: 10),
+                  TextDefaultWidget(title:
+                  "اقرأ وتدبّر",
+                    fontWeight: FontWeight.w600,
+                    fontSize: 17.sp,
+                    fontFamily: "me",
+                    color: isDark?Colors.white:AppColors.primary,
+                    // style: theme.textTheme.titleLarge!.copyWith(
+                    //   fontWeight: FontWeight.bold,
+                    // color: theme.colorScheme.primary,
+                    // ),
                   ),
+
                 ],
               ),
             ),
@@ -248,14 +262,26 @@ class _DrawerWidgetState extends State<DrawerWidget> with SingleTickerProviderSt
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  section.title,
-                  style: theme.textTheme.labelLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
-                    letterSpacing: 0.5,
-                  ),
+                // Text(
+                //   section.title,
+                //   style: theme.textTheme.labelLarge!.copyWith(
+                //     fontWeight: FontWeight.bold,
+                //     color: theme.colorScheme.primary,
+                //     letterSpacing: 0.5,
+                //   ),
+                // ),
+                TextDefaultWidget(title:
+                section.title,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 17.sp,
+                  fontFamily: "cairo",
+                  color: isDark?Colors.white:Colors.black,
+                  // style: theme.textTheme.titleLarge!.copyWith(
+                  //   fontWeight: FontWeight.bold,
+                  // color: theme.colorScheme.primary,
+                  // ),
                 ),
+
               ],
             ),
           )
@@ -348,16 +374,28 @@ class _DrawerWidgetState extends State<DrawerWidget> with SingleTickerProviderSt
                 if (maxWidth) const SizedBox(width: 12),
                 if (_widthAnimation.value > 180)
                   Flexible(
-                    child: Text(
-                      item.title,
-                      style: theme.textTheme.bodyMedium!.copyWith(
-                        color: isSelected
-                            ? theme.colorScheme.primary
-                            : theme.textTheme.bodyMedium!.color,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                    // child: Text(
+                    //   item.title,
+                    //   style: theme.textTheme.bodyMedium!.copyWith(
+                    //     color: isSelected
+                    //         ? theme.colorScheme.primary
+                    //         : theme.textTheme.bodyMedium!.color,
+                    //     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    //   ),
+                    //   overflow: TextOverflow.ellipsis,
+                    // ),
+                    child:   TextDefaultWidget(title:
+                    item.title,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 17.sp,
+                      fontFamily: "me",
+                      color: isDark?Colors.white:Colors.black,
+                      // style: theme.textTheme.titleLarge!.copyWith(
+                      //   fontWeight: FontWeight.bold,
+                      // color: theme.colorScheme.primary,
+                      // ),
                     ),
+
                   ),
                 if (maxWidth && isSelected)
                   Container(

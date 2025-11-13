@@ -298,11 +298,11 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                 ),
               );
             } else if (state is HadithSearchStateLoading) {
-              return Center(child: KLoading.progressIOSIndicator());
+              return Center(child: KLoading.progressIOSIndicator(context: context));
             } else {
               return state.maybeMap(
                 error: (value) => TextWidget(title: value.failure),
-                loading: (value) => KLoading.progressIOSIndicator(radius: 15),
+                loading: (value) => KLoading.progressIOSIndicator(radius: 15,context: context),
                 success: (value) {
                   final isDark = Theme.of(context).brightness == Brightness.dark;
 

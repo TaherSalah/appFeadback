@@ -2,7 +2,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../features/about_view/RateService.dart';
+import '../../../features/aboutView/RateService.dart';
 import '../exports/all_exports.dart';
 
 class AboutItemBuilder extends StatefulWidget {

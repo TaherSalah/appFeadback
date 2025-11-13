@@ -197,7 +197,7 @@ class HadithViewItemBuilder extends StatelessWidget {
                 ),
               );
             } else if (state is HadithSearchStateLoading) {
-              return Center(child: KLoading.progressIOSIndicator());
+              return Center(child: KLoading.progressIOSIndicator(context: context));
             } else {
               return state.maybeMap(
                 orElse: () {
@@ -288,7 +288,7 @@ class HadithViewItemBuilder extends StatelessWidget {
                         );
                       });
                 },
-                loading: (value) => KLoading.progressIOSIndicator(),
+                loading: (value) => KLoading.progressIOSIndicator(context: context),
                 error: (value) => TextWidget(title: value.failure),
               );
             }

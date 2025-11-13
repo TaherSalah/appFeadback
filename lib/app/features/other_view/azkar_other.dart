@@ -35,6 +35,8 @@ class _AzkarOthersState extends State<AzkarOthers> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final con =Provider.of<AzkarProvider>(context);
     return Scaffold(
       appBar: PreferredSize(
@@ -59,6 +61,7 @@ class _AzkarOthersState extends State<AzkarOthers> {
                         duration: const Duration(seconds: 1),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton2<String>(
+
                             isExpanded: true,
                             hint: const TextDefaultWidget(
                               textAlign: TextAlign.right,
@@ -73,6 +76,7 @@ class _AzkarOthersState extends State<AzkarOthers> {
                                     textAlign: TextAlign.right,
                                     title: e,
                                     fontSize: 12.5,
+                                    color: isDark? Colors.white:Colors.black,
                                   ));
                             }).toList(),
                             value: selectedFontSize,
@@ -100,7 +104,7 @@ class _AzkarOthersState extends State<AzkarOthers> {
                             dropdownStyleData: DropdownStyleData(
                               elevation: 1,
                               decoration: BoxDecoration(
-                                color: const Color(0xfffaedcd),
+                                color:isDark? Theme.of(context).cardColor :  Color(0xfffaedcd),
 
                                 // Set the background color for the dropdown menu
                                 borderRadius: BorderRadius.circular(

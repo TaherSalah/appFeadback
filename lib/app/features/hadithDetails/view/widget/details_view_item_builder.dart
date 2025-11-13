@@ -138,6 +138,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                textAlign: TextAlign.right,
                                title: e,
                                fontSize: 12.5,
+                               color: isDark? Colors.white:Colors.black,
                              ));
                        }).toList(),
                        value: selectedFontSize,
@@ -169,7 +170,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                        dropdownStyleData: DropdownStyleData(
                          elevation: 1,
                          decoration: BoxDecoration(
-                           color: const Color(0xfffaedcd),
+                           color:isDark? Theme.of(context).cardColor :  Color(0xfffaedcd),
 
                            // Set the background color for the dropdown menu
                            borderRadius: BorderRadius.circular(
@@ -658,7 +659,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
             ],
           );
         } else if (state is HadithDetailsStateLoading) {
-          return KLoading.progressIOSIndicator();
+          return KLoading.progressIOSIndicator(context: context);
         } else if (state is HadithDetailsStateError) {
           return const TextWidget(title: 'error');
         } else {

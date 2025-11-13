@@ -115,17 +115,17 @@ class KLoading {
       ),
     );
   }
-
   static Widget progressIOSIndicator({
     Color? progressColor,
     double? radius,
+    required BuildContext context
   }) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: CupertinoActivityIndicator(
           radius: radius ?? 15,
-          color: progressColor ?? KColors.primary2Color,
+          color: Theme.of(context).brightness == Brightness.dark?Colors.white:KColors.primary2Color,
         ),
       ),
     );

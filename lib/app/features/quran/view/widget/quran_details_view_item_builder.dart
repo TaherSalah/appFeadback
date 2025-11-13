@@ -9,6 +9,7 @@ import 'package:muslimdaily/app/core/utils/log.dart';
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/localization/localization_manager.dart';
 import '../../../../core/utils/style/k_color.dart';
+import '../../../../core/utils/style/k_helper.dart';
 import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/widgets/KLoading.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
@@ -80,7 +81,7 @@ class QuranDetailsViewItemBuilder extends StatelessWidget {
             ],
           );
         } else if (state is HadithDetailsStateLoading) {
-          return KLoading.progressIOSIndicator();
+          return KLoading.progressIOSIndicator(context: context);
         } else if (state is HadithDetailsStateError) {
           return const TextWidget(title: 'erererererer');
         } else {
@@ -386,8 +387,10 @@ class _MusicPlayerState extends State<MusicPlayer> {
       await _audioPlayer.pause();
       if (mounted) setState(() {});
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('سيتم إيقاف الصوت بعد 10 دقائق')),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(content: Text('سيتم إيقاف الصوت بعد 10 دقائق')),
+    // );
+    KHelper.showSuccess(message: 'سيتم إيقاف الصوت بعد 10 دقائق');
+
   }
 }

@@ -220,12 +220,12 @@ class QuranAudioViewItemBuilder extends StatelessWidget {
 
 
             if (state is QuranRecitersStateLoading) {
-              return Center(child: KLoading.progressIOSIndicator());
+              return Center(child: KLoading.progressIOSIndicator(context: context));
             } else {
               return state.maybeMap(
 
                 errorReciters: (value) => TextWidget(title: value.failure),
-                loadingReciters: (value) => KLoading.progressIOSIndicator(radius: 15),
+                loadingReciters: (value) => KLoading.progressIOSIndicator(radius: 15,context: context),
                 successReciters: (value) {
                   return GridView.builder(
                       padding: EdgeInsets.zero,

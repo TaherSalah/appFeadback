@@ -12,6 +12,7 @@ import 'package:quran_library/quran.dart';
 
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/utils/style/k_color.dart';
+import '../../../../core/utils/style/k_helper.dart';
 
 class TafsirQuranView extends StatefulWidget {
   const TafsirQuranView({super.key});
@@ -157,7 +158,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                     fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
                   ),
                   SizedBox(height: 20),
-                  KLoading.progressIOSIndicator(),
+                  KLoading.progressIOSIndicator(context: context),
                 ],
               ),
             ),
@@ -173,9 +174,11 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
       if (mounted) {
         Navigator.of(context).pop(); // يقفل Dialog
         // رسالة نجاح صغيرة
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("تم تنزيل التفسير بنجاح")),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(content: Text("تم تنزيل التفسير بنجاح")),
+        // );
+        KHelper.showSuccess(message: "تم تنزيل التفسير بنجاح");
+
         await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) =>
@@ -186,9 +189,11 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
     } catch (e) {
       if (mounted) {
         Navigator.of(context).pop(); // يقفل Dialog
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('تعذّر تنزيل التفسير: $e')),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('تعذّر تنزيل التفسير: $e')),
+        // );
+        KHelper.showError(message:'تعذّر تنزيل التفسير: $e');
+
       }
     } finally {
       if (mounted) setState(() => _downloading.remove(index));
@@ -200,7 +205,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
     if (!_inited) {
       return Scaffold(
         body: Center(
-          child: KLoading.progressIOSIndicator(),
+          child: KLoading.progressIOSIndicator(context: context),
         ),
       );
     }

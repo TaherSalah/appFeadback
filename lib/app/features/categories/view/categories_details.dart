@@ -76,7 +76,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
             orElse: () {
               return const TextWidget(title: 'other error ');
             },
-            hadithCatrgoriesLoading: (value) => KLoading.progressIOSIndicator(),
+            hadithCatrgoriesLoading: (value) => KLoading.progressIOSIndicator(context: context),
             hadithCatrgoriesError: (value) => TextWidget(title: value.failure),
             hadithCatrgoriesSuccess: (value) {
               List ids = value.allHadithCategorieModal?.data

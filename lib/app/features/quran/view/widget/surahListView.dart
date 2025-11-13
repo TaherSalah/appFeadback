@@ -71,7 +71,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
         ),
         body: isLoading == true
             ? Center(
-                child: KLoading.progressIOSIndicator(radius: 15.r),
+                child: KLoading.progressIOSIndicator(radius: 15.r,context: context),
               )
             : ListView.separated(
           separatorBuilder: (context, index) => Divider(),

@@ -43,7 +43,7 @@ class _SplashItemBuilderState extends State<SplashItemBuilder> {
           //   ),
           // ),
           SizedBox(
-              child: KLoading.progressIOSIndicator()),
+              child: KLoading.progressIOSIndicator(context: context)),
         ],
       ),
     );

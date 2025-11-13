@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 import '../../core/shard/constanc/app_string.dart';
 import '../../core/shard/exports/all_exports.dart';
@@ -161,7 +162,7 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with SingleTickerProv
           );
 
           return Column(
-            spacing: 60,
+            spacing: ResponsiveUtil.isTablet(context)?60: 40,
             children: [
               const SizedBox(height: 12),
 

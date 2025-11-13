@@ -213,9 +213,9 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                       itemCount: ayah.length,
                       // physics: const BouncingScrollPhysics(), // تمكين التمرير
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: ResponsiveUtil.isTablet(context) ? 6 : 4, // يقلّل الأعمدة → الكروت أوسع
+                        crossAxisCount: ResponsiveUtil.isTablet(context) ? 6 : 3, // يقلّل الأعمدة → الكروت أوسع
                         crossAxisSpacing: 8,
-                        mainAxisSpacing: 25,
+                        mainAxisSpacing: 30,
                         mainAxisExtent: ResponsiveUtil.isTablet(context) ? 150 : 130, // ارتفاع ثابت مناسب
                       ),
                       itemBuilder: (context, index) {
@@ -237,6 +237,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                             child: Stack(
                               alignment: Alignment.center,
                               clipBehavior: Clip.none,
+                              fit: StackFit.expand,
                               children: [
                                 Card(
                                   color: Color(b.colorCode),
@@ -255,15 +256,18 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                                               ? KColors.black2Color
                                               : KColors.primary2Color,
                                           fontWeight: FontWeight.w600,
-                                          fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 10.sp,
+                                          fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 13.sp,
                                         ),
-                                        TextWidget(
-                                          title: "رقم الاية (${b.ayahNumber})",
-                                          color: isDark
-                                              ? KColors.black2Color
-                                              : KColors.primary2Color,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 10.sp,
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 4),
+                                          child: TextWidget(
+                                            title: "رقم الاية (${b.ayahNumber})",
+                                            color: isDark
+                                                ? KColors.blackColor
+                                                : KColors.primary2Color,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 13.sp,
+                                          ),
                                         ),
                                         TextWidget(
                                           title: "الصفحة (${b.page})",
@@ -271,7 +275,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                                               ? KColors.black2Color
                                               : KColors.primary2Color,
                                           fontWeight: FontWeight.w600,
-                                          fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 10.sp,
+                                          fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 13.sp,
                                         ),
                                       ],
                                     ),
@@ -288,7 +292,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                                     },
 
                                     child: CircleAvatar(
-                                      backgroundColor: Colors.black,
+                                      backgroundColor: Theme.of(context).brightness == Brightness.dark?Colors.black : Colors.white,
                                       foregroundColor: Color(b.colorCode),
                                       child: const Icon(Icons.delete_forever_outlined, size: 30),
                                     ),

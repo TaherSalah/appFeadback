@@ -35,6 +35,7 @@ class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
           // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            SizedBox(height: 10,),
             SizedBox(
               height: MediaQuery.sizeOf(context).height/5.6,
               width: MediaQuery.of(context).size.width,
