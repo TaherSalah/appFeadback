@@ -211,7 +211,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                           color: con.quranIndex >=
                                   Azkary.rokiaQuranRepe[quranCurrentIndex]
                               ? const Color(AppStyle.yellowColor)
-                              : const Color(AppStyle.primaryColor),
+                              : isDark?Colors.black: Color(AppStyle.whiteColor),
                         ),
                       ),
                     ),

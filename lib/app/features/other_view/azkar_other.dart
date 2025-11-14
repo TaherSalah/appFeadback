@@ -1,6 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
@@ -203,7 +205,7 @@ class _AzkarOthersState extends State<AzkarOthers> {
                           azkarOtherTitle: Azkary.azkarOtherTitle[zOtherIndex],
                           azkarOtherDesc: Azkary.azkarOtherDesc[zOtherIndex],
                           azkarRepate: con.zOtherIndex >= Azkary.azkarRepate[zOtherIndex]?"0": '${Azkary.azkarRepate[zOtherIndex]}',
-                        color: con.zOtherIndex >= Azkary.azkarRepate[zOtherIndex]?  const Color(AppStyle.yellowColor):const Color(AppStyle.primaryColor),
+                        color: con.zOtherIndex >= Azkary.azkarRepate[zOtherIndex]?  const Color(AppStyle.yellowColor):isDark?Colors.black: Color(AppStyle.whiteColor),
 
                       ),
                     ),
@@ -220,57 +222,168 @@ class _AzkarOthersState extends State<AzkarOthers> {
   }
 }
 
+// Widget buildOtherZakarItem({
+//   Color ? color,
+//   required String azkarOtherTitle,
+//   required String azkarOtherDesc,
+//   required String azkarRepate,
+//   double? fontSize,
+//   required BuildContext context
+// }) {
+//   return Stack(
+//     alignment: Alignment.bottomCenter,
+//     children: [
+//       SizedBox(
+//         width: double.infinity,
+//         child: Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: Card(
+//               elevation: 14,
+//               child: Padding(
+//                 padding:
+//                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+//                 child: Column(
+//                   children: [
+//                     Text(azkarOtherTitle,
+//                         textAlign: TextAlign.center,
+//                         style: GoogleFonts.notoKufiArabic(
+//                             fontSize: MediaQuery.sizeOf(context).width>600?9.sp: 14.sp, height: 3)),
+//                     SizedBox(
+//                       height: 10.h,
+//                     ),
+//                     Text(
+//                       azkarOtherDesc,
+//                       textAlign: TextAlign.center,
+//                       style: TextStyle(fontFamily: 'maja', fontSize:fontSize?? 18.sp),
+//                     ),
+//                     SizedBox(
+//                       height: 25.h,
+//                     ),
+//                   ],
+//                 ),
+//               )),
+//         ),
+//       ),
+//       CircleAvatar(
+//         backgroundColor: color?? const Color(AppStyle.primaryColor),
+//         child: Text(
+//           azkarRepate,
+//           textAlign: TextAlign.start,
+//           style: GoogleFonts.cairo(
+//               color:  Colors.black, fontWeight: FontWeight.bold),
+//         ),
+//       )
+//     ],
+//   );
+// }
 Widget buildOtherZakarItem({
-  Color ? color,
+  Color? color,
   required String azkarOtherTitle,
   required String azkarOtherDesc,
   required String azkarRepate,
   double? fontSize,
-  required BuildContext context
+  required BuildContext context,
 }) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  final fullText = "$azkarOtherTitle\n\n$azkarOtherDesc";
+
   return Stack(
     alignment: Alignment.bottomCenter,
+    clipBehavior: Clip.none,
     children: [
       SizedBox(
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Card(
-              elevation: 14,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
-                child: Column(
-                  children: [
-                    Text(azkarOtherTitle,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.notoKufiArabic(
-                            fontSize: MediaQuery.sizeOf(context).width>600?9.sp: 14.sp, height: 3)),
-                    SizedBox(
-                      height: 10.h,
+            elevation: 14,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Column(
+                children: [
+                  Text(
+                    azkarOtherTitle,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.notoKufiArabic(
+                      fontSize: MediaQuery.sizeOf(context).width > 600 ? 9.sp : 14.sp,
+                      height: 3,
                     ),
-                    Text(
-                      azkarOtherDesc,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontFamily: 'maja', fontSize:fontSize?? 18.sp),
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    azkarOtherDesc,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'maja',
+                      fontSize: fontSize ?? 18.sp,
+                      height: 1.8,
                     ),
-                    SizedBox(
-                      height: 25.h,
-                    ),
-                  ],
-                ),
-              )),
+                  ),
+                  SizedBox(height: 35.h),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
-      CircleAvatar(
-        backgroundColor: color?? const Color(AppStyle.primaryColor),
-        child: Text(
-          azkarRepate,
-          textAlign: TextAlign.start,
-          style: GoogleFonts.cairo(
-              color:  Colors.black, fontWeight: FontWeight.bold),
+
+      // 🔸 دائرة التكرار
+      Positioned(
+        bottom: -10,
+        child: CircleAvatar(
+          radius: 25,
+          backgroundColor: color ?? const Color(AppStyle.primaryColor),
+          child: Text(
+            azkarRepate,
+            style: GoogleFonts.cairo(
+              color: isDark ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-      )
+      ),
+
+      // 🔹 أزرار النسخ والمشاركة بنفس مكان AzkerItemBuilder
+      Positioned(
+        bottom: -10,
+        child: Row(
+          spacing: 60,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                await Clipboard.setData(ClipboardData(text: fullText));
+                Fluttertoast.showToast(
+                  msg: "تم نسخ الذكر بنجاح",
+                  gravity: ToastGravity.BOTTOM,
+                  backgroundColor: Colors.green.shade600,
+                  textColor: Colors.white,
+                );
+              },
+              child: CircleAvatar(
+                radius: 25,
+                backgroundColor: isDark ? Colors.black : Colors.white,
+                child: const Icon(Icons.copy, color: Colors.green, size: 20),
+              ),
+            ),
+
+            SizedBox(width: 15.w),
+
+            GestureDetector(
+              onTap: () {
+                Share.share(fullText, subject: azkarOtherTitle);
+              },
+              child: CircleAvatar(
+                radius: 25,
+                backgroundColor: isDark ? Colors.black : Colors.white,
+                child: const Icon(Icons.share, color: Colors.blue, size: 20),
+              ),
+            ),
+          ],
+        ),
+      ),
     ],
   );
 }

@@ -28,31 +28,6 @@ class DrawerModle {
   });
 }
 
-// List<DrawerModle?> topBar = [
-//   DrawerModle(icon: Icons.home, title: "فضل قرأه القران", route: Routes.homeRoute),
-//
-//   DrawerModle(
-//       icon: Icons.favorite,
-//       title: "فهرس القران الكريم",
-//       route: Routes.myFavorites),
-//   DrawerModle(
-//       icon: Icons.shopping_cart, title: "الاجزاء", route: Routes.myCard),
-//   DrawerModle(
-//       icon: Icons.shopping_cart, title: "الاحزاب", route: Routes.myCard),
-//   DrawerModle(
-//       icon: Icons.shopping_cart, title: "حفظ علامة", route: Routes.myCard),
-//   DrawerModle(
-//       icon: Icons.shopping_cart, title: "انتقال الي العلامه", route: Routes.myCard),
-//   DrawerModle(
-//       icon: Icons.shopping_cart, title: "دعاء ختم القران الكريم", route: Routes.myCard),
-//   DrawerModle(
-//       icon: Icons.shopping_cart, title: "التفسير", route: Routes.myCard),
-//   DrawerModle(
-//       icon: Icons.shopping_cart, title: "الوضع الليلي", route: Routes.myCard),
-//   DrawerModle(
-//       icon: Icons.shopping_cart, title: "دعاء الختم", route: Routes.myCard),
-//
-// ];
 class DrawerSection {
   final String title;
   final List<DrawerModle> items;
@@ -88,8 +63,8 @@ class _DrawerWidgetState extends State<DrawerWidget> with SingleTickerProviderSt
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _widthAnimation = Tween<double>(begin: 85, end: 300).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    _widthAnimation = Tween<double>(begin: 85, end: 250).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.ease),
     );
     if (maxWidth) _animationController.forward();
   }
@@ -151,7 +126,9 @@ class _DrawerWidgetState extends State<DrawerWidget> with SingleTickerProviderSt
                     // المحتوى
                     Expanded(
                       child: ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                       physics: BouncingScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
                         children: [
                           ...widget.sections.map(
                                 (section) => _buildSection(context, theme, section, isDark),

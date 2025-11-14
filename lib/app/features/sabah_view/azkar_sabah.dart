@@ -393,7 +393,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                               color: con.zSabahIndex >=
                                       Azkary.azkarSabahRepate[zSabahIndex]
                                   ? const Color(AppStyle.yellowColor)
-                                  : isDark?Colors.black: Color(AppStyle.primaryColor),
+                                  : isDark?Colors.black: Color(AppStyle.whiteColor),
                             ),
                           ),
                         );

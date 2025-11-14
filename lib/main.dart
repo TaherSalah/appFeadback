@@ -10,6 +10,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quran_library/quran.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 
 import 'app.dart';
 import 'app/core/cache/shard_pref/shardpref_obj.dart';
@@ -20,6 +21,8 @@ import 'app/core/utils/services_locator.dart';
 import 'app/core/utils/style/responsive_util.dart';
 import 'app/core/widgets/custom_text_widget.dart';
 import 'app/features/Khatmah/data/khatmah_model.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
 //   tz.initializeTimeZones();
@@ -84,7 +87,6 @@ Future<void> main() async {
 
   // Hive
   await Hive.initFlutter();
-
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(KhatmahModelAdapter());
   }
@@ -350,3 +352,133 @@ class NoConnectionScreen extends StatelessWidget {
 //     );
 //   }
 // }
+
+void checkWhatsNew(BuildContext context) async {
+  final prefs = await SharedPreferences.getInstance();
+  final lastVersion = prefs.getString("last_version");
+
+  // هات معلومات التطبيق
+  final info = await PackageInfo.fromPlatform();
+  final currentVersion = info.version; // هنا بقت String تلقائيًا
+print("currentVersion $currentVersion");
+print("lastVersion $lastVersion");
+  if (lastVersion != currentVersion) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showWhatsNew(context);
+    });
+
+    prefs.setString("last_version", currentVersion);
+  }
+}
+
+void showWhatsNew(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (_) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.55,
+        maxChildSize: 0.85,
+        minChildSize: 0.4,
+        builder: (context, scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+            ),
+            child: ListView(
+              controller: scrollController,
+              padding: EdgeInsets.all(20),
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15),
+                Text(
+                  "🌟 ما الجديد في التحديث؟",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                whatsNewItem(
+                  Icons.star,
+                  "تحسين واجهة قراءة القرآن",
+                  "تم إضافة وضع ليلي محسن + تحسين حجم الخط + تقليل استهلاك البطارية.",
+                ),
+                whatsNewItem(
+                  Icons.bookmark,
+                  "إدارة العلامات المرجعية",
+                  "تقدر تحفظ، تعدل، وتمسح العلامات بسهولة وسرعة.",
+                ),
+                whatsNewItem(
+                  Icons.search,
+                  "بحث أسرع",
+                  "تحسين سرعة البحث داخل السور والآيات.",
+                ),
+                whatsNewItem(
+                  Icons.bug_report,
+                  "إصلاحات أخطاء",
+                  "إصلاح مشكلة تحميل الصفحات وتحسين الأداء العام.",
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    minimumSize: Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: Text(
+                    "تمام، فهمت 👍",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+Widget whatsNewItem(IconData icon, String title, String desc) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 15),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: Colors.green, size: 28),
+        SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 4),
+              Text(
+                desc,
+                style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+              ),
+            ],
+          ),
+        )
+      ],
+    ),
+  );
+}

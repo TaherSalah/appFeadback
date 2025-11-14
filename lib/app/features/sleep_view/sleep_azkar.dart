@@ -208,7 +208,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
                           color: con.zSleepIndex >=
                                   Azkary.azkarSleepRepate[zSleepIndex]
                               ? const Color(AppStyle.yellowColor)
-                              : const Color(AppStyle.primaryColor),
+                              : isDark?Colors.black: Color(AppStyle.whiteColor),
                         ),
                       ),
                     );

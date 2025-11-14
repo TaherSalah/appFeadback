@@ -298,6 +298,30 @@ drawer: Padding(
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
           child: AppBar(
+            // leading: IconButton(
+            //   icon: Icon(
+            //     Icons.cure, // غيّرها باللي انت عايزه
+            //     color: isDark ? Colors.white : Colors.black,
+            //   ),
+            //   onPressed: () {
+            //     Scaffold.of(context).openDrawer();
+            //   },
+            // ),
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: Image.asset(
+                  "assets/images/menu2.png",
+                  width: 32,
+                  height: 32,
+                  fit: BoxFit.contain,
+                color:     isDark?Colors.white:Colors.black
+                ),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
+            ),
+            iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.blue),
             actions: [
               // InkWell(
               //   onTap: () {
@@ -316,7 +340,7 @@ drawer: Padding(
                   Navigator.push(context, MaterialPageRoute(builder: (context) => SurahAudioScreen(isDark: isDark),));
                 },
                 child:  Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Icon(
                     color: isDark?Colors.white:Colors.black,
                     Icons.play_circle_outlined,
@@ -326,7 +350,7 @@ drawer: Padding(
               ),
               FontsDownloadDialog(
                 topBarStyle: QuranTopBarStyle(
-                    iconColor: isDark ? Colors.white : AppColors.primary),
+                    iconColor: isDark ? Colors.white : Colors.blue ),
                 downloadFontsDialogStyle: DownloadFontsDialogStyle(
                   iconColor: isDark ? Colors.white : Colors.blueAccent,
                   headerTitle: 'الخطوط المتاحة',

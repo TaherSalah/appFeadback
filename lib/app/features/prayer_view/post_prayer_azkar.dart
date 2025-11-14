@@ -220,7 +220,7 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
                           color: con.zPrayerIndex >=
                                   Azkary.azkarPrayerRepate[zPrayerIndex]
                               ? const Color(AppStyle.yellowColor)
-                              : const Color(AppStyle.primaryColor),
+                              : isDark?Colors.black: Color(AppStyle.whiteColor),
                         ),
                       ),
                     );

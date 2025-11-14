@@ -38,6 +38,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
       gravity: ToastGravity.BOTTOM,
       backgroundColor: Colors.green.shade600,
       textColor: Colors.white,
+
     );
   }
 
@@ -130,8 +131,8 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                 onTap: () => copyText(fullText),
                 child: CircleAvatar(
                   radius: 25,
-                  // backgroundColor:
-                  // Theme.of(context).colorScheme.secondaryContainer,
+                  backgroundColor:
+                  isDark?Colors.black:Colors.white,
                   child: const Icon(Icons.copy,
                       color: Colors.green, size: 20),
                 ),
@@ -142,7 +143,8 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                 onTap: () => shareText(fullText),
                 child: CircleAvatar(
                   radius: 25,
-
+                  backgroundColor:
+                  isDark?Colors.black:Colors.white,
                   // radius: 18,
                   // backgroundColor:
                   // Theme.of(context).colorScheme.secondaryContainer,

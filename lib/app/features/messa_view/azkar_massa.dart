@@ -208,7 +208,7 @@ class _AzkarMassaState extends State<AzkarMassa> {
                             azkarDes: Azkary.azkarMassaDes[zMessaIndex],
                             fontSize: double.parse(selectedFontSize),
                             azkarRepate: con.zMessaIndex >= Azkary.azkarMassaRepate[zMessaIndex]?'0':'${Azkary.azkarMassaRepate[zMessaIndex]}',
-                          color: con.zMessaIndex >= Azkary.azkarMassaRepate[zMessaIndex]?  const Color(AppStyle.yellowColor):const Color(AppStyle.primaryColor),
+                          color: con.zMessaIndex >= Azkary.azkarMassaRepate[zMessaIndex]?  const Color(AppStyle.yellowColor):isDark?Colors.black: Color(AppStyle.whiteColor),
 
                         ),
                       ),
