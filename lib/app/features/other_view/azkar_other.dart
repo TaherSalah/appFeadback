@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../core/cubit/centralized_cubit.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
 
@@ -17,27 +18,12 @@ class AzkarOthers extends StatefulWidget {
 
 class _AzkarOthersState extends State<AzkarOthers> {
   var selectedFontSize;
-  @override
-  void initState() {
-    super.initState();
-    selectedFontSize = "20";
-  }
-  List<String> sizes = <String>[
-    "10",
-    "20",
-    "30",
-    "40",
-    "50",
-    "60",
-    "70",
-    "80",
-    "90",
-    "100",
-  ];
+
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final double fontSize = CentralizedCubit.get(context).azkarFontSize();
 
     final con =Provider.of<AzkarProvider>(context);
     return Scaffold(
@@ -48,80 +34,6 @@ class _AzkarOthersState extends State<AzkarOthers> {
               ? Colors.white
               : Colors.black,),
           centerTitle: true,
-          actions: [
-            Directionality(
-              textDirection: ui.TextDirection.rtl,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8),
-
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 85,
-                      child: AnimatedWrapper(
-                        type: UiAnimationType.slideRight,
-                        duration: const Duration(seconds: 1),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton2<String>(
-
-                            isExpanded: true,
-                            hint: const TextDefaultWidget(
-                              textAlign: TextAlign.right,
-                              title: "حجم الخط",
-                              fontSize: 15,
-                              color: Color(0xff1A1A1A),
-                            ),
-                            items: sizes.map((e) {
-                              return DropdownMenuItem(
-                                  value: e,
-                                  child: TextDefaultWidget(
-                                    textAlign: TextAlign.right,
-                                    title: e,
-                                    fontSize: 12.5,
-                                    color: isDark? Colors.white:Colors.black,
-                                  ));
-                            }).toList(),
-                            value: selectedFontSize,
-                            onChanged: (value) {
-                              selectedFontSize = value;
-                              setState(() {});
-                            },
-                            buttonStyleData: ButtonStyleData(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: AppStyle.scondColors, width: 1.5),
-                                  color: Theme.of(context).cardColor,
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 16),
-                              height: 50,
-                              width: MediaQuery.of(context).size.width / 1.2,
-                            ),
-                            menuItemStyleData: MenuItemStyleData(
-                              overlayColor: MaterialStateProperty.all(
-                                Colors.grey.withOpacity(0.5),
-                              ), // Use MaterialStateProperty
-                              height: 50,
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              elevation: 1,
-                              decoration: BoxDecoration(
-                                color:isDark? Theme.of(context).cardColor :  Color(0xfffaedcd),
-
-                                // Set the background color for the dropdown menu
-                                borderRadius: BorderRadius.circular(
-                                    10.0), // Optional: rounded corners
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
           title: Text(
             AppString.KOtherZakar,
             style: GoogleFonts.cairo(
@@ -201,7 +113,7 @@ class _AzkarOthersState extends State<AzkarOthers> {
                       },
                       child: buildOtherZakarItem(
                         context: context,
-                        fontSize: double.parse(selectedFontSize),
+                        fontSize: fontSize,
                           azkarOtherTitle: Azkary.azkarOtherTitle[zOtherIndex],
                           azkarOtherDesc: Azkary.azkarOtherDesc[zOtherIndex],
                           azkarRepate: con.zOtherIndex >= Azkary.azkarRepate[zOtherIndex]?"0": '${Azkary.azkarRepate[zOtherIndex]}',

@@ -19,3 +19,6 @@ class ConnectivityState extends CentralizedState {
 
   ConnectivityState({this.status});
 }
+
+// جديد:
+class AzkarFontChangedState extends CentralizedState {}

@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
+import '../../core/cubit/centralized_cubit.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
 
@@ -15,30 +16,15 @@ class AzkarMassa extends StatefulWidget {
 }
 
 class _AzkarMassaState extends State<AzkarMassa> {
-  var selectedFontSize;
+  // var selectedFontSize;
 
-  @override
-  void initState() {
-    super.initState();
-    selectedFontSize = "20";
-  }
 
-  List<String> sizes = <String>[
-    "10",
-    "20",
-    "30",
-    "40",
-    "50",
-    "60",
-    "70",
-    "80",
-    "90",
-    "100",
-  ];
   @override
   Widget build(BuildContext context) {
     final con =Provider.of<AzkarProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final double fontSize = CentralizedCubit.get(context).azkarFontSize();
+
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
@@ -48,80 +34,6 @@ class _AzkarMassaState extends State<AzkarMassa> {
                 ? Colors.white
                 : Colors.black,),
             centerTitle: true,
-            actions: [
-              Directionality(
-                textDirection: ui.TextDirection.rtl,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8),
-
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 85,
-                        child: AnimatedWrapper(
-                          type: UiAnimationType.slideRight,
-                          duration: const Duration(seconds: 1),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: const TextDefaultWidget(
-                                textAlign: TextAlign.right,
-                                title: "حجم الخط",
-                                fontSize: 15,
-                                color: Color(0xff1A1A1A),
-                              ),
-                              items: sizes.map((e) {
-                                return DropdownMenuItem(
-                                    value: e,
-                                    child: TextDefaultWidget(
-                                      textAlign: TextAlign.right,
-                                      title: e,
-                                      fontSize: 12.5,
-                                      color: isDark? Colors.white:Colors.black,
-
-                                    ));
-                              }).toList(),
-                              value: selectedFontSize,
-                              onChanged: (value) {
-                                selectedFontSize = value;
-                                setState(() {
-
-                                });
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: AppStyle.scondColors, width: 1.5),
-                                    color: Theme.of(context).cardColor,
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                height: 50,
-                                width: MediaQuery.of(context).size.width / 1.2,
-                              ),
-                              menuItemStyleData: MenuItemStyleData(
-                                overlayColor: MaterialStateProperty.all(
-                                  Colors.grey.withOpacity(0.5),
-                                ), // Use MaterialStateProperty
-                                height: 50,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                elevation: 1,
-                                decoration: BoxDecoration(
-                                  color:isDark? Theme.of(context).cardColor :  Color(0xfffaedcd),
-                                  // Set the background color for the dropdown menu
-                                  borderRadius: BorderRadius.circular(
-                                      10.0), // Optional: rounded corners
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
 
             title:   Text(
               AppString.KMessa,
@@ -206,7 +118,7 @@ class _AzkarMassaState extends State<AzkarMassa> {
                         child: AzkerItemBuilder(
                             azkarTitle: Azkary.azkarMassa[zMessaIndex],
                             azkarDes: Azkary.azkarMassaDes[zMessaIndex],
-                            fontSize: double.parse(selectedFontSize),
+                            fontSize: fontSize,
                             azkarRepate: con.zMessaIndex >= Azkary.azkarMassaRepate[zMessaIndex]?'0':'${Azkary.azkarMassaRepate[zMessaIndex]}',
                           color: con.zMessaIndex >= Azkary.azkarMassaRepate[zMessaIndex]?  const Color(AppStyle.yellowColor):isDark?Colors.black: Color(AppStyle.whiteColor),
 

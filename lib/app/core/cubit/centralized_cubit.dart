@@ -25,6 +25,19 @@ class CentralizedCubit extends Cubit<CentralizedState> {
       : super(CentralizedInitial());
 
   static bool isDarkMode = false;
+// داخل CentralizedCubit
+
+  static const _kThemeKey = 'themeMode'; // موجودة عندك
+  static const _kAzkarFontKey = 'azkarFontSize'; // جديد
+
+  double azkarFontSize() {
+    return sharedPreferences.getDouble(_kAzkarFontKey) ?? 22.0; // قيمة افتراضية
+  }
+
+  Future<void> setAzkarFontSize(double value) async {
+    await sharedPreferences.setDouble(_kAzkarFontKey, value);
+    emit(AzkarFontChangedState()); // حالة جديدة لإعادة البناء
+  }
 
   // ThemeMode themeMode() {
   //   ThemeMode theme = ThemeMode.system;
@@ -44,7 +57,6 @@ class CentralizedCubit extends Cubit<CentralizedState> {
   //   }
   //   return theme;
   // }
-  static const _kThemeKey = 'themeMode'; // 0 system, 1 light, 2 dark
 
   Future<void> setThemeMode(ThemeMode mode) async {
     final v = mode == ThemeMode.light ? 1 : mode == ThemeMode.dark ? 2 : 0;

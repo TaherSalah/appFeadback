@@ -16,7 +16,7 @@ import 'app.dart';
 import 'app/core/cache/shard_pref/shardpref_obj.dart';
 import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/localization/localization_manager.dart';
-import 'app/core/shard/widgets/def_controller_tabs.dart';
+import 'app/features/main_view/widget/IslamicCardWidget.dart';
 import 'app/core/utils/services_locator.dart';
 import 'app/core/utils/style/responsive_util.dart';
 import 'app/core/widgets/custom_text_widget.dart';

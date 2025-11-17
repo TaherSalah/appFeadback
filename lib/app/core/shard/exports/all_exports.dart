@@ -39,7 +39,7 @@ export 'package:muslimdaily/app/core/shard/widgets/about_item_builder.dart';
 
 
 export 'package:muslimdaily/app/core/shard/constanc/images_paths.dart';
-export 'package:muslimdaily/app/core/shard/widgets/def_controller_tabs.dart';
+export 'package:muslimdaily/app/features/main_view/widget/IslamicCardWidget.dart';
 export 'package:muslimdaily/app/core/shard/widgets/azkar_item_builder.dart';
 export 'package:muslimdaily/app/core/model/azkary_model.dart';
 export 'package:muslimdaily/app/core/controller/azkar_controller.dart';

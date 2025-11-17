@@ -82,7 +82,7 @@ dependencies:
   dots_indicator: ^3.0.0
   geolocator: ^10.0.0
   flutter_compass: ^0.8.1
-  vector_math: ^2.1.0
+  vector_math:
   simple_animations: ^5.1.0
   redacted: ^1.0.12
   toggle_switch: ^2.3.0
@@ -91,8 +91,8 @@ dependencies:
   animate_do: ^3.3.4
   flutter_expandable_fab: ^2.3.0
   flutter_widget_from_html: ^0.16.0
-  quran_library: ^2.2.5
-  fl_chart: ^1.1.1
+  quran_library: ^2.3.0
+  fl_chart:
   package_info_plus: ^9.0.0
 #  flutter_quran:
 #  quran_library:

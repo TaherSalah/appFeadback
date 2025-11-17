@@ -19,7 +19,7 @@ import '../../../features/categories/view/categories_details.dart';
 import '../../../features/counter_view/counter_azkar.dart';
 import '../../../features/hadith/hadith_view.dart';
 import '../../../features/hadithDetails/hadith_details_view.dart';
-import '../../../features/main_view/home.dart';
+import '../../../features/main_view/MainView.dart';
 import '../../../features/main_view/widget/AllAzkarListView.dart';
 import '../../../features/main_view/widget/QiblaDirection.dart';
 import '../../../features/messa_view/azkar_massa.dart';
@@ -144,7 +144,7 @@ class RouteGenerator {
         );
 
       case 'home':
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(builder: (_) => const MainView());
       case '/azkarSabah':
         return MaterialPageRoute(builder: (_) => const AzkarSabah());
 

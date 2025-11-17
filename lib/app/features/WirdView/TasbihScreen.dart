@@ -213,112 +213,200 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Column(
+      builder: (context) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              const Text('🎉', style: TextStyle(fontSize: 50)),
-              const SizedBox(height: 8),
-              Text(
-                'أحسنت!',
-                style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
+              // جسم الديالوج
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: widget.isDark
+                        ? [const Color(0xFF101820), const Color(0xFF062726)]
+                        : [const Color(0xFFE8FFF7), const Color(0xFFD4FFF1)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // العنوان والنص
+                    Text(
+                      'أحسنت!',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: widget.isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'لقد أكملت الورد بنجاح',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: widget.isDark ? Colors.white70 : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // الكارت اللي فيه عدد المرات
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: widget.isDark
+                            ? Colors.teal.withOpacity(0.2)
+                            : Colors.teal.withOpacity(0.08),
+                        border: Border.all(
+                          color: Colors.teal.withOpacity(0.6),
+                          width: 1.2,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          const Text(
+                            'عدد مرات إكمال هذا الورد',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.teal,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'المرة رقم ${widget.wird.completedCount}',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.teal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // الأزرار
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              // إعادة تعيين كل شيء
+                              for (var dhikr in widget.wird.adhkar) {
+                                dhikr.currentCount = 0;
+                              }
+                              widget.wird.currentDhikrIndex = 0;
+                              widget.wird.isInProgress = false;
+                              setState(() => currentDhikrIndex = 0);
+                              _saveProgress();
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('ابدأ من جديد'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              // إعادة تعيين عند الخروج
+                              for (var dhikr in widget.wird.adhkar) {
+                                dhikr.currentCount = 0;
+                              }
+                              widget.wird.currentDhikrIndex = 0;
+                              widget.wird.isInProgress = false;
+                              _saveProgress();
+                              Navigator.pop(context);
+                              Navigator.pop(context, 'completed');
+                            },
+                            icon: const Icon(Icons.check_circle_outline),
+                            label: const Text('إنهاء'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // الأيقونة الدائرية اللي فوق الديالوج
+              Positioned(
+                top: -30,
+                left: 0,
+                right: 0,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Colors.teal, Colors.green],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.teal.withOpacity(0.6),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.check_rounded,
+                        size: 34,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'لقد أكملت الورد بنجاح',
-              style: TextStyle(
-                fontSize: 16,
-                color: widget.isDark ? Colors.white70 : Colors.black87,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.teal.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                'المرة رقم ${widget.wird.completedCount}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.teal,
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          // TextButton.icon(
-          //   onPressed: () {
-          //     // إعادة تعيين كل شيء
-          //     for (var dhikr in widget.wird.adhkar) {
-          //       dhikr.currentCount = 0;
-          //     }
-          //     widget.wird.currentDhikrIndex = 0;
-          //     widget.wird.isInProgress = false;
-          //     setState(() => currentDhikrIndex = 0);
-          //     _saveProgress();
-          //     Navigator.pop(context);
-          //   },
-          //   icon: const Icon(Icons.refresh),
-          //   label: const Text('ابدأ من جديد'),
-          // ),
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () {
-                // إعادة تعيين كل شيء
-                for (var dhikr in widget.wird.adhkar) {
-                  dhikr.currentCount = 0;
-                }
-                widget.wird.currentDhikrIndex = 0;
-                widget.wird.isInProgress = false;
-                setState(() => currentDhikrIndex = 0);
-                _saveProgress();
-                Navigator.pop(context);
-              },
-
-              icon: const Icon(Icons.refresh),
-              label: const Text('ابدأ من جديد'),
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            ),
-          ),
-
-          // Spacer(),
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () {
-                // إعادة تعيين عند الخروج
-                for (var dhikr in widget.wird.adhkar) {
-                  dhikr.currentCount = 0;
-                }
-                widget.wird.currentDhikrIndex = 0;
-                widget.wird.isInProgress = false;
-                _saveProgress();
-                Navigator.pop(context);
-                // Navigator.pop(context, true);
-                Navigator.pop(context, 'completed');
-
-              },
-              icon: const Icon(Icons.check),
-              label: const Text('إنهاء'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-            ),
-          ),
-        ],
       ),
     );
   }
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -632,4 +720,5 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
       ),
     );
   }
+
 }
