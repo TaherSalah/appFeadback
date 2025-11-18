@@ -1,52 +1,17 @@
-import 'dart:ui' as ui;
-
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../core/cubit/centralized_cubit.dart';
-import '../../core/shard/exports/all_exports.dart';
-import '../../core/shard/widgets/ui_animations.dart';
-
-
-
-import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:just_audio/just_audio.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// imports الخاصة بمشروعك
 import '../../core/cubit/centralized_cubit.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
-
-import 'dart:async';
-import 'dart:io';
-import 'dart:ui' as ui;
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-// imports الخاصة بمشروعك
-import '../../core/cubit/centralized_cubit.dart';
-import '../../core/shard/exports/all_exports.dart';
-import '../../core/shard/widgets/ui_animations.dart';
+import '../../core/widgets/AudioManager.dart';
 
 class AzkarSabah extends StatefulWidget {
   const AzkarSabah({super.key});
@@ -57,22 +22,17 @@ class AzkarSabah extends StatefulWidget {
 
 class _AzkarSabahState extends State<AzkarSabah> {
   // ================== إعدادات الصوت ==================
-  static const String _sabahUrl =
-      'https://cdn.jsdelivr.net/gh/TaherSalah/azkarAudio@main/sabah.mp3';
+  static const String _sabahUrl = 'https://cdn.jsdelivr.net/gh/TaherSalah/azkarAudio@main/sabah.mp3';
   static const String _sabahKey = 'sabah_audio_path';
+  static const String _fileName = 'azkar_sabah.mp3';
 
-  final AudioPlayer _player = AudioPlayer();
+  final AudioManager _audioManager = AudioManager();
 
   bool _isPlaying = false;
   bool _isDownloading = false;
   bool _isDownloaded = false;
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
-  String? _localPath;
-
-  StreamSubscription<Duration>? _positionSub;
-  StreamSubscription<Duration?>? _durationSub;
-  StreamSubscription<PlayerState>? _playerStateSub;
 
   @override
   void initState() {
@@ -81,46 +41,30 @@ class _AzkarSabahState extends State<AzkarSabah> {
   }
 
   Future<void> _initAudio() async {
+    // تهيئة الـ AudioManager
+    _audioManager.initialize();
+
     // استرجاع المسار لو تم تحميله من قبل
-    final prefs = await SharedPreferences.getInstance();
-    final savedPath = prefs.getString(_sabahKey);
-    if (savedPath != null && File(savedPath).existsSync()) {
-      _localPath = savedPath;
+    final savedPath = await _audioManager.getSavedAudioPath(_sabahKey);
+    if (savedPath != null) {
       _isDownloaded = true;
     }
 
-    // متابعة تقدّم التشغيل
-    _positionSub = _player.positionStream.listen((pos) {
+    // متابعة التحديثات
+    _audioManager.positionStream.listen((pos) {
       if (!mounted) return;
       setState(() => _position = pos);
     });
 
-    // مدة الملف
-    _durationSub = _player.durationStream.listen((dur) {
+    _audioManager.durationStream.listen((dur) {
       if (!mounted) return;
       setState(() => _duration = dur ?? Duration.zero);
     });
 
-    // حالة المشغّل
-    _playerStateSub = _player.playerStateStream.listen((state) {
+    _audioManager.playerStateStream.listen((state) {
       if (!mounted) return;
-      final playing = state.playing;
-      final processingState = state.processingState;
-
-      setState(() {
-        _isPlaying = playing && processingState != ProcessingState.completed;
-      });
-
-      if (processingState == ProcessingState.completed) {
-        _player.seek(Duration.zero);
-        _player.pause();
-      }
+      setState(() => _isPlaying = _audioManager.isPlaying);
     });
-  }
-
-  Future<bool> _hasConnection() async {
-    final result = await Connectivity().checkConnectivity();
-    return result != ConnectivityResult.none;
   }
 
   void _showSnack(String message) {
@@ -135,87 +79,50 @@ class _AzkarSabahState extends State<AzkarSabah> {
     );
   }
 
-  // تشغيل / إيقاف مع شرط الإنترنت والأوفلاين
+  // تشغيل / إيقاف
   Future<void> _playOrPause() async {
-    // لو شغّال → إيقاف مؤقت
-    if (_isPlaying) {
-      await _player.pause();
-      return;
-    }
-
     try {
-      // لو متحمّل → شغّل من الجهاز (أوفلاين)
-      if (_isDownloaded &&
-          _localPath != null &&
-          File(_localPath!).existsSync()) {
-        await _player.setFilePath(_localPath!);
-      } else {
-        // غير متحمّل → لازم إنترنت
-        final hasNet = await _hasConnection();
-        if (!hasNet) {
-          _showSnack(
-              'لا يوجد اتصال بالإنترنت.\nقم بتحميل أذكار الصباح للتشغيل بدون إنترنت.');
-          return;
-        }
-        await _player.setUrl(_sabahUrl);
-      }
-
-      await _player.play();
+      await _audioManager.playOrPause(
+        url: _sabahUrl,
+        localPath: _isDownloaded ? _audioManager.currentLocalPath : null,
+        sharedPrefsKey: _sabahKey,
+      );
     } catch (e) {
       _showSnack('حدث خطأ أثناء تشغيل الصوت.');
     }
   }
 
-  // تحميل الملف للتشغيل أوفلاين
+  // تحميل الملف
   Future<void> _downloadAudio() async {
     if (_isDownloading) return;
 
-    final hasNet = await _hasConnection();
+    final hasNet = await _audioManager.hasConnection();
     if (!hasNet) {
       _showSnack('لا يوجد اتصال بالإنترنت، لا يمكن التحميل الآن.');
       return;
     }
 
-    setState(() {
-      _isDownloading = true;
-    });
+    setState(() => _isDownloading = true);
 
     try {
-      final uri = Uri.parse(_sabahUrl);
-      final response =
-      await http.get(uri).timeout(const Duration(seconds: 40));
+      await _audioManager.downloadAudio(
+        url: _sabahUrl,
+        fileName: _fileName,
+        sharedPrefsKey: _sabahKey,
+      );
 
-      if (response.statusCode != 200) {
-        _showSnack('فشل تحميل الملف الصوتي (كود ${response.statusCode}).');
-        return;
-      }
-
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/azkar_sabah.mp3');
-      await file.writeAsBytes(response.bodyBytes);
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_sabahKey, file.path);
-
-      setState(() {
-        _localPath = file.path;
-        _isDownloaded = true;
-      });
-
+      setState(() => _isDownloaded = true);
       _showSnack('تم تحميل أذكار الصباح، يمكن تشغيلها بدون إنترنت.');
-    } on TimeoutException {
-      _showSnack('انتهت مهلة الاتصال أثناء التحميل، حاول مرة أخرى.');
     } catch (e) {
-      _showSnack('حدث خطأ أثناء تحميل الصوت، حاول مرة أخرى.');
+      _showSnack(e.toString());
     } finally {
       if (mounted) {
-        setState(() {
-          _isDownloading = false;
-        });
+        setState(() => _isDownloading = false);
       }
     }
   }
 
+  // باقي الكود يبقى كما هو مع تعديل المراجع
   String _formatDuration(Duration d) {
     String two(int n) => n.toString().padLeft(2, '0');
     final m = two(d.inMinutes.remainder(60));
@@ -223,6 +130,12 @@ class _AzkarSabahState extends State<AzkarSabah> {
     return '$m:$s';
   }
 
+  @override
+  void dispose() {
+    // لا نقوم بـ dispose للـ AudioManager لأنه Singleton
+    // وسيتم استخدامه في أماكن أخرى
+    super.dispose();
+  }
   Widget _buildBottomPlayer(bool isDark) {
     final primaryColor =
     isDark ? const Color(AppStyle.primaryColor) : Colors.green;
@@ -244,7 +157,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
 
     return SafeArea(
       top: false,
-
+bottom: false,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -283,52 +196,67 @@ class _AzkarSabahState extends State<AzkarSabah> {
               children: [
                 // الصف الرئيسي: زر التشغيل + العنوان + الحالة
 
-                Row(
-                  children: [
-                    // const SizedBox(width: 10),
-                    Expanded(
-                      child: Directionality(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                  child: Row(
+                    children: [
+                      // const SizedBox(width: 10),
+                      Directionality(
                         textDirection: ui.TextDirection.rtl,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'أذكار الصباح',
-                              style: GoogleFonts.cairo(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: primaryColor,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            // const SizedBox(height: 3),
-                            // Text(
-                            //   modeText,
-                            //   style: GoogleFonts.cairo(
-                            //     fontSize: 11,
-                            //     color: isDark
-                            //         ? Colors.grey[300]
-                            //         : Colors.grey[700],
-                            //   ),
-                            //   maxLines: 2,
-                            //   overflow: TextOverflow.ellipsis,
-                            // ),
-                          ],
+                        child: Text(
+                          'مشاري العفاسي',
+                          style: GoogleFonts.notoKufiArabic(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: primaryColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    if (_isDownloaded)
-                      const Icon(
-                        Icons.offline_pin_rounded,
-                        color: Colors.green,
-                        size: 22,
+
+                      const SizedBox(width: 6),
+                      if (_isDownloaded)
+                        const Icon(
+                          Icons.offline_pin_rounded,
+                          color: Colors.green,
+                          size: 22,
+                        ),
+                      Spacer(),
+                      Directionality(
+                        textDirection: ui.TextDirection.rtl,
+                        child: Text(
+                          'أذكار الصباح',
+                          style: GoogleFonts.notoKufiArabic(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: primaryColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                  ],
+
+                    ],
+                  ),
                 ),
+                Directionality(
+                  textDirection: ui.TextDirection.rtl,
+                  child: Text(
+                    modeText,
+                    style: GoogleFonts.aboreto(
+                      fontSize: ResponsiveUtil.isTablet(context)? 13:15,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
                 const SizedBox(height: 6),
                 // السلايدر + التوقيت
+
                 Row(
                   children: [
                     Text(
@@ -352,7 +280,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                               ? null
                               : (v) async {
                             final newPos = Duration(milliseconds: v.toInt());
-                            await _player.seek(newPos);
+                            await _audioManager.seek(newPos);
                           },
                           activeColor: primaryColor,
                           inactiveColor: primaryColor.withOpacity(0.25),
@@ -396,7 +324,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                       ),
                       label: Text(
                         'تم تحميل الأذكار، تعمل بدون إنترنت',
-                        style: GoogleFonts.cairo(
+                        style: GoogleFonts.notoKufiArabic(
                           fontSize: 12,
                           color: Colors.green,
                         ),
@@ -421,9 +349,9 @@ class _AzkarSabahState extends State<AzkarSabah> {
                         _isDownloading
                             ? 'جاري تحميل أذكار الصباح...'
                             : 'تحميل للتشغيل بدون إنترنت',
-                        style: GoogleFonts.cairo(
-                          fontSize: 12,
-                          color: primaryColor,
+                        style: GoogleFonts.aboreto(
+                          fontSize: 14,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -433,7 +361,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
             ),
           ),
           Positioned(
-            top: -30,right: 150,
+            top: -30,right: ResponsiveUtil.isTablet(context)?370: 150,
             child:
             GestureDetector(
               onTap: _playOrPause,
@@ -444,8 +372,8 @@ class _AzkarSabahState extends State<AzkarSabah> {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      primaryColor,
-                      primaryColor.withOpacity(0.8),
+                      KColors.primary,
+                      KColors.primaryColor,
                     ],
                   ),
                   boxShadow: [
@@ -471,14 +399,8 @@ class _AzkarSabahState extends State<AzkarSabah> {
     );
   }
 
-  @override
-  void dispose() {
-    _positionSub?.cancel();
-    _durationSub?.cancel();
-    _playerStateSub?.cancel();
-    _player.dispose();
-    super.dispose();
-  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -604,12 +526,3 @@ class _AzkarSabahState extends State<AzkarSabah> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
