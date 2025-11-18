@@ -15,8 +15,11 @@ class AzkarProvider extends ChangeNotifier {
     )) {
       throw Exception('Could not launch $url');
     }
+  }  AzkarProvider() {
+    // حفظ القيم الأصلية مرة واحدة عند إنشاء الـ Provider
+    _initialSleepRepate = List<int>.from(Azkary.azkarSleepRepate);
   }
-
+  late List<int> _initialSleepRepate;
   AzkarRemoteServices azkarRemoteServices = AzkarRemoteServices();
   int counter = 0;
 
@@ -108,13 +111,25 @@ class AzkarProvider extends ChangeNotifier {
     }
   }
 
-  decrementSleep(zSleepIndex) {
-    if (zSleepIndex >= 0 && zSleepIndex < Azkary.azkarSleepRepate.length) {
-      Azkary.azkarSleepRepate[zSleepIndex] -= 1;
+  // decrementSleep(zSleepIndex) {
+  //   if (zSleepIndex >= 0 && zSleepIndex < Azkary.azkarSleepRepate.length) {
+  //     Azkary.azkarSleepRepate[zSleepIndex] -= 1;
+  //     notifyListeners();
+  //   }
+  // }
+  void decrementSleep(int index) {
+    if (index < 0 || index >= Azkary.azkarSleepRepate.length) return;
+
+    if (Azkary.azkarSleepRepate[index] > 0) {
+      Azkary.azkarSleepRepate[index]--;
       notifyListeners();
     }
   }
 
+  void resetSleep() {
+    Azkary.azkarSleepRepate = List<int>.from(_initialSleepRepate);
+    notifyListeners();
+  }
   decrementPrayer(zPrayerIndex) {
     if (zPrayerIndex >= 0 && zPrayerIndex < Azkary.azkarPrayerRepate.length) {
       Azkary.azkarPrayerRepate[zPrayerIndex] -= 1;

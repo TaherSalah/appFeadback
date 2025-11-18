@@ -1438,7 +1438,7 @@ class _AzkarMassaState extends State<AzkarMassa> {
           ),
         ),
       ),
-      body: Azkary.azkarSabahRepate.isEmpty
+      body: Azkary.azkarMassaRepate.isEmpty
           ? Center(
         child: SingleChildScrollView(
           child: Column(
