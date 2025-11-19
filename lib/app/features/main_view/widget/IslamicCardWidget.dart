@@ -25,9 +25,7 @@ class IslamicCardWidget extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
-      child:
-
-    Container(
+      child: Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -71,11 +69,13 @@ class IslamicCardWidget extends StatelessWidget {
           ],
         ),
       ),
-    )
-
-    );
+    ));
   }
 }
+
+
+
+
 
 void showThemeSheet(BuildContext ctx) {
   final cubit = CentralizedCubit.get(ctx);

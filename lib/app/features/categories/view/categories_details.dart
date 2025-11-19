@@ -14,6 +14,7 @@ import '../../../core/widgets/KLoading.dart';
 import '../../../core/widgets/custom_text_widget.dart';
 import '../../hadithDetails/data/repo/hadith_details_repo_immp.dart';
 import '../../hadithDetails/view/controller/hadith_details_bloc.dart';
+import '../../messa_view/azkar_massa.dart';
 import 'controller/categories_bloc.dart';
 import 'controller/categories_state.dart';
 
@@ -106,6 +107,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                         Padding(
                             padding: const EdgeInsets.only(left: 10),
                             child: Card(
+
                                 shape: const BeveledRectangleBorder(
                                     borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(5),
@@ -161,6 +163,9 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                                             ?.data?[index].id);
                                   },
                                   child: Card(
+                                      shape: BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
+
+                                    color: AppThemeColors.cardBackgroundColor(context),
                                       shadowColor:
                                           KColors.whiteColor.withOpacity(0.6),
                                       elevation: 2,

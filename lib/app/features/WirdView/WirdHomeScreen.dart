@@ -2,11 +2,13 @@
 // =============== الشاشة الرئيسية ===============
 import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/utils/style/k_color.dart';
 import '../../core/widgets/KLoading.dart';
 import '../main_view/MainView.dart';
+import '../messa_view/azkar_massa.dart';
 import 'AddWirdScreen.dart';
 import 'StatisticsScreen.dart';
 import 'TasbihScreen.dart';
@@ -58,7 +60,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-
+bool isTab = ResponsiveUtil.isTablet(context) ;
     return Scaffold(
       backgroundColor: isDark ? Colors.grey.shade900 : Colors.grey.shade50,
       // appBar: AppBar(
@@ -144,14 +146,14 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
                 children: [
                   ExpansionTile(
                     initiallyExpanded: true,
-                    title: Text('الأوراد الجارية (${filteredAwrad.length})',style: TextStyle(fontFamily: "me",fontSize: 20.sp),),
+                    title: Text('الأوراد الجارية (${filteredAwrad.length})',style: TextStyle(fontFamily: "me",fontSize: isTab?12.sp:20.sp),),
                     children: filteredAwrad
                         .map((wird) => _buildWirdCard(wird, isDark: isDark))
                         .toList(),
                   ),
                   ExpansionTile(
                     initiallyExpanded: false,
-                    title: Text('الأوراد المنجزة (${completedAwrad.length})',style: TextStyle(fontFamily: "me",fontSize: 20.sp),),
+                    title: Text('الأوراد المنجزة (${completedAwrad.length})',style: TextStyle(fontFamily: "me",fontSize: isTab?12.sp:20.sp),),
                     children: completedAwrad
                         .map((wird) => _buildWirdCard(wird, isDark: isDark, completed: true))
                         .toList(),
@@ -179,8 +181,9 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
             }
           },
           icon: const Icon(Icons.add),
-          label: const TextDefaultWidget(title: 'إضافة ورد جديد',fontWeight: FontWeight.bold,fontFamily: "cairo",color: Colors.white,),
-          backgroundColor:Colors.green,
+          // label: const TextDefaultWidget(title: 'إضافة ورد جديد',fontWeight: FontWeight.bold,fontFamily: "cairo",color: Colors.white,),
+          label: Text('إضافة ورد جديد',style: TextStyle(fontFamily: "me",fontSize: isTab?12.sp:20.sp),),
+          backgroundColor:AppThemeColors.buttonBackgroundColor(context),
           foregroundColor: Colors.white,
 
         ),

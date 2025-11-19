@@ -17,6 +17,7 @@ import '../../../../core/widgets/custom_divider_widget.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 import '../../../../core/widgets/head_title_item_builder.dart';
 import '../../../../core/widgets/image_widget.dart';
+import '../../../messa_view/azkar_massa.dart';
 import '../../hadith_details_view.dart';
 import '../controller/hadith_details_bloc.dart';
 import '../controller/hadith_details_state.dart';
@@ -234,11 +235,52 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: HeadTitleItemBuilder(
+                          icon: Icons.menu_book_sharp,
+                          fontSize: isChangeFontSize == false
+                              ? 10
+                              : double.parse(selectedFontSize),
+                          iconSize:ResponsiveUtil.isTablet(context)?20: 15,
+                          headTitle: LocalizationManager.call("hadith-text"),
+                          lineColor: KColors.scoColor),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Container(
+                          width: MediaQuery.sizeOf(context).width,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color:  AppThemeColors.cardBackgroundColor(context),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.r),
+                                  bottomLeft: Radius.circular(20.r)),
+                              border: Border(
+                                  right: BorderSide(
+                                      color: KColors.primaryColor, width: 4))),
+                          child: Column(
+                            children: [
+                              TextWidget(
+                                  title: bloc.hadithDetailsModal?.hadeeth
+                                      .toString()
+                                      .replaceAll("،", "").replaceAll("؛", "").replaceAll("؟", "") ??
+                                      "",
+                                  height: 2,
+                                  fontFamily: "me",
+                                  fontSize: isChangeFontSize == false
+                                      ? (ResponsiveUtil.isTablet(context)
+                                      ? 8.sp
+                                      : 15.sp)
+                                      : double.parse(selectedFontSize))
+                            ],
+                          )),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: HeadTitleItemBuilder(
                           icon: Icons.rotate_90_degrees_ccw_sharp,
                           fontSize: isChangeFontSize == false
                               ? 10
                               : double.parse(selectedFontSize),
-                          iconSize: 15,
+                          iconSize:ResponsiveUtil.isTablet(context)?20: 15,
                           headTitle: LocalizationManager.call("source"),
                           lineColor: KColors.scoColor),
                     ),
@@ -248,9 +290,10 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: isDark
-                                  ? KColors.blackColor
-                                  : Theme.of(context).cardColor,
+                              // color: isDark
+                              //     ? KColors.blackColor
+                              //     : Theme.of(context).cardColor,
+                            color:  AppThemeColors.cardBackgroundColor(context),
                               borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(20.r),
                                   bottomLeft: Radius.circular(20.r)),
@@ -280,7 +323,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           fontSize: isChangeFontSize == false
                               ? 10
                               : double.parse(selectedFontSize),
-                          iconSize: 15,
+                          iconSize:ResponsiveUtil.isTablet(context)?20: 15,
                           headTitle: LocalizationManager.call("hadith-degree"),
                           lineColor: KColors.scoColor),
                     ),
@@ -290,9 +333,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: isDark
-                                  ? KColors.blackColor
-                                  : Theme.of(context).cardColor,
+                              color:  AppThemeColors.cardBackgroundColor(context),
                               borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(20.r),
                                   bottomLeft: Radius.circular(20.r)),
@@ -315,49 +356,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                             ],
                           )),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: HeadTitleItemBuilder(
-                          icon: Icons.menu_book_sharp,
-                          fontSize: isChangeFontSize == false
-                              ? 10
-                              : double.parse(selectedFontSize),
-                          iconSize: 15,
-                          headTitle: LocalizationManager.call("hadith-text"),
-                          lineColor: KColors.scoColor),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Container(
-                          width: MediaQuery.sizeOf(context).width,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: isDark
-                                  ? KColors.blackColor
-                                  : Theme.of(context).cardColor,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20.r),
-                                  bottomLeft: Radius.circular(20.r)),
-                              border: Border(
-                                  right: BorderSide(
-                                      color: KColors.primaryColor, width: 4))),
-                          child: Column(
-                            children: [
-                              TextWidget(
-                                  title: bloc.hadithDetailsModal?.hadeeth
-                                          .toString()
-                                          .replaceAll("،", "").replaceAll("؛", "").replaceAll("؟", "") ??
-                                      "",
-                                  height: 2,
-                                  fontFamily: "me",
-                                  fontSize: isChangeFontSize == false
-                                      ? (ResponsiveUtil.isTablet(context)
-                                          ? 8.sp
-                                          : 15.sp)
-                                      : double.parse(selectedFontSize))
-                            ],
-                          )),
-                    ),
+
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: HeadTitleItemBuilder(
@@ -365,7 +364,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           fontSize: isChangeFontSize == false
                               ? 10
                               : double.parse(selectedFontSize),
-                          iconSize: 15,
+                          iconSize:ResponsiveUtil.isTablet(context)?20: 15,
                           headTitle:
                               LocalizationManager.call("hadith-explanation"),
                           lineColor: KColors.scoColor),
@@ -376,9 +375,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: isDark
-                                  ? KColors.blackColor
-                                  : Theme.of(context).cardColor,
+                              color:  AppThemeColors.cardBackgroundColor(context),
                               borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(20.r),
                                   bottomLeft: Radius.circular(20.r)),
@@ -409,19 +406,21 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                             fontSize: isChangeFontSize == false
                                 ? 10
                                 : double.parse(selectedFontSize),
-                            iconSize: 15,
+                            iconSize:ResponsiveUtil.isTablet(context)?20: 15,
                             headTitle:
                                 LocalizationManager.call("hadith-vocabulary"),
                             lineColor: KColors.scoColor)),
                     bloc.hadithDetailsModal?.wordsMeanings?.isNotEmpty == true
                         ? Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                             child: Wrap(
                               children: bloc.hadithDetailsModal?.wordsMeanings
                                       ?.map((word) {
                                     return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 1.5),
+                                      padding:  EdgeInsets.symmetric(
+                                          vertical: ResponsiveUtil.isTablet(context)
+                                              ? 5.h
+                                              : 1.5.h),
                                       child: Container(
                                         width: MediaQuery.sizeOf(context).width,
                                         padding: const EdgeInsets.symmetric(
@@ -429,9 +428,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                         decoration: BoxDecoration(
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(10)),
-                                          color:isDark
-                                              ? KColors.blackColor
-                                              : Theme.of(context).cardColor,
+                                          color:  AppThemeColors.cardBackgroundColor(context),
                                         ),
                                         child: Row(
                                           mainAxisAlignment:
@@ -459,6 +456,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                                         .toString()
                                                         .replaceAll("،", "").replaceAll("؛", "").replaceAll("؟", ""),
                                                     height: 1.8,
+                                                    fontFamily: "me",
                                                     fontSize: isChangeFontSize ==
                                                             false
                                                         ? (ResponsiveUtil
@@ -498,7 +496,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                             fontSize: isChangeFontSize == false
                                 ? 10
                                 : double.parse(selectedFontSize),
-                            iconSize: 15,
+                            iconSize:ResponsiveUtil.isTablet(context)?20: 15,
                             headTitle:
                                 LocalizationManager.call("hadith-benefits"),
                             lineColor: KColors.scoColor)),
@@ -508,9 +506,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           width: MediaQuery.sizeOf(context).width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color:isDark
-                                  ? KColors.blackColor
-                                  : Theme.of(context).cardColor,
+                              color:  AppThemeColors.cardBackgroundColor(context),
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(20.r),
                                   topLeft: Radius.circular(20.r)),
@@ -542,7 +538,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                             fontSize: isChangeFontSize == false
                                 ? 10
                                 : double.parse(selectedFontSize),
-                            iconSize: 15,
+                            iconSize:ResponsiveUtil.isTablet(context)?20: 15,
                             headTitle:
                                 LocalizationManager.call("hadith-references"),
                             lineColor: KColors.scoColor)),
@@ -556,9 +552,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                 width: double.infinity,
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                    color: isDark
-                                        ? KColors.blackColor
-                                        : Theme.of(context).cardColor,
+                                    color:  AppThemeColors.cardBackgroundColor(context),
                                     borderRadius: BorderRadius.only(
                                         bottomLeft: Radius.circular(20.r),
                                         topLeft: Radius.circular(20.r)),
@@ -595,11 +589,12 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                     Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: HeadTitleItemBuilder(
+
                             icon: Icons.more,
                             fontSize: isChangeFontSize == false
                                 ? 10
                                 : double.parse(selectedFontSize),
-                            iconSize: 15,
+                            iconSize:ResponsiveUtil.isTablet(context)?20: 15,
                             headTitle: LocalizationManager.call("more"),
                             lineColor: KColors.scoColor)),
                   ],
@@ -624,6 +619,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                   child: SizedBox(
                                     width: double.infinity,
                                     child: Card(
+                                      color:  AppThemeColors.cardBackgroundColor(context),
                                       shape: BeveledRectangleBorder(
                                           borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(12.r))),

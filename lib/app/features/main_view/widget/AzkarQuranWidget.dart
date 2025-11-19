@@ -6,6 +6,7 @@ import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/style/k_color.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import '../../../core/widgets/custom_text_widget.dart';
+import '../../messa_view/azkar_massa.dart';
 
 
 
@@ -84,7 +85,8 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
               border: const BorderDirectional(
                 start: BorderSide(color: CupertinoColors.systemGreen, width: 3),
               ),
-              color: Theme.of(context).cardColor,
+              // color: Theme.of(context).cardColor,
+              color: AppThemeColors.cardBackgroundColor(context)
             ),
             width: MediaQuery.sizeOf(context).width,
             child: Padding(
@@ -148,7 +150,7 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
               },
               child: Icon(
                 Icons.copy,
-                color: Theme.of(context).brightness == Brightness.dark ? Colors.deepOrangeAccent: CupertinoColors.systemRed,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.amberAccent: CupertinoColors.systemRed,
 
                 size: MediaQuery.sizeOf(context).width>600?25: 20,
               ),

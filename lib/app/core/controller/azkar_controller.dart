@@ -15,11 +15,30 @@ class AzkarProvider extends ChangeNotifier {
     )) {
       throw Exception('Could not launch $url');
     }
-  }  AzkarProvider() {
-    // حفظ القيم الأصلية مرة واحدة عند إنشاء الـ Provider
-    _initialSleepRepate = List<int>.from(Azkary.azkarSleepRepate);
   }
+  AzkarProvider() {
+    // حفظ القيم الأصلية لكل نوع أذكار
+    _initialSleepRepate  = List<int>.from(Azkary.azkarSleepRepate);
+    _initialSabahRepate  = List<int>.from(Azkary.azkarSabahRepate);
+    _initialMassaRepate  = List<int>.from(Azkary.azkarMassaRepate);
+    _initialOtherRepate  = List<int>.from(Azkary.azkarRepate);
+    _initialPrayerRepate = List<int>.from(Azkary.azkarPrayerRepate);
+    _initialQuranRepate  = List<int>.from(Azkary.rokiaQuranRepe);
+  }
+
   late List<int> _initialSleepRepate;
+  late List<int> _initialSabahRepate;
+  late List<int> _initialMassaRepate;
+  late List<int> _initialOtherRepate;
+  late List<int> _initialPrayerRepate;
+  late List<int> _initialQuranRepate;
+  bool get isSleepDone  => Azkary.azkarSleepRepate.every((c) => c <= 0);
+  bool get isSabahDone  => Azkary.azkarSabahRepate.every((c) => c <= 0);
+  bool get isMessaDone  => Azkary.azkarMassaRepate.every((c) => c <= 0);
+  bool get isOtherDone  => Azkary.azkarRepate.every((c) => c <= 0);
+  bool get isPrayerDone => Azkary.azkarPrayerRepate.every((c) => c <= 0);
+  bool get isQuranDone  => Azkary.rokiaQuranRepe.every((c) => c <= 0);
+
   AzkarRemoteServices azkarRemoteServices = AzkarRemoteServices();
   int counter = 0;
 
@@ -82,60 +101,122 @@ class AzkarProvider extends ChangeNotifier {
   int zOtherIndex = 0;
   int zPrayerIndex = 0;
 
-  decrementQuran(quranCurrentIndex) {
-    if (quranCurrentIndex >= 0 &&
-        quranCurrentIndex < Azkary.rokiaQuranRepe.length) {
-      Azkary.rokiaQuranRepe[quranCurrentIndex] -= 1;
-      notifyListeners();
-    }
-  }
-
-  decrementSabah(zSabahIndex) {
-    if (zSabahIndex >= 0 && zSabahIndex < Azkary.azkarSabahRepate.length) {
-      Azkary.azkarSabahRepate[zSabahIndex] -= 1;
-      notifyListeners();
-    }
-  }
-
-  decrementMessa(zMessaIndex) {
-    if (zMessaIndex >= 0 && zMessaIndex < Azkary.azkarMassaRepate.length) {
-      Azkary.azkarMassaRepate[zMessaIndex] -= 1;
-      notifyListeners();
-    }
-  }
-
-  decrementOther(zOtherIndex) {
-    if (zOtherIndex >= 0 && zOtherIndex < Azkary.azkarRepate.length) {
-      Azkary.azkarRepate[zOtherIndex] -= 1;
-      notifyListeners();
-    }
-  }
-
+  // decrementQuran(quranCurrentIndex) {
+  //   if (quranCurrentIndex >= 0 &&
+  //       quranCurrentIndex < Azkary.rokiaQuranRepe.length) {
+  //     Azkary.rokiaQuranRepe[quranCurrentIndex] -= 1;
+  //     notifyListeners();
+  //   }
+  // }
+  //
+  // decrementSabah(zSabahIndex) {
+  //   if (zSabahIndex >= 0 && zSabahIndex < Azkary.azkarSabahRepate.length) {
+  //     Azkary.azkarSabahRepate[zSabahIndex] -= 1;
+  //     notifyListeners();
+  //   }
+  // }
+  //
+  // decrementMessa(zMessaIndex) {
+  //   if (zMessaIndex >= 0 && zMessaIndex < Azkary.azkarMassaRepate.length) {
+  //     Azkary.azkarMassaRepate[zMessaIndex] -= 1;
+  //     notifyListeners();
+  //   }
+  // }
+  //
+  // decrementOther(zOtherIndex) {
+  //   if (zOtherIndex >= 0 && zOtherIndex < Azkary.azkarRepate.length) {
+  //     Azkary.azkarRepate[zOtherIndex] -= 1;
+  //     notifyListeners();
+  //   }
+  // }
+  //
   // decrementSleep(zSleepIndex) {
   //   if (zSleepIndex >= 0 && zSleepIndex < Azkary.azkarSleepRepate.length) {
   //     Azkary.azkarSleepRepate[zSleepIndex] -= 1;
   //     notifyListeners();
   //   }
   // }
+  void decrementQuran(int index) {
+    if (index < 0 || index >= Azkary.rokiaQuranRepe.length) return;
+    if (Azkary.rokiaQuranRepe[index] > 0) {
+      Azkary.rokiaQuranRepe[index]--;
+      notifyListeners();
+    }
+  }
+
+  void decrementSabah(int index) {
+    if (index < 0 || index >= Azkary.azkarSabahRepate.length) return;
+    if (Azkary.azkarSabahRepate[index] > 0) {
+      Azkary.azkarSabahRepate[index]--;
+      notifyListeners();
+    }
+  }
+
+  void decrementMessa(int index) {
+    if (index < 0 || index >= Azkary.azkarMassaRepate.length) return;
+    if (Azkary.azkarMassaRepate[index] > 0) {
+      Azkary.azkarMassaRepate[index]--;
+      notifyListeners();
+    }
+  }
+
+  void decrementOther(int index) {
+    if (index < 0 || index >= Azkary.azkarRepate.length) return;
+    if (Azkary.azkarRepate[index] > 0) {
+      Azkary.azkarRepate[index]--;
+      notifyListeners();
+    }
+  }
+
   void decrementSleep(int index) {
     if (index < 0 || index >= Azkary.azkarSleepRepate.length) return;
-
     if (Azkary.azkarSleepRepate[index] > 0) {
       Azkary.azkarSleepRepate[index]--;
       notifyListeners();
     }
   }
 
+  void decrementPrayer(int index) {
+    if (index < 0 || index >= Azkary.azkarPrayerRepate.length) return;
+    if (Azkary.azkarPrayerRepate[index] > 0) {
+      Azkary.azkarPrayerRepate[index]--;
+      notifyListeners();
+    }
+  }
+
+
+
   void resetSleep() {
     Azkary.azkarSleepRepate = List<int>.from(_initialSleepRepate);
     notifyListeners();
   }
-  decrementPrayer(zPrayerIndex) {
-    if (zPrayerIndex >= 0 && zPrayerIndex < Azkary.azkarPrayerRepate.length) {
-      Azkary.azkarPrayerRepate[zPrayerIndex] -= 1;
-      notifyListeners();
-    }
+
+  void resetSabah() {
+    Azkary.azkarSabahRepate = List<int>.from(_initialSabahRepate);
+    notifyListeners();
   }
+
+  void resetMessa() {
+    Azkary.azkarMassaRepate = List<int>.from(_initialMassaRepate);
+    notifyListeners();
+  }
+
+  void resetOther() {
+    Azkary.azkarRepate = List<int>.from(_initialOtherRepate);
+    notifyListeners();
+  }
+
+  void resetPrayer() {
+    Azkary.azkarPrayerRepate = List<int>.from(_initialPrayerRepate);
+    notifyListeners();
+  }
+
+  void resetQuran() {
+    Azkary.rokiaQuranRepe = List<int>.from(_initialQuranRepate);
+    notifyListeners();
+  }
+
+
 
   ///**** counter methods ****///
 

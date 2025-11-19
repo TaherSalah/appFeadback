@@ -23,7 +23,6 @@ class QuranViewItemBuilder extends StatefulWidget {
 
 class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     with SingleTickerProviderStateMixin {
-  var selectedFontSize;
 
   // late List<DrawerModle?> topBar = [
   //   DrawerModle(

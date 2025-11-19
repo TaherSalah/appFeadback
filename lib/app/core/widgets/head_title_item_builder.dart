@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 import '../cubit/centralized_cubit.dart';
 import '../utils/style/k_color.dart';
@@ -38,7 +39,7 @@ class HeadTitleItemBuilder extends StatelessWidget {
             size: iconSize,
             color: iconColor,
           ),
-          const SizedBox(width: 3),
+           SizedBox(width:ResponsiveUtil.isTablet(context)?7: 3),
           TextWidget(
             title: headTitle,
             color: titleColor,

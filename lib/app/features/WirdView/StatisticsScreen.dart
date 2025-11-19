@@ -3,8 +3,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 import '../../core/shard/exports/all_exports.dart';
+import '../messa_view/azkar_massa.dart';
 import 'data/UserStats.dart';
 
 class StatisticsScreen extends StatefulWidget {
@@ -77,6 +79,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Card(
+                   color: AppThemeColors.cardBackgroundColor(context),
+                  shape:BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
                   elevation: 4,
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -104,6 +108,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   children: [
                     Expanded(
                       child: Card(
+                        color: AppThemeColors.cardBackgroundColor(context),
+                        shape:BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
@@ -123,6 +129,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Card(
+                        color: AppThemeColors.cardBackgroundColor(context),
+                        shape:BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
@@ -205,8 +213,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ),
                 const SizedBox(height: 12),
                 Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
+                  alignment: WrapAlignment.spaceBetween,
+                  spacing:ResponsiveUtil.isTablet(context)?25: 12,
+                  runSpacing: ResponsiveUtil.isTablet(context)?25:12,
                   children: _buildAchievements(widget.stats),
                 ),
               ],
@@ -225,64 +234,118 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   //     {'id': 'week_streak', 'icon': '🔥', 'title': 'أسبوع', 'desc': '7 أيام متتالية'},
   //     {'id': 'month_streak', 'icon': '💎', 'title': 'شهر', 'desc': '30 يوم متتالي'},
   //   ];
-  final allAchievements = [
-    {'id': 'beginner', 'icon': '🌱', 'title': 'البداية', 'desc': '100 تسبيحة'},
-    {'id': 'dedicated', 'icon': '⭐', 'title': 'المواظب', 'desc': '1000 تسبيحة'},
-    {'id': 'master', 'icon': '👑', 'title': 'الخبير', 'desc': '10000 تسبيحة'},
-    {'id': 'week_streak', 'icon': '🔥', 'title': 'أسبوع', 'desc': '7 أيام متتالية'},
-    {'id': 'month_streak', 'icon': '💎', 'title': 'شهر', 'desc': '30 يوم متتالي'},
+  // final allAchievements = [
+  //   {'id': 'beginner', 'icon': '🌱', 'title': 'البداية', 'desc': '100 تسبيحة'},
+  //   {'id': 'dedicated', 'icon': '⭐', 'title': 'المواظب', 'desc': '1000 تسبيحة'},
+  //   {'id': 'master', 'icon': '👑', 'title': 'الخبير', 'desc': '10000 تسبيحة'},
+  //   {'id': 'week_streak', 'icon': '🔥', 'title': 'أسبوع', 'desc': '7 أيام متتالية'},
+  //   {'id': 'month_streak', 'icon': '💎', 'title': 'شهر', 'desc': '30 يوم متتالي'},
+  //
+  //   // 🌙 إضافات جديدة
+  //   {'id': 'first_day', 'icon': '🎉', 'title': 'أول يوم', 'desc': 'أكملت أول ورد لك'},
+  //   {'id': 'fifty', 'icon': '💠', 'title': 'نصف الطريق', 'desc': '5000 تسبيحة'},
+  //   {'id': 'hundred_days', 'icon': '🏅', 'title': 'مئة يوم', 'desc': '100 يوم متتالي'},
+  //   {'id': 'night_dhikr', 'icon': '🌙', 'title': 'ذكر الليل', 'desc': 'ورد بعد منتصف الليل'},
+  //   {'id': 'millions', 'icon': '💯', 'title': 'الملهم', 'desc': '100,000 تسبيحة'},
+  // ];
+    final allAchievements = [
+      {'id': 'beginner', 'icon': '🌱', 'title': 'البداية', 'desc': '100 تسبيحة'},
+      {'id': 'dedicated', 'icon': '⭐', 'title': 'المواظب', 'desc': '1000 تسبيحة'},
+      {'id': 'master', 'icon': '👑', 'title': 'الخبير', 'desc': '10000 تسبيحة'},
+      {'id': 'week_streak', 'icon': '🔥', 'title': 'أسبوع', 'desc': '7 أيام متتالية'},
+      {'id': 'month_streak', 'icon': '💎', 'title': 'شهر', 'desc': '30 يوم متتالي'},
 
-    // 🌙 إضافات جديدة
-    {'id': 'first_day', 'icon': '🎉', 'title': 'أول يوم', 'desc': 'أكملت أول ورد لك'},
-    {'id': 'fifty', 'icon': '💠', 'title': 'نصف الطريق', 'desc': '5000 تسبيحة'},
-    {'id': 'hundred_days', 'icon': '🏅', 'title': 'مئة يوم', 'desc': '100 يوم متتالي'},
-    {'id': 'night_dhikr', 'icon': '🌙', 'title': 'ذكر الليل', 'desc': 'ورد بعد منتصف الليل'},
-    {'id': 'millions', 'icon': '💯', 'title': 'الملهم', 'desc': '100,000 تسبيحة'},
-  ];
+      // 🌙 إضافات جديدة
+      {'id': 'first_day', 'icon': '🎉', 'title': 'أول يوم', 'desc': 'أكملت أول ورد لك'},
+      {'id': 'fifty', 'icon': '💠', 'title': 'نصف الطريق', 'desc': '5000 تسبيحة'},
+      {'id': 'hundred_days', 'icon': '🏅', 'title': 'مئة يوم', 'desc': '100 يوم متتالي'},
+      {'id': 'night_dhikr', 'icon': '🌙', 'title': 'ذكر الليل', 'desc': 'ورد بعد منتصف الليل'},
+      {'id': 'millions', 'icon': '💯', 'title': 'الملهم', 'desc': '100,000 تسبيحة'},
 
-    return allAchievements.map((ach) {
-      final isUnlocked = stats.achievements.contains(ach['id']);
-      return Container(
-        width: 100,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isUnlocked ? Colors.teal.shade50 : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isUnlocked ? Colors.teal : Colors.grey.shade300,
-            width: 2,
+      // إنجازات إضافية
+      {'id': 'two_days_streak', 'icon': '🌟', 'title': 'يومين متتاليين', 'desc': 'إتمام وردين يومين متتاليين'},
+      {'id': 'two_weeks_streak', 'icon': '🔥', 'title': 'أسبوعين متتاليين', 'desc': 'إتمام الورد لمدة أسبوعين متتاليين'},
+      {'id': 'two_months_streak', 'icon': '💎', 'title': 'شهرين متتاليين', 'desc': 'إتمام الورد لمدة شهرين متتاليين'},
+
+      // إنجازات جديدة بالعدد
+      {'id': 'thousand', 'icon': '🔢', 'title': 'الآلاف', 'desc': 'إتمام 5000 تسبيحة'},
+      {'id': 'ten_thousand', 'icon': '🔟', 'title': 'عشرة آلاف', 'desc': 'إتمام 10,000 تسبيحة'},
+      {'id': 'golden_achievement', 'icon': '🏆', 'title': 'الإنجاز الذهبي', 'desc': 'إتمام 1,000,000 تسبيحة'},
+
+      // // إنجازات خاصة بالوقت
+      // {'id': 'fajr_dhikr', 'icon': '🌄', 'title': 'أذكار الفجر', 'desc': 'إتمام الأذكار بعد صلاة الفجر'},
+      // {'id': 'asr_dhikr', 'icon': '🌇', 'title': 'أذكار العصر', 'desc': 'إتمام الأذكار بعد صلاة العصر'},
+      // {'id': 'night_kiam', 'icon': '🌙', 'title': 'التهجد', 'desc': 'إتمام ورد تهجد في الليل'},
+      //
+      // // إنجازات تفاعلية
+      // {'id': 'share_app', 'icon': '📲', 'title': 'مشاركة التطبيق', 'desc': 'مشاركة التطبيق مع الأصدقاء'},
+      // {'id': 'invite_friend', 'icon': '💌', 'title': 'دعوة صديق', 'desc': 'دعوة صديق للاشتراك في التطبيق'},
+      //
+      // // إنجازات خاصة بالشهر
+      // {'id': 'ramadan', 'icon': '🌙', 'title': 'الصائم', 'desc': 'إتمام تسبيحة طوال شهر رمضان'},
+      // {'id': 'year_streak', 'icon': '🎯', 'title': 'الذكر المستمر', 'desc': 'إتمام 365 يوم متتالي'},
+    ];
+
+  return allAchievements.map((ach) {
+    final isUnlocked = stats.achievements.contains(ach['id']);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // ألوان حسب السمة
+    final Color backgroundColor = isUnlocked
+        ? (isDark ? Colors.teal.shade700 : Colors.teal.shade50)
+        : (isDark ? Colors.grey.shade800 : Colors.grey.shade200);
+
+    final Color borderColor = isUnlocked
+        ? Colors.teal
+        : (isDark ? Colors.grey.shade600 : Colors.grey.shade300);
+
+    final Color textColor = isUnlocked
+        ? Colors.teal
+        : (isDark ? Colors.white70 : Colors.grey);
+
+    final Color subtitleColor = isDark ? Colors.white54 : Colors.grey;
+
+    return Container(
+      width:ResponsiveUtil.isTablet(context)? 160:110,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: borderColor,
+          width: 2,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            ach['icon'] as String,
+            style: TextStyle(
+              fontSize: 32,
+              color: isUnlocked ? null : Colors.grey,
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            Text(
-              ach['icon'] as String,
-              style: TextStyle(
-                fontSize: 32,
-                color: isUnlocked ? null : Colors.grey,
-              ),
+          const SizedBox(height: 4),
+          Text(
+            ach['title'] as String,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: textColor,
             ),
-            const SizedBox(height: 4),
-            Text(
-              ach['title'] as String,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isUnlocked ? Colors.teal : Colors.grey,
-              ),
-              textAlign: TextAlign.center,
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            ach['desc'] as String,
+            style: TextStyle(
+              fontSize: ResponsiveUtil.isTablet(context)?12:10,
+              color: subtitleColor,
             ),
-            Text(
-              ach['desc'] as String,
-              style: const TextStyle(
-                fontSize: 10,
-                color: Colors.grey,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    }).toList();
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }).toList();
   }
 }
 

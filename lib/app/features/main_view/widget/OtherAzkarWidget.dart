@@ -9,6 +9,7 @@ import '../../../core/utils/style/k_color.dart';
 import '../../../core/utils/style/k_helper.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import '../../../core/widgets/custom_text_widget.dart';
+import '../../messa_view/azkar_massa.dart';
 
 
 
@@ -118,7 +119,8 @@ class _OtherAzkarWidgetState extends State<OtherAzkarWidget> {
               border: const BorderDirectional(
                 start: BorderSide(color: Color(0xffd6bb7a), width: 3),
               ),
-              color: Theme.of(context).cardColor,
+              // color: Theme.of(context).cardColor,
+              color: AppThemeColors.cardBackgroundColor(context),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
@@ -153,7 +155,7 @@ class _OtherAzkarWidgetState extends State<OtherAzkarWidget> {
               },
               child: Icon(
                 Icons.share,
-                color: Theme.of(context).brightness == Brightness.dark ? Colors.white: CupertinoColors.darkBackgroundGray,
+                // color: Theme.of(context).brightness == Brightness.dark ? Colors.white: CupertinoColors.darkBackgroundGray,
 
                 size: MediaQuery.sizeOf(context).width>600?25: 20,
               ),
@@ -181,7 +183,7 @@ class _OtherAzkarWidgetState extends State<OtherAzkarWidget> {
               },
               child: Icon(
                 Icons.copy,
-                color: Theme.of(context).brightness == Brightness.dark ? Colors.deepOrangeAccent: CupertinoColors.systemRed,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.amberAccent: CupertinoColors.systemRed,
                 size: MediaQuery.sizeOf(context).width>600?25: 20,
               ),
             )),

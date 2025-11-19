@@ -16,6 +16,7 @@ import '../../../../core/widgets/custom_divider_widget.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 import '../../../../core/widgets/image_widget.dart';
 import '../../../../core/widgets/kButtons.dart';
+import '../../../messa_view/azkar_massa.dart';
 import '../categories_details.dart';
 import '../controller/categories_bloc.dart';
 import '../controller/categories_state.dart';
@@ -36,7 +37,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
       childAspectRatio = 2.35;
     } else if (screenWidth < 1200) {
       // Tablet
-      crossAxisCount = 2;
+      crossAxisCount = 3;
       childAspectRatio = 3.40;
     } else {
       // Desktop
@@ -334,6 +335,9 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                                     ));
                               },
                               child: Card(
+                                color: AppThemeColors.cardBackgroundColor(context),
+                                shape: BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
+
                                 // shadowColor:
                                 //     KColors.whiteColor.withOpacity(0.6),
                                 // elevation: 2,

@@ -22,6 +22,7 @@ import '../../../../core/widgets/kButtons.dart';
 import '../../../categories/view/categories_details.dart';
 import '../../../categories/view/controller/categories_bloc.dart';
 import '../../../categories/view/controller/categories_state.dart';
+import '../../../messa_view/azkar_massa.dart';
 
 class QuranRadioItemBuilder extends StatefulWidget {
   const QuranRadioItemBuilder({super.key});
@@ -197,6 +198,9 @@ leading: SizedBox(),
                                       ""));
                         },
                         child: Card(
+                          elevation: 4,
+                          color: AppThemeColors.cardBackgroundColor(context),
+                          shape: BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(

@@ -1437,87 +1437,8 @@ class _SleepAzkarState extends State<SleepAzkar> {
           ),
         ),
       ),
-      body: allDone
-          ? Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(child: Image.asset(doneZakar)),
-              SizedBox(height: 10.h),
-              Text(
-                AppString.KSleepDaialogText,
-                style: GoogleFonts.cairo(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15.sp,
-                ),
-              ),
-              SizedBox(height: 15.h),
-              Text(
-                AppString.KZakarSleepFeaturesTitle,
-                style: GoogleFonts.cairo(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.sp,
-                ),
-              ),
-              SizedBox(height: 10.h),
-              const Divider(
-                color: Color(AppStyle.primaryColor),
-                thickness: 2,
-                indent: 150,
-                endIndent: 150,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  AppString.doneText,
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                    fontFamily: AppStyle.fontFamily,
-                    height: 1.8,
-                    fontSize: 17.5.sp,
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 20.h),
-
-              // الأزرار: إعادة / إنهاء
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // إعادة العدادات من الأول
-                      con.resetSleep();
-                    },
-                    icon: const Icon(Icons.refresh_rounded),
-                    label: Text(
-                      'إعادة الأذكار من البداية',
-                      style: GoogleFonts.cairo(fontSize: 13),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: KColors.primaryColor,
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(Icons.check_rounded),
-                    label: Text(
-                      'إنهاء',
-                      style: GoogleFonts.cairo(fontSize: 13),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      )
+      body: !allDone
+          ? DoneDialogWidget(onPressedRepeat: con.resetSleep, doneText: AppString.doneText, KZakarFeaturesTitle:AppString.KZakarSleepFeaturesTitle, KDaialogText: AppString.KSleepDaialogText)
           : Column(
         children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 8.0.w)),
@@ -1585,4 +1506,204 @@ class _SleepAzkarState extends State<SleepAzkar> {
     );
   }
 
+}
+
+class DoneDialogWidget extends StatelessWidget {
+  const DoneDialogWidget({super.key, this.onPressedRepeat, required this.doneText, required this.KZakarFeaturesTitle, required this.KDaialogText,});
+final  void Function()? onPressedRepeat;
+final String doneText,KZakarFeaturesTitle,KDaialogText;
+  @override
+  Widget build(BuildContext context) {
+    bool isTab = ResponsiveUtil.isTablet(context);
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Center(child: Image.asset(doneZakar,)),
+              Icon(Icons.check_circle,color: Colors.green,size: 45.sp,),
+              SizedBox(height: 10.h),
+              Text(
+                KDaialogText,
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  fontSize:isTab? 10.sp:15.sp,
+                ),
+              ),
+              SizedBox(height: 15.h),
+              Text(
+                KZakarFeaturesTitle,
+                style: GoogleFonts.cairo(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize:isTab? 9.5.sp: 18.sp,
+                ),
+              ),
+              SizedBox(height: 10.h),
+              const Divider(
+                color: Color(AppStyle.primaryColor),
+                thickness: 2,
+                indent: 150,
+                endIndent: 150,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  doneText,
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(
+                    fontFamily: AppStyle.fontFamily,
+                    height: 1.8,
+                    fontSize:isTab? 10.sp: 17.5.sp,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 20.h),
+
+              // الأزرار: إعادة / إنهاء
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28.r),
+            gradient: const LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Color(0xFF022C22), // أخضر غامق مائل للأزرق
+                Color(0xFF064E3B),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.18),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+            border: Border.all(
+              color: Colors.white.withOpacity(0.12),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              // زر إعادة الأذكار
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: onPressedRepeat,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: Colors.white.withOpacity(0.06),
+                    padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24.r),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // دائرة للأيقونة
+                      Container(
+                        padding: EdgeInsets.all(6.r),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.14),
+                        ),
+                        child: const Icon(
+                          Icons.refresh_rounded,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'إعادة الأذكار',
+                              style: GoogleFonts.cairo(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              'من البداية',
+                              style: GoogleFonts.cairo(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white.withOpacity(0.85),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(width: 10.w),
+
+              // زر إنهاء
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: Colors.white.withOpacity(0.45),
+                      width: 1.1,
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24.r),
+                    ),
+                    backgroundColor: Colors.white.withOpacity(0.04),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(6.r),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.1),
+                        ),
+                        child: const Icon(
+                          Icons.check_rounded,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: Text(
+                          'إنهاء',
+                          style: GoogleFonts.cairo(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )],
+          ),
+        ),
+      ),
+    );
+  }
 }

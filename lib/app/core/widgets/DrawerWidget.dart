@@ -61,10 +61,17 @@ class _DrawerWidgetState extends State<DrawerWidget>
 
   // بدل الـ static maxWidth نخليها حالة داخلية
   late bool _isExpanded;
-
+  // هذه الدالة يتم استدعاؤها بعد اكتمال البناء الأولي
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // الحصول على عرض الشاشة بعد بناء الـ widget
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    // تحديد قيم begin و end بناءً على حجم الشاشة
+    double beginValue = screenWidth < 600 ? 85 : 100; // إذا كان الهاتف، يبدأ من 85 وإذا كان التابلت يبدأ من 100
+    double endValue = screenWidth < 600 ? 250 : 450; // إذا كان الهاتف، ينتهي عند 250 وإذا كان التابلت ينتهي عند 350
 
     _isExpanded = widget.initiallyExpanded;
 
@@ -73,15 +80,15 @@ class _DrawerWidgetState extends State<DrawerWidget>
       vsync: this,
     );
 
-    _widthAnimation = Tween<double>(begin: 85, end: 250).animate(
+    _widthAnimation = Tween<double>(begin: beginValue, end: endValue).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.ease),
     );
 
     // لو حابب يبدأ بالحجم الكبير
     if (_isExpanded) {
-      _animationController.value = 1.0; // مباشرة على النهاية (عرض 250)
+      _animationController.value = 1.0; // مباشرة على النهاية (قيمة end)
     } else {
-      _animationController.value = 0.0; // بداية (عرض 85)
+      _animationController.value = 0.0; // بداية (قيمة begin)
     }
   }
 
@@ -101,6 +108,45 @@ class _DrawerWidgetState extends State<DrawerWidget>
       }
     });
   }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   _isExpanded = widget.initiallyExpanded;
+  //
+  //   _animationController = AnimationController(
+  //     duration: const Duration(milliseconds: 200),
+  //     vsync: this,
+  //   );
+  //
+  //   _widthAnimation = Tween<double>(begin: 85, end: 250).animate(
+  //     CurvedAnimation(parent: _animationController, curve: Curves.ease),
+  //   );
+  //
+  //   // لو حابب يبدأ بالحجم الكبير
+  //   if (_isExpanded) {
+  //     _animationController.value = 1.0; // مباشرة على النهاية (عرض 250)
+  //   } else {
+  //     _animationController.value = 0.0; // بداية (عرض 85)
+  //   }
+  // }
+
+  // @override
+  // void dispose() {
+  //   _animationController.dispose();
+  //   super.dispose();
+  // }
+  //
+  // void _toggleDrawer() {
+  //   setState(() {
+  //     _isExpanded = !_isExpanded;
+  //     if (_isExpanded) {
+  //       _animationController.forward();
+  //     } else {
+  //       _animationController.reverse();
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +207,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
 
   Widget _buildHeader(
       BuildContext context, ThemeData theme, bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 12),
       decoration: BoxDecoration(
@@ -187,7 +234,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                   TextDefaultWidget(
                     title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
                     fontWeight: FontWeight.bold,
-                    fontSize: 20.sp,
+                    fontSize: isTab?15.sp:20.sp,
                     fontFamily: "me",
                     color: isDark ? Colors.white : AppColors.primary,
                   ),
@@ -195,7 +242,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                   TextDefaultWidget(
                     title: "اقرأ وتدبّر",
                     fontWeight: FontWeight.w600,
-                    fontSize: 17.sp,
+                    fontSize: isTab?12.sp:17.sp,
                     fontFamily: "me",
                     color: isDark ? Colors.white : AppColors.primary,
                   ),
@@ -216,7 +263,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                 child: Icon(
                   _isExpanded ? Icons.menu_open : Icons.menu,
                   color: theme.colorScheme.primary,
-                  size: 24,
+                  size: isTab? 45:24,
                 ),
               ),
             ),
@@ -228,6 +275,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
 
   Widget _buildSection(BuildContext context, ThemeData theme,
       DrawerSection section, bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -249,7 +297,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                 TextDefaultWidget(
                   title: section.title,
                   fontWeight: FontWeight.w600,
-                  fontSize: 17.sp,
+                  fontSize: isTab?10.sp:17.sp,
                   fontFamily: "cairo",
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -279,6 +327,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
   Widget _buildDrawerItem(BuildContext context, ThemeData theme,
       DrawerModle item, bool isDark) {
     final isSelected = item.route == widget.selectItmeRoute;
+    bool isTab = ResponsiveUtil.isTablet(context);
 
     return Padding(
       padding:
@@ -349,7 +398,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                     color: isSelected
                         ? theme.colorScheme.primary
                         : theme.iconTheme.color?.withOpacity(0.7),
-                    size: 20,
+                    size: isTab?30:20,
                   ),
                 ),
                 if (_isExpanded) const SizedBox(width: 12),
@@ -358,7 +407,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                     child: TextDefaultWidget(
                       title: item.title,
                       fontWeight: FontWeight.w400,
-                      fontSize: 17.sp,
+                      fontSize:isTab? 12.sp:17.sp,
                       fontFamily: "me",
                       color: isDark ? Colors.white : Colors.black,
                     ),

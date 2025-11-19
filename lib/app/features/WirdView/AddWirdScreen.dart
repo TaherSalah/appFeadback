@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/utils/style/k_helper.dart';
+import '../messa_view/azkar_massa.dart';
 import 'data/Dhikr.dart';
 import 'data/Wird.dart';
 
@@ -98,72 +99,247 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
     {'text': 'لَا إِلَهَ إِلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ', 'count': 100},
     {'text': 'سُبْحَانَ اللهِ وَالْحَمْدُ لِلّهِ وَاللهُ أَكْبَرُ وَلا حَوْلَ وَلا قُوَّةَ إِلَّا بِاللهِ', 'count': 100},
   ];
-
   void addCustomDhikr() {
     showDialog(
       context: context,
       builder: (context) {
         final textController = TextEditingController();
         final countController = TextEditingController(text: '33');
+        final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
         return Directionality(
           textDirection: TextDirection.rtl,
-          child: AlertDialog(
-            backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
-            title: Text(
-              'إضافة ذكر مخصص',
-              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
+          child: Dialog(
+            insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            backgroundColor: Colors.transparent,
+            child: Stack(
+              clipBehavior: Clip.none,
               children: [
-                TextField(
-                  controller: textController,
-                  style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
-                  decoration: InputDecoration(
-                    labelText: 'نص الذكر',
-                    border: const OutlineInputBorder(),
-                    labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
+                // Main body of the dialog
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: isDark
+                          ? [
+                        const Color(0xFF1C1C2D), // Deep blue/dark purple
+                        const Color(0xFF2A2A46), // Darker shade of blue/purple
+                      ]
+                          : [const Color(0xFFFFF2F2), const Color(0xFFFFE1E1)],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Title
+                      Text(
+                        'إضافة ذكر مخصص',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Text input for Dhikr text
+                      TextField(
+                        controller: textController,
+                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                        decoration: InputDecoration(
+                          labelText: 'نص الذكر',
+                          border: const OutlineInputBorder(),
+                          labelStyle: TextStyle(color: isDark ? Colors.white70 : null),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Text input for repetition count
+                      TextField(
+                        controller: countController,
+                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                        decoration: InputDecoration(
+                          labelText: 'عدد التكرارات',
+                          border: const OutlineInputBorder(),
+                          labelStyle: TextStyle(color: isDark ? Colors.white70 : null),
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Action buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.pop(context),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 11),
+                              ),
+                              child: Text(
+                                'إلغاء',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: isDark ? Colors.white : Colors.grey.shade800,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                if (textController.text.isNotEmpty) {
+                                  setState(() {
+                                    selectedAdhkar.add(Dhikr(
+                                      id: DateTime.now().toString(),
+                                      text: textController.text,
+                                      targetCount: int.tryParse(countController.text) ?? 33,
+                                    ));
+                                  });
+                                }
+                                Navigator.pop(context);
+                              },
+                              icon: const Icon(Icons.add_circle_outline),
+                              label: const Text('إضافة'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 11),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: countController,
-                  style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
-                  decoration: InputDecoration(
-                    labelText: 'عدد التكرارات',
-                    border: const OutlineInputBorder(),
-                    labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
+
+                // Positioned icon at the top of the dialog
+                Positioned(
+                  top: -30,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [Colors.green, Colors.lightGreen],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.green.withOpacity(0.6),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.add_circle_rounded,
+                          size: 34,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                  keyboardType: TextInputType.number,
                 ),
               ],
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('إلغاء'),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (textController.text.isNotEmpty) {
-                    setState(() {
-                      selectedAdhkar.add(Dhikr(
-                        id: DateTime.now().toString(),
-                        text: textController.text,
-                        targetCount: int.tryParse(countController.text) ?? 33,
-                      ));
-                    });
-                  }
-                  Navigator.pop(context);
-                },
-                child: const Text('إضافة'),
-              ),
-            ],
           ),
         );
       },
     );
   }
+
+  // void addCustomDhikr() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       final textController = TextEditingController();
+  //       final countController = TextEditingController(text: '33');
+  //       return Directionality(
+  //         textDirection: TextDirection.rtl,
+  //         child: AlertDialog(
+  //           backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
+  //           title: Text(
+  //             'إضافة ذكر مخصص',
+  //             style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+  //           ),
+  //           content: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               TextField(
+  //                 controller: textController,
+  //                 style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+  //                 decoration: InputDecoration(
+  //                   labelText: 'نص الذكر',
+  //                   border: const OutlineInputBorder(),
+  //                   labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 12),
+  //               TextField(
+  //                 controller: countController,
+  //                 style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+  //                 decoration: InputDecoration(
+  //                   labelText: 'عدد التكرارات',
+  //                   border: const OutlineInputBorder(),
+  //                   labelStyle: TextStyle(color: widget.isDark ? Colors.white70 : null),
+  //                 ),
+  //                 keyboardType: TextInputType.number,
+  //               ),
+  //             ],
+  //           ),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context),
+  //               child: const Text('إلغاء'),
+  //             ),
+  //             TextButton(
+  //               onPressed: () {
+  //                 if (textController.text.isNotEmpty) {
+  //                   setState(() {
+  //                     selectedAdhkar.add(Dhikr(
+  //                       id: DateTime.now().toString(),
+  //                       text: textController.text,
+  //                       targetCount: int.tryParse(countController.text) ?? 33,
+  //                     ));
+  //                   });
+  //                 }
+  //                 Navigator.pop(context);
+  //               },
+  //               child: const Text('إضافة'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -283,15 +459,17 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                   final idx = entry.key;
                   final dhikr = entry.value;
                   return Card(
-                    color: widget.isDark ? Colors.grey.shade800 : Colors.white,
+                    color: AppThemeColors.cardBackgroundColor(context),
                     child: ListTile(
                       leading: CircleAvatar(
                         child: Text('${idx + 1}'),
-                        backgroundColor: Colors.teal,
+                        backgroundColor: Colors.black,
+
                       ),
                       title: Text(
                         dhikr.text,
-                        style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+
+                        style: TextStyle(color: widget.isDark ? Colors.white : Colors.black,),
                       ),
                       subtitle: Text('${dhikr.targetCount} مرة'),
                       trailing: IconButton(
@@ -328,10 +506,11 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Text('حفظ الورد', style: TextStyle(fontSize: 16)),
+                  child: Text('حفظ الورد', style: TextStyle(fontSize: 16,fontFamily: "me")),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
+
+                  backgroundColor:       AppThemeColors.buttonBackgroundColor(context),
                 ),
               ),
             ],

@@ -19,175 +19,150 @@ class AzkarOthers extends StatefulWidget {
 class _AzkarOthersState extends State<AzkarOthers> {
   var selectedFontSize;
 
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final double fontSize = CentralizedCubit.get(context).azkarFontSize();
 
-    final con =Provider.of<AzkarProvider>(context);
+    final con = Provider.of<AzkarProvider>(context);
+
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
+        preferredSize: Size.fromHeight(
+          MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+        ),
         child: AppBar(
-          leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
-              ? Colors.white
-              : Colors.black,),
+          leading: CupertinoNavigationBarBackButton(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
           centerTitle: true,
           title: Text(
             AppString.KOtherZakar,
             style: GoogleFonts.cairo(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+            ),
           ),
         ),
       ),
-      // backgroundColor: Azkary.azkarMassaRepate.isEmpty? Colors.white :        AppStyle.bgColors,
-      body:Azkary.azkarRepate.isEmpty? Center(
-        child:  SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                  child: Image.asset(
-                    doneZakar,
-                  )),
-              SizedBox(
-                height: 10.h,
-              ),
-              Text(
-                AppString.KAzkarDaialogText,
-                style: GoogleFonts.cairo(
-                    fontWeight: FontWeight.bold, fontSize: 15.sp),
-              ),
-              SizedBox(
-                height: 15.h,
-              ),
-              Text(
-                AppString.KZakarFeaturesTitle,
-                style: GoogleFonts.cairo(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.sp),
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              const Divider(
-                color: Color(AppStyle.primaryColor),
-                thickness: 2,
-                indent: 150,
-                endIndent: 150,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  AppString.KZakarOtherFeaturesDes,
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                      fontFamily: AppStyle.fontFamily,
-                      height: 1.8.h,
-                      fontSize: 17.5.sp),
-                ),
-              )
-            ],
-          ),
-        ),
-      ) :   Column(
+      body: Azkary.azkarRepate.isEmpty
+          ? _buildEmptyState(context)
+          : Column(
         children: [
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0.w),
           ),
           Expanded(
             child: ListView.separated(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, zOtherIndex) {
-                  return ScrollAppearAnimation(
-                    duration: const Duration(milliseconds: 700),
-                    child: GestureDetector(
-                      onTap: () {
-                        con.decrementOther(zOtherIndex);
-                      },
-                      child: buildOtherZakarItem(
-                        context: context,
-                        fontSize: fontSize,
-                          azkarOtherTitle: Azkary.azkarOtherTitle[zOtherIndex],
-                          azkarOtherDesc: Azkary.azkarOtherDesc[zOtherIndex],
-                          azkarRepate: con.zOtherIndex >= Azkary.azkarRepate[zOtherIndex]?"0": '${Azkary.azkarRepate[zOtherIndex]}',
-                        color: con.zOtherIndex >= Azkary.azkarRepate[zOtherIndex]?  const Color(AppStyle.yellowColor):isDark?Colors.black: Color(AppStyle.whiteColor),
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: (context, zOtherIndex) {
+                // هل الذكر خلاص خلص؟
+                final bool isFinished = con.zOtherIndex >=
+                    Azkary.azkarRepate[zOtherIndex];
 
-                      ),
+                // النص اللي هيظهر في كبسولة التكرار
+                final String repeatText = isFinished
+                    ? "0"
+                    : '${Azkary.azkarRepate[zOtherIndex]}';
+
+                // لون الكارت حسب حالة الانتهاء
+                final Color cardColor = isFinished
+                    ? const Color(AppStyle
+                    .yellowColor) // نفس اللي كنت مستخدمه قبل كده
+                    : (isDark
+                    ? Colors.black
+                    : const Color(AppStyle.whiteColor));
+
+                return ScrollAppearAnimation(
+                  duration: const Duration(milliseconds: 700),
+                  child: GestureDetector(
+                    onTap: () {
+                      // لما تضغط على الكارت يقلّل العد
+                      con.decrementOther(zOtherIndex);
+                    },
+                    child: AzkerItemBuilder(
+                      azkarTitle:
+                      Azkary.azkarOtherTitle[zOtherIndex],
+                      azkarDes:
+                      Azkary.azkarOtherDesc[zOtherIndex],
+                      azkarRepate: repeatText,
+                      fontSize: fontSize,
+                      color: cardColor,
+                      // تقدر تزبط ألوان كبسولة التكرار لو حابب
+                      repertColor: isFinished
+                          ? Colors.black
+                          : (isDark ? Colors.white : Colors.black87),
+                      repertColor2: isFinished
+                          ? const Color(AppStyle.yellowColor)
+                          : null,
                     ),
-                  );
-                },
-                separatorBuilder: (context, zOtherIndex) => SizedBox(
-                      height: 15.h,
-                    ),
-                itemCount: Azkary.azkarOtherTitle.length),
-          )
+                  ),
+                );
+              },
+              separatorBuilder: (context, zOtherIndex) =>
+                  SizedBox(height: 15.h),
+              itemCount: Azkary.azkarOtherTitle.length,
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: Image.asset(doneZakar)),
+            SizedBox(height: 10.h),
+            Text(
+              AppString.KAzkarDaialogText,
+              style: GoogleFonts.cairo(
+                fontWeight: FontWeight.bold,
+                fontSize: 15.sp,
+              ),
+            ),
+            SizedBox(height: 15.h),
+            Text(
+              AppString.KZakarFeaturesTitle,
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: 18.sp,
+              ),
+            ),
+            SizedBox(height: 10.h),
+            const Divider(
+              color: Color(AppStyle.primaryColor),
+              thickness: 2,
+              indent: 150,
+              endIndent: 150,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                AppString.KZakarOtherFeaturesDes,
+                textAlign: TextAlign.justify,
+                style: TextStyle(
+                  fontFamily: AppStyle.fontFamily,
+                  height: 1.8,
+                  fontSize: 17.5.sp,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// Widget buildOtherZakarItem({
-//   Color ? color,
-//   required String azkarOtherTitle,
-//   required String azkarOtherDesc,
-//   required String azkarRepate,
-//   double? fontSize,
-//   required BuildContext context
-// }) {
-//   return Stack(
-//     alignment: Alignment.bottomCenter,
-//     children: [
-//       SizedBox(
-//         width: double.infinity,
-//         child: Padding(
-//           padding: const EdgeInsets.all(8.0),
-//           child: Card(
-//               elevation: 14,
-//               child: Padding(
-//                 padding:
-//                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
-//                 child: Column(
-//                   children: [
-//                     Text(azkarOtherTitle,
-//                         textAlign: TextAlign.center,
-//                         style: GoogleFonts.notoKufiArabic(
-//                             fontSize: MediaQuery.sizeOf(context).width>600?9.sp: 14.sp, height: 3)),
-//                     SizedBox(
-//                       height: 10.h,
-//                     ),
-//                     Text(
-//                       azkarOtherDesc,
-//                       textAlign: TextAlign.center,
-//                       style: TextStyle(fontFamily: 'maja', fontSize:fontSize?? 18.sp),
-//                     ),
-//                     SizedBox(
-//                       height: 25.h,
-//                     ),
-//                   ],
-//                 ),
-//               )),
-//         ),
-//       ),
-//       CircleAvatar(
-//         backgroundColor: color?? const Color(AppStyle.primaryColor),
-//         child: Text(
-//           azkarRepate,
-//           textAlign: TextAlign.start,
-//           style: GoogleFonts.cairo(
-//               color:  Colors.black, fontWeight: FontWeight.bold),
-//         ),
-//       )
-//     ],
-//   );
-// }
 Widget buildOtherZakarItem({
   Color? color,
   required String azkarOtherTitle,
