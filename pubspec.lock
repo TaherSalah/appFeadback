@@ -671,10 +671,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_scale_kit
-      sha256: "223580dba137abe95ee096cdd07d62f61f7f9caa7991d592237694e927e49b9d"
+      sha256: "5e23d4a5e468774673643fb66ebb381f84f5d95a36d5ef4d078dd8cb4e0bf4b4"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.0"
+    version: "1.5.2"
   flutter_screenutil:
     dependency: "direct main"
     description:
@@ -1504,11 +1504,12 @@ packages:
   quran_library:
     dependency: "direct main"
     description:
-      name: quran_library
-      sha256: aa133d8e3847454eb4a04a131f71ffca2c0d0751201f3a3766c20d2ff506df09
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.0"
+      path: "."
+      ref: main
+      resolved-ref: "6d3d6a741de9fbf5bd0866a21111d321cbbdca0b"
+      url: "https://github.com/alheekmahlib/quran_library.git"
+    source: git
+    version: "2.3.1"
   rate_my_app:
     dependency: "direct main"
     description:

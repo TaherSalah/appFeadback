@@ -7,6 +7,8 @@ import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart' as surahModel;
 import 'package:quran_library/quran.dart';
 
+import '../../../messa_view/azkar_massa.dart';
+
 class SurahListScreen extends StatefulWidget {
   const SurahListScreen({super.key});
 
@@ -55,6 +57,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
           child: AppBar(
+
             leading:  CupertinoNavigationBarBackButton(
               color: Theme.of(context).brightness == Brightness.dark? Colors.white:Colors.black,
             ),
@@ -130,17 +133,23 @@ class _SurahListScreenState extends State<SurahListScreen> {
                             child: InkWell(
                               onTap: () {
                                 QuranLibrary().getSurahInfoBottomSheet(
-                                    surahInfoStyle: SurahInfoStyle(
-                                            primaryColor: Theme.of(context).brightness == Brightness.dark? Colors.black12:Colors.green,
-                                      indicatorColor: Theme.of(context).brightness == Brightness.dark? Colors.greenAccent:Colors.green,
-                                      surahNumberColor: Theme.of(context).brightness == Brightness.dark? Colors.greenAccent:Colors.green,
-                                      titleColor: Theme.of(context).brightness == Brightness.dark? Colors.greenAccent:Colors.green,
-                                      backgroundColor:  Theme.of(context).brightness == Brightness.dark?Theme.of(context).cardColor:Theme.of(context).cardColor,
-                                      textColor:Theme.of(context).brightness == Brightness.dark?Colors.white: CupertinoColors.black,
-                                        // backgroundColor: AppStyle.bgColors,
-                                      ),
+                                    // surahInfoStyle: SurahInfoStyle(
+                                    //   //       primaryColor: Theme.of(context).brightness == Brightness.dark? Colors.black12:Colors.green,
+                                    //   // indicatorColor: Theme.of(context).brightness == Brightness.dark? Colors.greenAccent:Colors.green,
+                                    //   // surahNumberColor: Theme.of(context).brightness == Brightness.dark? Colors.greenAccent:Colors.green,
+                                    //   // titleColor: Theme.of(context).brightness == Brightness.dark? Colors.greenAccent:Colors.green,
+                                    //   // backgroundColor:  Theme.of(context).brightness == Brightness.dark?Theme.of(context).cardColor:Theme.of(context).cardColor,
+                                    //   // textColor:Theme.of(context).brightness == Brightness.dark?Colors.white: CupertinoColors.black,
+                                    //   primaryColor:AppThemeColors.backgroundColor(context),
+                                    //   indicatorColor: AppThemeColors.accentColor(context),
+                                    //   surahNumberColor: AppThemeColors.textColor(context),
+                                    //   titleColor: AppThemeColors.textColor(context),
+                                    //   backgroundColor: AppThemeColors.cardBackgroundColor(context),
+                                    //   textColor: Theme.of(context).brightness == Brightness.dark?Colors.white: CupertinoColors.black,
+                                    //     // backgroundColor: AppStyle.bgColors,
+                                    //   ),
                                     surahNumber: index + 1,
-                                    context: context);
+                                    context: context,isDark: Theme.of(context).brightness == Brightness.dark);
                               },
                               child: const Icon(Icons.info_outline),
                             ),

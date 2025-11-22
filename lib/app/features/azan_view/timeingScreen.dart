@@ -14,6 +14,7 @@ import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/shard/widgets/def_text_widget.dart';
@@ -31,6 +32,8 @@ import 'package:just_audio/just_audio.dart';
 import 'dart:ui' as ui;
 import 'package:geolocator/geolocator.dart';
 import 'dart:math' as math;
+
+import '../messa_view/azkar_massa.dart';
 
 
 class TimingScreen extends StatefulWidget {
@@ -681,9 +684,11 @@ class _TimingScreenState extends State<TimingScreen> {
                           prayerNames[index], prayerTimesList[index]);
                       final isNext = nextPrayer.contains(prayerNames[index]);
                       return Card(
-                        color: isNext
-                            ? Colors.grey
-                            : CupertinoColors.systemBackground,
+                        // color: isNext
+                        //     ? Colors.grey
+                        //     : CupertinoColors.systemBackground,
+                        color: AppThemeColors.cardBackgroundColor(context),
+                        shape: Border.all(color: isNext?Colors.red:Colors.black),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: MediaQuery.sizeOf(context).width > 600
@@ -697,7 +702,7 @@ class _TimingScreenState extends State<TimingScreen> {
                               Text(
                                 prayerNames[index],
                                 style: GoogleFonts.cairo(
-                                    color: isNext ? Colors.white : Colors.black,
+                                    color: isNext ? Colors.amberAccent.shade700 : Colors.black,
                                     fontWeight: FontWeight.bold,
                                     fontSize:  MediaQuery.sizeOf(context).width > 600
                                         ? 10.sp
@@ -719,7 +724,7 @@ class _TimingScreenState extends State<TimingScreen> {
                   ),
                 )
               else
-                const CircularProgressIndicator()
+                KLoading.progressIOSIndicator(context: context)
             ],
           ),
         ),

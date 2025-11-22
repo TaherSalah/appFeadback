@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 
 import '../../core/cubit/centralized_cubit.dart';
@@ -583,11 +584,24 @@ class _RokiaScreenState extends State<RokiaScreen> {
       if (!mounted) return;
       setState(() => _duration = dur ?? Duration.zero);
     });
-
     _audioManager.playerStateStream.listen((state) {
       if (!mounted) return;
-      setState(() => _isPlaying = _audioManager.isPlaying);
+
+      // لو بتستخدم just_audio
+      final processingState = state.processingState;
+      final bufferingNow = processingState == ProcessingState.loading ||
+          processingState == ProcessingState.buffering;
+
+      setState(() {
+        _isPlaying = state.playing; // أو _audioManager.isPlaying
+        _isBuffering = bufferingNow;
+      });
     });
+
+    // _audioManager.playerStateStream.listen((state) {
+    //   if (!mounted) return;
+    //   setState(() => _isPlaying = _audioManager.isPlaying);
+    // });
   }
 
   void _showSnack(String message) {
@@ -657,7 +671,440 @@ class _RokiaScreenState extends State<RokiaScreen> {
 
   // ================== الـ Bottom Player ==================
 
+  // Widget _buildBottomPlayer(bool isDark) {
+  //   final theme = Theme.of(context);
+  //   final primaryColor =
+  //   isDark ? KColors.primaryColor : theme.colorScheme.primary;
+  //
+  //   final int durationMs = _duration.inMilliseconds;
+  //   final int positionMs = _position.inMilliseconds;
+  //
+  //   final double sliderMax = durationMs > 0 ? durationMs.toDouble() : 1.0;
+  //
+  //   final double sliderValue = durationMs > 0
+  //       ? positionMs.clamp(0, durationMs).toDouble()
+  //       : 0.0;
+  //
+  //   final modeText = _isDownloaded
+  //       ? 'وضع أوفلاين: يمكن التشغيل بدون إنترنت.'
+  //       : 'وضع أونلاين: يتطلب إنترنت للتشغيل إذا لم يتم التحميل.';
+  //
+  //   final bool isPlayingNow = _isPlaying;
+  //   final String stateText = isPlayingNow
+  //       ? 'جاري تشغيل الرقية الآن'
+  //       : 'اضغط على زر التشغيل لسماع الرقية الشرعية';
+  //
+  //   final IconData stateIcon =
+  //   isPlayingNow ? Icons.graphic_eq_rounded : Icons.headphones_rounded;
+  //
+  //   final Color stateBg = isDark
+  //       ? (isPlayingNow
+  //       ? Colors.greenAccent.withOpacity(0.15)
+  //       : Colors.white.withOpacity(0.06))
+  //       : (isPlayingNow
+  //       ? Colors.green.withOpacity(0.10)
+  //       : primaryColor.withOpacity(0.08));
+  //
+  //   final Color stateFg = isDark
+  //       ? (isPlayingNow ? Colors.greenAccent : Colors.white70)
+  //       : (isPlayingNow ? Colors.green.shade700 : Colors.black87);
+  //
+  //   return SafeArea(
+  //     top: false,
+  //     child: Stack(
+  //       clipBehavior: Clip.none,
+  //       children: [
+  //         Container(
+  //           margin: const EdgeInsets.only(top: 30),
+  //           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+  //           decoration: BoxDecoration(
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(22),
+  //               topRight: Radius.circular(22),
+  //             ),
+  //             gradient: LinearGradient(
+  //               begin: Alignment.topRight,
+  //               end: Alignment.bottomLeft,
+  //               colors: isDark
+  //                   ? const [
+  //                 Color(0xFF020617),
+  //                 Color(0xFF0F172A),
+  //               ]
+  //                   : [
+  //                 primaryColor.withOpacity(0.06),
+  //                 const Color(0xFFFFFFFF),
+  //               ],
+  //             ),
+  //             border: Border.all(
+  //               color: primaryColor.withOpacity(isDark ? 0.5 : 0.25),
+  //               width: 1,
+  //             ),
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: primaryColor.withOpacity(isDark ? 0.45 : 0.18),
+  //                 blurRadius: 16,
+  //                 spreadRadius: 0.5,
+  //                 offset: const Offset(0, -4),
+  //               ),
+  //             ],
+  //           ),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               // handle
+  //               Container(
+  //                 width: 32,
+  //                 height: 3,
+  //                 margin: const EdgeInsets.only(bottom: 8),
+  //                 decoration: BoxDecoration(
+  //                   color:
+  //                   isDark ? Colors.white24 : Colors.black.withOpacity(0.15),
+  //                   borderRadius: BorderRadius.circular(999),
+  //                 ),
+  //               ),
+  //
+  //               // الاسم + العنوان + حالة التحميل
+  //               Padding(
+  //                 padding: const EdgeInsets.symmetric(
+  //                   horizontal: 4,
+  //                   vertical: 4,
+  //                 ),
+  //                 child: Row(
+  //                   children: [
+  //                     Directionality(
+  //                       textDirection: ui.TextDirection.rtl,
+  //                       child: Text(
+  //                         'مشاري العفاسي',
+  //                         style: GoogleFonts.notoKufiArabic(
+  //                           fontSize: 15,
+  //                           fontWeight: FontWeight.w700,
+  //                           color: isDark
+  //                               ? Colors.white
+  //                               : primaryColor.withOpacity(0.9),
+  //                         ),
+  //                         maxLines: 1,
+  //                         overflow: TextOverflow.ellipsis,
+  //                       ),
+  //                     ),
+  //                     const SizedBox(width: 6),
+  //                     if (_isDownloaded)
+  //                       const Icon(
+  //                         Icons.offline_pin_rounded,
+  //                         color: Colors.green,
+  //                         size: 20,
+  //                       ),
+  //                     const Spacer(),
+  //                     Directionality(
+  //                       textDirection: ui.TextDirection.rtl,
+  //                       child: Text(
+  //                         'الرقية الشرعية',
+  //                         style: GoogleFonts.notoKufiArabic(
+  //                           fontSize: 15,
+  //                           fontWeight: FontWeight.w700,
+  //                           color: isDark ? Colors.white70 : Colors.black87,
+  //                         ),
+  //                         maxLines: 1,
+  //                         overflow: TextOverflow.ellipsis,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //
+  //               const SizedBox(height: 4),
+  //
+  //               // شارة الحالة
+  //               AnimatedSwitcher(
+  //                 duration: const Duration(milliseconds: 220),
+  //                 transitionBuilder: (child, anim) =>
+  //                     FadeTransition(opacity: anim, child: child),
+  //                 child: Container(
+  //                   key: ValueKey<bool>(isPlayingNow),
+  //                   padding: const EdgeInsets.symmetric(
+  //                     horizontal: 10,
+  //                     vertical: 6,
+  //                   ),
+  //                   decoration: BoxDecoration(
+  //                     color: stateBg,
+  //                     borderRadius: BorderRadius.circular(999),
+  //                   ),
+  //                   child: Directionality(
+  //                     textDirection: ui.TextDirection.rtl,
+  //                     child: Row(
+  //                       mainAxisSize: MainAxisSize.min,
+  //                       children: [
+  //                         Icon(
+  //                           stateIcon,
+  //                           size: 16,
+  //                           color: stateFg,
+  //                         ),
+  //                         const SizedBox(width: 5),
+  //                         Text(
+  //                           stateText,
+  //                           style: GoogleFonts.cairo(
+  //                             fontSize: 11,
+  //                             fontWeight: FontWeight.w600,
+  //                             color: stateFg,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //
+  //               const SizedBox(height: 6),
+  //
+  //               // نص وضع التشغيل
+  //               Directionality(
+  //                 textDirection: ui.TextDirection.rtl,
+  //                 child: Text(
+  //                   modeText,
+  //                   style: GoogleFonts.cairo(
+  //                     fontSize: ResponsiveUtil.isTablet(context) ? 12 : 13,
+  //                     fontWeight: FontWeight.w400,
+  //                     color: isDark ? Colors.grey[300] : Colors.grey[700],
+  //                   ),
+  //                   maxLines: 2,
+  //                   textAlign: TextAlign.center,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
+  //               ),
+  //
+  //               const SizedBox(height: 6),
+  //
+  //               // السلايدر + التوقيت + +/- 10 ثواني
+  //               Row(
+  //                 children: [
+  //                   IconButton(
+  //                     onPressed: durationMs == 0
+  //                         ? null
+  //                         : () async {
+  //                       final int newMs =
+  //                       (positionMs - 10000).clamp(0, durationMs);
+  //                       await _audioManager.seek(
+  //                         Duration(milliseconds: newMs),
+  //                       );
+  //                     },
+  //                     icon: const Icon(Icons.replay_10_rounded),
+  //                     iconSize: 20,
+  //                     color: isDark
+  //                         ? Colors.white70
+  //                         : primaryColor.withOpacity(0.9),
+  //                     visualDensity: VisualDensity.compact,
+  //                   ),
+  //                   Text(
+  //                     _formatDuration(_position),
+  //                     style: GoogleFonts.cairo(
+  //                       fontSize: 10,
+  //                       color: isDark ? Colors.white70 : Colors.black54,
+  //                     ),
+  //                   ),
+  //                   Expanded(
+  //                     child: SliderTheme(
+  //                       data: SliderTheme.of(context).copyWith(
+  //                         trackHeight: 3,
+  //                         thumbShape: const RoundSliderThumbShape(
+  //                           enabledThumbRadius: 7,
+  //                         ),
+  //                       ),
+  //                       child: Slider(
+  //                         value: sliderValue,
+  //                         min: 0,
+  //                         max: sliderMax,
+  //                         onChanged: durationMs == 0
+  //                             ? null
+  //                             : (v) async {
+  //                           final newPos = Duration(
+  //                             milliseconds: v.toInt(),
+  //                           );
+  //                           await _audioManager.seek(newPos);
+  //                         },
+  //                         activeColor: primaryColor,
+  //                         inactiveColor: primaryColor.withOpacity(0.25),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Text(
+  //                     _formatDuration(_duration),
+  //                     style: GoogleFonts.cairo(
+  //                       fontSize: 10,
+  //                       color: isDark ? Colors.white70 : Colors.black54,
+  //                     ),
+  //                   ),
+  //                   IconButton(
+  //                     onPressed: durationMs == 0
+  //                         ? null
+  //                         : () async {
+  //                       final int newMs =
+  //                       (positionMs + 10000).clamp(0, durationMs);
+  //                       await _audioManager.seek(
+  //                         Duration(milliseconds: newMs),
+  //                       );
+  //                     },
+  //                     icon: const Icon(Icons.forward_10_rounded),
+  //                     iconSize: 20,
+  //                     color: isDark
+  //                         ? Colors.white70
+  //                         : primaryColor.withOpacity(0.9),
+  //                     visualDensity: VisualDensity.compact,
+  //                   ),
+  //                 ],
+  //               ),
+  //
+  //               const SizedBox(height: 6),
+  //
+  //               // زر التحميل
+  //               Align(
+  //                 alignment: Alignment.center,
+  //                 child: Directionality(
+  //                   textDirection: ui.TextDirection.rtl,
+  //                   child: _isDownloaded
+  //                       ? TextButton.icon(
+  //                     onPressed: null,
+  //                     style: TextButton.styleFrom(
+  //                       padding: const EdgeInsets.symmetric(
+  //                         horizontal: 16,
+  //                         vertical: 6,
+  //                       ),
+  //                       backgroundColor: isDark
+  //                           ? Colors.white.withOpacity(0.05)
+  //                           : Colors.green.withOpacity(0.08),
+  //                       shape: const StadiumBorder(),
+  //                     ),
+  //                     icon: const Icon(
+  //                       Icons.download_done_rounded,
+  //                       size: 18,
+  //                       color: Colors.green,
+  //                     ),
+  //                     label: Text(
+  //                       'تم تحميل الرقية، تعمل بدون إنترنت',
+  //                       style: GoogleFonts.notoKufiArabic(
+  //                         fontSize: 12,
+  //                         color: isDark
+  //                             ? Colors.greenAccent
+  //                             : Colors.green.shade700,
+  //                       ),
+  //                     ),
+  //                   )
+  //                       : TextButton.icon(
+  //                     onPressed:
+  //                     _isDownloading ? null : _downloadAudio,
+  //                     style: TextButton.styleFrom(
+  //                       padding: const EdgeInsets.symmetric(
+  //                         horizontal: 16,
+  //                         vertical: 6,
+  //                       ),
+  //                       backgroundColor: isDark
+  //                           ? Colors.white.withOpacity(0.06)
+  //                           : primaryColor.withOpacity(0.08),
+  //                       shape: const StadiumBorder(),
+  //                     ),
+  //                     icon: _isDownloading
+  //                         ? const SizedBox(
+  //                       width: 16,
+  //                       height: 16,
+  //                       child: CircularProgressIndicator(
+  //                         strokeWidth: 2,
+  //                       ),
+  //                     )
+  //                         : Icon(
+  //                       Icons.download_rounded,
+  //                       size: 19,
+  //                       color: isDark
+  //                           ? Colors.greenAccent
+  //                           : primaryColor,
+  //                     ),
+  //                     label: Text(
+  //                       _isDownloading
+  //                           ? 'جاري تحميل الرقية...'
+  //                           : 'تحميل للتشغيل بدون إنترنت',
+  //                       style: GoogleFonts.cairo(
+  //                         fontSize: 13,
+  //                         fontWeight: FontWeight.w600,
+  //                         color: isDark
+  //                             ? Colors.white
+  //                             : Colors.grey[900],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //
+  //         // زر التشغيل العائم
+  //         Positioned(
+  //           top: -4,
+  //           left: 0,
+  //           right: 0,
+  //           child: Center(
+  //             child: GestureDetector(
+  //               onTap: () {
+  //                 if (!_isDownloaded && _isBuffering) return;
+  //                 HapticFeedback.lightImpact();
+  //                 _playOrPause();
+  //               },
+  //
+  //               child: AnimatedContainer(
+  //                 duration: const Duration(milliseconds: 220),
+  //                 width: 70,
+  //                 height: 70,
+  //                 decoration: BoxDecoration(
+  //                   shape: BoxShape.circle,
+  //                   gradient: LinearGradient(
+  //                     colors: [
+  //                       primaryColor,
+  //                       primaryColor.withOpacity(0.85),
+  //                     ],
+  //                     begin: Alignment.topLeft,
+  //                     end: Alignment.bottomRight,
+  //                   ),
+  //                   boxShadow: [
+  //                     BoxShadow(
+  //                       color: primaryColor
+  //                           .withOpacity(isPlayingNow ? 0.55 : 0.35),
+  //                       blurRadius: isPlayingNow ? 20 : 12,
+  //                       spreadRadius: isPlayingNow ? 1.8 : 0.6,
+  //                       offset: const Offset(0, 4),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 child: AnimatedSwitcher(
+  //                   duration: const Duration(milliseconds: 200),
+  //                   transitionBuilder: (child, anim) =>
+  //                       ScaleTransition(scale: anim, child: child),
+  //                   child: (!_isDownloaded && _isBuffering)
+  //                       ? const SizedBox(
+  //                     key: ValueKey('loader'),
+  //                     width: 26,
+  //                     height: 26,
+  //                     child: CircularProgressIndicator(
+  //                       strokeWidth: 3,
+  //                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+  //                     ),
+  //                   )
+  //                       : Icon(
+  //                     isPlayingNow
+  //                         ? Icons.pause_rounded
+  //                         : Icons.play_arrow_rounded,
+  //                     key: ValueKey<bool>(isPlayingNow),
+  //                     color: Colors.white,
+  //                     size: 32,
+  //                   ),
+  //                 ),
+  //
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
   Widget _buildBottomPlayer(bool isDark) {
+    bool isTab =ResponsiveUtil.isTablet(context);
     final theme = Theme.of(context);
     final primaryColor =
     isDark ? KColors.primaryColor : theme.colorScheme.primary;
@@ -665,7 +1112,8 @@ class _RokiaScreenState extends State<RokiaScreen> {
     final int durationMs = _duration.inMilliseconds;
     final int positionMs = _position.inMilliseconds;
 
-    final double sliderMax = durationMs > 0 ? durationMs.toDouble() : 1.0;
+    final double sliderMax =
+    durationMs > 0 ? durationMs.toDouble() : 1.0;
 
     final double sliderValue = durationMs > 0
         ? positionMs.clamp(0, durationMs).toDouble()
@@ -675,9 +1123,10 @@ class _RokiaScreenState extends State<RokiaScreen> {
         ? 'وضع أوفلاين: يمكن التشغيل بدون إنترنت.'
         : 'وضع أونلاين: يتطلب إنترنت للتشغيل إذا لم يتم التحميل.';
 
+    // حالة تشجيع المستخدم
     final bool isPlayingNow = _isPlaying;
     final String stateText = isPlayingNow
-        ? 'جاري تشغيل الرقية الآن'
+        ? 'جاري تشغيل الرقية الشرعية الآن'
         : 'اضغط على زر التشغيل لسماع الرقية الشرعية';
 
     final IconData stateIcon =
@@ -700,10 +1149,12 @@ class _RokiaScreenState extends State<RokiaScreen> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
+          // جسم المشغل
           Container(
-            margin: const EdgeInsets.only(top: 30),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            margin:  EdgeInsets.only(top:isTab? 30:0),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
             decoration: BoxDecoration(
+
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(22),
                 topRight: Radius.circular(22),
@@ -737,19 +1188,20 @@ class _RokiaScreenState extends State<RokiaScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // handle
+                // الـ handle الصغير في الأعلى
                 Container(
                   width: 32,
                   height: 3,
                   margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
-                    color:
-                    isDark ? Colors.white24 : Colors.black.withOpacity(0.15),
+                    color: isDark
+                        ? Colors.white24
+                        : Colors.black.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
 
-                // الاسم + العنوان + حالة التحميل
+                // الصف الرئيسي: اسم القارئ + عنوان الأذكار + حالة التحميل
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 4,
@@ -799,7 +1251,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
 
                 const SizedBox(height: 4),
 
-                // شارة الحالة
+                // شارة الحالة "يعمل الآن / اضغط تشغيل"
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 220),
                   transitionBuilder: (child, anim) =>
@@ -841,7 +1293,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
 
                 const SizedBox(height: 6),
 
-                // نص وضع التشغيل
+                // نص وضع التشغيل (أونلاين / أوفلاين)
                 Directionality(
                   textDirection: ui.TextDirection.rtl,
                   child: Text(
@@ -859,7 +1311,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
 
                 const SizedBox(height: 6),
 
-                // السلايدر + التوقيت + +/- 10 ثواني
+                // السلايدر + التوقيت + أزرار ١٠ ثواني
                 Row(
                   children: [
                     IconButton(
@@ -879,6 +1331,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                           : primaryColor.withOpacity(0.9),
                       visualDensity: VisualDensity.compact,
                     ),
+
                     Text(
                       _formatDuration(_position),
                       style: GoogleFonts.cairo(
@@ -886,6 +1339,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),
                     ),
+
                     Expanded(
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
@@ -911,6 +1365,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                         ),
                       ),
                     ),
+
                     Text(
                       _formatDuration(_duration),
                       style: GoogleFonts.cairo(
@@ -918,6 +1373,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),
                     ),
+
                     IconButton(
                       onPressed: durationMs == 0
                           ? null
@@ -940,7 +1396,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
 
                 const SizedBox(height: 6),
 
-                // زر التحميل
+                // زر التحميل / تم التحميل
                 Align(
                   alignment: Alignment.center,
                   child: Directionality(
@@ -964,7 +1420,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                         color: Colors.green,
                       ),
                       label: Text(
-                        'تم تحميل الرقية، تعمل بدون إنترنت',
+                        'تم تحميل الرقية الشرعية، تعمل بدون إنترنت',
                         style: GoogleFonts.notoKufiArabic(
                           fontSize: 12,
                           color: isDark
@@ -974,8 +1430,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                       ),
                     )
                         : TextButton.icon(
-                      onPressed:
-                      _isDownloading ? null : _downloadAudio,
+                      onPressed: _isDownloading ? null : _downloadAudio,
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -1003,26 +1458,48 @@ class _RokiaScreenState extends State<RokiaScreen> {
                       ),
                       label: Text(
                         _isDownloading
-                            ? 'جاري تحميل الرقية...'
+                            ? 'جاري تحميل الرقية الشرعية...'
                             : 'تحميل للتشغيل بدون إنترنت',
                         style: GoogleFonts.cairo(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? Colors.white
-                              : Colors.grey[900],
+                          color:
+                          isDark ? Colors.white : Colors.grey[900],
                         ),
                       ),
                     ),
                   ),
                 ),
+
+                // const SizedBox(height: 4),
+                //
+                // // زر فتح المشغّل الكامل
+                // TextButton.icon(
+                //   onPressed: () => _openFullPlayer(isDark),
+                //   icon: const Icon(
+                //     Icons.open_in_full_rounded,
+                //     size: 18,
+                //   ),
+                //   label: Text(
+                //     'عرض المشغّل الكامل',
+                //     style: GoogleFonts.cairo(
+                //       fontSize: 12,
+                //       fontWeight: FontWeight.w600,
+                //     ),
+                //   ),
+                //   style: TextButton.styleFrom(
+                //     foregroundColor:
+                //     isDark ? Colors.white70 : primaryColor,
+                //     visualDensity: VisualDensity.compact,
+                //   ),
+                // ),
               ],
             ),
           ),
 
-          // زر التشغيل العائم
+          // زر التشغيل العائم في المنتصف
           Positioned(
-            top: -4,
+            top: isTab?-4:-20,
             left: 0,
             right: 0,
             child: Center(
@@ -1033,8 +1510,8 @@ class _RokiaScreenState extends State<RokiaScreen> {
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 220),
-                  width: 70,
-                  height: 70,
+                  width: isPlayingNow ? isTab?70:50 : isTab?70:50,
+                  height: isPlayingNow ? isTab?70:50 : isTab?70:50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
@@ -1055,21 +1532,30 @@ class _RokiaScreenState extends State<RokiaScreen> {
                       ),
                     ],
                   ),
-                  child: Center(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      transitionBuilder: (child, anim) =>
-                          ScaleTransition(scale: anim, child: child),
-                      child: Icon(
-                        isPlayingNow
-                            ? Icons.pause_rounded
-                            : Icons.play_arrow_rounded,
-                        key: ValueKey<bool>(isPlayingNow),
-                        color: Colors.white,
-                        size: 32,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    transitionBuilder: (child, anim) =>
+                        ScaleTransition(scale: anim, child: child),
+                    child: (!_isDownloaded && _isBuffering)
+                        ? const SizedBox(
+                      key: ValueKey('loader'),
+                      width: 26,
+                      height: 26,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
+                    )
+                        : Icon(
+                      isPlayingNow
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
+                      key: ValueKey<bool>(isPlayingNow),
+                      color: Colors.white,
+                      size: 32,
                     ),
                   ),
+
                 ),
               ),
             ),
@@ -1080,6 +1566,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
   }
 
   // ================== واجهة الشاشة الأساسية ==================
+  bool _isBuffering = false;
 
   @override
   Widget build(BuildContext context) {

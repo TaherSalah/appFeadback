@@ -21,15 +21,27 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 // استيراداتك العادية: Azkary, AzkarProvider, CentralizedCubit, AppStyle, AppString, KColors, doneZakar, ScrollAppearAnimation, AzkerItemBuilder, ResponsiveUtil, AudioManager...
 
+// azkar_sabah.dart
+import 'dart:ui' as ui;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../sleep_view/sleep_azkar.dart';
+
+// استيرادات مشروعك
+// import 'audio_manager.dart';  // عدّل المسار حسب مشروعك
+// import باقي الملفات عندك...
+
 class AzkarSabah extends StatefulWidget {
   const AzkarSabah({super.key});
-
   @override
   State<AzkarSabah> createState() => _AzkarSabahState();
 }
 
 class _AzkarSabahState extends State<AzkarSabah> {
-  // ================== إعدادات الصوت ==================
   static const String _sabahUrl =
       'https://cdn.jsdelivr.net/gh/TaherSalah/azkarAudio@main/sabah.mp3';
   static const String _sabahKey = 'sabah_audio_path';
@@ -40,6 +52,8 @@ class _AzkarSabahState extends State<AzkarSabah> {
   bool _isPlaying = false;
   bool _isDownloading = false;
   bool _isDownloaded = false;
+  bool _isBuffering = false;
+
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
 
@@ -54,7 +68,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
 
     final savedPath = await _audioManager.getSavedAudioPath(_sabahKey);
     if (savedPath != null) {
-      _isDownloaded = true;
+      setState(() => _isDownloaded = true);
     }
 
     _audioManager.positionStream.listen((pos) {
@@ -71,16 +85,13 @@ class _AzkarSabahState extends State<AzkarSabah> {
       if (!mounted) return;
       setState(() => _isPlaying = _audioManager.isPlaying);
     });
+
+    _audioManager.bufferingStream.listen((b) {
+      if (!mounted) return;
+      setState(() => _isBuffering = b);
+    });
   }
 
-  void _showSnack(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message, textDirection: ui.TextDirection.rtl)),
-    );
-  }
-
-  // تشغيل / إيقاف
   Future<void> _playOrPause() async {
     try {
       await _audioManager.playOrPause(
@@ -88,12 +99,11 @@ class _AzkarSabahState extends State<AzkarSabah> {
         localPath: _isDownloaded ? _audioManager.currentLocalPath : null,
         sharedPrefsKey: _sabahKey,
       );
-    } catch (e) {
+    } catch (_) {
       KHelper.showError(message: 'حدث خطأ أثناء تشغيل الصوت.');
     }
   }
 
-  // تحميل الملف
   Future<void> _downloadAudio() async {
     if (_isDownloading) return;
 
@@ -112,16 +122,13 @@ class _AzkarSabahState extends State<AzkarSabah> {
         fileName: _fileName,
         sharedPrefsKey: _sabahKey,
       );
-
       setState(() => _isDownloaded = true);
       KHelper.showSuccess(
           message: 'تم تحميل أذكار الصباح، يمكن تشغيلها بدون إنترنت.');
     } catch (e) {
       KHelper.showError(message: e.toString());
     } finally {
-      if (mounted) {
-        setState(() => _isDownloading = false);
-      }
+      if (mounted) setState(() => _isDownloading = false);
     }
   }
 
@@ -134,13 +141,12 @@ class _AzkarSabahState extends State<AzkarSabah> {
 
   @override
   void dispose() {
-    // AudioManager Singleton فلا نعمل dispose
     super.dispose();
   }
 
   // ================== الـ Bottom Player (Mini) ==================
-
   Widget _buildBottomPlayer(bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     final theme = Theme.of(context);
     final primaryColor =
     isDark ? KColors.primaryColor : theme.colorScheme.primary;
@@ -149,7 +155,6 @@ class _AzkarSabahState extends State<AzkarSabah> {
     final int positionMs = _position.inMilliseconds;
 
     final double sliderMax = durationMs > 0 ? durationMs.toDouble() : 1.0;
-
     final double sliderValue = durationMs > 0
         ? positionMs.clamp(0, durationMs).toDouble()
         : 0.0;
@@ -158,11 +163,9 @@ class _AzkarSabahState extends State<AzkarSabah> {
         ? 'وضع أوفلاين: يمكن التشغيل بدون إنترنت.'
         : 'وضع أونلاين: يتطلب إنترنت للتشغيل إذا لم يتم التحميل.';
 
-    // حالة تشجيع المستخدم
     final bool isPlayingNow = _isPlaying;
-    final String stateText = isPlayingNow
-        ? 'جاري تشغيل الأذكار الآن'
-        : 'اضغط على زر التشغيل لسماع الأذكار';
+    final String stateText =
+    isPlayingNow ? 'جاري تشغيل الأذكار الآن' : 'اضغط على زر التشغيل لسماع الأذكار';
 
     final IconData stateIcon =
     isPlayingNow ? Icons.graphic_eq_rounded : Icons.headphones_rounded;
@@ -184,10 +187,9 @@ class _AzkarSabahState extends State<AzkarSabah> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // جسم المشغل
           Container(
-            margin: const EdgeInsets.only(top: 30),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            margin: EdgeInsets.only(top: isTab ? 30 : 0),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(22),
@@ -197,14 +199,8 @@ class _AzkarSabahState extends State<AzkarSabah> {
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
                 colors: isDark
-                    ? const [
-                  Color(0xFF020617),
-                  Color(0xFF0F172A),
-                ]
-                    : [
-                  primaryColor.withOpacity(0.06),
-                  const Color(0xFFFFFFFF),
-                ],
+                    ? const [Color(0xFF020617), Color(0xFF0F172A)]
+                    : [primaryColor.withOpacity(0.06), const Color(0xFFFFFFFF)],
               ),
               border: Border.all(
                 color: primaryColor.withOpacity(isDark ? 0.5 : 0.25),
@@ -222,24 +218,19 @@ class _AzkarSabahState extends State<AzkarSabah> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // الـ handle الصغير في الأعلى
                 Container(
                   width: 32,
                   height: 3,
                   margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
-                    color:
-                    isDark ? Colors.white24 : Colors.black.withOpacity(0.15),
+                    color: isDark
+                        ? Colors.white24
+                        : Colors.black.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
-
-                // الصف الرئيسي: اسم القارئ + عنوان الأذكار + حالة التحميل
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 4,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                   child: Row(
                     children: [
                       Directionality(
@@ -281,20 +272,15 @@ class _AzkarSabahState extends State<AzkarSabah> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
-                // شارة الحالة "يعمل الآن / اضغط تشغيل"
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 220),
                   transitionBuilder: (child, anim) =>
                       FadeTransition(opacity: anim, child: child),
                   child: Container(
                     key: ValueKey<bool>(isPlayingNow),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: stateBg,
                       borderRadius: BorderRadius.circular(999),
@@ -304,11 +290,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            stateIcon,
-                            size: 16,
-                            color: stateFg,
-                          ),
+                          Icon(stateIcon, size: 16, color: stateFg),
                           const SizedBox(width: 5),
                           Text(
                             stateText,
@@ -323,16 +305,13 @@ class _AzkarSabahState extends State<AzkarSabah> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 6),
-
-                // نص وضع التشغيل (أونلاين / أوفلاين)
                 Directionality(
                   textDirection: ui.TextDirection.rtl,
                   child: Text(
                     modeText,
                     style: GoogleFonts.cairo(
-                      fontSize: ResponsiveUtil.isTablet(context) ? 12 : 13,
+                      fontSize: isTab ? 12 : 13,
                       fontWeight: FontWeight.w400,
                       color: isDark ? Colors.grey[300] : Colors.grey[700],
                     ),
@@ -341,10 +320,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-
                 const SizedBox(height: 6),
-
-                // السلايدر + التوقيت + أزرار ١٠ ثواني
                 Row(
                   children: [
                     IconButton(
@@ -364,7 +340,6 @@ class _AzkarSabahState extends State<AzkarSabah> {
                           : primaryColor.withOpacity(0.9),
                       visualDensity: VisualDensity.compact,
                     ),
-
                     Text(
                       _formatDuration(_position),
                       style: GoogleFonts.cairo(
@@ -372,7 +347,6 @@ class _AzkarSabahState extends State<AzkarSabah> {
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),
                     ),
-
                     Expanded(
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
@@ -388,17 +362,15 @@ class _AzkarSabahState extends State<AzkarSabah> {
                           onChanged: durationMs == 0
                               ? null
                               : (v) async {
-                            final newPos = Duration(
-                              milliseconds: v.toInt(),
+                            await _audioManager.seek(
+                              Duration(milliseconds: v.toInt()),
                             );
-                            await _audioManager.seek(newPos);
                           },
                           activeColor: primaryColor,
                           inactiveColor: primaryColor.withOpacity(0.25),
                         ),
                       ),
                     ),
-
                     Text(
                       _formatDuration(_duration),
                       style: GoogleFonts.cairo(
@@ -406,7 +378,6 @@ class _AzkarSabahState extends State<AzkarSabah> {
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),
                     ),
-
                     IconButton(
                       onPressed: durationMs == 0
                           ? null
@@ -426,10 +397,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 6),
-
-                // زر التحميل / تم التحميل
                 Align(
                   alignment: Alignment.center,
                   child: Directionality(
@@ -439,19 +407,14 @@ class _AzkarSabahState extends State<AzkarSabah> {
                       onPressed: null,
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
-                        ),
+                            horizontal: 16, vertical: 6),
                         backgroundColor: isDark
                             ? Colors.white.withOpacity(0.05)
                             : Colors.green.withOpacity(0.08),
                         shape: const StadiumBorder(),
                       ),
-                      icon: const Icon(
-                        Icons.download_done_rounded,
-                        size: 18,
-                        color: Colors.green,
-                      ),
+                      icon: const Icon(Icons.download_done_rounded,
+                          size: 18, color: Colors.green),
                       label: Text(
                         'تم تحميل الأذكار، تعمل بدون إنترنت',
                         style: GoogleFonts.notoKufiArabic(
@@ -467,9 +430,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                       _isDownloading ? null : _downloadAudio,
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
-                        ),
+                            horizontal: 16, vertical: 6),
                         backgroundColor: isDark
                             ? Colors.white.withOpacity(0.06)
                             : primaryColor.withOpacity(0.08),
@@ -509,35 +470,33 @@ class _AzkarSabahState extends State<AzkarSabah> {
             ),
           ),
 
-          // زر التشغيل العائم في المنتصف
+          // زر التشغيل العائم
           Positioned(
-            top: -4,
+            top: isTab ? -4 : -20,
             left: 0,
             right: 0,
             child: Center(
               child: GestureDetector(
                 onTap: () {
+                  if (!_isDownloaded && _isBuffering) return;
                   HapticFeedback.lightImpact();
                   _playOrPause();
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 220),
-                  width: isPlayingNow ? 70 : 70,
-                  height: isPlayingNow ? 70 : 70,
+                  width: isTab ? 70 : 50,
+                  height: isTab ? 70 : 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
-                      colors: [
-                        primaryColor,
-                        primaryColor.withOpacity(0.85),
-                      ],
+                      colors: [primaryColor, primaryColor.withOpacity(0.85)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: primaryColor
-                            .withOpacity(isPlayingNow ? 0.55 : 0.35),
+                        color: primaryColor.withOpacity(
+                            isPlayingNow ? 0.55 : 0.35),
                         blurRadius: isPlayingNow ? 20 : 12,
                         spreadRadius: isPlayingNow ? 1.8 : 0.6,
                         offset: const Offset(0, 4),
@@ -549,7 +508,18 @@ class _AzkarSabahState extends State<AzkarSabah> {
                       duration: const Duration(milliseconds: 200),
                       transitionBuilder: (child, anim) =>
                           ScaleTransition(scale: anim, child: child),
-                      child: Icon(
+                      child: (!_isDownloaded && _isBuffering)
+                          ? const SizedBox(
+                        key: ValueKey('loader'),
+                        width: 26,
+                        height: 26,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                          : Icon(
                         isPlayingNow
                             ? Icons.pause_rounded
                             : Icons.play_arrow_rounded,
@@ -568,8 +538,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
     );
   }
 
-  // ================== المشغّل الكامل (Full Player) ==================
-
+  // ================= Full Player =================
   void _openFullPlayer(bool isDark) {
     final theme = Theme.of(context);
     final primaryColor =
@@ -579,7 +548,6 @@ class _AzkarSabahState extends State<AzkarSabah> {
     final int positionMs = _position.inMilliseconds;
 
     final double sliderMax = durationMs > 0 ? durationMs.toDouble() : 1.0;
-
     final double sliderValue = durationMs > 0
         ? positionMs.clamp(0, durationMs).toDouble()
         : 0.0;
@@ -604,14 +572,8 @@ class _AzkarSabahState extends State<AzkarSabah> {
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
                   colors: isDark
-                      ? const [
-                    Color(0xFF020617),
-                    Color(0xFF0F172A),
-                  ]
-                      : [
-                    primaryColor.withOpacity(0.06),
-                    const Color(0xFFFFFFFF),
-                  ],
+                      ? const [Color(0xFF020617), Color(0xFF0F172A)]
+                      : [primaryColor.withOpacity(0.06), const Color(0xFFFFFFFF)],
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -628,19 +590,16 @@ class _AzkarSabahState extends State<AzkarSabah> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color:
-                      isDark ? Colors.white24 : Colors.black.withOpacity(0.15),
+                      color: isDark
+                          ? Colors.white24
+                          : Colors.black.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(999),
                     ),
                   ),
                   const SizedBox(height: 12),
-
-                  // العنوان + إغلاق
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 4,
-                    ),
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     child: Row(
                       children: [
                         Directionality(
@@ -650,8 +609,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                             style: GoogleFonts.notoKufiArabic(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
-                              color:
-                              isDark ? Colors.white : Colors.black87,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                         ),
@@ -659,18 +617,16 @@ class _AzkarSabahState extends State<AzkarSabah> {
                         IconButton(
                           onPressed: () => Navigator.of(context).pop(),
                           icon: const Icon(Icons.close_rounded),
-                          color:
-                          isDark ? Colors.white70 : Colors.black54,
+                          color: isDark ? Colors.white70 : Colors.black54,
                         ),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 8),
 
-                  // زر تشغيل كبير في الوسط
                   GestureDetector(
                     onTap: () {
+                      if (!_isDownloaded && _isBuffering) return;
                       HapticFeedback.lightImpact();
                       _playOrPause();
                     },
@@ -681,17 +637,14 @@ class _AzkarSabahState extends State<AzkarSabah> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
-                          colors: [
-                            primaryColor,
-                            primaryColor.withOpacity(0.85),
-                          ],
+                          colors: [primaryColor, primaryColor.withOpacity(0.85)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: primaryColor
-                                .withOpacity(_isPlaying ? 0.6 : 0.35),
+                            color: primaryColor.withOpacity(
+                                _isPlaying ? 0.6 : 0.35),
                             blurRadius: _isPlaying ? 22 : 14,
                             spreadRadius: _isPlaying ? 2.0 : 0.8,
                             offset: const Offset(0, 6),
@@ -703,7 +656,18 @@ class _AzkarSabahState extends State<AzkarSabah> {
                           duration: const Duration(milliseconds: 200),
                           transitionBuilder: (child, anim) =>
                               ScaleTransition(scale: anim, child: child),
-                          child: Icon(
+                          child: (!_isDownloaded && _isBuffering)
+                              ? const SizedBox(
+                            key: ValueKey('loader_full'),
+                            width: 34,
+                            height: 34,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3.2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white),
+                            ),
+                          )
+                              : Icon(
                             _isPlaying
                                 ? Icons.pause_rounded
                                 : Icons.play_arrow_rounded,
@@ -717,12 +681,8 @@ class _AzkarSabahState extends State<AzkarSabah> {
                   ),
 
                   const SizedBox(height: 16),
-
-                  // نص تشجيعي / توجيهي
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Directionality(
                       textDirection: ui.TextDirection.rtl,
                       child: Text(
@@ -731,8 +691,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                         style: GoogleFonts.cairo(
                           fontSize: 13,
                           height: 1.6,
-                          color:
-                          isDark ? Colors.grey[300] : Colors.grey[800],
+                          color: isDark ? Colors.grey[300] : Colors.grey[800],
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -740,20 +699,16 @@ class _AzkarSabahState extends State<AzkarSabah> {
                   ),
 
                   const SizedBox(height: 18),
-
-                  // السلايدر + التوقيت + أزرار 10 ثواني
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
                       children: [
                         IconButton(
                           onPressed: durationMs == 0
                               ? null
                               : () async {
-                            final int newMs = (positionMs - 10000)
-                                .clamp(0, durationMs);
+                            final int newMs =
+                            (positionMs - 10000).clamp(0, durationMs);
                             await _audioManager.seek(
                               Duration(milliseconds: newMs),
                             );
@@ -767,17 +722,15 @@ class _AzkarSabahState extends State<AzkarSabah> {
                           _formatDuration(_position),
                           style: GoogleFonts.cairo(
                             fontSize: 11,
-                            color:
-                            isDark ? Colors.white70 : Colors.black54,
+                            color: isDark ? Colors.white70 : Colors.black54,
                           ),
                         ),
                         Expanded(
                           child: SliderTheme(
                             data: SliderTheme.of(context).copyWith(
                               trackHeight: 3.5,
-                              thumbShape: const RoundSliderThumbShape(
-                                enabledThumbRadius: 8,
-                              ),
+                              thumbShape:
+                              const RoundSliderThumbShape(enabledThumbRadius: 8),
                             ),
                             child: Slider(
                               value: sliderValue,
@@ -786,14 +739,12 @@ class _AzkarSabahState extends State<AzkarSabah> {
                               onChanged: durationMs == 0
                                   ? null
                                   : (v) async {
-                                final newPos = Duration(
-                                  milliseconds: v.toInt(),
+                                await _audioManager.seek(
+                                  Duration(milliseconds: v.toInt()),
                                 );
-                                await _audioManager.seek(newPos);
                               },
                               activeColor: primaryColor,
-                              inactiveColor:
-                              primaryColor.withOpacity(0.25),
+                              inactiveColor: primaryColor.withOpacity(0.25),
                             ),
                           ),
                         ),
@@ -801,16 +752,15 @@ class _AzkarSabahState extends State<AzkarSabah> {
                           _formatDuration(_duration),
                           style: GoogleFonts.cairo(
                             fontSize: 11,
-                            color:
-                            isDark ? Colors.white70 : Colors.black54,
+                            color: isDark ? Colors.white70 : Colors.black54,
                           ),
                         ),
                         IconButton(
                           onPressed: durationMs == 0
                               ? null
                               : () async {
-                            final int newMs = (positionMs + 10000)
-                                .clamp(0, durationMs);
+                            final int newMs =
+                            (positionMs + 10000).clamp(0, durationMs);
                             await _audioManager.seek(
                               Duration(milliseconds: newMs),
                             );
@@ -825,15 +775,11 @@ class _AzkarSabahState extends State<AzkarSabah> {
                   ),
 
                   const SizedBox(height: 10),
-
-                  // مساحة مستقبلية لنص الذكر أو قائمة الأذكار
                   Expanded(
                     child: SingleChildScrollView(
                       controller: scrollController,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 8,
-                      ),
+                          horizontal: 18, vertical: 8),
                       child: Directionality(
                         textDirection: ui.TextDirection.rtl,
                         child: Column(
@@ -844,8 +790,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                               style: GoogleFonts.cairo(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
-                                color:
-                                isDark ? Colors.white : Colors.black87,
+                                color: isDark ? Colors.white : Colors.black87,
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -855,8 +800,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                               style: GoogleFonts.cairo(
                                 fontSize: 13,
                                 height: 1.7,
-                                color:
-                                isDark ? Colors.grey[300] : Colors.grey[800],
+                                color: isDark ? Colors.grey[300] : Colors.grey[800],
                               ),
                             ),
                           ],
@@ -873,15 +817,12 @@ class _AzkarSabahState extends State<AzkarSabah> {
     );
   }
 
-  // ================== واجهة الشاشة الأساسية ==================
-
+  // ================== UI ==================
   @override
   Widget build(BuildContext context) {
     final con = Provider.of<AzkarProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final double fontSize = CentralizedCubit.get(context).azkarFontSize();
-
-    // هنا المنطق الجديد: تشيك لو كل أذكار الصباح خلصت
     final bool allDone = con.isSabahDone;
 
     return Scaffold(
@@ -899,94 +840,18 @@ class _AzkarSabahState extends State<AzkarSabah> {
             style: GoogleFonts.cairo(
               color: Colors.green,
               fontWeight: FontWeight.bold,
-              fontSize:
-              MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
             ),
           ),
         ),
       ),
       body: allDone
-      // شاشة "تم الانتهاء" مع إعادة من البداية
-          ? Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(child: Image.asset(doneZakar)),
-              SizedBox(height: 10.h),
-              Text(
-                AppString.KSabahDaialogText,
-                style: GoogleFonts.cairo(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15.sp,
-                ),
-              ),
-              SizedBox(height: 15.h),
-              Text(
-                AppString.KZakarSabahFeaturesTitle,
-                style: GoogleFonts.cairo(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.sp,
-                ),
-              ),
-              SizedBox(height: 10.h),
-              const Divider(
-                color: Color(AppStyle.primaryColor),
-                thickness: 2,
-                indent: 150,
-                endIndent: 150,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  AppString.doneText,
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                    fontFamily: AppStyle.fontFamily,
-                    height: 1.8,
-                    fontSize: 17.5.sp,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-
-              // الأزرار: إعادة / إنهاء
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // إعادة العدادات من الأول
-                      con.resetSabah();
-                    },
-                    icon: const Icon(Icons.refresh_rounded),
-                    label: Text(
-                      'إعادة الأذكار من البداية',
-                      style: GoogleFonts.cairo(fontSize: 13),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: KColors.primaryColor,
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(Icons.check_rounded),
-                    label: Text(
-                      'إنهاء',
-                      style: GoogleFonts.cairo(fontSize: 13),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+          ? DoneDialogWidget(
+        onPressedRepeat: con.resetSabah,
+        doneText: AppString.doneText,
+        KZakarFeaturesTitle: AppString.KZakarSabahFeaturesTitle,
+        KDaialogText: AppString.KSabahDaialogText,
       )
-      // قائمة الأذكار
           : Column(
         children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 8.0.w)),
@@ -999,7 +864,6 @@ class _AzkarSabahState extends State<AzkarSabah> {
                 final isDarkLocal =
                     Theme.of(context).brightness == Brightness.dark;
 
-                // الذكر يعتبر خلص لما عدّاده صفر أو أقل
                 final bool isDone =
                     Azkary.azkarSabahRepate[zSabahIndex] <= 0;
 
@@ -1008,9 +872,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
 
                 final Color cardAccent = isDone
                     ? const Color(AppStyle.yellowColor)
-                    : (isDarkLocal
-                    ? Colors.black
-                    : primaryColorLocal);
+                    : (isDarkLocal ? Colors.black : primaryColorLocal);
 
                 final Color chipBg = isDone
                     ? const Color(AppStyle.yellowColor)
@@ -1020,16 +882,12 @@ class _AzkarSabahState extends State<AzkarSabah> {
 
                 final Color chipText = isDone
                     ? Colors.black
-                    : (isDarkLocal
-                    ? Colors.white
-                    : KColors.primaryColor);
+                    : (isDarkLocal ? Colors.white : KColors.primaryColor);
 
                 return ScrollAppearAnimation(
                   duration: const Duration(milliseconds: 700),
                   child: GestureDetector(
-                    onTap: () {
-                      con.decrementSabah(zSabahIndex);
-                    },
+                    onTap: () => con.decrementSabah(zSabahIndex),
                     child: AzkerItemBuilder(
                       azkarTitle: Azkary.azkarSabah[zSabahIndex],
                       azkarDes: Azkary.azkarSabahDes[zSabahIndex],
@@ -1044,8 +902,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
                   ),
                 );
               },
-              separatorBuilder: (context, zSabahIndex) =>
-                  SizedBox(height: 15.h),
+              separatorBuilder: (context, _) => SizedBox(height: 15.h),
               itemCount: Azkary.azkarSabah.length,
             ),
           ),
@@ -1055,6 +912,7 @@ class _AzkarSabahState extends State<AzkarSabah> {
     );
   }
 }
+
 
 
 

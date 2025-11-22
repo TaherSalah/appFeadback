@@ -193,11 +193,32 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: customAppBar(
-          " قائمة بالايات المحفوظه",
-          color: Colors.black,
-          leading: const CupertinoNavigationBarBackButton(color: Colors.black),
+        // appBar: customAppBar(
+        //   " قائمة بالايات المحفوظه",
+        //   color: Colors.black,
+        //   leading: const CupertinoNavigationBarBackButton(color: Colors.black),
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+          ),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            centerTitle: true,
+            title: Text(
+              " قائمة بالايات المحفوظه",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
+          ),
         ),
+
         body: RefreshIndicator(
           onRefresh: loadBookmarksData,
           child: Padding(

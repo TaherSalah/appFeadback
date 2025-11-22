@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
+import 'package:just_audio/just_audio.dart';
 import '../../core/cubit/centralized_cubit.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
@@ -539,6 +540,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
   bool _isDownloaded = false;
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
+  bool _isBuffering = false;
 
   @override
   void initState() {
@@ -564,10 +566,24 @@ class _SleepAzkarState extends State<SleepAzkar> {
       setState(() => _duration = dur ?? Duration.zero);
     });
 
+    // _audioManager.playerStateStream.listen((state) {
+    //   if (!mounted) return;
+    //   setState(() => _isPlaying = _audioManager.isPlaying);
+    // });
     _audioManager.playerStateStream.listen((state) {
       if (!mounted) return;
-      setState(() => _isPlaying = _audioManager.isPlaying);
+
+      // لو بتستخدم just_audio
+      final processingState = state.processingState;
+      final bufferingNow = processingState == ProcessingState.loading ||
+          processingState == ProcessingState.buffering;
+
+      setState(() {
+        _isPlaying = state.playing; // أو _audioManager.isPlaying
+        _isBuffering = bufferingNow;
+      });
     });
+
   }
 
   void _showSnack(String message) {
@@ -615,7 +631,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
 
       setState(() => _isDownloaded = true);
       // _showSnack('تم تحميل أذكار الصباح، يمكن تشغيلها بدون إنترنت.');
-      KHelper.showSuccess(message: 'تم تحميل أذكار الصباح، يمكن تشغيلها بدون إنترنت.');
+      KHelper.showSuccess(message: 'تم تحميل أذكار النوم، يمكن تشغيلها بدون إنترنت.');
     } catch (e) {
       // _showSnack(e.toString());
       KHelper.showError(message: e.toString());
@@ -646,6 +662,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
   // ================== الـ Bottom Player (Mini) ==================
 
   Widget _buildBottomPlayer(bool isDark) {
+    bool isTab =ResponsiveUtil.isTablet(context);
     final theme = Theme.of(context);
     final primaryColor =
     isDark ? KColors.primaryColor : theme.colorScheme.primary;
@@ -692,9 +709,10 @@ class _SleepAzkarState extends State<SleepAzkar> {
         children: [
           // جسم المشغل
           Container(
-            margin: const EdgeInsets.only(top: 30),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            margin:  EdgeInsets.only(top:isTab? 30:0),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
             decoration: BoxDecoration(
+
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(22),
                 topRight: Radius.circular(22),
@@ -1039,7 +1057,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
 
           // زر التشغيل العائم في المنتصف
           Positioned(
-            top: -4,
+            top: isTab?-4:-20,
             left: 0,
             right: 0,
             child: Center(
@@ -1050,8 +1068,8 @@ class _SleepAzkarState extends State<SleepAzkar> {
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 220),
-                  width: isPlayingNow ? 70 : 70,
-                  height: isPlayingNow ? 70 : 70,
+                  width: isPlayingNow ? isTab?70:50 : isTab?70:50,
+                  height: isPlayingNow ? isTab?70:50 : isTab?70:50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
@@ -1072,21 +1090,30 @@ class _SleepAzkarState extends State<SleepAzkar> {
                       ),
                     ],
                   ),
-                  child: Center(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      transitionBuilder: (child, anim) =>
-                          ScaleTransition(scale: anim, child: child),
-                      child: Icon(
-                        isPlayingNow
-                            ? Icons.pause_rounded
-                            : Icons.play_arrow_rounded,
-                        key: ValueKey<bool>(isPlayingNow),
-                        color: Colors.white,
-                        size: 32,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    transitionBuilder: (child, anim) =>
+                        ScaleTransition(scale: anim, child: child),
+                    child: (!_isDownloaded && _isBuffering)
+                        ? const SizedBox(
+                      key: ValueKey('loader'),
+                      width: 26,
+                      height: 26,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
+                    )
+                        : Icon(
+                      isPlayingNow
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
+                      key: ValueKey<bool>(isPlayingNow),
+                      color: Colors.white,
+                      size: 32,
                     ),
                   ),
+
                 ),
               ),
             ),
@@ -1201,9 +1228,11 @@ class _SleepAzkarState extends State<SleepAzkar> {
                   // زر تشغيل كبير في الوسط
                   GestureDetector(
                     onTap: () {
+                      if (!_isDownloaded && _isBuffering) return;
                       HapticFeedback.lightImpact();
                       _playOrPause();
                     },
+
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 220),
                       width: _isPlaying ? 90 : 80,
@@ -1437,7 +1466,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
           ),
         ),
       ),
-      body: !allDone
+      body: allDone
           ? DoneDialogWidget(onPressedRepeat: con.resetSleep, doneText: AppString.doneText, KZakarFeaturesTitle:AppString.KZakarSleepFeaturesTitle, KDaialogText: AppString.KSleepDaialogText)
           : Column(
         children: [

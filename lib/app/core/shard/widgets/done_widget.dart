@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../exports/all_exports.dart';
 
 class DoneScreen extends StatelessWidget {
@@ -5,9 +7,31 @@ class DoneScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: customAppBar(AppString.KForYou),
+      // appBar: customAppBar(AppString.KForYou),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+          MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+        ),
+        child: AppBar(
+          leading: CupertinoNavigationBarBackButton(
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          centerTitle: true,
+          title: Text(
+            AppString.KForYou,
+            style: GoogleFonts.cairo(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize:
+              MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+            ),
+          ),
+        ),
+      ),
+
       body: SingleChildScrollView(
         child: Directionality(
           textDirection: TextDirection.rtl,

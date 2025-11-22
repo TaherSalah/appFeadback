@@ -92,7 +92,11 @@ dependencies:
   animate_do: ^3.3.4
   flutter_expandable_fab: ^2.3.0
   flutter_widget_from_html: ^0.16.0
-  quran_library: ^2.3.0
+#  quran_library: ^2.3.0
+  quran_library:
+    git:
+      ref: main
+      url: https://github.com/alheekmahlib/quran_library.git
   table_calendar: ^3.0.2
   fl_chart:
   package_info_plus: ^9.0.0
