@@ -9,10 +9,6 @@ import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/k_helper.dart';
 import '../../core/utils/style/responsive_util.dart';
 import '../../core/widgets/AudioManager.dart';
-
-
-
-
 // class AzkarMassa extends StatefulWidget {
 //   const AzkarMassa({super.key});
 //
@@ -1400,8 +1396,6 @@ class _AzkarMassaState extends State<AzkarMassa> {
               ),
 
               const SizedBox(height: 8),
-
-
 
               const SizedBox(height: 12),
 
