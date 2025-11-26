@@ -1003,6 +1003,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                     backgroundColor: KColors.primaryColor,
                     width: MediaQuery.sizeOf(context).width / 3,
                     title: "انشاء ختمة جديدة",
+                    borderColor: KColors.primaryColor,
                     onTap: () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

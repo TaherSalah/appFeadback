@@ -130,7 +130,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     },
     {
       "title": "السبحة",
-      "icon": "assets/images/tasbih21.png",
+      "icon": "assets/images/beads2.png",
       "navigate": "/azkarCounter"
     },
     {
@@ -561,8 +561,10 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                             return InkWell(
                               onTap: () {
                                 bool needsInternet =
-                                    item["navigate"] == Routes.categoriesRoute ||
-                                        item["navigate"] == "/qiblaDirection";
+                                    item["navigate"] == Routes.categoriesRoute || item["navigate"] == "/QuranRadioView" ;
+
+                                        // ||
+                                        // item["navigate"] == "/qiblaDirection";
 
                                 (state is ConnectivityState &&
                                     state.status ==
@@ -678,7 +680,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                 //   ),
                 ,
                 SizedBox(
-                    height: MediaQuery.sizeOf(context).width > 600 ? 25 : 10),
+                    height: MediaQuery.sizeOf(context).width > 600 ? 25 : 20),
                 const AzkarQuranWidget(),
                 const SizedBox(height: 10),
                 const OtherAzkarWidget(),
