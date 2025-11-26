@@ -153,6 +153,28 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
                     ? Colors.black
                     : const Color(AppStyle.whiteColor));
 
+
+                final Color primaryColorLocal =
+                const Color(AppStyle.primaryColor);
+
+                final Color cardAccent = isDone
+                    ? const Color(AppStyle.yellowColor)
+                    : (isDark
+                    ? Colors.black
+                    : primaryColorLocal);
+
+                final Color chipBg = isDone
+                    ? const Color(AppStyle.yellowColor)
+                    : (isDark
+                    ? Colors.black
+                    : const Color(0xFFECFDF3));
+
+                final Color chipText = isDone
+                    ? Colors.black
+                    : (isDark
+                    ? Colors.white
+                    : KColors.primaryColor);
+
                 return ScrollAppearAnimation(
                   duration: const Duration(milliseconds: 700),
                   child: GestureDetector(
@@ -166,7 +188,9 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
                       azkarRepate: isDone
                           ? '0'
                           : '${Azkary.azkarPrayerRepate[zPrayerIndex]}',
-                      color: cardColor,
+                      color: cardAccent,
+                      repertColor: chipText,
+                      repertColor2: chipBg,
                     ),
                   ),
                 );

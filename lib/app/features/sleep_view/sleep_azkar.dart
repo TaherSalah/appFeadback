@@ -158,7 +158,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
     final bool isPlayingNow = _isPlaying;
 
     return Positioned(
-      bottom: isTab ? 18 : 25,
+      bottom: MediaQuery.of(context).viewPadding.bottom + (isTab ? 18 : 10),
       left: 0,
       right: 0,
       child: Center(
@@ -708,6 +708,9 @@ class _SleepAzkarState extends State<SleepAzkar> {
             ],
           ),
           child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewPadding.bottom + 20,
+            ),
             child: Column(
               children: [
                 const SizedBox(height: 8),
@@ -715,39 +718,46 @@ class _SleepAzkarState extends State<SleepAzkar> {
                 // Handle + Close
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Center(
+                  child: SizedBox(
+                    height: 50, // خليه أعلى من 40 عشان الـ IconButton مايضغطش
+                    width: double.infinity,
+                    child: Stack(
+                      children: [
+                        // الخط في النص
+                        Align(
+                          alignment: Alignment.center,
                           child: Container(
                             width: 46,
                             height: 5,
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white24
-                                  : Colors.black.withOpacity(0.12),
+                              color: isDark ? Colors.white24 : Colors.black.withOpacity(0.12),
                               borderRadius: BorderRadius.circular(999),
                             ),
                           ),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (_isPlaying) {
-                              _showFullPlayer = false;
-                            } else {
-                              _showFullPlayer = false;
-                              _showMiniPlayer = false;
-                            }
-                          });
-                        },
-                        icon: const Icon(Icons.close_rounded),
-                        color: isDark ? Colors.white70 : Colors.black54,
-                      ),
-                    ],
+
+                        // زر الإغلاق على اليمين
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                if (_isPlaying) {
+                                  _showFullPlayer = false;
+                                } else {
+                                  _showFullPlayer = false;
+                                  _showMiniPlayer = false;
+                                }
+                              });
+                            },
+                            icon: const Icon(Icons.close_rounded),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+
 
                 const SizedBox(height: 10),
 
@@ -773,7 +783,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
                           height: 350,
                           width: double.infinity,
                           child: Image.asset(
-                            "assets/images/beautiful-view-sunset-light.jpg",
+                            "assets/images/natural-view-night_1112329-37092.jpg",
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -1258,6 +1268,7 @@ final String doneText,KZakarFeaturesTitle,KDaialogText;
       textDirection: TextDirection.rtl,
       child: Center(
         child: SingleChildScrollView(
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

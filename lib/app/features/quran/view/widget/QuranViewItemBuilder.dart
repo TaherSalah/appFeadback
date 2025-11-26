@@ -534,6 +534,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                               onPageChanged: _handlePageChanged,
                               itemBuilder: (context, index) {
                                 return QuranLibraryScreen(
+                                  backgroundColor:isDark? Colors.black:Colors.white,
+
                                   withPageView: false,
                                   isDark: isDark,
                                   pageIndex: index,
@@ -547,6 +549,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                               },
                             )
                           : QuranLibraryScreen(
+                    backgroundColor:isDark? Colors.black:Color(0xFFF7F1E1),
                               withPageView: true,
                               isDark: isDark,
                               pageIndex: _currentPage!,

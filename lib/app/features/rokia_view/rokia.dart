@@ -158,7 +158,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
     final bool isPlayingNow = _isPlaying;
 
     return Positioned(
-      bottom: isTab ? 18 : 25,
+      bottom: MediaQuery.of(context).viewPadding.bottom + (isTab ? 18 : 10),
       left: 0,
       right: 0,
       child: Center(
@@ -694,6 +694,9 @@ class _RokiaScreenState extends State<RokiaScreen> {
             ],
           ),
           child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewPadding.bottom + 20,
+            ),
             child: Column(
               children: [
                 const SizedBox(height: 8),
@@ -701,37 +704,43 @@ class _RokiaScreenState extends State<RokiaScreen> {
                 // Handle + Close
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Center(
+                  child: SizedBox(
+                    height: 50, // خليه أعلى من 40 عشان الـ IconButton مايضغطش
+                    width: double.infinity,
+                    child: Stack(
+                      children: [
+                        // الخط في النص
+                        Align(
+                          alignment: Alignment.center,
                           child: Container(
                             width: 46,
                             height: 5,
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white24
-                                  : Colors.black.withOpacity(0.12),
+                              color: isDark ? Colors.white24 : Colors.black.withOpacity(0.12),
                               borderRadius: BorderRadius.circular(999),
                             ),
                           ),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (_isPlaying) {
-                              _showFullPlayer = false;
-                            } else {
-                              _showFullPlayer = false;
-                              _showMiniPlayer = false;
-                            }
-                          });
-                        },
-                        icon: const Icon(Icons.close_rounded),
-                        color: isDark ? Colors.white70 : Colors.black54,
-                      ),
-                    ],
+
+                        // زر الإغلاق على اليمين
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                if (_isPlaying) {
+                                  _showFullPlayer = false;
+                                } else {
+                                  _showFullPlayer = false;
+                                  _showMiniPlayer = false;
+                                }
+                              });
+                            },
+                            icon: const Icon(Icons.close_rounded),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -760,7 +769,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                           height: 350,
                           width: double.infinity,
                           child: Image.asset(
-                            "assets/images/beautiful-view-sunset-light.jpg",
+                            "assets/images/OIP.webp",
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -1225,7 +1234,31 @@ class _RokiaScreenState extends State<RokiaScreen> {
                         : (isDark
                         ? Colors.black
                         : const Color(AppStyle.whiteColor));
+                    final isDarkLocal =
+                        Theme.of(context).brightness == Brightness.dark;
 
+
+
+                    final Color primaryColorLocal =
+                    const Color(AppStyle.primaryColor);
+
+                    final Color cardAccent = isDone
+                        ? const Color(AppStyle.yellowColor)
+                        : (isDarkLocal
+                        ? Colors.black
+                        : primaryColorLocal);
+
+                    final Color chipBg = isDone
+                        ? const Color(AppStyle.yellowColor)
+                        : (isDarkLocal
+                        ? Colors.black
+                        : const Color(0xFFECFDF3));
+
+                    final Color chipText = isDone
+                        ? Colors.black
+                        : (isDarkLocal
+                        ? Colors.white
+                        : KColors.primaryColor);
                     return ScrollAppearAnimation(
                       duration: const Duration(milliseconds: 700),
                       child: GestureDetector(
@@ -1242,7 +1275,9 @@ class _RokiaScreenState extends State<RokiaScreen> {
                             azkarRepate: isDone
                                 ? '0'
                                 : '${Azkary.rokiaQuranRepe[quranCurrentIndex]}',
-                            color: cardColor,
+                            color: cardAccent,
+                            repertColor: chipText,
+                            repertColor2: chipBg,
                           ),
                         ),
                       ),

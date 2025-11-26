@@ -167,11 +167,12 @@ class _DrawerWidgetState extends State<DrawerWidget>
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Drawer(
                 width: _widthAnimation.value,
-                backgroundColor: isDark ? Colors.black : Colors.white,
+                backgroundColor: isDark ? Color(0xFF020617): Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
-                    color: isDark ? Colors.blue : Colors.white,
+                    style: BorderStyle.none,
+                    color: isDark ? Colors.amberAccent.shade700 : Colors.white,
                   ),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(50.r),

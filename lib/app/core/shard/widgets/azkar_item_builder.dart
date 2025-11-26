@@ -358,7 +358,8 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                   Color(0xFF0F172A),
                 ]
                     : [
-                  baseColor.withOpacity(0.06), // لمسة لون خفيفة
+                  // baseColor.withOpacity(0.06), // لمسة لون خفيفة
+                  Color(0xFFF7F1E1),
                   Colors.white,
                 ],
               ),
