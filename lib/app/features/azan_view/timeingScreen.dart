@@ -390,13 +390,15 @@ class _TimingScreenState extends State<TimingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =  Theme.of(context).brightness == Brightness.dark;
+    final baseColor =  const Color(AppStyle.primaryColor);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize:
         Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
         child: AppBar(
           leading:  CupertinoNavigationBarBackButton(
-            color: Theme.of(context).brightness == Brightness.dark ?Colors.white:Colors.black,
+            color: isDark ?Colors.white:Colors.black,
           ),
           centerTitle: true,
           title: Text(
@@ -443,7 +445,7 @@ class _TimingScreenState extends State<TimingScreen> {
                                     textAlign: TextAlign.right,
                                     title: country,
                                     fontSize: 12.5,
-                                    color: Theme.of(context).brightness == Brightness.dark ?Colors.white:Colors.black,
+                                    color: isDark?Colors.white:Colors.black,
 
                                   ),
                                 ),
@@ -471,8 +473,8 @@ class _TimingScreenState extends State<TimingScreen> {
                             buttonStyleData: ButtonStyleData(
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: AppStyle.scondColors, width: 1.5),
-                                  color: Theme.of(context).cardColor,
+                                      color: AppThemeColors.cardBackgroundColor(context), width: 1.5),
+                                  color: AppThemeColors.cardBackgroundColor(context),
                                   borderRadius: BorderRadius.circular(10.0)),
                               padding:
                               const EdgeInsets.symmetric(horizontal: 16),
@@ -505,6 +507,7 @@ class _TimingScreenState extends State<TimingScreen> {
                         duration: const Duration(seconds: 1),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton2<String>(
+
                             isExpanded: true,
                             hint: const TextDefaultWidget(
                               title: 'اختر المدينة',
@@ -520,7 +523,7 @@ class _TimingScreenState extends State<TimingScreen> {
                                     textAlign: TextAlign.right,
                                     title: cities,
                                     fontSize: 12.5,
-                                    color: Theme.of(context).brightness == Brightness.dark ?Colors.white:Colors.black,
+                                    color:isDark?Colors.white:Colors.black,
                                   ),
                                 ),
                               );
@@ -543,8 +546,9 @@ class _TimingScreenState extends State<TimingScreen> {
                             buttonStyleData: ButtonStyleData(
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: AppStyle.scondColors, width: 1.5),
-                                  color: Theme.of(context).canvasColor,
+                                      color: AppThemeColors.cardBackgroundColor(context), width: 1.5),
+                                  color: AppThemeColors.cardBackgroundColor(context),
+
                                   borderRadius: BorderRadius.circular(10.0)),
                               padding:
                               const EdgeInsets.symmetric(horizontal: 16),
@@ -605,12 +609,40 @@ class _TimingScreenState extends State<TimingScreen> {
                 type: UiAnimationType.crossFade,
                 child: SizedBox(
                   width: MediaQuery.sizeOf(context).width / 1.8,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24.r),
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: isDark
+                            ? const [
+                          Color(0xFF020617),
+                          Color(0xFF0F172A),
+                        ]
+                            : [
+                          baseColor.withOpacity(0.06), // لمسة لون خفيفة
+                          Colors.white,
+                        ],
+                      ),
+                      border: Border.all(
+                        color: baseColor.withOpacity(isDark ? 0.5 : 0.3),
+                        width: 1.2,
+                      ),
+                      // boxShadow: [
+                      //   BoxShadow(
+                      //     color: baseColor.withOpacity(isDark ? 0.4 : 0.18),
+                      //     blurRadius: 50,
+                      //     spreadRadius: 0.5,
+                      //     offset: Offset(0, isDark ? 10 : 6),
+                      //   ),
+                      // ],
                     ),
-                    elevation: 1,
-                    color: AppColors.secondaryLight,
+                    // shape: RoundedRectangleBorder(
+                    //   borderRadius: BorderRadius.circular(10),
+                    // ),
+                    // elevation: 1,
+                    // color:AppThemeColors.cardBackgroundColor(context),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 7),
@@ -622,7 +654,7 @@ class _TimingScreenState extends State<TimingScreen> {
                                 ? Text(
                               nextPrayer,
                               style: GoogleFonts.cairo(
-                                  color: Colors.black,
+                                  color:isDark?Colors.white: Colors.black,
                                   fontWeight: FontWeight.bold,
                                   fontSize:
                                   MediaQuery.sizeOf(context).width >
@@ -630,8 +662,8 @@ class _TimingScreenState extends State<TimingScreen> {
                                       ? 10.sp
                                       : 16.sp),
                             )
-                                : const Center(
-                              child: CircularProgressIndicator(),
+                                :  Center(
+                              child: KLoading.progressIOSIndicator(context: context),
                             ),
                             const SizedBox(
                               height: 10,
@@ -639,7 +671,7 @@ class _TimingScreenState extends State<TimingScreen> {
                             Text(
                               remainingTimeText,
                               style: GoogleFonts.cairo(
-                                  color: Colors.black,
+                                  color:isDark?Colors.white: Colors.black,
                                   fontWeight: FontWeight.bold,
                                   fontSize:
                                   MediaQuery.sizeOf(context).width > 600
@@ -683,12 +715,41 @@ class _TimingScreenState extends State<TimingScreen> {
                       final iqamaTime = getIqamaTime(
                           prayerNames[index], prayerTimesList[index]);
                       final isNext = nextPrayer.contains(prayerNames[index]);
-                      return Card(
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24.r),
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: isDark
+                                ? const [
+                              Color(0xFF020617),
+                              Color(0xFF0F172A),
+                            ]
+                                : [
+                              baseColor.withOpacity(0.06), // لمسة لون خفيفة
+                              Colors.white,
+                            ],
+                          ),
+                          border: Border.all(
+                            color: isNext?isDark?Colors.amberAccent.shade700: Colors.blue: Colors.black,
+                            width: 1.2,
+                          ),
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     color: baseColor.withOpacity(isDark ? 0.4 : 0.18),
+                          //     blurRadius: 50,
+                          //     spreadRadius: 0.5,
+                          //     offset: Offset(0, isDark ? 10 : 6),
+                          //   ),
+                          // ],
+                        ),
+
                         // color: isNext
                         //     ? Colors.grey
                         //     : CupertinoColors.systemBackground,
-                        color: AppThemeColors.cardBackgroundColor(context),
-                        shape: Border.all(color: isNext?Colors.red:Colors.black),
+                        // color: AppThemeColors.cardBackgroundColor(context),
+                        // shape: Border.all(color: isNext?Colors.amber.withOpacity(0.6):Colors.black),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: MediaQuery.sizeOf(context).width > 600
@@ -702,7 +763,7 @@ class _TimingScreenState extends State<TimingScreen> {
                               Text(
                                 prayerNames[index],
                                 style: GoogleFonts.cairo(
-                                    color: isNext ? Colors.amberAccent.shade700 : Colors.black,
+                                    color: isNext ? isDark ? Colors.amberAccent.shade700:Colors.blueAccent : isDark?Colors.white:Colors.black,
                                     fontWeight: FontWeight.bold,
                                     fontSize:  MediaQuery.sizeOf(context).width > 600
                                         ? 10.sp
@@ -712,7 +773,9 @@ class _TimingScreenState extends State<TimingScreen> {
                                 DateFormat('h:mm a')
                                     .format(prayerTimesList[index]),
                                 style: GoogleFonts.cairo(
-                                    color: isNext ? Colors.white : Colors.black,
+                                    color: isNext ? isDark ? Colors.amberAccent.shade700:Colors.blueAccent : isDark?Colors.white:Colors.black,
+
+                                    // color:isNext ? Colors.amberAccent.shade700 : isDark?Colors.white:Colors.black,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12.sp),
                               ),

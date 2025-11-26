@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/utils/style/k_helper.dart';
@@ -442,7 +443,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               OutlinedButton.icon(
                 onPressed: addCustomDhikr,
                 icon: const Icon(Icons.add),
-                label: const Text('إضافة ذكر مخصص'),
+                label:  TextWidget(title: 'إضافة ذكر مخصص',fontSize: 14.sp,),
               ),
               if (selectedAdhkar.isNotEmpty) ...[
                 const SizedBox(height: 24),

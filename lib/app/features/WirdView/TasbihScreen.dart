@@ -130,41 +130,237 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
   }
 
   // ✅ دالة تخطي الذكر الحالي
+  // void _skipCurrentDhikr() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
+  //       title: Text(
+  //         'تخطي الذكر؟',
+  //         style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
+  //       ),
+  //       content: Text(
+  //         'هل تريد تخطي هذا الذكر والانتقال للتالي؟',
+  //         style: TextStyle(color: widget.isDark ? Colors.white70 : Colors.black87),
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('إلغاء'),
+  //         ),
+  //         ElevatedButton(
+  //           onPressed: () {
+  //             // ضع العداد على الحد الأقصى وانتقل
+  //             widget.wird.adhkar[currentDhikrIndex].currentCount =
+  //                 widget.wird.adhkar[currentDhikrIndex].targetCount;
+  //
+  //             if (currentDhikrIndex < widget.wird.adhkar.length - 1) {
+  //               _goToNextDhikr();
+  //             } else {
+  //               _completeWird();
+  //             }
+  //             Navigator.pop(context);
+  //           },
+  //           child: const Text('تخطي'),
+  //           style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
   void _skipCurrentDhikr() {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
-        title: Text(
-          'تخطي الذكر؟',
-          style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
-        ),
-        content: Text(
-          'هل تريد تخطي هذا الذكر والانتقال للتالي؟',
-          style: TextStyle(color: widget.isDark ? Colors.white70 : Colors.black87),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // ضع العداد على الحد الأقصى وانتقل
-              widget.wird.adhkar[currentDhikrIndex].currentCount =
-                  widget.wird.adhkar[currentDhikrIndex].targetCount;
+      barrierDismissible: false,
+      builder: (dialogContext) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // جسم الديالوج
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: isDark
+                        ? [const Color(0xFF253A4D), const Color(0xFF13232F)]
+                        : [const Color(0xFFE8F6FF), const Color(0xFFD6EEFF)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.25),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // العنوان
+                    Text(
+                      'تخطي الذكر؟',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
 
-              if (currentDhikrIndex < widget.wird.adhkar.length - 1) {
-                _goToNextDhikr();
-              } else {
-                _completeWird();
-              }
-              Navigator.pop(context);
-            },
-            child: const Text('تخطي'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                    // النص
+                    Text(
+                      'هل تريد تخطي هذا الذكر والانتقال إلى التالي؟',
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.4,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // كارت تنبيه بسيط
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.orange.withOpacity(0.08),
+                        border: Border.all(
+                            color: Colors.orange.withOpacity(0.5), width: 1.2),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.info_outline,
+                              size: 18, color: Colors.orange),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'سيتم اعتبار الذكر كأنك أكملته.',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: Colors.orange,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // الأزرار
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                color: isDark
+                                    ? Colors.grey.shade400
+                                    : Colors.grey.shade600,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                            child: Text(
+                              'تراجع',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isDark
+                                    ? Colors.white
+                                    : Colors.grey.shade800,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              // 👈 نفس منطق التخطي القديم
+                              widget.wird.adhkar[currentDhikrIndex].currentCount =
+                                  widget.wird
+                                      .adhkar[currentDhikrIndex].targetCount;
+
+                              if (currentDhikrIndex <
+                                  widget.wird.adhkar.length - 1) {
+                                _goToNextDhikr();
+                              } else {
+                                _completeWird();
+                              }
+
+                              Navigator.of(dialogContext).pop();
+                            },
+                            icon: const Icon(Icons.skip_next_outlined),
+                            label: const Text('تخطي'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // أيقونة فوق
+              Positioned(
+                top: -30,
+                left: 0,
+                right: 0,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Colors.orange, Colors.deepOrangeAccent],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orange.withOpacity(0.6),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.fast_forward_rounded,
+                        size: 34,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -666,38 +862,204 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                   onPressed: () {
                                     showDialog(
                                       context: context,
-                                      builder: (context) => AlertDialog(
-                                        backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.white,
-                                        title: Text(
-                                          'إعادة الورد؟',
-                                          style: TextStyle(color: widget.isDark ? Colors.white : Colors.black87),
-                                        ),
-                                        content: Text(
-                                          'هل تريد إعادة الورد من البداية؟',
-                                          style: TextStyle(color: widget.isDark ? Colors.white70 : Colors.black87),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(context),
-                                            child: const Text('إلغاء'),
+                                      barrierDismissible: true,
+                                      builder: (context) {
+                                        return Center(
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: Container(
+                                              width: MediaQuery.of(context).size.width * 0.8,
+                                              padding: const EdgeInsets.all(20),
+                                              decoration: BoxDecoration(
+                                                color: widget.isDark ? Colors.grey.shade900 : Colors.white,
+                                                borderRadius: BorderRadius.circular(20),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: widget.isDark
+                                                        ? Colors.black.withOpacity(0.4)
+                                                        : Colors.grey.withOpacity(0.3),
+                                                    blurRadius: 10,
+                                                    offset: const Offset(0, 4),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+
+                                                  // ===== Title =====
+                                                  Text(
+                                                    "إعادة الورد؟",
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: widget.isDark ? Colors.white : Colors.black87,
+                                                    ),
+                                                  ),
+
+                                                  const SizedBox(height: 10),
+
+                                                  // ===== Content =====
+                                                  Text(
+                                                    "هل تريد إعادة الورد من البداية؟",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: widget.isDark ? Colors.white70 : Colors.black87,
+                                                    ),
+                                                  ),
+
+                                                  const SizedBox(height: 25),
+
+                                                  // ===== Actions =====
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+
+                                                      // Cancel
+                                                      Expanded(
+                                                        child: InkWell(
+                                                          onTap: () => Navigator.pop(context),
+                                                          child: Container(
+                                                            padding: const EdgeInsets.symmetric(
+                                                                vertical: 12
+                                                            ),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(12),
+                                                              color: widget.isDark
+                                                                  ? Colors.grey.shade800
+                                                                  : Colors.grey.shade200,
+                                                            ),
+                                                            alignment: Alignment.center,
+                                                            child: Text(
+                                                              "إلغاء",
+                                                              style: TextStyle(
+                                                                fontSize: 16,
+                                                                color: widget.isDark
+                                                                    ? Colors.white
+                                                                    : Colors.black87,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                      const SizedBox(width: 10),
+
+                                                      // Reset ALL
+                                                      Expanded(
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            for (var d in widget.wird.adhkar) {
+                                                              d.currentCount = 0;
+                                                            }
+                                                            widget.wird.currentDhikrIndex = 0;
+                                                            widget.wird.isInProgress = false;
+
+                                                            setState(() => currentDhikrIndex = 0);
+                                                            _saveProgress();
+
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: Container(
+                                                            padding: const EdgeInsets.symmetric(
+                                                                vertical: 12
+                                                            ),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(12),
+                                                              color: Colors.red,
+                                                            ),
+                                                            alignment: Alignment.center,
+                                                            child: const Text(
+                                                              "إعادة الكل",
+                                                              style: TextStyle(
+                                                                fontSize: 16,
+                                                                color: Colors.white,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              for (var d in widget.wird.adhkar) {
-                                                d.currentCount = 0;
-                                              }
-                                              widget.wird.currentDhikrIndex = 0;
-                                              widget.wird.isInProgress = false;
-                                              setState(() => currentDhikrIndex = 0);
-                                              _saveProgress();
-                                              Navigator.pop(context);
-                                            },
-                                            child: const Text('إعادة الكل'),
-                                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                                          ),
-                                        ],
-                                      ),
+                                        );
+                                      },
                                     );
+
+                                    // showDialog(
+                                    //   context: context,
+                                    //   builder: (context) => AlertDialog(
+                                    //     backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.white,
+                                    //     shape: RoundedRectangleBorder(
+                                    //       borderRadius: BorderRadius.circular(16),
+                                    //     ),
+                                    //     title: Text(
+                                    //       'إعادة الورد؟',
+                                    //       textAlign: TextAlign.center,
+                                    //       style: TextStyle(
+                                    //         fontSize: 20,
+                                    //         fontWeight: FontWeight.bold,
+                                    //         color: widget.isDark ? Colors.white : Colors.black87,
+                                    //       ),
+                                    //     ),
+                                    //     content: Text(
+                                    //       'هل تريد إعادة الورد من البداية؟',
+                                    //       textAlign: TextAlign.center,
+                                    //       style: TextStyle(
+                                    //         fontSize: 16,
+                                    //         color: widget.isDark ? Colors.white70 : Colors.black87,
+                                    //       ),
+                                    //     ),
+                                    //
+                                    //     actionsAlignment: MainAxisAlignment.spaceEvenly,
+                                    //
+                                    //     actions: [
+                                    //       TextButton(
+                                    //         onPressed: () => Navigator.pop(context),
+                                    //         child: Text(
+                                    //           'إلغاء',
+                                    //           style: TextStyle(
+                                    //             color: widget.isDark ? Colors.blue[200] : Colors.blue,
+                                    //             fontSize: 16,
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //
+                                    //       ElevatedButton(
+                                    //         onPressed: () {
+                                    //           for (var d in widget.wird.adhkar) {
+                                    //             d.currentCount = 0;
+                                    //           }
+                                    //
+                                    //           widget.wird.currentDhikrIndex = 0;
+                                    //           widget.wird.isInProgress = false;
+                                    //
+                                    //           setState(() => currentDhikrIndex = 0);
+                                    //           _saveProgress();
+                                    //
+                                    //           Navigator.pop(context);
+                                    //         },
+                                    //         style: ElevatedButton.styleFrom(
+                                    //           backgroundColor: Colors.red,
+                                    //           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                    //           shape: RoundedRectangleBorder(
+                                    //             borderRadius: BorderRadius.circular(10),
+                                    //           ),
+                                    //         ),
+                                    //         child: const Text(
+                                    //           'إعادة الكل',
+                                    //           style: TextStyle(fontSize: 16, color: Colors.white),
+                                    //         ),
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    // );
+
                                   },
                                   icon: const Icon(Icons.restart_alt),
                                   label: const Text('إعادة الكل'),

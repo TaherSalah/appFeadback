@@ -123,7 +123,7 @@ void showThemeSheet(BuildContext ctx) {
                   children: [
                     const SizedBox(height: 8),
                     const Text(
-                      'الاعدادت',
+                      'الاعدادات',
                       style: TextStyle(fontSize: 18, fontFamily: "cairo"),
                     ),
 
@@ -169,10 +169,11 @@ void showThemeSheet(BuildContext ctx) {
                         const Spacer(),
                         TextButton(
                           onPressed: () => Navigator.pop(bc),
-                          child: const Text('إلغاء'),
+                          child: Text('إلغاء',style: TextStyle(color: isDark?Colors.white:Colors.black),),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
+                          style: ButtonStyle(backgroundColor:WidgetStatePropertyAll( isDark?AppColors.primary :Colors.blue)),
                           // Disabled لو مفيش أي تغيير
                           onPressed: hasChanges
                               ? () async {
