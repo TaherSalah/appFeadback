@@ -22,6 +22,20 @@ jobs:
       - name: Flutter Pub Get
         run: flutter pub get
 
+      # Setup keystore from GitHub Secrets
+      - name: Setup keystore
+        run: |
+          echo ${{ secrets.KEYSTORE_BASE64 }} | base64 --decode > android/key.jks
+
+      - name: Setup key.properties
+        run: |
+          cat <<EOF > android/key.properties
+          storePassword=${{ secrets.STORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=key.jks
+          EOF
+
       - name: Build APK
         run: flutter build apk --release
 
