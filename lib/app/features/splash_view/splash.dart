@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     await Future.delayed(const Duration(seconds: 2)); // وقت الشاشة التمهيدية
 
-    if (isFirstLaunch || currentVersion != lastVersion) {
+    if (isFirstLaunch || currentVersion == lastVersion) {
       // حفظ البيانات للمرة القادمة
       await prefs.setBool('first_launch', false);
       await prefs.setString('last_version', currentVersion);

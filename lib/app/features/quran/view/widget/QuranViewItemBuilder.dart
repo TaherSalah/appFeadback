@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum _QuranMenuAction {
   audio,
   orientation,
+  background
 }
 
 class QuranViewItemBuilder extends StatefulWidget {
@@ -23,6 +24,74 @@ class QuranViewItemBuilder extends StatefulWidget {
 
 class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     with SingleTickerProviderStateMixin {
+  bool get isDark => Theme.of(context).brightness == Brightness.dark;
+
+  Color _darkBackgroundColor = const Color(0xFF101623);
+  Color _lightBackgroundColor = const Color(0xFFF7F1E1);
+
+  Color get _backgroundColor =>
+      isDark ? _darkBackgroundColor : _lightBackgroundColor;
+  List<Color> get _darkColors => const [
+    Color(0xFF101623), // رمادي مزرق
+    Color(0xFF121212), // رمادي داكن
+    Color(0xFF0B1A14), // أخضر داكن
+    Color(0xFF0B1020), // أزرق داكن
+  ];
+
+  List<Color> get _lightColors => const [
+    Color(0xFFF7F1E1), // بيج فاتح
+    Color(0xFFFFFFFF), // أبيض
+    Color(0xFFF0F4F8), // رمادي فاتح مزرق
+    Color(0xFFFFF8E1), // أصفر فاتح دافئ
+  ];
+
+  void _showBackgroundColorPicker() async {
+    // يختار الباليت حسب الوضع الحالي
+    final colors = isDark ? _darkColors : _lightColors;
+
+    final Color? selected = await showModalBottomSheet<Color>(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: colors.map((c) {
+              final bool isSelected = c ==
+                  (isDark ? _darkBackgroundColor : _lightBackgroundColor);
+
+              return GestureDetector(
+                onTap: () => Navigator.of(context).pop(c),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: c,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isSelected ? Colors.white : Colors.white24,
+                      width: isSelected ? 3 : 1,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+
+    if (selected != null) {
+      setState(() {
+        if (isDark) {
+          _darkBackgroundColor = selected;
+        } else {
+          _lightBackgroundColor = selected;
+        }
+      });
+    }
+  }
 
   // late List<DrawerModle?> topBar = [
   //   DrawerModle(
@@ -336,7 +405,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       _bookmarkedPage != null && _currentPage == _bookmarkedPage;
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final ayahIconColor = isDark ? AppStyle.scondColors : AppColors.primary;
 
@@ -452,6 +520,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       case _QuranMenuAction.orientation:
                         _toggleMode(); // نفس الدالة اللي عندك لتبديل رأسي/أفقي
                         break;
+                      case _QuranMenuAction.background:
+                        _showBackgroundColorPicker(); // نفس الدالة اللي عندك لتبديل رأسي/أفقي
+                        break;
                     }
                   },
                   itemBuilder: (ctx) => [
@@ -488,6 +559,24 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                         ],
                       ),
                     ),
+                    PopupMenuItem(
+                      value: _QuranMenuAction.background,
+                      child: Row(
+                        children: [
+                          Icon(
+                            isDark ? Icons.dark_mode : Icons.light_mode,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            isDark ? 'الخلفية الليليه' : 'الخلفية النهارية',
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -504,6 +593,10 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             ),
           ),
         ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: _showBackgroundColorPicker,
+        //   child: const Icon(Icons.color_lens),
+        // ),
 
         body: Stack(
           children: [
@@ -549,7 +642,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                               },
                             )
                           : QuranLibraryScreen(
-                    backgroundColor:isDark? Colors.black:Color(0xFFF7F1E1),
+                    backgroundColor: _backgroundColor,
+
+                    // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
                               withPageView: true,
                               isDark: isDark,
                               pageIndex: _currentPage!,
