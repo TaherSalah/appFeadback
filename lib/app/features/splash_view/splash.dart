@@ -6,31 +6,6 @@ import 'package:rate_my_app/rate_my_app.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../main_view/MainView.dart';
 
-// class SplashScreen extends StatefulWidget {
-//   const SplashScreen({super.key});
-//
-//   @override
-//   State<SplashScreen> createState() => _SplashScreenState();
-// }
-//
-// class _SplashScreenState extends State<SplashScreen> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     Timer(
-//         const Duration(seconds: 3),
-//         () => Navigator.pushReplacement(context,
-//             MaterialPageRoute(builder: (context) => const MainView())));
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold(
-//       body: SplashItemBuilder(),
-//     );
-//   }
-// }
-// في main.dart أو SplashScreen
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -42,69 +17,94 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkFirstLaunch();
-  }
-
-  void _checkFirstLaunch() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isFirstLaunch = prefs.getBool('first_launch') ?? true;
-    String currentVersion = await PackageInfo.fromPlatform().then((info) => info.version);
-    String lastVersion = prefs.getString('last_version') ?? '';
-
-    await Future.delayed(const Duration(seconds: 2)); // وقت الشاشة التمهيدية
-
-    if (isFirstLaunch || currentVersion == lastVersion) {
-      // حفظ البيانات للمرة القادمة
-      await prefs.setBool('first_launch', false);
-      await prefs.setString('last_version', currentVersion);
-      final List<AppFeature> features = [
-        AppFeature(
-          title: 'مصحف تفاعلي',
-          description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
-          imagePath: 'assets/images/8.jpg',
-        ),
-
-        AppFeature(
-          title: 'مصحف تفاعلي',
-          description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
-          imagePath: 'assets/images/9.jpg',
-        ),
-
-        AppFeature(
-          title: 'مصحف تفاعلي',
-          description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
-          imagePath: 'assets/images/10.jpg',
-        ),
-        AppFeature(
-          title: 'أذكار متنوعة',
-          description: 'مجموعة شاملة من الأذكار اليومية مع تذكير وتتبع لعدد المرات',
-          imagePath: 'assets/images/11.jpg',
-        ),
-        AppFeature(
-          title: 'مواقيت الصلاة',
-          description: 'احصل على مواقيت الصلاة بدقة مع تحديد اتجاه القبلة وتنبيهات قبل الأذان',
-          imagePath: 'assets/images/13.jpg',
-        ),
-      ];
-      // الانتقال لصفحة What's New
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => WhatsNewScreen(isFirstTime: true,newFeatures: features,)),
-      );
-    } else {
-      // الانتقال للصفحة الرئيسية مباشرة
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainView()),
-      );
-    }
+    Timer(
+        const Duration(seconds: 3),
+        () => Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const MainView())));
   }
 
   @override
   Widget build(BuildContext context) {
-    return const SplashItemBuilder();
+    return const Scaffold(
+      body: SplashItemBuilder(),
+    );
   }
 }
+// في main.dart أو SplashScreen
+// class SplashScreen extends StatefulWidget {
+//   const SplashScreen({super.key});
+//
+//   @override
+//   State<SplashScreen> createState() => _SplashScreenState();
+// }
+//
+// class _SplashScreenState extends State<SplashScreen> {
+//   @override
+//   void initState() {
+//     super.initState();
+//     _checkFirstLaunch();
+//   }
+//
+//   void _checkFirstLaunch() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     bool isFirstLaunch = prefs.getBool('first_launch') ?? true;
+//     String currentVersion = await PackageInfo.fromPlatform().then((info) => info.version);
+//     String lastVersion = prefs.getString('last_version') ?? '';
+//
+//     await Future.delayed(const Duration(seconds: 2)); // وقت الشاشة التمهيدية
+//
+//     if (isFirstLaunch || currentVersion != lastVersion) {
+//       // حفظ البيانات للمرة القادمة
+//       await prefs.setBool('first_launch', false);
+//       await prefs.setString('last_version', currentVersion);
+//       final List<AppFeature> features = [
+//         AppFeature(
+//           title: 'مصحف تفاعلي',
+//           description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
+//           imagePath: 'assets/images/8.jpg',
+//         ),
+//
+//         AppFeature(
+//           title: 'مصحف تفاعلي',
+//           description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
+//           imagePath: 'assets/images/9.jpg',
+//         ),
+//
+//         AppFeature(
+//           title: 'مصحف تفاعلي',
+//           description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
+//           imagePath: 'assets/images/10.jpg',
+//         ),
+//         AppFeature(
+//           title: 'أذكار متنوعة',
+//           description: 'مجموعة شاملة من الأذكار اليومية مع تذكير وتتبع لعدد المرات',
+//           imagePath: 'assets/images/11.jpg',
+//         ),
+//         AppFeature(
+//           title: 'مواقيت الصلاة',
+//           description: 'احصل على مواقيت الصلاة بدقة مع تحديد اتجاه القبلة وتنبيهات قبل الأذان',
+//           imagePath: 'assets/images/13.jpg',
+//         ),
+//       ];
+//       // الانتقال لصفحة What's New
+//       Navigator.pushReplacement(
+//         context,
+//         MaterialPageRoute(builder: (context) => WhatsNewScreen(isFirstTime: true,newFeatures: features,)),
+//       );
+//     } else {
+//       // الانتقال للصفحة الرئيسية مباشرة
+//       Navigator.pushReplacement(
+//         context,
+//         MaterialPageRoute(builder: (context) => const MainView()),
+//       );
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const SplashItemBuilder();
+//   }
+// }
 class WhatsNewScreen extends StatefulWidget {
   final bool isFirstTime; // هل هذه أول مرة للمستخدم؟
   final List<AppFeature> newFeatures; // قائمة الميزات الجديدة

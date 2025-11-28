@@ -54,15 +54,36 @@ class UpdateService {
   final Dio _dio = Dio();
 
   // 🔗 غيّر هذا الرابط لـ API الخاص بك
-  static const String UPDATE_API_URL = 'https://your-api.com/app-update';
+  static const String UPDATE_API_URL = 'https://raw.githubusercontent.com/TaherSalah/update_app/refs/heads/master/update.json';
 
   /// فحص التحديثات من السيرفر
+  // Future<AppUpdateModel?> checkForUpdate() async {
+  //   try {
+  //     final response = await _dio.get(UPDATE_API_URL);
+  //
+  //     if (response.statusCode == 200) {
+  //       print("response.statusCode ${response.statusCode}");
+  //       print("response.statusCode ${response.data}");
+  //       return AppUpdateModel.fromJson(response.data);
+  //     }
+  //   } catch (e) {
+  //     print('❌ Error checking for updates: $e');
+  //   }
+  //   return null;
+  // }
+
   Future<AppUpdateModel?> checkForUpdate() async {
     try {
       final response = await _dio.get(UPDATE_API_URL);
 
       if (response.statusCode == 200) {
-        return AppUpdateModel.fromJson(response.data);
+        print("response.statusCode ${response.statusCode}");
+              print("response.statusCode ${response.data}");
+        // لو response.data String → حوله ل JSON
+        final Map<String, dynamic> jsonData =
+        response.data is String ? jsonDecode(response.data) : response.data;
+
+        return AppUpdateModel.fromJson(jsonData);
       }
     } catch (e) {
       print('❌ Error checking for updates: $e');
