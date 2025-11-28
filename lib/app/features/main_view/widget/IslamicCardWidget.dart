@@ -61,7 +61,7 @@ class IslamicCardWidget extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: GoogleFonts.beiruti(
-                fontSize: isTablet ? 9.sp : 12.sp,
+                fontSize: isTablet ? 9.sp : 16.sp,
                 fontWeight: FontWeight.w600,
                 shadows: [Shadow(color: Colors.black.withOpacity(0.1), blurRadius: 2)],
               ),

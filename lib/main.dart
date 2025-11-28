@@ -16,7 +16,6 @@ import 'app.dart';
 import 'app/core/cache/shard_pref/shardpref_obj.dart';
 import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/localization/localization_manager.dart';
-import 'app/features/aboutView/update.dart';
 import 'app/features/main_view/widget/IslamicCardWidget.dart';
 import 'app/core/utils/services_locator.dart';
 import 'app/core/utils/style/responsive_util.dart';
@@ -115,7 +114,7 @@ Future<void> main() async {
                   ..localization(),
             child: BlocBuilder<CentralizedCubit, CentralizedState>(
               builder: (context, state) {
-                return const UpdateCheckScreen(isArabic:true,child: MashkahApp());
+                return const MashkahApp();
               },
             )));
   });
