@@ -56,12 +56,12 @@ class IslamicCardWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset(iconPath, width: isTablet ? 22.w : 40.w, height: isTablet ? 22.w : 40.w, fit: BoxFit.fill),
+            Image.asset(iconPath, width: isTablet ? 30.w : 40.w, height: isTablet ? 30.w : 40.w, fit: BoxFit.fill),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
-                fontSize: isTablet ? 13 : 12.sp,
+              style: GoogleFonts.beiruti(
+                fontSize: isTablet ? 9.sp : 12.sp,
                 fontWeight: FontWeight.w600,
                 shadows: [Shadow(color: Colors.black.withOpacity(0.1), blurRadius: 2)],
               ),

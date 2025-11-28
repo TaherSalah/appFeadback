@@ -71,7 +71,7 @@ class Allazkarlistview extends StatelessWidget {
                       crossAxisCount: 2,
                       crossAxisSpacing: isTab ? 30 : 15,
                       mainAxisSpacing: isTab ? 20 : 25,
-                      childAspectRatio: isTab ? 1.9 : 01.80,
+                      childAspectRatio: isTab ? 2.9 : 01.80,
                       shrinkWrap: true,
                       physics:
                           const NeverScrollableScrollPhysics(), // عشان المكون يكون جزء من ScrollView تانية

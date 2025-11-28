@@ -1291,8 +1291,8 @@ class _RokiaScreenState extends State<RokiaScreen> {
           ),
 
           // ✅ الميني يظهر فقط بعد أول Play
-          bottomNavigationBar:
-          _showMiniPlayer ? _buildBottomPlayer(isDark) : null,
+          // bottomNavigationBar:
+          // _showMiniPlayer ? _buildBottomPlayer(isDark) : null,
         ),
 
         // خلفية معتمة عند فتح الـ Full

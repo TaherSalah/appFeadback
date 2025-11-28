@@ -225,424 +225,424 @@ class _AzkarMassaState extends State<AzkarMassa> {
 
   // ================== الـ Bottom Player (Mini) ==================
   // ✅ نفس كودك بالضبط، التغيير الوحيد: onTap بتاع زر التشغيل العائم
-  Widget _buildBottomPlayer(bool isDark) {
-    final theme = Theme.of(context);
-    final primaryColor =
-    isDark ? KColors.primaryColor : theme.colorScheme.primary;
-
-    final int durationMs = _duration.inMilliseconds;
-    final int positionMs = _position.inMilliseconds;
-
-    final double sliderMax = durationMs > 0 ? durationMs.toDouble() : 1.0;
-
-    final double sliderValue = durationMs > 0
-        ? positionMs.clamp(0, durationMs).toDouble()
-        : 0.0;
-
-    final modeText = _isDownloaded
-        ? 'وضع أوفلاين: يمكن التشغيل بدون إنترنت.'
-        : 'وضع أونلاين: يتطلب إنترنت للتشغيل إذا لم يتم التحميل.';
-
-    final bool isPlayingNow = _isPlaying;
-    final String stateText = isPlayingNow
-        ? 'جاري تشغيل الأذكار الآن'
-        : 'اضغط على زر التشغيل لسماع الأذكار';
-
-    final IconData stateIcon =
-    isPlayingNow ? Icons.graphic_eq_rounded : Icons.headphones_rounded;
-
-    final Color stateBg = isDark
-        ? (isPlayingNow
-        ? Colors.greenAccent.withOpacity(0.15)
-        : Colors.white.withOpacity(0.06))
-        : (isPlayingNow
-        ? Colors.green.withOpacity(0.10)
-        : primaryColor.withOpacity(0.08));
-
-    final Color stateFg = isDark
-        ? (isPlayingNow ? Colors.greenAccent : Colors.white70)
-        : (isPlayingNow ? Colors.green.shade700 : Colors.black87);
-
-    bool isTab = ResponsiveUtil.isTablet(context);
-
-    return SafeArea(
-      top: false,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: isTab ? 30 : 0),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(22),
-                topRight: Radius.circular(22),
-              ),
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: isDark
-                    ? const [Color(0xFF020617), Color(0xFF0F172A)]
-                    : [primaryColor.withOpacity(0.06), const Color(0xFFFFFFFF)],
-              ),
-              border: Border.all(
-                color: primaryColor.withOpacity(isDark ? 0.5 : 0.25),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: primaryColor.withOpacity(isDark ? 0.45 : 0.18),
-                  blurRadius: 16,
-                  spreadRadius: 0.5,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 32,
-                  height: 3,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white24
-                        : Colors.black.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                ),
-
-                Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                  child: Row(
-                    children: [
-                      Directionality(
-                        textDirection: ui.TextDirection.rtl,
-                        child: Text(
-                          'مشاري العفاسي',
-                          style: GoogleFonts.notoKufiArabic(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: isDark
-                                ? Colors.white
-                                : primaryColor.withOpacity(0.9),
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      if (_isDownloaded)
-                        const Icon(
-                          Icons.offline_pin_rounded,
-                          color: Colors.green,
-                          size: 20,
-                        ),
-                      const Spacer(),
-                      Directionality(
-                        textDirection: ui.TextDirection.rtl,
-                        child: Text(
-                          'أذكار المساء',
-                          style: GoogleFonts.notoKufiArabic(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: isDark ? Colors.white70 : Colors.black87,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 4),
-
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  transitionBuilder: (child, anim) =>
-                      FadeTransition(opacity: anim, child: child),
-                  child: Container(
-                    key: ValueKey<bool>(isPlayingNow),
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: stateBg,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Directionality(
-                      textDirection: ui.TextDirection.rtl,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(stateIcon, size: 16, color: stateFg),
-                          const SizedBox(width: 5),
-                          Text(
-                            stateText,
-                            style: GoogleFonts.cairo(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: stateFg,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 6),
-
-                Directionality(
-                  textDirection: ui.TextDirection.rtl,
-                  child: Text(
-                    modeText,
-                    style: GoogleFonts.cairo(
-                      fontSize: ResponsiveUtil.isTablet(context) ? 12 : 13,
-                      fontWeight: FontWeight.w400,
-                      color: isDark ? Colors.grey[300] : Colors.grey[700],
-                    ),
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-
-                const SizedBox(height: 6),
-
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: durationMs == 0
-                          ? null
-                          : () async {
-                        final int newMs =
-                        (positionMs - 10000).clamp(0, durationMs);
-                        await _audioManager.seek(
-                          Duration(milliseconds: newMs),
-                        );
-                      },
-                      icon: const Icon(Icons.replay_10_rounded),
-                      iconSize: 20,
-                      color: isDark
-                          ? Colors.white70
-                          : primaryColor.withOpacity(0.9),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                    Text(
-                      _formatDuration(_position),
-                      style: GoogleFonts.cairo(
-                        fontSize: 10,
-                        color: isDark ? Colors.white70 : Colors.black54,
-                      ),
-                    ),
-                    Expanded(
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          trackHeight: 3,
-                          thumbShape: const RoundSliderThumbShape(
-                            enabledThumbRadius: 7,
-                          ),
-                        ),
-                        child: Slider(
-                          value: sliderValue,
-                          min: 0,
-                          max: sliderMax,
-                          onChanged: durationMs == 0
-                              ? null
-                              : (v) async {
-                            await _audioManager.seek(
-                              Duration(milliseconds: v.toInt()),
-                            );
-                          },
-                          activeColor: primaryColor,
-                          inactiveColor: primaryColor.withOpacity(0.25),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      _formatDuration(_duration),
-                      style: GoogleFonts.cairo(
-                        fontSize: 10,
-                        color: isDark ? Colors.white70 : Colors.black54,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: durationMs == 0
-                          ? null
-                          : () async {
-                        final int newMs =
-                        (positionMs + 10000).clamp(0, durationMs);
-                        await _audioManager.seek(
-                          Duration(milliseconds: newMs),
-                        );
-                      },
-                      icon: const Icon(Icons.forward_10_rounded),
-                      iconSize: 20,
-                      color: isDark
-                          ? Colors.white70
-                          : primaryColor.withOpacity(0.9),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 6),
-
-                Align(
-                  alignment: Alignment.center,
-                  child: Directionality(
-                    textDirection: ui.TextDirection.rtl,
-                    child: _isDownloaded
-                        ? TextButton.icon(
-                      onPressed: null,
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 6),
-                        backgroundColor: isDark
-                            ? Colors.white.withOpacity(0.05)
-                            : Colors.green.withOpacity(0.08),
-                        shape: const StadiumBorder(),
-                      ),
-                      icon: const Icon(
-                        Icons.download_done_rounded,
-                        size: 18,
-                        color: Colors.green,
-                      ),
-                      label: Text(
-                        'تم تحميل الأذكار، تعمل بدون إنترنت',
-                        style: GoogleFonts.notoKufiArabic(
-                          fontSize: 12,
-                          color: isDark
-                              ? Colors.greenAccent
-                              : Colors.green.shade700,
-                        ),
-                      ),
-                    )
-                        : TextButton.icon(
-                      onPressed:
-                      _isDownloading ? null : _downloadAudio,
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 6),
-                        backgroundColor: isDark
-                            ? Colors.white.withOpacity(0.06)
-                            : primaryColor.withOpacity(0.08),
-                        shape: const StadiumBorder(),
-                      ),
-                      icon: _isDownloading
-                          ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                        ),
-                      )
-                          : Icon(
-                        Icons.download_rounded,
-                        size: 19,
-                        color: isDark
-                            ? Colors.greenAccent
-                            : primaryColor,
-                      ),
-                      label: Text(
-                        _isDownloading
-                            ? 'جاري تحميل أذكار المساء...'
-                            : 'تحميل للتشغيل بدون إنترنت',
-                        style: GoogleFonts.cairo(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? Colors.white
-                              : Colors.grey[900],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // زر التشغيل العائم (نفس زرّك لكن بتعديل onTap فقط)
-          Positioned(
-            top: isTab ? -4 : -20,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: GestureDetector(
-                onTap: () async {
-                  if (!_isDownloaded && _isBuffering) return;
-                  HapticFeedback.lightImpact();
-
-                  final bool willPlay = !_isPlaying;
-                  await _playOrPause();
-
-                  if (willPlay) {
-                    if (!mounted) return;
-                    setState(() {
-                      _showMiniPlayer = true;
-                      _showFullPlayer = true;
-                    });
-                  }
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  width: isTab ? 70 : 50,
-                  height: isTab ? 70 : 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [primaryColor, primaryColor.withOpacity(0.85)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: primaryColor.withOpacity(
-                            isPlayingNow ? 0.55 : 0.35),
-                        blurRadius: isPlayingNow ? 20 : 12,
-                        spreadRadius: isPlayingNow ? 1.8 : 0.6,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      transitionBuilder: (child, anim) =>
-                          ScaleTransition(scale: anim, child: child),
-                      child: (!_isDownloaded && _isBuffering)
-                          ? const SizedBox(
-                        key: ValueKey('loader'),
-                        width: 26,
-                        height: 26,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,
-                          valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                          : Icon(
-                        isPlayingNow
-                            ? Icons.pause_rounded
-                            : Icons.play_arrow_rounded,
-                        key: ValueKey<bool>(isPlayingNow),
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildBottomPlayer(bool isDark) {
+  //   final theme = Theme.of(context);
+  //   final primaryColor =
+  //   isDark ? KColors.primaryColor : theme.colorScheme.primary;
+  //
+  //   final int durationMs = _duration.inMilliseconds;
+  //   final int positionMs = _position.inMilliseconds;
+  //
+  //   final double sliderMax = durationMs > 0 ? durationMs.toDouble() : 1.0;
+  //
+  //   final double sliderValue = durationMs > 0
+  //       ? positionMs.clamp(0, durationMs).toDouble()
+  //       : 0.0;
+  //
+  //   final modeText = _isDownloaded
+  //       ? 'وضع أوفلاين: يمكن التشغيل بدون إنترنت.'
+  //       : 'وضع أونلاين: يتطلب إنترنت للتشغيل إذا لم يتم التحميل.';
+  //
+  //   final bool isPlayingNow = _isPlaying;
+  //   final String stateText = isPlayingNow
+  //       ? 'جاري تشغيل الأذكار الآن'
+  //       : 'اضغط على زر التشغيل لسماع الأذكار';
+  //
+  //   final IconData stateIcon =
+  //   isPlayingNow ? Icons.graphic_eq_rounded : Icons.headphones_rounded;
+  //
+  //   final Color stateBg = isDark
+  //       ? (isPlayingNow
+  //       ? Colors.greenAccent.withOpacity(0.15)
+  //       : Colors.white.withOpacity(0.06))
+  //       : (isPlayingNow
+  //       ? Colors.green.withOpacity(0.10)
+  //       : primaryColor.withOpacity(0.08));
+  //
+  //   final Color stateFg = isDark
+  //       ? (isPlayingNow ? Colors.greenAccent : Colors.white70)
+  //       : (isPlayingNow ? Colors.green.shade700 : Colors.black87);
+  //
+  //   bool isTab = ResponsiveUtil.isTablet(context);
+  //
+  //   return SafeArea(
+  //     top: false,
+  //     child: Stack(
+  //       clipBehavior: Clip.none,
+  //       children: [
+  //         Container(
+  //           margin: EdgeInsets.only(top: isTab ? 30 : 0),
+  //           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+  //           decoration: BoxDecoration(
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(22),
+  //               topRight: Radius.circular(22),
+  //             ),
+  //             gradient: LinearGradient(
+  //               begin: Alignment.topRight,
+  //               end: Alignment.bottomLeft,
+  //               colors: isDark
+  //                   ? const [Color(0xFF020617), Color(0xFF0F172A)]
+  //                   : [primaryColor.withOpacity(0.06), const Color(0xFFFFFFFF)],
+  //             ),
+  //             border: Border.all(
+  //               color: primaryColor.withOpacity(isDark ? 0.5 : 0.25),
+  //               width: 1,
+  //             ),
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: primaryColor.withOpacity(isDark ? 0.45 : 0.18),
+  //                 blurRadius: 16,
+  //                 spreadRadius: 0.5,
+  //                 offset: const Offset(0, -4),
+  //               ),
+  //             ],
+  //           ),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Container(
+  //                 width: 32,
+  //                 height: 3,
+  //                 margin: const EdgeInsets.only(bottom: 8),
+  //                 decoration: BoxDecoration(
+  //                   color: isDark
+  //                       ? Colors.white24
+  //                       : Colors.black.withOpacity(0.15),
+  //                   borderRadius: BorderRadius.circular(999),
+  //                 ),
+  //               ),
+  //
+  //               Padding(
+  //                 padding:
+  //                 const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+  //                 child: Row(
+  //                   children: [
+  //                     Directionality(
+  //                       textDirection: ui.TextDirection.rtl,
+  //                       child: Text(
+  //                         'مشاري العفاسي',
+  //                         style: GoogleFonts.notoKufiArabic(
+  //                           fontSize: 15,
+  //                           fontWeight: FontWeight.w700,
+  //                           color: isDark
+  //                               ? Colors.white
+  //                               : primaryColor.withOpacity(0.9),
+  //                         ),
+  //                         maxLines: 1,
+  //                         overflow: TextOverflow.ellipsis,
+  //                       ),
+  //                     ),
+  //                     const SizedBox(width: 6),
+  //                     if (_isDownloaded)
+  //                       const Icon(
+  //                         Icons.offline_pin_rounded,
+  //                         color: Colors.green,
+  //                         size: 20,
+  //                       ),
+  //                     const Spacer(),
+  //                     Directionality(
+  //                       textDirection: ui.TextDirection.rtl,
+  //                       child: Text(
+  //                         'أذكار المساء',
+  //                         style: GoogleFonts.notoKufiArabic(
+  //                           fontSize: 15,
+  //                           fontWeight: FontWeight.w700,
+  //                           color: isDark ? Colors.white70 : Colors.black87,
+  //                         ),
+  //                         maxLines: 1,
+  //                         overflow: TextOverflow.ellipsis,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //
+  //               const SizedBox(height: 4),
+  //
+  //               AnimatedSwitcher(
+  //                 duration: const Duration(milliseconds: 220),
+  //                 transitionBuilder: (child, anim) =>
+  //                     FadeTransition(opacity: anim, child: child),
+  //                 child: Container(
+  //                   key: ValueKey<bool>(isPlayingNow),
+  //                   padding:
+  //                   const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+  //                   decoration: BoxDecoration(
+  //                     color: stateBg,
+  //                     borderRadius: BorderRadius.circular(999),
+  //                   ),
+  //                   child: Directionality(
+  //                     textDirection: ui.TextDirection.rtl,
+  //                     child: Row(
+  //                       mainAxisSize: MainAxisSize.min,
+  //                       children: [
+  //                         Icon(stateIcon, size: 16, color: stateFg),
+  //                         const SizedBox(width: 5),
+  //                         Text(
+  //                           stateText,
+  //                           style: GoogleFonts.cairo(
+  //                             fontSize: 11,
+  //                             fontWeight: FontWeight.w600,
+  //                             color: stateFg,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //
+  //               const SizedBox(height: 6),
+  //
+  //               Directionality(
+  //                 textDirection: ui.TextDirection.rtl,
+  //                 child: Text(
+  //                   modeText,
+  //                   style: GoogleFonts.cairo(
+  //                     fontSize: ResponsiveUtil.isTablet(context) ? 12 : 13,
+  //                     fontWeight: FontWeight.w400,
+  //                     color: isDark ? Colors.grey[300] : Colors.grey[700],
+  //                   ),
+  //                   maxLines: 2,
+  //                   textAlign: TextAlign.center,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
+  //               ),
+  //
+  //               const SizedBox(height: 6),
+  //
+  //               Row(
+  //                 children: [
+  //                   IconButton(
+  //                     onPressed: durationMs == 0
+  //                         ? null
+  //                         : () async {
+  //                       final int newMs =
+  //                       (positionMs - 10000).clamp(0, durationMs);
+  //                       await _audioManager.seek(
+  //                         Duration(milliseconds: newMs),
+  //                       );
+  //                     },
+  //                     icon: const Icon(Icons.replay_10_rounded),
+  //                     iconSize: 20,
+  //                     color: isDark
+  //                         ? Colors.white70
+  //                         : primaryColor.withOpacity(0.9),
+  //                     visualDensity: VisualDensity.compact,
+  //                   ),
+  //                   Text(
+  //                     _formatDuration(_position),
+  //                     style: GoogleFonts.cairo(
+  //                       fontSize: 10,
+  //                       color: isDark ? Colors.white70 : Colors.black54,
+  //                     ),
+  //                   ),
+  //                   Expanded(
+  //                     child: SliderTheme(
+  //                       data: SliderTheme.of(context).copyWith(
+  //                         trackHeight: 3,
+  //                         thumbShape: const RoundSliderThumbShape(
+  //                           enabledThumbRadius: 7,
+  //                         ),
+  //                       ),
+  //                       child: Slider(
+  //                         value: sliderValue,
+  //                         min: 0,
+  //                         max: sliderMax,
+  //                         onChanged: durationMs == 0
+  //                             ? null
+  //                             : (v) async {
+  //                           await _audioManager.seek(
+  //                             Duration(milliseconds: v.toInt()),
+  //                           );
+  //                         },
+  //                         activeColor: primaryColor,
+  //                         inactiveColor: primaryColor.withOpacity(0.25),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Text(
+  //                     _formatDuration(_duration),
+  //                     style: GoogleFonts.cairo(
+  //                       fontSize: 10,
+  //                       color: isDark ? Colors.white70 : Colors.black54,
+  //                     ),
+  //                   ),
+  //                   IconButton(
+  //                     onPressed: durationMs == 0
+  //                         ? null
+  //                         : () async {
+  //                       final int newMs =
+  //                       (positionMs + 10000).clamp(0, durationMs);
+  //                       await _audioManager.seek(
+  //                         Duration(milliseconds: newMs),
+  //                       );
+  //                     },
+  //                     icon: const Icon(Icons.forward_10_rounded),
+  //                     iconSize: 20,
+  //                     color: isDark
+  //                         ? Colors.white70
+  //                         : primaryColor.withOpacity(0.9),
+  //                     visualDensity: VisualDensity.compact,
+  //                   ),
+  //                 ],
+  //               ),
+  //
+  //               const SizedBox(height: 6),
+  //
+  //               Align(
+  //                 alignment: Alignment.center,
+  //                 child: Directionality(
+  //                   textDirection: ui.TextDirection.rtl,
+  //                   child: _isDownloaded
+  //                       ? TextButton.icon(
+  //                     onPressed: null,
+  //                     style: TextButton.styleFrom(
+  //                       padding: const EdgeInsets.symmetric(
+  //                           horizontal: 16, vertical: 6),
+  //                       backgroundColor: isDark
+  //                           ? Colors.white.withOpacity(0.05)
+  //                           : Colors.green.withOpacity(0.08),
+  //                       shape: const StadiumBorder(),
+  //                     ),
+  //                     icon: const Icon(
+  //                       Icons.download_done_rounded,
+  //                       size: 18,
+  //                       color: Colors.green,
+  //                     ),
+  //                     label: Text(
+  //                       'تم تحميل الأذكار، تعمل بدون إنترنت',
+  //                       style: GoogleFonts.notoKufiArabic(
+  //                         fontSize: 12,
+  //                         color: isDark
+  //                             ? Colors.greenAccent
+  //                             : Colors.green.shade700,
+  //                       ),
+  //                     ),
+  //                   )
+  //                       : TextButton.icon(
+  //                     onPressed:
+  //                     _isDownloading ? null : _downloadAudio,
+  //                     style: TextButton.styleFrom(
+  //                       padding: const EdgeInsets.symmetric(
+  //                           horizontal: 16, vertical: 6),
+  //                       backgroundColor: isDark
+  //                           ? Colors.white.withOpacity(0.06)
+  //                           : primaryColor.withOpacity(0.08),
+  //                       shape: const StadiumBorder(),
+  //                     ),
+  //                     icon: _isDownloading
+  //                         ? const SizedBox(
+  //                       width: 16,
+  //                       height: 16,
+  //                       child: CircularProgressIndicator(
+  //                         strokeWidth: 2,
+  //                       ),
+  //                     )
+  //                         : Icon(
+  //                       Icons.download_rounded,
+  //                       size: 19,
+  //                       color: isDark
+  //                           ? Colors.greenAccent
+  //                           : primaryColor,
+  //                     ),
+  //                     label: Text(
+  //                       _isDownloading
+  //                           ? 'جاري تحميل أذكار المساء...'
+  //                           : 'تحميل للتشغيل بدون إنترنت',
+  //                       style: GoogleFonts.cairo(
+  //                         fontSize: 13,
+  //                         fontWeight: FontWeight.w600,
+  //                         color: isDark
+  //                             ? Colors.white
+  //                             : Colors.grey[900],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //
+  //         // زر التشغيل العائم (نفس زرّك لكن بتعديل onTap فقط)
+  //         Positioned(
+  //           top: isTab ? -4 : -20,
+  //           left: 0,
+  //           right: 0,
+  //           child: Center(
+  //             child: GestureDetector(
+  //               onTap: () async {
+  //                 if (!_isDownloaded && _isBuffering) return;
+  //                 HapticFeedback.lightImpact();
+  //
+  //                 final bool willPlay = !_isPlaying;
+  //                 await _playOrPause();
+  //
+  //                 if (willPlay) {
+  //                   if (!mounted) return;
+  //                   setState(() {
+  //                     _showMiniPlayer = true;
+  //                     _showFullPlayer = true;
+  //                   });
+  //                 }
+  //               },
+  //               child: AnimatedContainer(
+  //                 duration: const Duration(milliseconds: 220),
+  //                 width: isTab ? 70 : 50,
+  //                 height: isTab ? 70 : 50,
+  //                 decoration: BoxDecoration(
+  //                   shape: BoxShape.circle,
+  //                   gradient: LinearGradient(
+  //                     colors: [primaryColor, primaryColor.withOpacity(0.85)],
+  //                     begin: Alignment.topLeft,
+  //                     end: Alignment.bottomRight,
+  //                   ),
+  //                   boxShadow: [
+  //                     BoxShadow(
+  //                       color: primaryColor.withOpacity(
+  //                           isPlayingNow ? 0.55 : 0.35),
+  //                       blurRadius: isPlayingNow ? 20 : 12,
+  //                       spreadRadius: isPlayingNow ? 1.8 : 0.6,
+  //                       offset: const Offset(0, 4),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 child: Center(
+  //                   child: AnimatedSwitcher(
+  //                     duration: const Duration(milliseconds: 200),
+  //                     transitionBuilder: (child, anim) =>
+  //                         ScaleTransition(scale: anim, child: child),
+  //                     child: (!_isDownloaded && _isBuffering)
+  //                         ? const SizedBox(
+  //                       key: ValueKey('loader'),
+  //                       width: 26,
+  //                       height: 26,
+  //                       child: CircularProgressIndicator(
+  //                         strokeWidth: 3,
+  //                         valueColor:
+  //                         AlwaysStoppedAnimation<Color>(Colors.white),
+  //                       ),
+  //                     )
+  //                         : Icon(
+  //                       isPlayingNow
+  //                           ? Icons.pause_rounded
+  //                           : Icons.play_arrow_rounded,
+  //                       key: ValueKey<bool>(isPlayingNow),
+  //                       color: Colors.white,
+  //                       size: 32,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // ================== المشغّل الكامل (Full Player Overlay) ==================
 // ضيف الثوابت/المتغيرات دي جوّه الـ State عندك (فوق):
@@ -1278,8 +1278,8 @@ class _AzkarMassaState extends State<AzkarMassa> {
           ),
 
           // ✅ الميني يظهر فقط بعد أول Play
-          bottomNavigationBar:
-          _showMiniPlayer ? _buildBottomPlayer(isDark) : null,
+          // bottomNavigationBar:
+          // _showMiniPlayer ? _buildBottomPlayer(isDark) : null,
         ),
 
         // طبقة تغطي الخلفية لما الـ Full ظاهر
