@@ -11,7 +11,10 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quran_library/quran.dart';
 import 'package:rate_my_app/rate_my_app.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:permission_handler/permission_handler.dart';
 import 'app.dart';
 import 'app/core/cache/shard_pref/shardpref_obj.dart';
 import 'app/core/cubit/centralized_cubit.dart';
@@ -22,7 +25,7 @@ import 'app/core/utils/style/responsive_util.dart';
 import 'app/core/widgets/custom_text_widget.dart';
 import 'app/features/Khatmah/data/khatmah_model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
+import 'package:flutter/material.dart';
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
 //   tz.initializeTimeZones();
@@ -63,7 +66,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // ← أول سطر دائمًا
   await QuranLibrary.init();
+  // تهيئة خدمة الإشعارات
+  await NotificationService().initialize();
 
+  // جدولة الإشعارات الافتراضية
+  await _setupDefaultNotifications();
   // SystemChrome و أي platform channels لازم بعد ensureInitialized
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -481,4 +488,245 @@ Widget whatsNewItem(IconData icon, String title, String desc) {
       ],
     ),
   );
+}
+
+
+
+// إعداد الإشعارات الافتراضية
+Future<void> _setupDefaultNotifications() async {
+  final notificationService = NotificationService();
+
+  // جدولة أذكار الصباح - الساعة 6 صباحاً
+  await notificationService.scheduleMorningAthkar(6, 0);
+
+  // جدولة أذكار المساء - الساعة 6 مساءً
+  await notificationService.scheduleEveningAthkar(18, 0);
+
+  // جدولة ورد القرآن - الساعة 8 مساءً
+  await notificationService.scheduleDailyQuranWird(20, 0);
+
+  // جدولة حديث اليوم - الساعة 12 ظهراً
+  await notificationService.scheduleDailyHadith(12, 0);
+}
+class NotificationService {
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+
+  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+
+  // تهيئة الإشعارات
+  Future<void> initialize() async {
+    tz.initializeTimeZones();
+
+    // إعدادات Android
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    // إعدادات iOS
+    const iosSettings = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    const initSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
+
+    await _notifications.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: _onNotificationTapped,
+    );
+
+    // طلب الأذونات
+    await _requestPermissions();
+  }
+
+  // طلب الأذونات
+  Future<void> _requestPermissions() async {
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+  }
+
+  // عند النقر على الإشعار
+  void _onNotificationTapped(NotificationResponse response) {
+    // يمكنك هنا التنقل إلى صفحة معينة
+    print('تم النقر على الإشعار: ${response.payload}');
+  }
+
+  // جدولة أذكار الصباح
+  Future<void> scheduleMorningAthkar(int hour, int minute) async {
+    await _scheduleNotification(
+      id: 1,
+      title: '🌅 أذكار الصباح',
+      body: 'حان وقت أذكار الصباح، بارك الله في صباحك',
+      hour: hour,
+      minute: minute,
+      payload: 'morning_athkar',
+    );
+  }
+
+  // جدولة أذكار المساء
+  Future<void> scheduleEveningAthkar(int hour, int minute) async {
+    await _scheduleNotification(
+      id: 2,
+      title: '🌙 أذكار المساء',
+      body: 'حان وقت أذكار المساء، جعل الله مساءك مباركاً',
+      hour: hour,
+      minute: minute,
+      payload: 'evening_athkar',
+    );
+  }
+
+  // جدولة ورد قراني يومي
+  Future<void> scheduleDailyQuranWird(int hour, int minute) async {
+    await _scheduleNotification(
+      id: 3,
+      title: '📖 ورد القرآن اليومي',
+      body: 'لا تنسَ وردك اليومي من القرآن الكريم',
+      hour: hour,
+      minute: minute,
+      payload: 'quran_wird',
+    );
+  }
+
+  // جدولة تنبيه بعد صلاة
+  Future<void> scheduleAfterPrayerReminder(String prayerName, int afterMinutes) async {
+    // هنا يمكنك حساب الوقت بناءً على وقت الصلاة
+    // مثال: بعد صلاة الفجر بـ 15 دقيقة
+    await _scheduleNotification(
+      id: 10,
+      title: '🤲 تذكير بعد صلاة $prayerName',
+      body: 'وقت الأذكار والدعاء بعد الصلاة',
+      hour: 6, // مثال
+      minute: 15,
+      payload: 'after_prayer',
+    );
+  }
+
+  // جدولة تنبيه بحديث يومي
+  Future<void> scheduleDailyHadith(int hour, int minute) async {
+    await _scheduleNotification(
+      id: 4,
+      title: '📿 حديث اليوم',
+      body: 'اطلع على الحديث الشريف لهذا اليوم',
+      hour: hour,
+      minute: minute,
+      payload: 'daily_hadith',
+    );
+  }
+
+  // الدالة الأساسية للجدولة
+  Future<void> _scheduleNotification({
+    required int id,
+    required String title,
+    required String body,
+    required int hour,
+    required int minute,
+    String? payload,
+  }) async {
+    await _notifications.zonedSchedule(
+      id,
+      title,
+      body,
+      _nextInstanceOfTime(hour, minute),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'athkar_channel',
+          'أذكار وأوراد',
+          channelDescription: 'إشعارات الأذكار والأوراد اليومية',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          // sound: RawResourceAndroidNotificationSound('azan'),
+        ),
+        iOS: const DarwinNotificationDetails(
+          // sound: 'azan.aiff',
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+      UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+      payload: payload,
+    );
+  }
+
+  // حساب الوقت التالي للتنبيه
+  tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
+    // إذا كان الوقت قد مضى اليوم، جدوله لليوم التالي
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    return scheduledDate;
+  }
+
+  // إلغاء إشعار معين
+  Future<void> cancelNotification(int id) async {
+    await _notifications.cancel(id);
+  }
+
+  // إلغاء جميع الإشعارات
+  Future<void> cancelAllNotifications() async {
+    await _notifications.cancelAll();
+  }
+
+  // عرض إشعار فوري (للتجربة)
+  Future<void> showInstantNotification(String title, String body) async {
+    const androidDetails = AndroidNotificationDetails(
+      'instant_channel',
+      'إشعارات فورية',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    const iosDetails = DarwinNotificationDetails();
+
+    await _notifications.show(
+      0,
+      title,
+      body,
+      const NotificationDetails(android: androidDetails, iOS: iosDetails),
+    );
+  }
+
+  // الحصول على الإشعارات المجدولة
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    return await _notifications.pendingNotificationRequests();
+  }
+
+  // دالة عامة للجدولة (للاستخدام المرن)
+  Future<void> scheduleNotification({
+    required int id,
+    required String title,
+    required String body,
+    required int hour,
+    required int minute,
+    String? payload,
+  }) async {
+    await _scheduleNotification(
+      id: id,
+      title: title,
+      body: body,
+      hour: hour,
+      minute: minute,
+      payload: payload,
+    );
+  }
 }

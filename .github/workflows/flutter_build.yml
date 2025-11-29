@@ -25,7 +25,8 @@ jobs:
       # Setup keystore from GitHub Secrets
       - name: Setup keystore
         run: |
-          echo ${{ secrets.KEYSTORE_BASE64 }} | base64 --decode > android/key.jks
+          echo ${{ secrets.KEYSTORE_BASE64 }} | base64 --decode > android/app/key.jks
+
       - name: Setup key.properties
         run: |
           cat <<EOF > android/key.properties
@@ -34,6 +35,7 @@ jobs:
           keyAlias=${{ secrets.KEY_ALIAS }}
           storeFile=key.jks
           EOF
+
       - name: Build APK
         run: flutter build apk --release
 
