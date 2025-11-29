@@ -15,8 +15,10 @@ import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
+import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main_view/controllar/MainController.dart';
 import '../../core/shard/widgets/def_text_widget.dart';
 
 
@@ -34,59 +36,24 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:math' as math;
 
 import '../messa_view/azkar_massa.dart';
-
-
 class TimingScreen extends StatefulWidget {
   const TimingScreen({super.key});
 
   @override
-  State<TimingScreen> createState() => _TimingScreenState();
+  _TimingScreenState createState() => _TimingScreenState();
 }
 
-class _TimingScreenState extends State<TimingScreen> {
-  static const _kCountryKey = 'selected_country';
-  static const _kCityKey = 'selected_city';
-
-  Future<void> _saveSelection() async {
-    final p = await SharedPreferences.getInstance();
-    if (selectedCountry != null) await p.setString(_kCountryKey, selectedCountry!);
-    if (selectedCity != null) await p.setString(_kCityKey, selectedCity!);
+class _TimingScreenState extends StateMVC<TimingScreen> {
+  _TimingScreenState() : super(MainController()) {
+    con = controller as MainController;
   }
 
-  Future<void> _loadSelection() async {
-    final p = await SharedPreferences.getInstance();
-    final savedCountry = p.getString(_kCountryKey);
-    final savedCity = p.getString(_kCityKey);
+  late MainController con;
 
-    // إذا وُجدت "مصر" اجعلها الافتراض، وإلا استخدم المحفوظ أو أول دولة
-    final defaultCountry = countries.keys.contains('مصر') ? 'مصر' : countries.keys.first;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
-    selectedCountry = savedCountry != null && countries.keys.contains(savedCountry)
-        ? savedCountry
-        : defaultCountry;
-
-    cities = (countries[selectedCountry!] as Map<String, dynamic>)..removeWhere((k, v) => v == null);
-
-    selectedCity = (savedCity != null && cities.keys.contains(savedCity))
-        ? savedCity
-        : cities.keys.first;
-  }
-  AudioPlayer _audioPlayer = AudioPlayer();
-  Map<String, dynamic> countries = {}; // لخزن الدول
-  Map<String, dynamic> cities = {}; // لخزن المدن بناءً على الدولة
-  String? selectedCountry; // لتخزين الدولة المختارة
-  String? selectedCity; // لتخزين المدينة المختارة
-  PrayerTimes? prayerTimes;
-  Timer? countdownTimer;
-  DateTime? previousTime;
-  DateTime? targetTime;
-
-  // المتغيرات الناقصة
-  String nextPrayer = "";
-  String remainingTimeText = "";
-  double progressValue = 0.0; // إضافة المتغير لحفظ التقدم في العد التنازلي
-
-  Map<String, String> adhanSounds = {
+  // أصوات الأذان لكل صلاة
+  final Map<String, String> adhanSounds = {
     "الفجر": "assets/sounds/fajr_adhan.mp3",
     "الظهر": "assets/sounds/dhuhr_adhan.mp3",
     "العصر": "assets/sounds/asr_adhan.mp3",
@@ -94,11 +61,22 @@ class _TimingScreenState extends State<TimingScreen> {
     "العشاء": "assets/sounds/isha_adhan.mp3",
   };
 
+  bool _adhanScheduled = false;
+
   @override
   void initState() {
     super.initState();
-    loadCountries();
+
+    // تأكد أن الكنترولر قرأ الموقع والمواقيت من الـ SharedPreferences
+    con.refreshPrayerTimesFromPrefs();
+
+    // بعد أول فريم حاول جدول الأذان لليوم
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scheduleAllAdhanForToday();
+    });
   }
+
+  // التأكد من صلاحيات الموقع
   Future<bool> _ensureLocationPermission() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return false;
@@ -107,35 +85,41 @@ class _TimingScreenState extends State<TimingScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
       return false;
     }
     return true;
   }
 
+  // دالة حساب المسافة (Haversine)
   double _haversine(double lat1, double lon1, double lat2, double lon2) {
     const R = 6371.0;
     final dLat = (lat2 - lat1) * (math.pi / 180);
     final dLon = (lon2 - lon1) * (math.pi / 180);
-    final a = math.sin(dLat/2)*math.sin(dLat/2) +
-        math.cos(lat1*math.pi/180)*math.cos(lat2*math.pi/180) *
-            math.sin(dLon/2)*math.sin(dLon/2);
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(lat1 * math.pi / 180) *
+            math.cos(lat2 * math.pi / 180) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
     final c = 2 * math.asin(math.sqrt(a));
     return R * c;
   }
 
-
-
-
+  // تحديد أقرب مدينة بالـ GPS وتحديث الكنترولر
   Future<void> _selectByLocation() async {
     final ok = await _ensureLocationPermission();
     if (!ok) return;
 
-    final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    final pos = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
     final userLat = pos.latitude;
     final userLng = pos.longitude;
 
-    // ابحث عن أقرب مدينة عبر جميع الدول/المدن في ملفك
+    final countries = con.countries;
+    if (countries.isEmpty) return;
+
     String? bestCountry;
     String? bestCity;
     double bestDist = double.infinity;
@@ -155,53 +139,52 @@ class _TimingScreenState extends State<TimingScreen> {
       });
     });
 
-    KHelper.showSuccess(message:' تم تحديد الموقع: $bestCountry - $bestCity');
-
     if (bestCountry != null && bestCity != null) {
-      setState(() {
-        selectedCountry = bestCountry;
-        cities = countries[selectedCountry!] ?? {};
-        selectedCity = bestCity;
-      });
-      await _saveSelection();
-      calculatePrayerTimes();
+      await con.setLocation(country: bestCountry!, city: bestCity!);
+      setState(() {});
+      _scheduleAllAdhanForToday();
+      KHelper.showSuccess(
+          message: ' تم تحديد الموقع: $bestCountry - $bestCity');
     }
   }
 
-  // Future<void> loadCountries() async {
-  //   final String response =
-  //   await rootBundle.loadString('assets/images/egypt_governorates.json');
-  //   final data = json.decode(response) as Map<String, dynamic>;
-  //   setState(() {
-  //     countries = data;
-  //     selectedCountry = countries.keys.first;
-  //     cities = countries[selectedCountry!] ?? {};
-  //     selectedCity = cities.keys.first;
-  //     calculatePrayerTimes();
-  //   });
-  // }
-  Future<void> loadCountries() async {
-    final String response = await rootBundle.loadString('assets/images/egypt_governorates.json');
-    final data = json.decode(response) as Map<String, dynamic>;
+  // تشغيل صوت الأذان
+  void _playAdhanSound(String prayerName) {
+    final sound =
+        adhanSounds[prayerName] ?? "assets/sounds/default_adhan.mp3";
 
-    countries = data;
-    await _loadSelection();   // يحدد selectedCountry و selectedCity ويجهّز cities
-    setState(() {});          // لتحديث القوائم
-    calculatePrayerTimes();   // احسب المواقيت بعد التثبيت
+    _audioPlayer.setAsset(sound).then((_) {
+      _audioPlayer.play();
+    }).catchError((e) {
+      debugPrint("Error playing adhan sound: $e");
+    });
   }
 
-  void calculatePrayerTimes() {
-    if (selectedCity == null) return;
+  // جدولة الأذان لصلاة معينة
+  void _scheduleAdhan(DateTime prayerTime, String prayerName) {
+    final now = DateTime.now();
+    final duration = prayerTime.difference(now);
 
-    final lat = cities[selectedCity]!["lat"];
-    final lng = cities[selectedCity]!["lng"];
-    final coordinates = Coordinates(lat, lng);
-    final params = CalculationMethod.egyptian.getParameters();
-    final date = DateComponents.from(DateTime.now());
-    final times = PrayerTimes(coordinates, date, params);
+    if (duration.isNegative) {
+      return;
+    }
+
+    Future.delayed(duration, () {
+      _playAdhanSound(prayerName);
+    });
+
+    debugPrint("هيشتغل أذان $prayerName بعد ${duration.inMinutes} دقيقة");
+  }
+
+  // جدولة جميع الأذان لليوم الحالي بناءً على prayerTimes في الكنترولر
+  void _scheduleAllAdhanForToday() {
+    if (_adhanScheduled) return; // لا تكرر الجدولة في نفس الجلسة
+    final times = con.prayerTimes;
+    if (times == null) return;
 
     final now = DateTime.now();
-    final prayers = {
+
+    final Map<String, DateTime> prayers = {
       "الفجر": times.fajr,
       "الشروق": times.sunrise,
       "الظهر": times.dhuhr,
@@ -210,215 +193,61 @@ class _TimingScreenState extends State<TimingScreen> {
       "العشاء": times.isha,
     };
 
-    DateTime? next;
-    String? upcoming;
-
-    for (var entry in prayers.entries) {
-      if (now.isBefore(entry.value)) {
-        next = entry.value;
-        upcoming = entry.key;
-        break;
+    prayers.forEach((name, time) {
+      if (time.isAfter(now)) {
+        _scheduleAdhan(time, name);
       }
-    }
-
-    if (next == null) {
-      final tomorrow = DateTime.now().add(const Duration(days: 1));
-      final nextFajr =
-          PrayerTimes(coordinates, DateComponents.from(tomorrow), params).fajr;
-      next = nextFajr;
-      upcoming = "الفجر";
-    }
-
-    final iqama = getIqamaTime(upcoming!, next);
-    previousTime = DateTime.now();
-    targetTime = next;
-
-    // بدء العد التنازلي للصلاة
-    startCountdown(
-      from: DateTime.now(),
-      to: next,
-      isIqama: false,
-      onDone: () {
-        if (iqama.year != 0) {
-          previousTime = next;
-          targetTime = iqama;
-          startCountdown(
-            from: DateTime.now(),
-            to: iqama,
-            isIqama: true,
-            onDone: () {
-              calculatePrayerTimes();
-            },
-          );
-        } else {
-          calculatePrayerTimes();
-        }
-      },
-    );
-
-    // تشغيل صوت الأذان عند وقت الصلاة
-    scheduleAdhan(next, upcoming);
-
-    setState(() {
-      prayerTimes = times;
-    });
-  }
-
-  // دالة لتشغيل صوت الأذان
-  void playAdhanSound(DateTime prayerTime, String prayerName) {
-    final sound = adhanSounds[prayerName] ?? "assets/sounds/default_adhan.mp3";
-
-    // استخدام AudioPlayer من just_audio لتشغيل الصوت من الـ assets
-    _audioPlayer.setAsset(sound).then((_) {
-      _audioPlayer.play();
-    }).catchError((e) {
-      print("Error playing sound: $e");
-    });
-  }
-
-  // دالة لتجدول الأذان عند الصلاة
-  void scheduleAdhan(DateTime prayerTime, String prayerName) {
-    final now = DateTime.now();
-    final duration = prayerTime.difference(now);
-
-    if (duration.isNegative) {
-      // يعني الوقت فات بالفعل
-      print("وقت $prayerName فات خلاص");
-      return;
-    }
-
-    // نعمل Timer لحد ما ييجي وقت الصلاة
-    Future.delayed(duration, () {
-      playAdhanSound(prayerTime, prayerName);
     });
 
-    print("هيشتغل أذان $prayerName بعد ${duration.inMinutes} دقيقة");
-  }
-  // void scheduleAdhan(DateTime prayerTime, String prayerName) {
-  //   // ضبط وقت الاختبار (الآن)
-  //   final now = DateTime.now();
-  //   final duration = Duration(seconds: 0); // يتم تشغيل الأذان فورًا
-  //
-  //   // نعمل Timer لحد ما ييجي وقت الصلاة
-  //   Future.delayed(duration, () {
-  //     playAdhanSound(prayerTime, prayerName);  // شغل الصوت مباشرة عند الاختبار
-  //   });
-  //
-  //   print("هيشتغل أذان $prayerName الآن مباشرة");
-  // }
-
-  DateTime getIqamaTime(String prayerName, DateTime adhanTime) {
-    switch (prayerName) {
-      case "الفجر":
-        return adhanTime.add(const Duration(minutes: 20));
-      case "المغرب":
-        return adhanTime.add(const Duration(minutes: 5));
-      case "الشروق":
-        return DateTime(0); // لا إقامة
-      default:
-        return adhanTime.add(const Duration(minutes: 10));
-    }
-  }
-
-  void stopAdhanSound() {
-    _audioPlayer.stop();
-  }
-
-  // دالة لبدء العد التنازلي
-  void startCountdown({
-    required DateTime from,
-    required DateTime to,
-    required bool isIqama,
-    required VoidCallback onDone,
-  }) {
-    countdownTimer?.cancel();
-
-    countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final now = DateTime.now();
-      final total = to.difference(from).inSeconds;
-      final remaining = to.difference(now).inSeconds;
-
-      if (remaining <= 0) {
-        countdownTimer?.cancel();
-        onDone();
-        return;
-      }
-
-      final progress = 1.0 - (remaining / total);
-      final h = remaining ~/ 3600;
-      final m = (remaining % 3600) ~/ 60;
-      final s = remaining % 60;
-
-      setState(() {
-        progressValue = progress.clamp(0.0, 1.0); // تحديث التقدم
-        remainingTimeText =
-        "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
-        nextPrayer = isIqama
-            ? "الإقامة ${getNextPrayerName(targetTime!)}"
-            : getNextPrayerName(targetTime!);
-      });
-    });
-  }
-
-  String getNextPrayerName(DateTime time) {
-    final prayers = {
-      "الفجر": prayerTimes?.fajr,
-      "الشروق": prayerTimes?.sunrise,
-      "الظهر": prayerTimes?.dhuhr,
-      "العصر": prayerTimes?.asr,
-      "المغرب": prayerTimes?.maghrib,
-      "العشاء": prayerTimes?.isha,
-    };
-    for (var entry in prayers.entries) {
-      if (entry.value?.hour == time.hour &&
-          entry.value?.minute == time.minute) {
-        return entry.key;
-      }
-    }
-    return " للصلاة";
-  }
-
-  String formatTime(DateTime time) {
-    return DateFormat.jm().format(time);
+    _adhanScheduled = true;
   }
 
   @override
   void dispose() {
-    countdownTimer?.cancel();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isDark =  Theme.of(context).brightness == Brightness.dark;
-    final baseColor =  const Color(AppStyle.primaryColor);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = const Color(AppStyle.primaryColor);
+
+    final countries = con.countries;
+    final cities = con.cities;
+    final selectedCountry = con.selectedCountry;
+    final selectedCity = con.selectedCity;
+    final prayerTimes = con.prayerTimes;
+    final nextPrayer = con.nextPrayer;
+    final remainingTimeText = con.remainingTimeText;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize:
         Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
         child: AppBar(
-          leading:  CupertinoNavigationBarBackButton(
-            color: isDark ?Colors.white:Colors.black,
+          leading: CupertinoNavigationBarBackButton(
+            color: isDark ? Colors.white : Colors.black,
           ),
           centerTitle: true,
           title: Text(
             "مواقيت الصلاة",
             style: GoogleFonts.cairo(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize:
+              MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+            ),
           ),
         ),
       ),
-      // backgroundColor: AppStyle.bgColors,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         child: Directionality(
           textDirection: ui.TextDirection.rtl,
           child: Column(
-
             children: [
+              // اختيار الدولة والمدينة + زر تحديد موقعي
               Directionality(
                 textDirection: ui.TextDirection.rtl,
                 child: Row(
@@ -445,52 +274,56 @@ class _TimingScreenState extends State<TimingScreen> {
                                     textAlign: TextAlign.right,
                                     title: country,
                                     fontSize: 12.5,
-                                    color: isDark?Colors.white:Colors.black,
-
+                                    color:
+                                    isDark ? Colors.white : Colors.black,
                                   ),
                                 ),
                               );
                             }).toList(),
                             value: selectedCountry,
-                            // onChanged: (value) {
-                            //   setState(() {
-                            //     selectedCountry = value!;
-                            //     cities = countries[selectedCountry!] ?? {};
-                            //     selectedCity = cities.keys.first;
-                            //     calculatePrayerTimes();
-                            //   });
-                            // },
-                            onChanged: (value) {
-                              setState(() {
-                                selectedCountry = value!;
-                                cities = countries[selectedCountry!] ?? {};
-                                selectedCity = cities.keys.first;
-                                calculatePrayerTimes();
-                              });
-                              _saveSelection();
-                            },
+                            onChanged: (value) async {
+                              if (value == null) return;
 
+                              final Map<String, dynamic> cityMap =
+                              (countries[value] as Map<String, dynamic>)
+                                ..removeWhere((k, v) => v == null);
+
+                              final firstCity = cityMap.keys.first;
+
+                              await con.setLocation(
+                                country: value,
+                                city: firstCity,
+                              );
+                              setState(() {});
+                              _adhanScheduled = false;
+                              _scheduleAllAdhanForToday();
+                            },
                             buttonStyleData: ButtonStyleData(
                               decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: AppThemeColors.cardBackgroundColor(context), width: 1.5),
-                                  color: AppThemeColors.cardBackgroundColor(context),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 16),
+                                border: Border.all(
+                                  color: AppThemeColors
+                                      .cardBackgroundColor(context),
+                                  width: 1.5,
+                                ),
+                                color: AppThemeColors.cardBackgroundColor(
+                                    context),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16),
                               height: 50,
-                              width: MediaQuery.of(context).size.width / 1.2,
+                              width:
+                              MediaQuery.of(context).size.width / 1.2,
                             ),
                             menuItemStyleData: MenuItemStyleData(
                               overlayColor: WidgetStateProperty.all(
                                 Colors.grey.withOpacity(0.5),
-                              ), // Use MaterialStateProperty
+                              ),
                               height: 50,
                             ),
                             dropdownStyleData: DropdownStyleData(
                               elevation: 1,
                               decoration: BoxDecoration(
-                                // color: const Color(0xfffaedcd),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
@@ -498,73 +331,72 @@ class _TimingScreenState extends State<TimingScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: AnimatedWrapper(
                         type: UiAnimationType.slideLeft,
                         duration: const Duration(seconds: 1),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton2<String>(
-
                             isExpanded: true,
                             hint: const TextDefaultWidget(
                               title: 'اختر المدينة',
                               fontSize: 15,
                             ),
-                            items: cities.keys.map((cities) {
+                            items: cities.keys.map((c) {
                               return DropdownMenuItem(
-
-                                value: cities,
+                                value: c,
                                 child: Align(
                                   alignment: Alignment.centerRight,
                                   child: TextDefaultWidget(
                                     textAlign: TextAlign.right,
-                                    title: cities,
+                                    title: c,
                                     fontSize: 12.5,
-                                    color:isDark?Colors.white:Colors.black,
+                                    color:
+                                    isDark ? Colors.white : Colors.black,
                                   ),
                                 ),
                               );
                             }).toList(),
                             value: selectedCity,
-                            // onChanged: (value) {
-                            //   setState(() {
-                            //     selectedCity = value!;
-                            //     calculatePrayerTimes();
-                            //   });
-                            // },
-                            onChanged: (value) {
-                              setState(() {
-                                selectedCity = value!;
-                                calculatePrayerTimes();
-                              });
-                              _saveSelection();
-                            },
+                            onChanged: (value) async {
+                              if (value == null ||
+                                  selectedCountry == null) return;
 
+                              await con.setLocation(
+                                country: selectedCountry,
+                                city: value,
+                              );
+                              setState(() {});
+                              _adhanScheduled = false;
+                              _scheduleAllAdhanForToday();
+                            },
                             buttonStyleData: ButtonStyleData(
                               decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: AppThemeColors.cardBackgroundColor(context), width: 1.5),
-                                  color: AppThemeColors.cardBackgroundColor(context),
-
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 16),
+                                border: Border.all(
+                                  color: AppThemeColors
+                                      .cardBackgroundColor(context),
+                                  width: 1.5,
+                                ),
+                                color: AppThemeColors.cardBackgroundColor(
+                                    context),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16),
                               height: 50,
-                              width: MediaQuery.of(context).size.width / 1.2,
+                              width:
+                              MediaQuery.of(context).size.width / 1.2,
                             ),
                             menuItemStyleData: MenuItemStyleData(
                               overlayColor: WidgetStateProperty.all(
                                 Colors.grey.withOpacity(0.5),
-                              ), // Use MaterialStateProperty
+                              ),
                               height: 50,
                             ),
                             dropdownStyleData: DropdownStyleData(
                               elevation: 1,
                               decoration: BoxDecoration(
-                                // color: const Color(0xfffaedcd),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
@@ -575,29 +407,33 @@ class _TimingScreenState extends State<TimingScreen> {
                     const SizedBox(width: 10),
                     IconButton(
                       tooltip: 'تحديد موقعي',
-                      onPressed: _selectByLocation,
+                      onPressed: countries.isEmpty ? null : _selectByLocation,
                       icon: const Icon(Icons.my_location),
                     ),
-
                   ],
                 ),
               ),
+
               const SizedBox(height: 12),
+
               if (selectedCountry != null && selectedCity != null)
                 Padding(
-                  padding:  EdgeInsets.symmetric(vertical: 10.h),
+                  padding: EdgeInsets.symmetric(vertical: 10.h),
                   child: Center(
                     child: Directionality(
                       textDirection: ui.TextDirection.rtl,
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,            // خليه بعرض المحتوى فقط
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.place, size: 18),
                           const SizedBox(width: 6),
                           Text(
-                            'الموقع الحالي: ${selectedCountry!} - ${selectedCity!}',
-                            style: GoogleFonts.cairo(fontSize: 10.sp, fontWeight: FontWeight.w600),
+                            'الموقع الحالي: $selectedCountry - $selectedCity',
+                            style: GoogleFonts.cairo(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
@@ -605,6 +441,7 @@ class _TimingScreenState extends State<TimingScreen> {
                   ),
                 ),
 
+              // الكارت العلوي (الصلاة القادمة والوقت المتبقي)
               AnimatedWrapper(
                 type: UiAnimationType.crossFade,
                 child: SizedBox(
@@ -621,7 +458,7 @@ class _TimingScreenState extends State<TimingScreen> {
                           Color(0xFF0F172A),
                         ]
                             : [
-                          baseColor.withOpacity(0.06), // لمسة لون خفيفة
+                          baseColor.withOpacity(0.06),
                           Colors.white,
                         ],
                       ),
@@ -629,20 +466,7 @@ class _TimingScreenState extends State<TimingScreen> {
                         color: baseColor.withOpacity(isDark ? 0.5 : 0.3),
                         width: 1.2,
                       ),
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: baseColor.withOpacity(isDark ? 0.4 : 0.18),
-                      //     blurRadius: 50,
-                      //     spreadRadius: 0.5,
-                      //     offset: Offset(0, isDark ? 10 : 6),
-                      //   ),
-                      // ],
                     ),
-                    // shape: RoundedRectangleBorder(
-                    //   borderRadius: BorderRadius.circular(10),
-                    // ),
-                    // elevation: 1,
-                    // color:AppThemeColors.cardBackgroundColor(context),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 7),
@@ -654,29 +478,33 @@ class _TimingScreenState extends State<TimingScreen> {
                                 ? Text(
                               nextPrayer,
                               style: GoogleFonts.cairo(
-                                  color:isDark?Colors.white: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                  MediaQuery.sizeOf(context).width >
-                                      600
-                                      ? 10.sp
-                                      : 16.sp),
+                                color: isDark
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.sizeOf(context).width >
+                                    600
+                                    ? 10.sp
+                                    : 16.sp,
+                              ),
                             )
-                                :  Center(
-                              child: KLoading.progressIOSIndicator(context: context),
+                                : Center(
+                              child: KLoading.progressIOSIndicator(
+                                  context: context),
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
+                            const SizedBox(height: 10),
                             Text(
                               remainingTimeText,
                               style: GoogleFonts.cairo(
-                                  color:isDark?Colors.white: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                  MediaQuery.sizeOf(context).width > 600
-                                      ? 10.sp
-                                      : 16.sp),
+                                color:
+                                isDark ? Colors.white : Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.sizeOf(context).width > 600
+                                    ? 10.sp
+                                    : 16.sp,
+                              ),
                             ),
                           ],
                         ),
@@ -685,16 +513,15 @@ class _TimingScreenState extends State<TimingScreen> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 20),
+
               if (prayerTimes != null)
                 Expanded(
                   child: ListView.separated(
-                    separatorBuilder: (context, index) => const SizedBox(
-                      height: 10,
-                    ),
-                    itemCount: prayerTimes != null
-                        ? 6
-                        : 0, // عدد العناصر في Grid (6 صلوات)
+                    separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                    itemCount: 6,
                     itemBuilder: (context, index) {
                       final prayerNames = [
                         "الفجر",
@@ -705,16 +532,17 @@ class _TimingScreenState extends State<TimingScreen> {
                         "العشاء"
                       ];
                       final prayerTimesList = [
-                        prayerTimes!.fajr,
-                        prayerTimes!.sunrise,
-                        prayerTimes!.dhuhr,
-                        prayerTimes!.asr,
-                        prayerTimes!.maghrib,
-                        prayerTimes!.isha
+                        prayerTimes.fajr,
+                        prayerTimes.sunrise,
+                        prayerTimes.dhuhr,
+                        prayerTimes.asr,
+                        prayerTimes.maghrib,
+                        prayerTimes.isha
                       ];
-                      final iqamaTime = getIqamaTime(
-                          prayerNames[index], prayerTimesList[index]);
-                      final isNext = nextPrayer.contains(prayerNames[index]);
+
+                      final isNext =
+                      nextPrayer.contains(prayerNames[index]);
+
                       return Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.r),
@@ -727,57 +555,64 @@ class _TimingScreenState extends State<TimingScreen> {
                               Color(0xFF0F172A),
                             ]
                                 : [
-                              baseColor.withOpacity(0.06), // لمسة لون خفيفة
+                              baseColor.withOpacity(0.06),
                               Colors.white,
                             ],
                           ),
                           border: Border.all(
-                            color: isNext?isDark?Colors.amberAccent.shade700: Colors.blue: Colors.black,
+                            color: isNext
+                                ? (isDark
+                                ? Colors.amberAccent.shade700
+                                : Colors.blue)
+                                : Colors.black,
                             width: 1.2,
                           ),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: baseColor.withOpacity(isDark ? 0.4 : 0.18),
-                          //     blurRadius: 50,
-                          //     spreadRadius: 0.5,
-                          //     offset: Offset(0, isDark ? 10 : 6),
-                          //   ),
-                          // ],
                         ),
-
-                        // color: isNext
-                        //     ? Colors.grey
-                        //     : CupertinoColors.systemBackground,
-                        // color: AppThemeColors.cardBackgroundColor(context),
-                        // shape: Border.all(color: isNext?Colors.amber.withOpacity(0.6):Colors.black),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: MediaQuery.sizeOf(context).width > 600
-                                  ? 8
-                                  : 13,
-                              horizontal: 20),
+                            vertical:
+                            MediaQuery.sizeOf(context).width > 600
+                                ? 8
+                                : 13,
+                            horizontal: 20,
+                          ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 prayerNames[index],
                                 style: GoogleFonts.cairo(
-                                    color: isNext ? isDark ? Colors.amberAccent.shade700:Colors.blueAccent : isDark?Colors.white:Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:  MediaQuery.sizeOf(context).width > 600
-                                        ? 10.sp
-                                        : 17,),
+                                  color: isNext
+                                      ? (isDark
+                                      ? Colors.amberAccent.shade700
+                                      : Colors.blueAccent)
+                                      : (isDark
+                                      ? Colors.white
+                                      : Colors.black),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                  MediaQuery.sizeOf(context).width >
+                                      600
+                                      ? 10.sp
+                                      : 17,
+                                ),
                               ),
                               Text(
                                 DateFormat('h:mm a')
                                     .format(prayerTimesList[index]),
                                 style: GoogleFonts.cairo(
-                                    color: isNext ? isDark ? Colors.amberAccent.shade700:Colors.blueAccent : isDark?Colors.white:Colors.black,
-
-                                    // color:isNext ? Colors.amberAccent.shade700 : isDark?Colors.white:Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12.sp),
+                                  color: isNext
+                                      ? (isDark
+                                      ? Colors.amberAccent.shade700
+                                      : Colors.blueAccent)
+                                      : (isDark
+                                      ? Colors.white
+                                      : Colors.black),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12.sp,
+                                ),
                               ),
                             ],
                           ),
@@ -787,7 +622,7 @@ class _TimingScreenState extends State<TimingScreen> {
                   ),
                 )
               else
-                KLoading.progressIOSIndicator(context: context)
+                KLoading.progressIOSIndicator(context: context),
             ],
           ),
         ),
@@ -795,4 +630,765 @@ class _TimingScreenState extends State<TimingScreen> {
     );
   }
 }
+
+
+// class TimingScreen extends StatefulWidget {
+//   const TimingScreen({super.key});
+//
+//   @override
+//   State<TimingScreen> createState() => _TimingScreenState();
+// }
+//
+// class _TimingScreenState extends State<TimingScreen> {
+//   static const _kCountryKey = 'selected_country';
+//   static const _kCityKey = 'selected_city';
+//
+//   Future<void> _saveSelection() async {
+//     final p = await SharedPreferences.getInstance();
+//     if (selectedCountry != null) await p.setString(_kCountryKey, selectedCountry!);
+//     if (selectedCity != null) await p.setString(_kCityKey, selectedCity!);
+//   }
+//
+//   Future<void> _loadSelection() async {
+//     final p = await SharedPreferences.getInstance();
+//     final savedCountry = p.getString(_kCountryKey);
+//     final savedCity = p.getString(_kCityKey);
+//
+//     // إذا وُجدت "مصر" اجعلها الافتراض، وإلا استخدم المحفوظ أو أول دولة
+//     final defaultCountry = countries.keys.contains('مصر') ? 'مصر' : countries.keys.first;
+//
+//     selectedCountry = savedCountry != null && countries.keys.contains(savedCountry)
+//         ? savedCountry
+//         : defaultCountry;
+//
+//     cities = (countries[selectedCountry!] as Map<String, dynamic>)..removeWhere((k, v) => v == null);
+//
+//     selectedCity = (savedCity != null && cities.keys.contains(savedCity))
+//         ? savedCity
+//         : cities.keys.first;
+//   }
+//   AudioPlayer _audioPlayer = AudioPlayer();
+//   Map<String, dynamic> countries = {}; // لخزن الدول
+//   Map<String, dynamic> cities = {}; // لخزن المدن بناءً على الدولة
+//   String? selectedCountry; // لتخزين الدولة المختارة
+//   String? selectedCity; // لتخزين المدينة المختارة
+//   PrayerTimes? prayerTimes;
+//   Timer? countdownTimer;
+//   DateTime? previousTime;
+//   DateTime? targetTime;
+//
+//   // المتغيرات الناقصة
+//   String nextPrayer = "";
+//   String remainingTimeText = "";
+//   double progressValue = 0.0; // إضافة المتغير لحفظ التقدم في العد التنازلي
+//
+//   Map<String, String> adhanSounds = {
+//     "الفجر": "assets/sounds/fajr_adhan.mp3",
+//     "الظهر": "assets/sounds/dhuhr_adhan.mp3",
+//     "العصر": "assets/sounds/asr_adhan.mp3",
+//     "المغرب": "assets/sounds/maghrib_adhan.mp3",
+//     "العشاء": "assets/sounds/isha_adhan.mp3",
+//   };
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     loadCountries();
+//   }
+//   Future<bool> _ensureLocationPermission() async {
+//     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+//     if (!serviceEnabled) return false;
+//
+//     LocationPermission permission = await Geolocator.checkPermission();
+//     if (permission == LocationPermission.denied) {
+//       permission = await Geolocator.requestPermission();
+//     }
+//     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+//       return false;
+//     }
+//     return true;
+//   }
+//
+//   double _haversine(double lat1, double lon1, double lat2, double lon2) {
+//     const R = 6371.0;
+//     final dLat = (lat2 - lat1) * (math.pi / 180);
+//     final dLon = (lon2 - lon1) * (math.pi / 180);
+//     final a = math.sin(dLat/2)*math.sin(dLat/2) +
+//         math.cos(lat1*math.pi/180)*math.cos(lat2*math.pi/180) *
+//             math.sin(dLon/2)*math.sin(dLon/2);
+//     final c = 2 * math.asin(math.sqrt(a));
+//     return R * c;
+//   }
+//
+//
+//
+//
+//   Future<void> _selectByLocation() async {
+//     final ok = await _ensureLocationPermission();
+//     if (!ok) return;
+//
+//     final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+//     final userLat = pos.latitude;
+//     final userLng = pos.longitude;
+//
+//     // ابحث عن أقرب مدينة عبر جميع الدول/المدن في ملفك
+//     String? bestCountry;
+//     String? bestCity;
+//     double bestDist = double.infinity;
+//
+//     countries.forEach((country, cityMap) {
+//       final Map<String, dynamic> m = cityMap ?? {};
+//       m.forEach((cityName, v) {
+//         final lat = (v?['lat'])?.toDouble();
+//         final lng = (v?['lng'])?.toDouble();
+//         if (lat == null || lng == null) return;
+//         final d = _haversine(userLat, userLng, lat, lng);
+//         if (d < bestDist) {
+//           bestDist = d;
+//           bestCountry = country;
+//           bestCity = cityName;
+//         }
+//       });
+//     });
+//
+//     KHelper.showSuccess(message:' تم تحديد الموقع: $bestCountry - $bestCity');
+//
+//     if (bestCountry != null && bestCity != null) {
+//       setState(() {
+//         selectedCountry = bestCountry;
+//         cities = countries[selectedCountry!] ?? {};
+//         selectedCity = bestCity;
+//       });
+//       await _saveSelection();
+//       calculatePrayerTimes();
+//     }
+//   }
+//
+//   // Future<void> loadCountries() async {
+//   //   final String response =
+//   //   await rootBundle.loadString('assets/images/egypt_governorates.json');
+//   //   final data = json.decode(response) as Map<String, dynamic>;
+//   //   setState(() {
+//   //     countries = data;
+//   //     selectedCountry = countries.keys.first;
+//   //     cities = countries[selectedCountry!] ?? {};
+//   //     selectedCity = cities.keys.first;
+//   //     calculatePrayerTimes();
+//   //   });
+//   // }
+//   Future<void> loadCountries() async {
+//     final String response = await rootBundle.loadString('assets/images/egypt_governorates.json');
+//     final data = json.decode(response) as Map<String, dynamic>;
+//
+//     countries = data;
+//     await _loadSelection();   // يحدد selectedCountry و selectedCity ويجهّز cities
+//     setState(() {});          // لتحديث القوائم
+//     calculatePrayerTimes();   // احسب المواقيت بعد التثبيت
+//   }
+//
+//   void calculatePrayerTimes() {
+//     if (selectedCity == null) return;
+//
+//     final lat = cities[selectedCity]!["lat"];
+//     final lng = cities[selectedCity]!["lng"];
+//     final coordinates = Coordinates(lat, lng);
+//     final params = CalculationMethod.egyptian.getParameters();
+//     final date = DateComponents.from(DateTime.now());
+//     final times = PrayerTimes(coordinates, date, params);
+//
+//     final now = DateTime.now();
+//     final prayers = {
+//       "الفجر": times.fajr,
+//       "الشروق": times.sunrise,
+//       "الظهر": times.dhuhr,
+//       "العصر": times.asr,
+//       "المغرب": times.maghrib,
+//       "العشاء": times.isha,
+//     };
+//
+//     DateTime? next;
+//     String? upcoming;
+//
+//     for (var entry in prayers.entries) {
+//       if (now.isBefore(entry.value)) {
+//         next = entry.value;
+//         upcoming = entry.key;
+//         break;
+//       }
+//     }
+//
+//     if (next == null) {
+//       final tomorrow = DateTime.now().add(const Duration(days: 1));
+//       final nextFajr =
+//           PrayerTimes(coordinates, DateComponents.from(tomorrow), params).fajr;
+//       next = nextFajr;
+//       upcoming = "الفجر";
+//     }
+//
+//     final iqama = getIqamaTime(upcoming!, next);
+//     previousTime = DateTime.now();
+//     targetTime = next;
+//
+//     // بدء العد التنازلي للصلاة
+//     startCountdown(
+//       from: DateTime.now(),
+//       to: next,
+//       isIqama: false,
+//       onDone: () {
+//         if (iqama.year != 0) {
+//           previousTime = next;
+//           targetTime = iqama;
+//           startCountdown(
+//             from: DateTime.now(),
+//             to: iqama,
+//             isIqama: true,
+//             onDone: () {
+//               calculatePrayerTimes();
+//             },
+//           );
+//         } else {
+//           calculatePrayerTimes();
+//         }
+//       },
+//     );
+//
+//     // تشغيل صوت الأذان عند وقت الصلاة
+//     scheduleAdhan(next, upcoming);
+//
+//     setState(() {
+//       prayerTimes = times;
+//     });
+//   }
+//
+//   // دالة لتشغيل صوت الأذان
+//   void playAdhanSound(DateTime prayerTime, String prayerName) {
+//     final sound = adhanSounds[prayerName] ?? "assets/sounds/default_adhan.mp3";
+//
+//     // استخدام AudioPlayer من just_audio لتشغيل الصوت من الـ assets
+//     _audioPlayer.setAsset(sound).then((_) {
+//       _audioPlayer.play();
+//     }).catchError((e) {
+//       print("Error playing sound: $e");
+//     });
+//   }
+//
+//   // دالة لتجدول الأذان عند الصلاة
+//   void scheduleAdhan(DateTime prayerTime, String prayerName) {
+//     final now = DateTime.now();
+//     final duration = prayerTime.difference(now);
+//
+//     if (duration.isNegative) {
+//       // يعني الوقت فات بالفعل
+//       print("وقت $prayerName فات خلاص");
+//       return;
+//     }
+//
+//     // نعمل Timer لحد ما ييجي وقت الصلاة
+//     Future.delayed(duration, () {
+//       playAdhanSound(prayerTime, prayerName);
+//     });
+//
+//     print("هيشتغل أذان $prayerName بعد ${duration.inMinutes} دقيقة");
+//   }
+//   // void scheduleAdhan(DateTime prayerTime, String prayerName) {
+//   //   // ضبط وقت الاختبار (الآن)
+//   //   final now = DateTime.now();
+//   //   final duration = Duration(seconds: 0); // يتم تشغيل الأذان فورًا
+//   //
+//   //   // نعمل Timer لحد ما ييجي وقت الصلاة
+//   //   Future.delayed(duration, () {
+//   //     playAdhanSound(prayerTime, prayerName);  // شغل الصوت مباشرة عند الاختبار
+//   //   });
+//   //
+//   //   print("هيشتغل أذان $prayerName الآن مباشرة");
+//   // }
+//
+//   DateTime getIqamaTime(String prayerName, DateTime adhanTime) {
+//     switch (prayerName) {
+//       case "الفجر":
+//         return adhanTime.add(const Duration(minutes: 20));
+//       case "المغرب":
+//         return adhanTime.add(const Duration(minutes: 5));
+//       case "الشروق":
+//         return DateTime(0); // لا إقامة
+//       default:
+//         return adhanTime.add(const Duration(minutes: 10));
+//     }
+//   }
+//
+//   void stopAdhanSound() {
+//     _audioPlayer.stop();
+//   }
+//
+//   // دالة لبدء العد التنازلي
+//   void startCountdown({
+//     required DateTime from,
+//     required DateTime to,
+//     required bool isIqama,
+//     required VoidCallback onDone,
+//   }) {
+//     countdownTimer?.cancel();
+//
+//     countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+//       final now = DateTime.now();
+//       final total = to.difference(from).inSeconds;
+//       final remaining = to.difference(now).inSeconds;
+//
+//       if (remaining <= 0) {
+//         countdownTimer?.cancel();
+//         onDone();
+//         return;
+//       }
+//
+//       final progress = 1.0 - (remaining / total);
+//       final h = remaining ~/ 3600;
+//       final m = (remaining % 3600) ~/ 60;
+//       final s = remaining % 60;
+//
+//       setState(() {
+//         progressValue = progress.clamp(0.0, 1.0); // تحديث التقدم
+//         remainingTimeText =
+//         "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
+//         nextPrayer = isIqama
+//             ? "الإقامة ${getNextPrayerName(targetTime!)}"
+//             : getNextPrayerName(targetTime!);
+//       });
+//     });
+//   }
+//
+//   String getNextPrayerName(DateTime time) {
+//     final prayers = {
+//       "الفجر": prayerTimes?.fajr,
+//       "الشروق": prayerTimes?.sunrise,
+//       "الظهر": prayerTimes?.dhuhr,
+//       "العصر": prayerTimes?.asr,
+//       "المغرب": prayerTimes?.maghrib,
+//       "العشاء": prayerTimes?.isha,
+//     };
+//     for (var entry in prayers.entries) {
+//       if (entry.value?.hour == time.hour &&
+//           entry.value?.minute == time.minute) {
+//         return entry.key;
+//       }
+//     }
+//     return " للصلاة";
+//   }
+//
+//   String formatTime(DateTime time) {
+//     return DateFormat.jm().format(time);
+//   }
+//
+//   @override
+//   void dispose() {
+//     countdownTimer?.cancel();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     bool isDark =  Theme.of(context).brightness == Brightness.dark;
+//     final baseColor =  const Color(AppStyle.primaryColor);
+//     return Scaffold(
+//       appBar: PreferredSize(
+//         preferredSize:
+//         Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+//         child: AppBar(
+//           leading:  CupertinoNavigationBarBackButton(
+//             color: isDark ?Colors.white:Colors.black,
+//           ),
+//           centerTitle: true,
+//           title: Text(
+//             "مواقيت الصلاة",
+//             style: GoogleFonts.cairo(
+//                 color: Colors.green,
+//                 fontWeight: FontWeight.bold,
+//                 fontSize:
+//                 MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+//           ),
+//         ),
+//       ),
+//       // backgroundColor: AppStyle.bgColors,
+//       body: Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+//         child: Directionality(
+//           textDirection: ui.TextDirection.rtl,
+//           child: Column(
+//
+//             children: [
+//               Directionality(
+//                 textDirection: ui.TextDirection.rtl,
+//                 child: Row(
+//                   children: [
+//                     Expanded(
+//                       child: AnimatedWrapper(
+//                         type: UiAnimationType.slideRight,
+//                         duration: const Duration(seconds: 1),
+//                         child: DropdownButtonHideUnderline(
+//                           child: DropdownButton2<String>(
+//                             isExpanded: true,
+//                             hint: const TextDefaultWidget(
+//                               textAlign: TextAlign.right,
+//                               title: 'اختر الدولة',
+//                               fontSize: 15,
+//                               color: Color(0xff1A1A1A),
+//                             ),
+//                             items: countries.keys.map((country) {
+//                               return DropdownMenuItem(
+//                                 value: country,
+//                                 child: Align(
+//                                   alignment: Alignment.centerRight,
+//                                   child: TextDefaultWidget(
+//                                     textAlign: TextAlign.right,
+//                                     title: country,
+//                                     fontSize: 12.5,
+//                                     color: isDark?Colors.white:Colors.black,
+//
+//                                   ),
+//                                 ),
+//                               );
+//                             }).toList(),
+//                             value: selectedCountry,
+//                             // onChanged: (value) {
+//                             //   setState(() {
+//                             //     selectedCountry = value!;
+//                             //     cities = countries[selectedCountry!] ?? {};
+//                             //     selectedCity = cities.keys.first;
+//                             //     calculatePrayerTimes();
+//                             //   });
+//                             // },
+//                             onChanged: (value) {
+//                               setState(() {
+//                                 selectedCountry = value!;
+//                                 cities = countries[selectedCountry!] ?? {};
+//                                 selectedCity = cities.keys.first;
+//                                 calculatePrayerTimes();
+//                               });
+//                               _saveSelection();
+//                             },
+//
+//                             buttonStyleData: ButtonStyleData(
+//                               decoration: BoxDecoration(
+//                                   border: Border.all(
+//                                       color: AppThemeColors.cardBackgroundColor(context), width: 1.5),
+//                                   color: AppThemeColors.cardBackgroundColor(context),
+//                                   borderRadius: BorderRadius.circular(10.0)),
+//                               padding:
+//                               const EdgeInsets.symmetric(horizontal: 16),
+//                               height: 50,
+//                               width: MediaQuery.of(context).size.width / 1.2,
+//                             ),
+//                             menuItemStyleData: MenuItemStyleData(
+//                               overlayColor: WidgetStateProperty.all(
+//                                 Colors.grey.withOpacity(0.5),
+//                               ), // Use MaterialStateProperty
+//                               height: 50,
+//                             ),
+//                             dropdownStyleData: DropdownStyleData(
+//                               elevation: 1,
+//                               decoration: BoxDecoration(
+//                                 // color: const Color(0xfffaedcd),
+//                                 borderRadius: BorderRadius.circular(10.0),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     const SizedBox(
+//                       width: 10,
+//                     ),
+//                     Expanded(
+//                       child: AnimatedWrapper(
+//                         type: UiAnimationType.slideLeft,
+//                         duration: const Duration(seconds: 1),
+//                         child: DropdownButtonHideUnderline(
+//                           child: DropdownButton2<String>(
+//
+//                             isExpanded: true,
+//                             hint: const TextDefaultWidget(
+//                               title: 'اختر المدينة',
+//                               fontSize: 15,
+//                             ),
+//                             items: cities.keys.map((cities) {
+//                               return DropdownMenuItem(
+//
+//                                 value: cities,
+//                                 child: Align(
+//                                   alignment: Alignment.centerRight,
+//                                   child: TextDefaultWidget(
+//                                     textAlign: TextAlign.right,
+//                                     title: cities,
+//                                     fontSize: 12.5,
+//                                     color:isDark?Colors.white:Colors.black,
+//                                   ),
+//                                 ),
+//                               );
+//                             }).toList(),
+//                             value: selectedCity,
+//                             // onChanged: (value) {
+//                             //   setState(() {
+//                             //     selectedCity = value!;
+//                             //     calculatePrayerTimes();
+//                             //   });
+//                             // },
+//                             onChanged: (value) {
+//                               setState(() {
+//                                 selectedCity = value!;
+//                                 calculatePrayerTimes();
+//                               });
+//                               _saveSelection();
+//                             },
+//
+//                             buttonStyleData: ButtonStyleData(
+//                               decoration: BoxDecoration(
+//                                   border: Border.all(
+//                                       color: AppThemeColors.cardBackgroundColor(context), width: 1.5),
+//                                   color: AppThemeColors.cardBackgroundColor(context),
+//
+//                                   borderRadius: BorderRadius.circular(10.0)),
+//                               padding:
+//                               const EdgeInsets.symmetric(horizontal: 16),
+//                               height: 50,
+//                               width: MediaQuery.of(context).size.width / 1.2,
+//                             ),
+//                             menuItemStyleData: MenuItemStyleData(
+//                               overlayColor: WidgetStateProperty.all(
+//                                 Colors.grey.withOpacity(0.5),
+//                               ), // Use MaterialStateProperty
+//                               height: 50,
+//                             ),
+//                             dropdownStyleData: DropdownStyleData(
+//                               elevation: 1,
+//                               decoration: BoxDecoration(
+//                                 // color: const Color(0xfffaedcd),
+//                                 borderRadius: BorderRadius.circular(10.0),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     const SizedBox(width: 10),
+//                     IconButton(
+//                       tooltip: 'تحديد موقعي',
+//                       onPressed: _selectByLocation,
+//                       icon: const Icon(Icons.my_location),
+//                     ),
+//
+//                   ],
+//                 ),
+//               ),
+//               const SizedBox(height: 12),
+//               if (selectedCountry != null && selectedCity != null)
+//                 Padding(
+//                   padding:  EdgeInsets.symmetric(vertical: 10.h),
+//                   child: Center(
+//                     child: Directionality(
+//                       textDirection: ui.TextDirection.rtl,
+//                       child: Row(
+//                         mainAxisSize: MainAxisSize.min,            // خليه بعرض المحتوى فقط
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           const Icon(Icons.place, size: 18),
+//                           const SizedBox(width: 6),
+//                           Text(
+//                             'الموقع الحالي: ${selectedCountry!} - ${selectedCity!}',
+//                             style: GoogleFonts.cairo(fontSize: 10.sp, fontWeight: FontWeight.w600),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//
+//               AnimatedWrapper(
+//                 type: UiAnimationType.crossFade,
+//                 child: SizedBox(
+//                   width: MediaQuery.sizeOf(context).width / 1.8,
+//                   child: Container(
+//                     decoration: BoxDecoration(
+//                       borderRadius: BorderRadius.circular(24.r),
+//                       gradient: LinearGradient(
+//                         begin: Alignment.topRight,
+//                         end: Alignment.bottomLeft,
+//                         colors: isDark
+//                             ? const [
+//                           Color(0xFF020617),
+//                           Color(0xFF0F172A),
+//                         ]
+//                             : [
+//                           baseColor.withOpacity(0.06), // لمسة لون خفيفة
+//                           Colors.white,
+//                         ],
+//                       ),
+//                       border: Border.all(
+//                         color: baseColor.withOpacity(isDark ? 0.5 : 0.3),
+//                         width: 1.2,
+//                       ),
+//                       // boxShadow: [
+//                       //   BoxShadow(
+//                       //     color: baseColor.withOpacity(isDark ? 0.4 : 0.18),
+//                       //     blurRadius: 50,
+//                       //     spreadRadius: 0.5,
+//                       //     offset: Offset(0, isDark ? 10 : 6),
+//                       //   ),
+//                       // ],
+//                     ),
+//                     // shape: RoundedRectangleBorder(
+//                     //   borderRadius: BorderRadius.circular(10),
+//                     // ),
+//                     // elevation: 1,
+//                     // color:AppThemeColors.cardBackgroundColor(context),
+//                     child: Padding(
+//                       padding: const EdgeInsets.symmetric(
+//                           horizontal: 10.0, vertical: 7),
+//                       child: Center(
+//                         child: Column(
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: [
+//                             nextPrayer.isNotEmpty
+//                                 ? Text(
+//                               nextPrayer,
+//                               style: GoogleFonts.cairo(
+//                                   color:isDark?Colors.white: Colors.black,
+//                                   fontWeight: FontWeight.bold,
+//                                   fontSize:
+//                                   MediaQuery.sizeOf(context).width >
+//                                       600
+//                                       ? 10.sp
+//                                       : 16.sp),
+//                             )
+//                                 :  Center(
+//                               child: KLoading.progressIOSIndicator(context: context),
+//                             ),
+//                             const SizedBox(
+//                               height: 10,
+//                             ),
+//                             Text(
+//                               remainingTimeText,
+//                               style: GoogleFonts.cairo(
+//                                   color:isDark?Colors.white: Colors.black,
+//                                   fontWeight: FontWeight.bold,
+//                                   fontSize:
+//                                   MediaQuery.sizeOf(context).width > 600
+//                                       ? 10.sp
+//                                       : 16.sp),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(height: 20),
+//               if (prayerTimes != null)
+//                 Expanded(
+//                   child: ListView.separated(
+//                     separatorBuilder: (context, index) => const SizedBox(
+//                       height: 10,
+//                     ),
+//                     itemCount: prayerTimes != null
+//                         ? 6
+//                         : 0, // عدد العناصر في Grid (6 صلوات)
+//                     itemBuilder: (context, index) {
+//                       final prayerNames = [
+//                         "الفجر",
+//                         "الشروق",
+//                         "الظهر",
+//                         "العصر",
+//                         "المغرب",
+//                         "العشاء"
+//                       ];
+//                       final prayerTimesList = [
+//                         prayerTimes!.fajr,
+//                         prayerTimes!.sunrise,
+//                         prayerTimes!.dhuhr,
+//                         prayerTimes!.asr,
+//                         prayerTimes!.maghrib,
+//                         prayerTimes!.isha
+//                       ];
+//                       final iqamaTime = getIqamaTime(
+//                           prayerNames[index], prayerTimesList[index]);
+//                       final isNext = nextPrayer.contains(prayerNames[index]);
+//                       return Container(
+//                         decoration: BoxDecoration(
+//                           borderRadius: BorderRadius.circular(24.r),
+//                           gradient: LinearGradient(
+//                             begin: Alignment.topRight,
+//                             end: Alignment.bottomLeft,
+//                             colors: isDark
+//                                 ? const [
+//                               Color(0xFF020617),
+//                               Color(0xFF0F172A),
+//                             ]
+//                                 : [
+//                               baseColor.withOpacity(0.06), // لمسة لون خفيفة
+//                               Colors.white,
+//                             ],
+//                           ),
+//                           border: Border.all(
+//                             color: isNext?isDark?Colors.amberAccent.shade700: Colors.blue: Colors.black,
+//                             width: 1.2,
+//                           ),
+//                           // boxShadow: [
+//                           //   BoxShadow(
+//                           //     color: baseColor.withOpacity(isDark ? 0.4 : 0.18),
+//                           //     blurRadius: 50,
+//                           //     spreadRadius: 0.5,
+//                           //     offset: Offset(0, isDark ? 10 : 6),
+//                           //   ),
+//                           // ],
+//                         ),
+//
+//                         // color: isNext
+//                         //     ? Colors.grey
+//                         //     : CupertinoColors.systemBackground,
+//                         // color: AppThemeColors.cardBackgroundColor(context),
+//                         // shape: Border.all(color: isNext?Colors.amber.withOpacity(0.6):Colors.black),
+//                         child: Padding(
+//                           padding: EdgeInsets.symmetric(
+//                               vertical: MediaQuery.sizeOf(context).width > 600
+//                                   ? 8
+//                                   : 13,
+//                               horizontal: 20),
+//                           child: Row(
+//                             crossAxisAlignment: CrossAxisAlignment.center,
+//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                             children: [
+//                               Text(
+//                                 prayerNames[index],
+//                                 style: GoogleFonts.cairo(
+//                                     color: isNext ? isDark ? Colors.amberAccent.shade700:Colors.blueAccent : isDark?Colors.white:Colors.black,
+//                                     fontWeight: FontWeight.bold,
+//                                     fontSize:  MediaQuery.sizeOf(context).width > 600
+//                                         ? 10.sp
+//                                         : 17,),
+//                               ),
+//                               Text(
+//                                 DateFormat('h:mm a')
+//                                     .format(prayerTimesList[index]),
+//                                 style: GoogleFonts.cairo(
+//                                     color: isNext ? isDark ? Colors.amberAccent.shade700:Colors.blueAccent : isDark?Colors.white:Colors.black,
+//
+//                                     // color:isNext ? Colors.amberAccent.shade700 : isDark?Colors.white:Colors.black,
+//                                     fontWeight: FontWeight.bold,
+//                                     fontSize: 12.sp),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                   ),
+//                 )
+//               else
+//                 KLoading.progressIOSIndicator(context: context)
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 

@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Khatmah/data/khatmah_model.dart';
 import 'AzkarQuranWidget.dart';
 import 'OtherAzkarWidget.dart';
-import '../../../core/controller/timing.dart';
+import '../controllar/MainController.dart';
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
 
@@ -40,6 +40,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
   List<SurahModel>? surahModel;
   late final Box<KhatmahModel> box;
   late final Box plansBox; // khatmahPlans
+  String? _locationText; // 👈 لعرض الموقع في الهيدر
+
   @override
   void initState() {
     centralizedCubit = context.read<CentralizedCubit>();
@@ -51,9 +53,35 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     loadVerseName();
     loadSurahs();
     loadBookmark();
+
     box = Hive.box<KhatmahModel>('khatmahBox'); // نفس الاسم اللي بتفتحه في main
     plansBox = Hive.box('khatmahPlans');
+    _loadSavedLocation(); // 👈 حمّل الموقع المحفوظ
+
   }
+
+  Future<void> _loadSavedLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    final country = prefs.getString('selected_country');
+    final city = prefs.getString('selected_city');
+
+    setState(() {
+      if (country != null && city != null) {
+        _locationText = '$country - $city';
+      } else {
+        _locationText = 'لم يتم تحديد الموقع';
+      }
+    });
+  }
+
+  Future<void> _onLocationChanged() async {
+    // حدّث الكنترولر حسب القيم الجديدة من الـ SharedPreferences
+    await con.refreshPrayerTimesFromPrefs();
+
+    // حدّث نص الموقع اللي في الهيدر
+    await _loadSavedLocation();
+  }
+
 
   void loadBookmark() async {
     final id = await getBookmark();
@@ -117,78 +145,6 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
         .toList();
   }
 
-  final List<Map<String, String>> iconsApp = [
-    {
-      "title": "أَذْكَارُ الصَّبَاحِ",
-      "icon": "assets/images/contrast.png",
-      "navigate": "/azkarSabah"
-    },
-    {
-      "title": "أَذْكَارُ الْمَسَاءِ",
-      "icon": "assets/images/islam.png",
-      "navigate": "/azkarMassa"
-    },
-    {
-      "title": "السبحة",
-      "icon": "assets/images/beads2.png",
-      "navigate": "/azkarCounter"
-    },
-    {
-      "title": "المصحف",
-      "icon": "assets/images/koran.png",
-      "navigate": "/surahListScreen"
-    },
-    {
-      "title": "أَذْكَارٌ مُتَنَوِّعَةٌ",
-      "icon": "assets/images/open-hands.png",
-      "navigate": "/allazkarlistview"
-    },
-    {
-      "title": "مَوَاقِيتُ الصَّلَاةِ",
-      "icon": "assets/images/mosque.png",
-      "navigate": "/timingScreen"
-    },
-    {
-      "title": "الْقِبْلَةِ",
-      "icon": "assets/images/qibla (1).png",
-      "navigate": "/qiblaDirection"
-    },
-    {
-      "title": "مَوْسُوعَةُ الْأَحَادِيثِ",
-      "icon": "assets/images/kaaba.png",
-      "navigate": Routes.categoriesRoute,
-    },
-    {
-      "title": "راديو القران الكريم",
-      "icon": "assets/icons/radio.png",
-      "navigate": "/QuranRadioView"
-    },
-    {
-      "title": "الختمات المنجزه",
-      "icon": "assets/images/achivement.png",
-      "navigate": "/compplateKhatna"
-    },
-    {
-      "title": " اورادك من الذكر",
-      "icon": "assets/images/tauhid.png",
-      "navigate": "/WirdHomeScreen"
-    },
-    // {
-    //   "title": "قناة القران الكريم",
-    //   "icon": "assets/icons/radio.png",
-    //   "navigate": "/QuranChannalPlayerView"
-    // },
-    // {
-    //   "title": "قناة السنة النبوية",
-    //   "icon": "assets/icons/radio.png",
-    //   "navigate": "/QuranChannalPlayerView"
-    // },
-    {
-      "title": "عَنَّا",
-      "icon": "assets/images/info (1).png",
-      "navigate": "/about"
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -211,336 +167,179 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
             bottom: true,
             child: Column(
               children: [
-                Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: isTab
-                            ? MediaQuery.of(context).size.height / 3.5
-                            : MediaQuery.of(context).size.height/3.5,
-                        child: Image.asset(
-                          "assets/images/pattern.webp",
-                          height: isTab
-                              ? MediaQuery.of(context).size.height / 3.5
-                              : MediaQuery.of(context).size.height,
-                          fit: BoxFit.cover,
-                        )),
-                    Positioned.fill(
-                        top: 0,
-                        right: 0,
-                        left: 0,
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: isTab
-                              ? MediaQuery.of(context).size.height / 3.5
-                              : MediaQuery.of(context).size.height,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black.withOpacity(0.8)
-                              : AppColors.secondaryLight.withOpacity(0.6),
-                        )),
-                    Positioned(
-                        top: 45,
-                        right: 10,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  // Icon(Icons.date_range,size: isTab?33:20,color: AppColors.greyLightColor,),
-                                  // SizedBox(width: 5.w,),
-                                  TextDefaultWidget(
-                                    title: con.hijriDate,
-                                    color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                        ? AppColors.greyLightColor
-                                        : Colors.black,
-                                    fontSize: isTab ? 12.sp : 14.sp,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 4.h,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: TextDefaultWidget(
-                                      title: con.gregorian ?? "",
-                                      color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                          ? AppColors.greyLightColor
-                                          : Colors.black,
-                                      fontSize: isTab ? 9.sp : 12.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )),
-                    // Positioned(
-                    //   top: 50,
-                    //   left: 10,
-                    //   child: InkWell(
-                    //     onTap: () => showThemeSheet(context),
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    //       child: AnimatedSwitcher(
-                    //         duration: const Duration(milliseconds: 200),
-                    //         child: Icon(
-                    //           Theme.of(context).brightness == Brightness.dark
-                    //               ? Icons.dark_mode
-                    //               : Icons.light_mode,
-                    //           key: ValueKey(Theme.of(context).brightness),
-                    //           size: isTab ? 33 : 20,
-                    //           color:
-                    //               Theme.of(context).brightness == Brightness.dark
-                    //                   ? AppColors.greyLightColor
-                    //                   : Colors.black,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    Positioned(
-                      top: 50,
-                      left: 10,
-                      child: InkWell(
-                        onTap: () => showThemeSheet(context),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
-                            child: Icon(
-                              Icons.settings,
-                              // key: ValueKey(Theme.of(context).brightness),
-                              size: isTab ? 33 : 20,
-                              color:
-                              Theme.of(context).brightness == Brightness.dark
-                                  ? AppColors.greyLightColor
-                                  : Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 30),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextDefaultWidget(
-                            title: "الصلاة القادمة",
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? AppColors.greyLightColor
-                                : Colors.black,
-                            fontSize: isTab ? 12.sp : 20.sp,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "me",
-                          ),
-                          TextDefaultWidget(
-                            title: con.nextPrayer,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? AppColors.greyLightColor
-                                : Colors.black,
-                            fontSize: isTab ? 12.sp : 20.sp,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "me",
-                          ),
-                          TextDefaultWidget(
-                            title: con.remainingTimeText,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? AppColors.greyLightColor
-                                : Colors.black,
-                            fontSize: isTab ? 12.sp : 20.sp,
-                            fontFamily: "cairo",
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Positioned(
-                    //     top: isTab ? 180 : 120,
-                    //     right: isTab ? 330 : 125,
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    //       child: Column(
-                    //         crossAxisAlignment: CrossAxisAlignment.center,
-                    //         mainAxisAlignment: MainAxisAlignment.center,
-                    //         children: [
-                    //           TextDefaultWidget(
-                    //             title: "الصلاة القادمة",
-                    //             color: Theme.of(context).brightness ==
-                    //                     Brightness.dark
-                    //                 ? AppColors.greyLightColor
-                    //                 : Colors.black,
-                    //             fontSize: isTab ? 12.sp : 20.sp,
-                    //             fontWeight: FontWeight.bold,
-                    //             fontFamily: "me",
-                    //           ),
-                    //           TextDefaultWidget(
-                    //             title: con.nextPrayer,
-                    //             color: Theme.of(context).brightness ==
-                    //                     Brightness.dark
-                    //                 ? AppColors.greyLightColor
-                    //                 : Colors.black,
-                    //             fontSize: isTab ? 12.sp : 20.sp,
-                    //             fontWeight: FontWeight.bold,
-                    //             fontFamily: "me",
-                    //           ),
-                    //           TextDefaultWidget(
-                    //             title: con.remainingTimeText,
-                    //             color: Theme.of(context).brightness ==
-                    //                     Brightness.dark
-                    //                 ? AppColors.greyLightColor
-                    //                 : Colors.black,
-                    //             fontSize: isTab ? 12.sp : 20.sp,
-                    //             fontFamily: "cairo",
-                    //             fontWeight: FontWeight.bold,
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     )),
-                  ],
+                // Stack(
+                //   alignment: Alignment.bottomCenter,
+                //   children: [
+                //     SizedBox(
+                //         width: MediaQuery.of(context).size.width,
+                //         height: isTab
+                //             ? MediaQuery.of(context).size.height / 3.5
+                //             : MediaQuery.of(context).size.height/3.5,
+                //         child: Image.asset(
+                //           "assets/images/pattern.webp",
+                //           height: isTab
+                //               ? MediaQuery.of(context).size.height / 3.5
+                //               : MediaQuery.of(context).size.height,
+                //           fit: BoxFit.cover,
+                //         )),
+                //     Positioned.fill(
+                //         top: 0,
+                //         right: 0,
+                //         left: 0,
+                //         child: Container(
+                //           width: MediaQuery.of(context).size.width,
+                //           height: isTab
+                //               ? MediaQuery.of(context).size.height / 3.5
+                //               : MediaQuery.of(context).size.height,
+                //           color: Theme.of(context).brightness == Brightness.dark
+                //               ? Colors.black.withOpacity(0.8)
+                //               : AppColors.secondaryLight.withOpacity(0.6),
+                //         )),
+                //     Positioned(
+                //         top: 45,
+                //         right: 10,
+                //         child: Padding(
+                //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                //           child: Column(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             mainAxisAlignment: MainAxisAlignment.start,
+                //             children: [
+                //               Row(
+                //                 children: [
+                //                   // Icon(Icons.date_range,size: isTab?33:20,color: AppColors.greyLightColor,),
+                //                   // SizedBox(width: 5.w,),
+                //                   TextDefaultWidget(
+                //                     title: con.hijriDate,
+                //                     color: Theme.of(context).brightness ==
+                //                         Brightness.dark
+                //                         ? AppColors.greyLightColor
+                //                         : Colors.black,
+                //                     fontSize: isTab ? 12.sp : 14.sp,
+                //                   ),
+                //                 ],
+                //               ),
+                //               SizedBox(
+                //                 height: 4.h,
+                //               ),
+                //               Row(
+                //                 crossAxisAlignment: CrossAxisAlignment.center,
+                //                 mainAxisAlignment: MainAxisAlignment.center,
+                //                 children: [
+                //                   Padding(
+                //                     padding: const EdgeInsets.symmetric(
+                //                         horizontal: 8.0),
+                //                     child: TextDefaultWidget(
+                //                       title: con.gregorian ?? "",
+                //                       color: Theme.of(context).brightness ==
+                //                           Brightness.dark
+                //                           ? AppColors.greyLightColor
+                //                           : Colors.black,
+                //                       fontSize: isTab ? 9.sp : 12.sp,
+                //                     ),
+                //                   ),
+                //                 ],
+                //               ),
+                //             ],
+                //           ),
+                //         )),
+                //     // Positioned(
+                //     //   top: 50,
+                //     //   left: 10,
+                //     //   child: InkWell(
+                //     //     onTap: () => showThemeSheet(context),
+                //     //     child: Padding(
+                //     //       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                //     //       child: AnimatedSwitcher(
+                //     //         duration: const Duration(milliseconds: 200),
+                //     //         child: Icon(
+                //     //           Theme.of(context).brightness == Brightness.dark
+                //     //               ? Icons.dark_mode
+                //     //               : Icons.light_mode,
+                //     //           key: ValueKey(Theme.of(context).brightness),
+                //     //           size: isTab ? 33 : 20,
+                //     //           color:
+                //     //               Theme.of(context).brightness == Brightness.dark
+                //     //                   ? AppColors.greyLightColor
+                //     //                   : Colors.black,
+                //     //         ),
+                //     //       ),
+                //     //     ),
+                //     //   ),
+                //     // ),
+                //     Positioned(
+                //       top: 50,
+                //       left: 10,
+                //       child: InkWell(
+                //         onTap: () => showThemeSheet(context),
+                //         child: Padding(
+                //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                //           child: AnimatedSwitcher(
+                //             duration: const Duration(milliseconds: 200),
+                //             child: Icon(
+                //               Icons.settings,
+                //               // key: ValueKey(Theme.of(context).brightness),
+                //               size: isTab ? 33 : 20,
+                //               color:
+                //               Theme.of(context).brightness == Brightness.dark
+                //                   ? AppColors.greyLightColor
+                //                   : Colors.black,
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 30),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.center,
+                //         mainAxisAlignment: MainAxisAlignment.center,
+                //         children: [
+                //           TextDefaultWidget(
+                //             title: "الصلاة القادمة",
+                //             color: Theme.of(context).brightness == Brightness.dark
+                //                 ? AppColors.greyLightColor
+                //                 : Colors.black,
+                //             fontSize: isTab ? 12.sp : 20.sp,
+                //             fontWeight: FontWeight.bold,
+                //             fontFamily: "me",
+                //           ),
+                //           TextDefaultWidget(
+                //             title: con.nextPrayer,
+                //             color: Theme.of(context).brightness == Brightness.dark
+                //                 ? AppColors.greyLightColor
+                //                 : Colors.black,
+                //             fontSize: isTab ? 12.sp : 20.sp,
+                //             fontWeight: FontWeight.bold,
+                //             fontFamily: "me",
+                //           ),
+                //           TextDefaultWidget(
+                //             title: con.remainingTimeText,
+                //             color: Theme.of(context).brightness == Brightness.dark
+                //                 ? AppColors.greyLightColor
+                //                 : Colors.black,
+                //             fontSize: isTab ? 12.sp : 20.sp,
+                //             fontFamily: "cairo",
+                //             fontWeight: FontWeight.bold,
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                PrayerHeaderSection(
+                  progressValue: con.progressValue,
+                  hijriDate: con.hijriDate,
+                  gregorian: con.gregorian ?? "",
+                  nextPrayer: con.nextPrayer,
+                  remainingTime: con.remainingTimeText,
+                  location: _locationText ?? 'لم يتم تحديد الموقع',
+                  onSettingsTap: () => showThemeSheet(
+                    context,
+                    onLocationChanged: _onLocationChanged,
+                  ),
+
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     Text(
-                //       'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
-                //       style: GoogleFonts.cairo(
-                //           color: Colors.black,
-                //           fontWeight: FontWeight.bold,
-                //           fontSize: MediaQuery.sizeOf(context).width > 600
-                //               ? 10.sp
-                //               : 16.sp),
-                //     ),
-                //   ],
-                // ),
-                // const Padding(
-                //    padding: EdgeInsets.symmetric(vertical: 15),
-                //    child: GreetingWidget()),
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       flex: 2,
-                //       child: AnimatedWrapper(
-                //         type: UiAnimationType.slideLeft,
-                //         child: SizedBox(
-                //           width: MediaQuery.sizeOf(context).width / 1.8,
-                //           height: MediaQuery.sizeOf(context).width > 600
-                //               ? MediaQuery.sizeOf(context).width / 6
-                //               : MediaQuery.sizeOf(context).width / 4,
-                //           child: Card(
-                //             shape: RoundedRectangleBorder(
-                //               borderRadius: BorderRadius.circular(10),
-                //             ),
-                //             color: CupertinoColors.systemBackground,
-                //             child: Padding(
-                //               padding: const EdgeInsets.symmetric(
-                //                   horizontal: 10.0, vertical: 7),
-                //               child: Center(
-                //                 child: Column(
-                //                   mainAxisAlignment:
-                //                       MainAxisAlignment.spaceEvenly,
-                //                   children: [
-                //                     Text(
-                //                       con.gregorian ?? "",
-                //                       style: GoogleFonts.cairo(
-                //                           color: Colors.black,
-                //                           fontWeight: FontWeight.bold,
-                //                           fontSize: MediaQuery.sizeOf(context)
-                //                                       .width >
-                //                                   600
-                //                               ? 17
-                //                               : 13),
-                //                     ),
-                //                     const SizedBox(
-                //                       height: 10,
-                //                     ),
-                //                     Text(
-                //                       con.hijriDate,
-                //                       style: GoogleFonts.cairo(
-                //                           color: Colors.black,
-                //                           fontWeight: FontWeight.bold,
-                //                           fontSize: 11.sp),
-                //                     ),
-                //                   ],
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //     con.nextPrayer.isNotEmpty
-                //         ?  Expanded(
-                //       child: AnimatedWrapper(
-                //         type: UiAnimationType.slideRight,
-                //         child: SizedBox(
-                //           height: MediaQuery.sizeOf(context).width > 600
-                //               ? MediaQuery.sizeOf(context).width / 6
-                //               : MediaQuery.sizeOf(context).width / 4,
-                //           width: MediaQuery.sizeOf(context).width / 1.8,
-                //           child: Card(
-                //             shape: RoundedRectangleBorder(
-                //               borderRadius: BorderRadius.circular(10),
-                //             ),
-                //             color: CupertinoColors.systemBackground,
-                //             child: Padding(
-                //               padding: const EdgeInsets.symmetric(
-                //                   horizontal: 10.0, vertical: 7),
-                //               child: Center(
-                //                 child: Column(
-                //                   mainAxisAlignment:
-                //                       MainAxisAlignment.spaceEvenly,
-                //                   children: [
-                //                   Text(
-                //                             con.nextPrayer,
-                //                             style: GoogleFonts.cairo(
-                //                                 color: Colors.black,
-                //                                 fontWeight: FontWeight.w600,
-                //                                 fontSize:
-                //                                     MediaQuery.sizeOf(context)
-                //                                                 .width >
-                //                                             600
-                //                                         ? 14.sp
-                //                                         : 15.sp),
-                //                           ),
-                //                     const SizedBox(
-                //                       height: 10,
-                //                     ),
-                //                     Text(
-                //                       con.remainingTimeText,
-                //                       style: GoogleFonts.cairo(
-                //                           color: Colors.black,
-                //                           fontWeight: FontWeight.bold,
-                //                           fontSize: MediaQuery.sizeOf(context)
-                //                                       .width >
-                //                                   600
-                //                               ? 11.sp
-                //                               : 13.sp),
-                //                     ),
-                //                   ],
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ):const Expanded(child: Center(child: CircularProgressIndicator(),)),
-                //   ],
-                // ),
-                // IslamicHeaderWidget(gregorian: con.gregorian, hijriDate: con.hijriDate, nextPrayer: con.nextPrayer, remainingTimeText: con.remainingTimeText),
+                const SizedBox(height: 10),
                 const SizedBox(height: 10),
                 // MediaQuery.sizeOf(context).width > 600
                 Padding(
@@ -555,7 +354,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
                       physics: const NeverScrollableScrollPhysics(),
                       // عشان المكون يكون جزء من ScrollView تانية
-                      children: iconsApp.map((item) {
+                      children: con.iconsApp.map((item) {
                         return BlocBuilder<CentralizedCubit, CentralizedState>(
                           builder: (context, state) {
                             return InkWell(
@@ -724,6 +523,440 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class PrayerHeaderSection extends StatelessWidget {
+  final String hijriDate;
+  final String location;
+  final String gregorian;
+  final String nextPrayer;
+  final String remainingTime;
+  final VoidCallback onSettingsTap;
+  final double? progressValue;
+  const PrayerHeaderSection({
+    super.key,
+    required this.hijriDate,
+    required this.gregorian,
+    required this.nextPrayer,
+    required this.remainingTime,
+    required this.onSettingsTap, required this.location, this.progressValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isTab = ResponsiveUtil.isTablet(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final size = MediaQuery.sizeOf(context);
+    final double headerHeight =
+    isTab ? size.height / 3.2 : size.height / 3.1;
+
+    return SizedBox(
+      height: headerHeight,
+      width: double.infinity,
+      child: Stack(
+        children: [
+          // الخلفية (الصورة)
+            Positioned.fill(
+            child: Image.asset(
+               "assets/images/8495460.jpg",
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // طبقة التدرّج فوق الصورة
+          // Positioned.fill(
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //       gradient: LinearGradient(
+          //         begin: Alignment.topCenter,
+          //         end: Alignment.bottomCenter,
+          //         colors: isDark
+          //             ? [
+          //           Colors.black.withOpacity(0.40),
+          //           Colors.black.withOpacity(0.85),
+          //         ]
+          //             : [
+          //           Colors.white.withOpacity(0.10),
+          //           Colors.white.withOpacity(0.20),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          Positioned.fill(
+            child: Container(
+              color: isDark
+                  ? Colors.black.withOpacity(0.55)  // تغميق قوي للصورة في الوضع الليلي
+                  : Colors.white.withOpacity(0.30), // تفتيح/بهتان بسيط في الوضع النهاري
+            ),
+          ),
+          // زر الإعدادات في أعلى اليسار
+          Positioned(
+             top: 35,
+              left: 10,
+            child: InkWell(
+              onTap: onSettingsTap,
+              borderRadius: BorderRadius.circular(30),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDark
+                      ? Colors.white.withOpacity(0.08)
+                      : Colors.white.withOpacity(0.9),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.settings,
+                  size: isTab ? 26 : 22,
+                  color: isDark
+                      ? AppColors.greyLightColor
+                      : Colors.black87,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+             top: 35,
+              right: 10,
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isDark
+                        ? Colors.white.withOpacity(0.08)
+                        : Colors.white.withOpacity(0.9),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.location_on_rounded,
+                    size: isTab ? 26 : 22,
+                    color: isDark
+                          ? KColors.primaryColor
+                          : AppColors.primary,
+                  ),
+                ),
+                // Icon(
+                //   Icons.location_on_rounded,
+                //   size:isTab?25: 16,
+                //   color: isDark
+                //       ? KColors.primaryColor
+                //       : AppColors.primary,
+                // ),
+                const SizedBox(width: 10),
+                TextDefaultWidget(
+                  title: location,
+                  fontSize: isTab ? 8.sp : 11.sp,
+                  fontFamily: "cairo",
+                  fontWeight: FontWeight.bold,
+                  color: isDark
+                      ? AppColors.greyLightColor
+                      : Colors.white,
+                ),
+]
+            ),
+          ),
+          // التاريخ في أعلى اليمين (هجري + ميلادي)
+          // Padding(
+          //   padding: const EdgeInsets.only(top:45),
+          //   child: Align(
+          //     alignment: Alignment.topRight,
+          //     child: Column(
+          //       // crossAxisAlignment: CrossAxisAlignment.end,
+          //       children: [
+          //         Container(
+          //           padding:
+          //           const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          //           decoration: BoxDecoration(
+          //             borderRadius: BorderRadius.circular(20),
+          //             // color: isDark
+          //             //     ? Colors.black.withOpacity(0.5)
+          //             //     : Colors.white.withOpacity(0.95),
+          //             // border: Border.all(
+          //             //   color: const Color(0xFFD4AF37).withOpacity(0.7),
+          //             //   width: 1,
+          //             // ),
+          //           ),
+          //           child: Column(
+          //             children: [
+          //               Row(
+          //                 mainAxisSize: MainAxisSize.min,
+          //                 children: [
+          //                   Icon(
+          //                     Icons.calendar_today_rounded,
+          //                     size: 14,
+          //                     color: isDark
+          //                         ? AppColors.greyLightColor
+          //                         : const Color(0xFF1B5E20),
+          //                   ),
+          //                   const SizedBox(width: 6),
+          //                   TextDefaultWidget(
+          //                     title: hijriDate,
+          //                     fontSize: isTab ? 10.sp : 12.sp,
+          //                     fontFamily: "cairo",
+          //                     fontWeight: FontWeight.w600,
+          //                     color: isDark
+          //                         ? AppColors.greyLightColor
+          //                         : Colors.black,
+          //                   ),
+          //                 ],
+          //               ),
+          //               const SizedBox(height: 10),
+          //               TextDefaultWidget(
+          //                 title: gregorian,
+          //                 fontSize: isTab ? 9.sp : 11.sp,
+          //                 fontFamily: "cairo",
+          //                 color: isDark
+          //                     ? AppColors.greyLightColor.withOpacity(0.8)
+          //                     : Colors.black87.withOpacity(0.7),
+          //               ),
+          //
+          //             ],
+          //           ),
+          //         ),
+          //         Row(
+          //           mainAxisSize: MainAxisSize.min,
+          //
+          //           children: [
+          //             Icon(
+          //               Icons.location_on_rounded,
+          //               size:isTab?25: 16,
+          //               color: isDark
+          //                   ? AppColors.greyLightColor
+          //                   : const Color(0xFFd32f2f),
+          //             ),
+          //             const SizedBox(width: 4),
+          //             TextDefaultWidget(
+          //               title: location,
+          //               fontSize: isTab ? 9.sp : 11.sp,
+          //               fontFamily: "cairo",
+          //               fontWeight: FontWeight.w500,
+          //               color: isDark
+          //                   ? AppColors.greyLightColor
+          //                   : Colors.black87,
+          //             ),
+          //           ],
+          //         )
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // كارت "الصلاة القادمة" في الأسفل
+
+          Padding(
+            padding:  EdgeInsets.only(top:isTab? 0:80),
+            child: Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding:
+                 EdgeInsets.symmetric(horizontal:isTab?19: 16.0, vertical:12),
+                child: Container(
+                  width: double.infinity,
+                  padding:
+                   EdgeInsets.symmetric(horizontal: 14, vertical: isTab? 18: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: isDark
+                        ? Colors.black.withOpacity(0.45)
+                        : Colors.white.withOpacity(0.70),
+                    // border: Border.all(
+                    //   color: const Color(0xFFD4AF37).withOpacity(0.7),
+                    //   width: 1.2,
+                    // ),
+                  //   boxShadow: [
+                  //     BoxShadow(
+                  //       color: Colors.black.withOpacity(0.18),
+                  //       blurRadius: 10,
+                  //       offset: const Offset(0, 4),
+                  //     ),
+                  //   ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding:  EdgeInsets.all(isTab?10:6),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isDark? Colors.black.withOpacity(0.6):Colors.white
+                                  .withOpacity( 1.00),
+                            ),
+                            child: Icon(
+                              Icons.calendar_month_outlined,
+                              size: isTab ? 22 : 18,
+                              color: isDark?KColors.primaryColor: const Color(0xFF1B5E20),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // Icon(
+                          //   Icons.calendar_today_rounded,
+                          //   size: 14,
+                          //   color: isDark
+                          //       ? AppColors.greyLightColor
+                          //       : const Color(0xFF1B5E20),
+                          // ),
+                          // const SizedBox(width: 6),
+                          TextDefaultWidget(
+                            title: hijriDate,
+                            fontSize: isTab ? 8.sp : 12.sp,
+                            fontFamily: "cairo",
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.greyLightColor
+                                : Colors.black,
+                          ),
+                          Spacer(),
+                          TextDefaultWidget(
+                            title: gregorian,
+                            fontSize: isTab ? 8.sp : 12.sp,
+                            fontWeight: FontWeight.w600,
+
+                            fontFamily: "cairo",
+                            color: isDark
+                                ? AppColors.greyLightColor.withOpacity(0.8)
+                                : Colors.black87.withOpacity(0.7),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+
+                      // العنوان + اسم الصلاة
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding:  EdgeInsets.all(isTab?10:6),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isDark? Colors.black.withOpacity(0.6):Colors.white
+                                      .withOpacity( 1.00),
+                                ),
+                                child: Icon(
+                                  Icons.mosque_outlined,
+                                  size: isTab ? 22 : 18,
+                                  color: isDark?KColors.primaryColor: const Color(0xFF1B5E20),
+                                ),
+                              ),
+
+                              const SizedBox(width: 8),
+                              TextDefaultWidget(
+                                title: "الصلاة القادمة",
+                                fontFamily: "me",
+                                fontWeight: FontWeight.bold,
+                                fontSize: isTab ? 11.sp : 15.sp,
+                                color: isDark
+                                    ? AppColors.greyLightColor
+                                    : Colors.black87,
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color:isDark? const Color(0xFF1B5E20)
+                                  .withOpacity(isDark ? 0.6 : 0.30):Colors.white.withOpacity(isDark ? 0.6 : 1.00),
+                            ),
+                            child: TextDefaultWidget(
+                              title: nextPrayer,
+                              fontFamily: "me",
+                              fontWeight: FontWeight.w600,
+                              fontSize: isTab ? 10.sp : 13.sp,
+                              color: isDark
+                                  ? AppColors.greyLightColor
+                                  : const Color(0xFF1B5E20),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // الوقت المتبقي + شريط بسيط (ديكور)
+                      Row(
+                        children: [
+                          Container(
+                            padding:  EdgeInsets.all(isTab?10:6),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isDark? Colors.black.withOpacity(0.6):Colors.white
+                                  .withOpacity( 1.00),
+                            ),
+                            child: Icon(
+                              Icons.timer_outlined,
+                              size: isTab ? 22 : 18,
+                              color: isDark?KColors.primaryColor: const Color(0xFF1B5E20),
+                            ),
+                          ),
+
+                          const SizedBox(width: 8),
+                          TextDefaultWidget(
+                            title: "الوقت المتبقي",
+                            fontFamily: "cairo",
+                            fontSize: isTab ? 8.sp : 11.sp,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.greyLightColor.withOpacity(0.8)
+                                : Colors.black,
+                          ),
+            Spacer(),
+                          TextDefaultWidget(
+                            title: remainingTime,
+                            fontFamily: "cairo",
+                            fontWeight: FontWeight.bold,
+                            fontSize: isTab ? 10.sp : 13.sp,
+                            color: isDark
+                                ? AppColors.greyLightColor
+                                : Colors.black87,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      // شريط ديكوري (مش progress حقيقي، بس يعطي إحساس)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: LinearProgressIndicator(
+                          value: progressValue, // لو عندك نسبة حقيقية ممكن تمررها هنا
+                          minHeight:isTab?7: 4,
+                          backgroundColor: isDark
+                              ? Colors.white10
+                              : Colors.grey.shade200,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            const Color(0xFF1B5E20),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

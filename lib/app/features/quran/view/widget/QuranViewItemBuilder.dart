@@ -9,6 +9,8 @@ import 'package:quran_library/quran.dart';
 import 'package:quran_library/quran_library.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../core/utils/style/responsive_util.dart';
+
 enum _QuranMenuAction {
   audio,
   orientation,
@@ -530,14 +532,16 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       value: _QuranMenuAction.audio,
                       child: Row(
                         children: [
-                          const Icon(Icons.play_circle_outlined, size: 20),
-                          const SizedBox(width: 8),
                           Text(
                             'الإستماع للسور',
                             style: TextStyle(
                               color: isDark ? Colors.white : Colors.black,
                             ),
                           ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.play_circle_outlined, size: 20),
+
+
                         ],
                       ),
                     ),
@@ -545,17 +549,18 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       value: _QuranMenuAction.orientation,
                       child: Row(
                         children: [
-                          Icon(
-                            _verticalMode ? Icons.swap_horiz : Icons.swap_vert,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
                           Text(
                             _verticalMode ? 'الوضع الأفقي' : 'الوضع الرأسي',
                             style: TextStyle(
                               color: isDark ? Colors.white : Colors.black,
                             ),
                           ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            _verticalMode ? Icons.swap_horiz : Icons.swap_vert,
+                            size: ResponsiveUtil.isTablet(context)  ? 25:20,
+                          ),
+
                         ],
                       ),
                     ),
@@ -563,16 +568,17 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       value: _QuranMenuAction.background,
                       child: Row(
                         children: [
-                          Icon(
-                            isDark ? Icons.dark_mode : Icons.light_mode,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
+
                           Text(
                             isDark ? 'الخلفية الليليه' : 'الخلفية النهارية',
                             style: TextStyle(
                               color: isDark ? Colors.white : Colors.black,
                             ),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            isDark ? Icons.dark_mode : Icons.light_mode,
+                            size: 20,
                           ),
                         ],
                       ),
@@ -627,7 +633,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                               onPageChanged: _handlePageChanged,
                               itemBuilder: (context, index) {
                                 return QuranLibraryScreen(
-                                  backgroundColor:isDark? Colors.black:Colors.white,
+                                  backgroundColor: _backgroundColor,
 
                                   withPageView: false,
                                   isDark: isDark,

@@ -12,6 +12,7 @@ import '../../core/cubit/centralized_cubit.dart';
 import '../../core/localization/localization_manager.dart';
 import '../../core/shard/constanc/app_style.dart';
 import '../../core/utils/style/k_color.dart';
+import '../../core/utils/style/k_helper.dart';
 import '../../core/utils/style/responsive_util.dart';
 import '../../core/widgets/custom_text_widget.dart';
 import 'data/repo/hadith_details_repo_immp.dart';
@@ -51,18 +52,20 @@ class HadithDetailsView extends StatelessWidget {
                                 text: bloc.hadithDetailsModal?.hadeeth))
                             .then((_) {
                           // Show a snackbar to indicate that the text has been copied
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                backgroundColor: isDark
-                                    ? KColors.blackColor
-                                    : KColors.whiteColor,
-                                content: TextWidget(
-                                    fontSize: ResponsiveUtil.isTablet(context)
-                                        ? 10.sp
-                                        : 12.sp,
-                                    textAlign: TextAlign.right,
-                                    title: '! تم نسخ الحديث إلى الحافظة')),
-                          );
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   SnackBar(
+                          //       backgroundColor: isDark
+                          //           ? KColors.blackColor
+                          //           : KColors.whiteColor,
+                          //       content: TextWidget(
+                          //           fontSize: ResponsiveUtil.isTablet(context)
+                          //               ? 10.sp
+                          //               : 12.sp,
+                          //           textAlign: TextAlign.right,
+                          //           title: '! تم نسخ الحديث إلى الحافظة')),
+                          // );
+                          KHelper.showSuccess(message: 'تم نسخ الحديث إلى الحافظة!');
+
                         });
                       }
 
