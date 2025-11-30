@@ -29,72 +29,107 @@ import 'app/features/Khatmah/data/khatmah_model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   tz.initializeTimeZones();
-//   tz.setLocalLocation(tz.getLocation(await tz.local.name));
-//   await initl.initializeDateFormatting('ar');
+// @pragma('vm:entry-point')
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) async {
+//     try {
+//       print("🔊 بدء تشغيل الأذان: $task");
 //
-//   HijriCalendar.setLocal('ar');
+//       final prayerName = inputData?['prayerName'] ?? 'الفجر';
 //
-//   WidgetsFlutterBinding.ensureInitialized();
-//   final List<ConnectivityResult> connectivityResult =
-//       await (Connectivity().checkConnectivity());
-//   tz.initializeTimeZones();
-//   final String timeZoneName = tz.local.name;
-//   tz.setLocalLocation(tz.getLocation(timeZoneName));
-//   if (connectivityResult.contains(ConnectivityResult.mobile)) {
-//     await Firebase.initializeApp();
-//     await MyFirebaseMessagingService.requestPermission();
-//     await MyFirebaseMessagingService.initialize();
-//     FirebaseMessaging.onBackgroundMessage(
-//         MyFirebaseMessagingService.firebaseMessagingBackgroundHandler);
-//   } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
-//     await Firebase.initializeApp();
-//     await MyFirebaseMessagingService.requestPermission();
-//     await MyFirebaseMessagingService.initialize();
+//       // تشغيل صوت الأذان
+//       final audioPlayer = AudioPlayer();
+//       await audioPlayer.setAsset('assets/athan/athan.mp3');
+//       await audioPlayer.play();
 //
-//     FirebaseMessaging.onBackgroundMessage(
-//         MyFirebaseMessagingService.firebaseMessagingBackgroundHandler);
-//   } else if (connectivityResult.contains(ConnectivityResult.none)) {
-//     await AzkarNotificationService.initialize();
-//     await AzkarNotificationService.scheduleAllAzkarNotifications();
-//   }
+//       // انتظار انتهاء الأذان
+//       await audioPlayer.playerStateStream.firstWhere(
+//             (state) => state.processingState == ProcessingState.completed,
+//       );
 //
-//   await AzkarNotificationService.initialize();
-//   await AzkarNotificationService.scheduleAllAzkarNotifications();
-//   runApp(const MyApp());
+//       await audioPlayer.dispose();
+//       print("✅ انتهى أذان $prayerName");
+//
+//       return Future.value(true);
+//     } catch (e) {
+//       print("❌ خطأ في الأذان: $e");
+//       return Future.value(false);
+//     }
+//   });
 // }
-
-// ⚠️ هذه الدالة تعمل في الخلفية
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     try {
-      print("🔊 بدء تشغيل الأذان: $task");
+      // مهم جدًا مع الـ plugins في الخلفية
+      WidgetsFlutterBinding.ensureInitialized();
+
+      print("🔊 بدء تشغيل الأذان في الخلفية: $task");
 
       final prayerName = inputData?['prayerName'] ?? 'الفجر';
+      final cityName = inputData?['cityName'] ?? '';
 
-      // تشغيل صوت الأذان
+      // 1) تهيئة الـ notifications في هذا الـ isolate
+      final FlutterLocalNotificationsPlugin notifications =
+      FlutterLocalNotificationsPlugin();
+
+      const androidSettings = AndroidInitializationSettings('ic_stat_logoapp');
+      const iosSettings = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      );
+
+      const initSettings = InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      );
+
+      await notifications.initialize(initSettings);
+
+      // 2) تشغيل صوت الأذان
       final audioPlayer = AudioPlayer();
       await audioPlayer.setAsset('assets/athan/athan.mp3');
       await audioPlayer.play();
 
-      // انتظار انتهاء الأذان
       await audioPlayer.playerStateStream.firstWhere(
             (state) => state.processingState == ProcessingState.completed,
       );
 
       await audioPlayer.dispose();
-      print("✅ انتهى أذان $prayerName");
 
+      // 3) إظهار الإشعار بعد انتهاء الأذان
+      await notifications.show(
+        999,
+        '✅ انتهى أذان $prayerName',
+        'تم تشغيل الأذان - $cityName',
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'adhan_complete_channel',
+            'إشعارات اكتمال الأذان',
+            channelDescription: 'إشعار يظهر بعد انتهاء الأذان',
+            importance: Importance.low,
+            priority: Priority.low,
+            icon: 'ic_stat_logoapp',
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: false, // هنا لأن الصوت خلص أصلاً
+          ),
+        ),
+      );
+
+      print("✅ انتهى تشغيل الأذان وإظهار الإشعار بنجاح");
       return Future.value(true);
-    } catch (e) {
-      print("❌ خطأ في الأذان: $e");
+    } catch (e, s) {
+      print("❌ خطأ في تشغيل الأذان: $e");
+      print(s); // علشان تشوف الـ stacktrace
       return Future.value(false);
     }
   });
 }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // ← أول سطر دائمًا
   await QuranLibrary.init();
@@ -110,6 +145,11 @@ Future<void> main() async {
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
   ));
+
+  // await Workmanager().initialize(
+  //   callbackDispatcher,      // ← دي واحدة فقط من الملف اللي فوق
+  //   isInDebugMode: false,
+  // );
   HijriCalendar.setLocal('ar_SA');
 
   // لو عندك DI بيتعامل مع ملفات/قنوات منصة، خلّيه بعد ensureInitialized
@@ -160,65 +200,6 @@ Future<void> main() async {
   });
 }
 
-// void main() async {
-//   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-//     statusBarColor: Colors.transparent,
-//     statusBarIconBrightness: Brightness.dark,
-//     systemNavigationBarColor: Colors.transparent,
-//   ),
-//   );
-//
-//   await Di.init();
-//   WidgetsFlutterBinding.ensureInitialized();
-//   //// for init date language
-//   await initializeDateFormatting();
-//   await initializeDateFormatting('ar', null);
-//   await initializeDateFormatting('en', null);
-//   await SharedObj().init();
-//   QuranLibrary().init();
-//   QuranLibrary().initTafsir();
-//   // Init Hive
-//   await Hive.initFlutter();
-//   Hive.registerAdapter(KhatmahModelAdapter());
-//   await Hive.openBox<KhatmahModel>('khatmahBox');
-//   await Hive.openBox('khatmahPlans'); // لو عندك خطط الأجزاء
-//
-//   // await Hive.deleteBoxFromDisk('khatmahBox');
-//
-//   // Init Notifications
-//   // AwesomeNotifications().initialize(
-//   //   null,
-//   //   [
-//   //     NotificationChannel(
-//   //       channelKey: 'khatmah_channel',
-//   //       channelName: 'ختمتك',
-//   //       channelDescription: 'إشعارات ختمتك اليومية',
-//   //       defaultColor: Colors.green,
-//   //       importance: NotificationImportance.High,
-//   //       channelShowBadge: true,
-//   //     )
-//   //   ],
-//   //   debug: true,
-//   // );
-//   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-//       .then((_) {
-//     runApp(
-//         // DevicePreview(
-//         //   enabled: !kReleaseMode,
-//         //   builder: (context) => YaqeesApp(), // Wrap your app
-//         // ),
-//
-//         BlocProvider<CentralizedCubit>(
-//             create: (context) =>
-//                 CentralizedCubit(sharedPreferences: Di.sharedPreferences)
-//                   ..localization(),
-//             child: BlocBuilder<CentralizedCubit, CentralizedState>(
-//               builder: (context, state) {
-//                 return const MashkahApp();
-//               },
-//             )));
-//   });
-// }
 
 class NoConnectionScreen extends StatelessWidget {
   const NoConnectionScreen({super.key});
@@ -263,135 +244,6 @@ class NoConnectionScreen extends StatelessWidget {
   }
 }
 
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   tz.initializeTimeZones();
-//   tz.setLocalLocation(tz.getLocation(await tz.local.name));
-//   await initl.initializeDateFormatting('ar');
-//
-//   HijriCalendar.setLocal('ar');
-//
-//   WidgetsFlutterBinding.ensureInitialized();
-//   final List<ConnectivityResult> connectivityResult =
-//   await (Connectivity().checkConnectivity());
-//   tz.initializeTimeZones();
-//   final String timeZoneName = tz.local.name;
-//   // await Firebase.initializeApp();
-//   // await MyFirebaseMessagingService.requestPermission();
-//   // await MyFirebaseMessagingService.initialize();
-//   // FirebaseMessaging.onBackgroundMessage(
-//   //     MyFirebaseMessagingService.firebaseMessagingBackgroundHandler);
-//   tz.setLocalLocation(tz.getLocation(timeZoneName));
-//   await AzkarNotificationService.initialize();
-//   await AzkarNotificationService.scheduleAllAzkarNotifications();
-//
-//   runApp(const MyApp());
-// }
-// class MyApp extends StatefulWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   State<MyApp> createState() => _MyAppState();
-// }
-//
-// class _MyAppState extends State<MyApp> {
-//   late String selectedFontSize;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     selectedFontSize = "20";
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ScreenUtilInit(
-//       builder: (BuildContext context, Widget? child) {
-//         return MultiProvider(
-//           providers: [
-//             ChangeNotifierProvider(
-//               create: (context) => AzkarProvider()
-//                 ..fetchAzkarMassa()
-//                 ..fetchAzkarSabah()
-//                 ..fetchAzkarPostPrayer()
-//                 ..fetchAzkar(),
-//             )
-//           ],
-//           child: MaterialApp(
-//             debugShowCheckedModeBanner: false,
-//             title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
-//             initialRoute: 'splash',
-//             onGenerateRoute: (settings) {
-//               WidgetBuilder builder;
-//               switch (settings.name) {
-//                 case 'splash':
-//                   builder = (context) => const SplashScreen();
-//                   break;
-//                 case 'home':
-//                   builder = (context) => const HomeScreen();
-//                   break;
-//                 case '/azkarSabah':
-//                   builder = (context) => const AzkarSabah();
-//                   break;
-//                 case '/azkarMassa':
-//                   builder = (context) => const AzkarMassa();
-//                   break;
-//                 case '/prayerAzkar':
-//                   builder = (context) => const PrayerAzkar();
-//                   break;
-//                 case '/surahListScreen':
-//                   builder = (context) => const SurahListScreen();
-//                   break;
-//                 case '/timingScreen':
-//                   builder = (context) => const TimingScreen();
-//                   break;
-//                 case '/allazkarlistview':
-//                   builder = (context) => const Allazkarlistview();
-//                   break;
-//                 case '/azkarCounter':
-//                   builder = (context) => const AzkarCounter();
-//                   break;
-//                 case '/sleepAzkar':
-//                   builder = (context) => const SleepAzkar();
-//                   break;
-//                 case '/rokiaScreen':
-//                   builder = (context) => const RokiaScreen();
-//                   break;
-//                 case '/azkarOthers':
-//                   builder = (context) => const AzkarOthers();
-//                   break;
-//                 case '/about':
-//                   builder = (context) => const About();
-//                   break;
-//                 default:
-//                   builder = (context) => const SplashScreen(); // fallback
-//               }
-//
-//               return PageRouteBuilder(
-//                 pageBuilder: (context, animation, secondaryAnimation) =>
-//                     builder(context),
-//                 transitionsBuilder:
-//                     (context, animation, secondaryAnimation, child) {
-//                   const begin = Offset(1.0, 0.0); // Slide from right to left
-//                   const end = Offset.zero;
-//                   const curve = Curves.easeIn;
-//
-//                   final tween = Tween(begin: begin, end: end)
-//                       .chain(CurveTween(curve: curve));
-//
-//                   return SlideTransition(
-//                     position: animation.drive(tween),
-//                     child: child,
-//                   );
-//                 },
-//               );
-//             },
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
 
 void checkWhatsNew(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
@@ -404,125 +256,125 @@ print("currentVersion $currentVersion");
 print("lastVersion $lastVersion");
   if (lastVersion != currentVersion) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showWhatsNew(context);
+      // showWhatsNew(context);
     });
 
     prefs.setString("last_version", currentVersion);
   }
 }
 
-void showWhatsNew(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    isScrollControlled: true,
-    builder: (_) {
-      return DraggableScrollableSheet(
-        initialChildSize: 0.55,
-        maxChildSize: 0.85,
-        minChildSize: 0.4,
-        builder: (context, scrollController) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-            ),
-            child: ListView(
-              controller: scrollController,
-              padding: EdgeInsets.all(20),
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 15),
-                Text(
-                  "🌟 ما الجديد في التحديث؟",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 20),
-                whatsNewItem(
-                  Icons.star,
-                  "تحسين واجهة قراءة القرآن",
-                  "تم إضافة وضع ليلي محسن + تحسين حجم الخط + تقليل استهلاك البطارية.",
-                ),
-                whatsNewItem(
-                  Icons.bookmark,
-                  "إدارة العلامات المرجعية",
-                  "تقدر تحفظ، تعدل، وتمسح العلامات بسهولة وسرعة.",
-                ),
-                whatsNewItem(
-                  Icons.search,
-                  "بحث أسرع",
-                  "تحسين سرعة البحث داخل السور والآيات.",
-                ),
-                whatsNewItem(
-                  Icons.bug_report,
-                  "إصلاحات أخطاء",
-                  "إصلاح مشكلة تحميل الصفحات وتحسين الأداء العام.",
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    minimumSize: Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: Text(
-                    "تمام، فهمت 👍",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
-Widget whatsNewItem(IconData icon, String title, String desc) {
-  return Container(
-    margin: EdgeInsets.only(bottom: 15),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: Colors.green, size: 28),
-        SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 4),
-              Text(
-                desc,
-                style: TextStyle(fontSize: 15, color: Colors.grey[700]),
-              ),
-            ],
-          ),
-        )
-      ],
-    ),
-  );
-}
-
+// void showWhatsNew(BuildContext context) {
+//   showModalBottomSheet(
+//     context: context,
+//     backgroundColor: Colors.transparent,
+//     isScrollControlled: true,
+//     builder: (_) {
+//       return DraggableScrollableSheet(
+//         initialChildSize: 0.55,
+//         maxChildSize: 0.85,
+//         minChildSize: 0.4,
+//         builder: (context, scrollController) {
+//           return Container(
+//             decoration: BoxDecoration(
+//               color: Colors.white,
+//               borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+//             ),
+//             child: ListView(
+//               controller: scrollController,
+//               padding: EdgeInsets.all(20),
+//               children: [
+//                 Center(
+//                   child: Container(
+//                     width: 40,
+//                     height: 5,
+//                     decoration: BoxDecoration(
+//                       color: Colors.grey[300],
+//                       borderRadius: BorderRadius.circular(10),
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(height: 15),
+//                 Text(
+//                   "🌟 ما الجديد في التحديث؟",
+//                   style: TextStyle(
+//                     fontSize: 22,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 SizedBox(height: 20),
+//                 whatsNewItem(
+//                   Icons.star,
+//                   "تحسين واجهة قراءة القرآن",
+//                   "تم إضافة وضع ليلي محسن + تحسين حجم الخط + تقليل استهلاك البطارية.",
+//                 ),
+//                 whatsNewItem(
+//                   Icons.bookmark,
+//                   "إدارة العلامات المرجعية",
+//                   "تقدر تحفظ، تعدل، وتمسح العلامات بسهولة وسرعة.",
+//                 ),
+//                 whatsNewItem(
+//                   Icons.search,
+//                   "بحث أسرع",
+//                   "تحسين سرعة البحث داخل السور والآيات.",
+//                 ),
+//                 whatsNewItem(
+//                   Icons.bug_report,
+//                   "إصلاحات أخطاء",
+//                   "إصلاح مشكلة تحميل الصفحات وتحسين الأداء العام.",
+//                 ),
+//                 SizedBox(height: 20),
+//                 ElevatedButton(
+//                   onPressed: () => Navigator.pop(context),
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: Colors.green,
+//                     minimumSize: Size(double.infinity, 50),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(15),
+//                     ),
+//                   ),
+//                   child: Text(
+//                     "تمام، فهمت 👍",
+//                     style: TextStyle(fontSize: 18, color: Colors.white),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           );
+//         },
+//       );
+//     },
+//   );
+// }
+//
+// Widget whatsNewItem(IconData icon, String title, String desc) {
+//   return Container(
+//     margin: EdgeInsets.only(bottom: 15),
+//     child: Row(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Icon(icon, color: Colors.green, size: 28),
+//         SizedBox(width: 12),
+//         Expanded(
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Text(
+//                 title,
+//                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//               ),
+//               SizedBox(height: 4),
+//               Text(
+//                 desc,
+//                 style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+//               ),
+//             ],
+//           ),
+//         )
+//       ],
+//     ),
+//   );
+// }
+//
 
 
 // إعداد الإشعارات الافتراضية
@@ -623,6 +475,7 @@ class NotificationService {
       hour: hour,
       minute: minute,
       payload: 'quran_wird',
+
     );
   }
 
@@ -673,7 +526,7 @@ class NotificationService {
           channelDescription: 'إشعارات الأذكار والأوراد اليومية',
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@drawable/ic_stat_logoapp',
+          icon: 'ic_stat_logoapp',
           // استخدام الصوت الافتراضي
           playSound: true,
           enableVibration: true,

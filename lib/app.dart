@@ -33,156 +33,17 @@ class _MashkahAppState extends State<MashkahApp> {
       checkWhatsNew(context);
     });
     final rateMyApp = RateMyApp(
-      preferencesPrefix: 'rateMyApp_',
+      preferencesPrefix: 'rateMyApp',
       minDays: 3,
       minLaunches: 5,
       remindDays: 3,
       remindLaunches: 5,
       googlePlayIdentifier: 'com.rafiq.muslimdaily', // عدّل
-      appStoreIdentifier: '1234567890', // عدّل
+      appStoreIdentifier: '6749927338', // عدّل
     );
     rateService = RateService(rateMyApp);
     rateService.init().then((_) => rateService.maybeAskForRating(context));
   }
-//   final RateMyApp rateMyApp = RateMyApp(
-//     preferencesPrefix: 'rateMyApp_',
-//     minDays: 3, // بعد 3 أيام من التثبيت
-//     minLaunches: 5, // أو بعد 5 مرات تشغيل
-//     remindDays: 3,
-//     remindLaunches: 5,
-//     googlePlayIdentifier: 'com.rafiq.muslimdaily', // ← غيّرها
-//     appStoreIdentifier: '1234567890', // ← غيّرها
-//   );
-//   @override
-//   void initState() {
-//     super.initState();
-//
-//     rateMyApp.init().then((_) {
-//       if (rateMyApp.shouldOpenDialog) {
-//         _showRatingDialog();
-//       }
-//     });
-//   }
-//   Future<void> _openStore() async {
-//     if (Platform.isAndroid) {
-//       // 🔹 تحقق أولاً إذا كان على Huawei أم لا
-//       try {
-//         final bool isHuawei = await _isHuaweiDevice();
-//         if (isHuawei) {
-//           await launchUrl(Uri.parse('https://appgallery.huawei.com/app/C123456789')); // رابط تطبيقك في AppGallery
-//           return;
-//         }
-//       } catch (_) {}
-//
-//       // 🔹 غير Huawei → Google Play
-//       await launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.yourcompany.yourapp'));
-//     } else if (Platform.isIOS) {
-//       // 🔹 App Store
-//       await launchUrl(Uri.parse('https://apps.apple.com/app/id1234567890'));
-//     }
-//   }
-//
-// // فحص هل الجهاز Huawei
-//   Future<bool> _isHuaweiDevice() async {
-//     try {
-//       // إذا الجهاز بيحتوي على خدمات Huawei
-//       return await File('/system/app/HwOUC').exists();
-//     } catch (_) {
-//       return false;
-//     }
-//   }
-//   void _showRateDialog() {
-//     rateMyApp.showStarRateDialog(
-//       context,
-//       title: '⭐ قيّم تطبيقنا',
-//       message: 'ساعدنا بتقييمك لتطوير التطبيق أكثر 🙏',
-//       starRatingOptions: const StarRatingOptions(initialRating: 5),
-//       actionsBuilder: (context, stars) {
-//         return [
-//           TextButton(
-//             child: const Text('لاحقًا'),
-//             onPressed: () {
-//               rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
-//               Navigator.pop<RateMyAppDialogButton>(context, RateMyAppDialogButton.later);
-//             },
-//           ),
-//           ElevatedButton(
-//             child: const Text('إرسال'),
-//             onPressed: () async {
-//               final rating = (stars ?? 0).round();
-//               if (rating >= 4) {
-//                 await rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
-//                 await _openStore(); // ← افتح المتجر المناسب
-//               } else {
-//                 // لو التقييم منخفض افتح صفحة ملاحظات أو تجاهل
-//                 await rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
-//               }
-//               Navigator.pop<RateMyAppDialogButton>(context, RateMyAppDialogButton.rate);
-//             },
-//           ),
-//         ];
-//       },
-//       ignoreNativeDialog: false,
-//       dialogStyle: const DialogStyle(
-//         titleAlign: TextAlign.center,
-//         messageAlign: TextAlign.center,
-//       ),
-//       onDismissed: () => rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed),
-//     );
-//   }
-//   // ListTile(
-//   // leading: const Icon(Icons.star, color: Colors.amber),
-//   // title: const Text('تقييم التطبيق'),
-//   // onTap: _showRateDialog,
-//   // ),
-//
-//   void _showRatingDialog() {
-//     rateMyApp.showStarRateDialog(
-//       context,
-//       title: '⭐ قيم تطبيقنا',
-//       message: 'إذا أعجبك التطبيق، يسعدنا أن تترك لنا تقييمًا بسيطًا 🙏',
-//       actionsBuilder: (context, stars) {
-//         return [
-//           TextButton(
-//             child: const Text('إلغاء'),
-//             onPressed: () {
-//               Navigator.pop<RateMyAppDialogButton>(
-//                   context, RateMyAppDialogButton.no);
-//             },
-//           ),
-//           ElevatedButton(
-//             child: const Text('إرسال'),
-//             onPressed: () async {
-//               print('تم التقييم: ${stars ?? 0} نجوم');
-//
-//               if ((stars ?? 0) >= 4) {
-//                 // ⭐ لو التقييم عالي، افتح صفحة التطبيق في المتجر
-//                 await rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
-//               } else {
-//                 // 💬 لو التقييم قليل، ممكن توجه المستخدم لصفحة الملاحظات
-//                 await rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed);
-//               }
-//
-//               Navigator.pop<RateMyAppDialogButton>(
-//                   context, RateMyAppDialogButton.rate);
-//             },
-//           ),
-//         ];
-//       },
-//       ignoreNativeDialog: Platform.isAndroid,
-//       dialogStyle: const DialogStyle(
-//         titleAlign: TextAlign.center,
-//         messageAlign: TextAlign.center,
-//       ),
-//       starRatingOptions: const StarRatingOptions(
-//         initialRating: 5,
-//         minRating: 1,
-//         allowHalfRating: true,
-//       ),
-//       onDismissed: () => rateMyApp
-//           .callEvent(RateMyAppEventType.laterButtonPressed), // لما يقفل النافذة
-//     );
-//   }
 
   @override
   Widget build(BuildContext context) {

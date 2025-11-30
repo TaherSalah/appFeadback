@@ -730,7 +730,7 @@ class AdhanWorkManagerService {
     // تهيئة الإشعارات
     tz.initializeTimeZones();
 
-    const androidSettings = AndroidInitializationSettings('@drawable/ic_stat_logoapp');
+    const androidSettings = AndroidInitializationSettings('ic_stat_logoapp');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -825,7 +825,7 @@ class AdhanWorkManagerService {
           channelDescription: 'تنبيه قبل موعد الأذان بـ 5 دقائق',
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@drawable/ic_stat_logoapp',
+          icon: 'ic_stat_logoapp',
           color: Color(0xFFFF9800),
         ),
       ),
@@ -859,7 +859,8 @@ class AdhanWorkManagerService {
           channelDescription: 'إشعارات مواعيد الصلاة مع تشغيل الأذان تلقائياً',
           importance: Importance.max,
           priority: Priority.high,
-          icon: '@drawable/ic_stat_logoapp',
+          // icon: '@drawable/ic_stat_logoapp',
+          icon: 'ic_stat_logoapp',
           playSound: true,
           enableVibration: true,
           enableLights: true,
