@@ -8,6 +8,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quran_library/quran.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -19,6 +20,7 @@ import 'app.dart';
 import 'app/core/cache/shard_pref/shardpref_obj.dart';
 import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/localization/localization_manager.dart';
+import 'app/features/azan_view/timeingScreen.dart';
 import 'app/features/main_view/widget/IslamicCardWidget.dart';
 import 'app/core/utils/services_locator.dart';
 import 'app/core/utils/style/responsive_util.dart';
@@ -26,6 +28,7 @@ import 'app/core/widgets/custom_text_widget.dart';
 import 'app/features/Khatmah/data/khatmah_model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:workmanager/workmanager.dart';
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
 //   tz.initializeTimeZones();
@@ -63,12 +66,42 @@ import 'package:flutter/material.dart';
 //   runApp(const MyApp());
 // }
 
+// ⚠️ هذه الدالة تعمل في الخلفية
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    try {
+      print("🔊 بدء تشغيل الأذان: $task");
+
+      final prayerName = inputData?['prayerName'] ?? 'الفجر';
+
+      // تشغيل صوت الأذان
+      final audioPlayer = AudioPlayer();
+      await audioPlayer.setAsset('assets/athan/athan.mp3');
+      await audioPlayer.play();
+
+      // انتظار انتهاء الأذان
+      await audioPlayer.playerStateStream.firstWhere(
+            (state) => state.processingState == ProcessingState.completed,
+      );
+
+      await audioPlayer.dispose();
+      print("✅ انتهى أذان $prayerName");
+
+      return Future.value(true);
+    } catch (e) {
+      print("❌ خطأ في الأذان: $e");
+      return Future.value(false);
+    }
+  });
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // ← أول سطر دائمًا
   await QuranLibrary.init();
   // تهيئة خدمة الإشعارات
   await NotificationService().initialize();
-
+  // تهيئة خدمة الأذان مع WorkManager
+  await AdhanWorkManagerService().initialize();
   // جدولة الإشعارات الافتراضية
   await _setupDefaultNotifications();
   // SystemChrome و أي platform channels لازم بعد ensureInitialized
@@ -508,6 +541,7 @@ Future<void> _setupDefaultNotifications() async {
   // جدولة حديث اليوم - الساعة 12 ظهراً
   await notificationService.scheduleDailyHadith(12, 0);
 }
+
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
@@ -520,7 +554,7 @@ class NotificationService {
     tz.initializeTimeZones();
 
     // إعدادات Android
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings('@drawable/ic_stat_logoapp');
 
     // إعدادات iOS
     const iosSettings = DarwinInitializationSettings(
@@ -639,11 +673,12 @@ class NotificationService {
           channelDescription: 'إشعارات الأذكار والأوراد اليومية',
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
-          // sound: RawResourceAndroidNotificationSound('azan'),
+          icon: '@drawable/ic_stat_logoapp',
+          // استخدام الصوت الافتراضي
+          playSound: true,
+          enableVibration: true,
         ),
         iOS: const DarwinNotificationDetails(
-          // sound: 'azan.aiff',
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
@@ -730,3 +765,172 @@ class NotificationService {
     );
   }
 }
+
+
+
+//# دليل إعداد WorkManager للأذان التلقائي
+//
+//## ✅ ما تم عمله:
+//
+//### 1. WorkManager
+//- يشغل الأذان **تلقائياً في الخلفية**
+//- يعمل حتى لو التطبيق **مقفول تماماً**
+//- يعمل حتى لو الهاتف في **وضع السكون**
+//
+//### 2. المميزات:
+//- ✅ أذان تلقائي بدون تدخل المستخدم
+//- ✅ يعمل لـ 7 أيام قادمة
+//- ✅ تنبيه قبل الأذان بـ 5 دقائق (اختياري)
+//- ✅ يحدّث نفسه عند تغيير الموقع
+//
+//---
+//
+//## 📱 الإعدادات المطلوبة على الهاتف:
+//
+//### أ) تعطيل توفير البطارية للتطبيق:
+//1. إعدادات الهاتف → البطارية
+//2. تحسين استهلاك البطارية
+//3. ابحث عن التطبيق
+//4. اختر **"لا تحسّن"** أو **"غير مقيد"**
+//
+//### ب) السماح بالعمل في الخلفية:
+//1. إعدادات الهاتف → التطبيقات
+//2. اختر التطبيق
+//3. الأذونات → **السماح بالعمل في الخلفية**
+//
+//### ج) تفعيل التشغيل التلقائي (للهواتف الصينية):
+//**Xiaomi/Redmi/POCO:**
+//- الإعدادات → الأمان → الأذونات → التشغيل التلقائي
+//- فعّل التطبيق
+//
+//**Huawei:**
+//- الإعدادات → التطبيقات → إدارة التطبيقات
+//- اختر التطبيق → التشغيل التلقائي
+//
+//**Oppo/Realme:**
+//- الإعدادات → البطارية → تحسين استخدام البطارية
+//- اختر التطبيق → لا تحسّن
+//
+//**Samsung:**
+//- الإعدادات → البطارية وصيانة الجهاز
+//- التطبيقات غير المراقبة → أضف التطبيق
+//
+//---
+//
+//## 🔧 إعدادات للمطورين:
+//
+//### 1. تفعيل Debug Mode:
+//في `adhan_workmanager_service.dart`:
+//```dart
+//await Workmanager().initialize(
+//callbackDispatcher,
+//isInDebugMode: true, // غيّرها لـ true للتجربة
+//);
+//```
+//
+//### 2. اختبار الأذان فوراً:
+//```dart
+//// تشغيل الأذان بعد 10 ثواني للتجربة
+//await Workmanager().registerOneOffTask(
+//'test_adhan',
+//'playAdhan',
+//initialDelay: Duration(seconds: 10),
+//inputData: {
+//'prayerName': 'الفجر',
+//'cityName': 'القاهرة',
+//},
+//);
+//```
+//
+//### 3. عرض سجل الأحداث:
+//في Android Studio:
+//```
+//Run → Flutter → Run
+//ثم افتح Logcat وابحث عن:
+//- 🔊 (لتتبع تشغيل الأذان)
+//- ✅ (للعمليات الناجحة)
+//- ❌ (للأخطاء)
+//```
+//
+//---
+//
+//## ⚠️ ملاحظات مهمة:
+//
+//### 1. صوت الأذان:
+//- **يجب** وضع الملف في: `assets/athan/athan.mp3`
+//- أضفه في `pubspec.yaml`:
+//```yaml
+//flutter:
+//assets:
+//- assets/athan/athan.mp3
+//```
+//
+//### 2. القيود في Android 12+:
+//- Android 12 وما فوق يحتاج إذن `SCHEDULE_EXACT_ALARM`
+//- التطبيق سيطلبه تلقائياً عند أول تشغيل
+//
+//### 3. مدة الأذان:
+//- الأذان يشتغل كاملاً ثم يتوقف تلقائياً
+//- لو عايز توقفه يدوياً، ممكن تضيف زر في الإشعار
+//
+//### 4. استهلاك البطارية:
+//- WorkManager مُحسّن ولا يستهلك بطارية كثيرة
+//- يعمل فقط عند موعد الأذان بالضبط
+//
+//---
+//
+//## 🐛 حل المشاكل الشائعة:
+//
+//### المشكلة: الأذان ما يشتغلش
+//**الحل:**
+//1. تأكد من تعطيل توفير البطارية
+//2. تأكد من أن ملف `athan.mp3` موجود
+//3. راجع الـ Logcat للأخطاء
+//
+//### المشكلة: الأذان يتأخر
+//**الحل:**
+//1. تأكد من إذن `SCHEDULE_EXACT_ALARM`
+//2. أغلق تطبيقات توفير البطارية الخارجية
+//3. فعّل التشغيل التلقائي (للهواتف الصينية)
+//
+//### المشكلة: الأذان يتوقف بعد يوم
+//**الحل:**
+//- التطبيق يجدول لـ 7 أيام
+//- افتح التطبيق مرة كل أسبوع لتجديد الجدولة
+//- أو استخدم `BOOT_COMPLETED` receiver
+//
+//---
+//
+//## 🎯 الخطوات التالية (اختيارية):
+//
+//1. **إضافة زر إيقاف الأذان** في الإشعار
+//2. **تطبيق Foreground Service** للموثوقية الأعلى
+//3. **جدولة تلقائية** بعد إعادة تشغيل الجهاز
+//4. **إعدادات مخصصة** لصوت الأذان لكل صلاة
+//
+//---
+//
+//## 📊 اختبار الجودة:
+//
+//```dart
+//// في TimingScreen، أضف هذا الزر للاختبار:
+//ElevatedButton(
+//onPressed: () async {
+//// اختبار فوري
+//await Workmanager().registerOneOffTask(
+//'test_now',
+//'playAdhan',
+//initialDelay: Duration(seconds: 5),
+//inputData: {
+//'prayerName': 'اختبار',
+//'cityName': 'القاهرة',
+//},
+//);
+//
+//ScaffoldMessenger.of(context).showSnackBar(
+//const SnackBar(content: Text('سيبدأ الأذان بعد 5 ثواني')),
+//);
+//},
+//child: const Text('اختبار الأذان الآن'),
+//)
+//```

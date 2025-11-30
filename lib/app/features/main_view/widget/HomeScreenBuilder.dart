@@ -360,10 +360,10 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                           builder: (context, state) {
                             return InkWell(
                               onTap: () {
-                                NotificationService().showInstantNotification(
-                                  '🌅 أذكار الصباح',
-                                  'بسم الله الذي لا يضر مع اسمه شيء',
-                                );
+                                // NotificationService().showInstantNotification(
+                                //   '🌅 أذكار الصباح',
+                                //   'بسم الله الذي لا يضر مع اسمه شيء',
+                                // );
                                 bool needsInternet =
                                     item["navigate"] == Routes.categoriesRoute || item["navigate"] == "/QuranRadioView" ;
 

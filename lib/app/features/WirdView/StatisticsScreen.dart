@@ -263,9 +263,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       {'id': 'millions', 'icon': '💯', 'title': 'الملهم', 'desc': '100,000 تسبيحة'},
 
       // إنجازات إضافية
-      {'id': 'two_days_streak', 'icon': '🌟', 'title': 'يومين متتاليين', 'desc': 'إتمام وردين يومين متتاليين'},
-      {'id': 'two_weeks_streak', 'icon': '🔥', 'title': 'أسبوعين متتاليين', 'desc': 'إتمام الورد لمدة أسبوعين متتاليين'},
-      {'id': 'two_months_streak', 'icon': '💎', 'title': 'شهرين متتاليين', 'desc': 'إتمام الورد لمدة شهرين متتاليين'},
+      {'id': 'two_days_streak', 'icon': '🌟', 'title': 'يومين متتاليين', 'desc': 'إتمام  يومين متتاليين'},
+      {'id': 'two_months_streak', 'icon': '💎', 'title': 'شهرين متتاليين', 'desc': 'إتمام شهرين متتاليين'},
 
       // إنجازات جديدة بالعدد
       {'id': 'thousand', 'icon': '🔢', 'title': 'الآلاف', 'desc': 'إتمام 5000 تسبيحة'},
@@ -306,7 +305,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final Color subtitleColor = isDark ? Colors.white54 : Colors.grey;
 
     return Container(
-      width:ResponsiveUtil.isTablet(context)? 160:110,
+      width:ResponsiveUtil.isTablet(context)? 160:100,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: backgroundColor,
