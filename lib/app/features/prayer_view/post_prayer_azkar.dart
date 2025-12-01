@@ -7,6 +7,7 @@ import '../../core/cubit/centralized_cubit.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
 import '../../core/utils/style/k_color.dart';
+import '../sleep_view/sleep_azkar.dart';
 
 
 class PrayerAzkar extends StatefulWidget {
@@ -34,6 +35,14 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
           MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
         ),
         child: AppBar(
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: 'إعادة العداد',
+              onPressed: con.resetPrayer,
+            ),
+          ],
+
           leading: CupertinoNavigationBarBackButton(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white
@@ -53,85 +62,11 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
       ),
 
       body: allDone
-      // شاشة "تم الانتهاء" + إعادة من البداية
-          ? Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(child: Image.asset(doneZakar)),
-              SizedBox(height: 10.h),
-              Text(
-                AppString.KPrayerDaialogText,
-                style: GoogleFonts.cairo(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15.sp,
-                ),
-              ),
-              SizedBox(height: 15.h),
-              Text(
-                AppString.KZakarPrayerFeaturesTitle,
-                style: GoogleFonts.cairo(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.sp,
-                ),
-              ),
-              SizedBox(height: 10.h),
-              const Divider(
-                color: Color(AppStyle.primaryColor),
-                thickness: 2,
-                indent: 150,
-                endIndent: 150,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  AppString.KZakarPrayerFeaturesDes,
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                    fontFamily: AppStyle.fontFamily,
-                    height: 1.8,
-                    fontSize: 17.5.sp,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-
-              // الأزرار: إعادة / إنهاء
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // إعادة العدادات من البداية
-                      con.resetPrayer();
-                    },
-                    icon: const Icon(Icons.refresh_rounded),
-                    label: Text(
-                      'إعادة الأذكار من البداية',
-                      style: GoogleFonts.cairo(fontSize: 13),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: KColors.primaryColor,
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(Icons.check_rounded),
-                    label: Text(
-                      'إنهاء',
-                      style: GoogleFonts.cairo(fontSize: 13),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+          ? DoneDialogWidget(
+        onPressedRepeat: con.resetPrayer,
+        doneText: AppString.KZakarPrayerFeaturesDes,
+        KZakarFeaturesTitle: AppString.KPrayerDaialogText,
+        KDaialogText: AppString.KZakarPrayerFeaturesTitle,
       )
       // قائمة أذكار ما بعد الصلاة
           : Column(

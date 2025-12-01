@@ -10,6 +10,7 @@ import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/k_helper.dart';
 import '../../core/utils/style/responsive_util.dart';
 import '../../core/widgets/AudioManager.dart';
+import '../sleep_view/sleep_azkar.dart';
 class RokiaScreen extends StatefulWidget {
   const RokiaScreen({super.key});
 
@@ -1131,6 +1132,14 @@ class _RokiaScreenState extends State<RokiaScreen> {
                 color: isDark ? Colors.white : Colors.black,
               ),
               centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: 'إعادة العداد',
+                  onPressed: con.resetQuran,
+                ),
+              ],
+
               title: Text(
                 AppString.KRokia,
                 style: GoogleFonts.cairo(
@@ -1143,77 +1152,12 @@ class _RokiaScreenState extends State<RokiaScreen> {
             ),
           ),
           body: allDone
-              ? Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(child: Image.asset(doneZakar)),
-                  SizedBox(height: 10.h),
-                  Text(
-                    AppString.KRokiaDaialogText,
-                    style: GoogleFonts.cairo(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15.sp,
-                    ),
-                  ),
-                  SizedBox(height: 15.h),
-                  Text(
-                    AppString.KRokiaFeaturesTitle,
-                    style: GoogleFonts.cairo(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.sp,
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  const Divider(
-                    color: Color(AppStyle.primaryColor),
-                    thickness: 2,
-                    indent: 150,
-                    endIndent: 150,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text(
-                      AppString.KZakarRokiaFeaturesDes,
-                      textAlign: TextAlign.justify,
-                      style: TextStyle(
-                        fontFamily: AppStyle.fontFamily,
-                        height: 1.8,
-                        fontSize: 17.5.sp,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: con.resetQuran,
-                        icon: const Icon(Icons.refresh_rounded),
-                        label: Text(
-                          'إعادة الرقية من البداية',
-                          style: GoogleFonts.cairo(fontSize: 13),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: KColors.primaryColor,
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      OutlinedButton.icon(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.check_rounded),
-                        label: Text(
-                          'إنهاء',
-                          style: GoogleFonts.cairo(fontSize: 13),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            ? DoneDialogWidget(
+            repratBtn: "إعادة الرقية",
+            onPressedRepeat: con.resetQuran,
+            doneText: AppString.KZakarRokiaFeaturesDes,
+            KZakarFeaturesTitle: AppString.KRokiaFeaturesTitle,
+            KDaialogText: AppString.KRokiaDaialogText,
           )
               : Column(
             children: [

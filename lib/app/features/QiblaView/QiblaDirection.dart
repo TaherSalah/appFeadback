@@ -460,7 +460,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           elevation: 0,
           actions: [
             IconButton(
-              icon: Icon(Icons.refresh, color: isDark ? Colors.greenAccent : Colors.green[700]),
+              icon: Icon(Icons.refresh),
               onPressed: _initLocationAndCompass,
             ),
           ],
@@ -507,7 +507,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           children: [
             Icon(
               Icons.error_outline,
-              color: Colors.red,
+              // color: Colors.red,
               size: 64,
             ),
             const SizedBox(height: 20),

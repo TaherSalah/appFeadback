@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../core/cubit/centralized_cubit.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
+import '../sleep_view/sleep_azkar.dart';
 
 
 class AzkarOthers extends StatefulWidget {
@@ -25,6 +26,7 @@ class _AzkarOthersState extends State<AzkarOthers> {
     final double fontSize = CentralizedCubit.get(context).azkarFontSize();
 
     final con = Provider.of<AzkarProvider>(context);
+    final bool allDone = Azkary.azkarRepate.every((c) => c <= 0);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -32,6 +34,14 @@ class _AzkarOthersState extends State<AzkarOthers> {
           MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
         ),
         child: AppBar(
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: 'إعادة العداد',
+              onPressed: con.resetOther,
+            ),
+          ],
+
           leading: CupertinoNavigationBarBackButton(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white
@@ -48,8 +58,13 @@ class _AzkarOthersState extends State<AzkarOthers> {
           ),
         ),
       ),
-      body: Azkary.azkarRepate.isEmpty
-          ? _buildEmptyState(context)
+      body: allDone
+          ?   DoneDialogWidget(
+      onPressedRepeat: con.resetOther,
+      doneText: AppString.KZakarOtherFeaturesDes,
+      KZakarFeaturesTitle: AppString.KAzkarDaialogText,
+      KDaialogText: AppString.KZakarFeaturesTitle,
+    )
           : Column(
         children: [
           Padding(

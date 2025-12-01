@@ -6,6 +6,7 @@ import 'package:muslimdaily/app/features/hadith/view/widget/details_view_item_bu
 import '../../../main.dart';
 import '../../core/cubit/centralized_cubit.dart';
 import '../../core/shard/constanc/app_style.dart';
+import '../../core/widgets/NoConnectionScreen.dart';
 
 
 class HadithView extends StatefulWidget {

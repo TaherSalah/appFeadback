@@ -29,34 +29,6 @@ import 'app/features/Khatmah/data/khatmah_model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
-// @pragma('vm:entry-point')
-// void callbackDispatcher() {
-//   Workmanager().executeTask((task, inputData) async {
-//     try {
-//       print("🔊 بدء تشغيل الأذان: $task");
-//
-//       final prayerName = inputData?['prayerName'] ?? 'الفجر';
-//
-//       // تشغيل صوت الأذان
-//       final audioPlayer = AudioPlayer();
-//       await audioPlayer.setAsset('assets/athan/athan.mp3');
-//       await audioPlayer.play();
-//
-//       // انتظار انتهاء الأذان
-//       await audioPlayer.playerStateStream.firstWhere(
-//             (state) => state.processingState == ProcessingState.completed,
-//       );
-//
-//       await audioPlayer.dispose();
-//       print("✅ انتهى أذان $prayerName");
-//
-//       return Future.value(true);
-//     } catch (e) {
-//       print("❌ خطأ في الأذان: $e");
-//       return Future.value(false);
-//     }
-//   });
-// }
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
@@ -201,48 +173,6 @@ Future<void> main() async {
 }
 
 
-class NoConnectionScreen extends StatelessWidget {
-  const NoConnectionScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: SvgPicture.asset("assets/icons/arrow.svg",color: Colors.black,height: 25,))
-
-          ],
-        ),
-          body: Column(
-        // spacing: 25,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: SizedBox(
-                child: Lottie.asset(
-                    fit: BoxFit.fill,
-                    height: 500,
-                    width: 500,
-                    'assets/json/wifi.json')),
-          ),
-          const SizedBox(height: 25),
-          TextWidget(
-              fontWeight: FontWeight.w700,
-              fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 8.sp,
-              textAlign: TextAlign.center,
-              title: LocalizationManager.call('no_connection'))
-        ],
-      )),
-    );
-  }
-}
 
 
 void checkWhatsNew(BuildContext context) async {

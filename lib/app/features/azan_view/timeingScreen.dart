@@ -352,11 +352,11 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
           ),
           actions: [
             // زر عرض الإشعارات المجدولة
-            IconButton(
-              icon: const Icon(Icons.notifications_active),
-              tooltip: 'عرض الإشعارات المجدولة',
-              onPressed: _showScheduledNotifications,
-            ),
+            // IconButton(
+            //   icon: const Icon(Icons.notifications_active),
+            //   tooltip: 'عرض الإشعارات المجدولة',
+            //   onPressed: _showScheduledNotifications,
+            // ),
             // زر إعادة جدولة الإشعارات
             IconButton(
               icon: const Icon(Icons.refresh),

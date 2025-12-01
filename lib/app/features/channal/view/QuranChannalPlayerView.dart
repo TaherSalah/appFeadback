@@ -14,6 +14,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../../core/widgets/NoConnectionScreen.dart';
+
 
 class QuranChannalPlayerView extends StatefulWidget {
   const QuranChannalPlayerView({super.key});

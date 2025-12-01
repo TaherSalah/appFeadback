@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:geolocator/geolocator.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
@@ -368,8 +369,8 @@ void showThemeSheet( BuildContext ctx, {
                         const SizedBox(width: 8),
                         Text(
                           text,
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style:  TextStyle(
+                            fontSize:ResponsiveUtil.isTablet(context)? 16:13.sp,
                             fontFamily: "cairo",
                             fontWeight: FontWeight.w600,
                           ),

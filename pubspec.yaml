@@ -67,6 +67,8 @@ dependencies:
   flutter_onboarding_slider: ^1.0.11
   flutter_offline:
   carousel_slider: ^4.2.1
+  another_flushbar: ^1.12.32
+
   shimmer: ^3.0.0
   flare_flutter: ^3.0.2
   gradient_icon: ^2.0.9
@@ -113,7 +115,7 @@ flutter_native_splash:
   fullscreen: true
   color: "#ffffff"
   android_gravity: center
-  ios_content_mode: scaleAspectFit
+  ios_content_mode: scaleAspectFill
   image: "assets/images/logoApp.png"
 dev_dependencies:
   flutter_test:

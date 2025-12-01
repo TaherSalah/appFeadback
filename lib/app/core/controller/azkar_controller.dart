@@ -1,6 +1,7 @@
 import 'package:muslimdaily/app/core/model/all_azkar_modal.dart';
 import 'package:muslimdaily/app/core/model/azkar_massa_model.dart';
 import 'package:muslimdaily/app/core/services/azkar_services.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -188,31 +189,43 @@ class AzkarProvider extends ChangeNotifier {
 
   void resetSleep() {
     Azkary.azkarSleepRepate = List<int>.from(_initialSleepRepate);
+    KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
+
     notifyListeners();
   }
 
   void resetSabah() {
     Azkary.azkarSabahRepate = List<int>.from(_initialSabahRepate);
+    KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
+
     notifyListeners();
   }
 
   void resetMessa() {
     Azkary.azkarMassaRepate = List<int>.from(_initialMassaRepate);
+    KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
+
     notifyListeners();
   }
 
   void resetOther() {
     Azkary.azkarRepate = List<int>.from(_initialOtherRepate);
+    KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
+
     notifyListeners();
   }
 
   void resetPrayer() {
     Azkary.azkarPrayerRepate = List<int>.from(_initialPrayerRepate);
     notifyListeners();
+    KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
+
   }
 
   void resetQuran() {
     Azkary.rokiaQuranRepe = List<int>.from(_initialQuranRepate);
+    KHelper.showSuccess(message: "تم إعادة تعيين الرقية إلى الصفر بنجاح.");
+
     notifyListeners();
   }
 

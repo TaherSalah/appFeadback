@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -64,29 +65,95 @@ class KHelper {
   }
 
   ///***  Show Toast message ***///
-  static showError({required String message, Color? backgroundColor}) async {
+  static showError({required String message, Color? backgroundColor,ToastGravity? gravity,Toast? toastLength,Color? textColor,double? fontSize}) async {
     Fluttertoast.showToast(
         msg: message,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.SNACKBAR,
+        toastLength:toastLength?? Toast.LENGTH_LONG,
+        gravity: gravity??ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 2,
         backgroundColor: backgroundColor ?? Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 16.sp);
+        textColor:textColor?? Colors.white,
+        fontSize:fontSize?? 16.sp);
   }
 
-  static showSuccess({required String message, Color? backgroundColor}) async {
+  static showSuccess({required String message, Color? backgroundColor,ToastGravity? gravity,Toast? toastLength,Color? textColor,double? fontSize}) async {
     Fluttertoast.showToast(
         msg: message,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.SNACKBAR,
+        toastLength:toastLength?? Toast.LENGTH_LONG,
+        gravity:gravity?? ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 2,
         backgroundColor: backgroundColor ?? Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.sp);
+        textColor:textColor?? Colors.white,
+        fontSize: fontSize??16.sp);
   }
 
-  ///***  get time AmOrPm ***///
+  static showErrorFlushBar(BuildContext context, String message) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.red.shade900 // داكن في الوضع الليلي
+        : Colors.redAccent; // فاتح في الوضع النهاري
+
+    Flushbar(
+      message: message,
+      icon: Icon(Icons.error_outline, color: Colors.white),
+      backgroundColor: backgroundColor,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 3),
+      flushbarStyle: FlushbarStyle.FLOATING,
+      margin: EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(8),
+    ).show(context);
+  }
+
+  static showSuccessFlushBar(BuildContext context, String message) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.green.shade900 // داكن في الوضع الليلي
+        : Colors.green; // فاتح في الوضع النهاري
+
+    Flushbar(
+      message: message,
+      icon: Icon(Icons.check_circle_outline, color: Colors.white),
+      backgroundColor: backgroundColor,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 3),
+      flushbarStyle: FlushbarStyle.FLOATING,
+      margin: EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(8),
+    ).show(context);
+  }
+
+  static showWarningFlushBar(BuildContext context, String message) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.amber.shade800 // داكن في الوضع الليلي
+        : Colors.amber; // فاتح في الوضع النهاري
+
+    Flushbar(
+      message: message,
+      icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
+      backgroundColor: backgroundColor,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 3),
+      flushbarStyle: FlushbarStyle.FLOATING,
+      margin: EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(8),
+    ).show(context);
+  }
+
+  static showNeutralFlushBar(BuildContext context, String message) {
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey.shade700 // داكن في الوضع الليلي
+        : Colors.grey.shade300; // فاتح في الوضع النهاري
+
+    Flushbar(
+      message: message,
+      icon: Icon(Icons.info_outline, color: Colors.white),
+      backgroundColor: backgroundColor,
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 3),
+      flushbarStyle: FlushbarStyle.FLOATING,
+      margin: EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(8),
+    ).show(context);
+  }  ///***  get time AmOrPm ***///
   static final timeAmOrPm = DateTime.now().hour < 12 ? 'am' : "pm";
 
   ///*** says good morning ***///

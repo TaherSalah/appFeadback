@@ -1145,6 +1145,14 @@ class _SleepAzkarState extends State<SleepAzkar> {
                 color: isDark ? Colors.white : Colors.black,
               ),
               centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: 'إعادة العداد',
+                  onPressed: con.resetSleep,
+                ),
+              ],
+
               title: Text(
                 AppString.KSleep,
                 style: GoogleFonts.cairo(
@@ -1258,9 +1266,10 @@ class _SleepAzkarState extends State<SleepAzkar> {
 
 
 class DoneDialogWidget extends StatelessWidget {
-  const DoneDialogWidget({super.key, this.onPressedRepeat, required this.doneText, required this.KZakarFeaturesTitle, required this.KDaialogText,});
+  const DoneDialogWidget({super.key, this.onPressedRepeat, required this.doneText, required this.KZakarFeaturesTitle, required this.KDaialogText,  this.repratBtn,});
 final  void Function()? onPressedRepeat;
 final String doneText,KZakarFeaturesTitle,KDaialogText;
+final String? repratBtn;
   @override
   Widget build(BuildContext context) {
     bool isTab = ResponsiveUtil.isTablet(context);
@@ -1299,7 +1308,7 @@ final String doneText,KZakarFeaturesTitle,KDaialogText;
                 endIndent: 150,
               ),
               Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 10),
                 child: Text(
                   doneText,
                   textAlign: TextAlign.justify,
@@ -1376,7 +1385,7 @@ final String doneText,KZakarFeaturesTitle,KDaialogText;
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              'إعادة الأذكار',
+                            repratBtn??  'إعادة الأذكار',
                               style: GoogleFonts.cairo(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w700,
