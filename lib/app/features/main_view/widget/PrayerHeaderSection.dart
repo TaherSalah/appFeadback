@@ -15,6 +15,7 @@ import 'OtherAzkarWidget.dart';
 import '../controllar/MainController.dart';
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
+import 'morningWidget.dart';
 
 class PrayerHeaderSection extends StatelessWidget {
   final String hijriDate;
@@ -42,7 +43,7 @@ class PrayerHeaderSection extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final size = MediaQuery.sizeOf(context);
-    final double headerHeight = isTab ? size.height / 3.2 : size.height / 2.8;
+    final double headerHeight = isTab ? size.height / 3.2 : size.height / 2.4;
 
     return SizedBox(
       height: headerHeight,
@@ -158,6 +159,7 @@ class PrayerHeaderSection extends StatelessWidget {
               ),
             ]),
           ),
+
           // التاريخ في أعلى اليمين (هجري + ميلادي)
           // Padding(
           //   padding: const EdgeInsets.only(top:45),
@@ -334,6 +336,14 @@ class PrayerHeaderSection extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            HalalGreeting(),
+                            AdhkarReminder(),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             Row(
                               children: [
                                 Container(
@@ -414,6 +424,7 @@ class PrayerHeaderSection extends StatelessWidget {
                             ),
                           ],
                         ),
+
                         const SizedBox(height: 12),
                         // خط فاصل جمالي
                         Container(

@@ -76,6 +76,7 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
           ),
           Expanded(
             child: ListView.separated(
+
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, zPrayerIndex) {
                 // الذكر خلص لما عدّاده <= 0

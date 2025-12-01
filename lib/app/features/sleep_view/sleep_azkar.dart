@@ -1176,7 +1176,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
               Padding(padding: EdgeInsets.symmetric(vertical: 8.0.w)),
               Expanded(
                 child: ListView.separated(
-                  padding: EdgeInsets.only(bottom: 50.h),
+                  padding: EdgeInsets.only(bottom: ResponsiveUtil.isTablet(context)? 50.h:80.h),
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, zSleepIndex) {

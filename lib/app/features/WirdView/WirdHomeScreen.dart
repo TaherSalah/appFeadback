@@ -183,7 +183,7 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
           icon: const Icon(Icons.add),
           // label: const TextDefaultWidget(title: 'إضافة ورد جديد',fontWeight: FontWeight.bold,fontFamily: "cairo",color: Colors.white,),
           label: Text('إضافة ورد جديد',style: TextStyle(fontFamily: "me",fontSize: isTab?12.sp:20.sp),),
-          backgroundColor:AppThemeColors.buttonBackgroundColor(context),
+          backgroundColor:isDark? Colors.black: const Color(0xFF00897B),
           foregroundColor: Colors.white,
 
         ),

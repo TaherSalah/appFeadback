@@ -1166,7 +1166,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
               ),
               Expanded(
                 child: ListView.separated(
-                  padding: EdgeInsets.only(bottom: 50.h),
+                  padding: EdgeInsets.only(bottom: ResponsiveUtil.isTablet(context)? 50.h:80.h),
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, quranCurrentIndex) {

@@ -467,7 +467,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
 
           // كبسولة عدد التكرار (تحت الكارت)
           Positioned(
-            bottom: -20.h,
+            bottom: -15.h,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
               decoration: BoxDecoration(
@@ -507,6 +507,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
               ),
             ),
           ),
+
         ],
       ),
     );
