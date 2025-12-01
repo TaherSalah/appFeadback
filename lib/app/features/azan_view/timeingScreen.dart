@@ -663,6 +663,53 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
 
 // ⚠️ هذه الدالة تعمل في الخلفية - لا تستخدم BuildContext هنا
 @pragma('vm:entry-point')
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) async {
+//     try {
+//       print("🔊 بدء تشغيل الأذان في الخلفية: $task");
+//
+//       // الحصول على اسم الصلاة من البيانات
+//       final prayerName = inputData?['prayerName'] ?? 'الفجر';
+//       final cityName = inputData?['cityName'] ?? '';
+//
+//       // تشغيل صوت الأذان
+//       final audioPlayer = AudioPlayer();
+//       await audioPlayer.setAsset('assets/athan/athan.mp3');
+//       await audioPlayer.play();
+//
+//       // الانتظار حتى ينتهي الأذان
+//       await audioPlayer.playerStateStream.firstWhere(
+//             (state) => state.processingState == ProcessingState.completed,
+//       );
+//
+//       await audioPlayer.dispose();
+//
+//       // إظهار إشعار أن الأذان انتهى
+//       final FlutterLocalNotificationsPlugin notifications =
+//       FlutterLocalNotificationsPlugin();
+//
+//       await notifications.show(
+//         999,
+//         '✅ انتهى أذان $prayerName',
+//         'تمت قراءة الأذان - $cityName',
+//         const NotificationDetails(
+//           android: AndroidNotificationDetails(
+//             'adhan_complete_channel',
+//             'إشعارات اكتمال الأذان',
+//             importance: Importance.low,
+//             priority: Priority.low,
+//           ),
+//         ),
+//       );
+//
+//       print("✅ انتهى تشغيل الأذان بنجاح");
+//       return Future.value(true);
+//     } catch (e) {
+//       print("❌ خطأ في تشغيل الأذان: $e");
+//       return Future.value(false);
+//     }
+//   });
+// }
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     try {
@@ -672,19 +719,29 @@ void callbackDispatcher() {
       final prayerName = inputData?['prayerName'] ?? 'الفجر';
       final cityName = inputData?['cityName'] ?? '';
 
+      // تحديد ملف الصوت
+      String audioFile;
+      if (prayerName.trim() == 'الفجر' || prayerName.trim() == 'Fajr') {
+        audioFile = 'assets/athan/fajr.mp3';
+      } else {
+        audioFile = 'assets/athan/athan.mp3';
+      }
+
+      print("🎵 سيتم تشغيل ملف: $audioFile للصلاة: $prayerName");
+
       // تشغيل صوت الأذان
       final audioPlayer = AudioPlayer();
-      await audioPlayer.setAsset('assets/athan/athan.mp3');
+      await audioPlayer.setAsset(audioFile);
       await audioPlayer.play();
 
-      // الانتظار حتى ينتهي الأذان
+      // الانتظار حتى ينتهي التشغيل
       await audioPlayer.playerStateStream.firstWhere(
             (state) => state.processingState == ProcessingState.completed,
       );
 
       await audioPlayer.dispose();
 
-      // إظهار إشعار أن الأذان انتهى
+      // إظهار إشعار انتهاء الأذان
       final FlutterLocalNotificationsPlugin notifications =
       FlutterLocalNotificationsPlugin();
 
@@ -704,6 +761,7 @@ void callbackDispatcher() {
 
       print("✅ انتهى تشغيل الأذان بنجاح");
       return Future.value(true);
+
     } catch (e) {
       print("❌ خطأ في تشغيل الأذان: $e");
       return Future.value(false);
