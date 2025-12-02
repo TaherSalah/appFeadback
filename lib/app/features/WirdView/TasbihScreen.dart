@@ -708,86 +708,88 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                   ],
                   Expanded(
                     child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(32),
-                            child: AnimatedDefaultTextStyle(
-                              duration: const Duration(milliseconds: 300),
-                              style: TextStyle(
-                                fontSize: isFocusMode ? 40 : 32,
-                                fontWeight: FontWeight.bold,
-                                height: 2,
-                                color: widget.isDark ? Colors.white : Colors.black87,
-                              ),
-                              textAlign: TextAlign.center,
-                              child: Text(dhikr.text),
-                            ),
-                          ),
-                          const SizedBox(height: 40),
-                          ScaleTransition(
-                            scale: Tween<double>(begin: 1.0, end: 0.95).animate(
-                              CurvedAnimation(
-                                parent: _scaleController,
-                                curve: Curves.easeInOut,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(32),
+                              child: AnimatedDefaultTextStyle(
+                                duration: const Duration(milliseconds: 300),
+                                style: TextStyle(
+                                  fontSize: isFocusMode ? 40 : 32,
+                                  fontWeight: FontWeight.bold,
+                                  height: 2,
+                                  color: widget.isDark ? Colors.white : Colors.black87,
+                                ),
+                                textAlign: TextAlign.center,
+                                child: Text(dhikr.text),
                               ),
                             ),
-                            child: AnimatedBuilder(
-                              animation: _pulseController,
-                              builder: (context, child) {
-                                return Container(
-                                  width: isFocusMode ? 220 : 200,
-                                  height: isFocusMode ? 220 : 200,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.teal.withOpacity(
-                                          0.3 + (_pulseController.value * 0.2),
+                            const SizedBox(height: 40),
+                            ScaleTransition(
+                              scale: Tween<double>(begin: 1.0, end: 0.95).animate(
+                                CurvedAnimation(
+                                  parent: _scaleController,
+                                  curve: Curves.easeInOut,
+                                ),
+                              ),
+                              child: AnimatedBuilder(
+                                animation: _pulseController,
+                                builder: (context, child) {
+                                  return Container(
+                                    width: isFocusMode ? 220 : 200,
+                                    height: isFocusMode ? 220 : 200,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.teal.withOpacity(
+                                            0.3 + (_pulseController.value * 0.2),
+                                          ),
+                                          blurRadius: 30,
+                                          spreadRadius: 10,
                                         ),
-                                        blurRadius: 30,
-                                        spreadRadius: 10,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '${dhikr.currentCount}',
-                                        style: TextStyle(
-                                          fontSize: isFocusMode ? 72 : 64,
-                                          fontWeight: FontWeight.bold,
-                                          color: isCompleted ? Colors.green : Colors.teal,
-                                        ),
-                                      ),
-                                      if (!isFocusMode)
+                                      ],
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
                                         Text(
-                                          'من ${dhikr.targetCount}',
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.grey,
+                                          '${dhikr.currentCount}',
+                                          style: TextStyle(
+                                            fontSize: isFocusMode ? 72 : 64,
+                                            fontWeight: FontWeight.bold,
+                                            color: isCompleted ? Colors.green : Colors.teal,
                                           ),
                                         ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          if (!isFocusMode) ...[
-                            const SizedBox(height: 40),
-                            Text(
-                              'اضغط في أي مكان للتسبيح',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: widget.isDark ? Colors.white60 : Colors.grey.shade600,
+                                        if (!isFocusMode)
+                                          Text(
+                                            'من ${dhikr.targetCount}',
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                             ),
+                            if (!isFocusMode) ...[
+                              const SizedBox(height: 40),
+                              Text(
+                                'اضغط في أي مكان للتسبيح',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: widget.isDark ? Colors.white60 : Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
                     ),
                   ),

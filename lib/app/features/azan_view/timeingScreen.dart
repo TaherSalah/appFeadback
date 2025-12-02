@@ -788,7 +788,7 @@ class AdhanWorkManagerService {
     // تهيئة الإشعارات
     tz.initializeTimeZones();
 
-    const androidSettings = AndroidInitializationSettings('ic_stat_logoapp');
+    const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -883,13 +883,14 @@ class AdhanWorkManagerService {
           channelDescription: 'تنبيه قبل موعد الأذان بـ 5 دقائق',
           importance: Importance.high,
           priority: Priority.high,
-          icon: 'ic_stat_logoapp',
+          icon: '@mipmap/launcher_icon',
           color: Color(0xFFFF9800),
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+
+      // uiLocalNotificationDateInterpretation:
+      // UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
@@ -917,8 +918,8 @@ class AdhanWorkManagerService {
           channelDescription: 'إشعارات مواعيد الصلاة مع تشغيل الأذان تلقائياً',
           importance: Importance.max,
           priority: Priority.high,
-          // icon: '@drawable/ic_stat_logoapp',
-          icon: 'ic_stat_logoapp',
+          // icon: '@drawable/@mipmap/launcher_icon',
+          icon: '@mipmap/launcher_icon',
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -932,9 +933,10 @@ class AdhanWorkManagerService {
           presentSound: true,
         ),
       ),
+
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+      // uiLocalNotificationDateInterpretation:
+      // UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 

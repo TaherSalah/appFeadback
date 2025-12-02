@@ -45,7 +45,7 @@ void callbackDispatcher() {
       final FlutterLocalNotificationsPlugin notifications =
       FlutterLocalNotificationsPlugin();
 
-      const androidSettings = AndroidInitializationSettings('ic_stat_logoapp');
+      const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
       const iosSettings = DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
@@ -82,7 +82,7 @@ void callbackDispatcher() {
             channelDescription: 'إشعار يظهر بعد انتهاء الأذان',
             importance: Importance.low,
             priority: Priority.low,
-            icon: 'ic_stat_logoapp',
+            icon: '@mipmap/launcher_icon',
           ),
           iOS: DarwinNotificationDetails(
             presentAlert: true,
@@ -105,6 +105,7 @@ void callbackDispatcher() {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // ← أول سطر دائمًا
   await QuranLibrary.init();
+
   // تهيئة خدمة الإشعارات
   await NotificationService().initialize();
   // تهيئة خدمة الأذان مع WorkManager
@@ -336,7 +337,7 @@ class NotificationService {
     tz.initializeTimeZones();
 
     // إعدادات Android
-    const androidSettings = AndroidInitializationSettings('@drawable/ic_stat_logoapp');
+    const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
 
     // إعدادات iOS
     const iosSettings = DarwinInitializationSettings(
@@ -456,7 +457,7 @@ class NotificationService {
           channelDescription: 'إشعارات الأذكار والأوراد اليومية',
           importance: Importance.high,
           priority: Priority.high,
-          icon: 'ic_stat_logoapp',
+          icon: '@mipmap/launcher_icon',
           // استخدام الصوت الافتراضي
           playSound: true,
           enableVibration: true,
@@ -468,8 +469,9 @@ class NotificationService {
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+
+      // uiLocalNotificationDateInterpretation:
+      // UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: payload,
     );
@@ -512,6 +514,7 @@ class NotificationService {
       'إشعارات فورية',
       importance: Importance.high,
       priority: Priority.high,
+      icon: "@mipmap/launcher_icon"
     );
 
     const iosDetails = DarwinNotificationDetails();

@@ -208,7 +208,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                 CentralizedState>(
                               builder: (context, state) {
                                 return InkWell(
-                                  onTap: () {
+                                  onTap: () async {
+                                 //    NotificationService b = NotificationService();
+                                 // await   b.showInstantNotification("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo", "heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo");
                                     bool needsInternet =
                                         item["navigate"] ==
                                             Routes.categoriesRoute ||

@@ -150,7 +150,7 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
               },
               child: Icon(
                 Icons.copy,
-                color: Theme.of(context).brightness == Brightness.dark ? Colors.amberAccent: CupertinoColors.systemRed,
+                color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF00897B): CupertinoColors.systemRed,
 
                 size: MediaQuery.sizeOf(context).width>600?25: 20,
               ),
