@@ -642,125 +642,132 @@ void showThemeSheet( BuildContext ctx, {
                               Row(
                                 children: [
                                   Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(10),
-                                        border: Border.all(
-                                          color: isDark
-                                              ? Colors.white24
-                                              : Colors.grey.shade300,
-                                        ),
-                                        color: isDark
-                                            ? Colors.black.withOpacity(0.3)
-                                            : Colors.white,
-                                      ),
-                                      child:
-                                      DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          isExpanded: true,
-                                          value: selectedCountry,
-                                          hint: const Text(
-                                            'اختر الدولة',
-                                            style: TextStyle(
-                                              fontFamily: "cairo",
-                                              fontSize: 12,
-                                            ),
+                                    child: Directionality(
+                                      textDirection: TextDirection.rtl,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: isDark
+                                                ? Colors.white24
+                                                : Colors.grey.shade300,
                                           ),
-                                          items: countries.keys
-                                              .map((country) {
-                                            return DropdownMenuItem(
-                                              value: country,
-                                              child: Text(
-                                                country,
-                                                style: TextStyle(
-                                                  fontFamily: "cairo",
-                                                  fontSize: 12,
-                                                  color: isDark
-                                                      ? Colors.white
-                                                      : Colors.black87,
-                                                ),
+                                          color: isDark
+                                              ? Colors.black.withOpacity(0.3)
+                                              : Colors.white,
+                                        ),
+                                        child:
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            isExpanded: true,
+                                            value: selectedCountry,
+                                            hint: const Text(
+                                              'اختر الدولة',
+                                              style: TextStyle(
+                                                fontFamily: "cairo",
+                                                fontSize: 12,
                                               ),
-                                            );
-                                          }).toList(),
-                                          onChanged: (value) async {
-                                            if (value == null) return;
-                                            final Map<String, dynamic>
-                                            newCities =
-                                            (countries[value]
-                                            as Map<String,
-                                                dynamic>)
-                                              ..removeWhere((k, v) =>
-                                              v == null);
-                                            setState(() {
-                                              selectedCountry = value;
-                                              cities = newCities;
-                                              selectedCity =
-                                                  cities.keys.first;
-                                            });
-                                            await saveLocation(false);
-                                            if (onLocationChanged != null) onLocationChanged(); // 👈 هنا
+                                            ),
+                                            items: countries.keys
+                                                .map((country) {
+                                              return DropdownMenuItem(
+                                                value: country,
+                                                child: Text(
+                                                  country,
+                                                  style: TextStyle(
+                                                    fontFamily: "cairo",
+                                                    fontSize: 12,
+                                                    color: isDark
+                                                        ? Colors.white
+                                                        : Colors.black87,
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) async {
+                                              if (value == null) return;
+                                              final Map<String, dynamic>
+                                              newCities =
+                                              (countries[value]
+                                              as Map<String,
+                                                  dynamic>)
+                                                ..removeWhere((k, v) =>
+                                                v == null);
+                                              setState(() {
+                                                selectedCountry = value;
+                                                cities = newCities;
+                                                selectedCity =
+                                                    cities.keys.first;
+                                              });
+                                              await saveLocation(false);
+                                              if (onLocationChanged != null) onLocationChanged(); // 👈 هنا
 
-                                          },
+                                            },
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(10),
-                                        border: Border.all(
-                                          color: isDark
-                                              ? Colors.white24
-                                              : Colors.grey.shade300,
-                                        ),
-                                        color: isDark
-                                            ? Colors.black.withOpacity(0.3)
-                                            : Colors.white,
-                                      ),
-                                      child:
-                                      DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          isExpanded: true,
-                                          value: selectedCity,
-                                          hint: const Text(
-                                            'اختر المدينة',
-                                            style: TextStyle(
-                                              fontFamily: "cairo",
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          items: cities.keys.map((c) {
-                                            return DropdownMenuItem(
-                                              value: c,
-                                              child: Text(
-                                                c,
-                                                style: TextStyle(
-                                                  fontFamily: "cairo",
-                                                  fontSize: 12,
-                                                  color: isDark
-                                                      ? Colors.white
-                                                      : Colors.black87,
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                          onChanged: (value) async {
-                                            if (value == null) return;
-                                            setState(() {
-                                              selectedCity = value;
-                                            });
-                                            await saveLocation(false);
-                                            if (onLocationChanged != null) onLocationChanged(); // 👈 هنا
+                                    child: Directionality(
+                                      textDirection: TextDirection.rtl,
 
-                                          },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: isDark
+                                                ? Colors.white24
+                                                : Colors.grey.shade300,
+                                          ),
+                                          color: isDark
+                                              ? Colors.black.withOpacity(0.3)
+                                              : Colors.white,
+                                        ),
+                                        child:
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            isExpanded: true,
+                                            value: selectedCity,
+                                            hint: const Text(
+                                              'اختر المدينة',
+                                              style: TextStyle(
+                                                fontFamily: "cairo",
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            items: cities.keys.map((c) {
+                                              return DropdownMenuItem(
+                                                value: c,
+                                                child: Text(
+                                                  c,
+                                                  style: TextStyle(
+                                                    fontFamily: "cairo",
+                                                    fontSize: 12,
+                                                    color: isDark
+                                                        ? Colors.white
+                                                        : Colors.black87,
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) async {
+                                              if (value == null) return;
+                                              setState(() {
+                                                selectedCity = value;
+                                              });
+                                              await saveLocation(false);
+                                              if (onLocationChanged != null) onLocationChanged(); // 👈 هنا
+
+                                            },
+                                          ),
                                         ),
                                       ),
                                     ),

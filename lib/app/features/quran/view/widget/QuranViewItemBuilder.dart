@@ -262,6 +262,13 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   void initState() {
     super.initState();
     _loadPages();
+    // فتح التدوير داخل صفحة القرآن
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     QuranLibrary.init();
   }
 
@@ -370,6 +377,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
 
   @override
   void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     _verticalController?.dispose();
     super.dispose();
   }

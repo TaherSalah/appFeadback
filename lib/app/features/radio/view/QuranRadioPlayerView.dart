@@ -295,6 +295,7 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
             child: Padding(
               padding: EdgeInsets.all(0),
               child: StreamBuilder<PlayerState>(
+
                 stream: _playerStateStream,
                 builder: (context, snapshot) {
                   final state = snapshot.data ?? _player.playerState;

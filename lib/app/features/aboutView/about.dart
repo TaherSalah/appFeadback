@@ -17,28 +17,32 @@ class About extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return   Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
-        child: AppBar(
-          leading:CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
-              ? Colors.white
-              : Colors.black,),
-          centerTitle: true,
-          title: Text(
-            AppString.KAbout,
-            style: GoogleFonts.cairo(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+    return   SafeArea(
+      top: false,
+      bottom: true,
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
+          child: AppBar(
+            leading:CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,),
+            centerTitle: true,
+            title: Text(
+              AppString.KAbout,
+              style: GoogleFonts.cairo(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+            ),
           ),
         ),
-      ),
 
-      // backgroundColor: AppStyle.bgColors,
-      body: const SingleChildScrollView(
-          physics: BouncingScrollPhysics(), child: AboutItemBuilder()),
+        // backgroundColor: AppStyle.bgColors,
+        body: const SingleChildScrollView(
+            physics: BouncingScrollPhysics(), child: AboutItemBuilder()),
+      ),
     );
   }
 }

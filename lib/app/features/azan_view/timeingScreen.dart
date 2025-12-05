@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:adhan/adhan.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -61,6 +62,8 @@ import 'package:adhan/adhan.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math' as math;
 
+import 'adhan_callback.dart';
+
 class TimingScreen extends StatefulWidget {
   const TimingScreen({super.key});
 
@@ -84,17 +87,23 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
   void initState() {
     super.initState();
 
-    // تهيئة خدمة WorkManager
     _adhanService.initialize();
-
-    // تحديث المواقيت من SharedPreferences
     con.refreshPrayerTimesFromPrefs();
 
-    // جدولة الإشعارات بعد بناء الواجهة
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // ✅ فحص Battery Optimization أول ما الشاشة تفتح
+      _checkBatteryOptimization();
+
       _scheduleAllPrayerNotifications();
     });
   }
+
+  /// 🔋 فحص حالة Battery Optimization وعرض تحذير إذا لزم الأمر
+  Future<void> _checkBatteryOptimization() async {
+    // ✅ الدالة دي بتفحص الأول، ولو مش مفعّل بس هتظهر الـ Dialog
+    await BatteryOptimizationHelper.showBatteryOptimizationDialog(context);
+  }
+
 
   // جدولة إشعارات الصلاة
   Future<void> _scheduleAllPrayerNotifications() async {
@@ -201,12 +210,13 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
     final ok = await _ensureLocationPermission();
     if (!ok) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('يرجى تفعيل خدمات الموقع والسماح بالوصول'),
-            backgroundColor: Colors.orange,
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     content: Text('يرجى تفعيل خدمات الموقع والسماح بالوصول'),
+        //     backgroundColor: Colors.orange,
+        //   ),
+        // );
+        KHelper.showError(message: 'يرجى تفعيل خدمات الموقع والسماح بالوصول');
       }
       return;
     }
@@ -351,13 +361,26 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
             ),
           ),
           actions: [
-            // زر عرض الإشعارات المجدولة
-            // IconButton(
-            //   icon: const Icon(Icons.notifications_active),
-            //   tooltip: 'عرض الإشعارات المجدولة',
-            //   onPressed: _showScheduledNotifications,
-            // ),
-            // زر إعادة جدولة الإشعارات
+            if (Platform.isAndroid)
+              FutureBuilder<bool>(
+                future: BatteryOptimizationHelper.isBatteryOptimizationDisabled(),
+                builder: (context, snapshot) {
+                  return IconButton(
+                    icon: const Icon(Icons.battery_charging_full),
+                    tooltip: 'فحص إعدادات البطارية',
+                    onPressed: () async {
+                      final isDisabled = await BatteryOptimizationHelper.isBatteryOptimizationDisabled();
+                      if (!mounted) return;
+
+                      if (isDisabled) {
+                        KHelper.showSuccess(message: "التطبيق مُستثنى من توفير البطارية");
+                      } else {
+                        BatteryOptimizationHelper.showBatteryOptimizationDialog(context);
+                      }
+                    },
+                  );
+                },
+              ),
             IconButton(
               icon: const Icon(Icons.refresh),
               tooltip: 'إعادة جدولة الإشعارات',
@@ -366,298 +389,586 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-        child: Directionality(
-          textDirection: ui.TextDirection.rtl,
-          child: Column(
-            children: [
-              // اختيار الدولة والمدينة
-              Directionality(
-                textDirection: ui.TextDirection.rtl,
-                child: Row(
-                  children: [
-                    // Dropdown الدولة
-                    Expanded(
-                      child: AnimatedWrapper(
-                        type: UiAnimationType.slideRight,
-                        duration: const Duration(seconds: 1),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            hint: const TextDefaultWidget(
-                              textAlign: TextAlign.right,
-                              title: 'اختر الدولة',
-                              fontSize: 15,
-                              color: Color(0xff1A1A1A),
-                            ),
-                            items: countries.keys.map((country) {
-                              return DropdownMenuItem(
-                                value: country,
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextDefaultWidget(
-                                    textAlign: TextAlign.right,
-                                    title: country,
-                                    fontSize: 12.5,
-                                    color: isDark ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                            value: selectedCountry,
-                            onChanged: (value) async {
-                              if (value == null) return;
-
-                              final Map<String, dynamic> cityMap =
-                              (countries[value] as Map<String, dynamic>)
-                                ..removeWhere((k, v) => v == null);
-
-                              final firstCity = cityMap.keys.first;
-
-                              await con.setLocation(
-                                country: value,
-                                city: firstCity,
-                              );
-                              setState(() {});
-
-                              // جدولة الإشعارات للموقع الجديد
-                              await _scheduleAllPrayerNotifications();
-                            },
-                            buttonStyleData: ButtonStyleData(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppThemeColors.cardBackgroundColor(context),
-                                  width: 1.5,
-                                ),
-                                color: AppThemeColors.cardBackgroundColor(context),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              height: 50,
-                              width: MediaQuery.of(context).size.width / 1.2,
-                            ),
-                            menuItemStyleData: MenuItemStyleData(
-                              overlayColor: WidgetStateProperty.all(
-                                Colors.grey.withOpacity(0.5),
-                              ),
-                              height: 50,
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              elevation: 1,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // Dropdown المدينة
-                    Expanded(
-                      child: AnimatedWrapper(
-                        type: UiAnimationType.slideLeft,
-                        duration: const Duration(seconds: 1),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            hint: const TextDefaultWidget(
-                              title: 'اختر المدينة',
-                              fontSize: 15,
-                            ),
-                            items: cities.keys.map((c) {
-                              return DropdownMenuItem(
-                                value: c,
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextDefaultWidget(
-                                    textAlign: TextAlign.right,
-                                    title: c,
-                                    fontSize: 12.5,
-                                    color: isDark ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                            value: selectedCity,
-                            onChanged: (value) async {
-                              if (value == null || selectedCountry == null) return;
-
-                              await con.setLocation(
-                                country: selectedCountry,
-                                city: value,
-                              );
-                              setState(() {});
-
-                              // جدولة الإشعارات للمدينة الجديدة
-                              await _scheduleAllPrayerNotifications();
-                            },
-                            buttonStyleData: ButtonStyleData(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppThemeColors.cardBackgroundColor(context),
-                                  width: 1.5,
-                                ),
-                                color: AppThemeColors.cardBackgroundColor(context),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              height: 50,
-                              width: MediaQuery.of(context).size.width / 1.2,
-                            ),
-                            menuItemStyleData: MenuItemStyleData(
-                              overlayColor: WidgetStateProperty.all(
-                                Colors.grey.withOpacity(0.5),
-                              ),
-                              height: 50,
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              elevation: 1,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // زر تحديد الموقع بالـ GPS
-                    IconButton(
-                      tooltip: 'تحديد موقعي',
-                      onPressed: countries.isEmpty ? null : _selectByLocation,
-                      icon: const Icon(Icons.my_location),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // عرض الموقع الحالي
-              if (selectedCountry != null && selectedCity != null)
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.h),
-                  child: Center(
-                    child: Directionality(
-                      textDirection: ui.TextDirection.rtl,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.place, size: 18),
-                          const SizedBox(width: 6),
-                          Text(
-                            'الموقع الحالي: $selectedCountry - $selectedCity',
-                            style: GoogleFonts.cairo(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-              // باقي الواجهة (الصلاة القادمة وقائمة المواقيت)
-              // ... نفس الكود السابق ...
-
-              const SizedBox(height: 20),
-
-              if (prayerTimes != null)
-                Expanded(
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) => const SizedBox(height: 10),
-                    itemCount: 6,
-                    itemBuilder: (context, index) {
-                      final prayerNames = [
-                        "الفجر",
-                        "الشروق",
-                        "الظهر",
-                        "العصر",
-                        "المغرب",
-                        "العشاء"
-                      ];
-                      final prayerTimesList = [
-                        prayerTimes.fajr,
-                        prayerTimes.sunrise,
-                        prayerTimes.dhuhr,
-                        prayerTimes.asr,
-                        prayerTimes.maghrib,
-                        prayerTimes.isha
-                      ];
-
-                      final isNext = nextPrayer.contains(prayerNames[index]);
-
-                      return Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24.r),
-                          gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                            colors: isDark
-                                ? const [Color(0xFF020617), Color(0xFF0F172A)]
-                                : [baseColor.withOpacity(0.06), Colors.white],
-                          ),
-                          border: Border.all(
-                            color: isNext
-                                ? (isDark ? Colors.amberAccent.shade700 : Colors.blue)
-                                : Colors.black,
-                            width: 1.2,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: MediaQuery.sizeOf(context).width > 600 ? 8 : 13,
-                            horizontal: 20,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                prayerNames[index],
-                                style: GoogleFonts.cairo(
-                                  color: isNext
-                                      ? (isDark
-                                      ? Colors.amberAccent.shade700
-                                      : Colors.blueAccent)
-                                      : (isDark ? Colors.white : Colors.black),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                  MediaQuery.sizeOf(context).width > 600 ? 10.sp : 17,
-                                ),
-                              ),
-                              Text(
-                                DateFormat('h:mm a').format(prayerTimesList[index]),
-                                style: GoogleFonts.cairo(
-                                  color: isNext
-                                      ? (isDark
-                                      ? Colors.amberAccent.shade700
-                                      : Colors.blueAccent)
-                                      : (isDark ? Colors.white : Colors.black),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                )
-              else
-                KLoading.progressIOSIndicator(context: context),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? [
+              const Color(0xFF0F172A),
+              const Color(0xFF1E293B),
+              const Color(0xFF0F172A),
+            ]
+                : [
+              Colors.blue.shade50,
+              Colors.white,
+              Colors.blue.shade50,
             ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Directionality(
+            textDirection: ui.TextDirection.rtl,
+            child: Column(
+              children: [
+                // 🎯 قسم اختيار الموقع المحسّن
+                _buildLocationSelector(context, isDark, countries, cities, selectedCountry, selectedCity),
+
+                const SizedBox(height: 20),
+
+                // 📍 عرض الموقع الحالي بتصميم جذاب
+                if (selectedCountry != null && selectedCity != null)
+                  _buildCurrentLocation(context, isDark, selectedCountry, selectedCity),
+
+                const SizedBox(height: 24),
+
+                // ⏰ الصلاة القادمة (بطاقة مميزة)
+                if (prayerTimes != null && nextPrayer.isNotEmpty)
+                  _buildNextPrayerCard(context, isDark, nextPrayer, remainingTimeText, prayerTimes),
+
+                const SizedBox(height: 24),
+
+                // 📋 قائمة المواقيت المحسّنة
+                if (prayerTimes != null)
+                  Expanded(
+                    child: _buildPrayerTimesList(context, isDark, prayerTimes, nextPrayer),
+                  )
+                else
+                  KLoading.progressIOSIndicator(context: context),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
+// 🎯 قسم اختيار الموقع
+  Widget _buildLocationSelector(
+      BuildContext context,
+      bool isDark,
+      Map countries,
+      Map cities,
+      String? selectedCountry,
+      String? selectedCity,
+      ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.blue.withOpacity(0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.location_city, color: Colors.green, size: 24),
+              const SizedBox(width: 8),
+              Text(
+                'اختر موقعك',
+                style: GoogleFonts.cairo(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              // Dropdown الدولة
+              Expanded(
+                child: _buildCustomDropdown(
+                  context: context,
+                  isDark: isDark,
+                  hint: 'الدولة',
+                  items: countries.keys.map((e) => e.toString()).toList(),
+                  value: selectedCountry,
+                  icon: Icons.public,
+                  onChanged: (value) async {
+                    if (value == null) return;
+                    final Map<String, dynamic> cityMap =
+                    (countries[value] as Map<String, dynamic>)
+                      ..removeWhere((k, v) => v == null);
+                    final firstCity = cityMap.keys.first;
+                    await con.setLocation(country: value, city: firstCity);
+                    setState(() {});
+                    await _scheduleAllPrayerNotifications();
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Dropdown المدينة
+              Expanded(
+                child: _buildCustomDropdown(
+                  context: context,
+                  isDark: isDark,
+                  hint: 'المدينة',
+                  items: cities.keys.map((e) => e.toString()).toList(),
+                  value: selectedCity,
+                  icon: Icons.location_on,
+                  onChanged: (value) async {
+                    if (value == null || selectedCountry == null) return;
+                    await con.setLocation(country: selectedCountry, city: value);
+                    setState(() {});
+                    await _scheduleAllPrayerNotifications();
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // زر GPS
+          InkWell(
+            onTap: countries.isEmpty ? null : _selectByLocation,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: isDark
+                      ? [Colors.teal.shade700, Colors.teal.shade900]
+                      : [Colors.blue.shade400, Colors.blue.shade600],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.my_location, color: Colors.white, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    'تحديد موقعي الحالي',
+                    style: GoogleFonts.cairo(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+// 🎨 Dropdown مخصص
+  Widget _buildCustomDropdown({
+    required BuildContext context,
+    required bool isDark,
+    required String hint,
+    required List<String> items,
+    required String? value,
+    required IconData icon,
+    required Function(String?) onChanged,
+  }) {
+    return Container(
+      // decoration: BoxDecoration(
+      //   color: isDark ? const Color(0xFF334155) : Colors.grey.shade100,
+      //   borderRadius: BorderRadius.circular(12),
+      //   border: Border.all(
+      //     color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
+      //   ),
+      // ),
+      decoration: BoxDecoration(
+        borderRadius:
+        BorderRadius.circular(10),
+        border: Border.all(
+          color: isDark
+              ? Colors.white24
+              : Colors.grey.shade300,
+        ),
+        color: isDark
+            ? Colors.black.withOpacity(0.3)
+            : Colors.white,
+      ),
+
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<String>(
+          isExpanded: true,
+          hint: Row(
+            children: [
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+              Text(
+                hint,
+                style: GoogleFonts.cairo(
+                  fontSize: 13.sp,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+          items: items.map((item) {
+            return DropdownMenuItem(
+              value: item,
+              child: Text(
+                item,
+                style: GoogleFonts.cairo(
+                  fontSize: 12.sp,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            );
+          }).toList(),
+          value: value,
+          onChanged: onChanged,
+          buttonStyleData: const ButtonStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            height: 50,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF334155) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          menuItemStyleData: MenuItemStyleData(
+            overlayColor: WidgetStateProperty.all(
+              isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+// 📍 عرض الموقع الحالي
+  Widget _buildCurrentLocation(
+      BuildContext context,
+      bool isDark,
+      String selectedCountry,
+      String selectedCity,
+      ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark
+              ? [Colors.indigo.shade800, Colors.purple.shade900]
+              : [Colors.blue.shade100, Colors.purple.shade100],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black38 : Colors.blue.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.place_rounded,
+            color: isDark ? Colors.amberAccent : Colors.blue.shade800,
+            size: 24,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '$selectedCountry - $selectedCity',
+            style: GoogleFonts.cairo(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+// ⏰ بطاقة الصلاة القادمة
+  Widget _buildNextPrayerCard(
+      BuildContext context,
+      bool isDark,
+      String nextPrayer,
+      String remainingTimeText,
+      dynamic prayerTimes,
+      ) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: isDark
+              ? [Colors.amber.shade800, Colors.orange.shade900]
+              : [Colors.green.shade400, Colors.teal.shade600],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.amber.withOpacity(0.3) : Colors.green.withOpacity(0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.access_time_rounded,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'الصلاة القادمة',
+                    style: GoogleFonts.cairo(
+                      fontSize: 12.sp,
+                      color: Colors.white.withOpacity(0.9),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    nextPrayer,
+                    style: GoogleFonts.cairo(
+                      fontSize: 20.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.timer_outlined, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  'الوقت المتبقي: $remainingTimeText',
+                  style: GoogleFonts.cairo(
+                    fontSize: 14.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+// 📋 قائمة المواقيت
+  Widget _buildPrayerTimesList(
+      BuildContext context,
+      bool isDark,
+      dynamic prayerTimes,
+      String nextPrayer,
+      ) {
+    final prayerData = [
+      {"name": "الفجر", "time": prayerTimes.fajr, "icon": Icons.wb_twilight},
+      {"name": "الشروق", "time": prayerTimes.sunrise, "icon": Icons.wb_sunny},
+      {"name": "الظهر", "time": prayerTimes.dhuhr, "icon": Icons.light_mode},
+      {"name": "العصر", "time": prayerTimes.asr, "icon": Icons.wb_sunny_outlined},
+      {"name": "المغرب", "time": prayerTimes.maghrib, "icon": Icons.wb_twilight},
+      {"name": "العشاء", "time": prayerTimes.isha, "icon": Icons.nightlight_round},
+    ];
+
+    return ListView.separated(
+      physics: const BouncingScrollPhysics(),
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemCount: prayerData.length,
+      itemBuilder: (context, index) {
+        final prayer = prayerData[index];
+        final isNext = nextPrayer.contains(prayer["name"] as String);
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: isNext
+                  ? (isDark
+                  ? [Colors.amber.shade700, Colors.orange.shade800]
+                  : [Colors.blue.shade400, Colors.blue.shade600])
+                  : (isDark
+                  ? [const Color(0xFF1E293B), const Color(0xFF334155)]
+                  : [Colors.white, Colors.grey.shade50]),
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: isNext
+                    ? (isDark ? Colors.amber.withOpacity(0.3) : Colors.blue.withOpacity(0.3))
+                    : (isDark ? Colors.black26 : Colors.grey.withOpacity(0.2)),
+                blurRadius: isNext ? 15 : 8,
+                offset: Offset(0, isNext ? 6 : 3),
+              ),
+            ],
+            border: isNext
+                ? Border.all(
+              color: isDark ? Colors.amberAccent : Colors.white,
+              width: 2,
+            )
+                : null,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            child: Row(
+              children: [
+                // أيقونة الصلاة
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isNext
+                        ? Colors.white.withOpacity(0.2)
+                        : (isDark ? Colors.grey.shade800 : Colors.blue.shade50),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    prayer["icon"] as IconData,
+                    color: isNext
+                        ? Colors.white
+                        : (isDark ? Colors.amberAccent : Colors.blue.shade700),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // اسم الصلاة
+                Expanded(
+                  child: Text(
+                    prayer["name"] as String,
+                    style: GoogleFonts.cairo(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isNext
+                          ? Colors.white
+                          : (isDark ? Colors.white : Colors.black87),
+                    ),
+                  ),
+                ),
+                // الوقت
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: isNext
+                        ? Colors.white.withOpacity(0.2)
+                        : (isDark ? Colors.grey.shade800 : Colors.grey.shade100),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    DateFormat('h:mm a').format(prayer["time"] as DateTime),
+                    style: GoogleFonts.cairo(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isNext
+                          ? Colors.white
+                          : (isDark ? Colors.amberAccent : Colors.blue.shade700),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
+
+
+
+
+
+
+
+
+
+// <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+// ```
+//
+// 3. **إنشاء Helper Class** تحتوي على:
+// - `isBatteryOptimizationDisabled()` → فحص الحالة
+// - `openBatteryOptimizationSettings()` → فتح الإعدادات مباشرة
+// - `showBatteryOptimizationDialog()` → عرض Dialog تحذيري
+// - `showBatteryOptimizationSnackBar()` → عرض SnackBar بسيط
+//
+// 4. **في `initState`**:
+// - استدعاء `_checkBatteryOptimization()` لفحص الحالة أول ما الشاشة تفتح
+// - إذا كان Battery Optimization مفعّل → يظهر Dialog
+// - المستخدم يضغط "فتح الإعدادات" → يروح مباشرة لصفحة Battery Settings
+//
+// ---
+//
+// ## 🎯 **مميزات الحل:**
+//
+// ✅ **فحص تلقائي** عند فتح الشاشة
+// ✅ **Dialog واضح** يشرح للمستخدم المشكلة
+// ✅ **زر مباشر** لفتح صفحة الإعدادات
+// ✅ **زر يدوي** في AppBar للفحص في أي وقت
+// ✅ **دعم اللغة العربية** بالكامل
+//
+// ---
+//
+// ## 🔥 **بعد التطبيق:**
+//
+// المستخدم هيشوف رسالة زي دي:
+// ```
+// ⚠️ تنبيه هام
+//
+// حتى يعمل الأذان في الخلفية بشكل صحيح،
+// يجب إيقاف وضع توفير البطارية للتطبيق.
+//
+// 📌 سنوجهك الآن إلى الإعدادات لتفعيل هذا الخيار
+//
+// [لاحقاً]  [فتح الإعدادات ⚙️]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

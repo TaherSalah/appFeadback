@@ -1,0 +1,175 @@
+# إضافة لـ Privacy Policy - Battery Optimization
+
+---
+
+## 📋 **النص بالإنجليزي (للـ Privacy Policy):**
+
+```markdown
+## Battery Optimization Permission
+
+### Why We Need This Permission
+Our app is a prayer times reminder service that requires exemption from
+battery optimization to function correctly. This permission ensures that:
+
+- Prayer call (Adhan) notifications are delivered at the exact prayer times
+- Notifications work reliably even when your device is in sleep/Doze mode
+- The app can run background tasks to schedule prayer reminders accurately
+
+### How We Use This Permission
+- **Sole Purpose:** To deliver timely and accurate Islamic prayer time notifications
+- **No Abuse:** We do NOT use this permission for advertising, tracking, or
+  any purpose other than prayer reminders
+- **User Control:** This permission is optional. You can choose to decline it,
+  but prayer notifications may be delayed or missed
+
+### When We Request This Permission
+The app will prompt you to disable battery optimization when:
+- You first open the prayer times screen
+- You manually check the battery settings via the app icon
+
+You can always change this setting later through your device's Settings >
+Apps > [App Name] > Battery > Unrestricted.
+
+### Compliance
+This permission usage complies with Google Play's policies for alarm clock
+and reminder applications, as outlined in the Android documentation for
+acceptable use cases of battery optimization exemptions.
+
+---
+
+Last Updated: [ضع تاريخ اليوم]
+```
+
+---
+
+## 📋 **النص بالعربي (إذا كانت Privacy Policy ثنائية اللغة):**
+
+```markdown
+## صلاحية تعطيل توفير البطارية
+
+### لماذا نحتاج هذه الصلاحية؟
+تطبيقنا هو خدمة تذكير بمواقيت الصلاة تتطلب استثناءً من توفير البطارية
+للعمل بشكل صحيح. تضمن هذه الصلاحية:
+
+- تسليم إشعارات الأذان في المواقيت الدقيقة للصلاة
+- عمل الإشعارات بشكل موثوق حتى عندما يكون جهازك في وضع السكون
+- قدرة التطبيق على جدولة تذكيرات الصلاة بدقة في الخلفية
+
+### كيف نستخدم هذه الصلاحية؟
+- **الهدف الوحيد:** تقديم إشعارات مواقيت الصلاة الدقيقة في الوقت المحدد
+- **بدون إساءة استخدام:** نحن لا نستخدم هذه الصلاحية للإعلانات أو التتبع
+  أو أي غرض آخر غير تذكيرات الصلاة
+- **تحكم المستخدم:** هذه الصلاحية اختيارية. يمكنك اختيار رفضها، لكن
+  إشعارات الصلاة قد تتأخر أو تُفوَّت
+
+### متى نطلب هذه الصلاحية؟
+سيطالبك التطبيق بتعطيل توفير البطارية عندما:
+- تفتح شاشة مواقيت الصلاة لأول مرة
+- تفحص إعدادات البطارية يدوياً عبر أيقونة التطبيق
+
+يمكنك دائماً تغيير هذا الإعداد لاحقاً من خلال:
+الإعدادات > التطبيقات > [اسم التطبيق] > البطارية > غير مقيد
+
+### الامتثال
+يتوافق استخدام هذه الصلاحية مع سياسات Google Play لتطبيقات المنبهات
+والتذكيرات، كما هو موضح في وثائق Android للحالات المقبولة
+لاستثناءات توفير البطارية.
+
+---
+
+آخر تحديث: [ضع تاريخ اليوم]
+```
+
+---
+
+## 📍 **أين تضع هذا النص في Privacy Policy؟**
+
+### **الترتيب المثالي:**
+
+1. **Introduction** (المقدمة)
+2. **Information We Collect** (المعلومات التي نجمعها)
+3. **Location Data** (بيانات الموقع)
+4. ✅ **Battery Optimization Permission** ← **أضف هنا**
+5. **How We Use Your Information** (كيف نستخدم معلوماتك)
+6. **Data Security** (أمان البيانات)
+7. **Third-Party Services** (خدمات طرف ثالث)
+8. **Contact Us** (اتصل بنا)
+
+---
+
+## 🎯 **نموذج كامل مختصر:**
+
+```markdown
+# Privacy Policy
+
+## 1. Introduction
+This privacy policy explains how [App Name] collects, uses,
+and protects your information.
+
+## 2. Location Data
+We use your location to determine accurate prayer times for your area.
+Location data is stored locally and never shared with third parties.
+
+## 3. Battery Optimization Permission
+Our app requires exemption from battery optimization to deliver
+accurate prayer notifications at exact times. This permission is
+used ONLY for scheduling prayer reminders and is completely optional.
+
+### Why We Need It:
+- Ensure Adhan notifications arrive on time
+- Work reliably in background/Doze mode
+- Schedule accurate prayer reminders
+
+### User Control:
+You can decline this permission, but notifications may be delayed.
+
+## 4. Data Security
+All data is stored locally on your device. We do not collect,
+transmit, or sell any personal information.
+
+## 5. Contact Us
+Email: your.email@example.com
+
+Last Updated: December 5, 2024
+```
+
+---
+
+## ✅ **Checklist قبل الرفع:**
+
+- [ ] ✅ Privacy Policy تحتوي على قسم Battery Optimization
+- [ ] ✅ الشرح واضح: "للاستخدام في إشعارات الصلاة فقط"
+- [ ] ✅ ذكرت إنها "اختيارية" (optional)
+- [ ] ✅ رابط Privacy Policy موجود في Google Play Console
+- [ ] ✅ رابط Privacy Policy موجود **داخل التطبيق** (Settings أو About)
+
+---
+
+## 🔗 **رفع الـ Privacy Policy:**
+
+### **خيارات:**
+
+1. **استضافة مجانية:**
+   - GitHub Pages (مجاني)
+   - Firebase Hosting (مجاني)
+   - Google Sites (مجاني)
+
+2. **في التطبيق نفسه:**
+   - أضف صفحة "Privacy Policy" في Settings
+   - استخدم `WebView` أو `Markdown` viewer
+
+---
+
+## 📝 **ملاحظة نهائية:**
+
+عند رفع التطبيق في **Google Play Console**، في قسم **"App content"**:
+
+1. اضغط على **"Data safety"**
+2. هتلاقي سؤال: **"Does your app request battery optimization exemption?"**
+3. اختر: ✅ **Yes**
+4. السبب: **"Alarm clock"** أو **"Task reminder"**
+5. الشرح: **"To deliver accurate prayer time notifications"**
+
+---
+
+**جاهز للرفع! 🚀** فقط أضف النص ده في الـ Privacy Policy وخلصنا! 🎉

@@ -334,6 +334,29 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
   @override
   Widget build(BuildContext context) {
     final fullText = "${widget.azkarTitle}\n\n${widget.azkarDes}";
+    final shareFullTextFancy = """
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
+
+📿 *${fullText}*
+
+🌿✨🌸✨🌿✨🌸✨🌿✨
+
+💫 من تطبيق *رفيق المسلم اليومي* 💫  
+حمل التطبيق الآن واستفد من كل الذكر اليومي:
+
+📱 **Play Google للاندرويد:**  
+➡️ https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+
+📱 **App Gallery هواوي:**  
+➡️ https://appgallery.huawei.com/app/C114956477
+
+📱 **App Store للايفون:**  
+➡️ https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+
+🌟 شارك هذا الذكر مع أصدقائك لتعمّ الفائدة 🌟
+
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
+""";
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.sizeOf(context);
     final baseColor = widget.color ?? const Color(AppStyle.primaryColor);
@@ -354,14 +377,14 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                 end: Alignment.bottomLeft,
                 colors: isDark
                     ? const [
-                  Color(0xFF020617),
-                  Color(0xFF0F172A),
-                ]
+                        Color(0xFF020617),
+                        Color(0xFF0F172A),
+                      ]
                     : [
-                  // baseColor.withOpacity(0.06), // لمسة لون خفيفة
-                  Color(0xFFF7F1E1),
-                  Colors.white,
-                ],
+                        // baseColor.withOpacity(0.06), // لمسة لون خفيفة
+                        Color(0xFFF7F1E1),
+                        Colors.white,
+                      ],
               ),
               border: Border.all(
                 color: baseColor.withOpacity(isDark ? 0.5 : 0.3),
@@ -441,7 +464,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                       _AzkarActionButton(
                         icon: Icons.copy_rounded,
                         label: "نسخ",
-                        onTap: () => copyText(fullText),
+                        onTap: () => copyText(shareFullTextFancy),
                       ),
 
                       // فاصل خفيف في المنتصف
@@ -456,7 +479,35 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                       _AzkarActionButton(
                         icon: Icons.share_rounded,
                         label: "مشاركة",
-                        onTap: () => shareText(fullText),
+                        onTap: () {
+//                           final shareFullTextDecorated = """
+// 🌸🌿🌸🌿🌸🌿🌸🌿🌸
+//
+// 📿 *${fullText}*
+//
+// 🌿🌸🌿🌸🌿🌸🌿🌸🌿
+//
+// ✨ من تطبيق *رفيق المسلم اليومي* 📱
+// حمل التطبيق الآن:
+//
+// 📲 **Android:**
+// https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+//
+// 📲 **Huawei AppGallery:**
+// https://appgallery.huawei.com/app/C114956477
+//
+// 📲 **iOS App Store:**
+// https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+//
+// 🌟 شارك هذا الذكر مع أصدقائك ليعمّ الخير 🌟
+//
+// 🌸🌿🌸🌿🌸🌿🌸🌿🌸
+// """;
+
+
+
+                          shareText(shareFullTextFancy);
+                        },
                       ),
                     ],
                   ),
@@ -478,8 +529,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                 borderRadius: BorderRadius.circular(40.r),
                 boxShadow: [
                   BoxShadow(
-                    color:
-                    (widget.repertColor2 ?? baseColor).withOpacity(0.35),
+                    color: (widget.repertColor2 ?? baseColor).withOpacity(0.35),
                     blurRadius: 14,
                     offset: const Offset(0, 6),
                   ),
@@ -507,7 +557,6 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
               ),
             ),
           ),
-
         ],
       ),
     );

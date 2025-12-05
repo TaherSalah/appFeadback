@@ -19,7 +19,7 @@ class Radio {
   int id;
   String name;
   String url;
-  DateTime recentDate;
+  dynamic recentDate;
 
   Radio({
     required this.id,
@@ -32,7 +32,8 @@ class Radio {
     id: json["id"],
     name: json["name"],
     url: json["url"],
-    recentDate: DateTime.parse(json["recent_date"]),
+    // recentDate: DateTime.parse(json["recent_date"]),
+    recentDate: json["recent_date"],
   );
 
   Map<String, dynamic> toJson() => {

@@ -248,7 +248,7 @@ class PrayerHeaderSection extends StatelessWidget {
           // كارت "الصلاة القادمة" في الأسفل
 
           Padding(
-            padding: EdgeInsets.only(top: isTab ? 0 : 80),
+            padding: EdgeInsets.only(top: isTab ? 85 : 80),
             child: Align(
               alignment: Alignment.center,
               child: Padding(
@@ -333,7 +333,7 @@ class PrayerHeaderSection extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             HalalGreeting(),
@@ -357,10 +357,10 @@ class PrayerHeaderSection extends StatelessWidget {
                                         const Color(0xFF2E7D32).withOpacity(0.6),
                                       ],
                                     )
-                                        : LinearGradient(
+                                        : const LinearGradient(
                                       colors: [
                                         Colors.white,
-                                        const Color(0xFFFFFBF0),
+                                        Color(0xFFFFFBF0),
                                       ],
                                     ),
                                     boxShadow: [
@@ -459,10 +459,10 @@ class PrayerHeaderSection extends StatelessWidget {
                                         const Color(0xFF2E7D32).withOpacity(0.6),
                                       ],
                                     )
-                                        : LinearGradient(
+                                        : const LinearGradient(
                                       colors: [
                                         Colors.white,
-                                        const Color(0xFFFFFBF0),
+                                        Color(0xFFFFFBF0),
                                       ],
                                     ),
                                     boxShadow: [
@@ -507,10 +507,10 @@ class PrayerHeaderSection extends StatelessWidget {
                                     const Color(0xFF2E7D32).withOpacity(0.5),
                                   ],
                                 )
-                                    : LinearGradient(
+                                    : const LinearGradient(
                                   colors: [
                                     Colors.white,
-                                    const Color(0xFFFFFBF0),
+                                    Color(0xFFFFFBF0),
                                   ],
                                 ),
                                 border: Border.all(
@@ -566,10 +566,10 @@ class PrayerHeaderSection extends StatelessWidget {
                                     const Color(0xFF2E7D32).withOpacity(0.6),
                                   ],
                                 )
-                                    : LinearGradient(
+                                    : const LinearGradient(
                                   colors: [
                                     Colors.white,
-                                    const Color(0xFFFFFBF0),
+                                    Color(0xFFFFFBF0),
                                   ],
                                 ),
                                 boxShadow: [
@@ -600,7 +600,7 @@ class PrayerHeaderSection extends StatelessWidget {
                                   ? Colors.white.withOpacity(0.9)
                                   : const Color(0xFF2C3E50),
                             ),
-                            Spacer(),
+                            const Spacer(),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
@@ -612,10 +612,10 @@ class PrayerHeaderSection extends StatelessWidget {
                                     const Color(0xFFD4AF37).withOpacity(0.1),
                                   ],
                                 )
-                                    : LinearGradient(
+                                    : const LinearGradient(
                                   colors: [
-                                    const Color(0xFFFFF8E7),
-                                    const Color(0xFFFFFBF0),
+                                    Color(0xFFFFF8E7),
+                                    Color(0xFFFFFBF0),
                                   ],
                                 ),
                               ),
@@ -669,6 +669,7 @@ class PrayerHeaderSection extends StatelessWidget {
                                     ),
                                   ),
                                 ),
+                                SizedBox(height:isTab? 5:0,),
                                 // شريط التقدم
                                 LinearProgressIndicator(
                                   value: progressValue,

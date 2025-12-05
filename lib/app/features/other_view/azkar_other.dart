@@ -188,7 +188,29 @@ Widget buildOtherZakarItem({
 }) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
   final fullText = "$azkarOtherTitle\n\n$azkarOtherDesc";
+  final shareFullTextFancy = """
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
 
+📿 *${fullText}*
+
+🌿✨🌸✨🌿✨🌸✨🌿✨
+
+💫 من تطبيق *رفيق المسلم اليومي* 💫  
+حمل التطبيق الآن واستفد من كل الذكر اليومي:
+
+📱 **Play Google للاندرويد:**  
+➡️ https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+
+📱 **App Gallery هواوي:**  
+➡️ https://appgallery.huawei.com/app/C114956477
+
+📱 **App Store للايفون:**  
+➡️ https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+
+🌟 شارك هذا الذكر مع أصدقائك لتعمّ الفائدة 🌟
+
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
+""";
   return Stack(
     alignment: Alignment.bottomCenter,
     clipBehavior: Clip.none,
@@ -256,7 +278,7 @@ Widget buildOtherZakarItem({
           children: [
             GestureDetector(
               onTap: () async {
-                await Clipboard.setData(ClipboardData(text: fullText));
+                await Clipboard.setData(ClipboardData(text: shareFullTextFancy));
                 Fluttertoast.showToast(
                   msg: "تم نسخ الذكر بنجاح",
                   gravity: ToastGravity.BOTTOM,
@@ -275,7 +297,7 @@ Widget buildOtherZakarItem({
 
             GestureDetector(
               onTap: () {
-                Share.share(fullText, subject: azkarOtherTitle);
+                Share.share(shareFullTextFancy, subject: azkarOtherTitle);
               },
               child: CircleAvatar(
                 radius: 25,

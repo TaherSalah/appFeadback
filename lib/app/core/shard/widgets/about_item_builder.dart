@@ -1,4 +1,5 @@
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -18,30 +19,40 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
 
     void shareGooglePlay() {
       const msg = '''
-رَفِيقُ المُسْلِمِ اليَوْمِيّ — القرآن والأذكار في تطبيق واحد.
-حمّل من Google Play:
-https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+📱✨ تطبيق *رَفِيقُ المُسْلِمِ اليَوْمِيّ* — القرآن والأذكار اليومية في مكان واحد! ✨📱
+
+قم بتحميل التطبيق الآن من Google Play:
+➡️ https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+
+🌟 استمتع بقراءة الأذكار والأحاديث اليومية بسهولة وراحة.
 ''';
       Share.share(msg, subject: 'رَفِيقُ المُسْلِمِ اليَوْمِيّ');
     }
 
     void shareAppGallery() {
       const msg = '''
-رَفِيقُ المُسْلِمِ اليَوْمِيّ — القرآن والأذكار في تطبيق واحد.
-حمّل من AppGallery:
-https://appgallery.huawei.com/app/C114956477
+📱✨ تطبيق *رَفِيقُ المُسْلِمِ اليَوْمِيّ* — القرآن والأذكار اليومية في مكان واحد! ✨📱
+
+قم بتحميل التطبيق الآن من Huawei AppGallery:
+➡️ https://appgallery.huawei.com/app/C114956477
+
+🌟 استمتع بقراءة الأذكار والأحاديث اليومية بسهولة وراحة.
 ''';
       Share.share(msg, subject: 'رَفِيقُ المُسْلِمِ اليَوْمِيّ');
     }
 
     void shareAppStore() {
       const msg = '''
-رَفِيقُ المُسْلِمِ اليَوْمِيّ — القرآن والأذكار في تطبيق واحد.
-حمّل من App Store:
-https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+📱✨ تطبيق *رَفِيقُ المُسْلِمِ اليَوْمِيّ* — القرآن والأذكار اليومية في مكان واحد! ✨📱
+
+قم بتحميل التطبيق الآن من App Store:
+➡️ https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+
+🌟 استمتع بقراءة الأذكار والأحاديث اليومية بسهولة وراحة.
 ''';
       Share.share(msg, subject: 'رَفِيقُ المُسْلِمِ اليَوْمِيّ');
     }
+
 
     final con = Provider.of<AzkarProvider>(context);
     final bool isTablate = MediaQuery.sizeOf(context).width > 600;
@@ -196,6 +207,7 @@ https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%
 // زر قيّم التطبيق
                 Center(
                   child: ElevatedButton.icon(
+                    style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(KColors.primaryColor)),
                     icon: const Icon(Icons.star_rate_rounded),
                     label: Text(
                       'قيّم التطبيق',

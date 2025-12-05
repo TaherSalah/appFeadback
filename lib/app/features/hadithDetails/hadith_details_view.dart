@@ -70,10 +70,27 @@ class HadithDetailsView extends StatelessWidget {
                       }
 
                       return ExpandableFab(
+
                           key: key,
+                          openButtonBuilder: RotateFloatingActionButtonBuilder(
+                            child: const Icon(Icons.menu),
+                            fabSize: ExpandableFabSize.regular,
+                            foregroundColor: Theme.of(context).brightness == Brightness.dark? Colors.white : KColors.primaryColor,
+                            backgroundColor:Theme.of(context).brightness == Brightness.dark? Colors.black: KColors.primaryColor,
+                            shape: const CircleBorder(),
+                          ),
+                          closeButtonBuilder: RotateFloatingActionButtonBuilder(
+                            child: const Icon(Icons.close),
+                            fabSize: ExpandableFabSize.regular,
+                            foregroundColor: Theme.of(context).brightness == Brightness.dark? Colors.white : KColors.primaryColor,
+                            backgroundColor:Theme.of(context).brightness == Brightness.dark? Colors.black: KColors.primaryColor,
+                            shape: const CircleBorder(),
+                          ),
                           overlayStyle: ExpandableFabOverlayStyle(
+
                               color: Colors.black.withOpacity(0.5), blur: 5),
                           pos: ExpandableFabPos.left,
+
                           onOpen: () {
                             debugPrint('onOpen');
                           },
@@ -86,6 +103,7 @@ class HadithDetailsView extends StatelessWidget {
                           afterClose: () {
                             debugPrint('afterClose');
                           },
+
                           children: [
                             FloatingActionButton.small(
                               backgroundColor: Colors.black,
@@ -120,9 +138,9 @@ class HadithDetailsView extends StatelessWidget {
                                   final state = key.currentState;
                                   if (state != null) {
                                     debugPrint('isOpen:${state.isOpen}');
-                                    onShare(
+                                    onShareHadith(
                                         context: context,
-                                        hadithContent:
+                                        hadithText:
                                             bloc.hadithDetailsModal?.hadeeth,
                                         hadithTitle:
                                             bloc.hadithDetailsModal?.title);
@@ -151,56 +169,88 @@ class HadithContentShare {
 }
 
 
-void onShare(
-    {required BuildContext context,
-    required String hadithContent,
-    String? hadithTitle}) async {
+// void onShare(
+//     {required BuildContext context,
+//     required String hadithContent,
+//     String? hadithTitle}) async {
+//   final box = context.findRenderObject() as RenderBox?;
+//   String shareApp =
+//       ' $hadithContent  \n \n \n 📦 قم بتحميل تطبيق  رَفِيقُ المُسْلِمِ اليَوْمِي حتي يمكنك من قراءة المزيد من الأحاديث النبوية الشريفة الصحيحة ';
+//   String? subject = hadithTitle;
+//
+// // Android specific code
+//   await Share.share(shareApp,
+//       subject: subject,
+//       sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+// }
+void onShareHadith({
+  required BuildContext context,
+  required String hadithText,
+  String? hadithTitle,
+}) async {
   final box = context.findRenderObject() as RenderBox?;
-  String shareApp =
-      ' $hadithContent  \n \n \n 📦 قم بتحميل تطبيق  رَفِيقُ المُسْلِمِ اليَوْمِي حتي يمكنك من قراءة المزيد من الأحاديث النبوية الشريفة الصحيحة ';
-  String? subject = hadithTitle;
 
-// Android specific code
-  await Share.share(shareApp,
-      subject: subject,
-      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+  final shareText = """
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
+
+📿 **${hadithTitle ?? "حديث شريف"}** 
+$hadithText
+
+🌿✨🌸✨🌿✨🌸✨🌿✨
+
+💫 من تطبيق *رفيق المسلم اليومي* 💫  
+حمل التطبيق الآن واستفد من كل الأحاديث اليومية:
+
+📱 **Play Google للاندرويد:**  
+➡️ https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+
+📱 **App Gallery هواوي:**  
+➡️ https://appgallery.huawei.com/app/C114956477
+
+📱 **App Store للايفون:**  
+➡️ https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+
+🌟 شارك هذا الحديث مع أصدقائك لتعمّ الفائدة 🌟
+
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
+""";
+
+  await Share.share(
+    shareText,
+    subject: hadithTitle,
+    sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+  );
 }
 
-class CopyTextWidget extends StatelessWidget {
-  final String textToCopy = "This is the text to copy.";
 
-  const CopyTextWidget({super.key});
+void copyHadithToClipboard(BuildContext context, {required String hadithText, String? hadithTitle}) {
+  final copyText = """
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
 
-  void _copyToClipboard(BuildContext context) {
-    // Copy the text to the clipboard
-    Clipboard.setData(ClipboardData(text: textToCopy)).then((_) {
-      // Show a snackbar to indicate that the text has been copied
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Text copied to clipboard!')),
-      );
-    });
-  }
+📿 **${hadithTitle ?? "حديث شريف"}** 
+$hadithText
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          // Display the text
-          Text(
-            textToCopy,
-            style: const TextStyle(fontSize: 18),
-          ),
-          const SizedBox(height: 20),
-          // Button to trigger copy action
-          ElevatedButton(
-            onPressed: () => _copyToClipboard(context),
-            child: const Text('Copy Text'),
-          ),
-        ],
-      ),
-    );
-  }
+🌿✨🌸✨🌿✨🌸✨🌿✨
+
+💫 من تطبيق *رفيق المسلم اليومي* 💫  
+حمل التطبيق الآن واستفد من كل الأحاديث اليومية:
+
+📱 **Android:**  
+➡️ https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+
+📱 **Huawei AppGallery:**  
+➡️ https://appgallery.huawei.com/app/C114956477
+
+📱 **iOS App Store:**  
+➡️ https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+
+🌟 شارك هذا الحديث مع أصدقائك لتعمّ الفائدة 🌟
+
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
+""";
+
+  Clipboard.setData(ClipboardData(text: copyText));
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('تم نسخ الحديث مع رابط التطبيق!')),
+  );
 }

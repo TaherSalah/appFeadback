@@ -22,9 +22,9 @@ import 'package:share_plus/share_plus.dart';
 List<List<int>> _buildDailyJuzPlan(
   int days, {
   int totalJuz = 30,
-  int startJuz = 1,
+ int startJuz = 1,
 }) {
-  if (days <= 0 || totalJuz <= 0) return const [];
+if (days <= 0 || totalJuz <= 0) return const[];
 
   // توزيع عادل: أول (remainder) أيام تأخذ +1
   final base = totalJuz ~/ days;
@@ -32,16 +32,16 @@ List<List<int>> _buildDailyJuzPlan(
 
   final perDay = List<int>.generate(
     days,
-    (_) => base + (remainder-- > 0 ? 1 : 0),
+ (_) => base + (remainder-- > 0 ? 1 : 0),
   );
 
   final plan = <List<int>>[];
   int current = startJuz; // 1-based
 
   for (final count in perDay) {
-    if (current > (startJuz + totalJuz - 1)) {
+if (current > (startJuz + totalJuz - 1)) {
       // خلّصنا كل الأجزاء
-      plan.add(const []);
+      plan.add(const[]);
       continue;
     }
 
@@ -59,7 +59,7 @@ List<List<int>> _buildDailyJuzPlan(
 
   // لو لسه في أيام زيادة بعد انتهاء الأجزاء، تفضل فاضية
   while (plan.length < days) {
-    plan.add(const []);
+    plan.add(const[]);
   }
 
   return plan;
@@ -81,7 +81,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
   String _distribution = "صفحات"; // "صفحات" أو "أجزاء"
 
   void _saveKhatmah() {
-    if (!_formKey.currentState!.validate()) return;
+if (!_formKey.currentState!.validate()) return;
 
     // final khatmahBox = Hive.box<KhatmahModel>('khatmahBox');
     final khatmahBox = Hive.box<KhatmahModel>('khatmahBox');
@@ -93,16 +93,16 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
     final String khId = DateTime.now().toIso8601String();
 
     // في وضع "صفحات": نفس منطقك الحالي
-    if (_distribution == "صفحات") {
+if (_distribution == "صفحات") {
       final int dailyPages = (totalPages / _days).ceil();
       final newKhatmah = KhatmahModel(
         id: khId,
-        title: _titleController.text,
-        totalPages: totalPages,
-        currentPage: 0,
-        startDate: DateTime.now(),
-        endDate: DateTime.now().add(Duration(days: _days)),
-        dailyPages: dailyPages,
+ title: _titleController.text,
+ totalPages: totalPages,
+ currentPage: 0,
+ startDate: DateTime.now(),
+ endDate: DateTime.now().add(Duration(days: _days)),
+ dailyPages: dailyPages,
       );
       khatmahBox.add(newKhatmah);
 
@@ -119,12 +119,12 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
       // في وضع "أجزاء" مش هنستخدم dailyPages (خليه 0 أو سيبه كما تحب)
       final newKhatmah = KhatmahModel(
         id: khId,
-        title: _titleController.text,
-        totalPages: totalPages,
-        currentPage: 0,
-        startDate: DateTime.now(),
-        endDate: DateTime.now().add(Duration(days: _days)),
-        dailyPages: 0, // غير مستخدم مع الأجزاء
+ title: _titleController.text,
+ totalPages: totalPages,
+ currentPage: 0,
+ startDate: DateTime.now(),
+ endDate: DateTime.now().add(Duration(days: _days)),
+ dailyPages: 0, // غير مستخدم مع الأجزاء
       );
       khatmahBox.add(newKhatmah);
 
@@ -167,7 +167,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
 
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
+ child: Scaffold(
         // backgroundColor: AppStyle.bgColors,
         // appBar: AppBar(
         //   leading: const CupertinoNavigationBarBackButton(color: Colors.black),
@@ -184,9 +184,9 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
           appBar: PreferredSize(
             preferredSize:
             Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
-            child: AppBar(
-              leading:  CupertinoNavigationBarBackButton(
-                color:isDark? Colors.white :Colors.black,
+ child: AppBar(
+              leading: CupertinoNavigationBarBackButton(
+                color: isDark ? Colors.white : Colors.black,
 
               ),
               // actions: [
@@ -200,135 +200,135 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
               //     icon: const Icon(Icons.add),
               //   )
               // ],
-              centerTitle: true,
-              title: Text(
+ centerTitle: true,
+ title: Text(
                 'إنشاء ختمة جديدة',
-                style: GoogleFonts.cairo(
+ style: GoogleFonts.cairo(
                   color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+ fontWeight: FontWeight.bold,
+ fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
                 ),
               ),
             ),
           ),
 
-        body: Padding(
+ body: Padding(
           padding: const EdgeInsets.all(16),
-          child: Form(
+ child: Form(
             key: _formKey,
-            child: SingleChildScrollView(
+ child: SingleChildScrollView(
               child: SizedBox(
                 height: MediaQuery.sizeOf(context).height,
-                child: Column(
+ child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
+ mainAxisAlignment: MainAxisAlignment.spaceAround,
+ children: [
                     HadithCarouselCard(),
 
                     // اسم الختمة
-                    TextFormField(
+ TextFormField(
                       controller: _titleController,
-                      decoration: InputDecoration(
+ decoration: InputDecoration(
                         fillColor: Theme.of(context).cardColor,
-                        labelText: "اسم الختمة",
-                        focusedBorder: OutlineInputBorder(
+ labelText: "اسم الختمة",
+ focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: AppStyle.scondColors)),
-                        border: const OutlineInputBorder(),
+ border: const OutlineInputBorder(),
                       ),
-                      validator: (v) =>
+ validator: (v) =>
                       v == null || v.isEmpty ? "أدخل اسم الختمة" : null,
                     ),
 
                     // مدة الختمة بالأيام
-                    FormField<int>(
+ FormField<int>(
                       validator: (value) =>
                       value == null ? "من فضلك اختر مدة الختمة بالأيام" : null,
-                      builder: (state) {
+ builder: (state) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+ children: [
                             DropdownMenu<int>(
-                              menuStyle:  MenuStyle(
+                              menuStyle: MenuStyle(
                                   backgroundColor:
                                   WidgetStatePropertyAll(Theme.of(context).cardColor)),
-                              hintText: "اختر عدد الايام",
-                              width: MediaQuery.sizeOf(context).width,
-                              label: const Text("مدة الختمة بالأيام"),
-                              menuHeight: 260,
-                              dropdownMenuEntries: const [
+ hintText: "اختر عدد الايام",
+ width: MediaQuery.sizeOf(context).width,
+ label: const Text("مدة الختمة بالأيام"),
+ menuHeight: 260,
+ dropdownMenuEntries: const[
                                 DropdownMenuEntry(value: 7, label: "7 أيام"),
-                                DropdownMenuEntry(value: 10, label: "10 أيام"),
-                                DropdownMenuEntry(value: 15, label: "15 أيام"),
-                                DropdownMenuEntry(value: 20, label: "20 أيام"),
-                                DropdownMenuEntry(value: 30, label: "30 يوم"),
-                                DropdownMenuEntry(value: 60, label: "60 يوم"),
-                                DropdownMenuEntry(value: 90, label: "90 يوم"),
+ DropdownMenuEntry(value: 10, label: "10 أيام"),
+ DropdownMenuEntry(value: 15, label: "15 أيام"),
+ DropdownMenuEntry(value: 20, label: "20 أيام"),
+ DropdownMenuEntry(value: 30, label: "30 يوم"),
+ DropdownMenuEntry(value: 60, label: "60 يوم"),
+ DropdownMenuEntry(value: 90, label: "90 يوم"),
                               ],
-                              onSelected: (v) {
+ onSelected: (v) {
                                 setState(() => _days = v!);
                                 state.didChange(v);
                               },
                             ),
-                            if (state.hasError)
+ if (state.hasError)
                               Padding(
                                 padding: const EdgeInsets.only(top: 5),
-                                child: Text(state.errorText!,
-                                    style:
+ child: Text(state.errorText!,
+ style:
                                     const TextStyle(color: Colors.red, fontSize: 12)),
                               )
-                          ],
+],
                         );
                       },
                     ),
 
                     // طريقة التوزيع
-                    FormField<String>(
+ FormField<String>(
                       validator: (value) =>
                       value == null || value.isEmpty ? "من فضلك اختر طريقة التوزيع" : null,
-                      builder: (state) {
+ builder: (state) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+ children: [
                             DropdownMenu<String>(
                               hintText: "اختر طريقة التوزيع",
-                              width: MediaQuery.sizeOf(context).width,
-                              initialSelection: null,
-                              menuStyle:  MenuStyle(
+ width: MediaQuery.sizeOf(context).width,
+ initialSelection: null,
+ menuStyle: MenuStyle(
                                   backgroundColor:
                                   WidgetStatePropertyAll(Theme.of(context).cardColor)),
-                              label: const Text("طريقة التوزيع"),
-                              menuHeight: 260,
-                              dropdownMenuEntries: const [
+ label: const Text("طريقة التوزيع"),
+ menuHeight: 260,
+ dropdownMenuEntries: const[
                                 DropdownMenuEntry(value: "صفحات", label: "صفحات"),
-                                DropdownMenuEntry(value: "أجزاء", label: "أجزاء"),
+ DropdownMenuEntry(value: "أجزاء", label: "أجزاء"),
                               ],
-                              onSelected: (v) {
+ onSelected: (v) {
                                 setState(() => _distribution = v!);
                                 state.didChange(v);
                               },
                             ),
-                            if (state.hasError)
+ if (state.hasError)
                               Padding(
                                 padding: const EdgeInsets.only(top: 5),
-                                child: Text(state.errorText!,
-                                    style:
+ child: Text(state.errorText!,
+ style:
                                     const TextStyle(color: Colors.red, fontSize: 12)),
                               )
-                          ],
+],
                         );
                       },
                     ),
 
                     // زرار الحفظ
-                    Center(
+ Center(
                       child: CustomButton(
                         borderColor: Theme.of(context).cardColor,
-                        backgroundColor: KColors.primaryColor,
-                        width: MediaQuery.sizeOf(context).width / 3,
-                        title: "ابدأ الختمة",
+ backgroundColor: KColors.primaryColor,
+ width: MediaQuery.sizeOf(context).width / 3,
+ title: "ابدأ الختمة",
 
-                        onTap: () {
-                          if (_formKey.currentState?.validate() ?? false) {
+ onTap: () {
+if (_formKey.currentState?.validate() ?? false) {
                             _saveKhatmah();
                           }
                         },
@@ -341,7 +341,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
           ),
         )
 
-      ),
+),
     );
   }
 }
@@ -451,17 +451,17 @@ class _HadithCarouselCardState extends State<HadithCarouselCard> {
       "text": " عبد الله بن عمرو أن رسول الله صلى الله عليه وسلم قال: لم يفقه من قرأ القرآن في أقل من ثلاثِ.",
       "source": "رواه الترمذي وأبو داود والدارمي",
     },
-    {
+ {
       "title": "حديث عن مدة ختم القرآن",
       "text": " قال رسول الله صلى الله عليه وسلم: «من قرأ حرفًا من كتاب الله فله به حسنة، والحسنة بعشر أمثالها، لا أقول: ألم حرف، ولكن ألف حرف، ولام حرف، وميم حرف",
       "source": "رواه الترمذي"
     },
-    {
+ {
       "title": "فضل أهل القرآن",
       "text": "قال رسول الله صلى الله عليه وسلم:مثل المؤمن الذي يقرأ القرآن مثل الأُترُجّة ريحها طيب وطعمها طيب، ومثل المؤمن الذي لا يقرأ القرآن مثل التمرة طعمها طيب ولا ريح لها، ومثل الفاجر الذي يقرأ القرآن كمثل الريحانة ريحها طيب وطعمها مر، ومثل الفاجر الذي لا يقرأ القرآن كمثل الحنظلة طعمها مر ولا ريح لها",
       "source": "رواه البخاري",
     },
-    {
+ {
       "title": "فضل أهل القرآن",
       "text": "عن عبد الله بن عمرو: أنه سأل النبي صلى الله عليه وسلم في كم ‏يُقرأ القرآن؟ قال: «في أربعين يومًا، ثم قال في شهر...». وفي رواية البخاري قال له: «اقرأ القرآن في كل شهر، قلت: إني أجد قوة، قال: فاقرأه في سبع ولا تزد",
       "source": "رواه البخاري",
@@ -469,10 +469,10 @@ class _HadithCarouselCardState extends State<HadithCarouselCard> {
   ];
   final List<Color> _bgColors = [
     Colors.greenAccent,
-    Colors.blueAccent,
-    Colors.purpleAccent,
-    Colors.orangeAccent,
-    Colors.tealAccent,
+ Colors.blueAccent,
+ Colors.purpleAccent,
+ Colors.orangeAccent,
+ Colors.tealAccent,
   ];
   int _currentIndex = 0;
   Timer? _timer;
@@ -501,41 +501,41 @@ class _HadithCarouselCardState extends State<HadithCarouselCard> {
     final bgColor = _bgColors[_currentIndex % _bgColors.length].withOpacity(0.15);
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: SizedBox(
+ child: SizedBox(
         // height: 250,
         child: Card(
 
           color: CupertinoColors.black,
           // elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(style: BorderStyle.solid,color: KColors.accentColor,width: 2.9)),
-          child: Padding(
+ shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(style: BorderStyle.solid, color: KColors.accentColor, width: 2.9)),
+ child: Padding(
             padding: const EdgeInsets.all(14),
-            child: Column(
+ child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-              Center(child: TextWidget(title: currentHadith["title"]!,color: CupertinoColors.systemYellow,fontWeight: FontWeight.bold,)),
-                const SizedBox(height: 8),
-                const Divider(),
-                const SizedBox(height: 12),
-                TextWidget(title: currentHadith["text"]!,color: CupertinoColors.white,fontWeight: FontWeight.w600,fontSize: 13.sp,),
+ crossAxisAlignment: CrossAxisAlignment.stretch,
+ children: [
+              Center(child: TextWidget(title: currentHadith["title"]!, color: CupertinoColors.systemYellow, fontWeight: FontWeight.bold,)),
+ const SizedBox(height: 8),
+ const Divider(),
+ const SizedBox(height: 12),
+ TextWidget(title: currentHadith["text"]!, color: CupertinoColors.white, fontWeight: FontWeight.w600, fontSize: 13.sp,),
 
-                const SizedBox(height: 12),
-                Align(
+ const SizedBox(height: 12),
+ Align(
                   alignment: Alignment.centerLeft,
 
-                  child: Text(
+ child: Text(
                     currentHadith["source"]!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+ style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.grey,
-                      fontStyle: FontStyle.italic,
+ fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Row(
+ const SizedBox(height: 12),
+ Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
+ children: [
                     TextButton.icon(
 
                       onPressed: () async {
@@ -543,23 +543,62 @@ class _HadithCarouselCardState extends State<HadithCarouselCard> {
                           text:
                           "${currentHadith["title"]}\n${currentHadith["text"]}\n${currentHadith["source"]}",
                         ));
-                        if (context.mounted) {
+if (context.mounted) {
                          KHelper.showSuccess(message: 'تم نسخ الحديث');
                         }
                       },
-                      icon:  Icon(Icons.copy, size: 18,color: KColors.orang2Color,),
-                      label:  TextWidget(title: 'نسخ', fontSize: 13.sp,color:KColors.orang2Color ,),
+ icon: Icon(Icons.copy, size: 18, color: KColors.orang2Color,),
+ label: TextWidget(title: 'نسخ', fontSize: 13.sp, color: KColors.orang2Color ,),
                     ),
-                    const SizedBox(width: 8),
-                    TextButton.icon(
-                      onPressed: () {
-                        Share.share(
-                            "${currentHadith["title"]}\n${currentHadith["text"]}\n${currentHadith["source"]}");
-                      },
-                      icon:  Icon(Icons.share, size: 18,color: KColors.whiteColor,),
-                      label:  TextWidget(title: 'مشاركة', fontSize: 13.sp,color:KColors.whiteColor ,),
-                    ),
-                  ],
+ const SizedBox(width: 8),
+                    // TextButton.icon(
+                    //   onPressed: () {
+                    //     Share.share(
+                    //         "${currentHadith["title"]}\n${currentHadith["text"]}\n${currentHadith["source"]}");
+                    //   },
+                    //   icon:  Icon(Icons.share, size: 18,color: KColors.whiteColor,),
+                    //   label:  TextWidget(title: 'مشاركة', fontSize: 13.sp,color:KColors.whiteColor ,),
+                    // ),
+ TextButton.icon(
+          onPressed: () {
+            final shareText = """
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
+
+📿 ${currentHadith["title"]}
+
+${currentHadith["text"]}
+
+📘 المصدر: ${currentHadith["source"]}
+
+🌿✨🌸✨🌿✨🌸✨🌿✨
+
+💫 من تطبيق *رفيق المسلم اليومي* 💫  
+حمل التطبيق الآن واستفد من كل الأذكار اليومية:
+
+📱 **Android:**  
+➡️ https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+
+📱 **Huawei AppGallery:**  
+➡️ https://appgallery.huawei.com/app/C114956477
+
+📱 **iOS App Store:**  
+➡️ https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+
+🌟 شارك هذا الدعاء مع أصدقائك لتعمّ الفائدة 🌟
+
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
+""";
+            Share.share(shareText);
+          },
+ icon: Icon(Icons.share, size: 18, color: KColors.whiteColor),
+ label: TextWidget(
+            title: 'مشاركة',
+ fontSize: 13.sp,
+ color: KColors.whiteColor,
+          ),
+        ),
+
+        ],
                 ),
               ],
             ),

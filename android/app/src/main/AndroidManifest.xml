@@ -11,7 +11,9 @@
     <!-- أذونات الإشعارات والمهام في الخلفية -->
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-<!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>-->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
+    <!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>-->
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
@@ -28,6 +30,14 @@
             android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+                android:value="androidx.media3.session.MediaSessionService" />
+
+            <meta-data
+                android:name="flutter.notification_icon"
+                android:resource="@mipmap/launcher_icon" />
+
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />

@@ -143,50 +143,124 @@ class _OtherAzkarWidgetState extends State<OtherAzkarWidget> {
             ),
           ),
         ),
+        // Positioned(
+        //     top: 15,
+        //     left: 55,
+        //     child: InkWell(
+        //       onTap: () {
+        //         Share.share(
+        //           subject: "أدعية مختارة",
+        //           ' أدعية مختارة \n\n${azkar[currentIndex]}\n\n ',
+        //         );
+        //       },
+        //       child: Icon(
+        //         Icons.share,
+        //         // color: Theme.of(context).brightness == Brightness.dark ? Colors.white: CupertinoColors.darkBackgroundGray,
+        //
+        //         size: MediaQuery.sizeOf(context).width>600?25: 20,
+        //       ),
+        //     )),
+        // Positioned(
+        //     top: 15,
+        //     left: 20,
+        //     child: InkWell(
+        //       onTap: () {
+        //         Clipboard.setData(ClipboardData(text: azkar[currentIndex]));
+        //         KHelper.showSuccess(message:  'تم نسخ الدعاء إلى الحافظة !');
+        //
+        //         // ScaffoldMessenger.of(context).showSnackBar(
+        //         //   SnackBar(
+        //         //       backgroundColor: CentralizedCubit.isDarkMode
+        //         //           ? KColors.blackColor
+        //         //           : KColors.whiteColor,
+        //         //       content: TextWidget(
+        //         //           fontSize: ResponsiveUtil.isTablet(context)
+        //         //               ? 10.sp
+        //         //               : 12.sp,
+        //         //           textAlign: TextAlign.right,
+        //         //           title: '! تم نسخ الدعاء إلى الحافظة')),
+        //         // );
+        //       },
+        //       child: Icon(
+        //         Icons.copy,
+        //         color: Theme.of(context).brightness == Brightness.dark ?  const Color(0xFF00897B): CupertinoColors.systemRed,
+        //         size: MediaQuery.sizeOf(context).width>600?25: 20,
+        //       ),
+        //     )),
         Positioned(
-            top: 15,
-            left: 55,
-            child: InkWell(
-              onTap: () {
-                Share.share(
-                  subject: "أدعية مختارة",
-                  ' أدعية مختارة \n\n${azkar[currentIndex]}\n\n ',
-                );
-              },
-              child: Icon(
-                Icons.share,
-                // color: Theme.of(context).brightness == Brightness.dark ? Colors.white: CupertinoColors.darkBackgroundGray,
+          top: 15,
+          left: 55,
+          child: InkWell(
+            onTap: () {
+              final shareText = """
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
 
-                size: MediaQuery.sizeOf(context).width>600?25: 20,
-              ),
-            )),
+📿 *أدعية مختارة*  
+
+${azkar[currentIndex]}
+
+🌿✨🌸✨🌿✨🌸✨🌿✨
+
+💫 من تطبيق *رفيق المسلم اليومي* 💫  
+حمل التطبيق الآن واستفد من كل الأذكار اليومية:
+
+📱 **Android:**  
+➡️ https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+
+📱 **Huawei AppGallery:**  
+➡️ https://appgallery.huawei.com/app/C114956477
+
+📱 **iOS App Store:**  
+➡️ https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+
+🌟 شارك هذا الدعاء مع أصدقائك لتعمّ الفائدة 🌟
+
+🌺✨🌿✨🌺✨🌿✨🌺✨🌿
+""";
+
+              Share.share(
+                shareText,
+                subject: "أدعية مختارة من رفيق المسلم اليومي",
+              );
+            },
+            child: Icon(
+              Icons.share,
+              size: MediaQuery.sizeOf(context).width > 600 ? 25 : 20,
+            ),
+          ),
+        ),
+
         Positioned(
-            top: 15,
-            left: 20,
-            child: InkWell(
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: azkar[currentIndex]));
-                KHelper.showSuccess(message:  'تم نسخ الدعاء إلى الحافظة !');
+          top: 15,
+          left: 20,
+          child: InkWell(
+            onTap: () {
+              final copyText = """
+📿 أدعية مختارة
 
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   SnackBar(
-                //       backgroundColor: CentralizedCubit.isDarkMode
-                //           ? KColors.blackColor
-                //           : KColors.whiteColor,
-                //       content: TextWidget(
-                //           fontSize: ResponsiveUtil.isTablet(context)
-                //               ? 10.sp
-                //               : 12.sp,
-                //           textAlign: TextAlign.right,
-                //           title: '! تم نسخ الدعاء إلى الحافظة')),
-                // );
-              },
-              child: Icon(
-                Icons.copy,
-                color: Theme.of(context).brightness == Brightness.dark ?  const Color(0xFF00897B): CupertinoColors.systemRed,
-                size: MediaQuery.sizeOf(context).width>600?25: 20,
-              ),
-            )),
+${azkar[currentIndex]}
+
+💫 من تطبيق رفيق المسلم اليومي  
+حمل التطبيق الآن واستفد من كل الأذكار اليومية:  
+
+Android: https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily  
+Huawei AppGallery: https://appgallery.huawei.com/app/C114956477  
+iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+""";
+
+              Clipboard.setData(ClipboardData(text: copyText));
+              KHelper.showSuccess(message: 'تم نسخ الدعاء مع رابط التطبيق إلى الحافظة!');
+            },
+            child: Icon(
+              Icons.copy,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF00897B)
+                  : CupertinoColors.systemRed,
+              size: MediaQuery.sizeOf(context).width > 600 ? 25 : 20,
+            ),
+          ),
+        ),
+
       ],
     );
   }

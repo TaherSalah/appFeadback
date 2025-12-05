@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">تطبيق رفيق المسلم اليومي</string>
+
+    <!-- شرح للمراجعين في Google Play -->
+    <string name="battery_optimization_rationale">
+        This prayer times app requires exemption from battery
+        optimization to deliver accurate Adhan (call to prayer)
+        notifications at exact Islamic prayer times, which is
+        essential for users religious practice.
+    </string>
+</resources>

@@ -162,303 +162,308 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
       ),
     );
 
-    return Scaffold(
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Stack(
-          children: [
-            // المحتوى القابل للسكرول
-            CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                // الهيدر الكبير
-                SliverToBoxAdapter(
-                  child: PrayerHeaderSection(
-                    progressValue: con.progressValue,
-                    hijriDate: con.hijriDate,
-                    gregorian: con.gregorian ?? "",
-                    nextPrayer: con.nextPrayer,
-                    remainingTime: con.remainingTimeText,
-                    location: _locationText ?? 'لم يتم تحديد الموقع',
-                    onSettingsTap: () => showThemeSheet(
-                      context,
-                      onLocationChanged: _onLocationChanged,
-                    ),
-                  ),
-                ),
-
-                // باقي المحتوى
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      // const SizedBox(height: 10),
-                      // const SizedBox(height: 10),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: isTab ? 10.w : 5.0),
-                        child: GridView.count(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: isTab ? 30 : 7,
-                          mainAxisSpacing: isTab ? 20 : 15,
-                          childAspectRatio: isTab ? 1.9 : 01.20,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: con.iconsApp.map((item) {
-                            return BlocBuilder<CentralizedCubit,
-                                CentralizedState>(
-                              builder: (context, state) {
-                                return InkWell(
-                                  onTap: () async {
-                                 //    NotificationService b = NotificationService();
-                                 // await   b.showInstantNotification("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo", "heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo");
-                                    bool needsInternet =
-                                        item["navigate"] ==
-                                            Routes.categoriesRoute ||
-                                            item["navigate"] ==
-                                                "/QuranRadioView";
-
-                                    (state is ConnectivityState &&
-                                        state.status ==
-                                            ConnectivityStatus
-                                                .disconnected) ==
-                                        true &&
-                                        needsInternet
-                                        ? Fluttertoast.showToast(
-                                        msg:
-                                        "يرجي التحقق من اتصالك بالانترنت")
-                                        : Navigator.pushNamed(
-                                        context, item['navigate']!);
-                                  },
-                                  child: IslamicCardWidget(
-                                      title: item["title"]!,
-                                      iconPath: item["icon"]!),
-                                );
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      SizedBox(
-                          height: MediaQuery.sizeOf(context).width > 600
-                              ? 25
-                              : 20),
-                      const AzkarQuranWidget(),
-                      const SizedBox(height: 10),
-                      const OtherAzkarWidget(),
-                      const SizedBox(height: 10),
-
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            // الهيدر الثابت المصغر (يظهر عند السكرول)
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              top: _isScrolled ? 0 : -150,
-              left: 0,
-              right: 0,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
-                opacity: _isScrolled ? 1.0 : 0.0,
-                child: Container(
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top,
-                    bottom: 10,
-                    left: 16,
-                    right: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: isDark
-                        ? LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        const Color(0xFF1a1a2e).withOpacity(0.98),
-                        const Color(0xFF16213e).withOpacity(0.95),
-                      ],
-                    )
-                        : LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withOpacity(0.98),
-                        const Color(0xFFFFFBF0).withOpacity(0.95),
-                      ],
-                    ),
-                    border: Border(
-                      bottom: BorderSide(
-                        color: isDark
-                            ? const Color(0xFFD4AF37).withOpacity(0.3)
-                            : const Color(0xFFD4AF37).withOpacity(0.2),
-                        width: 1,
+    return SafeArea(
+      top: false,
+      bottom: true,
+      child: Scaffold(
+        body: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Stack(
+            children: [
+              // المحتوى القابل للسكرول
+              CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  // الهيدر الكبير
+                  SliverToBoxAdapter(
+                    child: PrayerHeaderSection(
+                      progressValue: con.progressValue,
+                      hijriDate: con.hijriDate,
+                      gregorian: con.gregorian ?? "",
+                      nextPrayer: con.nextPrayer,
+                      remainingTime: con.remainingTimeText,
+                      location: _locationText ?? 'لم يتم تحديد الموقع',
+                      onSettingsTap: () => showThemeSheet(
+                        context,
+                        onLocationChanged: _onLocationChanged,
                       ),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: isDark
-                            ? Colors.black.withOpacity(0.5)
-                            : const Color(0xFFD4AF37).withOpacity(0.15),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
                   ),
-                  child: SafeArea(
-                    top: false,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                  // باقي المحتوى
+                  SliverToBoxAdapter(
+                    child: Column(
                       children: [
-                        // Row(
-                        //   children: [
-                        //     Icon(
-                        //       Icons.location_on_rounded,
-                        //       size: 16,
-                        //       color: isDark
-                        //           ? const Color(0xFFD4AF37)
-                        //           : const Color(0xFF1B5E20),
-                        //     ),
-                        //     const SizedBox(width: 4),
-                        //     Container(
-                        //       constraints: const BoxConstraints(maxWidth: 80),
-                        //       child: TextDefaultWidget(
-                        //         title: _locationText?.split(' - ').last ??
-                        //             'موقع',
-                        //         fontSize: isTab ? 7.sp : 9.sp,
-                        //         fontFamily: "cairo",
-                        //         fontWeight: FontWeight.w600,
-                        //         color: isDark
-                        //             ? AppColors.greyLightColor
-                        //             .withOpacity(0.8)
-                        //             : const Color(0xFF2C3E50),
-                        //         maxLines: 1,
-                        //         // overflow: TextOverflow.ellipsis,
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        Row(children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.08)
-                                  : Colors.white.withOpacity(0.9),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.location_on_rounded,
-                              size: isTab ? 26 : 22,
-                              color: isDark ? KColors.whiteColor : AppColors.primary,
-                            ),
-                          ),
-                          // Icon(
-                          //   Icons.location_on_rounded,
-                          //   size:isTab?25: 16,
-                          //   color: isDark
-                          //       ? KColors.primaryColor
-                          //       : AppColors.primary,
-                          // ),
-                          const SizedBox(width: 10),
-                          TextDefaultWidget(
-                            title:  _locationText?.split(' - ').last ??
-                                'موقع',
-                            fontSize: isTab ? 8.sp : 11.sp,
-                            fontFamily: "cairo",
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? AppColors.greyLightColor : Colors.white,
-                          ),
-                        ]),
-                        // زر الإعدادات
-                        // InkWell(
-                        //   onTap: () => showThemeSheet(
-                        //     context,
-                        //     onLocationChanged: _onLocationChanged,
-                        //   ),
-                        //   borderRadius: BorderRadius.circular(20),
-                        //   child: Container(
-                        //     padding: const EdgeInsets.all(8),
-                        //     decoration: BoxDecoration(
-                        //       shape: BoxShape.circle,
-                        //       gradient: isDark
-                        //           ? LinearGradient(
-                        //         colors: [
-                        //           const Color(0xFF1B5E20)
-                        //               .withOpacity(0.6),
-                        //           const Color(0xFF2E7D32)
-                        //               .withOpacity(0.4),
-                        //         ],
-                        //       )
-                        //           : LinearGradient(
-                        //         colors: [
-                        //           Colors.white,
-                        //           const Color(0xFFFFFBF0),
-                        //         ],
-                        //       ),
-                        //       boxShadow: [
-                        //         BoxShadow(
-                        //           color: isDark
-                        //               ? const Color(0xFFD4AF37)
-                        //               .withOpacity(0.2)
-                        //               : const Color(0xFF1B5E20)
-                        //               .withOpacity(0.15),
-                        //           blurRadius: 6,
-                        //           offset: const Offset(0, 2),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //     child: Icon(
-                        //       Icons.settings,
-                        //       size: 20,
-                        //       color: isDark
-                        //           ? const Color(0xFFD4AF37)
-                        //           : const Color(0xFF1B5E20),
-                        //     ),
-                        //   ),
-                        // ),
-                        InkWell(
-                          onTap: () => showThemeSheet(
-                            context,
-                            onLocationChanged: _onLocationChanged,
-                          ),                            borderRadius: BorderRadius.circular(30),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.08)
-                                  : Colors.white.withOpacity(0.9),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.settings,
-                              size: isTab ? 26 : 22,
-                              color: isDark ? AppColors.greyLightColor : Colors.black87,
-                            ),
+                        // const SizedBox(height: 10),
+                        // const SizedBox(height: 10),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: isTab ? 10.w : 5.0),
+                          child: GridView.count(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: isTab ? 30 : 7,
+                            mainAxisSpacing: isTab ? 20 : 15,
+                            childAspectRatio: isTab ? 1.9 : 01.20,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: con.iconsApp.map((item) {
+                              return BlocBuilder<CentralizedCubit,
+                                  CentralizedState>(
+                                builder: (context, state) {
+                                  return InkWell(
+                                    onTap: () async {
+                                   //    NotificationService b = NotificationService();
+                                   // await   b.showInstantNotification("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo", "heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo");
+                                      bool needsInternet =
+                                          item["navigate"] ==
+                                              Routes.categoriesRoute ||
+                                              item["navigate"] ==
+                                                  "/QuranRadioView";
+
+                                      (state is ConnectivityState &&
+                                          state.status ==
+                                              ConnectivityStatus
+                                                  .disconnected) ==
+                                          true &&
+                                          needsInternet
+                                          ? Fluttertoast.showToast(
+                                          msg:
+                                          "يرجي التحقق من اتصالك بالانترنت")
+                                          : Navigator.pushNamed(
+                                          context, item['navigate']!);
+                                    },
+                                    child: IslamicCardWidget(
+                                        title: item["title"]!,
+                                        iconPath: item["icon"]!),
+                                  );
+                                },
+                              );
+                            }).toList(),
                           ),
                         ),
+                        SizedBox(
+                            height: MediaQuery.sizeOf(context).width > 600
+                                ? 25
+                                : 20),
+                        const AzkarQuranWidget(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: const OtherAzkarWidget(),
+                        ),
+
                       ],
+                    ),
+                  ),
+                ],
+              ),
+
+              // الهيدر الثابت المصغر (يظهر عند السكرول)
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                top: _isScrolled ? 0 : -150,
+                left: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: _isScrolled ? 1.0 : 0.0,
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).padding.top,
+                      bottom: 10,
+                      left: 16,
+                      right: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: isDark
+                          ? LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          const Color(0xFF1a1a2e).withOpacity(0.98),
+                          const Color(0xFF16213e).withOpacity(0.95),
+                        ],
+                      )
+                          : LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white.withOpacity(0.98),
+                          const Color(0xFFFFFBF0).withOpacity(0.95),
+                        ],
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: isDark
+                              ? const Color(0xFFD4AF37).withOpacity(0.3)
+                              : const Color(0xFFD4AF37).withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: isDark
+                              ? Colors.black.withOpacity(0.5)
+                              : const Color(0xFFD4AF37).withOpacity(0.15),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: SafeArea(
+                      top: false,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Row(
+                          //   children: [
+                          //     Icon(
+                          //       Icons.location_on_rounded,
+                          //       size: 16,
+                          //       color: isDark
+                          //           ? const Color(0xFFD4AF37)
+                          //           : const Color(0xFF1B5E20),
+                          //     ),
+                          //     const SizedBox(width: 4),
+                          //     Container(
+                          //       constraints: const BoxConstraints(maxWidth: 80),
+                          //       child: TextDefaultWidget(
+                          //         title: _locationText?.split(' - ').last ??
+                          //             'موقع',
+                          //         fontSize: isTab ? 7.sp : 9.sp,
+                          //         fontFamily: "cairo",
+                          //         fontWeight: FontWeight.w600,
+                          //         color: isDark
+                          //             ? AppColors.greyLightColor
+                          //             .withOpacity(0.8)
+                          //             : const Color(0xFF2C3E50),
+                          //         maxLines: 1,
+                          //         // overflow: TextOverflow.ellipsis,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          Row(children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isDark
+                                    ? Colors.white.withOpacity(0.08)
+                                    : Colors.white.withOpacity(0.9),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.location_on_rounded,
+                                size: isTab ? 26 : 22,
+                                color: isDark ? KColors.whiteColor : AppColors.primary,
+                              ),
+                            ),
+                            // Icon(
+                            //   Icons.location_on_rounded,
+                            //   size:isTab?25: 16,
+                            //   color: isDark
+                            //       ? KColors.primaryColor
+                            //       : AppColors.primary,
+                            // ),
+                            const SizedBox(width: 10),
+                            TextDefaultWidget(
+                              title:  _locationText?.split(' - ').last ??
+                                  'موقع',
+                              fontSize: isTab ? 8.sp : 11.sp,
+                              fontFamily: "cairo",
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? AppColors.greyLightColor : Colors.white,
+                            ),
+                          ]),
+                          // زر الإعدادات
+                          // InkWell(
+                          //   onTap: () => showThemeSheet(
+                          //     context,
+                          //     onLocationChanged: _onLocationChanged,
+                          //   ),
+                          //   borderRadius: BorderRadius.circular(20),
+                          //   child: Container(
+                          //     padding: const EdgeInsets.all(8),
+                          //     decoration: BoxDecoration(
+                          //       shape: BoxShape.circle,
+                          //       gradient: isDark
+                          //           ? LinearGradient(
+                          //         colors: [
+                          //           const Color(0xFF1B5E20)
+                          //               .withOpacity(0.6),
+                          //           const Color(0xFF2E7D32)
+                          //               .withOpacity(0.4),
+                          //         ],
+                          //       )
+                          //           : LinearGradient(
+                          //         colors: [
+                          //           Colors.white,
+                          //           const Color(0xFFFFFBF0),
+                          //         ],
+                          //       ),
+                          //       boxShadow: [
+                          //         BoxShadow(
+                          //           color: isDark
+                          //               ? const Color(0xFFD4AF37)
+                          //               .withOpacity(0.2)
+                          //               : const Color(0xFF1B5E20)
+                          //               .withOpacity(0.15),
+                          //           blurRadius: 6,
+                          //           offset: const Offset(0, 2),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //     child: Icon(
+                          //       Icons.settings,
+                          //       size: 20,
+                          //       color: isDark
+                          //           ? const Color(0xFFD4AF37)
+                          //           : const Color(0xFF1B5E20),
+                          //     ),
+                          //   ),
+                          // ),
+                          InkWell(
+                            onTap: () => showThemeSheet(
+                              context,
+                              onLocationChanged: _onLocationChanged,
+                            ),                            borderRadius: BorderRadius.circular(30),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isDark
+                                    ? Colors.white.withOpacity(0.08)
+                                    : Colors.white.withOpacity(0.9),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.settings,
+                                size: isTab ? 26 : 22,
+                                color: isDark ? AppColors.greyLightColor : Colors.black87,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
