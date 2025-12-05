@@ -310,6 +310,19 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
               await manager.saveAwrad([...awrad, ...completedAwrad]);
               await loadData();
             }
+            // فحص الإنجازات الجديدة
+            final oldAchievementsCount = stats.achievements.length;
+            final updatedStats = await manager.loadStats();
+
+            if (updatedStats.achievements.length > oldAchievementsCount) {
+              KHelper.showSuccess(
+                message: "🎉 إنجاز جديد! تحقق من صفحة الإحصائيات",
+              );
+            }
+
+            setState(() {
+              stats = updatedStats;
+            });
           },
           child: Padding(
             padding: const EdgeInsets.all(16),

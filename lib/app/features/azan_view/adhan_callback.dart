@@ -1,5 +1,6 @@
 // lib/background/adhan_callback.dart
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:workmanager/workmanager.dart';
 
 import '../../core/shard/exports/all_exports.dart';
@@ -433,7 +434,7 @@ class BatteryOptimizationHelper {
                   children: [
                     // العنوان
                     Text(
-                      '⚠️ تنبيه هام',
+                      ' تنبيه هام',
                       style: GoogleFonts.cairo(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -454,7 +455,7 @@ class BatteryOptimizationHelper {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      '📌 سنوجهك الآن إلى الإعدادات لتفعيل هذا الخيار\n✅ ابحث عن اسم التطبيق واختر "عدم التحسين" أو "Don\'t optimize"',
+                      '📌 سنوجهك الآن إلى الإعدادات لتفعيل هذا الخيار\n📌 ابحث عن اسم التطبيق واختر "عدم التحسين" أو "Don\'t optimize"',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.cairo(
                         fontSize: 13,
@@ -505,7 +506,7 @@ class BatteryOptimizationHelper {
                             icon: const Icon(Icons.settings, size: 20),
                             label: const Text('فتح الإعدادات'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
+                              backgroundColor: KColors.primaryColor,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),

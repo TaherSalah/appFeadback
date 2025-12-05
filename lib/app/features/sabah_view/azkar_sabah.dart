@@ -766,8 +766,8 @@ class _AzkarSabahState extends State<AzkarSabah> {
                     final bool isDone =
                         Azkary.azkarSabahRepate[zSabahIndex] <= 0;
 
-                    final Color primaryColorLocal =
-                    const Color(AppStyle.primaryColor);
+                    const Color primaryColorLocal =
+                    Color(AppStyle.primaryColor);
 
                     final Color cardAccent = isDone
                         ? const Color(AppStyle.yellowColor)

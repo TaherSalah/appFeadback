@@ -65,40 +65,87 @@ class WirdManager {
     final yesterday = intl.DateFormat('yyyy-MM-dd')
         .format(DateTime.now().subtract(const Duration(days: 1)));
 
+    // لو اليوم موجود بالفعل، متزودش الـ streak تاني
     if (stats.dailyCompletions.containsKey(today)) {
-      if (stats.dailyCompletions.containsKey(yesterday)) {
-        stats.currentStreak++;
-      } else {
-        stats.currentStreak = 1;
+      // اليوم متسجل، بس نتأكد إن الـ streak محدث
+      if (stats.currentStreak == 0) {
+        stats.currentStreak = 1; // أول يوم
       }
-      if (stats.currentStreak > stats.longestStreak) {
-        stats.longestStreak = stats.currentStreak;
+      // لو أمس كمان متسجل، يبقى الـ streak مستمر
+      if (stats.dailyCompletions.containsKey(yesterday)) {
+        // الـ streak مستمر، متعملش حاجة
+      }
+    } else {
+      // أول مرة نسجل اليوم
+      if (stats.dailyCompletions.containsKey(yesterday)) {
+        stats.currentStreak++; // استمرار الـ streak
+      } else {
+        stats.currentStreak = 1; // بداية جديدة
       }
     }
+
+    // تحديث أطول سلسلة
+    if (stats.currentStreak > stats.longestStreak) {
+      stats.longestStreak = stats.currentStreak;
+    }
   }
-
   void _checkAchievements(UserStats stats) {
-    final achievements = <String>[];
+    final newAchievements = <String>[];
 
+    // ✅ إنجازات بناءً على عدد التسبيحات
     if (stats.totalTasbihat >= 100 && !stats.achievements.contains('beginner')) {
-      achievements.add('beginner');
+      newAchievements.add('beginner');
     }
     if (stats.totalTasbihat >= 1000 && !stats.achievements.contains('dedicated')) {
-      achievements.add('dedicated');
+      newAchievements.add('dedicated');
+    }
+    if (stats.totalTasbihat >= 5000 && !stats.achievements.contains('fifty')) {
+      newAchievements.add('fifty');
+    }
+    if (stats.totalTasbihat >= 5000 && !stats.achievements.contains('thousand')) {
+      newAchievements.add('thousand');
     }
     if (stats.totalTasbihat >= 10000 && !stats.achievements.contains('master')) {
-      achievements.add('master');
+      newAchievements.add('master');
+    }
+    if (stats.totalTasbihat >= 10000 && !stats.achievements.contains('ten_thousand')) {
+      newAchievements.add('ten_thousand');
+    }
+    if (stats.totalTasbihat >= 100000 && !stats.achievements.contains('millions')) {
+      newAchievements.add('millions');
+    }
+    if (stats.totalTasbihat >= 1000000 && !stats.achievements.contains('golden_achievement')) {
+      newAchievements.add('golden_achievement');
+    }
+
+    // ✅ إنجازات بناءً على الأيام المتتالية
+    if (stats.currentStreak >= 1 && !stats.achievements.contains('first_day')) {
+      newAchievements.add('first_day');
+    }
+    if (stats.currentStreak >= 2 && !stats.achievements.contains('two_days_streak')) {
+      newAchievements.add('two_days_streak');
     }
     if (stats.currentStreak >= 7 && !stats.achievements.contains('week_streak')) {
-      achievements.add('week_streak');
+      newAchievements.add('week_streak');
     }
     if (stats.currentStreak >= 30 && !stats.achievements.contains('month_streak')) {
-      achievements.add('month_streak');
+      newAchievements.add('month_streak');
+    }
+    if (stats.currentStreak >= 60 && !stats.achievements.contains('two_months_streak')) {
+      newAchievements.add('two_months_streak');
+    }
+    if (stats.currentStreak >= 100 && !stats.achievements.contains('hundred_days')) {
+      newAchievements.add('hundred_days');
+    }
+    if (stats.currentStreak >= 365 && !stats.achievements.contains('year_streak')) {
+      newAchievements.add('year_streak');
     }
 
-    stats.achievements.addAll(achievements);
-  }
+    // ✅ إنجازات خاصة بالوقت (اختياري - محتاج تطبيق منطق أعقد)
+    // يمكنك إضافتها لاحقاً بناءً على وقت إكمال الورد
 
+    stats.achievements.addAll(newAchievements);
+  }
   Future<String> getTheme() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_themeKey) ?? 'light';

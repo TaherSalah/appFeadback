@@ -265,65 +265,65 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
   }
 
   // عرض الإشعارات المجدولة
-  Future<void> _showScheduledNotifications() async {
-    final pending = await _adhanService.getPendingNotifications();
-
-    if (!mounted) return;
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            const Icon(Icons.notifications_active, color: Colors.green),
-            const SizedBox(width: 8),
-            const Text('إشعارات الأذان المجدولة'),
-          ],
-        ),
-        content: pending.isEmpty
-            ? const Padding(
-          padding: EdgeInsets.all(20),
-          child: Text(
-            'لا توجد إشعارات مجدولة حالياً',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
-          ),
-        )
-            : SizedBox(
-          width: double.maxFinite,
-          height: 400,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: pending.length,
-            itemBuilder: (context, index) {
-              final notification = pending[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 4),
-                child: ListTile(
-                  leading: const Icon(Icons.mosque, color: Colors.green),
-                  title: Text(
-                    notification.title ?? 'بدون عنوان',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(notification.body ?? ''),
-                  trailing: Text(
-                    'ID: ${notification.id}',
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('إغلاق'),
-          ),
-        ],
-      ),
-    );
-  }
+  // Future<void> _showScheduledNotifications() async {
+  //   final pending = await _adhanService.scheduleAllPrayers();
+  //
+  //   if (!mounted) return;
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Row(
+  //         children: [
+  //           const Icon(Icons.notifications_active, color: Colors.green),
+  //           const SizedBox(width: 8),
+  //           const Text('إشعارات الأذان المجدولة'),
+  //         ],
+  //       ),
+  //       content: pending.isEmpty
+  //           ? const Padding(
+  //         padding: EdgeInsets.all(20),
+  //         child: Text(
+  //           'لا توجد إشعارات مجدولة حالياً',
+  //           textAlign: TextAlign.center,
+  //           style: TextStyle(fontSize: 16),
+  //         ),
+  //       )
+  //           : SizedBox(
+  //         width: double.maxFinite,
+  //         height: 400,
+  //         child: ListView.builder(
+  //           shrinkWrap: true,
+  //           itemCount: pending.length,
+  //           itemBuilder: (context, index) {
+  //             final notification = pending[index];
+  //             return Card(
+  //               margin: const EdgeInsets.symmetric(vertical: 4),
+  //               child: ListTile(
+  //                 leading: const Icon(Icons.mosque, color: Colors.green),
+  //                 title: Text(
+  //                   notification.title ?? 'بدون عنوان',
+  //                   style: const TextStyle(fontWeight: FontWeight.bold),
+  //                 ),
+  //                 subtitle: Text(notification.body ?? ''),
+  //                 trailing: Text(
+  //                   'ID: ${notification.id}',
+  //                   style: const TextStyle(fontSize: 10),
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('إغلاق'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   @override
   void dispose() {
@@ -659,19 +659,20 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors:
-             [Colors.indigo.shade800, Colors.purple.shade900]
-              // : [Colors.blue.shade100, Colors.purple.shade100],
-        ),
+        // gradient: LinearGradient(
+        //   colors:
+        //      [Colors.indigo.shade800, Colors.purple.shade900]
+        //       // : [Colors.blue.shade100, Colors.purple.shade100],
+        // ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black38 : Colors.blue.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: isDark ? Colors.black38 : Colors.blue.withOpacity(0.2),
+        //     blurRadius: 10,
+        //     offset: const Offset(0, 4),
+        //   ),
+        // ],
+        color: AppThemeColors.cardBackgroundColor(context)
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -819,11 +820,14 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: isNext
-                  ? (isDark
-                  ? [Colors.amber.shade700, Colors.orange.shade800]
-                  : [Colors.blue.shade400, Colors.blue.shade600])
-                  : (isDark
+              colors:
+
+              // isNext
+                  // ? (isDark
+                  // ? [Colors.amber.shade700, Colors.orange.shade800]
+                  // : [Colors.blue.shade400, Colors.blue.shade600])
+                  // :
+                (isDark
                   ? [const Color(0xFF1E293B), const Color(0xFF334155)]
                   : [Colors.white, Colors.grey.shade50]),
             ),
@@ -831,15 +835,18 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
             boxShadow: [
               BoxShadow(
                 color: isNext
-                    ? (isDark ? Colors.amber.withOpacity(0.3) : Colors.blue.withOpacity(0.3))
-                    : (isDark ? Colors.black26 : Colors.grey.withOpacity(0.2)),
+                    // ? (isDark ? Colors.amber.withOpacity(0.3) : Colors.blue.withOpacity(0.3))
+                    // : (isDark ? Colors.black26 : Colors.grey.withOpacity(0.2)),
+        ? (isDark ? Colors.green.withOpacity(0.3) : Colors.blue.withOpacity(0.3))
+            : (isDark ? Colors.black26 : Colors.grey.withOpacity(0.2)),
                 blurRadius: isNext ? 15 : 8,
                 offset: Offset(0, isNext ? 6 : 3),
               ),
             ],
             border: isNext
                 ? Border.all(
-              color: isDark ? Colors.amberAccent : Colors.white,
+              // color: isDark ? Colors.amberAccent : Colors.white,
+              color:  Colors.green ,
               width: 2,
             )
                 : null,
@@ -853,15 +860,15 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isNext
-                        ? Colors.white.withOpacity(0.2)
+                        ? Colors.grey.withOpacity(0.1)
                         : (isDark ? Colors.grey.shade800 : Colors.blue.shade50),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     prayer["icon"] as IconData,
                     color: isNext
-                        ? Colors.white
-                        : (isDark ? Colors.amberAccent : Colors.blue.shade700),
+                        ? Colors.green
+                        : (isDark ? Colors.white : Colors.blue.shade700),
                     size: 24,
                   ),
                 ),
@@ -874,7 +881,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: isNext
-                          ? Colors.white
+                          ? Colors.green
                           : (isDark ? Colors.white : Colors.black87),
                     ),
                   ),
@@ -884,7 +891,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   decoration: BoxDecoration(
                     color: isNext
-                        ? Colors.white.withOpacity(0.2)
+                        ? Colors.grey.withOpacity(0.2)
                         : (isDark ? Colors.grey.shade800 : Colors.grey.shade100),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -894,8 +901,8 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: isNext
-                          ? Colors.white
-                          : (isDark ? Colors.amberAccent : Colors.blue.shade700),
+                          ? Colors.green.shade400
+                          : (isDark ? Colors.white : Colors.blue.shade700),
                     ),
                   ),
                 ),
@@ -971,12 +978,103 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
 
 
 
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    try {
+      WidgetsFlutterBinding.ensureInitialized();
+      print("🔊 بدء تشغيل الأذان: ${inputData?['prayerName']}");
 
+      final prayerName = inputData?['prayerName'] ?? 'الفجر';
+      final cityName = inputData?['cityName'] ?? '';
+
+      // 1) تهيئة الإشعارات
+      final notifications = FlutterLocalNotificationsPlugin();
+      const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
+      const iosSettings = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      );
+      await notifications.initialize(
+        const InitializationSettings(
+          android: androidSettings,
+          iOS: iosSettings,
+        ),
+      );
+
+      // 2) تشغيل الأذان
+      final audioPlayer = AudioPlayer();
+      await audioPlayer.setAsset('assets/athan/athan.mp3');
+      await audioPlayer.setVolume(1.0); // صوت كامل
+      await audioPlayer.play();
+
+      // انتظار انتهاء الأذان
+      await audioPlayer.playerStateStream.firstWhere(
+            (state) => state.processingState == ProcessingState.completed,
+        orElse: () => PlayerState(
+          false,
+          ProcessingState.completed,
+        ),
+      ).timeout(
+        const Duration(minutes: 5), // حد أقصى 5 دقائق
+        onTimeout: () =>  PlayerState(
+          false,
+          ProcessingState.completed,
+        ),
+      );
+
+      await audioPlayer.dispose();
+
+      // 3) إظهار إشعار بعد الانتهاء
+      await notifications.show(
+        DateTime.now().millisecondsSinceEpoch ~/ 1000, // ID فريد
+        '✅ انتهى أذان $prayerName',
+        'تم تشغيل الأذان - $cityName',
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'adhan_complete_channel',
+            'إشعارات اكتمال الأذان',
+            channelDescription: 'إشعار بعد انتهاء الأذان',
+            importance: Importance.low,
+            priority: Priority.low,
+            icon: '@mipmap/launcher_icon',
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: false,
+          ),
+        ),
+      );
+
+      print("✅ انتهى أذان $prayerName بنجاح");
+
+      // 4) إعادة جدولة الأذان لليوم التالي
+      await _rescheduleNextDay();
+
+      return Future.value(true);
+    } catch (e, s) {
+      print("❌ خطأ في تشغيل الأذان: $e");
+      print(s);
+      return Future.value(false);
+    }
+  });
+}
+
+/// إعادة جدولة الأذان لليوم التالي
+Future<void> _rescheduleNextDay() async {
+  try {
+    await AdhanWorkManagerService().reschedule();
+  } catch (e) {
+    print('❌ خطأ في إعادة الجدولة: $e');
+  }
+}
 
 
 
 // ⚠️ هذه الدالة تعمل في الخلفية - لا تستخدم BuildContext هنا
-@pragma('vm:entry-point')
+// @pragma('vm:entry-point')
 // void callbackDispatcher() {
 //   Workmanager().executeTask((task, inputData) async {
 //     try {
@@ -1024,324 +1122,654 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
 //     }
 //   });
 // }
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    try {
-      print("🔊 بدء تشغيل الأذان في الخلفية: $task");
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) async {
+//     try {
+//       print("🔊 بدء تشغيل الأذان في الخلفية: $task");
+//
+//       // الحصول على اسم الصلاة من البيانات
+//       final prayerName = inputData?['prayerName'] ?? 'الفجر';
+//       final cityName = inputData?['cityName'] ?? '';
+//
+//       // تحديد ملف الصوت
+//       String audioFile;
+//       if (prayerName.trim() == 'الفجر' || prayerName.trim() == 'Fajr') {
+//         audioFile = 'assets/athan/fajr.mp3';
+//       } else {
+//         audioFile = 'assets/athan/athan.mp3';
+//       }
+//
+//       print("🎵 سيتم تشغيل ملف: $audioFile للصلاة: $prayerName");
+//
+//       // تشغيل صوت الأذان
+//       final audioPlayer = AudioPlayer();
+//       await audioPlayer.setAsset(audioFile);
+//       await audioPlayer.play();
+//
+//       // الانتظار حتى ينتهي التشغيل
+//       await audioPlayer.playerStateStream.firstWhere(
+//             (state) => state.processingState == ProcessingState.completed,
+//       );
+//
+//       await audioPlayer.dispose();
+//
+//       // إظهار إشعار انتهاء الأذان
+//       final FlutterLocalNotificationsPlugin notifications =
+//       FlutterLocalNotificationsPlugin();
+//
+//       await notifications.show(
+//         999,
+//         '✅ انتهى أذان $prayerName',
+//         'تمت قراءة الأذان - $cityName',
+//         const NotificationDetails(
+//           android: AndroidNotificationDetails(
+//             'adhan_complete_channel',
+//             'إشعارات اكتمال الأذان',
+//             importance: Importance.low,
+//             priority: Priority.low,
+//           ),
+//         ),
+//       );
+//
+//       print("✅ انتهى تشغيل الأذان بنجاح");
+//       return Future.value(true);
+//
+//     } catch (e) {
+//       print("❌ خطأ في تشغيل الأذان: $e");
+//       return Future.value(false);
+//     }
+//   });
+// }
 
-      // الحصول على اسم الصلاة من البيانات
-      final prayerName = inputData?['prayerName'] ?? 'الفجر';
-      final cityName = inputData?['cityName'] ?? '';
+// class AdhanWorkManagerService {
+//   static final AdhanWorkManagerService _instance = AdhanWorkManagerService._internal();
+//   factory AdhanWorkManagerService() => _instance;
+//   AdhanWorkManagerService._internal();
+//
+//   final FlutterLocalNotificationsPlugin _notifications =
+//   FlutterLocalNotificationsPlugin();
+//
+//   // تهيئة الخدمة
+//   Future<void> initialize() async {
+//     // تهيئة WorkManager
+//     await Workmanager().initialize(
+//       callbackDispatcher,
+//       isInDebugMode: false, // غيّرها لـ true للتجربة
+//     );
+//
+//     // تهيئة الإشعارات
+//     tz.initializeTimeZones();
+//
+//     const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
+//     const iosSettings = DarwinInitializationSettings(
+//       requestAlertPermission: true,
+//       requestBadgePermission: true,
+//       requestSoundPermission: true,
+//     );
+//
+//     const initSettings = InitializationSettings(
+//       android: androidSettings,
+//       iOS: iosSettings,
+//     );
+//
+//     await _notifications.initialize(initSettings);
+//
+//     print("✅ تم تهيئة خدمة الأذان مع WorkManager");
+//   }
+//
+//   // جدولة أذان واحد
+//   Future<void> scheduleAdhanWithWork({
+//     required String taskId,
+//     required DateTime prayerTime,
+//     required String prayerName,
+//     required String cityName,
+//   }) async {
+//     final now = DateTime.now();
+//
+//     // لو الوقت فات، ما نجدولش
+//     if (prayerTime.isBefore(now)) {
+//       print("⏭️ وقت $prayerName فات، مش هيتجدول");
+//       return;
+//     }
+//
+//     final duration = prayerTime.difference(now);
+//
+//     // جدولة المهمة في WorkManager
+//     await Workmanager().registerOneOffTask(
+//       taskId,
+//       'playAdhan',
+//       initialDelay: duration,
+//       inputData: {
+//         'prayerName': prayerName,
+//         'cityName': cityName,
+//         'time': prayerTime.toIso8601String(),
+//       },
+//       constraints: Constraints(
+//         networkType: NetworkType.notRequired,
+//         requiresBatteryNotLow: false,
+//         requiresCharging: false,
+//         requiresDeviceIdle: false,
+//         requiresStorageNotLow: false,
+//       ),
+//     );
+//
+//     // جدولة إشعار تنبيه قبل الأذان بـ 5 دقائق (اختياري)
+//     await _schedulePreAdhanNotification(
+//       prayerTime: prayerTime,
+//       prayerName: prayerName,
+//       cityName: cityName,
+//     );
+//
+//     // جدولة الإشعار الرئيسي
+//     await _scheduleAdhanNotification(
+//       prayerTime: prayerTime,
+//       prayerName: prayerName,
+//       cityName: cityName,
+//     );
+//
+//     print("⏰ تم جدولة أذان $prayerName بعد ${duration.inMinutes} دقيقة");
+//   }
+//
+//   // إشعار قبل الأذان بـ 5 دقائق (اختياري)
+//   Future<void> _schedulePreAdhanNotification({
+//     required DateTime prayerTime,
+//     required String prayerName,
+//     required String cityName,
+//   }) async {
+//     final notificationTime = prayerTime.subtract(const Duration(minutes: 5));
+//     final now = DateTime.now();
+//
+//     if (notificationTime.isBefore(now)) return;
+//
+//     final scheduledTime = tz.TZDateTime.from(notificationTime, tz.local);
+//
+//     await _notifications.zonedSchedule(
+//       prayerName.hashCode + 1000, // معرف فريد
+//       '⏰ تنبيه: بقي 5 دقائق على أذان $prayerName',
+//       'استعد للصلاة - $cityName',
+//       scheduledTime,
+//       const NotificationDetails(
+//         android: AndroidNotificationDetails(
+//           'pre_adhan_channel',
+//           'تنبيهات ما قبل الأذان',
+//           channelDescription: 'تنبيه قبل موعد الأذان بـ 5 دقائق',
+//           importance: Importance.high,
+//           priority: Priority.high,
+//           icon: '@mipmap/launcher_icon',
+//           color: Color(0xFFFF9800),
+//         ),
+//       ),
+//       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+//
+//       // uiLocalNotificationDateInterpretation:
+//       // UILocalNotificationDateInterpretation.absoluteTime,
+//     );
+//   }
+//
+//   // إشعار عند موعد الأذان
+//   Future<void> _scheduleAdhanNotification({
+//     required DateTime prayerTime,
+//     required String prayerName,
+//     required String cityName,
+//   }) async {
+//     final now = DateTime.now();
+//
+//     if (prayerTime.isBefore(now)) return;
+//
+//     final scheduledTime = tz.TZDateTime.from(prayerTime, tz.local);
+//
+//     await _notifications.zonedSchedule(
+//       prayerName.hashCode, // معرف فريد
+//       '🕌 حان الآن موعد أذان $prayerName',
+//       '🔊 جارٍ تشغيل الأذان - $cityName',
+//       scheduledTime,
+//       const NotificationDetails(
+//         android: AndroidNotificationDetails(
+//           'adhan_channel',
+//           'أذان الصلاة',
+//           channelDescription: 'إشعارات مواعيد الصلاة مع تشغيل الأذان تلقائياً',
+//           importance: Importance.max,
+//           priority: Priority.high,
+//           // icon: '@drawable/@mipmap/launcher_icon',
+//           icon: '@mipmap/launcher_icon',
+//           playSound: true,
+//           enableVibration: true,
+//           enableLights: true,
+//           color: Color(0xFF00C853),
+//           // يمكن إضافة صوت قصير هنا أيضاً
+//           // sound: RawResourceAndroidNotificationSound('adhan_short'),
+//         ),
+//         iOS: DarwinNotificationDetails(
+//           presentAlert: true,
+//           presentBadge: true,
+//           presentSound: true,
+//         ),
+//       ),
+//
+//       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+//       // uiLocalNotificationDateInterpretation:
+//       // UILocalNotificationDateInterpretation.absoluteTime,
+//     );
+//   }
+//
+//   // جدولة جميع الصلوات لعدة أيام
+//   Future<void> scheduleAllPrayersForMultipleDays({
+//     required Coordinates coordinates,
+//     required CalculationParameters calculationParams,
+//     required String cityName,
+//     int days = 7,
+//   }) async {
+//     print("📅 جدولة الأذان لـ $days أيام قادمة...");
+//
+//     // إلغاء جميع المهام السابقة
+//     await Workmanager().cancelAll();
+//     await _notifications.cancelAll();
+//
+//     int taskCounter = 0;
+//
+//     for (int i = 0; i < days; i++) {
+//       final date = DateTime.now().add(Duration(days: i));
+//       final dateComponents = DateComponents(date.year, date.month, date.day);
+//       final prayerTimes = PrayerTimes(
+//         coordinates,
+//         dateComponents,
+//         calculationParams,
+//       );
+//
+//       // جدولة كل صلاة (ما عدا الشروق)
+//       final prayers = {
+//         'الفجر': prayerTimes.fajr,
+//         'الظهر': prayerTimes.dhuhr,
+//         'العصر': prayerTimes.asr,
+//         'المغرب': prayerTimes.maghrib,
+//         'العشاء': prayerTimes.isha,
+//       };
+//
+//       for (var entry in prayers.entries) {
+//         final prayerName = entry.key;
+//         final prayerTime = entry.value;
+//
+//         await scheduleAdhanWithWork(
+//           taskId: 'adhan_${prayerName}_day${i}_$taskCounter',
+//           prayerTime: prayerTime,
+//           prayerName: prayerName,
+//           cityName: cityName,
+//         );
+//
+//         taskCounter++;
+//       }
+//     }
+//
+//     // حفظ البيانات في SharedPreferences للاستخدام بعد إعادة التشغيل
+//     await _savePrayerSchedule(
+//       coordinates: coordinates,
+//       calculationParams: calculationParams,
+//       cityName: cityName,
+//       days: days,
+//     );
+//
+//     print("✅ تم جدولة ${taskCounter} أذان لـ $days أيام");
+//   }
+//
+//   // حفظ جدول الصلاة
+//   Future<void> _savePrayerSchedule({
+//     required Coordinates coordinates,
+//     required CalculationParameters calculationParams,
+//     required String cityName,
+//     required int days,
+//   }) async {
+//     final prefs = await SharedPreferences.getInstance();
+//
+//     final scheduleData = {
+//       'latitude': coordinates.latitude,
+//       'longitude': coordinates.longitude,
+//       'cityName': cityName,
+//       'days': days,
+//       'lastUpdate': DateTime.now().toIso8601String(),
+//     };
+//
+//     await prefs.setString('prayer_schedule', jsonEncode(scheduleData));
+//   }
+//
+//   // إلغاء جميع المهام
+//   Future<void> cancelAll() async {
+//     await Workmanager().cancelAll();
+//     await _notifications.cancelAll();
+//     print("🗑️ تم إلغاء جميع مهام الأذان");
+//   }
+//
+//   // الحصول على المهام المجدولة
+//   Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+//     return await _notifications.pendingNotificationRequests();
+//   }
+// }
+// ملف: lib/services/adhan_workmanager_service.dart
 
-      // تحديد ملف الصوت
-      String audioFile;
-      if (prayerName.trim() == 'الفجر' || prayerName.trim() == 'Fajr') {
-        audioFile = 'assets/athan/fajr.mp3';
-      } else {
-        audioFile = 'assets/athan/athan.mp3';
-      }
-
-      print("🎵 سيتم تشغيل ملف: $audioFile للصلاة: $prayerName");
-
-      // تشغيل صوت الأذان
-      final audioPlayer = AudioPlayer();
-      await audioPlayer.setAsset(audioFile);
-      await audioPlayer.play();
-
-      // الانتظار حتى ينتهي التشغيل
-      await audioPlayer.playerStateStream.firstWhere(
-            (state) => state.processingState == ProcessingState.completed,
-      );
-
-      await audioPlayer.dispose();
-
-      // إظهار إشعار انتهاء الأذان
-      final FlutterLocalNotificationsPlugin notifications =
-      FlutterLocalNotificationsPlugin();
-
-      await notifications.show(
-        999,
-        '✅ انتهى أذان $prayerName',
-        'تمت قراءة الأذان - $cityName',
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'adhan_complete_channel',
-            'إشعارات اكتمال الأذان',
-            importance: Importance.low,
-            priority: Priority.low,
-          ),
-        ),
-      );
-
-      print("✅ انتهى تشغيل الأذان بنجاح");
-      return Future.value(true);
-
-    } catch (e) {
-      print("❌ خطأ في تشغيل الأذان: $e");
-      return Future.value(false);
-    }
-  });
-}
 
 class AdhanWorkManagerService {
   static final AdhanWorkManagerService _instance = AdhanWorkManagerService._internal();
   factory AdhanWorkManagerService() => _instance;
   AdhanWorkManagerService._internal();
 
-  final FlutterLocalNotificationsPlugin _notifications =
-  FlutterLocalNotificationsPlugin();
+  /// تهيئة الخدمة وجدولة جميع أوقات الصلاة
+  Future<void> initialize({
+    Coordinates? coordinates,
+    CalculationParameters? calculationParams,
+    String? cityName,
+    int days = 3,
+  }) async {
+    try {
+      // إلغاء أي مهام قديمة
+      await Workmanager().cancelAll();
 
-  // تهيئة الخدمة
-  Future<void> initialize() async {
-    // تهيئة WorkManager
-    await Workmanager().initialize(
-      callbackDispatcher,
-      isInDebugMode: false, // غيّرها لـ true للتجربة
-    );
+      // جدولة الأذان لعدة أيام
+      await scheduleAllPrayersForMultipleDays(
+        coordinates: coordinates,
+        calculationParams: calculationParams,
+        cityName: cityName,
+        days: days,
+      );
 
-    // تهيئة الإشعارات
-    tz.initializeTimeZones();
-
-    const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
-    const iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
-
-    const initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
-
-    await _notifications.initialize(initSettings);
-
-    print("✅ تم تهيئة خدمة الأذان مع WorkManager");
+      print('✅ تم تهيئة خدمة الأذان بنجاح');
+    } catch (e) {
+      print('❌ خطأ في تهيئة AdhanWorkManager: $e');
+    }
   }
 
-  // جدولة أذان واحد
-  Future<void> scheduleAdhanWithWork({
-    required String taskId,
-    required DateTime prayerTime,
+  /// جدولة جميع الصلوات لعدة أيام قادمة
+  Future<void> scheduleAllPrayersForMultipleDays({
+    Coordinates? coordinates,
+    CalculationParameters? calculationParams,
+    String? cityName,
+    int days = 3,
+    int daysCount = 3, // للتوافق مع الكود القديم
+  }) async {
+    try {
+      // استخدام days أو daysCount (أيهما أكبر)
+      final totalDays = days > daysCount ? days : daysCount;
+
+      // حفظ البيانات إذا تم تمريرها
+      if (coordinates != null) {
+        await saveCoordinates(coordinates.latitude, coordinates.longitude);
+      }
+      if (cityName != null) {
+        await saveCityName(cityName);
+      }
+      if (calculationParams != null) {
+        await _saveCalculationParams(calculationParams);
+      }
+
+      for (int day = 0; day < totalDays; day++) {
+        final targetDate = DateTime.now().add(Duration(days: day));
+        final prayerTimes = await _getPrayerTimesForDate(
+          targetDate,
+          coordinates: coordinates,
+          params: calculationParams,
+        );
+
+        for (var entry in prayerTimes.entries) {
+          await _schedulePrayer(
+            prayerName: entry.key,
+            prayerTime: entry.value,
+            dayOffset: day,
+            cityName: cityName,
+          );
+        }
+      }
+      print('✅ تم جدولة الأذان لـ $totalDays أيام قادمة');
+    } catch (e) {
+      print('❌ خطأ في جدولة الصلوات: $e');
+    }
+  }
+
+  /// جدولة جميع الصلوات لليوم الحالي فقط
+  Future<void> scheduleAllPrayers() async {
+    final prayerTimes = await _getPrayerTimesForDate(DateTime.now());
+
+    for (var entry in prayerTimes.entries) {
+      await _schedulePrayer(
+        prayerName: entry.key,
+        prayerTime: entry.value,
+      );
+    }
+  }
+
+  /// جدولة أذان واحد
+  Future<void> _schedulePrayer({
     required String prayerName,
-    required String cityName,
+    required DateTime prayerTime,
+    int dayOffset = 0,
+    String? cityName,
   }) async {
     final now = DateTime.now();
+    var delay = prayerTime.difference(now);
 
-    // لو الوقت فات، ما نجدولش
-    if (prayerTime.isBefore(now)) {
-      print("⏭️ وقت $prayerName فات، مش هيتجدول");
+    // إذا الوقت فات، تخطى الجدولة
+    if (delay.isNegative && dayOffset == 0) {
+      print('⏭️ تم تخطي $prayerName - الوقت فات');
       return;
     }
 
-    final duration = prayerTime.difference(now);
+    // تأكد من أن التأخير موجب
+    if (delay.isNegative) {
+      print('⚠️ خطأ: وقت سالب لـ $prayerName');
+      return;
+    }
 
-    // جدولة المهمة في WorkManager
-    await Workmanager().registerOneOffTask(
-      taskId,
-      'playAdhan',
-      initialDelay: duration,
-      inputData: {
-        'prayerName': prayerName,
-        'cityName': cityName,
-        'time': prayerTime.toIso8601String(),
-      },
-      constraints: Constraints(
-        networkType: NetworkType.notRequired,
-        requiresBatteryNotLow: false,
-        requiresCharging: false,
-        requiresDeviceIdle: false,
-        requiresStorageNotLow: false,
-      ),
-    );
+    try {
+      final savedCityName = cityName ?? await _getCityName();
 
-    // جدولة إشعار تنبيه قبل الأذان بـ 5 دقائق (اختياري)
-    await _schedulePreAdhanNotification(
-      prayerTime: prayerTime,
-      prayerName: prayerName,
-      cityName: cityName,
-    );
-
-    // جدولة الإشعار الرئيسي
-    await _scheduleAdhanNotification(
-      prayerTime: prayerTime,
-      prayerName: prayerName,
-      cityName: cityName,
-    );
-
-    print("⏰ تم جدولة أذان $prayerName بعد ${duration.inMinutes} دقيقة");
-  }
-
-  // إشعار قبل الأذان بـ 5 دقائق (اختياري)
-  Future<void> _schedulePreAdhanNotification({
-    required DateTime prayerTime,
-    required String prayerName,
-    required String cityName,
-  }) async {
-    final notificationTime = prayerTime.subtract(const Duration(minutes: 5));
-    final now = DateTime.now();
-
-    if (notificationTime.isBefore(now)) return;
-
-    final scheduledTime = tz.TZDateTime.from(notificationTime, tz.local);
-
-    await _notifications.zonedSchedule(
-      prayerName.hashCode + 1000, // معرف فريد
-      '⏰ تنبيه: بقي 5 دقائق على أذان $prayerName',
-      'استعد للصلاة - $cityName',
-      scheduledTime,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'pre_adhan_channel',
-          'تنبيهات ما قبل الأذان',
-          channelDescription: 'تنبيه قبل موعد الأذان بـ 5 دقائق',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
-          color: Color(0xFFFF9800),
+      await Workmanager().registerOneOffTask(
+        'adhan_${prayerName}_day$dayOffset', // معرف فريد
+        'adhanTask',
+        initialDelay: delay,
+        inputData: {
+          'prayerName': prayerName,
+          'cityName': savedCityName,
+          'prayerTime': prayerTime.toString(),
+        },
+        constraints: Constraints(
+          networkType: NetworkType.notRequired,
         ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-
-      // uiLocalNotificationDateInterpretation:
-      // UILocalNotificationDateInterpretation.absoluteTime,
-    );
-  }
-
-  // إشعار عند موعد الأذان
-  Future<void> _scheduleAdhanNotification({
-    required DateTime prayerTime,
-    required String prayerName,
-    required String cityName,
-  }) async {
-    final now = DateTime.now();
-
-    if (prayerTime.isBefore(now)) return;
-
-    final scheduledTime = tz.TZDateTime.from(prayerTime, tz.local);
-
-    await _notifications.zonedSchedule(
-      prayerName.hashCode, // معرف فريد
-      '🕌 حان الآن موعد أذان $prayerName',
-      '🔊 جارٍ تشغيل الأذان - $cityName',
-      scheduledTime,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'adhan_channel',
-          'أذان الصلاة',
-          channelDescription: 'إشعارات مواعيد الصلاة مع تشغيل الأذان تلقائياً',
-          importance: Importance.max,
-          priority: Priority.high,
-          // icon: '@drawable/@mipmap/launcher_icon',
-          icon: '@mipmap/launcher_icon',
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-          color: Color(0xFF00C853),
-          // يمكن إضافة صوت قصير هنا أيضاً
-          // sound: RawResourceAndroidNotificationSound('adhan_short'),
-        ),
-        iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      // uiLocalNotificationDateInterpretation:
-      // UILocalNotificationDateInterpretation.absoluteTime,
-    );
-  }
-
-  // جدولة جميع الصلوات لعدة أيام
-  Future<void> scheduleAllPrayersForMultipleDays({
-    required Coordinates coordinates,
-    required CalculationParameters calculationParams,
-    required String cityName,
-    int days = 7,
-  }) async {
-    print("📅 جدولة الأذان لـ $days أيام قادمة...");
-
-    // إلغاء جميع المهام السابقة
-    await Workmanager().cancelAll();
-    await _notifications.cancelAll();
-
-    int taskCounter = 0;
-
-    for (int i = 0; i < days; i++) {
-      final date = DateTime.now().add(Duration(days: i));
-      final dateComponents = DateComponents(date.year, date.month, date.day);
-      final prayerTimes = PrayerTimes(
-        coordinates,
-        dateComponents,
-        calculationParams,
       );
 
-      // جدولة كل صلاة (ما عدا الشروق)
-      final prayers = {
+      print('📅 جدولة $prayerName: ${_formatTime(prayerTime)} (بعد ${delay.inMinutes} دقيقة)');
+    } catch (e) {
+      print('❌ خطأ في جدولة $prayerName: $e');
+    }
+  }
+
+  /// الحصول على أوقات الصلاة لتاريخ محدد
+  Future<Map<String, DateTime>> _getPrayerTimesForDate(
+      DateTime date, {
+        Coordinates? coordinates,
+        CalculationParameters? params,
+      }) async {
+    try {
+      // استخدام الإحداثيات المُمررة أو المحفوظة
+      final coords = coordinates ?? await _getSavedCoordinates();
+
+      // استخدام parameters المُمررة أو المحفوظة
+      final calculationParams = params ?? await _getSavedCalculationParams();
+
+      final components = DateComponents(date.year, date.month, date.day);
+      final prayerTimes = PrayerTimes(coords, components, calculationParams);
+
+      return {
         'الفجر': prayerTimes.fajr,
         'الظهر': prayerTimes.dhuhr,
         'العصر': prayerTimes.asr,
         'المغرب': prayerTimes.maghrib,
         'العشاء': prayerTimes.isha,
       };
+    } catch (e) {
+      print('❌ خطأ في حساب أوقات الصلاة: $e');
+      // أوقات افتراضية في حالة الخطأ
+      return _getDefaultPrayerTimes(date);
+    }
+  }
 
-      for (var entry in prayers.entries) {
-        final prayerName = entry.key;
-        final prayerTime = entry.value;
+  /// الحصول على الإحداثيات المحفوظة
+  Future<Coordinates> _getSavedCoordinates() async {
+    final prefs = await SharedPreferences.getInstance();
+    final latitude = prefs.getDouble('latitude') ?? 30.0444; // القاهرة
+    final longitude = prefs.getDouble('longitude') ?? 31.2357;
+    return Coordinates(latitude, longitude);
+  }
 
-        await scheduleAdhanWithWork(
-          taskId: 'adhan_${prayerName}_day${i}_$taskCounter',
-          prayerTime: prayerTime,
-          prayerName: prayerName,
-          cityName: cityName,
-        );
+  /// أوقات افتراضية في حالة الخطأ
+  Map<String, DateTime> _getDefaultPrayerTimes(DateTime date) {
+    return {
+      'الفجر': DateTime(date.year, date.month, date.day, 4, 30),
+      'الظهر': DateTime(date.year, date.month, date.day, 12, 0),
+      'العصر': DateTime(date.year, date.month, date.day, 15, 15),
+      'المغرب': DateTime(date.year, date.month, date.day, 17, 45),
+      'العشاء': DateTime(date.year, date.month, date.day, 19, 15),
+    };
+  }
 
-        taskCounter++;
-      }
+  /// الحصول على اسم المدينة المحفوظ
+  Future<String> _getCityName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('city_name') ?? 'القاهرة';
+  }
+
+  /// حفظ الإحداثيات
+  Future<void> saveCoordinates(double latitude, double longitude) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('latitude', latitude);
+    await prefs.setDouble('longitude', longitude);
+  }
+
+  /// حفظ اسم المدينة
+  Future<void> saveCityName(String cityName) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('city_name', cityName);
+  }
+
+  /// حفظ إعدادات الحساب
+  Future<void> _saveCalculationParams(CalculationParameters params) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('fajr_angle', params.fajrAngle);
+    await prefs.setDouble('isha_angle', params.ishaAngle??0.0);
+    await prefs.setInt('madhab', params.madhab == Madhab.shafi ? 0 : 1);
+
+    if (params.ishaInterval > 0) {
+      await prefs.setInt('isha_interval', params.ishaInterval);
+    }
+  }
+
+  /// الحصول على إعدادات الحساب المحفوظة
+  Future<CalculationParameters> _getSavedCalculationParams() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final fajrAngle = prefs.getDouble('fajr_angle');
+    final ishaAngle = prefs.getDouble('isha_angle');
+    final madhabIndex = prefs.getInt('madhab') ?? 0;
+    final ishaInterval = prefs.getInt('isha_interval') ?? 0;
+
+    // إذا مفيش بيانات محفوظة، استخدم الطريقة المصرية كـ default
+    if (fajrAngle == null || ishaAngle == null) {
+      final params = CalculationMethod.egyptian.getParameters();
+      params.madhab = Madhab.shafi;
+      return params;
     }
 
-    // حفظ البيانات في SharedPreferences للاستخدام بعد إعادة التشغيل
-    await _savePrayerSchedule(
+    final params = CalculationParameters(
+      fajrAngle: fajrAngle,
+      ishaAngle: ishaAngle,
+      ishaInterval: ishaInterval,
+    );
+    params.madhab = madhabIndex == 0 ? Madhab.shafi : Madhab.hanafi;
+
+    return params;
+  }
+
+  /// إعادة جدولة الأذان (استدعيها يومياً)
+  Future<void> reschedule({
+    Coordinates? coordinates,
+    CalculationParameters? calculationParams,
+    String? cityName,
+    int days = 3,
+  }) async {
+    await Workmanager().cancelAll();
+    await scheduleAllPrayersForMultipleDays(
       coordinates: coordinates,
       calculationParams: calculationParams,
       cityName: cityName,
       days: days,
     );
-
-    print("✅ تم جدولة ${taskCounter} أذان لـ $days أيام");
   }
 
-  // حفظ جدول الصلاة
-  Future<void> _savePrayerSchedule({
-    required Coordinates coordinates,
-    required CalculationParameters calculationParams,
-    required String cityName,
-    required int days,
-  }) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final scheduleData = {
-      'latitude': coordinates.latitude,
-      'longitude': coordinates.longitude,
-      'cityName': cityName,
-      'days': days,
-      'lastUpdate': DateTime.now().toIso8601String(),
-    };
-
-    await prefs.setString('prayer_schedule', jsonEncode(scheduleData));
-  }
-
-  // إلغاء جميع المهام
+  /// إلغاء جميع المهام
   Future<void> cancelAll() async {
     await Workmanager().cancelAll();
-    await _notifications.cancelAll();
-    print("🗑️ تم إلغاء جميع مهام الأذان");
+    print('🗑️ تم إلغاء جميع مهام الأذان');
   }
 
-  // الحصول على المهام المجدولة
-  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
-    return await _notifications.pendingNotificationRequests();
+  /// الحصول على الصلاة التالية
+  Future<Map<String, dynamic>?> getNextPrayer() async {
+    final prayerTimes = await _getPrayerTimesForDate(DateTime.now());
+    final now = DateTime.now();
+
+    for (var entry in prayerTimes.entries) {
+      if (entry.value.isAfter(now)) {
+        final timeUntil = entry.value.difference(now);
+        return {
+          'name': entry.key,
+          'time': entry.value,
+          'timeUntil': timeUntil,
+          'formattedTime': _formatTime(entry.value),
+        };
+      }
+    }
+
+    // إذا كل الأوقات فاتت، جيب أول صلاة بكرة
+    final tomorrowPrayers = await _getPrayerTimesForDate(
+      DateTime.now().add(const Duration(days: 1)),
+    );
+    final firstPrayer = tomorrowPrayers.entries.first;
+    final timeUntil = firstPrayer.value.difference(now);
+
+    return {
+      'name': firstPrayer.key,
+      'time': firstPrayer.value,
+      'timeUntil': timeUntil,
+      'formattedTime': _formatTime(firstPrayer.value),
+    };
+  }
+
+  /// تنسيق الوقت
+  String _formatTime(DateTime time) {
+    final hour = time.hour > 12 ? time.hour - 12 : time.hour;
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.hour >= 12 ? 'م' : 'ص';
+    return '$hour:$minute $period';
+  }
+
+  /// طباعة جميع الأوقات المجدولة (للتجربة)
+  Future<void> printScheduledPrayers({
+    Coordinates? coordinates,
+    CalculationParameters? calculationParams,
+    int days = 3,
+  }) async {
+    print('\n📋 أوقات الصلاة المجدولة:');
+    print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    for (int day = 0; day < days; day++) {
+      final date = DateTime.now().add(Duration(days: day));
+      final prayerTimes = await _getPrayerTimesForDate(
+        date,
+        coordinates: coordinates,
+        params: calculationParams,
+      );
+
+      print('\n📅 ${date.day}/${date.month}/${date.year}:');
+
+      for (var entry in prayerTimes.entries) {
+        print('   ${entry.key}: ${_formatTime(entry.value)}');
+      }
+    }
+    print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
   }
 }

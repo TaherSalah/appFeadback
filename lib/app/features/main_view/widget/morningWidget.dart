@@ -252,7 +252,7 @@ class _HalalGreetingState extends State<HalalGreeting> {
             ? Colors.white
             : Colors.black,
         fontWeight: FontWeight.w600,
-        fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 13.sp,
+        fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 11.sp,
       ),
     );
   }
@@ -335,7 +335,7 @@ class _AdhkarReminderState extends State<AdhkarReminder> {
     return Text(
       reminder,
       style: GoogleFonts.notoKufiArabic(
-        fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 13.sp,
+        fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 11.sp,
         fontWeight: FontWeight.w600,
         color: Theme.of(context).brightness == Brightness.dark
             ? Colors.white

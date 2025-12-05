@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
 import '../../core/shard/exports/all_exports.dart';
+import '../../core/widgets/custom_text_widget.dart';
 import 'data/Wird.dart';
 import 'data/WirdManager.dart';
 
@@ -619,464 +620,474 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
       },
       child:  Directionality(
         textDirection: TextDirection.rtl,
-        child: Scaffold(
-          backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
-          // appBar: isFocusMode
-          //     ? null
-          //     : AppBar(
-          //   title: Text(widget.wird.name),
-          //   backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.teal,
-          //   actions: [
-          //     IconButton(
-          //       icon: Icon(isFocusMode ? Icons.visibility : Icons.visibility_off),
-          //       onPressed: () => setState(() => isFocusMode = !isFocusMode),
-          //       tooltip: 'وضع التركيز',
-          //     ),
-          //   ],
-          // ),
-          appBar: isFocusMode
-                ? null
-                :  PreferredSize(
-            preferredSize:
-            Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
-            child: AppBar(
-              leading: CupertinoNavigationBarBackButton(color: isDark?Colors.white:Colors.black,),
-                actions: [
-                  IconButton(
-                    icon: Icon(isFocusMode ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () => setState(() => isFocusMode = !isFocusMode),
-                    tooltip: 'وضع التركيز',
-                  ),
-                ],
-              centerTitle: true,
-              title: Text(
-                widget.wird.name,
-                style: GoogleFonts.cairo(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                    fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
-              ),
-            ),
-          ),
-
-          body: GestureDetector(
-            onTap: isCompleted ? null : incrementCount,
-            child: Container(
-              color: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
-              child: Column(
-                children: [
-                  if (!isFocusMode) ...[
-                    LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 8,
-                      backgroundColor: Colors.grey.shade300,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        isCompleted ? Colors.green : Colors.teal,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'الذكر ${currentDhikrIndex + 1} من ${widget.wird.adhkar.length}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: widget.isDark ? Colors.white70 : Colors.grey.shade700,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.teal.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              '${((dhikr.currentCount / dhikr.targetCount) * 100).toInt()}%',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+        child: SafeArea(
+          top: false,
+          bottom: true,
+          child: Scaffold(
+            backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+            // appBar: isFocusMode
+            //     ? null
+            //     : AppBar(
+            //   title: Text(widget.wird.name),
+            //   backgroundColor: widget.isDark ? Colors.grey.shade800 : Colors.teal,
+            //   actions: [
+            //     IconButton(
+            //       icon: Icon(isFocusMode ? Icons.visibility : Icons.visibility_off),
+            //       onPressed: () => setState(() => isFocusMode = !isFocusMode),
+            //       tooltip: 'وضع التركيز',
+            //     ),
+            //   ],
+            // ),
+            appBar: isFocusMode
+                  ? null
+                  :  PreferredSize(
+              preferredSize:
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+              child: AppBar(
+                leading: CupertinoNavigationBarBackButton(color: isDark?Colors.white:Colors.black,),
+                  actions: [
+                    IconButton(
+                      icon: Icon(isFocusMode ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () => setState(() => isFocusMode = !isFocusMode),
+                      tooltip: 'وضع التركيز',
                     ),
                   ],
-                  Expanded(
-                    child: Center(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                centerTitle: true,
+                title: Text(
+                  widget.wird.name,
+                  style: GoogleFonts.cairo(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize:
+                      MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+                ),
+              ),
+            ),
+
+            body: GestureDetector(
+              onTap: isCompleted ? null : incrementCount,
+              child: Container(
+                color: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+                child: Column(
+                  children: [
+                    if (!isFocusMode) ...[
+                      LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 8,
+                        backgroundColor: Colors.grey.shade300,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isCompleted ? Colors.green : Colors.teal,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(32),
-                              child: AnimatedDefaultTextStyle(
-                                duration: const Duration(milliseconds: 300),
-                                style: TextStyle(
-                                  fontSize: isFocusMode ? 40 : 32,
-                                  fontWeight: FontWeight.bold,
-                                  height: 2,
-                                  color: widget.isDark ? Colors.white : Colors.black87,
-                                ),
-                                textAlign: TextAlign.center,
-                                child: Text(dhikr.text),
+                            Text(
+                              'الذكر ${currentDhikrIndex + 1} من ${widget.wird.adhkar.length}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: widget.isDark ? Colors.white70 : Colors.grey.shade700,
                               ),
                             ),
-                            const SizedBox(height: 40),
-                            ScaleTransition(
-                              scale: Tween<double>(begin: 1.0, end: 0.95).animate(
-                                CurvedAnimation(
-                                  parent: _scaleController,
-                                  curve: Curves.easeInOut,
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.teal.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                '${((dhikr.currentCount / dhikr.targetCount) * 100).toInt()}%',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal,
                                 ),
                               ),
-                              child: AnimatedBuilder(
-                                animation: _pulseController,
-                                builder: (context, child) {
-                                  return Container(
-                                    width: isFocusMode ? 220 : 200,
-                                    height: isFocusMode ? 220 : 200,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.teal.withOpacity(
-                                            0.3 + (_pulseController.value * 0.2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    Expanded(
+                      child: Center(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(32),
+                                child: AnimatedDefaultTextStyle(
+                                  duration: const Duration(milliseconds: 300),
+                                  style: TextStyle(
+                                    fontSize: isFocusMode ? 40 : 32,
+                                    fontWeight: FontWeight.bold,
+                                    height: 2,
+                                    color: widget.isDark ? Colors.white : Colors.black87,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  child: Text(dhikr.text),
+                                ),
+                              ),
+                              const SizedBox(height: 40),
+                              ScaleTransition(
+                                scale: Tween<double>(begin: 1.0, end: 0.95).animate(
+                                  CurvedAnimation(
+                                    parent: _scaleController,
+                                    curve: Curves.easeInOut,
+                                  ),
+                                ),
+                                child: AnimatedBuilder(
+                                  animation: _pulseController,
+                                  builder: (context, child) {
+                                    return Container(
+                                      width: isFocusMode ? 220 : 200,
+                                      height: isFocusMode ? 220 : 200,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.teal.withOpacity(
+                                              0.3 + (_pulseController.value * 0.2),
+                                            ),
+                                            blurRadius: 30,
+                                            spreadRadius: 10,
                                           ),
-                                          blurRadius: 30,
-                                          spreadRadius: 10,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '${dhikr.currentCount}',
-                                          style: TextStyle(
-                                            fontSize: isFocusMode ? 72 : 64,
-                                            fontWeight: FontWeight.bold,
-                                            color: isCompleted ? Colors.green : Colors.teal,
-                                          ),
-                                        ),
-                                        if (!isFocusMode)
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
                                           Text(
-                                            'من ${dhikr.targetCount}',
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.grey,
+                                            '${dhikr.currentCount}',
+                                            style: TextStyle(
+                                              fontSize: isFocusMode ? 72 : 64,
+                                              fontWeight: FontWeight.bold,
+                                              color: isCompleted ? Colors.green : Colors.teal,
                                             ),
                                           ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            if (!isFocusMode) ...[
-                              const SizedBox(height: 40),
-                              Text(
-                                'اضغط في أي مكان للتسبيح',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: widget.isDark ? Colors.white60 : Colors.grey.shade600,
+                                          if (!isFocusMode)
+                                            Text(
+                                              'من ${dhikr.targetCount}',
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
+                              ),
+                              if (!isFocusMode) ...[
+                                const SizedBox(height: 40),
+                                Text(
+                                  'اضغط في أي مكان للتسبيح',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: widget.isDark ? Colors.white60 : Colors.grey.shade600,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // ✅ أزرار التحكم الجديدة
+                    if (!isFocusMode)
+                      SafeArea(
+                        top: false,
+                        bottom: true,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: Column(
+                            children: [
+                              // أزرار التنقل (السابق / التالي)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // زر السابق
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: currentDhikrIndex > 0 ? _goToPreviousDhikr : null,
+                                      // icon: const Icon(Icons.arrow_back),
+                                      label: const TextWidget(title: 'السابق'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue,
+                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // زر التخطي
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: _skipCurrentDhikr,
+                                      // icon: const Icon(Icons.skip_next),
+                                      label: const TextWidget(title: 'تخطي'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.orange,
+                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // زر التالي
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: currentDhikrIndex < widget.wird.adhkar.length - 1
+                                          ? _goToNextDhikr
+                                          : null,
+                                      // icon: const Icon(Icons.arrow_forward),
+                                      label: const TextWidget(title: 'التالي'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue,
+                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 15),
+                              // أزرار الإعادة
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      setState(() => dhikr.currentCount = 0);
+                                      _saveProgress();
+                                    },
+                                    icon: const Icon(Icons.refresh),
+                                    label: const TextWidget(title: 'إعادة الحالي'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.grey.shade600,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                    ),
+                                  ),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: true,
+                                        builder: (context) {
+                                          return Center(
+                                            child: Material(
+                                              color: Colors.transparent,
+                                              child: Container(
+                                                width: MediaQuery.of(context).size.width * 0.8,
+                                                padding: const EdgeInsets.all(20),
+                                                decoration: BoxDecoration(
+                                                  color: widget.isDark ? Colors.grey.shade900 : Colors.white,
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: widget.isDark
+                                                          ? Colors.black.withOpacity(0.4)
+                                                          : Colors.grey.withOpacity(0.3),
+                                                      blurRadius: 10,
+                                                      offset: const Offset(0, 4),
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+
+                                                    // ===== Title =====
+                                                    Text(
+                                                      "إعادة الورد؟",
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: widget.isDark ? Colors.white : Colors.black87,
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(height: 10),
+
+                                                    // ===== Content =====
+                                                    Text(
+                                                      "هل تريد إعادة الورد من البداية؟",
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: widget.isDark ? Colors.white70 : Colors.black87,
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(height: 25),
+
+                                                    // ===== Actions =====
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+
+                                                        // Cancel
+                                                        Expanded(
+                                                          child: InkWell(
+                                                            onTap: () => Navigator.pop(context),
+                                                            child: Container(
+                                                              padding: const EdgeInsets.symmetric(
+                                                                  vertical: 12
+                                                              ),
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(12),
+                                                                color: widget.isDark
+                                                                    ? Colors.grey.shade800
+                                                                    : Colors.grey.shade200,
+                                                              ),
+                                                              alignment: Alignment.center,
+                                                              child: Text(
+                                                                "إلغاء",
+                                                                style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: widget.isDark
+                                                                      ? Colors.white
+                                                                      : Colors.black87,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        const SizedBox(width: 10),
+
+                                                        // Reset ALL
+                                                        Expanded(
+                                                          child: InkWell(
+                                                            onTap: () {
+                                                              for (var d in widget.wird.adhkar) {
+                                                                d.currentCount = 0;
+                                                              }
+                                                              widget.wird.currentDhikrIndex = 0;
+                                                              widget.wird.isInProgress = false;
+
+                                                              setState(() => currentDhikrIndex = 0);
+                                                              _saveProgress();
+
+                                                              Navigator.pop(context);
+                                                            },
+                                                            child: Container(
+                                                              padding: const EdgeInsets.symmetric(
+                                                                  vertical: 12
+                                                              ),
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(12),
+                                                                color: Colors.red,
+                                                              ),
+                                                              alignment: Alignment.center,
+                                                              child: const Text(
+                                                                "إعادة الكل",
+                                                                style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors.white,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+
+                                      // showDialog(
+                                      //   context: context,
+                                      //   builder: (context) => AlertDialog(
+                                      //     backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.white,
+                                      //     shape: RoundedRectangleBorder(
+                                      //       borderRadius: BorderRadius.circular(16),
+                                      //     ),
+                                      //     title: Text(
+                                      //       'إعادة الورد؟',
+                                      //       textAlign: TextAlign.center,
+                                      //       style: TextStyle(
+                                      //         fontSize: 20,
+                                      //         fontWeight: FontWeight.bold,
+                                      //         color: widget.isDark ? Colors.white : Colors.black87,
+                                      //       ),
+                                      //     ),
+                                      //     content: Text(
+                                      //       'هل تريد إعادة الورد من البداية؟',
+                                      //       textAlign: TextAlign.center,
+                                      //       style: TextStyle(
+                                      //         fontSize: 16,
+                                      //         color: widget.isDark ? Colors.white70 : Colors.black87,
+                                      //       ),
+                                      //     ),
+                                      //
+                                      //     actionsAlignment: MainAxisAlignment.spaceEvenly,
+                                      //
+                                      //     actions: [
+                                      //       TextButton(
+                                      //         onPressed: () => Navigator.pop(context),
+                                      //         child: Text(
+                                      //           'إلغاء',
+                                      //           style: TextStyle(
+                                      //             color: widget.isDark ? Colors.blue[200] : Colors.blue,
+                                      //             fontSize: 16,
+                                      //           ),
+                                      //         ),
+                                      //       ),
+                                      //
+                                      //       ElevatedButton(
+                                      //         onPressed: () {
+                                      //           for (var d in widget.wird.adhkar) {
+                                      //             d.currentCount = 0;
+                                      //           }
+                                      //
+                                      //           widget.wird.currentDhikrIndex = 0;
+                                      //           widget.wird.isInProgress = false;
+                                      //
+                                      //           setState(() => currentDhikrIndex = 0);
+                                      //           _saveProgress();
+                                      //
+                                      //           Navigator.pop(context);
+                                      //         },
+                                      //         style: ElevatedButton.styleFrom(
+                                      //           backgroundColor: Colors.red,
+                                      //           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                      //           shape: RoundedRectangleBorder(
+                                      //             borderRadius: BorderRadius.circular(10),
+                                      //           ),
+                                      //         ),
+                                      //         child: const Text(
+                                      //           'إعادة الكل',
+                                      //           style: TextStyle(fontSize: 16, color: Colors.white),
+                                      //         ),
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      // );
+
+                                    },
+                                    icon: const Icon(Icons.restart_alt),
+                                    label: const TextWidget(title: 'إعادة الكل'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-
-                  // ✅ أزرار التحكم الجديدة
-                  if (!isFocusMode)
-                    SafeArea(
-                      top: false,
-                      bottom: true,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: Column(
-                          children: [
-                            // أزرار التنقل (السابق / التالي)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // زر السابق
-                                ElevatedButton.icon(
-                                  onPressed: currentDhikrIndex > 0 ? _goToPreviousDhikr : null,
-                                  icon: const Icon(Icons.arrow_back),
-                                  label: const Text('السابق'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                // زر التخطي
-                                ElevatedButton.icon(
-                                  onPressed: _skipCurrentDhikr,
-                                  icon: const Icon(Icons.skip_next),
-                                  label: const Text('تخطي'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orange,
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                // زر التالي
-                                ElevatedButton.icon(
-                                  onPressed: currentDhikrIndex < widget.wird.adhkar.length - 1
-                                      ? _goToNextDhikr
-                                      : null,
-                                  icon: const Icon(Icons.arrow_forward),
-                                  label: const Text('التالي'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 15),
-                            // أزرار الإعادة
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    setState(() => dhikr.currentCount = 0);
-                                    _saveProgress();
-                                  },
-                                  icon: const Icon(Icons.refresh),
-                                  label: const Text('إعادة الحالي'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.grey.shade600,
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                  ),
-                                ),
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      barrierDismissible: true,
-                                      builder: (context) {
-                                        return Center(
-                                          child: Material(
-                                            color: Colors.transparent,
-                                            child: Container(
-                                              width: MediaQuery.of(context).size.width * 0.8,
-                                              padding: const EdgeInsets.all(20),
-                                              decoration: BoxDecoration(
-                                                color: widget.isDark ? Colors.grey.shade900 : Colors.white,
-                                                borderRadius: BorderRadius.circular(20),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: widget.isDark
-                                                        ? Colors.black.withOpacity(0.4)
-                                                        : Colors.grey.withOpacity(0.3),
-                                                    blurRadius: 10,
-                                                    offset: const Offset(0, 4),
-                                                  ),
-                                                ],
-                                              ),
-
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-
-                                                  // ===== Title =====
-                                                  Text(
-                                                    "إعادة الورد؟",
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: widget.isDark ? Colors.white : Colors.black87,
-                                                    ),
-                                                  ),
-
-                                                  const SizedBox(height: 10),
-
-                                                  // ===== Content =====
-                                                  Text(
-                                                    "هل تريد إعادة الورد من البداية؟",
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: widget.isDark ? Colors.white70 : Colors.black87,
-                                                    ),
-                                                  ),
-
-                                                  const SizedBox(height: 25),
-
-                                                  // ===== Actions =====
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-
-                                                      // Cancel
-                                                      Expanded(
-                                                        child: InkWell(
-                                                          onTap: () => Navigator.pop(context),
-                                                          child: Container(
-                                                            padding: const EdgeInsets.symmetric(
-                                                                vertical: 12
-                                                            ),
-                                                            decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.circular(12),
-                                                              color: widget.isDark
-                                                                  ? Colors.grey.shade800
-                                                                  : Colors.grey.shade200,
-                                                            ),
-                                                            alignment: Alignment.center,
-                                                            child: Text(
-                                                              "إلغاء",
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                                color: widget.isDark
-                                                                    ? Colors.white
-                                                                    : Colors.black87,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      const SizedBox(width: 10),
-
-                                                      // Reset ALL
-                                                      Expanded(
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            for (var d in widget.wird.adhkar) {
-                                                              d.currentCount = 0;
-                                                            }
-                                                            widget.wird.currentDhikrIndex = 0;
-                                                            widget.wird.isInProgress = false;
-
-                                                            setState(() => currentDhikrIndex = 0);
-                                                            _saveProgress();
-
-                                                            Navigator.pop(context);
-                                                          },
-                                                          child: Container(
-                                                            padding: const EdgeInsets.symmetric(
-                                                                vertical: 12
-                                                            ),
-                                                            decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.circular(12),
-                                                              color: Colors.red,
-                                                            ),
-                                                            alignment: Alignment.center,
-                                                            child: const Text(
-                                                              "إعادة الكل",
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                                color: Colors.white,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-
-                                    // showDialog(
-                                    //   context: context,
-                                    //   builder: (context) => AlertDialog(
-                                    //     backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.white,
-                                    //     shape: RoundedRectangleBorder(
-                                    //       borderRadius: BorderRadius.circular(16),
-                                    //     ),
-                                    //     title: Text(
-                                    //       'إعادة الورد؟',
-                                    //       textAlign: TextAlign.center,
-                                    //       style: TextStyle(
-                                    //         fontSize: 20,
-                                    //         fontWeight: FontWeight.bold,
-                                    //         color: widget.isDark ? Colors.white : Colors.black87,
-                                    //       ),
-                                    //     ),
-                                    //     content: Text(
-                                    //       'هل تريد إعادة الورد من البداية؟',
-                                    //       textAlign: TextAlign.center,
-                                    //       style: TextStyle(
-                                    //         fontSize: 16,
-                                    //         color: widget.isDark ? Colors.white70 : Colors.black87,
-                                    //       ),
-                                    //     ),
-                                    //
-                                    //     actionsAlignment: MainAxisAlignment.spaceEvenly,
-                                    //
-                                    //     actions: [
-                                    //       TextButton(
-                                    //         onPressed: () => Navigator.pop(context),
-                                    //         child: Text(
-                                    //           'إلغاء',
-                                    //           style: TextStyle(
-                                    //             color: widget.isDark ? Colors.blue[200] : Colors.blue,
-                                    //             fontSize: 16,
-                                    //           ),
-                                    //         ),
-                                    //       ),
-                                    //
-                                    //       ElevatedButton(
-                                    //         onPressed: () {
-                                    //           for (var d in widget.wird.adhkar) {
-                                    //             d.currentCount = 0;
-                                    //           }
-                                    //
-                                    //           widget.wird.currentDhikrIndex = 0;
-                                    //           widget.wird.isInProgress = false;
-                                    //
-                                    //           setState(() => currentDhikrIndex = 0);
-                                    //           _saveProgress();
-                                    //
-                                    //           Navigator.pop(context);
-                                    //         },
-                                    //         style: ElevatedButton.styleFrom(
-                                    //           backgroundColor: Colors.red,
-                                    //           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                    //           shape: RoundedRectangleBorder(
-                                    //             borderRadius: BorderRadius.circular(10),
-                                    //           ),
-                                    //         ),
-                                    //         child: const Text(
-                                    //           'إعادة الكل',
-                                    //           style: TextStyle(fontSize: 16, color: Colors.white),
-                                    //         ),
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // );
-
-                                  },
-                                  icon: const Icon(Icons.restart_alt),
-                                  label: const Text('إعادة الكل'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

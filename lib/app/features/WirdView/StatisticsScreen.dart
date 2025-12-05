@@ -212,11 +212,25 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                Wrap(
-                  alignment: WrapAlignment.spaceBetween,
-                  spacing:ResponsiveUtil.isTablet(context)?25: 12,
-                  runSpacing: ResponsiveUtil.isTablet(context)?25:12,
-                  children: _buildAchievements(widget.stats),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isTablet = ResponsiveUtil.isTablet(context);
+                    final spacing = isTablet ? 25.0 : 12.0;
+                    final itemsPerRow = isTablet ? 4 : 2;
+                    final cardWidth = (constraints.maxWidth - (spacing * (itemsPerRow - 1))) / itemsPerRow;
+
+                    return Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      spacing: spacing,
+                      runSpacing: spacing,
+                      children: _buildAchievements(widget.stats)
+                          .map((card) => SizedBox(
+                        width: cardWidth,
+                        child: card,
+                      ))
+                          .toList(),
+                    );
+                  },
                 ),
               ],
             ),
@@ -272,17 +286,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       {'id': 'golden_achievement', 'icon': '🏆', 'title': 'الإنجاز الذهبي', 'desc': 'إتمام 1,000,000 تسبيحة'},
 
       // // إنجازات خاصة بالوقت
-      // {'id': 'fajr_dhikr', 'icon': '🌄', 'title': 'أذكار الفجر', 'desc': 'إتمام الأذكار بعد صلاة الفجر'},
-      // {'id': 'asr_dhikr', 'icon': '🌇', 'title': 'أذكار العصر', 'desc': 'إتمام الأذكار بعد صلاة العصر'},
-      // {'id': 'night_kiam', 'icon': '🌙', 'title': 'التهجد', 'desc': 'إتمام ورد تهجد في الليل'},
+      {'id': 'fajr_dhikr', 'icon': '🌄', 'title': 'أذكار الفجر', 'desc': 'إتمام الأذكار بعد صلاة الفجر'},
+      {'id': 'asr_dhikr', 'icon': '🌇', 'title': 'أذكار العصر', 'desc': 'إتمام الأذكار بعد صلاة العصر'},
+      {'id': 'night_kiam', 'icon': '🌙', 'title': 'التهجد', 'desc': 'إتمام ورد تهجد في الليل'},
       //
       // // إنجازات تفاعلية
-      // {'id': 'share_app', 'icon': '📲', 'title': 'مشاركة التطبيق', 'desc': 'مشاركة التطبيق مع الأصدقاء'},
-      // {'id': 'invite_friend', 'icon': '💌', 'title': 'دعوة صديق', 'desc': 'دعوة صديق للاشتراك في التطبيق'},
+      {'id': 'share_app', 'icon': '📲', 'title': 'مشاركة التطبيق', 'desc': 'مشاركة التطبيق مع الأصدقاء'},
+      {'id': 'invite_friend', 'icon': '💌', 'title': 'دعوة صديق', 'desc': 'دعوة صديق للاشتراك في التطبيق'},
       //
       // // إنجازات خاصة بالشهر
-      // {'id': 'ramadan', 'icon': '🌙', 'title': 'الصائم', 'desc': 'إتمام تسبيحة طوال شهر رمضان'},
-      // {'id': 'year_streak', 'icon': '🎯', 'title': 'الذكر المستمر', 'desc': 'إتمام 365 يوم متتالي'},
+      {'id': 'ramadan', 'icon': '🌙', 'title': 'الصائم', 'desc': 'إتمام تسبيحة طوال شهر رمضان'},
+      {'id': 'year_streak', 'icon': '🎯', 'title': 'الذكر المستمر', 'desc': 'إتمام 365 يوم متتالي'},
     ];
 
   return allAchievements.map((ach) {

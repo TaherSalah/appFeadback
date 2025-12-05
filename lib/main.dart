@@ -29,152 +29,210 @@ import 'app/features/Khatmah/data/khatmah_model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    try {
-      // مهم جدًا مع الـ plugins في الخلفية
-      WidgetsFlutterBinding.ensureInitialized();
+// @pragma('vm:entry-point')
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) async {
+//     try {
+//       // مهم جدًا مع الـ plugins في الخلفية
+//       WidgetsFlutterBinding.ensureInitialized();
+//
+//       print("🔊 بدء تشغيل الأذان في الخلفية: $task");
+//
+//       final prayerName = inputData?['prayerName'] ?? 'الفجر';
+//       final cityName = inputData?['cityName'] ?? '';
+//
+//       // 1) تهيئة الـ notifications في هذا الـ isolate
+//       final FlutterLocalNotificationsPlugin notifications =
+//       FlutterLocalNotificationsPlugin();
+//
+//       const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
+//       const iosSettings = DarwinInitializationSettings(
+//         requestAlertPermission: true,
+//         requestBadgePermission: true,
+//         requestSoundPermission: true,
+//       );
+//
+//       const initSettings = InitializationSettings(
+//         android: androidSettings,
+//         iOS: iosSettings,
+//       );
+//
+//       await notifications.initialize(initSettings);
+//
+//       // 2) تشغيل صوت الأذان
+//       final audioPlayer = AudioPlayer();
+//       await audioPlayer.setAsset('assets/athan/athan.mp3');
+//       await audioPlayer.play();
+//
+//       await audioPlayer.playerStateStream.firstWhere(
+//             (state) => state.processingState == ProcessingState.completed,
+//       );
+//
+//       await audioPlayer.dispose();
+//
+//       // 3) إظهار الإشعار بعد انتهاء الأذان
+//       await notifications.show(
+//         999,
+//         '✅ انتهى أذان $prayerName',
+//         'تم تشغيل الأذان - $cityName',
+//         const NotificationDetails(
+//           android: AndroidNotificationDetails(
+//             'adhan_complete_channel',
+//             'إشعارات اكتمال الأذان',
+//             channelDescription: 'إشعار يظهر بعد انتهاء الأذان',
+//             importance: Importance.low,
+//             priority: Priority.low,
+//             icon: '@mipmap/launcher_icon',
+//           ),
+//           iOS: DarwinNotificationDetails(
+//             presentAlert: true,
+//             presentBadge: true,
+//             presentSound: false, // هنا لأن الصوت خلص أصلاً
+//           ),
+//         ),
+//       );
+//
+//       print("✅ انتهى تشغيل الأذان وإظهار الإشعار بنجاح");
+//       return Future.value(true);
+//     } catch (e, s) {
+//       print("❌ خطأ في تشغيل الأذان: $e");
+//       print(s); // علشان تشوف الـ stacktrace
+//       return Future.value(false);
+//     }
+//   });
+// }
+/////////////////*******
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized(); // ← أول سطر دائمًا
+//   await QuranLibrary.init();
+//
+//   // تهيئة خدمة الإشعارات
+//   await NotificationService().initialize();
+//   // تهيئة خدمة الأذان مع WorkManager
+//   await AdhanWorkManagerService().initialize();
+//   // جدولة الإشعارات الافتراضية
+//   await _setupDefaultNotifications();
+//   // SystemChrome و أي platform channels لازم بعد ensureInitialized
+//   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+//     statusBarColor: Colors.transparent,
+//     statusBarIconBrightness: Brightness.dark,
+//     systemNavigationBarColor: Colors.transparent,
+//   ));
+//
+//   // await Workmanager().initialize(
+//   //   callbackDispatcher,      // ← دي واحدة فقط من الملف اللي فوق
+//   //   isInDebugMode: false,
+//   // );
+//   HijriCalendar.setLocal('ar_SA');
+//
+//   // لو عندك DI بيتعامل مع ملفات/قنوات منصة، خلّيه بعد ensureInitialized
+//   await Di.init();
+//
+//   // Intl dates
+//   await initializeDateFormatting();
+//   await initializeDateFormatting('ar', null);
+//   await initializeDateFormatting('en', null);
+//
+//   await SharedObj().init();
+//
+//   // مكتبتك
+//   // QuranLibrary().initTafsir();
+//
+//   // Hive
+//   await Hive.initFlutter();
+//   if (!Hive.isAdapterRegistered(0)) {
+//     Hive.registerAdapter(KhatmahModelAdapter());
+//   }
+//
+//   await Hive.openBox<KhatmahModel>('khatmahBox');
+//
+//   if (!Hive.isBoxOpen('khatmahBox')) {
+//     await Hive.openBox<KhatmahModel>('khatmahBox');
+//   }
+//   if (!Hive.isBoxOpen('khatmahPlans')) {
+//     await Hive.openBox('khatmahPlans');
+//   }
+//
+//     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+//       .then((_) {
+//     runApp(
+//         // DevicePreview(
+//         //   enabled: !kReleaseMode,
+//         //   builder: (context) => YaqeesApp(), // Wrap your app
+//         // ),
+//
+//         BlocProvider<CentralizedCubit>(
+//             create: (context) =>
+//                 CentralizedCubit(sharedPreferences: Di.sharedPreferences)
+//                   ..localization(),
+//             child: BlocBuilder<CentralizedCubit, CentralizedState>(
+//               builder: (context, state) {
+//                 return const MashkahApp();
+//               },
+//             )));
+//   });
+// }
 
-      print("🔊 بدء تشغيل الأذان في الخلفية: $task");
-
-      final prayerName = inputData?['prayerName'] ?? 'الفجر';
-      final cityName = inputData?['cityName'] ?? '';
-
-      // 1) تهيئة الـ notifications في هذا الـ isolate
-      final FlutterLocalNotificationsPlugin notifications =
-      FlutterLocalNotificationsPlugin();
-
-      const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
-      const iosSettings = DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-      );
-
-      const initSettings = InitializationSettings(
-        android: androidSettings,
-        iOS: iosSettings,
-      );
-
-      await notifications.initialize(initSettings);
-
-      // 2) تشغيل صوت الأذان
-      final audioPlayer = AudioPlayer();
-      await audioPlayer.setAsset('assets/athan/athan.mp3');
-      await audioPlayer.play();
-
-      await audioPlayer.playerStateStream.firstWhere(
-            (state) => state.processingState == ProcessingState.completed,
-      );
-
-      await audioPlayer.dispose();
-
-      // 3) إظهار الإشعار بعد انتهاء الأذان
-      await notifications.show(
-        999,
-        '✅ انتهى أذان $prayerName',
-        'تم تشغيل الأذان - $cityName',
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'adhan_complete_channel',
-            'إشعارات اكتمال الأذان',
-            channelDescription: 'إشعار يظهر بعد انتهاء الأذان',
-            importance: Importance.low,
-            priority: Priority.low,
-            icon: '@mipmap/launcher_icon',
-          ),
-          iOS: DarwinNotificationDetails(
-            presentAlert: true,
-            presentBadge: true,
-            presentSound: false, // هنا لأن الصوت خلص أصلاً
-          ),
-        ),
-      );
-
-      print("✅ انتهى تشغيل الأذان وإظهار الإشعار بنجاح");
-      return Future.value(true);
-    } catch (e, s) {
-      print("❌ خطأ في تشغيل الأذان: $e");
-      print(s); // علشان تشوف الـ stacktrace
-      return Future.value(false);
-    }
-  });
-}
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // ← أول سطر دائمًا
+  WidgetsFlutterBinding.ensureInitialized();
   await QuranLibrary.init();
 
-  // تهيئة خدمة الإشعارات
+  // ✅ 1) تهيئة الإشعارات أولاً
   await NotificationService().initialize();
-  // تهيئة خدمة الأذان مع WorkManager
+
+  // ✅ 2) تهيئة Workmanager للأذان (هام جداً!)
+  await Workmanager().initialize(
+    callbackDispatcher,  // ← الدالة اللي فوق
+    isInDebugMode: false, // خليها true للتجربة أول مرة
+  );
+
+  // ✅ 3) تهيئة خدمة الأذان
   await AdhanWorkManagerService().initialize();
-  // جدولة الإشعارات الافتراضية
+
+  // ✅ 4) جدولة الإشعارات الافتراضية
   await _setupDefaultNotifications();
-  // SystemChrome و أي platform channels لازم بعد ensureInitialized
+
+  // باقي الكود...
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
   ));
 
-  // await Workmanager().initialize(
-  //   callbackDispatcher,      // ← دي واحدة فقط من الملف اللي فوق
-  //   isInDebugMode: false,
-  // );
   HijriCalendar.setLocal('ar_SA');
-
-  // لو عندك DI بيتعامل مع ملفات/قنوات منصة، خلّيه بعد ensureInitialized
   await Di.init();
-
-  // Intl dates
   await initializeDateFormatting();
   await initializeDateFormatting('ar', null);
   await initializeDateFormatting('en', null);
-
   await SharedObj().init();
-
-  // مكتبتك
-  // QuranLibrary().initTafsir();
 
   // Hive
   await Hive.initFlutter();
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(KhatmahModelAdapter());
   }
-
   await Hive.openBox<KhatmahModel>('khatmahBox');
-
-  if (!Hive.isBoxOpen('khatmahBox')) {
-    await Hive.openBox<KhatmahModel>('khatmahBox');
-  }
   if (!Hive.isBoxOpen('khatmahPlans')) {
     await Hive.openBox('khatmahPlans');
   }
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(
-        // DevicePreview(
-        //   enabled: !kReleaseMode,
-        //   builder: (context) => YaqeesApp(), // Wrap your app
-        // ),
-
-        BlocProvider<CentralizedCubit>(
-            create: (context) =>
-                CentralizedCubit(sharedPreferences: Di.sharedPreferences)
-                  ..localization(),
-            child: BlocBuilder<CentralizedCubit, CentralizedState>(
-              builder: (context, state) {
-                return const MashkahApp();
-              },
-            )));
+      BlocProvider<CentralizedCubit>(
+        create: (context) => CentralizedCubit(
+          sharedPreferences: Di.sharedPreferences,
+        )..localization(),
+        child: BlocBuilder<CentralizedCubit, CentralizedState>(
+          builder: (context, state) {
+            return const MashkahApp();
+          },
+        ),
+      ),
+    );
   });
 }
-
-
-
 
 void checkWhatsNew(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
