@@ -257,7 +257,7 @@ class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
             // ),
           ],
         ),
-        controller.showDialog()
+        // controller.showDialog()
       ]),
     );
   }

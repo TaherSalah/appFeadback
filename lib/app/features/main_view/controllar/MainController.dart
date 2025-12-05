@@ -119,14 +119,14 @@ class MainController extends ControllerMVC {
   String toArabicDigits(String s) =>
       s.replaceAllMapped(RegExp(r'\d'), (m) => _arabicDigits[int.parse(m[0]!)]);
 
-  List<String> images = [
-    "assets/images/fajr.png",
-    "assets/images/shrok.png",
-    "assets/images/dohr.png",
-    "assets/images/asr.png",
-    "assets/images/maghrab.png",
-    "assets/images/ihsaa.png",
-  ];
+  // List<String> images = [
+  //   "assets/images/fajr.png",
+  //   "assets/images/shrok.png",
+  //   "assets/images/dohr.png",
+  //   "assets/images/asr.png",
+  //   "assets/images/maghrab.png",
+  //   "assets/images/ihsaa.png",
+  // ];
 
   @override
   void initState() {

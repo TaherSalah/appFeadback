@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl ;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
@@ -574,70 +574,74 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
     required IconData icon,
     required Function(String?) onChanged,
   }) {
-    return Container(
-      // decoration: BoxDecoration(
-      //   color: isDark ? const Color(0xFF334155) : Colors.grey.shade100,
-      //   borderRadius: BorderRadius.circular(12),
-      //   border: Border.all(
-      //     color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
-      //   ),
-      // ),
-      decoration: BoxDecoration(
-        borderRadius:
-        BorderRadius.circular(10),
-        border: Border.all(
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Container(
+        // decoration: BoxDecoration(
+        //   color: isDark ? const Color(0xFF334155) : Colors.grey.shade100,
+        //   borderRadius: BorderRadius.circular(12),
+        //   border: Border.all(
+        //     color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
+        //   ),
+        // ),
+        decoration: BoxDecoration(
+          borderRadius:
+          BorderRadius.circular(10),
+          border: Border.all(
+            color: isDark
+                ? Colors.white24
+                : Colors.grey.shade300,
+          ),
           color: isDark
-              ? Colors.white24
-              : Colors.grey.shade300,
+              ? Colors.black.withOpacity(0.3)
+              : Colors.white,
         ),
-        color: isDark
-            ? Colors.black.withOpacity(0.3)
-            : Colors.white,
-      ),
 
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2<String>(
-          isExpanded: true,
-          hint: Row(
-            children: [
-              Icon(icon, size: 18, color: Colors.grey),
-              const SizedBox(width: 8),
-              Text(
-                hint,
-                style: GoogleFonts.cairo(
-                  fontSize: 13.sp,
-                  color: Colors.grey,
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton2<String>(
+            isExpanded: true,
+
+            hint: Row(
+              children: [
+                Icon(icon, size: 18, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  hint,
+                  style: GoogleFonts.cairo(
+                    fontSize: 13.sp,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          items: items.map((item) {
-            return DropdownMenuItem(
-              value: item,
-              child: Text(
-                item,
-                style: GoogleFonts.cairo(
-                  fontSize: 12.sp,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-            );
-          }).toList(),
-          value: value,
-          onChanged: onChanged,
-          buttonStyleData: const ButtonStyleData(
-            padding: EdgeInsets.symmetric(horizontal: 12),
-            height: 50,
-          ),
-          dropdownStyleData: DropdownStyleData(
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF334155) : Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              ],
             ),
-          ),
-          menuItemStyleData: MenuItemStyleData(
-            overlayColor: WidgetStateProperty.all(
-              isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+            items: items.map((item) {
+              return DropdownMenuItem(
+                value: item,
+                child: Text(
+                  item,
+                  style: GoogleFonts.cairo(
+                    fontSize: 12.sp,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+              );
+            }).toList(),
+            value: value,
+            onChanged: onChanged,
+            buttonStyleData: const ButtonStyleData(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              height: 50,
+            ),
+            dropdownStyleData: DropdownStyleData(
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF334155) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            menuItemStyleData: MenuItemStyleData(
+              overlayColor: WidgetStateProperty.all(
+                isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+              ),
             ),
           ),
         ),
@@ -656,9 +660,9 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: isDark
-              ? [Colors.indigo.shade800, Colors.purple.shade900]
-              : [Colors.blue.shade100, Colors.purple.shade100],
+          colors:
+             [Colors.indigo.shade800, Colors.purple.shade900]
+              // : [Colors.blue.shade100, Colors.purple.shade100],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -705,14 +709,13 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: isDark
-              ? [Colors.amber.shade800, Colors.orange.shade900]
-              : [Colors.green.shade400, Colors.teal.shade600],
+          colors:
+             [Colors.green.shade400, Colors.teal.shade600],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.amber.withOpacity(0.3) : Colors.green.withOpacity(0.4),
+            color:  Colors.green.withOpacity(0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -886,7 +889,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    DateFormat('h:mm a').format(prayer["time"] as DateTime),
+                    intl.DateFormat('h:mm a').format(prayer["time"] as DateTime),
                     style: GoogleFonts.cairo(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
