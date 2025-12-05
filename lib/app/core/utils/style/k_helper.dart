@@ -82,6 +82,7 @@ class KHelper {
         toastLength:toastLength?? Toast.LENGTH_LONG,
         gravity:gravity?? ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 2,
+
         backgroundColor: backgroundColor ?? Colors.green,
         textColor:textColor?? Colors.white,
         fontSize: fontSize??16.sp);

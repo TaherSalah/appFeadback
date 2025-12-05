@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:quran_library/quran.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
@@ -172,7 +173,7 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
 """;
 
               Clipboard.setData(ClipboardData(text: copyText));
-              KHelper.showSuccess(message: 'تم نسخ الدعاء مع رابط التطبيق إلى الحافظة!');
+              KHelper.showSuccess(message: 'تم نسخ الدعاء إلى الحافظة!');
             },
             child: Icon(
               Icons.copy,
@@ -233,3 +234,5 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
     );
   }
 }
+
+

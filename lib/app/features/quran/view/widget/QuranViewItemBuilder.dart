@@ -389,10 +389,10 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       _currentPage = page;
     });
 
-    KHelper.showSuccess(
-      message: "الصفحة رقم ${page + 1}",
-      backgroundColor: Colors.black,
-    );
+    // KHelper.showSuccess(
+    //   message: "الصفحة رقم ${page + 1}",
+    //   backgroundColor: Colors.black,
+    // );
 
     _saveCurrentPage(page);
   }

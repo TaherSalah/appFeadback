@@ -81,26 +81,26 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: isTablet ? 32.0 : 16.0,
-            vertical: 16.0,
+            vertical: 2.0,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // العنوان الرئيسي
-              Text(
-                'سبحة الأذكار',
-                style: GoogleFonts.cairo(
-                  fontSize: isTablet ? 32.sp : 28.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              SizedBox(height: isTablet ? 20.h : 10.h),
-
-              // شريط الأذكار
-              _buildAzkarBar(context),
-              SizedBox(height: isTablet ? 30.h : 20.h),
+              // Text(
+              //   'سبحة الأذكار',
+              //   style: GoogleFonts.cairo(
+              //     fontSize: isTablet ? 32.sp : 28.sp,
+              //     color: Colors.white,
+              //     fontWeight: FontWeight.bold,
+              //     letterSpacing: 1.2,
+              //   ),
+              // ),
+              // SizedBox(height: isTablet ? 20.h : 10.h),
+              //
+              // // شريط الأذكار
+              // _buildAzkarBar(context),
+              // SizedBox(height: isTablet ? 30.h : 20.h),
 
               // العداد
               Expanded(
@@ -110,8 +110,8 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                     children: [
                       // العداد المركزي
                       _buildCounterDisplay(),
-                      SizedBox(height: isTablet ? 40.h : 30.h),
-                  
+                      SizedBox(height: isTablet ? 40.h : 2.h),
+
                       // السبحه
                       TasbeehRealPlus(),
                     ],
@@ -219,13 +219,13 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
         bool isTablet = ResponsiveUtil.isTablet(context);
         return Column(
           children: [
-            // تاج العداد
-            Icon(
-              Icons.star_outlined,
-              color: const Color(0xFFF59E0B),
-              size: 30.sp,
-            ),
-            SizedBox(height: 10.h),
+            // // تاج العداد
+            // Icon(
+            //   Icons.star_outlined,
+            //   color: const Color(0xFFF59E0B),
+            //   size: 30.sp,
+            // ),
+            // SizedBox(height: 10.h),
 
             // العداد
             Container(
@@ -267,17 +267,16 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                 ),
               ),
             ),
-            SizedBox(height: 16.h),
-
-            // النص تحت العداد
-            Text(
-              'عدد التسبيحات',
-              style: GoogleFonts.cairo(
-                fontSize: isTablet ? 18.sp : 16.sp,
-                color: const Color(0xFFCBD5E1),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            // SizedBox(height: 16.h),
+            // // النص تحت العداد
+            // Text(
+            //   'عدد التسبيحات',
+            //   style: GoogleFonts.cairo(
+            //     fontSize: isTablet ? 18.sp : 16.sp,
+            //     color: const Color(0xFFCBD5E1),
+            //     fontWeight: FontWeight.w500,
+            //   ),
+            // ),
           ],
         );
       },
@@ -405,46 +404,102 @@ class TasbeehRealPlus extends StatefulWidget {
   State<TasbeehRealPlus> createState() => _TasbeehRealPlusState();
 }
 
-class _TasbeehRealPlusState extends State<TasbeehRealPlus> with SingleTickerProviderStateMixin {
-  static const int beadsCount = 33;
-  static const Duration animDur = Duration(milliseconds: 300);
+// كلاس للتأثيرات الجزيئية
+class ParticleEffect {
+  final double angle;
+  final double distance;
+  final double size;
+  final Color? color;
 
-  late AnimationController _controller;
-  late Animation<double> _animation;
+  ParticleEffect({
+    required this.angle,
+    required this.distance,
+    required this.size,
+    this.color,
+  });
+}
+
+class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderStateMixin {
+  static const int beadsCount = 33;
+  static const Duration animDur = Duration(milliseconds: 400);
+
+  late AnimationController _moveController;
+  late AnimationController _pulseController;
+  late AnimationController _glowController;
+  late AnimationController _particleController;
+  late AnimationController _shimmerController;
+  late Animation<double> _moveAnimation;
+  late Animation<double> _pulseAnimation;
+  late Animation<double> _glowAnimation;
+  late Animation<double> _particleAnimation;
+  late Animation<double> _shimmerAnimation;
 
   int _currentBead = 0;
   int _cycleCount = 0;
   final List<Offset> _beadPositions = [];
+  final List<ParticleEffect> _particles = [];
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+
+    _moveController = AnimationController(
       duration: animDur,
       vsync: this,
     );
-
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutBack,
+    _moveAnimation = CurvedAnimation(
+      parent: _moveController,
+      curve: Curves.easeInOutCubic,
     );
+
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _glowController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat();
+    _glowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_glowController);
+
+    _particleController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    _particleAnimation = CurvedAnimation(
+      parent: _particleController,
+      curve: Curves.easeOut,
+    );
+
+    _shimmerController = AnimationController(
+      duration: const Duration(milliseconds: 3000),
+      vsync: this,
+    )..repeat();
+    _shimmerAnimation = Tween<double>(begin: -2.0, end: 2.0).animate(_shimmerController);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _moveController.dispose();
+    _pulseController.dispose();
+    _glowController.dispose();
+    _particleController.dispose();
+    _shimmerController.dispose();
     super.dispose();
   }
 
   void _calculateBeadPositions(Size size) {
     _beadPositions.clear();
-
-    final double radius = size.width * 0.4;
+    final double radius = size.width * 0.38;
     final double centerX = size.width / 2;
     final double centerY = size.height / 2;
 
     for (int i = 0; i < beadsCount; i++) {
-      final angle = (2 * pi / beadsCount) * i;
+      final angle = (2 * pi / beadsCount) * i - pi / 2;
       final x = centerX + radius * cos(angle);
       final y = centerY + radius * sin(angle);
       _beadPositions.add(Offset(x, y));
@@ -452,27 +507,71 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with SingleTickerProv
   }
 
   void _moveToNextBead() {
-    if (_controller.isAnimating) return;
+    if (_moveController.isAnimating) return;
+    HapticFeedback.mediumImpact();
 
-    HapticFeedback.lightImpact();
+    final provider = Provider.of<AzkarProvider>(context, listen: false);
+    provider.incrementCount();
+
+    // إضافة جزيئات التأثير
+    _createParticleEffect();
 
     setState(() {
       _currentBead = (_currentBead + 1) % beadsCount;
       if (_currentBead == 0) {
         _cycleCount++;
+        HapticFeedback.heavyImpact();
+        // تأثير خاص لإكمال الدورة
+        _createCompletionEffect();
       }
     });
 
-    _controller.reset();
-    _controller.forward();
+    _moveController.reset();
+    _moveController.forward();
+    _particleController.reset();
+    _particleController.forward();
+  }
+
+  void _createParticleEffect() {
+    final random = Random();
+    for (int i = 0; i < 8; i++) {
+      _particles.add(ParticleEffect(
+        angle: (2 * pi / 8) * i + random.nextDouble() * 0.3,
+        distance: 40 + random.nextDouble() * 30,
+        size: 4 + random.nextDouble() * 6,
+      ));
+    }
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (mounted) {
+        setState(() {
+          _particles.clear();
+        });
+      }
+    });
+  }
+
+  void _createCompletionEffect() {
+    final random = Random();
+    for (int i = 0; i < 20; i++) {
+      _particles.add(ParticleEffect(
+        angle: random.nextDouble() * 2 * pi,
+        distance: 60 + random.nextDouble() * 80,
+        size: 6 + random.nextDouble() * 10,
+        color: i % 2 == 0 ? const Color(0xFFFBBF24) : const Color(0xFF10B981),
+      ));
+    }
   }
 
   void _resetCounter() {
+    HapticFeedback.heavyImpact();
+    final provider = Provider.of<AzkarProvider>(context, listen: false);
+    provider.restCount();
+
     setState(() {
       _currentBead = 0;
       _cycleCount = 0;
     });
-    _controller.reset();
+    _moveController.reset();
   }
 
   @override
@@ -481,51 +580,13 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with SingleTickerProv
 
     return Column(
       children: [
-        // مؤشر الدورة
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(
-              color: const Color(0xFF475569),
-              width: 2.w,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.autorenew,
-                color: const Color(0xFF10B981),
-                size: 18.sp,
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                'الدورة: $_cycleCount',
-                style: GoogleFonts.cairo(
-                  fontSize: 14.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(width: 16.w),
-              Text(
-                'الخرزة: ${_currentBead + 1}/$beadsCount',
-                style: GoogleFonts.cairo(
-                  fontSize: 14.sp,
-                  color: const Color(0xFFCBD5E1),
-                ),
-              ),
-            ],
-          ),
-        ),
-
+        // مؤشر الإحصائيات المحسّن
+        _buildStatsCard(isTablet),
         SizedBox(height: 30.h),
 
-        // الحلقة الدائرية للسبحة
+        // المسبحة الدائرية
         SizedBox(
-          height: isTablet ? 400.h : 320.h,
+          height: isTablet ? 420.h : 340.h,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final size = Size(constraints.maxWidth, constraints.maxHeight);
@@ -533,29 +594,164 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with SingleTickerProv
 
               return Stack(
                 children: [
-                  // الحلقة الخلفية
+                  // طبقة توهج خلفية متعددة الألوان
                   Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: const Color(0xFF334155),
-                          width: 3.w,
+                    child: AnimatedBuilder(
+                      animation: _glowAnimation,
+                      builder: (context, child) {
+                        return Transform.rotate(
+                          angle: _glowAnimation.value * 2 * pi,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: SweepGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  const Color(0xFF10B981).withOpacity(0.15),
+                                  Colors.transparent,
+                                  const Color(0xFF6366F1).withOpacity(0.15),
+                                  Colors.transparent,
+                                  const Color(0xFFFBBF24).withOpacity(0.15),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // الحلقة الخارجية المزخرفة بتدرج متحرك
+                  Positioned.fill(
+                    child: AnimatedBuilder(
+                      animation: _shimmerAnimation,
+                      builder: (context, child) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF1E293B),
+                              width: 5.w,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.4),
+                                blurRadius: 25,
+                                spreadRadius: -5,
+                              ),
+                              BoxShadow(
+                                color: const Color(0xFF10B981).withOpacity(0.2),
+                                blurRadius: 40,
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // حلقة وسطى بزخارف إسلامية
+                  Positioned.fill(
+                    child: Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: AnimatedBuilder(
+                        animation: _glowAnimation,
+                        builder: (context, child) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 3.w,
+                              //   gradient: LinearGradient(
+                              //     begin: Alignment.topLeft,
+                              //     end: Alignment.bottomRight,
+                              //     colors: [
+                              //       const Color(0xFF334155),
+                              //       const Color(0xFF475569),
+                              //       const Color(0xFF334155),
+                              //     ],
+                              //     stops: [
+                              //       0.0,
+                              //       (_glowAnimation.value + 0.5) % 1.0,
+                              //       1.0,
+                              //     ],
+                              //   ),
+                              ),
+                              gradient: RadialGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  const Color(0xFF0F172A).withOpacity(0.3),
+                                  const Color(0xFF0F172A).withOpacity(0.6),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
+                  // حلقة داخلية متوهجة
+                  Positioned.fill(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color(0xFF0067FF).withOpacity(0.5),
+                            width: 1.5.w,
+                          ),
                         ),
                       ),
                     ),
                   ),
 
-                  // الخرزات الثابتة
+                  // خطوط زخرفية دائرية
+                  ...List.generate(12, (index) {
+                    final angle = (2 * pi / 12) * index;
+                    return Positioned.fill(
+                      child: Transform.rotate(
+                        angle: angle,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            width: 2.w,
+                            height: 15.h,
+                            margin: EdgeInsets.only(top: 8.h),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  const Color(0xFF6366F1).withOpacity(0.6),
+                                  Colors.transparent,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(1.r),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+
+                  // الخرزات
                   ...List.generate(beadsCount, (index) {
                     final pos = _beadPositions[index];
+                    final isPassed = index < _currentBead || (_currentBead == 0 && index < beadsCount);
+                    final isNext = index == (_currentBead + 1) % beadsCount;
+
                     return Positioned(
-                      left: pos.dx - 20,
-                      top: pos.dy - 20,
+                      left: pos.dx - 18,
+                      top: pos.dy - 18,
                       child: _buildBead(
-                        isActive: false,
+                        isPassed: isPassed && _currentBead > 0,
+                        isNext: isNext,
                         index: index,
-                        size: 40,
+                        size: 36,
                       ),
                     );
                   }),
@@ -563,64 +759,60 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with SingleTickerProv
                   // الخرزة النشطة المتحركة
                   if (_beadPositions.isNotEmpty)
                     AnimatedBuilder(
-                      animation: _animation,
+                      animation: _moveAnimation,
                       builder: (context, child) {
                         final startPos = _beadPositions[_currentBead];
                         final nextPos = _beadPositions[(_currentBead + 1) % beadsCount];
 
-                        final x = startPos.dx + (nextPos.dx - startPos.dx) * _animation.value;
-                        final y = startPos.dy + (nextPos.dy - startPos.dy) * _animation.value;
+                        final x = startPos.dx + (nextPos.dx - startPos.dx) * _moveAnimation.value;
+                        final y = startPos.dy + (nextPos.dy - startPos.dy) * _moveAnimation.value;
 
                         return Positioned(
-                          left: x - 25,
-                          top: y - 25,
-                          child: _buildBead(
-                            isActive: true,
-                            index: _currentBead,
-                            size: 50,
-                          ),
+                          left: x - 28,
+                          top: y - 28,
+                          child: _buildActiveBead(size: 56),
                         );
                       },
                     ),
 
-                  // الزر المركزي
-                  Center(
-                    child: GestureDetector(
-                      onTap: _moveToNextBead,
-                      child: Container(
-                        width: isTablet ? 120 : 100,
-                        height: isTablet ? 120 : 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: RadialGradient(
-                            center: Alignment.center,
-                            radius: 0.8,
-                            colors: [
-                              const Color(0xFF6366F1),
-                              const Color(0xFF4F46E5),
-                            ],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF6366F1).withOpacity(0.5),
-                              blurRadius: 20,
-                              spreadRadius: 5,
+                  // جزيئات التأثير
+                  if (_particles.isNotEmpty)
+                    ...(_beadPositions.isNotEmpty
+                        ? _particles.map((particle) {
+                      final centerX = size.width / 2;
+                      final centerY = size.height / 2;
+                      return AnimatedBuilder(
+                        animation: _particleAnimation,
+                        builder: (context, child) {
+                          final distance = particle.distance * _particleAnimation.value;
+                          final opacity = 1.0 - _particleAnimation.value;
+                          return Positioned(
+                            left: centerX + cos(particle.angle) * distance - particle.size / 2,
+                            top: centerY + sin(particle.angle) * distance - particle.size / 2,
+                            child: Container(
+                              width: particle.size,
+                              height: particle.size,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: (particle.color ?? const Color(0xFFFBBF24)).withOpacity(opacity),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: (particle.color ?? const Color(0xFFFBBF24)).withOpacity(opacity * 0.5),
+                                    blurRadius: 8,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 4.w,
-                          ),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.touch_app,
-                            size: 40.sp,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
+                          );
+                        },
+                      );
+                    }).toList()
+                        : []),
+
+                  // الزر المركزي المحسّن
+                  Center(
+                    child: _buildCenterButton(isTablet),
                   ),
                 ],
               );
@@ -628,97 +820,708 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with SingleTickerProv
           ),
         ),
 
-        SizedBox(height: 30.h),
+        SizedBox(height: 35.h),
 
-        // أزرار التحكم
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // زر التسبيح
-              _buildControlButton(
-                icon: Icons.favorite,
-                label: 'تسبيح',
-                color: const Color(0xFF10B981),
-                onTap: _moveToNextBead,
-                isTablet: isTablet,
-              ),
-
-              // زر التصفير
-              _buildControlButton(
-                icon: Icons.refresh,
-                label: 'تصفير',
-                color: const Color(0xFFEF4444),
-                onTap: _resetCounter,
-                isTablet: isTablet,
-              ),
-
-              // زر التكبير
-              _buildControlButton(
-                icon: Icons.volume_up,
-                label: 'تكبير',
-                color: const Color(0xFFF59E0B),
-                onTap: () {
-                  HapticFeedback.heavyImpact();
-                },
-                isTablet: isTablet,
-              ),
-            ],
-          ),
-        ),
+        // أزرار التحكم المحدثة
+        _buildControlButtons(isTablet),
       ],
     );
   }
 
-  Widget _buildBead({required bool isActive, required int index, required double size}) {
-    return Container(
+  Widget _buildStatsCard(bool isTablet) {
+    return AnimatedBuilder(
+      animation: _glowAnimation,
+      builder: (context, child) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color(0xFF1E293B),
+                const Color(0xFF0F172A),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(28.r),
+            border: Border.all(
+              width: 2.w,
+              // gradient: LinearGradient(
+              //   colors: [
+              //     const Color(0xFF10B981).withOpacity(0.5),
+              //     const Color(0xFF6366F1).withOpacity(0.5),
+              //   ],
+              //   transform: GradientRotation(_glowAnimation.value * 2 * pi),
+              // ),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF10B981).withOpacity(0.2),
+                blurRadius: 25,
+                spreadRadius: 3,
+              ),
+              BoxShadow(
+                color: const Color(0xFF6366F1).withOpacity(0.15),
+                blurRadius: 35,
+                spreadRadius: 5,
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // أيقونة الدورة مع توهج
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(10.r),
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFF10B981).withOpacity(0.3),
+                        const Color(0xFF10B981).withOpacity(0.1),
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF10B981).withOpacity(0.5),
+                        blurRadius: 15,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  // child: Icon(
+                  //   Icons.autorenew_rounded,
+                  //   color: const Color(0xFF10B981),
+                  //   size: 22.sp,
+                  // ),
+                ),
+              ),
+              SizedBox(width: 14.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'الدورة الحالية',
+                    style: GoogleFonts.cairo(
+                      fontSize: 11.sp,
+                      color: const Color(0xFF94A3B8),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF10B981).withOpacity(0.2),
+                          const Color(0xFF10B981).withOpacity(0.1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: const Color(0xFF10B981).withOpacity(0.3),
+                        width: 1.w,
+                      ),
+                    ),
+                    child: Text(
+                      '$_cycleCount',
+                      style: GoogleFonts.cairo(
+                        fontSize: 20.sp,
+                        color: const Color(0xFF10B981),
+                        fontWeight: FontWeight.bold,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(width: 24.w),
+
+              // فاصل متوهج
+              Container(
+                width: 2.5.w,
+                height: 50.h,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      const Color(0xFF475569),
+                      const Color(0xFF64748B),
+                      const Color(0xFF475569),
+                      Colors.transparent,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+
+              SizedBox(width: 24.w),
+
+              // أيقونة الخرزة مع توهج
+              Container(
+                padding: EdgeInsets.all(10.r),
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFF6366F1).withOpacity(0.3),
+                      const Color(0xFF6366F1).withOpacity(0.1),
+                    ],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF6366F1).withOpacity(0.5),
+                      blurRadius: 15,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.circle,
+                  color: const Color(0xFF6366F1),
+                  size: 22.sp,
+                ),
+              ),
+              SizedBox(width: 14.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'الخرزة',
+                    style: GoogleFonts.cairo(
+                      fontSize: 11.sp,
+                      color: const Color(0xFF94A3B8),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF6366F1).withOpacity(0.2),
+                          const Color(0xFF6366F1).withOpacity(0.1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: const Color(0xFF6366F1).withOpacity(0.3),
+                        width: 1.w,
+                      ),
+                    ),
+                    child: Text(
+                      '${_currentBead + 1} / $beadsCount',
+                      style: GoogleFonts.cairo(
+                        fontSize: 20.sp,
+                        color: const Color(0xFF6366F1),
+                        fontWeight: FontWeight.bold,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBead({
+    required bool isPassed,
+    required bool isNext,
+    required int index,
+    required double size,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       width: size,
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: LinearGradient(
+        gradient: isPassed
+            ? LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isActive
-              ? [
-            const Color(0xFFFBBF24),
-            const Color(0xFFF59E0B),
-          ]
-              : [
-            const Color(0xFF475569),
+          colors: [
+            const Color(0xFF10B981),
+            const Color(0xFF059669),
+          ],
+        )
+            : isNext
+            ? RadialGradient(
+          colors: [
+            const Color(0xFF6366F1),
+            const Color(0xFF4F46E5),
+          ],
+        )
+            : LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
             const Color(0xFF334155),
+            const Color(0xFF1E293B),
           ],
         ),
-        boxShadow: isActive
+        boxShadow: isPassed
             ? [
           BoxShadow(
-            color: const Color(0xFFF59E0B).withOpacity(0.5),
-            blurRadius: 15,
-            spreadRadius: 3,
+            color: const Color(0xFF10B981).withOpacity(0.5),
+            blurRadius: 12,
+            spreadRadius: 2,
+          ),
+          BoxShadow(
+            color: const Color(0xFF10B981).withOpacity(0.3),
+            blurRadius: 20,
+            spreadRadius: 4,
+          ),
+        ]
+            : isNext
+            ? [
+          BoxShadow(
+            color: const Color(0xFF6366F1).withOpacity(0.5),
+            blurRadius: 12,
+            spreadRadius: 2,
           ),
         ]
             : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.4),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: isActive ? Colors.white : const Color(0xFF64748B),
-          width: isActive ? 3.w : 2.w,
+          color: isPassed
+              ? const Color(0xFF34D399)
+              : isNext
+              ? const Color(0xFF818CF8)
+              : const Color(0xFF475569),
+          width: isPassed ? 3.w : isNext ? 2.5.w : 1.5.w,
         ),
       ),
-      child: Center(
-        child: Text(
-          '${index + 1}',
-          style: GoogleFonts.cairo(
-            fontSize: isActive ? 14.sp : 12.sp,
-            color: isActive ? Colors.black : Colors.white,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+      child: isPassed
+          ? Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              Colors.white.withOpacity(0.3),
+              Colors.transparent,
+            ],
           ),
         ),
+        child: Center(
+          child: Icon(
+            Icons.check_circle,
+            size: 18.sp,
+            color: Colors.white,
+          ),
+        ),
+      )
+          : isNext
+          ? Center(
+        child: Container(
+          width: size * 0.4,
+          height: size * 0.4,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white.withOpacity(0.3),
+          ),
+        ),
+      )
+          : null,
+    );
+  }
+
+  Widget _buildActiveBead({required double size}) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseAnimation, _glowAnimation]),
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _pulseAnimation.value,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // توهج خارجي متعدد الطبقات
+              Container(
+                width: size * 1.6,
+                height: size * 1.6,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFFFBBF24).withOpacity(0.3),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: size * 1.3,
+                height: size * 1.3,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFFF59E0B).withOpacity(0.4),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+              // الخرزة الرئيسية
+              Container(
+                width: size,
+                height: size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: SweepGradient(
+                    colors: [
+                      const Color(0xFFFDE047),
+                      const Color(0xFFFBBF24),
+                      const Color(0xFFF59E0B),
+                      const Color(0xFFFBBF24),
+                      const Color(0xFFFDE047),
+                    ],
+                    transform: GradientRotation(_glowAnimation.value * 2 * pi),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFBBF24).withOpacity(0.8),
+                      blurRadius: 30,
+                      spreadRadius: 5,
+                    ),
+                    BoxShadow(
+                      color: const Color(0xFFF59E0B),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 4.w,
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    // انعكاس الضوء
+                    Positioned(
+                      top: size * 0.15,
+                      left: size * 0.15,
+                      child: Container(
+                        width: size * 0.3,
+                        height: size * 0.3,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              Colors.white.withOpacity(0.8),
+                              Colors.white.withOpacity(0.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // الرقم في المركز
+                    Center(
+                      child: Container(
+                        width: size * 0.55,
+                        height: size * 0.55,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              Colors.white,
+                              Colors.white.withOpacity(0.95),
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${_currentBead + 1}',
+                            style: GoogleFonts.cairo(
+                              fontSize: 18.sp,
+                              color: const Color(0xFFF59E0B),
+                              fontWeight: FontWeight.bold,
+                              shadows: [
+                                Shadow(
+                                  color: const Color(0xFFFBBF24).withOpacity(0.5),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCenterButton(bool isTablet) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseAnimation, _shimmerAnimation]),
+      builder: (context, child) {
+        return GestureDetector(
+          onTapDown: (_) => setState(() {}),
+          onTapUp: (_) {
+            _moveToNextBead();
+          },
+          onTapCancel: () => setState(() {}),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // توهج خارجي نابض
+              Container(
+                width: isTablet ? 180 : 160,
+                height: isTablet ? 180 : 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFF6366F1).withOpacity(0.3 * _pulseAnimation.value),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: isTablet ? 150 : 135,
+                height: isTablet ? 150 : 135,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFF8B5CF6).withOpacity(0.4 * _pulseAnimation.value),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+              // الزر الرئيسي
+              Container(
+                width: isTablet ? 130 : 110,
+                height: isTablet ? 130 : 110,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: SweepGradient(
+                    colors: [
+                      const Color(0xFF8B5CF6),
+                      const Color(0xFF6366F1),
+                      const Color(0xFF4F46E5),
+                      const Color(0xFF6366F1),
+                      const Color(0xFF8B5CF6),
+                    ],
+                    transform: GradientRotation(_shimmerAnimation.value),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF6366F1).withOpacity(0.6),
+                      blurRadius: 35,
+                      spreadRadius: 8,
+                    ),
+                    BoxShadow(
+                      color: const Color(0xFF8B5CF6).withOpacity(0.5),
+                      blurRadius: 50,
+                      spreadRadius: 12,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Container(
+                  margin: EdgeInsets.all(4.r),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 2.w,
+                    ),
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.all(4.r),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFF6366F1),
+                          const Color(0xFF4F46E5),
+                        ],
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        // بريق متحرك
+                        Positioned.fill(
+                          child: Transform.rotate(
+                            angle: _shimmerAnimation.value * pi,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.white.withOpacity(0.0),
+                                    Colors.white.withOpacity(0.2),
+                                    Colors.white.withOpacity(0.0),
+                                  ],
+                                  stops: const [0.0, 0.5, 1.0],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // المحتوى
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(8.r),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withOpacity(0.2),
+                                ),
+                                child: Icon(
+                                  Icons.touch_app_rounded,
+                                  size: 32.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 6.h),
+                              Text(
+                                'سبِّح',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 15.sp,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildControlButtons(bool isTablet) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xFF1E293B),
+            const Color(0xFF0F172A),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(28.r),
+        border: Border.all(
+          color: const Color(0xFF334155),
+          width: 2.w,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildControlButton(
+            icon: Icons.refresh_rounded,
+            label: 'إعادة تعيين',
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+            ),
+            glowColor: const Color(0xFFEF4444),
+            onTap: _resetCounter,
+            isTablet: isTablet,
+          ),
+
+          SizedBox(width: 12.w),
+
+          Container(
+            width: 2.5.w,
+            height: 60.h,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  const Color(0xFF334155),
+                  const Color(0xFF475569),
+                  const Color(0xFF334155),
+                  Colors.transparent,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(2.r),
+            ),
+          ),
+
+          SizedBox(width: 12.w),
+
+          _buildControlButton(
+            icon: Icons.favorite_rounded,
+            label: 'تسبيح سريع',
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF10B981), Color(0xFF059669)],
+            ),
+            glowColor: const Color(0xFF10B981),
+            onTap: _moveToNextBead,
+            isTablet: isTablet,
+          ),
+        ],
       ),
     );
   }
@@ -726,47 +1529,73 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with SingleTickerProv
   Widget _buildControlButton({
     required IconData icon,
     required String label,
-    required Color color,
+    required Gradient gradient,
+    required Color glowColor,
     required VoidCallback onTap,
     required bool isTablet,
   }) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: isTablet ? 80 : 70,
-            height: isTablet ? 80 : 70,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: color.withOpacity(0.4),
-                  blurRadius: 15,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Icon(
-                icon,
-                size: isTablet ? 30.sp : 28.sp,
-                color: Colors.white,
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 20.w : 16.w,
+            vertical: isTablet ? 18.h : 16.h,
+          ),
+          decoration: BoxDecoration(
+            gradient: gradient,
+            borderRadius: BorderRadius.circular(22.r),
+            boxShadow: [
+              BoxShadow(
+                color: glowColor.withOpacity(0.4),
+                blurRadius: 20,
+                spreadRadius: 2,
               ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(
+              color: Colors.white.withOpacity(0.1),
+              width: 1.5.w,
             ),
           ),
-        ),
-        SizedBox(height: 8.h),
-        Text(
-          label,
-          style: GoogleFonts.cairo(
-            fontSize: isTablet ? 14.sp : 12.sp,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Container(
+              //   padding: EdgeInsets.all(6.r),
+              //   decoration: BoxDecoration(
+              //     shape: BoxShape.circle,
+              //     color: Colors.white.withOpacity(0.2),
+              //   ),
+              //   child: Icon(
+              //     icon,
+              //     size: isTablet ? 22.sp : 20.sp,
+              //     color: Colors.white,
+              //   ),
+              // ),
+              // SizedBox(width: 5.w),
+              Flexible(
+                child: Text(
+                  label,
+                  style: GoogleFonts.cairo(
+                    fontSize: isTablet ? 14.sp : 13.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

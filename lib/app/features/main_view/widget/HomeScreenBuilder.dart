@@ -246,9 +246,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                 ? 25
                                 : 20),
                         const AzkarQuranWidget(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          child: const OtherAzkarWidget(),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          child: OtherAzkarWidget(),
                         ),
 
                       ],
