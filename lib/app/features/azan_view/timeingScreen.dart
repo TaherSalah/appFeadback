@@ -81,28 +81,28 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
   late MainController con;
 
   // استخدام خدمة WorkManager
-  final AdhanWorkManagerService _adhanService = AdhanWorkManagerService();
+  // final AdhanWorkManagerService _adhanService = AdhanWorkManagerService();
 
   @override
   void initState() {
     super.initState();
 
-    _adhanService.initialize();
+    // _adhanService.initialize();
     con.refreshPrayerTimesFromPrefs();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // ✅ فحص Battery Optimization أول ما الشاشة تفتح
-      _checkBatteryOptimization();
+      // _checkBatteryOptimization();
 
-      _scheduleAllPrayerNotifications();
+      // _scheduleAllPrayerNotifications();
     });
   }
 
-  /// 🔋 فحص حالة Battery Optimization وعرض تحذير إذا لزم الأمر
-  Future<void> _checkBatteryOptimization() async {
-    // ✅ الدالة دي بتفحص الأول، ولو مش مفعّل بس هتظهر الـ Dialog
-    await BatteryOptimizationHelper.showBatteryOptimizationDialog(context);
-  }
+  // /// 🔋 فحص حالة Battery Optimization وعرض تحذير إذا لزم الأمر
+  // Future<void> _checkBatteryOptimization() async {
+  //   // ✅ الدالة دي بتفحص الأول، ولو مش مفعّل بس هتظهر الـ Dialog
+  //   await BatteryOptimizationHelper.showBatteryOptimizationDialog(context);
+  // }
 
 
   // جدولة إشعارات الصلاة
@@ -119,7 +119,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
 
     try {
       // إلغاء جميع المهام القديمة
-      await _adhanService.cancelAll();
+      // await _adhanService.cancelAll();
 
       // الحصول على الإحداثيات من الكنترولر
       final cities = con.cities;
@@ -142,12 +142,12 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
       calculationParams.madhab = Madhab.shafi;
 
       // جدولة الأذان لـ 7 أيام قادمة مع WorkManager
-      await _adhanService.scheduleAllPrayersForMultipleDays(
-        coordinates: coordinates,
-        calculationParams: calculationParams,
-        cityName: cityName,
-        days: 7,
-      );
+      // await _adhanService.scheduleAllPrayersForMultipleDays(
+      //   coordinates: coordinates,
+      //   calculationParams: calculationParams,
+      //   cityName: cityName,
+      //   days: 7,
+      // );
 
       if (mounted) {
         // ScaffoldMessenger.of(context).showSnackBar(
@@ -360,33 +360,33 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
               fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
             ),
           ),
-          actions: [
-            if (Platform.isAndroid)
-              FutureBuilder<bool>(
-                future: BatteryOptimizationHelper.isBatteryOptimizationDisabled(),
-                builder: (context, snapshot) {
-                  return IconButton(
-                    icon: const Icon(Icons.battery_charging_full),
-                    tooltip: 'فحص إعدادات البطارية',
-                    onPressed: () async {
-                      final isDisabled = await BatteryOptimizationHelper.isBatteryOptimizationDisabled();
-                      if (!mounted) return;
-
-                      if (isDisabled) {
-                        KHelper.showSuccess(message: "التطبيق مُستثنى من توفير البطارية");
-                      } else {
-                        BatteryOptimizationHelper.showBatteryOptimizationDialog(context);
-                      }
-                    },
-                  );
-                },
-              ),
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: 'إعادة جدولة الإشعارات',
-              onPressed: _scheduleAllPrayerNotifications,
-            ),
-          ],
+          // actions: [
+          //   if (Platform.isAndroid)
+          //     FutureBuilder<bool>(
+          //       future: BatteryOptimizationHelper.isBatteryOptimizationDisabled(),
+          //       builder: (context, snapshot) {
+          //         return IconButton(
+          //           icon: const Icon(Icons.battery_charging_full),
+          //           tooltip: 'فحص إعدادات البطارية',
+          //           onPressed: () async {
+          //             final isDisabled = await BatteryOptimizationHelper.isBatteryOptimizationDisabled();
+          //             if (!mounted) return;
+          //
+          //             if (isDisabled) {
+          //               KHelper.showSuccess(message: "التطبيق مُستثنى من توفير البطارية");
+          //             } else {
+          //               BatteryOptimizationHelper.showBatteryOptimizationDialog(context);
+          //             }
+          //           },
+          //         );
+          //       },
+          //     ),
+          //   IconButton(
+          //     icon: const Icon(Icons.refresh),
+          //     tooltip: 'إعادة جدولة الإشعارات',
+          //     onPressed: _scheduleAllPrayerNotifications,
+          //   ),
+          // ],
         ),
       ),
       body: Container(
