@@ -7,6 +7,7 @@ import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import '../../core/shard/constanc/app_string.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
+import '../../core/widgets/custom_text_widget.dart';
 
 class AzkarCounter extends StatefulWidget {
   const AzkarCounter({super.key});
@@ -109,7 +110,7 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // العداد المركزي
-                      _buildCounterDisplay(),
+                      // _buildCounterDisplay(),
                       SizedBox(height: isTablet ? 40.h : 2.h),
 
                       // السبحه
@@ -212,76 +213,6 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
     );
   }
 
-  Widget _buildCounterDisplay() {
-
-    return Consumer<AzkarProvider>(
-      builder: (context, controller, child) {
-        bool isTablet = ResponsiveUtil.isTablet(context);
-        return Column(
-          children: [
-            // // تاج العداد
-            // Icon(
-            //   Icons.star_outlined,
-            //   color: const Color(0xFFF59E0B),
-            //   size: 30.sp,
-            // ),
-            // SizedBox(height: 10.h),
-
-            // العداد
-            Container(
-              padding: EdgeInsets.all(isTablet ? 32.r : 24.r),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  center: Alignment.center,
-                  radius: 1.5,
-                  colors: [
-                    const Color(0xFF1E293B),
-                    const Color(0xFF0F172A),
-                  ],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                  BoxShadow(
-                    color: const Color(0xFF6366F1).withOpacity(0.3),
-                    blurRadius: 30,
-                    spreadRadius: 1,
-                  ),
-                ],
-                border: Border.all(
-                  color: const Color(0xFF475569),
-                  width: 3.w,
-                ),
-              ),
-              child: Text(
-                '${controller.counter}',
-                style: GoogleFonts.cairo(
-                  fontSize: isTablet ? 48.sp : 42.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 2,
-                ),
-              ),
-            ),
-            // SizedBox(height: 16.h),
-            // // النص تحت العداد
-            // Text(
-            //   'عدد التسبيحات',
-            //   style: GoogleFonts.cairo(
-            //     fontSize: isTablet ? 18.sp : 16.sp,
-            //     color: const Color(0xFFCBD5E1),
-            //     fontWeight: FontWeight.w500,
-            //   ),
-            // ),
-          ],
-        );
-      },
-    );
-  }
 
   void _showZikrDetails(BuildContext context, int index) {
     showModalBottomSheet(
@@ -397,6 +328,79 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
     );
   }
 }
+Widget buildCounterDisplay() {
+
+  return Consumer<AzkarProvider>(
+    builder: (context, controller, child) {
+      bool isTablet = ResponsiveUtil.isTablet(context);
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+
+        crossAxisAlignment:  CrossAxisAlignment.center,
+        children: [
+          // // تاج العداد
+          // Icon(
+          //   Icons.star_outlined,
+          //   color: const Color(0xFFF59E0B),
+          //   size: 30.sp,
+          // ),
+          // SizedBox(height: 10.h),
+
+          // العداد
+          Container(
+            padding: EdgeInsets.all(isTablet ? 32.r : 24.r),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 1.5,
+                colors: [
+                  const Color(0xFF1E293B),
+                  const Color(0xFF0F172A),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                ),
+                BoxShadow(
+                  color: const Color(0xFF6366F1).withOpacity(0.3),
+                  blurRadius: 30,
+                  spreadRadius: 1,
+                ),
+              ],
+              border: Border.all(
+                color: const Color(0xFF475569),
+                width: 3.w,
+              ),
+            ),
+            child: Text(
+              '${controller.counter}',
+              style: GoogleFonts.cairo(
+                fontSize: isTablet ? 22.sp : 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: 2,
+              ),
+            ),
+          ),
+          // SizedBox(height: 16.h),
+          // // النص تحت العداد
+          // Text(
+          //   'عدد التسبيحات',
+          //   style: GoogleFonts.cairo(
+          //     fontSize: isTablet ? 18.sp : 16.sp,
+          //     color: const Color(0xFFCBD5E1),
+          //     fontWeight: FontWeight.w500,
+          //   ),
+          // ),
+        ],
+      );
+    },
+  );
+}
 
 class TasbeehRealPlus extends StatefulWidget {
   const TasbeehRealPlus({super.key});
@@ -418,6 +422,25 @@ class ParticleEffect {
     this.color,
   });
 }
+class ZikrItem {
+  final String text;
+  final int targetCount;
+  ZikrItem({required this.text, required this.targetCount});
+}
+class DhikrItem {
+  final String text;
+  final int count;
+
+  DhikrItem({required this.text, required this.count});
+
+  Map<String, dynamic> toJson() => {
+    'text': text,
+    'count': count,
+  };
+
+  factory DhikrItem.fromJson(Map<String, dynamic> json) =>
+      DhikrItem(text: json['text'], count: json['count']);
+}
 
 class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderStateMixin {
   static const int beadsCount = 33;
@@ -438,6 +461,27 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
   int _cycleCount = 0;
   final List<Offset> _beadPositions = [];
   final List<ParticleEffect> _particles = [];
+
+
+
+
+
+
+
+
+
+  // 1. قائمة الأذكار + متغيرات التتبع
+  final List<ZikrItem> zikrList = [
+  ZikrItem(text: "سبحان الله", targetCount: 33),
+  ZikrItem(text: "الحمد لله", targetCount: 33),
+  ZikrItem(text: "الله أكبر", targetCount: 34),
+  ZikrItem(text: "لا حول ولا قوة إلا بالله", targetCount: 100),
+  ];
+
+  int currentZikrIndex = 0;
+  int currentZikrCount = 0;
+
+  // باقي المتغيرات + انيميشن كما في كودك...
 
   @override
   void initState() {
@@ -513,15 +557,31 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
     final provider = Provider.of<AzkarProvider>(context, listen: false);
     provider.incrementCount();
 
-    // إضافة جزيئات التأثير
-    _createParticleEffect();
-
     setState(() {
+      // زيادة العداد للذكر الحالي
+      currentZikrCount++;
+
+      // إذا وصلنا للعدد المطلوب لهذا الذكر → الانتقال للذكر التالي
+      if (currentZikrCount >= zikrList[currentZikrIndex].targetCount) {
+        // اختياري: effect دورة كاملة قبل الانتقال
+        _createCompletionEffect();
+
+        // انتقال للذكر التالي
+        if (currentZikrIndex < zikrList.length - 1) {
+          currentZikrIndex++;
+        } else {
+          // إنتهت كل الأذكار — نبدأ من أول ذكر
+          currentZikrIndex = 0;
+        }
+        currentZikrCount = 0;
+      }
+
+      // (اختياري) يمكنك إعادة تعيين _currentBead و _cycleCount إذا تريد
       _currentBead = (_currentBead + 1) % beadsCount;
       if (_currentBead == 0) {
         _cycleCount++;
         HapticFeedback.heavyImpact();
-        // تأثير خاص لإكمال الدورة
+        // تأثير خاص لإكمال دورة beads
         _createCompletionEffect();
       }
     });
@@ -578,253 +638,303 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.sizeOf(context).width > 600;
 
-    return Column(
-      children: [
-        // مؤشر الإحصائيات المحسّن
-        _buildStatsCard(isTablet),
-        SizedBox(height: 30.h),
+    return InkWell(
+      enableFeedback: false,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      onTap: () {
+        _moveToNextBead();
+        setState(() {
 
-        // المسبحة الدائرية
-        SizedBox(
-          height: isTablet ? 420.h : 340.h,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final size = Size(constraints.maxWidth, constraints.maxHeight);
-              _calculateBeadPositions(size);
+        });
+      },
 
-              return Stack(
-                children: [
-                  // طبقة توهج خلفية متعددة الألوان
-                  Positioned.fill(
-                    child: AnimatedBuilder(
-                      animation: _glowAnimation,
-                      builder: (context, child) {
-                        return Transform.rotate(
-                          angle: _glowAnimation.value * 2 * pi,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: SweepGradient(
-                                colors: [
-                                  Colors.transparent,
-                                  const Color(0xFF10B981).withOpacity(0.15),
-                                  Colors.transparent,
-                                  const Color(0xFF6366F1).withOpacity(0.15),
-                                  Colors.transparent,
-                                  const Color(0xFFFBBF24).withOpacity(0.15),
-                                  Colors.transparent,
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(height:isTablet? 5.h:20),
 
-                  // الحلقة الخارجية المزخرفة بتدرج متحرك
-                  Positioned.fill(
-                    child: AnimatedBuilder(
-                      animation: _shimmerAnimation,
-                      builder: (context, child) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFF1E293B),
-                              width: 5.w,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.4),
-                                blurRadius: 25,
-                                spreadRadius: -5,
-                              ),
-                              BoxShadow(
-                                color: const Color(0xFF10B981).withOpacity(0.2),
-                                blurRadius: 40,
-                                spreadRadius: 0,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+          // مؤشر الإحصائيات المحسّن
+          _buildStatsCard(isTablet),
+          SizedBox(height:isTablet? 30.h:100),
 
-                  // حلقة وسطى بزخارف إسلامية
-                  Positioned.fill(
-                    child: Padding(
-                      padding: EdgeInsets.all(12.0),
+          // المسبحة الدائرية
+          SizedBox(
+            height: isTablet ? 420.h : 310.h,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final size = Size(constraints.maxWidth, constraints.maxHeight);
+                _calculateBeadPositions(size);
+
+                return Stack(
+
+                  children: [
+
+                    // طبقة توهج خلفية متعددة الألوان
+                    // Positioned.fill(
+                    //   child: AnimatedBuilder(
+                    //     animation: _glowAnimation,
+                    //     builder: (context, child) {
+                    //       return Transform.rotate(
+                    //         angle: _glowAnimation.value * 2 * pi,
+                    //         child: Container(
+                    //           decoration: BoxDecoration(
+                    //             shape: BoxShape.circle,
+                    //             gradient: SweepGradient(
+                    //               colors: [
+                    //                 Colors.transparent,
+                    //                 const Color(0xFF10B981).withOpacity(0.15),
+                    //                 Colors.transparent,
+                    //                 const Color(0xFF6366F1).withOpacity(0.15),
+                    //                 Colors.transparent,
+                    //                 const Color(0xFFFBBF24).withOpacity(0.15),
+                    //                 Colors.transparent,
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
+
+                    // الحلقة الخارجية المزخرفة بتدرج متحرك
+                    Positioned.fill(
                       child: AnimatedBuilder(
-                        animation: _glowAnimation,
+                        animation: _shimmerAnimation,
                         builder: (context, child) {
                           return Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                width: 3.w,
-                              //   gradient: LinearGradient(
-                              //     begin: Alignment.topLeft,
-                              //     end: Alignment.bottomRight,
-                              //     colors: [
-                              //       const Color(0xFF334155),
-                              //       const Color(0xFF475569),
-                              //       const Color(0xFF334155),
-                              //     ],
-                              //     stops: [
-                              //       0.0,
-                              //       (_glowAnimation.value + 0.5) % 1.0,
-                              //       1.0,
-                              //     ],
+                                color: const Color(0xFF1E293B),
+                                width: 5.w,
+                              ),
+                              // boxShadow: [
+                              //   BoxShadow(
+                              //     color: Colors.black.withOpacity(0.4),
+                              //     blurRadius: 25,
+                              //     spreadRadius: -5,
                               //   ),
-                              ),
-                              gradient: RadialGradient(
-                                colors: [
-                                  Colors.transparent,
-                                  const Color(0xFF0F172A).withOpacity(0.3),
-                                  const Color(0xFF0F172A).withOpacity(0.6),
-                                ],
-                              ),
+                              //   BoxShadow(
+                              //     color: const Color(0xFF10B981).withOpacity(0.2),
+                              //     blurRadius: 40,
+                              //     spreadRadius: 0,
+                              //   ),
+                              // ],
                             ),
                           );
                         },
                       ),
                     ),
-                  ),
 
-                  // حلقة داخلية متوهجة
-                  Positioned.fill(
-                    child: Padding(
-                      padding: EdgeInsets.all(24.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFF0067FF).withOpacity(0.5),
-                            width: 1.5.w,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // خطوط زخرفية دائرية
-                  ...List.generate(12, (index) {
-                    final angle = (2 * pi / 12) * index;
-                    return Positioned.fill(
-                      child: Transform.rotate(
-                        angle: angle,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                            width: 2.w,
-                            height: 15.h,
-                            margin: EdgeInsets.only(top: 8.h),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  const Color(0xFF6366F1).withOpacity(0.6),
-                                  Colors.transparent,
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(1.r),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-
-                  // الخرزات
-                  ...List.generate(beadsCount, (index) {
-                    final pos = _beadPositions[index];
-                    final isPassed = index < _currentBead || (_currentBead == 0 && index < beadsCount);
-                    final isNext = index == (_currentBead + 1) % beadsCount;
-
-                    return Positioned(
-                      left: pos.dx - 18,
-                      top: pos.dy - 18,
-                      child: _buildBead(
-                        isPassed: isPassed && _currentBead > 0,
-                        isNext: isNext,
-                        index: index,
-                        size: 36,
-                      ),
-                    );
-                  }),
-
-                  // الخرزة النشطة المتحركة
-                  if (_beadPositions.isNotEmpty)
-                    AnimatedBuilder(
-                      animation: _moveAnimation,
-                      builder: (context, child) {
-                        final startPos = _beadPositions[_currentBead];
-                        final nextPos = _beadPositions[(_currentBead + 1) % beadsCount];
-
-                        final x = startPos.dx + (nextPos.dx - startPos.dx) * _moveAnimation.value;
-                        final y = startPos.dy + (nextPos.dy - startPos.dy) * _moveAnimation.value;
-
-                        return Positioned(
-                          left: x - 28,
-                          top: y - 28,
-                          child: _buildActiveBead(size: 56),
-                        );
-                      },
-                    ),
-
-                  // جزيئات التأثير
-                  if (_particles.isNotEmpty)
-                    ...(_beadPositions.isNotEmpty
-                        ? _particles.map((particle) {
-                      final centerX = size.width / 2;
-                      final centerY = size.height / 2;
-                      return AnimatedBuilder(
-                        animation: _particleAnimation,
-                        builder: (context, child) {
-                          final distance = particle.distance * _particleAnimation.value;
-                          final opacity = 1.0 - _particleAnimation.value;
-                          return Positioned(
-                            left: centerX + cos(particle.angle) * distance - particle.size / 2,
-                            top: centerY + sin(particle.angle) * distance - particle.size / 2,
-                            child: Container(
-                              width: particle.size,
-                              height: particle.size,
+                    // حلقة وسطى بزخارف إسلامية
+                    Positioned.fill(
+                      child: Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: AnimatedBuilder(
+                          animation: _glowAnimation,
+                          builder: (context, child) {
+                            return Container(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: (particle.color ?? const Color(0xFFFBBF24)).withOpacity(opacity),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: (particle.color ?? const Color(0xFFFBBF24)).withOpacity(opacity * 0.5),
-                                    blurRadius: 8,
-                                    spreadRadius: 2,
-                                  ),
-                                ],
+                                border: Border.all(
+                                  width: 3.w,
+                                //   gradient: LinearGradient(
+                                //     begin: Alignment.topLeft,
+                                //     end: Alignment.bottomRight,
+                                //     colors: [
+                                //       const Color(0xFF334155),
+                                //       const Color(0xFF475569),
+                                //       const Color(0xFF334155),
+                                //     ],
+                                //     stops: [
+                                //       0.0,
+                                //       (_glowAnimation.value + 0.5) % 1.0,
+                                //       1.0,
+                                //     ],
+                                //   ),
+                                ),
+                                gradient: RadialGradient(
+                                  colors: [
+                                    Colors.transparent,
+                                    const Color(0xFF0F172A).withOpacity(0.3),
+                                    const Color(0xFF0F172A).withOpacity(0.6),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // حلقة داخلية متوهجة
+                    // Positioned.fill(
+                    //   child: Padding(
+                    //     padding: EdgeInsets.all(24.0),
+                    //     child: Container(
+                    //       decoration: BoxDecoration(
+                    //         shape: BoxShape.circle,
+                    //         border: Border.all(
+                    //           color: const Color(0xFF0067FF).withOpacity(0.5),
+                    //           width: 1.5.w,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+
+                    // خطوط زخرفية دائرية
+                    ...List.generate(12, (index) {
+                      final angle = (2 * pi / 12) * index;
+                      return Positioned.fill(
+                        child: Transform.rotate(
+                          angle: angle,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Container(
+                              width: 2.w,
+                              height: 15.h,
+                              margin: EdgeInsets.only(top: 8.h),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    const Color(0xFF6366F1).withOpacity(0.6),
+                                    Colors.transparent,
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(1.r),
                               ),
                             ),
-                          );
-                        },
+                          ),
+                        ),
                       );
-                    }).toList()
-                        : []),
+                    }),
 
-                  // الزر المركزي المحسّن
-                  Center(
-                    child: _buildCenterButton(isTablet),
-                  ),
-                ],
-              );
-            },
+                    // الخرزات
+                    ...List.generate(beadsCount, (index) {
+                      final pos = _beadPositions[index];
+                      final isPassed = index < _currentBead || (_currentBead == 0 && index < beadsCount);
+                      final isNext = index == (_currentBead + 1) % beadsCount;
+
+                      return Positioned(
+                        left: pos.dx - 18,
+                        top: pos.dy - 18,
+                        child: _buildBead(
+                          isPassed: isPassed && _currentBead > 0,
+                          isNext: isNext,
+                          index: index,
+                          size: 30,
+                        ),
+                      );
+                    }),
+
+                    // الخرزة النشطة المتحركة
+                    if (_beadPositions.isNotEmpty)
+                      AnimatedBuilder(
+                        animation: _moveAnimation,
+                        builder: (context, child) {
+                          // final startPos = _beadPositions[_currentBead];
+                          // final nextPos = _beadPositions[(_currentBead + 1) % beadsCount];
+                          //
+                          // final x = startPos.dx + (nextPos.dx - startPos.dx) * _moveAnimation.value;
+                          // final y = startPos.dy + (nextPos.dy - startPos.dy) * _moveAnimation.value;
+
+                          // return Positioned(
+                          //   left: x - 25,
+                          //   top: y - 13,
+                          //   child: _buildActiveBead(size:33),
+                          // );
+                          final beadSize = 33.0;
+                          final startPos = _beadPositions[_currentBead];
+                          final nextPos = _beadPositions[(_currentBead + 1) % beadsCount];
+
+                          final x = startPos.dx + (nextPos.dx - startPos.dx) * _moveAnimation.value - beadSize/2;
+                          final y = startPos.dy + (nextPos.dy - startPos.dy) * _moveAnimation.value - beadSize/2;
+
+                          return Positioned(
+                            left: x,
+                            top: y,
+                            child: _buildActiveBead(size: beadSize),
+                          );
+
+                        },
+                      ),
+
+                    // جزيئات التأثير
+                    if (_particles.isNotEmpty)
+                      ...(_beadPositions.isNotEmpty
+                          ? _particles.map((particle) {
+                        final centerX = size.width / 2;
+                        final centerY = size.height / 2;
+                        return AnimatedBuilder(
+                          animation: _particleAnimation,
+                          builder: (context, child) {
+                            final distance = particle.distance * _particleAnimation.value;
+                            final opacity = 1.0 - _particleAnimation.value;
+                            return Positioned(
+                              left: centerX + cos(particle.angle) * distance - particle.size / 2,
+                              top: centerY + sin(particle.angle) * distance - particle.size / 2,
+                              child: Container(
+                                width: particle.size,
+                                height: particle.size,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: (particle.color ?? const Color(0xFFFBBF24)).withOpacity(opacity),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: (particle.color ?? const Color(0xFFFBBF24)).withOpacity(opacity * 0.5),
+                                      blurRadius: 8,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }).toList()
+                          : []),
+
+                    // الزر المركزي المحسّن
+                    // Center(
+                    //   child: _buildCenterButton(isTablet),
+                    // ),
+                    // Center(
+                    //   child: Card(
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    //       child: Column(
+                    //         mainAxisSize: MainAxisSize.min,
+                    //         children: [
+                    //           TextWidget(title: zikrList[currentZikrIndex].text),
+                    //           TextWidget(
+                    //             title: "${currentZikrCount} / ${zikrList[currentZikrIndex].targetCount} مرة",
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    Center(child: buildCounterDisplay())
+                  ],
+                );
+              },
+            ),
           ),
-        ),
 
-        SizedBox(height: 35.h),
+          SizedBox(height:isTablet? 35.h:75),
 
-        // أزرار التحكم المحدثة
-        _buildControlButtons(isTablet),
-      ],
+          // أزرار التحكم المحدثة
+          _buildControlButtons(isTablet),
+        ],
+      ),
     );
   }
 
@@ -1151,19 +1261,19 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
             alignment: Alignment.center,
             children: [
               // توهج خارجي متعدد الطبقات
-              Container(
-                width: size * 1.6,
-                height: size * 1.6,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      const Color(0xFFFBBF24).withOpacity(0.3),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
+              // Container(
+              //   width: size * 1.6,
+              //   height: size * 1.6,
+              //   decoration: BoxDecoration(
+              //     shape: BoxShape.circle,
+              //     gradient: RadialGradient(
+              //       colors: [
+              //         const Color(0xFFFBBF24).withOpacity(0.3),
+              //         Colors.transparent,
+              //       ],
+              //     ),
+              //   ),
+              // ),
               Container(
                 width: size * 1.3,
                 height: size * 1.3,
@@ -1193,18 +1303,18 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                     ],
                     transform: GradientRotation(_glowAnimation.value * 2 * pi),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFFBBF24).withOpacity(0.8),
-                      blurRadius: 30,
-                      spreadRadius: 5,
-                    ),
-                    BoxShadow(
-                      color: const Color(0xFFF59E0B),
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: const Color(0xFFFBBF24).withOpacity(0.8),
+                  //     blurRadius: 30,
+                  //     spreadRadius: 5,
+                  //   ),
+                  //   BoxShadow(
+                  //     color: const Color(0xFFF59E0B),
+                  //     blurRadius: 20,
+                  //     spreadRadius: 2,
+                  //   ),
+                  // ],
                   border: Border.all(
                     color: Colors.white,
                     width: 4.w,
@@ -1214,8 +1324,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                   children: [
                     // انعكاس الضوء
                     Positioned(
-                      top: size * 0.15,
-                      left: size * 0.15,
+                      top: size * 0.10,
+                      left: size * 0.10,
                       child: Container(
                         width: size * 0.3,
                         height: size * 0.3,
@@ -1251,22 +1361,22 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                             ),
                           ],
                         ),
-                        child: Center(
-                          child: Text(
-                            '${_currentBead + 1}',
-                            style: GoogleFonts.cairo(
-                              fontSize: 18.sp,
-                              color: const Color(0xFFF59E0B),
-                              fontWeight: FontWeight.bold,
-                              shadows: [
-                                Shadow(
-                                  color: const Color(0xFFFBBF24).withOpacity(0.5),
-                                  blurRadius: 4,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // child: Center(
+                        //   child: Text(
+                        //     '${_currentBead + 1}',
+                        //     style: GoogleFonts.cairo(
+                        //       fontSize:ResponsiveUtil.isTablet(context)? 18.sp:12.sp,
+                        //       color: const Color(0xFFF59E0B),
+                        //       fontWeight: FontWeight.bold,
+                        //       shadows: [
+                        //         Shadow(
+                        //           color: const Color(0xFFFBBF24).withOpacity(0.5),
+                        //           blurRadius: 4,
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                       ),
                     ),
                   ],

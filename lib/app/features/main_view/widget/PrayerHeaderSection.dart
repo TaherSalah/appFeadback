@@ -43,7 +43,7 @@ class PrayerHeaderSection extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final size = MediaQuery.sizeOf(context);
-    final double headerHeight = isTab ? size.height / 3.2 : size.height / 2.4;
+    final double headerHeight = isTab ? size.height / 3.1 : size.height / 2.4;
 
     return SizedBox(
       height: headerHeight,
