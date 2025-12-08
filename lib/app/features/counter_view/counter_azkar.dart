@@ -564,7 +564,7 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
       // إذا وصلنا للعدد المطلوب لهذا الذكر → الانتقال للذكر التالي
       if (currentZikrCount >= zikrList[currentZikrIndex].targetCount) {
         // اختياري: effect دورة كاملة قبل الانتقال
-        _createCompletionEffect();
+        // _createCompletionEffect();
 
         // انتقال للذكر التالي
         if (currentZikrIndex < zikrList.length - 1) {
@@ -582,7 +582,7 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
         _cycleCount++;
         HapticFeedback.heavyImpact();
         // تأثير خاص لإكمال دورة beads
-        _createCompletionEffect();
+        // _createCompletionEffect();
       }
     });
 
@@ -610,17 +610,17 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
     });
   }
 
-  void _createCompletionEffect() {
-    final random = Random();
-    for (int i = 0; i < 20; i++) {
-      _particles.add(ParticleEffect(
-        angle: random.nextDouble() * 2 * pi,
-        distance: 60 + random.nextDouble() * 80,
-        size: 6 + random.nextDouble() * 10,
-        color: i % 2 == 0 ? const Color(0xFFFBBF24) : const Color(0xFF10B981),
-      ));
-    }
-  }
+  // void _createCompletionEffect() {
+  //   final random = Random();
+  //   for (int i = 0; i < 20; i++) {
+  //     _particles.add(ParticleEffect(
+  //       angle: random.nextDouble() * 2 * pi,
+  //       distance: 60 + random.nextDouble() * 80,
+  //       size: 6 + random.nextDouble() * 10,
+  //       color: i % 2 == 0 ? const Color(0xFFFBBF24) : const Color(0xFF10B981),
+  //     ));
+  //   }
+  // }
 
   void _resetCounter() {
     HapticFeedback.heavyImpact();

@@ -179,19 +179,19 @@ Future<void> main() async {
   await QuranLibrary.init();
 
   // ✅ 1) تهيئة الإشعارات أولاً
-  await NotificationService().initialize();
+  // await NotificationService().initialize();
 
-  // ✅ 2) تهيئة Workmanager للأذان (هام جداً!)
-  await Workmanager().initialize(
-    callbackDispatcher,  // ← الدالة اللي فوق
-    isInDebugMode: false, // خليها true للتجربة أول مرة
-  );
-
-  // ✅ 3) تهيئة خدمة الأذان
-  await AdhanWorkManagerService().initialize();
+  // // ✅ 2) تهيئة Workmanager للأذان (هام جداً!)
+  // await Workmanager().initialize(
+  //   callbackDispatcher,  // ← الدالة اللي فوق
+  //   isInDebugMode: false, // خليها true للتجربة أول مرة
+  // );
+  //
+  // // ✅ 3) تهيئة خدمة الأذان
+  // await AdhanWorkManagerService().initialize();
 
   // ✅ 4) جدولة الإشعارات الافتراضية
-  await _setupDefaultNotifications();
+  // await _setupDefaultNotifications();
 
   // باقي الكود...
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
