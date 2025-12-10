@@ -14,7 +14,7 @@ import '../../../../core/utils/style/responsive_util.dart';
 enum _QuranMenuAction {
   audio,
   orientation,
-  background
+   background
 }
 
 class QuranViewItemBuilder extends StatefulWidget {
@@ -483,119 +483,126 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             iconTheme:
                 IconThemeData(color: isDark ? Colors.white : Colors.blue),
             actions: [
-              FontsDownloadDialog(
-                topBarStyle: QuranTopBarStyle(
-                  iconColor: isDark ? Colors.white : Colors.blue,
-                ),
-                downloadFontsDialogStyle: DownloadFontsDialogStyle(
-                  iconColor: isDark ? Colors.white : Colors.blueAccent,
-                  headerTitle: 'الخطوط المتاحة',
-                  titleColor: isDark ? Colors.white : Colors.black,
-                  notes:
-                      'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خط مصحف المدينة من اسفل وتفعيله بدلا من الخط الاساسي',
-                  notesColor: isDark ? Colors.white : Colors.black,
-                  linearProgressBackgroundColor: Colors.blue.shade100,
-                  linearProgressColor: Colors.blue,
-                  downloadButtonBackgroundColor: Colors.blue,
-                  downloadingText: 'جارِ التحميل',
-                  backgroundColor: isDark
-                      ? const Color(0xff1E1E1E)
-                      : const Color(0xFFF7EFE0),
-                ),
-                languageCode: 'ar',
-                isFontsLocal: false, // تحميل من النت
-                isDark: isDark,
-              ),
+              // FontsDownloadDialog(
+              //   topBarStyle: QuranTopBarStyle(
+              //     iconColor: isDark ? Colors.white : Colors.blue,
+              //   ),
+              //   downloadFontsDialogStyle: DownloadFontsDialogStyle(
+              //     iconColor: isDark ? Colors.white : Colors.blueAccent,
+              //     headerTitle: 'الخطوط المتاحة',
+              //     titleColor: isDark ? Colors.white : Colors.black,
+              //     notes:
+              //         'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خط مصحف المدينة من اسفل وتفعيله بدلا من الخط الاساسي',
+              //     notesColor: isDark ? Colors.white : Colors.black,
+              //     linearProgressBackgroundColor: Colors.blue.shade100,
+              //     linearProgressColor: Colors.blue,
+              //     downloadButtonBackgroundColor: Colors.blue,
+              //     downloadingText: 'جارِ التحميل',
+              //     backgroundColor: isDark
+              //         ? const Color(0xff1E1E1E)
+              //         : const Color(0xFFF7EFE0),
+              //   ),
+              //   languageCode: 'ar',
+              //   isFontsLocal: false, // تحميل من النت
+              //   isDark: isDark,
+              // ),
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: PopupMenuButton<_QuranMenuAction>(
-                  tooltip: "اعدادات اضافية",
-                  // borderRadius: BorderRadius.all(Radius.circular(25)),
+                  tooltip: "خيارات إضافية",
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(25)),
+                    borderRadius: BorderRadius.circular(20),
+                    // side: BorderSide(
+                    //   color: isDark ? Colors.teal.withOpacity(0.3) : Colors.brown.withOpacity(0.3),
+                    //   width: 1,
+                    // ),
+                  ),
+                  // elevation: 8,
+                  // shadowColor: Colors.amber.withOpacity(0.2),
                   icon: Icon(
                     Icons.more_vert,
-                    color: isDark ? Colors.white : Colors.black,
+                    size: 22,
                   ),
+                  offset: const Offset(0, 50),
                   onSelected: (value) {
                     switch (value) {
                       case _QuranMenuAction.audio:
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                SurahAudioScreen(isDark: isDark),
+                            builder: (context) => SurahAudioScreen(isDark: isDark),
                           ),
                         );
                         break;
-
                       case _QuranMenuAction.orientation:
-                        _toggleMode(); // نفس الدالة اللي عندك لتبديل رأسي/أفقي
+                        _toggleMode();
                         break;
                       case _QuranMenuAction.background:
-                        _showBackgroundColorPicker(); // نفس الدالة اللي عندك لتبديل رأسي/أفقي
+                        _showBackgroundColorPicker();
                         break;
                     }
                   },
                   itemBuilder: (ctx) => [
-                    PopupMenuItem(
+                    // العنصر الأول - الاستماع للسور
+                    _buildMenuItem(
+                      context: ctx,
                       value: _QuranMenuAction.audio,
-                      child: Row(
-                        children: [
-                          Text(
-                            'الإستماع للسور',
-                            style: TextStyle(
-                              color: isDark ? Colors.white : Colors.black,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.play_circle_outlined, size: 20),
-
-
+                      title: 'الإستماع للسور',
+                      subtitle: 'استمع للقرآن بصوت القارئ',
+                      iconData: Icons.play_circle_filled_rounded,
+                      iconColor: Colors.green,
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.green.withOpacity(0.1),
+                          Colors.green.withOpacity(0.05),
                         ],
                       ),
+                      isDark: isDark,
                     ),
-                    PopupMenuItem(
+
+                    // العنصر الثاني - تغيير الاتجاه
+                    _buildMenuItem(
+                      context: ctx,
                       value: _QuranMenuAction.orientation,
-                      child: Row(
-                        children: [
-                          Text(
-                            _verticalMode ? 'الوضع الأفقي' : 'الوضع الرأسي',
-                            style: TextStyle(
-                              color: isDark ? Colors.white : Colors.black,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Icon(
-                            _verticalMode ? Icons.swap_horiz : Icons.swap_vert,
-                            size: ResponsiveUtil.isTablet(context)  ? 25:20,
-                          ),
+                      title: _verticalMode ? 'الوضع الأفقي' : 'الوضع الرأسي',
+                      subtitle: _verticalMode ? 'تغيير إلى القراءة الأفقية' : 'تغيير إلى القراءة العمودية',
 
+                      iconData:    _verticalMode ? Icons.swap_horiz : Icons.swap_vert,
+                      iconColor: Colors.blue,
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.blue.withOpacity(0.1),
+                          Colors.blue.withOpacity(0.05),
                         ],
                       ),
+                      isDark: isDark,
                     ),
-                    PopupMenuItem(
+                    _buildMenuItem(
+                      context: ctx,
                       value: _QuranMenuAction.background,
-                      child: Row(
-                        children: [
-
-                          Text(
-                            isDark ? 'الخلفية الليليه' : 'الخلفية النهارية',
-                            style: TextStyle(
-                              color: isDark ? Colors.white : Colors.black,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Icon(
-                            isDark ? Icons.dark_mode : Icons.light_mode,
-                            size: 20,
-                          ),
+                      title: isDark ? 'الوضع الليلي' : 'الوضع النهاري',
+                      subtitle: isDark ? 'اختر خلفية داكنة مناسية للقرأة' : 'اختر خلفية فاتحة مناسية للقرأة',
+                      iconData: isDark ? Icons.light_mode : Icons.dark_mode,
+                      iconColor: isDark ? Colors.amber : Colors.indigo,
+                      gradient: LinearGradient(
+                        colors: isDark
+                            ? [
+                          Colors.amber.withOpacity(0.1),
+                          Colors.orange.withOpacity(0.05),
+                        ]
+                            : [
+                          Colors.indigo.withOpacity(0.1),
+                          Colors.purple.withOpacity(0.05),
                         ],
                       ),
+                      isDark: isDark,
                     ),
+
+                    // يمكنك إضافة المزيد من العناصر هنا
                   ],
                 ),
               ),
+
             ],
 
             centerTitle: true,
@@ -692,4 +699,159 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       ),
     );
   }
+
+// دالة مساعدة لبناء عناصر القائمة
+  PopupMenuItem<_QuranMenuAction> _buildMenuItem({
+    required BuildContext context,
+    required _QuranMenuAction value,
+    required String title,
+    required String subtitle,
+    required IconData iconData,
+    required Color iconColor,
+    required Gradient gradient,
+    required bool isDark,
+  }) {
+    return PopupMenuItem<_QuranMenuAction>(
+      value: value,
+      height: 70,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: isDark ? Colors.white10 : Colors.black12,
+            width: 0.5,
+          ),
+        ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: iconColor.withOpacity(0.15),
+              border: Border.all(
+                color: iconColor.withOpacity(0.3),
+                width: 1.5,
+              ),
+            ),
+            child: Icon(
+              iconData,
+              color: iconColor,
+              size: 22,
+            ),
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white : Colors.black,
+              fontFamily: 'Uthmanic', // يمكنك استخدام خط عثماني
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 11,
+              color: isDark ? Colors.white70 : Colors.black54,
+            ),
+          ),
+          trailing: Icon(
+            Icons.arrow_back_ios_new,
+            size: 14,
+            color: isDark ? Colors.teal[300] : Colors.brown[600],
+          ),
+        ),
+      ),
+    );
+  }
+
+// أو تصميم بديل بلمسة إسلامية أكثر
+  PopupMenuItem<_QuranMenuAction> _buildIslamicMenuItem({
+    required BuildContext context,
+    required _QuranMenuAction value,
+    required String title,
+    required IconData iconData,
+    required bool isDark,
+  }) {
+    return PopupMenuItem<_QuranMenuAction>(
+      value: value,
+      height: 60,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: isDark ? Colors.grey[900] : Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // زخرفة إسلامية على الجانب
+            Container(
+              width: 4,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.green,
+                    Colors.teal,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            // أيقونة مع خلفية دائرية
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isDark ? Colors.teal.withOpacity(0.2) : Colors.green.withOpacity(0.1),
+              ),
+              child: Icon(
+                iconData,
+                color: isDark ? Colors.teal[300] : Colors.green[700],
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            // النص
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white : Colors.black,
+                  fontFamily: 'Amiri', // خط أميري
+                ),
+              ),
+            ),
+            // سهم صغير
+            Icon(
+              Icons.arrow_back_ios_new,
+              size: 12,
+              color: isDark ? Colors.teal[300] : Colors.brown[600],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+
+
 }
