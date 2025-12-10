@@ -186,17 +186,20 @@ Future<void> main() async {
     [
       NotificationChannel(
         channelKey: 'adhan_channel',
+
         channelName: 'أذان الصلاة',
         channelDescription: 'تشغيل صوت الأذان',
         importance: NotificationImportance.Max,
         playSound: true,
-        soundSource: 'resource://raw/athan',
+
+        // soundSource: 'resource://raw/athan',
         enableVibration: true,
         enableLights: true,
         ledColor: Colors.green,
       ),
     ],
-    debug: true,
+    // debug: true,
+    debug: false,
   );
 
   // ✅ 2) طلب الأذونات
