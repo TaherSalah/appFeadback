@@ -172,12 +172,71 @@ import 'package:workmanager/workmanager.dart';
 //             )));
 //   });
 // }
-
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await QuranLibrary.init();
+  // bool allowed = await AwesomeNotifications().isNotificationAllowed();
+  // if (!allowed) {
+  //   await AwesomeNotifications().requestPermissionToSendNotifications();
+  // }
+// ✅ 1) تهيئة AwesomeNotifications
+  await AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'adhan_channel',
+        channelName: 'أذان الصلاة',
+        channelDescription: 'تشغيل صوت الأذان',
+        importance: NotificationImportance.Max,
+        playSound: true,
+        soundSource: 'resource://raw/athan',
+        enableVibration: true,
+        enableLights: true,
+        ledColor: Colors.green,
+      ),
+    ],
+    debug: true,
+  );
 
+  // ✅ 2) طلب الأذونات
+  bool allowed = await AwesomeNotifications().isNotificationAllowed();
+  if (!allowed) {
+    await AwesomeNotifications().requestPermissionToSendNotifications(
+      channelKey: 'adhan_channel',
+    );
+  }
+
+  // ✅ 3) تهيئة Workmanager للخلفية
+  await Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: true, // غيرها لـ false في الإنتاج
+  );
+
+  // ✅ 4) إعداد مستمع للإشعارات (اختياري)
+  AwesomeNotifications().setListeners(
+    onActionReceivedMethod: (ReceivedAction receivedAction) async {
+      if (receivedAction.buttonKeyPressed == 'STOP_ADHAN') {
+        print('🛑 تم إيقاف الأذان بواسطة المستخدم');
+      }
+    },
+  );
+
+  await QuranLibrary.init();
+  // AwesomeNotifications().initialize(
+  //   null,
+  //   [
+  //     NotificationChannel(
+  //       channelKey: 'azan_channel',
+  //       channelName: 'أذان الصلاة',
+  //       channelDescription: 'تشغيل صوت الأذان',
+  //       importance: NotificationImportance.Max,
+  //       playSound: true,
+  //       soundSource: 'resource://raw/athan',
+  //     ),
+  //   ],
+  // );
+  // Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
   // ✅ 1) تهيئة الإشعارات أولاً
   // await NotificationService().initialize();
 
@@ -778,3 +837,19 @@ class NotificationService {
 //child: const Text('اختبار الأذان الآن'),
 //)
 //```
+
+Future scheduleAzan(DateTime prayerTime, String prayerName) async {
+  await AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: prayerTime.millisecondsSinceEpoch % 100000,
+      channelKey: 'azan_channel',
+      title: 'حان الآن وقت $prayerName',
+      body: 'الله أكبر الله أكبر',
+      notificationLayout: NotificationLayout.Default,
+    ),
+    schedule: NotificationCalendar.fromDate(
+      date: prayerTime,
+      preciseAlarm: true,
+    ),
+  );
+}

@@ -95,67 +95,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     }
   }
 
-  // late List<DrawerModle?> topBar = [
-  //   DrawerModle(
-  //       icon: Icons.search, title: "البحث بالاية", route: "/ayaSearchScreen"),
-  //   DrawerModle(
-  //       icon: Icons.gpp_good_outlined,
-  //       title: "التفسير",
-  //       route: Routes.tafsirQuranRoute),
-  //
-  //   DrawerModle(
-  //       icon: Icons.list, title: "فهرس القران الكريم", route: "/ListScreen"),
-  //   DrawerModle(
-  //       icon: Icons.dashboard_customize_outlined,
-  //       title: "الاجزاء",
-  //       route: Routes.jozzaListScreenRoute),
-  //   DrawerModle(
-  //       icon: Icons.category_outlined,
-  //       title: "الاحزاب",
-  //       route: Routes.hizbeListScreenRoute),
-  //   DrawerModle(
-  //       icon: Icons.chrome_reader_mode_outlined,
-  //       title: "انشاء ختمة جديدة",
-  //       isRepl: true,
-  //       route: "/KhatmahHome"),
-  //   DrawerModle(
-  //       icon: Icons.preview_outlined,
-  //       title: "الختمات المنجزه",
-  //       route: "/compplateKhatna"),
-  //
-  //   DrawerModle(
-  //     icon: Icons.bookmark_add_outlined,
-  //     title: "اضافة علامة للصفحة",
-  //     onTap: () => _saveBookmark(_currentPage!),
-  //   ),
-  //   DrawerModle(
-  //     icon: Icons.bookmark_remove_outlined,
-  //     title: " ازالة العلامه",
-  //     onTap: _delBookmark,
-  //   ),
-  //   DrawerModle(
-  //     icon: Icons.navigation_outlined,
-  //     title: "انتقال الي العلامه",
-  //     onTap: _goToBookmark,
-  //   ),
-  //   DrawerModle(
-  //       icon: Icons.bookmarks_outlined,
-  //       title: "الايات المحفوظة",
-  //       route: "/ayaBookmarkScreen"),
-  //   DrawerModle(
-  //       icon: Icons.info_outline,
-  //       title: "دعاء ختم القران الكريم",
-  //       route: Routes.quranKhitamRoute),
-  //   DrawerModle(
-  //       icon: Icons.favorite_border,
-  //       title: "فضل قرأه القران",
-  //       route: Routes.quranLoveRoute),
-  //
-  //   // DrawerModle(
-  //   //     icon: Icons.dark_mode_outlined,
-  //   //     title: "الوضع الليلي",
-  //   //     onTap: _changeMode),
-  // ];
   late List<DrawerSection> drawerSections = [
     DrawerSection(
       title: "بَحْثٌ وَتَفْسِيرٌ",
@@ -330,19 +269,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     // );
   }
 
-  // void _goToBookmark() {
-  //   if (_bookmarkedPage != null) {
-  //     setState(() {
-  //       _currentPage = _bookmarkedPage!;
-  //       QuranLibrary().jumpToPage(_bookmarkedPage!);
-  //     });
-  //   } else {
-  //     // ScaffoldMessenger.of(context).showSnackBar(
-  //     //   const SnackBar(content: Text('⚠️ لا توجد علامة محفوظة')),
-  //     // );
-  //     KHelper.showSuccess(message: " لا توجد علامة محفوظة");
-  //   }
-  // }
   void _goToBookmark() {
     if (_bookmarkedPage != null) {
       final pageIndex = _bookmarkedPage!; // 0-based
@@ -369,8 +295,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     );
   }
 
-  // false = الوضع الأفقي (الـ default من الباكدج)
-  // true  = الوضع الرأسي (PageView خارجي)
   bool _verticalMode = false;
 
   PageController? _verticalController;
@@ -715,54 +639,57 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       value: value,
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(
-            color: isDark ? Colors.white10 : Colors.black12,
-            width: 0.5,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: gradient,
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(
+              color: isDark ? Colors.white10 : Colors.black12,
+              width: 0.5,
+            ),
           ),
-        ),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          leading: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: iconColor.withOpacity(0.15),
-              border: Border.all(
-                color: iconColor.withOpacity(0.3),
-                width: 1.5,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: iconColor.withOpacity(0.15),
+                border: Border.all(
+                  color: iconColor.withOpacity(0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: Icon(
+                iconData,
+                color: iconColor,
+                size: 22,
               ),
             ),
-            child: Icon(
-              iconData,
-              color: iconColor,
-              size: 22,
+            title: Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Colors.black,
+                fontFamily: 'me', // يمكنك استخدام خط عثماني
+              ),
             ),
-          ),
-          title: Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : Colors.black,
-              fontFamily: 'Uthmanic', // يمكنك استخدام خط عثماني
+            subtitle: Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 11,
+                color: isDark ? Colors.white70 : Colors.black54,
+              ),
             ),
-          ),
-          subtitle: Text(
-            subtitle,
-            style: TextStyle(
-              fontSize: 11,
-              color: isDark ? Colors.white70 : Colors.black54,
+            trailing: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: isDark ? Colors.teal[300] : Colors.brown[600],
             ),
-          ),
-          trailing: Icon(
-            Icons.arrow_back_ios_new,
-            size: 14,
-            color: isDark ? Colors.teal[300] : Colors.brown[600],
           ),
         ),
       ),
@@ -780,6 +707,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     return PopupMenuItem<_QuranMenuAction>(
       value: value,
       height: 60,
+
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -834,13 +762,13 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isDark ? Colors.white : Colors.black,
-                  fontFamily: 'Amiri', // خط أميري
+                  fontFamily: 'cairo', // خط أميري
                 ),
               ),
             ),
             // سهم صغير
             Icon(
-              Icons.arrow_back_ios_new,
+              Icons.arrow_forward_ios_rounded,
               size: 12,
               color: isDark ? Colors.teal[300] : Colors.brown[600],
             ),

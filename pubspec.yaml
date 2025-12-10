@@ -16,6 +16,7 @@ dependencies:
   cupertino_icons:
   google_fonts:
   provider:
+  awesome_notifications:
   dio:
   flutter_rating_bar:
   in_app_review: ^2.0.8
