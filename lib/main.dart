@@ -174,94 +174,159 @@ import 'package:workmanager/workmanager.dart';
 // }
 import 'package:awesome_notifications/awesome_notifications.dart';
 
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//
+//
+//
+//   // ✅ 1) تهيئة AwesomeNotifications مع قناتين
+//   await AwesomeNotifications().initialize(
+//     null,
+//     [
+//       // 🌅 قناة أذان الفجر
+//       NotificationChannel(
+//         channelKey: 'fajr_adhan_channel',
+//         channelName: 'أذان الفجر',
+//         channelDescription: 'تشغيل أذان الفجر',
+//         importance: NotificationImportance.Max,
+//         // icon: 'resource://drawable/ic_stat_logoapp',
+//         // أو استخدم أيقونة التطبيق
+//         // largeIcon: 'resource://mipmap/launcher_icon',
+//         playSound: true,
+//         soundSource: 'resource://raw/fajr', // ✅ بدون .mp3
+//         enableVibration: true,
+//         enableLights: true,
+//         ledColor: Colors.orange,
+//         defaultPrivacy: NotificationPrivacy.Public,
+//
+//
+//       ),
+//
+//       // 🕌 قناة الأذان العادي
+//       NotificationChannel(
+//         channelKey: 'adhan_channel',
+//         channelName: 'أذان الصلاة',
+//         channelDescription: 'تشغيل صوت الأذان',
+//         importance: NotificationImportance.Max,
+//         defaultPrivacy: NotificationPrivacy.Public,
+//
+//         playSound: true,
+//         // icon: 'resource://drawable/ic_stat_logoapp',
+//         // أو استخدم أيقونة التطبيق
+//         soundSource: 'resource://raw/athan', // ✅ بدون .mp3
+//         enableVibration: true,
+//         enableLights: true,
+//         ledColor: Colors.green,
+//       ),
+//     ],
+//     debug: true, // ✅ اتركها true للتجربة
+//   );
+//
+//   // ✅ 2) طلب الأذونات
+//   bool allowed = await AwesomeNotifications().isNotificationAllowed();
+//   if (!allowed) {
+//     await AwesomeNotifications().requestPermissionToSendNotifications(
+//       channelKey: 'adhan_channel',
+//     );
+//   }
+//
+//
+//   // ✅ 3) تهيئة Workmanager للخلفية
+//   await Workmanager().initialize(
+//     callbackDispatcher,
+//     isInDebugMode: true, // غيرها لـ false في الإنتاج
+//   );
+//
+//   // ✅ 4) إعداد مستمع للإشعارات (اختياري)
+//   AwesomeNotifications().setListeners(
+//     onActionReceivedMethod: (ReceivedAction receivedAction) async {
+//       if (receivedAction.buttonKeyPressed == 'STOP_ADHAN') {
+//         print('🛑 تم إيقاف الأذان بواسطة المستخدم');
+//       }
+//     },
+//   );
+//
+//   await QuranLibrary.init();
+//   // AwesomeNotifications().initialize(
+//   //   null,
+//   //   [
+//   //     NotificationChannel(
+//   //       channelKey: 'azan_channel',
+//   //       channelName: 'أذان الصلاة',
+//   //       channelDescription: 'تشغيل صوت الأذان',
+//   //       importance: NotificationImportance.Max,
+//   //       playSound: true,
+//   //       soundSource: 'resource://raw/athan',
+//   //     ),
+//   //   ],
+//   // );
+//   // Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+//   // ✅ 1) تهيئة الإشعارات أولاً
+//   // await NotificationService().initialize();
+//
+//   // // ✅ 2) تهيئة Workmanager للأذان (هام جداً!)
+//   // await Workmanager().initialize(
+//   //   callbackDispatcher,  // ← الدالة اللي فوق
+//   //   isInDebugMode: false, // خليها true للتجربة أول مرة
+//   // );
+//   //
+//   // // ✅ 3) تهيئة خدمة الأذان
+//   // await AdhanWorkManagerService().initialize();
+//
+//   // ✅ 4) جدولة الإشعارات الافتراضية
+//   // await _setupDefaultNotifications();
+//
+//   // باقي الكود...
+//   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+//     statusBarColor: Colors.transparent,
+//     statusBarIconBrightness: Brightness.dark,
+//     systemNavigationBarColor: Colors.transparent,
+//   ));
+//
+//   HijriCalendar.setLocal('ar_SA');
+//   await Di.init();
+//   await initializeDateFormatting();
+//   await initializeDateFormatting('ar', null);
+//   await initializeDateFormatting('en', null);
+//   await SharedObj().init();
+//
+//   // Hive
+//   await Hive.initFlutter();
+//   if (!Hive.isAdapterRegistered(0)) {
+//     Hive.registerAdapter(KhatmahModelAdapter());
+//   }
+//   await Hive.openBox<KhatmahModel>('khatmahBox');
+//   if (!Hive.isBoxOpen('khatmahPlans')) {
+//     await Hive.openBox('khatmahPlans');
+//   }
+//
+//   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+//       .then((_) {
+//     runApp(
+//       BlocProvider<CentralizedCubit>(
+//         create: (context) => CentralizedCubit(
+//           sharedPreferences: Di.sharedPreferences,
+//         )..localization(),
+//         child: BlocBuilder<CentralizedCubit, CentralizedState>(
+//           builder: (context, state) {
+//             return const MashkahApp();
+//           },
+//         ),
+//       ),
+//     );
+//   });
+// }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // bool allowed = await AwesomeNotifications().isNotificationAllowed();
-  // if (!allowed) {
-  //   await AwesomeNotifications().requestPermissionToSendNotifications();
-  // }
-// ✅ 1) تهيئة AwesomeNotifications
-  await AwesomeNotifications().initialize(
-    null,
-    [
-      NotificationChannel(
-        channelKey: 'adhan_channel',
 
-        channelName: 'أذان الصلاة',
-        channelDescription: 'تشغيل صوت الأذان',
-        importance: NotificationImportance.Max,
-        playSound: true,
-
-        // soundSource: 'resource://raw/athan',
-        enableVibration: true,
-        enableLights: true,
-        ledColor: Colors.green,
-      ),
-    ],
-    // debug: true,
-    debug: false,
-  );
-
-  // ✅ 2) طلب الأذونات
-  bool allowed = await AwesomeNotifications().isNotificationAllowed();
-  if (!allowed) {
-    await AwesomeNotifications().requestPermissionToSendNotifications(
-      channelKey: 'adhan_channel',
-    );
-  }
-
-  // ✅ 3) تهيئة Workmanager للخلفية
-  await Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: true, // غيرها لـ false في الإنتاج
-  );
-
-  // ✅ 4) إعداد مستمع للإشعارات (اختياري)
-  AwesomeNotifications().setListeners(
-    onActionReceivedMethod: (ReceivedAction receivedAction) async {
-      if (receivedAction.buttonKeyPressed == 'STOP_ADHAN') {
-        print('🛑 تم إيقاف الأذان بواسطة المستخدم');
-      }
-    },
-  );
-
-  await QuranLibrary.init();
-  // AwesomeNotifications().initialize(
-  //   null,
-  //   [
-  //     NotificationChannel(
-  //       channelKey: 'azan_channel',
-  //       channelName: 'أذان الصلاة',
-  //       channelDescription: 'تشغيل صوت الأذان',
-  //       importance: NotificationImportance.Max,
-  //       playSound: true,
-  //       soundSource: 'resource://raw/athan',
-  //     ),
-  //   ],
-  // );
-  // Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  // ✅ 1) تهيئة الإشعارات أولاً
-  // await NotificationService().initialize();
-
-  // // ✅ 2) تهيئة Workmanager للأذان (هام جداً!)
-  // await Workmanager().initialize(
-  //   callbackDispatcher,  // ← الدالة اللي فوق
-  //   isInDebugMode: false, // خليها true للتجربة أول مرة
-  // );
-  //
-  // // ✅ 3) تهيئة خدمة الأذان
-  // await AdhanWorkManagerService().initialize();
-
-  // ✅ 4) جدولة الإشعارات الافتراضية
-  // await _setupDefaultNotifications();
-
-  // باقي الكود...
+  // ✅ 1) تهيئة تخصيصات النظام
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
   ));
 
+  // ✅ 2) تهيئة البيانات والمكتبات أولاً
   HijriCalendar.setLocal('ar_SA');
   await Di.init();
   await initializeDateFormatting();
@@ -269,7 +334,7 @@ Future<void> main() async {
   await initializeDateFormatting('en', null);
   await SharedObj().init();
 
-  // Hive
+  // ✅ 3) Hive
   await Hive.initFlutter();
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(KhatmahModelAdapter());
@@ -278,6 +343,26 @@ Future<void> main() async {
   if (!Hive.isBoxOpen('khatmahPlans')) {
     await Hive.openBox('khatmahPlans');
   }
+
+  // ✅ 4) طلب أذونات الإشعارات أولاً
+  bool allowed = await AwesomeNotifications().isNotificationAllowed();
+  if (!allowed) {
+    await AwesomeNotifications().requestPermissionToSendNotifications(
+      channelKey: 'adhan_channel',
+    );
+  }
+
+  // ✅ 5) تهيئة AwesomeNotifications **مرة واحدة فقط**
+  await _initializeNotifications();
+
+  // ✅ 6) تهيئة Workmanager
+  await Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: false, // غيرها لـ true للتجربة
+  );
+
+  // ✅ 7) تهيئة QuranLibrary
+  await QuranLibrary.init();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -296,6 +381,92 @@ Future<void> main() async {
   });
 }
 
+// ✅ دالة منفصلة لتهيئة الإشعارات
+Future<void> _initializeNotifications() async {
+  try {
+    await AwesomeNotifications().initialize(
+      // null أو مسار الـ launch
+      null,
+
+      // قنوات الإشعارات
+      [
+        // 🌅 قناة أذان الفجر
+        NotificationChannel(
+          // channelKey: 'fajr_adhan_channel',
+          // channelName: 'أذان الفجر',
+          // channelDescription: 'تشغيل أذان الفجر',
+          // importance: NotificationImportance.Max,
+          // defaultColor: Colors.orange,
+          // ledColor: Colors.orange,
+          // playSound: true,
+          // soundSource: 'resource://raw/fajr_adhan',
+          // enableVibration: true,
+          // enableLights: true,
+          // locked: true,
+          // criticalAlerts: true,
+
+                  channelKey: 'fajr_adhan_channel',
+        channelName: 'أذان الفجر',
+        channelDescription: 'تشغيل أذان الفجر',
+        importance: NotificationImportance.Max,
+        // icon: 'resource://drawable/ic_stat_logoapp',
+        // أو استخدم أيقونة التطبيق
+        // largeIcon: 'resource://mipmap/launcher_icon',
+        playSound: true,
+        soundSource: 'resource://raw/fajr', // ✅ بدون .mp3
+        enableVibration: true,
+        enableLights: true,
+        ledColor: Colors.orange,
+        defaultPrivacy: NotificationPrivacy.Public,
+        ),
+
+        // 🕌 قناة الأذان العادي
+        NotificationChannel(
+          channelKey: 'adhan_channel',
+          channelName: 'أذان الصلاة',
+          channelDescription: 'تشغيل صوت الأذان',
+          importance: NotificationImportance.Max,
+          defaultColor: Colors.green,
+          ledColor: Colors.green,
+          playSound: true,
+          soundSource: 'resource://raw/athan',
+          enableVibration: true,
+          enableLights: true,
+          locked: true,
+        ),
+
+        // 📿 قناة التذكيرات اليومية
+        NotificationChannel(
+          channelKey: 'reminder_channel',
+          channelName: 'تذكيرات يومية',
+          channelDescription: 'تذكير بذكر الله والصلاة على النبي',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.blue,
+          ledColor: Colors.blue,
+          playSound: true,
+          // soundSource: 'resource://raw/reminder',
+          enableVibration: false,
+          enableLights: true,
+        ),
+      ],
+
+      // ✅ إعداد المستمعين بشكل صحيح
+      debug: false,
+    );
+
+    // ✅ إعداد المستمعين
+    AwesomeNotifications().setListeners(
+      onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+      onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
+    );
+
+    print('✅ تم تهيئة AwesomeNotifications بنجاح');
+  } catch (e) {
+    print('❌ خطأ في تهيئة الإشعارات: $e');
+  }
+}
 void checkWhatsNew(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
   final lastVersion = prefs.getString("last_version");
@@ -855,4 +1026,41 @@ Future scheduleAzan(DateTime prayerTime, String prayerName) async {
       preciseAlarm: true,
     ),
   );
+}
+// في نهاية main.dart، بعد دالة main()
+
+@pragma('vm:entry-point')
+class NotificationController {
+  @pragma('vm:entry-point')
+  static Future<void> onNotificationCreatedMethod(
+      ReceivedNotification receivedNotification) async {
+    print('📱 إشعار جديد: ${receivedNotification.id}');
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> onNotificationDisplayedMethod(
+      ReceivedNotification receivedNotification) async {
+    print('📱 تم عرض الإشعار: ${receivedNotification.title}');
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> onDismissActionReceivedMethod(
+      ReceivedAction receivedAction) async {
+    print('📱 تم إغلاق الإشعار: ${receivedAction.id}');
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> onActionReceivedMethod(
+      ReceivedAction receivedAction) async {
+    print('🎯 ضغط على زر: ${receivedAction.buttonKeyPressed}');
+
+    switch (receivedAction.buttonKeyPressed) {
+      case 'STOP_ADHAN':
+        print('🛑 إيقاف الأذان');
+        break;
+      case 'REMIND_LATER':
+        print('⏰ تذكير لاحق');
+        break;
+    }
+  }
 }

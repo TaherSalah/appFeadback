@@ -101,7 +101,7 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
             // العداد
             Stack(
               children: [
-                Positioned.fill(child: Image.asset("assets/images/dd.jpg",fit: BoxFit.cover,)),
+                Positioned.fill(child: Image.asset("assets/images/countBg.jpg",fit: BoxFit.cover,)),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
