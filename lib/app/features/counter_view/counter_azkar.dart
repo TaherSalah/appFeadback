@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +9,7 @@ import '../../core/shard/constanc/app_string.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
 import '../../core/widgets/custom_text_widget.dart';
+import '../messa_view/azkar_massa.dart';
 
 class AzkarCounter extends StatefulWidget {
   const AzkarCounter({super.key});
@@ -101,7 +103,33 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
             // العداد
             Stack(
               children: [
-                Positioned.fill(child: Image.asset("assets/images/countBg.jpg",fit: BoxFit.cover,)),
+
+
+                // Positioned.fill(child:
+                //
+                //
+                // Container(
+                //   // height: MediaQuery.of(context).size.height,
+                //   width: MediaQuery.of(context).size.width,
+                //   padding: const EdgeInsets.all(10),
+                //   decoration: BoxDecoration(
+                //     image: const DecorationImage(image: AssetImage("assets/images/pattern.webp",),fit: BoxFit.cover,opacity: 0.3),
+                //
+                //     borderRadius: BorderRadius.circular(10),
+                //     border: const BorderDirectional(
+                //       start: BorderSide(color: Color(0xffd6bb7a), width: 3),
+                //     ),
+                //     // color: Theme.of(context).cardColor,
+                //     color: AppThemeColors.cardBackgroundColor(context),
+                //   ),
+                //   child:SizedBox(),
+                // ),
+                // ),
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.4), // غمّق الصورة
+                  ),
+                ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

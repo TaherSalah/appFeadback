@@ -11,11 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/utils/style/responsive_util.dart';
 
-enum _QuranMenuAction {
-  audio,
-  orientation,
-   background
-}
+enum _QuranMenuAction { audio, orientation, background }
 
 class QuranViewItemBuilder extends StatefulWidget {
   const QuranViewItemBuilder({super.key});
@@ -34,18 +30,18 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   Color get _backgroundColor =>
       isDark ? _darkBackgroundColor : _lightBackgroundColor;
   List<Color> get _darkColors => const [
-    Color(0xFF101623), // رمادي مزرق
-    Color(0xFF121212), // رمادي داكن
-    Color(0xFF0B1A14), // أخضر داكن
-    Color(0xFF0B1020), // أزرق داكن
-  ];
+        Color(0xFF101623), // رمادي مزرق
+        Color(0xFF121212), // رمادي داكن
+        Color(0xFF0B1A14), // أخضر داكن
+        Color(0xFF0B1020), // أزرق داكن
+      ];
 
   List<Color> get _lightColors => const [
-    Color(0xFFF7F1E1), // بيج فاتح
-    Color(0xFFFFFFFF), // أبيض
-    Color(0xFFF0F4F8), // رمادي فاتح مزرق
-    Color(0xFFFFF8E1), // أصفر فاتح دافئ
-  ];
+        Color(0xFFF7F1E1), // بيج فاتح
+        Color(0xFFFFFFFF), // أبيض
+        Color(0xFFF0F4F8), // رمادي فاتح مزرق
+        Color(0xFFFFF8E1), // أصفر فاتح دافئ
+      ];
 
   void _showBackgroundColorPicker() async {
     // يختار الباليت حسب الوضع الحالي
@@ -60,8 +56,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             spacing: 12,
             runSpacing: 12,
             children: colors.map((c) {
-              final bool isSelected = c ==
-                  (isDark ? _darkBackgroundColor : _lightBackgroundColor);
+              final bool isSelected =
+                  c == (isDark ? _darkBackgroundColor : _lightBackgroundColor);
 
               return GestureDetector(
                 onTap: () => Navigator.of(context).pop(c),
@@ -341,7 +337,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       _bookmarkedPage != null && _currentPage == _bookmarkedPage;
   @override
   Widget build(BuildContext context) {
-
     final ayahIconColor = isDark ? AppStyle.scondColors : AppColors.primary;
 
     final topBottomStyle = TopBottomQuranStyle.defaults(
@@ -454,7 +449,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SurahAudioScreen(isDark: isDark),
+                            builder: (context) =>
+                                SurahAudioScreen(isDark: isDark),
                           ),
                         );
                         break;
@@ -489,9 +485,11 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       context: ctx,
                       value: _QuranMenuAction.orientation,
                       title: _verticalMode ? 'الوضع الأفقي' : 'الوضع الرأسي',
-                      subtitle: _verticalMode ? 'تغيير إلى القراءة الأفقية' : 'تغيير إلى القراءة العمودية',
-
-                      iconData:    _verticalMode ? Icons.swap_horiz : Icons.swap_vert,
+                      subtitle: _verticalMode
+                          ? 'تغيير إلى القراءة الأفقية'
+                          : 'تغيير إلى القراءة العمودية',
+                      iconData:
+                          _verticalMode ? Icons.swap_horiz : Icons.swap_vert,
                       iconColor: Colors.blue,
                       gradient: LinearGradient(
                         colors: [
@@ -505,28 +503,28 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       context: ctx,
                       value: _QuranMenuAction.background,
                       title: isDark ? 'الوضع الليلي' : 'الوضع النهاري',
-                      subtitle: isDark ? 'اختر خلفية داكنة مناسية للقرأة' : 'اختر خلفية فاتحة مناسية للقرأة',
+                      subtitle: isDark
+                          ? 'اختر خلفية داكنة مناسية للقرأة'
+                          : 'اختر خلفية فاتحة مناسية للقرأة',
                       iconData: isDark ? Icons.light_mode : Icons.dark_mode,
                       iconColor: isDark ? Colors.amber : Colors.indigo,
                       gradient: LinearGradient(
                         colors: isDark
                             ? [
-                          Colors.amber.withOpacity(0.1),
-                          Colors.orange.withOpacity(0.05),
-                        ]
+                                Colors.amber.withOpacity(0.1),
+                                Colors.orange.withOpacity(0.05),
+                              ]
                             : [
-                          Colors.indigo.withOpacity(0.1),
-                          Colors.purple.withOpacity(0.05),
-                        ],
+                                Colors.indigo.withOpacity(0.1),
+                                Colors.purple.withOpacity(0.05),
+                              ],
                       ),
                       isDark: isDark,
                     ),
-
                     // يمكنك إضافة المزيد من العناصر هنا
                   ],
                 ),
               ),
-
             ],
 
             centerTitle: true,
@@ -575,7 +573,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                               itemBuilder: (context, index) {
                                 return QuranLibraryScreen(
                                   backgroundColor: _backgroundColor,
-
                                   withPageView: false,
                                   isDark: isDark,
                                   pageIndex: index,
@@ -589,9 +586,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                               },
                             )
                           : QuranLibraryScreen(
-                    backgroundColor: _backgroundColor,
+                              backgroundColor: _backgroundColor,
 
-                    // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
+                              // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
                               withPageView: true,
                               isDark: isDark,
                               pageIndex: _currentPage!,
@@ -707,7 +704,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     return PopupMenuItem<_QuranMenuAction>(
       value: value,
       height: 60,
-
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -745,7 +741,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               height: 36,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isDark ? Colors.teal.withOpacity(0.2) : Colors.green.withOpacity(0.1),
+                color: isDark
+                    ? Colors.teal.withOpacity(0.2)
+                    : Colors.green.withOpacity(0.1),
               ),
               child: Icon(
                 iconData,
@@ -777,9 +775,4 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       ),
     );
   }
-
-
-
-
-
 }
