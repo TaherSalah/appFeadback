@@ -65,6 +65,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  arabic_justified_text:
+    dependency: transitive
+    description:
+      name: arabic_justified_text
+      sha256: "0a0516fe91ec3cbdebd0afc701ea280fe9bc8c51ab0b8a41b614688aed98e995"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   archive:
     dependency: transitive
     description:
@@ -1552,11 +1560,12 @@ packages:
   quran_library:
     dependency: "direct main"
     description:
-      name: quran_library
-      sha256: "700fecee54cd7622a195c808265199b79f5a6fbb74e254721c83f8eba1a7e46e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.1"
+      path: "."
+      ref: main
+      resolved-ref: "6fe8fca6bff7acd8a0a3f86aeeb5f3262598054a"
+      url: "https://github.com/alheekmahlib/quran_library.git"
+    source: git
+    version: "2.3.2"
   rate_my_app:
     dependency: "direct main"
     description:

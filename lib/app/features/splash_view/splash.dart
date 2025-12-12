@@ -2,9 +2,271 @@
 
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rate_my_app/rate_my_app.dart';
+// ============================================
+// 📁 lib/core/services/version_service.dart
+// ============================================
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/shard/exports/all_exports.dart';
+import '../WhatsNewView/WhatsNewView.dart';
 import '../main_view/MainView.dart';
+
+class VersionService {
+  static const String _lastVersionKey = 'last_app_version';
+  static const String _isFirstTimeKey = 'is_first_time';
+
+
+  /// التحقق من حالة التطبيق (أول مرة، تحديث، أو استخدام عادي)
+  static Future<AppState> checkAppState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    final currentVersion = packageInfo.version; // مثال: "1.0.5"
+    final savedVersion = prefs.getString(_lastVersionKey);
+    final isFirstTime = prefs.getBool(_isFirstTimeKey) ?? true;
+
+    if (isFirstTime) {
+      // ✅ أول مرة يفتح التطبيق
+      await prefs.setBool(_isFirstTimeKey, false);
+      await prefs.setString(_lastVersionKey, currentVersion);
+      return AppState.firstTime;
+
+    } else if (savedVersion == null || savedVersion != currentVersion) {
+      // ✅ تحديث التطبيق
+      await prefs.setString(_lastVersionKey, currentVersion);
+      return AppState.updated;
+
+    } else {
+      // ✅ استخدام عادي
+      return AppState.normal;
+    }
+  }
+
+  /// الحصول على الإصدار الحالي
+  static Future<String> getCurrentVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
+  }
+
+  /// الحصول على الإصدار السابق
+  static Future<String?> getLastVersion() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_lastVersionKey);
+  }
+
+  /// إعادة تعيين حالة التطبيق (للتجربة فقط)
+  static Future<void> resetAppState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_lastVersionKey);
+    await prefs.remove(_isFirstTimeKey);
+  }
+}
+
+/// حالات التطبيق
+enum AppState {
+  firstTime,  // أول مرة
+  updated,    // تم التحديث
+  normal,     // استخدام عادي
+}
+
+// ============================================
+// 📁 lib/models/app_feature.dart (إذا لم يكن موجود)
+// ============================================
+
+class AppFeature {
+  final String title;
+  final String description;
+  final String imagePath;
+  final String? version; // إضافة (اختياري)
+
+  AppFeature({
+    required this.title,
+    required this.description,
+    required this.imagePath,
+    this.version,
+  });
+}
+
+// ============================================
+// 📁 lib/core/constants/app_updates.dart
+// ============================================
+
+class AppUpdates {
+  // ✅ ميزات التطبيق الجديدة (للمستخدمين الجدد)
+  static final List<AppFeature> firstTimeFeatures = [
+    AppFeature(
+      title: 'واجهة جديدة',
+      description: 'تصميم عصري ومريح للعين مع تجربة استخدام سلسة وانتقالات سلسة بين الشاشات',
+      imagePath: 'assets/images/1_12_11zon.webp',
+    ),
+    AppFeature(
+      title: 'مصحف تفاعلي',
+      description: 'استمتع بتجربة قراءة القرآن الكريم مع خيارات البحث السريع، إضافة العلامات المرجعية، والانتقال السهل بين السور والصفحات',
+      imagePath: 'assets/images/4_15_11zon.webp',
+    ),
+    AppFeature(
+      title: 'إنشاء ختمات للقرآن الكريم',
+      description: 'نظّم ختمتك بسهولة مع تحديد الأهداف اليومية، تتبع التقدم، وتذكيرات لمساعدتك على إنهاء القرآن',
+      imagePath: 'assets/images/17_8_11zon.webp',
+    ),
+    AppFeature(
+      title: 'أذكار متنوعة',
+      description: 'مكتبة شاملة من أذكار الصباح والمساء، أذكار الصلاة، النوم، والمناسبات المختلفة مع عداد ذكي لتتبع التكرار',
+      imagePath: 'assets/images/2_13_11zon.webp',
+    ),
+    AppFeature(
+      title: 'مواقيت الصلاة',
+      description: 'احصل على مواقيت الصلاة الدقيقة حسب موقعك، مع تنبيهات قبل الأذان وإمكانية تحديد اتجاه القبلة بدقة',
+      imagePath: 'assets/images/12_3_11zon.webp',
+    ),
+    AppFeature(
+      title: 'تفسير القرآن الكريم',
+      description: 'اقرأ وافهم معاني الآيات من خلال تفاسير موثوقة لعلماء معتمدين مع إمكانية البحث والمقارنة بين التفاسير',
+      imagePath: 'assets/images/7_18_11zon.webp',
+    ),
+    AppFeature(
+      title: 'الاستماع للقرآن الكريم',
+      description: 'استمع للقرآن الكريم بصوت مشايخ مختارين مع إمكانية التكرار، التحميل للاستماع بدون إنترنت،',
+      imagePath: 'assets/images/6_17_11zon.webp',
+    ),
+    AppFeature(
+      title: 'الاستماع للأذكار والرقية الشرعية',
+      description: ' يمكنك الاستماع للأذكار والرقية الشرعية، مع خاصية التشغيل بدون انترنت',
+      imagePath: 'assets/images/3_14_11zon.webp',
+    ),
+    AppFeature(
+      title: 'المسبحة الإلكترونية',
+      description: 'سبّح بسهولة مع عداد إلكتروني ذكي يحفظ تسبيحاتك، وإحصائيات يومية',
+      imagePath: 'assets/images/19_10_11zon.webp',
+    ),
+    AppFeature(
+      title: 'تغيير حجم الخط والوضع الليلي للتطبيق',
+      description: 'خصّص تجربتك بتعديل حجم الخط حسب راحتك، مع وضع ليلي مريح للعين للقراءة في الإضاءة الخافتة',
+      imagePath: 'assets/images/9_20_11zon.webp',
+    ),
+    AppFeature(
+      title: 'إنشاء ورد من الأذكار اليومية المفضلة',
+      description: 'اختر أذكارك المفضلة وأنشئ وردك الخاص، مع جدولة التذكيرات وتتبع الالتزام اليومي',
+      imagePath: 'assets/images/14_5_11zon.webp',
+    ),
+    AppFeature(
+      title: 'لوحة تحكم احترافية لتتبع الورد اليومي',
+      description: 'راقب تقدمك بإحصائيات تفصيلية، رسوم بيانية توضح مدى التزامك، وتحفيزات لمواصلة أورادك اليومية',
+      imagePath: 'assets/images/13_4_11zon.webp',
+    ),
+    AppFeature(
+      title: 'إمكانية مشاركة ونسخ الذكر أو الأحاديث',
+      description: 'شارك الفائدة مع الآخرين بسهولة عبر نسخ النصوص أو مشاركتها مباشرة على وسائل التواصل الاجتماعي',
+      imagePath: 'assets/images/11_2_11zon.webp',
+    ),
+    AppFeature(
+      title: 'إذاعة القرآن الكريم وعلومه',
+      description: 'استمع لبث مباشر من إذاعة القرآن الكريم، مع برامج متنوعة في التفسير والفقه وعلوم القرآن',
+      imagePath: 'assets/images/18_9_11zon.webp',
+    ),
+  ];
+
+  // ✅ ميزات التحديث (للمستخدمين الحاليين)
+  static final List<AppFeature> updateFeatures = [
+    AppFeature(
+      title: 'واجهة جديدة',
+      description: 'تصميم عصري ومريح للعين مع تجربة استخدام سلسة وانتقالات سلسة بين الشاشات',
+      imagePath: 'assets/images/1_12_11zon.webp',
+    ),
+    AppFeature(
+      title: 'مصحف تفاعلي',
+      description: 'استمتع بتجربة قراءة القرآن الكريم مع خيارات البحث السريع، إضافة العلامات المرجعية، والانتقال السهل بين السور والصفحات',
+      imagePath: 'assets/images/4_15_11zon.webp',
+    ),
+    AppFeature(
+      title: 'إنشاء ختمات للقرآن الكريم',
+      description: 'نظّم ختمتك بسهولة مع تحديد الأهداف اليومية، تتبع التقدم، وتذكيرات لمساعدتك على إنهاء القرآن',
+      imagePath: 'assets/images/17_8_11zon.webp',
+    ),
+    AppFeature(
+      title: 'أذكار متنوعة',
+      description: 'مكتبة شاملة من أذكار الصباح والمساء، أذكار الصلاة، النوم، والمناسبات المختلفة مع عداد ذكي لتتبع التكرار',
+      imagePath: 'assets/images/2_13_11zon.webp',
+    ),
+    AppFeature(
+      title: 'مواقيت الصلاة',
+      description: 'احصل على مواقيت الصلاة الدقيقة حسب موقعك، مع تنبيهات قبل الأذان وإمكانية تحديد اتجاه القبلة بدقة',
+      imagePath: 'assets/images/12_3_11zon.webp',
+    ),
+    AppFeature(
+      title: 'تفسير القرآن الكريم',
+      description: 'اقرأ وافهم معاني الآيات من خلال تفاسير موثوقة لعلماء معتمدين مع إمكانية البحث والمقارنة بين التفاسير',
+      imagePath: 'assets/images/7_18_11zon.webp',
+    ),
+    AppFeature(
+      title: 'الاستماع للقرآن الكريم',
+      description: 'استمع للقرآن الكريم بصوت مشايخ مختارين مع إمكانية التكرار، التحميل للاستماع بدون إنترنت،',
+      imagePath: 'assets/images/6_17_11zon.webp',
+    ),
+    AppFeature(
+      title: 'الاستماع للأذكار والرقية الشرعية',
+      description: ' يمكنك الاستماع للأذكار والرقية الشرعية، مع خاصية التشغيل بدون انترنت',
+      imagePath: 'assets/images/3_14_11zon.webp',
+    ),
+    AppFeature(
+      title: 'المسبحة الإلكترونية',
+      description: 'سبّح بسهولة مع عداد إلكتروني ذكي يحفظ تسبيحاتك، وإحصائيات يومية',
+      imagePath: 'assets/images/19_10_11zon.webp',
+    ),
+    AppFeature(
+      title: 'تغيير حجم الخط والوضع الليلي للتطبيق',
+      description: 'خصّص تجربتك بتعديل حجم الخط حسب راحتك، مع وضع ليلي مريح للعين للقراءة في الإضاءة الخافتة',
+      imagePath: 'assets/images/9_20_11zon.webp',
+    ),
+    AppFeature(
+      title: 'إنشاء ورد من الأذكار اليومية المفضلة',
+      description: 'اختر أذكارك المفضلة وأنشئ وردك الخاص، مع جدولة التذكيرات وتتبع الالتزام اليومي',
+      imagePath: 'assets/images/14_5_11zon.webp',
+    ),
+    AppFeature(
+      title: 'لوحة تحكم احترافية لتتبع الورد اليومي',
+      description: 'راقب تقدمك بإحصائيات تفصيلية، رسوم بيانية توضح مدى التزامك، وتحفيزات لمواصلة أورادك اليومية',
+      imagePath: 'assets/images/13_4_11zon.webp',
+    ),
+    AppFeature(
+      title: 'إمكانية مشاركة ونسخ الذكر أو الأحاديث',
+      description: 'شارك الفائدة مع الآخرين بسهولة عبر نسخ النصوص أو مشاركتها مباشرة على وسائل التواصل الاجتماعي',
+      imagePath: 'assets/images/11_2_11zon.webp',
+    ),
+    AppFeature(
+      title: 'إذاعة القرآن الكريم وعلومه',
+      description: 'استمع لبث مباشر من إذاعة القرآن الكريم، مع برامج متنوعة في التفسير والفقه وعلوم القرآن',
+      imagePath: 'assets/images/18_9_11zon.webp',
+    ),
+  ];
+  // static final List<AppFeature> updateFeatures = [
+  //   AppFeature(
+  //     title: 'تحسين نظام الأذان 🔔',
+  //     description: 'نظام أذان جديد كلياً مع دقة عالية وصوت واضح، يعمل حتى مع إغلاق التطبيق',
+  //     imagePath: 'assets/images/adhan_update.png',
+  //     version: 'v1.0.5',
+  //   ),
+  //   AppFeature(
+  //     title: 'واجهة محسّنة ✨',
+  //     description: 'تصميم جديد لشاشة مواقيت الصلاة مع ألوان هادئة وتجربة أفضل',
+  //     imagePath: 'assets/images/ui_update.png',
+  //     version: 'v1.0.5',
+  //   ),
+  //   AppFeature(
+  //     title: 'إصلاح الأخطاء 🐛',
+  //     description: 'تحسينات في الأداء وإصلاح مشاكل الإشعارات والصوت',
+  //     imagePath: 'assets/images/bugfix.png',
+  //     version: 'v1.0.5',
+  //   ),
+  // ];
+
+  // ✅ يمكنك تحديث القائمة هنا مع كل إصدار جديد
+  static List<AppFeature> getFeaturesForVersion(String version) {
+    // يمكنك إضافة منطق لإرجاع ميزات معينة حسب الإصدار
+    return updateFeatures;
+  }
+}
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,350 +275,92 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Timer(
-        const Duration(seconds: 3),
-        () => Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const MainView())));
-  }
+  class _SplashScreenState extends State<SplashScreen> {
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SplashItemBuilder(),
-    );
-  }
-}
-// في main.dart أو SplashScreen
-// class SplashScreen extends StatefulWidget {
-//   const SplashScreen({super.key});
-//
-//   @override
-//   State<SplashScreen> createState() => _SplashScreenState();
-// }
-//
-// class _SplashScreenState extends State<SplashScreen> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     _checkFirstLaunch();
-//   }
-//
-//   void _checkFirstLaunch() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     bool isFirstLaunch = prefs.getBool('first_launch') ?? true;
-//     String currentVersion = await PackageInfo.fromPlatform().then((info) => info.version);
-//     String lastVersion = prefs.getString('last_version') ?? '';
-//
-//     await Future.delayed(const Duration(seconds: 2)); // وقت الشاشة التمهيدية
-//
-//     if (isFirstLaunch || currentVersion != lastVersion) {
-//       // حفظ البيانات للمرة القادمة
-//       await prefs.setBool('first_launch', false);
-//       await prefs.setString('last_version', currentVersion);
-//       final List<AppFeature> features = [
-//         AppFeature(
-//           title: 'مصحف تفاعلي',
-//           description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
-//           imagePath: 'assets/images/8.jpg',
-//         ),
-//
-//         AppFeature(
-//           title: 'مصحف تفاعلي',
-//           description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
-//           imagePath: 'assets/images/9.jpg',
-//         ),
-//
-//         AppFeature(
-//           title: 'مصحف تفاعلي',
-//           description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
-//           imagePath: 'assets/images/10.jpg',
-//         ),
-//         AppFeature(
-//           title: 'أذكار متنوعة',
-//           description: 'مجموعة شاملة من الأذكار اليومية مع تذكير وتتبع لعدد المرات',
-//           imagePath: 'assets/images/11.jpg',
-//         ),
-//         AppFeature(
-//           title: 'مواقيت الصلاة',
-//           description: 'احصل على مواقيت الصلاة بدقة مع تحديد اتجاه القبلة وتنبيهات قبل الأذان',
-//           imagePath: 'assets/images/13.jpg',
-//         ),
-//       ];
-//       // الانتقال لصفحة What's New
-//       Navigator.pushReplacement(
-//         context,
-//         MaterialPageRoute(builder: (context) => WhatsNewScreen(isFirstTime: true,newFeatures: features,)),
-//       );
-//     } else {
-//       // الانتقال للصفحة الرئيسية مباشرة
-//       Navigator.pushReplacement(
-//         context,
-//         MaterialPageRoute(builder: (context) => const MainView()),
-//       );
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const SplashItemBuilder();
-//   }
-// }
-class WhatsNewScreen extends StatefulWidget {
-  final bool isFirstTime; // هل هذه أول مرة للمستخدم؟
-  final List<AppFeature> newFeatures; // قائمة الميزات الجديدة
+    @override
+    void initState() {
+      _checkAppStateAndNavigate();
+      super.initState();
+      // Timer(
+      //     const Duration(seconds: 3),
+      //     () => Navigator.pushReplacement(context,
+      //         MaterialPageRoute(builder: (context) => const MainView())));
+    }
+// التحقق من حالة التطبيق والانتقال للشاشة المناسبة
+    Future<void> _checkAppStateAndNavigate() async {
+      try {
+        // ✅ انتظار 2 ثانية (شاشة السبلاش)
+        await Future.delayed(const Duration(seconds: 2));
 
-  const WhatsNewScreen({
-    super.key,
-    required this.isFirstTime,
-    required this.newFeatures,
-  });
+        // ✅ التحقق من حالة التطبيق
+        final appState = await VersionService.checkAppState();
 
-  @override
-  State<WhatsNewScreen> createState() => _WhatsNewScreenState();
-}
+        if (!mounted) return;
 
-class _WhatsNewScreenState extends State<WhatsNewScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // شريط التقدم
-            _buildProgressIndicator(),
-
-            // منطقة المحتوى الرئيسية
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: widget.newFeatures.length,
-                onPageChanged: (int page) {
-                  setState(() {
-                    _currentPage = page;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  return _buildFeaturePage(widget.newFeatures[index]);
-                },
-              ),
-            ),
-
-            // أزرار التنقل
-            _buildNavigationButtons(),
-
-            SizedBox(height: 20.h),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // شريط التقدم
-  Widget _buildProgressIndicator() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
-      child: Row(
-        children: [
-          ...List.generate(widget.newFeatures.length, (index) {
-            return Expanded(
-              child: Container(
-                height: 4.h,
-                margin: EdgeInsets.symmetric(horizontal: 2.w),
-                decoration: BoxDecoration(
-                  color: _currentPage >= index
-                      ? Theme.of(context).primaryColor
-                      : Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+        switch (appState) {
+          case AppState.firstTime:
+          // ✅ أول مرة - عرض جميع الميزات
+            _navigateToWhatsNew(
+              isFirstTime: true,
+              features: AppUpdates.firstTimeFeatures,
             );
-          }),
-        ],
-      ),
-    );
+            break;
+
+          case AppState.updated:
+          // ✅ تحديث - عرض الميزات الجديدة فقط
+            _navigateToWhatsNew(
+              isFirstTime: false,
+              features: AppUpdates.updateFeatures,
+            );
+            break;
+
+          case AppState.normal:
+          // ✅ استخدام عادي - الذهاب مباشرة للشاشة الرئيسية
+            _navigateToMain();
+            break;
+        }
+      } catch (e) {
+        print('❌ خطأ في التحقق من حالة التطبيق: $e');
+        // في حالة الخطأ، الذهاب للشاشة الرئيسية
+        if (mounted) {
+          _navigateToMain();
+        }
+      }
+    }
+
+    /// الانتقال لشاشة "ما الجديد"
+    void _navigateToWhatsNew({
+      required bool isFirstTime,
+      required List<AppFeature> features,
+    }) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WhatsNewView(
+            isFirstTime: isFirstTime,
+            newFeatures: features,
+          ),
+        ),
+      );
+    }
+
+    /// الانتقال للشاشة الرئيسية
+    void _navigateToMain() {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MainView(),
+        ),
+      );
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      return const Scaffold(
+        body: SplashItemBuilder(),
+      );
+    }
   }
 
-  // صفحة عرض الميزة
-  Widget _buildFeaturePage(AppFeature feature) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 30.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // الصورة التوضيحية
-          Container(
-            height: 250.h,
-            width: 250.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.grey.shade50,
-            ),
-            child: Image.asset(
-              feature.imagePath,
-              fit: BoxFit.contain,
-            ),
-          ),
 
-          SizedBox(height: 40.h),
 
-          // عنوان الميزة
-          Text(
-            feature.title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
-              fontSize: 24.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-
-          SizedBox(height: 15.h),
-
-          // وصف الميزة
-          Text(
-            feature.description,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
-              fontSize: 16.sp,
-              color: Colors.grey.shade700,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // أزرار التنقل
-  Widget _buildNavigationButtons() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 30.w),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // زر تخطي (يظهر فقط إذا لم تكن آخر صفحة)
-          if (_currentPage < widget.newFeatures.length - 1)
-            TextButton(
-              onPressed: () {
-                // الانتقال للصفحة الرئيسية
-                Navigator.pushReplacementNamed(context, 'home');
-              },
-              child: Text(
-                'تخطي',
-                style: GoogleFonts.cairo(
-                  fontSize: 16.sp,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-            )
-          else
-            const SizedBox(width: 80),
-
-          // نقاط الصفحات
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(widget.newFeatures.length, (index) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
-                width: 8.w,
-                height: 8.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentPage == index
-                      ? Theme.of(context).primaryColor
-                      : Colors.grey.shade300,
-                ),
-              );
-            }),
-          ),
-
-          // زر التالي/البدء
-          ElevatedButton(
-            onPressed: () {
-              if (_currentPage < widget.newFeatures.length - 1) {
-                _pageController.nextPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              } else {
-                // الانتقال للصفحة الرئيسية
-                Navigator.pushReplacementNamed(context, 'home');
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-            ),
-            child: Text(
-              _currentPage < widget.newFeatures.length - 1 ? 'التالي' : 'ابدأ الآن',
-              style: GoogleFonts.cairo(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-}
-
-// نموذج بيانات الميزة
-class AppFeature {
-  final String title;
-  final String description;
-  final String imagePath;
-
-  AppFeature({
-    required this.title,
-    required this.description,
-    required this.imagePath,
-  });
-}
-
-// مثال على استخدام الصفحة
-class ExampleUsage extends StatelessWidget {
-  final List<AppFeature> features = [
-    AppFeature(
-      title: 'مصحف تفاعلي',
-      description: 'استمتع بتجربة قراءة المصحف بتصميم جديد وسهل الاستخدام مع إمكانية البحث والعلامات',
-      imagePath: 'assets/images/quran_feature.png',
-    ),
-    AppFeature(
-      title: 'أذكار متنوعة',
-      description: 'مجموعة شاملة من الأذكار اليومية مع تذكير وتتبع لعدد المرات',
-      imagePath: 'assets/images/adhkar_feature.png',
-    ),
-    AppFeature(
-      title: 'مواقيت الصلاة',
-      description: 'احصل على مواقيت الصلاة بدقة مع تحديد اتجاه القبلة وتنبيهات قبل الأذان',
-      imagePath: 'assets/images/prayer_feature.png',
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return WhatsNewScreen(
-      isFirstTime: true,
-      newFeatures: features,
-    );
-  }
-}

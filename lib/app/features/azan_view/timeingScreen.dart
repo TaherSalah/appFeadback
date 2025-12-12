@@ -393,7 +393,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
 
                 // 📍 عرض الموقع الحالي بتصميم جذاب
                 if (selectedCountry != null && selectedCity != null)
-                  _buildCurrentLocation(context, isDark, selectedCountry, selectedCity),
+                  buildCurrentLocation(context, isDark, selectedCountry, selectedCity),
 
                 const SizedBox(height: 24),
 
@@ -456,50 +456,50 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              // Dropdown الدولة
-              Expanded(
-                child: _buildCustomDropdown(
-                  context: context,
-                  isDark: isDark,
-                  hint: 'الدولة',
-                  items: countries.keys.map((e) => e.toString()).toList(),
-                  value: selectedCountry,
-                  icon: Icons.public,
-                  onChanged: (value) async {
-                    if (value == null) return;
-                    final Map<String, dynamic> cityMap =
-                    (countries[value] as Map<String, dynamic>)
-                      ..removeWhere((k, v) => v == null);
-                    final firstCity = cityMap.keys.first;
-                    await con.setLocation(country: value, city: firstCity);
-                    setState(() {});
-                    await _scheduleAllPrayerNotifications();
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Dropdown المدينة
-              Expanded(
-                child: _buildCustomDropdown(
-                  context: context,
-                  isDark: isDark,
-                  hint: 'المدينة',
-                  items: cities.keys.map((e) => e.toString()).toList(),
-                  value: selectedCity,
-                  icon: Icons.location_on,
-                  onChanged: (value) async {
-                    if (value == null || selectedCountry == null) return;
-                    await con.setLocation(country: selectedCountry, city: value);
-                    setState(() {});
-                    await _scheduleAllPrayerNotifications();
-                  },
-                ),
-              ),
-            ],
-          ),
+          // const SizedBox(height: 16),
+          // Row(
+          //   children: [
+          //     // Dropdown الدولة
+          //     Expanded(
+          //       child: _buildCustomDropdown(
+          //         context: context,
+          //         isDark: isDark,
+          //         hint: 'الدولة',
+          //         items: countries.keys.map((e) => e.toString()).toList(),
+          //         value: selectedCountry,
+          //         icon: Icons.public,
+          //         onChanged: (value) async {
+          //           if (value == null) return;
+          //           final Map<String, dynamic> cityMap =
+          //           (countries[value] as Map<String, dynamic>)
+          //             ..removeWhere((k, v) => v == null);
+          //           final firstCity = cityMap.keys.first;
+          //           await con.setLocation(country: value, city: firstCity);
+          //           setState(() {});
+          //           await _scheduleAllPrayerNotifications();
+          //         },
+          //       ),
+          //     ),
+          //     const SizedBox(width: 12),
+          //     // Dropdown المدينة
+          //     Expanded(
+          //       child: _buildCustomDropdown(
+          //         context: context,
+          //         isDark: isDark,
+          //         hint: 'المدينة',
+          //         items: cities.keys.map((e) => e.toString()).toList(),
+          //         value: selectedCity,
+          //         icon: Icons.location_on,
+          //         onChanged: (value) async {
+          //           if (value == null || selectedCountry == null) return;
+          //           await con.setLocation(country: selectedCountry, city: value);
+          //           setState(() {});
+          //           await _scheduleAllPrayerNotifications();
+          //         },
+          //       ),
+          //     ),
+          //   ],
+          // ),
           const SizedBox(height: 12),
           // زر GPS
           InkWell(
@@ -622,52 +622,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
     );
   }
 
-// 📍 عرض الموقع الحالي
-  Widget _buildCurrentLocation(
-      BuildContext context,
-      bool isDark,
-      String selectedCountry,
-      String selectedCity,
-      ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        // gradient: LinearGradient(
-        //   colors:
-        //      [Colors.indigo.shade800, Colors.purple.shade900]
-        //       // : [Colors.blue.shade100, Colors.purple.shade100],
-        // ),
-        borderRadius: BorderRadius.circular(16),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: isDark ? Colors.black38 : Colors.blue.withOpacity(0.2),
-        //     blurRadius: 10,
-        //     offset: const Offset(0, 4),
-        //   ),
-        // ],
-        color: AppThemeColors.cardBackgroundColor(context)
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.place_rounded,
-            color: isDark ? Colors.amberAccent : Colors.blue.shade800,
-            size: 24,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            '$selectedCountry - $selectedCity',
-            style: GoogleFonts.cairo(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
 // ⏰ بطاقة الصلاة القادمة
   Widget _buildNextPrayerCard(
@@ -1635,7 +1590,52 @@ class _AdhanSettingsDialogState extends State<AdhanSettingsDialog> {
 
 
 
-
+// 📍 عرض الموقع الحالي
+Widget buildCurrentLocation(
+    BuildContext context,
+    bool isDark,
+    String selectedCountry,
+    String selectedCity,
+    ) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+    decoration: BoxDecoration(
+      // gradient: LinearGradient(
+      //   colors:
+      //      [Colors.indigo.shade800, Colors.purple.shade900]
+      //       // : [Colors.blue.shade100, Colors.purple.shade100],
+      // ),
+        borderRadius: BorderRadius.circular(16),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: isDark ? Colors.black38 : Colors.blue.withOpacity(0.2),
+        //     blurRadius: 10,
+        //     offset: const Offset(0, 4),
+        //   ),
+        // ],
+        color: AppThemeColors.cardBackgroundColor(context)
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.place_rounded,
+          color: isDark ? Colors.amberAccent : Colors.blue.shade800,
+          size: 24,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '$selectedCountry - $selectedCity',
+          style: GoogleFonts.cairo(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
 // <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 // ```
