@@ -4,19 +4,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-import 'package:muslimdaily/app/features/azan_view/timeingScreen.dart';
+import 'package:muslimdaily/app/features/azanView/timeingScreen.dart';
+import 'package:muslimdaily/app/features/messa_view/azkar_massa.dart';
 
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
-
-
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 
 class IslamicCardWidget extends StatelessWidget {
   final String title;
@@ -50,10 +47,10 @@ class IslamicCardWidget extends StatelessWidget {
               image: isDark
                   ? null
                   : const DecorationImage(
-                opacity: 0.4,
-                image: AssetImage("assets/images/8180jjj00005.webp"),
-                fit: BoxFit.cover,
-              ),
+                      opacity: 0.4,
+                      image: AssetImage("assets/images/8180jjj00005.webp"),
+                      fit: BoxFit.cover,
+                    ),
               boxShadow: [
                 BoxShadow(
                   color: Theme.of(context).cardColor,
@@ -109,12 +106,9 @@ class IslamicCardWidget extends StatelessWidget {
   }
 }
 
-
-
-
-
-void showThemeSheet( BuildContext ctx, {
-  VoidCallback? onLocationChanged,   // 👈 باراميتر مُسمّى
+void showThemeSheet(
+  BuildContext ctx, {
+  VoidCallback? onLocationChanged, // 👈 باراميتر مُسمّى
 }) {
   final cubit = CentralizedCubit.get(ctx);
   final currentTheme = cubit.themeMode();
@@ -124,8 +118,7 @@ void showThemeSheet( BuildContext ctx, {
   ThemeMode tempTheme = currentTheme;
   final isDark = Theme.of(ctx).brightness == Brightness.dark;
 
-  final Color primary =
-  isDark ? AppColors.primary : const Color(0xFF1B5E20);
+  final Color primary = isDark ? AppColors.primary : const Color(0xFF1B5E20);
   final Color accentGold = const Color(0xFFD4AF37);
 
   // مفاتيح SharedPreferences
@@ -179,7 +172,7 @@ void showThemeSheet( BuildContext ctx, {
       final savedAllow = prefs.getBool(kAllowLocationKey);
 
       final String response =
-      await rootBundle.loadString('assets/images/egypt_governorates.json');
+          await rootBundle.loadString('assets/images/egypt_governorates.json');
       final data = json.decode(response) as Map<String, dynamic>;
 
       final Map<String, dynamic> loadedCountries = data;
@@ -188,13 +181,13 @@ void showThemeSheet( BuildContext ctx, {
           ? 'مصر'
           : loadedCountries.keys.first;
 
-      String country = savedCountry != null &&
-          loadedCountries.keys.contains(savedCountry)
-          ? savedCountry
-          : defaultCountry;
+      String country =
+          savedCountry != null && loadedCountries.keys.contains(savedCountry)
+              ? savedCountry
+              : defaultCountry;
 
-      Map<String, dynamic> loadedCities =
-      (loadedCountries[country] as Map<String, dynamic>)
+      Map<String, dynamic> loadedCities = (loadedCountries[country]
+          as Map<String, dynamic>)
         ..removeWhere((k, v) => v == null);
 
       String city = (savedCity != null && loadedCities.keys.contains(savedCity))
@@ -231,17 +224,18 @@ void showThemeSheet( BuildContext ctx, {
 
   // تحديد أقرب مدينة تلقائيًا داخل الـ BottomSheet
   Future<void> _selectByLocationInSheet(
-      void Function(void Function()) setState,
-      BuildContext context,
-      ) async {
+    void Function(void Function()) setState,
+    BuildContext context,
+  ) async {
     final ok = await _ensureLocationPermission();
     if (!ok) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text('تعذّر استخدام الموقع. تحقق من الصلاحيات وخدمة الموقع.'),
-    //     ),
-    //   );
-      KHelper.showError(message: 'تعذّر استخدام الموقع. تحقق من الصلاحيات وخدمة الموقع.');
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       content: Text('تعذّر استخدام الموقع. تحقق من الصلاحيات وخدمة الموقع.'),
+      //     ),
+      //   );
+      KHelper.showError(
+          message: 'تعذّر استخدام الموقع. تحقق من الصلاحيات وخدمة الموقع.');
 
       setState(() {
         allowLocationUsage = false;
@@ -290,10 +284,10 @@ void showThemeSheet( BuildContext ctx, {
       KHelper.showSuccess(message: 'تم تحديد الموقع: $bestCountry - $bestCity');
 
       // ScaffoldMessenger.of(context).showSnackBar(
-        // SnackBar(
-        //   content: Text('تم تحديد الموقع: $bestCountry - $bestCity'),
-        // ),
-        
+      // SnackBar(
+      //   content: Text('تم تحديد الموقع: $bestCountry - $bestCity'),
+      // ),
+
       // );
     } else {
       KHelper.showError(message: 'لم يتم العثور على مدينة مناسبة في البيانات.');
@@ -317,8 +311,7 @@ void showThemeSheet( BuildContext ctx, {
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Container(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 gradient: LinearGradient(
@@ -326,13 +319,13 @@ void showThemeSheet( BuildContext ctx, {
                   end: Alignment.bottomCenter,
                   colors: isDark
                       ? [
-                    const Color(0xFF0B0F16),
-                    const Color(0xFF111827),
-                  ]
+                          const Color(0xFF0B0F16),
+                          const Color(0xFF111827),
+                        ]
                       : [
-                    const Color(0xFFFDFCF8),
-                    const Color(0xFFF3F1E8),
-                  ],
+                          const Color(0xFFFDFCF8),
+                          const Color(0xFFF3F1E8),
+                        ],
                 ),
                 border: Border.all(
                   color: accentGold.withOpacity(0.7),
@@ -370,8 +363,9 @@ void showThemeSheet( BuildContext ctx, {
                         const SizedBox(width: 8),
                         Text(
                           text,
-                          style:  TextStyle(
-                            fontSize:ResponsiveUtil.isTablet(context)? 16:13.sp,
+                          style: TextStyle(
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 16 : 13.sp,
                             fontFamily: "cairo",
                             fontWeight: FontWeight.w600,
                           ),
@@ -405,8 +399,8 @@ void showThemeSheet( BuildContext ctx, {
                               color: selected
                                   ? primary
                                   : (isDark
-                                  ? Colors.white24
-                                  : Colors.grey.shade300),
+                                      ? Colors.white24
+                                      : Colors.grey.shade300),
                               width: selected ? 1.4 : 1,
                             ),
                           ),
@@ -415,8 +409,7 @@ void showThemeSheet( BuildContext ctx, {
                             children: [
                               Icon(icon,
                                   size: 18,
-                                  color:
-                                  selected ? primary : Colors.grey[600]),
+                                  color: selected ? primary : Colors.grey[600]),
                               const SizedBox(width: 6),
                               Flexible(
                                 child: Text(
@@ -428,8 +421,8 @@ void showThemeSheet( BuildContext ctx, {
                                     color: selected
                                         ? primary
                                         : (isDark
-                                        ? Colors.grey[200]
-                                        : Colors.grey[800]),
+                                            ? Colors.grey[200]
+                                            : Colors.grey[800]),
                                   ),
                                 ),
                               ),
@@ -485,8 +478,7 @@ void showThemeSheet( BuildContext ctx, {
                           children: [
                             themeChip(
                                 'فاتح', Icons.light_mode, ThemeMode.light),
-                            themeChip(
-                                'داكن', Icons.dark_mode, ThemeMode.dark),
+                            themeChip('داكن', Icons.dark_mode, ThemeMode.dark),
                             themeChip('حسب النظام', Icons.phone_android,
                                 ThemeMode.system),
                           ],
@@ -494,9 +486,7 @@ void showThemeSheet( BuildContext ctx, {
 
                         const SizedBox(height: 18),
                         Divider(
-                          color: isDark
-                              ? Colors.white10
-                              : Colors.grey.shade300,
+                          color: isDark ? Colors.white10 : Colors.grey.shade300,
                           height: 24,
                         ),
 
@@ -551,9 +541,8 @@ void showThemeSheet( BuildContext ctx, {
                             overlayColor: WidgetStatePropertyAll(
                                 primary.withOpacity(0.2)),
                             activeColor: primary,
-                            inactiveColor: isDark
-                                ? Colors.white10
-                                : Colors.grey.shade300,
+                            inactiveColor:
+                                isDark ? Colors.white10 : Colors.grey.shade300,
                             value: tempFont,
                             min: 10,
                             max: 100,
@@ -790,7 +779,11 @@ void showThemeSheet( BuildContext ctx, {
                                 //         : Colors.grey.shade700,
                                 //   ),
                                 // ),
-                                buildCurrentLocation(context, isDark, selectedCountry.toString(), selectedCity.toString()),
+                                buildCurrentLocation(
+                                    context,
+                                    isDark,
+                                    selectedCountry.toString(),
+                                    selectedCity.toString()),
                               const SizedBox(height: 10),
 
                               // سويتش السماح باستخدام الموقع مع تشغيل تحديد تلقائي عند التفعيل
@@ -854,11 +847,11 @@ void showThemeSheet( BuildContext ctx, {
                             TextButton(
                               onPressed: hasChanges
                                   ? () {
-                                setState(() {
-                                  tempTheme = currentTheme;
-                                  tempFont = currentFont;
-                                });
-                              }
+                                      setState(() {
+                                        tempTheme = currentTheme;
+                                        tempFont = currentFont;
+                                      });
+                                    }
                                   : null,
                               child: Text(
                                 'استرجاع',
@@ -867,34 +860,31 @@ void showThemeSheet( BuildContext ctx, {
                                   color: hasChanges
                                       ? primary
                                       : (isDark
-                                      ? Colors.grey[600]
-                                      : Colors.grey[400]),
+                                          ? Colors.grey[600]
+                                          : Colors.grey[400]),
                                 ),
                               ),
                             ),
                             const SizedBox(width: 6),
                             ElevatedButton(
                               style: ButtonStyle(
-                                elevation:
-                                const WidgetStatePropertyAll(0),
+                                elevation: const WidgetStatePropertyAll(0),
                                 shape: WidgetStatePropertyAll(
                                   RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                backgroundColor:
-                                WidgetStatePropertyAll(hasChanges
-                                    ? primary
-                                    : primary.withOpacity(0.4)),
+                                backgroundColor: WidgetStatePropertyAll(
+                                    hasChanges
+                                        ? primary
+                                        : primary.withOpacity(0.4)),
                               ),
                               onPressed: hasChanges
                                   ? () async {
-                                await cubit.setThemeMode(tempTheme);
-                                await cubit
-                                    .setAzkarFontSize(tempFont);
-                                Navigator.pop(bc);
-                              }
+                                      await cubit.setThemeMode(tempTheme);
+                                      await cubit.setAzkarFontSize(tempFont);
+                                      Navigator.pop(bc);
+                                    }
                                   : null,
                               child: const Padding(
                                 padding: EdgeInsets.symmetric(
@@ -921,6 +911,51 @@ void showThemeSheet( BuildContext ctx, {
   );
 }
 
+// 📍 عرض الموقع الحالي
+Widget buildCurrentLocation(
+  BuildContext context,
+  bool isDark,
+  String selectedCountry,
+  String selectedCity,
+) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+    decoration: BoxDecoration(
+        // gradient: LinearGradient(
+        //   colors:
+        //      [Colors.indigo.shade800, Colors.purple.shade900]
+        //       // : [Colors.blue.shade100, Colors.purple.shade100],
+        // ),
+        borderRadius: BorderRadius.circular(16),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: isDark ? Colors.black38 : Colors.blue.withOpacity(0.2),
+        //     blurRadius: 10,
+        //     offset: const Offset(0, 4),
+        //   ),
+        // ],
+        color: AppThemeColors.cardBackgroundColor(context)),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.place_rounded,
+          color: isDark ? Colors.amberAccent : Colors.blue.shade800,
+          size: 24,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '$selectedCountry - $selectedCity',
+          style: GoogleFonts.cairo(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
 // void showThemeSheet(BuildContext ctx) {
 //   final cubit = CentralizedCubit.get(ctx);

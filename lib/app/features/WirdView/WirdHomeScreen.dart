@@ -1,4 +1,3 @@
-
 // =============== الشاشة الرئيسية ===============
 import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
@@ -60,7 +59,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-bool isTab = ResponsiveUtil.isTablet(context) ;
+    bool isTab = ResponsiveUtil.isTablet(context);
     return Scaffold(
       backgroundColor: isDark ? Colors.grey.shade900 : Colors.grey.shade50,
       // appBar: AppBar(
@@ -84,10 +83,10 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
       // ),
       appBar: PreferredSize(
         preferredSize:
-        Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+            Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
         child: AppBar(
-          leading:  CupertinoNavigationBarBackButton(
-            color:isDark? Colors.white :Colors.black,
+          leading: CupertinoNavigationBarBackButton(
+            color: isDark ? Colors.white : Colors.black,
           ),
           actions: [
             IconButton(
@@ -106,9 +105,9 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                 );
 
 // بعد العودة، أعد تحميل البيانات
-                final updatedStats = await manager.loadStats(); // أو UserStats.loadFromPrefs()
+                final updatedStats =
+                    await manager.loadStats(); // أو UserStats.loadFromPrefs()
                 setState(() => stats = updatedStats);
-
               },
               icon: const Icon(Icons.bar_chart),
             )
@@ -127,47 +126,57 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
 
       body: isLoading
           ? Center(child: KLoading.progressIOSIndicator(context: context))
-          :  Directionality(
-        textDirection: TextDirection.rtl,
-        child: Column(
-          children: [
-            // بطاقة الإحصائيات السريعة
-            _buildStatsCard(isDark),
-
-            // فلتر الفئات
-            if (categories.length > 1)
-              _buildCategoryFilter(isDark),
-
-            // قائمة الأوراد
-            Expanded(
-              child: ListView(
-
-                padding: const EdgeInsets.all(16),
+          : Directionality(
+              textDirection: TextDirection.rtl,
+              child: Column(
                 children: [
-                  ExpansionTile(
-                    initiallyExpanded: true,
-                    title: Text('الأوراد الجارية (${filteredAwrad.length})',style: TextStyle(fontFamily: "me",fontSize: isTab?12.sp:20.sp),),
-                    children: filteredAwrad
-                        .map((wird) => _buildWirdCard(wird, isDark: isDark))
-                        .toList(),
-                  ),
-                  ExpansionTile(
-                    initiallyExpanded: false,
-                    title: Text('الأوراد المنجزة (${completedAwrad.length})',style: TextStyle(fontFamily: "me",fontSize: isTab?12.sp:20.sp),),
-                    children: completedAwrad
-                        .map((wird) => _buildWirdCard(wird, isDark: isDark, completed: true))
-                        .toList(),
+                  // بطاقة الإحصائيات السريعة
+                  _buildStatsCard(isDark),
+
+                  // فلتر الفئات
+                  if (categories.length > 1) _buildCategoryFilter(isDark),
+
+                  // قائمة الأوراد
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        ExpansionTile(
+                          enabled: true,
+                          initiallyExpanded: true,
+                          title: Text(
+                            'الأوراد الجارية (${filteredAwrad.length})',
+                            style: TextStyle(
+                                fontFamily: "me",
+                                fontSize: isTab ? 12.sp : 20.sp),
+                          ),
+                          children: filteredAwrad
+                              .map((wird) =>
+                                  _buildWirdCard(wird, isDark: isDark))
+                              .toList(),
+                        ),
+                        ExpansionTile(
+                          initiallyExpanded: false,
+                          title: Text(
+                            'الأوراد المنجزة (${completedAwrad.length})',
+                            style: TextStyle(
+                                fontFamily: "me",
+                                fontSize: isTab ? 12.sp : 20.sp),
+                          ),
+                          children: completedAwrad
+                              .map((wird) => _buildWirdCard(wird,
+                                  isDark: isDark, completed: true))
+                              .toList(),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
       floatingActionButton: Directionality(
         textDirection: TextDirection.rtl,
         child: FloatingActionButton.extended(
-
           onPressed: () async {
             final newWird = await Navigator.push(
               context,
@@ -182,10 +191,12 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
           },
           icon: const Icon(Icons.add),
           // label: const TextDefaultWidget(title: 'إضافة ورد جديد',fontWeight: FontWeight.bold,fontFamily: "cairo",color: Colors.white,),
-          label: Text('إضافة ورد جديد',style: TextStyle(fontFamily: "me",fontSize: isTab?12.sp:20.sp),),
-          backgroundColor:isDark? Colors.black: const Color(0xFF00897B),
+          label: Text(
+            'إضافة ورد جديد',
+            style: TextStyle(fontFamily: "me", fontSize: isTab ? 12.sp : 20.sp),
+          ),
+          backgroundColor: isDark ? Colors.black : const Color(0xFF00897B),
           foregroundColor: Colors.white,
-
         ),
       ),
     );
@@ -207,9 +218,12 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildStatItem('🔥', '${stats.currentStreak}', 'يوم متتالي', isDark),
-            _buildStatItem('⭐', 'المستوى ${stats.level}', '${stats.totalTasbihat} تسبيحة', isDark),
-            _buildStatItem('🏆', '${stats.achievements.length}', 'إنجاز', isDark),
+            _buildStatItem(
+                '🔥', '${stats.currentStreak}', 'يوم متتالي', isDark),
+            _buildStatItem('⭐', 'المستوى ${stats.level}',
+                '${stats.totalTasbihat} تسبيحة', isDark),
+            _buildStatItem(
+                '🏆', '${stats.achievements.length}', 'إنجاز', isDark),
           ],
         ),
       ),
@@ -221,8 +235,18 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
       children: [
         Text(emoji, style: const TextStyle(fontSize: 24)),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white,fontFamily: "me")),
-        Text(label, style: const TextStyle(fontSize: 20, color: Colors.white70,fontFamily: "me",fontWeight: FontWeight.bold)),
+        Text(value,
+            style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontFamily: "me")),
+        Text(label,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.white70,
+                fontFamily: "me",
+                fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -244,7 +268,8 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
               onTap: () => setState(() => selectedCategory = cat),
               child: Container(
                 margin: const EdgeInsets.only(left: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? KColors.primaryColor
@@ -257,8 +282,11 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                 child: Text(
                   cat,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : (isDark ? Colors.white : Colors.black87),
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected
+                        ? Colors.white
+                        : (isDark ? Colors.white : Colors.black87),
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ),
@@ -269,8 +297,10 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
     );
   }
 
-  Widget _buildWirdCard(Wird wird, {required bool isDark, bool completed = false}) {
-    final totalCount = wird.adhkar.fold<int>(0, (sum, dhikr) => sum + dhikr.targetCount);
+  Widget _buildWirdCard(Wird wird,
+      {required bool isDark, bool completed = false}) {
+    final totalCount =
+        wird.adhkar.fold<int>(0, (sum, dhikr) => sum + dhikr.targetCount);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -284,46 +314,47 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
           onTap: completed
               ? null
               : () async {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TasbihScreen(
-                  wird: wird,
-                  isDark: isDark,
-                ),
-              ),
-            );
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TasbihScreen(
+                        wird: wird,
+                        isDark: isDark,
+                      ),
+                    ),
+                  );
 
-            if (result == 'completed') {
-              setState(() {
-                wird.isCompleted = true;
-                awrad.remove(wird);
-                completedAwrad.add(wird);
-              });
-              await manager.saveAwrad([...awrad, ...completedAwrad]);
-              // ScaffoldMessenger.of(context).showSnackBar(
-                // const SnackBar(content: Text('✅ تم نقل الورد إلى قائمة الأوراد المنجزة')),
+                  if (result == 'completed') {
+                    setState(() {
+                      wird.isCompleted = true;
+                      awrad.remove(wird);
+                      completedAwrad.add(wird);
+                    });
+                    await manager.saveAwrad([...awrad, ...completedAwrad]);
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    // const SnackBar(content: Text('✅ تم نقل الورد إلى قائمة الأوراد المنجزة')),
 
-              // );
-              KHelper.showSuccess(message: "تم نقل الورد إلى قائمة الأوراد المنجزة");
-            } else if (result == true) {
-              await manager.saveAwrad([...awrad, ...completedAwrad]);
-              await loadData();
-            }
-            // فحص الإنجازات الجديدة
-            final oldAchievementsCount = stats.achievements.length;
-            final updatedStats = await manager.loadStats();
+                    // );
+                    KHelper.showSuccess(
+                        message: "تم نقل الورد إلى قائمة الأوراد المنجزة");
+                  } else if (result == true) {
+                    await manager.saveAwrad([...awrad, ...completedAwrad]);
+                    await loadData();
+                  }
+                  // فحص الإنجازات الجديدة
+                  final oldAchievementsCount = stats.achievements.length;
+                  final updatedStats = await manager.loadStats();
 
-            if (updatedStats.achievements.length > oldAchievementsCount) {
-              KHelper.showSuccess(
-                message: "🎉 إنجاز جديد! تحقق من صفحة الإحصائيات",
-              );
-            }
+                  if (updatedStats.achievements.length > oldAchievementsCount) {
+                    KHelper.showSuccess(
+                      message: "🎉 إنجاز جديد! تحقق من صفحة الإحصائيات",
+                    );
+                  }
 
-            setState(() {
-              stats = updatedStats;
-            });
-          },
+                  setState(() {
+                    stats = updatedStats;
+                  });
+                },
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -335,7 +366,8 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                     color: Colors.teal.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Center(child: Text('📿', style: TextStyle(fontSize: 30))),
+                  child: const Center(
+                      child: Text('📿', style: TextStyle(fontSize: 30))),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -353,16 +385,19 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                       const SizedBox(height: 4),
                       Text(
                         '${wird.adhkar.length} ذكر • $totalCount تسبيحة',
-                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                        style:
+                            const TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(Icons.check_circle, size: 16, color: Colors.green),
+                          const Icon(Icons.check_circle,
+                              size: 16, color: Colors.green),
                           const SizedBox(width: 4),
                           Text(
                             'أكملته ${wird.completedCount} مرة',
-                            style: const TextStyle(color: Colors.green, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.green, fontSize: 12),
                           ),
                         ],
                       ),
@@ -378,7 +413,8 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                 ),
 
                 if (!completed)
-                  const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                  const Icon(Icons.arrow_forward_ios,
+                      size: 16, color: Colors.grey),
               ],
             ),
           ),
@@ -386,6 +422,7 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
       ),
     );
   }
+
   void showDeleteWirdDialog(Wird wird, {required bool completed}) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -395,7 +432,8 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
       builder: (dialogContext) => Directionality(
         textDirection: TextDirection.rtl,
         child: Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           backgroundColor: Colors.transparent,
           child: Stack(
             clipBehavior: Clip.none,
@@ -437,7 +475,7 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                     // النص التحذيري
                     Text(
                       'هل أنت متأكد من رغبتك في حذف هذا الورد؟\n'
-                          'سيتم حذف جميع التقدّم المرتبط به ولا يمكن التراجع عن هذه العملية.',
+                      'سيتم حذف جميع التقدّم المرتبط به ولا يمكن التراجع عن هذه العملية.',
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.4,
@@ -487,7 +525,8 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () {
-                              Navigator.of(dialogContext).pop(); // إغلاق الديالوج فقط
+                              Navigator.of(dialogContext)
+                                  .pop(); // إغلاق الديالوج فقط
                             },
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(
@@ -498,8 +537,7 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 11),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
                             ),
                             child: Text(
                               'تراجع',
@@ -528,7 +566,8 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                               await manager
                                   .saveAwrad([...awrad, ...completedAwrad]);
 
-                              Navigator.of(dialogContext).pop(); // إغلاق الديالوج
+                              Navigator.of(dialogContext)
+                                  .pop(); // إغلاق الديالوج
                               KHelper.showSuccess(
                                 message: "تم حذف الورد بنجاح",
                               );
@@ -541,8 +580,7 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 11),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
                             ),
                           ),
                         ),
@@ -591,7 +629,4 @@ bool isTab = ResponsiveUtil.isTablet(context) ;
       ),
     );
   }
-
-
 }
-

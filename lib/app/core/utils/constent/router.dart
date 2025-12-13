@@ -1,4 +1,3 @@
-
 import 'package:muslimdaily/app/features/Khatmah/view/ComplateKhatmaView.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/KhatmahDashboard.dart';
 import 'package:muslimdaily/app/features/channal/view/QuranChannalPlayerView.dart';
@@ -13,7 +12,7 @@ import 'package:muslimdaily/app/features/radio/view/widget/RadioSearchScreen.dar
 
 import '../../../features/WirdView/WirdHomeScreen.dart';
 import '../../../features/aboutView/about.dart';
-import '../../../features/azan_view/timeingScreen.dart';
+import '../../../features/azanView/timeingScreen.dart';
 import '../../../features/categories/categories_view.dart';
 import '../../../features/categories/view/categories_details.dart';
 import '../../../features/counter_view/counter_azkar.dart';
@@ -34,8 +33,6 @@ import '../../../features/sabah_view/azkar_sabah.dart';
 import '../../../features/sleep_view/sleep_azkar.dart';
 import '../../../features/splash_view/splash.dart';
 import '../../shard/exports/all_exports.dart';
-
-
 
 class Routes {
   static const String splashRoute = "/";
@@ -74,6 +71,7 @@ class Routes {
   static const String quranKhitamRoute = "/QuranKhitamView";
   static const String tafsirQuranRoute = "/TafsirQuranView";
 }
+
 class QuranRadioPlayerArgs {
   final String title;
   final String streamUrl;
@@ -87,24 +85,24 @@ class QuranRadioPlayerArgs {
 
 class RouteGenerator {
   static Route<dynamic> getRoute(
-      RouteSettings settings,
-      BuildContext context,
-      ) {
+    RouteSettings settings,
+    BuildContext context,
+  ) {
     final arguments = settings.arguments;
 
     switch (settings.name) {
       case Routes.splashRoute:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
-        case Routes.quranKhitamRoute:
+      case Routes.quranKhitamRoute:
         return MaterialPageRoute(builder: (_) => const QuranKhitamView());
-        case Routes.hizbeListScreenRoute:
+      case Routes.hizbeListScreenRoute:
         return MaterialPageRoute(builder: (_) => const HizbeListScreen());
-        case Routes.jozzaListScreenRoute:
+      case Routes.jozzaListScreenRoute:
         return MaterialPageRoute(builder: (_) => const JozzsListScreen());
-        case Routes.tafsirQuranRoute:
+      case Routes.tafsirQuranRoute:
         return MaterialPageRoute(builder: (_) => const TafsirQuranView());
 
-    // ⬇️ الروت الجديد للبلاير
+      // ⬇️ الروت الجديد للبلاير
       case "/QuranRadioPlayerView":
         final args = arguments is QuranRadioPlayerArgs ? arguments : null;
         if (args == null) {
@@ -115,7 +113,6 @@ class RouteGenerator {
             title: args.title,
             streamUrl: args.streamUrl,
             compact: args.compact,
-
           ),
         );
 
@@ -123,24 +120,22 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const CategoriesView());
       case Routes.homeRoute:
         return MaterialPageRoute(builder: (_) => const HadithView());
-        case Routes.quranLoveRoute:
+      case Routes.quranLoveRoute:
         return MaterialPageRoute(builder: (_) => const QuranLoveView());
       case Routes.hadithDetailsRoute:
         return MaterialPageRoute(
             builder: (_) => HadithDetailsView(
-              hadithId: arguments as dynamic,
-            ));
+                  hadithId: arguments as dynamic,
+                ));
       case Routes.cateDetailsRoute:
         return MaterialPageRoute(
             builder: (_) => CategoriesDetailsView(
-              categoriesDetailsPrams: arguments as CategoriesDetailsPrams,
-            ));
-    // ⬇️ الروت الجديد للبلاير
+                  categoriesDetailsPrams: arguments as CategoriesDetailsPrams,
+                ));
+      // ⬇️ الروت الجديد للبلاير
       case "/QuranChannalPlayerView":
-
         return MaterialPageRoute(
-          builder: (_) => const QuranChannalPlayerView(
-          ),
+          builder: (_) => const QuranChannalPlayerView(),
         );
 
       case 'home':
@@ -148,11 +143,11 @@ class RouteGenerator {
       case '/azkarSabah':
         return MaterialPageRoute(builder: (_) => const AzkarSabah());
 
-        case '/compplateKhatna':
+      case '/compplateKhatna':
         return MaterialPageRoute(builder: (_) => const ComplateKhatmaView());
 
       case '/WirdHomeScreen':
-        return MaterialPageRoute(builder: (_) =>  WirdHomeScreen());
+        return MaterialPageRoute(builder: (_) => WirdHomeScreen());
 
       case '/azkarMassa':
         return MaterialPageRoute(builder: (_) => const AzkarMassa());
@@ -160,21 +155,21 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const PrayerAzkar());
       case '/surahListScreen':
         return MaterialPageRoute(builder: (_) => const QuranView());
-       case '/ListScreen':
-        return MaterialPageRoute(builder: (_) =>  const SurahListScreen());
-        case '/RadioSearchScreen':
-        return MaterialPageRoute(builder: (_) =>  const RadioSearchScreen());
+      case '/ListScreen':
+        return MaterialPageRoute(builder: (_) => const SurahListScreen());
+      case '/RadioSearchScreen':
+        return MaterialPageRoute(builder: (_) => const RadioSearchScreen());
       case '/ayaSearchScreen':
-        return MaterialPageRoute(builder: (_) =>  const AyaSearchScreen());
-        case '/ayaBookmarkScreen':
-        return MaterialPageRoute(builder: (_) =>  const AyaBookmarkScreen());
+        return MaterialPageRoute(builder: (_) => const AyaSearchScreen());
+      case '/ayaBookmarkScreen':
+        return MaterialPageRoute(builder: (_) => const AyaBookmarkScreen());
       case '/timingScreen':
         return MaterialPageRoute(builder: (_) => const TimingScreen());
 
       case '/allazkarlistview':
         return MaterialPageRoute(builder: (_) => const Allazkarlistview());
       case '/qiblaDirection':
-        return MaterialPageRoute(builder: (_) =>  QiblaDirection());
+        return MaterialPageRoute(builder: (_) => QiblaDirection());
 
       case '/azkarCounter':
         return MaterialPageRoute(builder: (_) => const AzkarCounter());
@@ -185,12 +180,12 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const RokiaScreen());
       case '/azkarOthers':
         return MaterialPageRoute(builder: (_) => const AzkarOthers());
-        case '/KhatmahHome':
+      case '/KhatmahHome':
         return MaterialPageRoute(builder: (_) => const KhatmahDashboard());
 
       case '/about':
         return MaterialPageRoute(builder: (_) => const About());
-        case '/QuranRadioView':
+      case '/QuranRadioView':
         return MaterialPageRoute(builder: (_) => const QuranRadioView());
 
       default:
@@ -215,6 +210,7 @@ class RouteGenerator {
       ),
     );
   }
+
   static Route _badArgsRoute(String msg) {
     return MaterialPageRoute(
       builder: (_) => Scaffold(
@@ -224,4 +220,3 @@ class RouteGenerator {
     );
   }
 }
-

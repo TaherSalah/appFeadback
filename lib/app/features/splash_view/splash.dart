@@ -1,5 +1,3 @@
-
-
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 // ============================================
@@ -14,8 +12,7 @@ import '../main_view/MainView.dart';
 
 class VersionService {
   static const String _lastVersionKey = 'last_app_version';
-  static const String _isFirstTimeKey = 'is_first_time';
-
+  static const String _isFirstTimeKey = 'is_first_tتال';
 
   /// التحقق من حالة التطبيق (أول مرة، تحديث، أو استخدام عادي)
   static Future<AppState> checkAppState() async {
@@ -31,12 +28,10 @@ class VersionService {
       await prefs.setBool(_isFirstTimeKey, false);
       await prefs.setString(_lastVersionKey, currentVersion);
       return AppState.firstTime;
-
     } else if (savedVersion == null || savedVersion != currentVersion) {
       // ✅ تحديث التطبيق
       await prefs.setString(_lastVersionKey, currentVersion);
       return AppState.updated;
-
     } else {
       // ✅ استخدام عادي
       return AppState.normal;
@@ -65,9 +60,9 @@ class VersionService {
 
 /// حالات التطبيق
 enum AppState {
-  firstTime,  // أول مرة
-  updated,    // تم التحديث
-  normal,     // استخدام عادي
+  firstTime, // أول مرة
+  updated, // تم التحديث
+  normal, // استخدام عادي
 }
 
 // ============================================
@@ -97,72 +92,86 @@ class AppUpdates {
   static final List<AppFeature> firstTimeFeatures = [
     AppFeature(
       title: 'واجهة جديدة',
-      description: 'تصميم عصري ومريح للعين مع تجربة استخدام سلسة وانتقالات سلسة بين الشاشات',
+      description:
+          'تصميم عصري ومريح للعين مع تجربة استخدام سلسة وانتقالات سلسة بين الشاشات',
       imagePath: 'assets/images/1_12_11zon.webp',
     ),
     AppFeature(
       title: 'مصحف تفاعلي',
-      description: 'استمتع بتجربة قراءة القرآن الكريم مع خيارات البحث السريع، إضافة العلامات المرجعية، والانتقال السهل بين السور والصفحات',
+      description:
+          'استمتع بتجربة قراءة القرآن الكريم مع خيارات البحث السريع، إضافة العلامات المرجعية، والانتقال السهل بين السور والصفحات',
       imagePath: 'assets/images/4_15_11zon.webp',
     ),
     AppFeature(
       title: 'إنشاء ختمات للقرآن الكريم',
-      description: 'نظّم ختمتك بسهولة مع تحديد الأهداف اليومية، تتبع التقدم، وتذكيرات لمساعدتك على إنهاء القرآن',
+      description:
+          'نظّم ختمتك بسهولة مع تحديد الأهداف اليومية، تتبع التقدم، وتذكيرات لمساعدتك على إنهاء القرآن',
       imagePath: 'assets/images/17_8_11zon.webp',
     ),
     AppFeature(
       title: 'أذكار متنوعة',
-      description: 'مكتبة شاملة من أذكار الصباح والمساء، أذكار الصلاة، النوم، والمناسبات المختلفة مع عداد ذكي لتتبع التكرار',
+      description:
+          'مكتبة شاملة من أذكار الصباح والمساء، أذكار الصلاة، النوم، والمناسبات المختلفة مع عداد ذكي لتتبع التكرار',
       imagePath: 'assets/images/2_13_11zon.webp',
     ),
     AppFeature(
       title: 'مواقيت الصلاة',
-      description: 'احصل على مواقيت الصلاة الدقيقة حسب موقعك، مع تنبيهات قبل الأذان وإمكانية تحديد اتجاه القبلة بدقة',
+      description:
+          'احصل على مواقيت الصلاة الدقيقة حسب موقعك، مع تنبيهات قبل الأذان وإمكانية تحديد اتجاه القبلة بدقة',
       imagePath: 'assets/images/12_3_11zon.webp',
     ),
     AppFeature(
       title: 'تفسير القرآن الكريم',
-      description: 'اقرأ وافهم معاني الآيات من خلال تفاسير موثوقة لعلماء معتمدين مع إمكانية البحث والمقارنة بين التفاسير',
+      description:
+          'اقرأ وافهم معاني الآيات من خلال تفاسير موثوقة لعلماء معتمدين مع إمكانية البحث والمقارنة بين التفاسير',
       imagePath: 'assets/images/7_18_11zon.webp',
     ),
     AppFeature(
       title: 'الاستماع للقرآن الكريم',
-      description: 'استمع للقرآن الكريم بصوت مشايخ مختارين مع إمكانية التكرار، التحميل للاستماع بدون إنترنت،',
+      description:
+          'استمع للقرآن الكريم بصوت مشايخ مختارين مع إمكانية التكرار، التحميل للاستماع بدون إنترنت،',
       imagePath: 'assets/images/6_17_11zon.webp',
     ),
     AppFeature(
       title: 'الاستماع للأذكار والرقية الشرعية',
-      description: ' يمكنك الاستماع للأذكار والرقية الشرعية، مع خاصية التشغيل بدون انترنت',
+      description:
+          ' يمكنك الاستماع للأذكار والرقية الشرعية، مع خاصية التشغيل بدون انترنت',
       imagePath: 'assets/images/3_14_11zon.webp',
     ),
     AppFeature(
       title: 'المسبحة الإلكترونية',
-      description: 'سبّح بسهولة مع عداد إلكتروني ذكي يحفظ تسبيحاتك، وإحصائيات يومية',
+      description:
+          'سبّح بسهولة مع عداد إلكتروني ذكي يحفظ تسبيحاتك، وإحصائيات يومية',
       imagePath: 'assets/images/19_10_11zon.webp',
     ),
     AppFeature(
       title: 'تغيير حجم الخط والوضع الليلي للتطبيق',
-      description: 'خصّص تجربتك بتعديل حجم الخط حسب راحتك، مع وضع ليلي مريح للعين للقراءة في الإضاءة الخافتة',
+      description:
+          'خصّص تجربتك بتعديل حجم الخط حسب راحتك، مع وضع ليلي مريح للعين للقراءة في الإضاءة الخافتة',
       imagePath: 'assets/images/9_20_11zon.webp',
     ),
     AppFeature(
       title: 'إنشاء ورد من الأذكار اليومية المفضلة',
-      description: 'اختر أذكارك المفضلة وأنشئ وردك الخاص، مع جدولة التذكيرات وتتبع الالتزام اليومي',
+      description:
+          'اختر أذكارك المفضلة وأنشئ وردك الخاص، مع جدولة التذكيرات وتتبع الالتزام اليومي',
       imagePath: 'assets/images/14_5_11zon.webp',
     ),
     AppFeature(
       title: 'لوحة تحكم احترافية لتتبع الورد اليومي',
-      description: 'راقب تقدمك بإحصائيات تفصيلية، رسوم بيانية توضح مدى التزامك، وتحفيزات لمواصلة أورادك اليومية',
+      description:
+          'راقب تقدمك بإحصائيات تفصيلية، رسوم بيانية توضح مدى التزامك، وتحفيزات لمواصلة أورادك اليومية',
       imagePath: 'assets/images/13_4_11zon.webp',
     ),
     AppFeature(
       title: 'إمكانية مشاركة ونسخ الذكر أو الأحاديث',
-      description: 'شارك الفائدة مع الآخرين بسهولة عبر نسخ النصوص أو مشاركتها مباشرة على وسائل التواصل الاجتماعي',
+      description:
+          'شارك الفائدة مع الآخرين بسهولة عبر نسخ النصوص أو مشاركتها مباشرة على وسائل التواصل الاجتماعي',
       imagePath: 'assets/images/11_2_11zon.webp',
     ),
     AppFeature(
       title: 'إذاعة القرآن الكريم وعلومه',
-      description: 'استمع لبث مباشر من إذاعة القرآن الكريم، مع برامج متنوعة في التفسير والفقه وعلوم القرآن',
+      description:
+          'استمع لبث مباشر من إذاعة القرآن الكريم، مع برامج متنوعة في التفسير والفقه وعلوم القرآن',
       imagePath: 'assets/images/18_9_11zon.webp',
     ),
   ];
@@ -171,72 +180,86 @@ class AppUpdates {
   static final List<AppFeature> updateFeatures = [
     AppFeature(
       title: 'واجهة جديدة',
-      description: 'تصميم عصري ومريح للعين مع تجربة استخدام سلسة وانتقالات سلسة بين الشاشات',
+      description:
+          'تصميم عصري ومريح للعين مع تجربة استخدام سلسة وانتقالات سلسة بين الشاشات',
       imagePath: 'assets/images/1_12_11zon.webp',
     ),
     AppFeature(
       title: 'مصحف تفاعلي',
-      description: 'استمتع بتجربة قراءة القرآن الكريم مع خيارات البحث السريع، إضافة العلامات المرجعية، والانتقال السهل بين السور والصفحات',
+      description:
+          'استمتع بتجربة قراءة القرآن الكريم مع خيارات البحث السريع، إضافة العلامات المرجعية، والانتقال السهل بين السور والصفحات',
       imagePath: 'assets/images/4_15_11zon.webp',
     ),
     AppFeature(
       title: 'إنشاء ختمات للقرآن الكريم',
-      description: 'نظّم ختمتك بسهولة مع تحديد الأهداف اليومية، تتبع التقدم، وتذكيرات لمساعدتك على إنهاء القرآن',
+      description:
+          'نظّم ختمتك بسهولة مع تحديد الأهداف اليومية، تتبع التقدم، وتذكيرات لمساعدتك على إنهاء القرآن',
       imagePath: 'assets/images/17_8_11zon.webp',
     ),
     AppFeature(
       title: 'أذكار متنوعة',
-      description: 'مكتبة شاملة من أذكار الصباح والمساء، أذكار الصلاة، النوم، والمناسبات المختلفة مع عداد ذكي لتتبع التكرار',
+      description:
+          'مكتبة شاملة من أذكار الصباح والمساء، أذكار الصلاة، النوم، والمناسبات المختلفة مع عداد ذكي لتتبع التكرار',
       imagePath: 'assets/images/2_13_11zon.webp',
     ),
     AppFeature(
       title: 'مواقيت الصلاة',
-      description: 'احصل على مواقيت الصلاة الدقيقة حسب موقعك، مع تنبيهات قبل الأذان وإمكانية تحديد اتجاه القبلة بدقة',
+      description:
+          'احصل على مواقيت الصلاة الدقيقة حسب موقعك، مع تنبيهات قبل الأذان وإمكانية تحديد اتجاه القبلة بدقة',
       imagePath: 'assets/images/12_3_11zon.webp',
     ),
     AppFeature(
       title: 'تفسير القرآن الكريم',
-      description: 'اقرأ وافهم معاني الآيات من خلال تفاسير موثوقة لعلماء معتمدين مع إمكانية البحث والمقارنة بين التفاسير',
+      description:
+          'اقرأ وافهم معاني الآيات من خلال تفاسير موثوقة لعلماء معتمدين مع إمكانية البحث والمقارنة بين التفاسير',
       imagePath: 'assets/images/7_18_11zon.webp',
     ),
     AppFeature(
       title: 'الاستماع للقرآن الكريم',
-      description: 'استمع للقرآن الكريم بصوت مشايخ مختارين مع إمكانية التكرار، التحميل للاستماع بدون إنترنت،',
+      description:
+          'استمع للقرآن الكريم بصوت مشايخ مختارين مع إمكانية التكرار، التحميل للاستماع بدون إنترنت،',
       imagePath: 'assets/images/6_17_11zon.webp',
     ),
     AppFeature(
       title: 'الاستماع للأذكار والرقية الشرعية',
-      description: ' يمكنك الاستماع للأذكار والرقية الشرعية، مع خاصية التشغيل بدون انترنت',
+      description:
+          ' يمكنك الاستماع للأذكار والرقية الشرعية، مع خاصية التشغيل بدون انترنت',
       imagePath: 'assets/images/3_14_11zon.webp',
     ),
     AppFeature(
       title: 'المسبحة الإلكترونية',
-      description: 'سبّح بسهولة مع عداد إلكتروني ذكي يحفظ تسبيحاتك، وإحصائيات يومية',
+      description:
+          'سبّح بسهولة مع عداد إلكتروني ذكي يحفظ تسبيحاتك، وإحصائيات يومية',
       imagePath: 'assets/images/19_10_11zon.webp',
     ),
     AppFeature(
       title: 'تغيير حجم الخط والوضع الليلي للتطبيق',
-      description: 'خصّص تجربتك بتعديل حجم الخط حسب راحتك، مع وضع ليلي مريح للعين للقراءة في الإضاءة الخافتة',
+      description:
+          'خصّص تجربتك بتعديل حجم الخط حسب راحتك، مع وضع ليلي مريح للعين للقراءة في الإضاءة الخافتة',
       imagePath: 'assets/images/9_20_11zon.webp',
     ),
     AppFeature(
       title: 'إنشاء ورد من الأذكار اليومية المفضلة',
-      description: 'اختر أذكارك المفضلة وأنشئ وردك الخاص، مع جدولة التذكيرات وتتبع الالتزام اليومي',
+      description:
+          'اختر أذكارك المفضلة وأنشئ وردك الخاص، مع جدولة التذكيرات وتتبع الالتزام اليومي',
       imagePath: 'assets/images/14_5_11zon.webp',
     ),
     AppFeature(
       title: 'لوحة تحكم احترافية لتتبع الورد اليومي',
-      description: 'راقب تقدمك بإحصائيات تفصيلية، رسوم بيانية توضح مدى التزامك، وتحفيزات لمواصلة أورادك اليومية',
+      description:
+          'راقب تقدمك بإحصائيات تفصيلية، رسوم بيانية توضح مدى التزامك، وتحفيزات لمواصلة أورادك اليومية',
       imagePath: 'assets/images/13_4_11zon.webp',
     ),
     AppFeature(
       title: 'إمكانية مشاركة ونسخ الذكر أو الأحاديث',
-      description: 'شارك الفائدة مع الآخرين بسهولة عبر نسخ النصوص أو مشاركتها مباشرة على وسائل التواصل الاجتماعي',
+      description:
+          'شارك الفائدة مع الآخرين بسهولة عبر نسخ النصوص أو مشاركتها مباشرة على وسائل التواصل الاجتماعي',
       imagePath: 'assets/images/11_2_11zon.webp',
     ),
     AppFeature(
       title: 'إذاعة القرآن الكريم وعلومه',
-      description: 'استمع لبث مباشر من إذاعة القرآن الكريم، مع برامج متنوعة في التفسير والفقه وعلوم القرآن',
+      description:
+          'استمع لبث مباشر من إذاعة القرآن الكريم، مع برامج متنوعة في التفسير والفقه وعلوم القرآن',
       imagePath: 'assets/images/18_9_11zon.webp',
     ),
   ];
@@ -275,92 +298,89 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-  class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    _checkAppStateAndNavigate();
+    super.initState();
+    // Timer(
+    //     const Duration(seconds: 3),
+    //     () => Navigator.pushReplacement(context,
+    //         MaterialPageRoute(builder: (context) => const MainView())));
+  }
 
-    @override
-    void initState() {
-      _checkAppStateAndNavigate();
-      super.initState();
-      // Timer(
-      //     const Duration(seconds: 3),
-      //     () => Navigator.pushReplacement(context,
-      //         MaterialPageRoute(builder: (context) => const MainView())));
-    }
 // التحقق من حالة التطبيق والانتقال للشاشة المناسبة
-    Future<void> _checkAppStateAndNavigate() async {
-      try {
-        // ✅ انتظار 2 ثانية (شاشة السبلاش)
-        await Future.delayed(const Duration(seconds: 2));
+  Future<void> _checkAppStateAndNavigate() async {
+    try {
+      // ✅ انتظار 2 ثانية (شاشة السبلاش)
+      await Future.delayed(const Duration(seconds: 2));
 
-        // ✅ التحقق من حالة التطبيق
-        final appState = await VersionService.checkAppState();
+      // ✅ التحقق من حالة التطبيق
+      final appState = await VersionService.checkAppState();
 
-        if (!mounted) return;
+      if (!mounted) return;
 
-        switch (appState) {
-          case AppState.firstTime:
+      switch (appState) {
+        case AppState.firstTime:
           // ✅ أول مرة - عرض جميع الميزات
-            _navigateToWhatsNew(
-              isFirstTime: true,
-              features: AppUpdates.firstTimeFeatures,
-            );
-            break;
+          _navigateToWhatsNew(
+            isFirstTime: true,
+            features: AppUpdates.firstTimeFeatures,
+          );
+          break;
 
-          case AppState.updated:
+        case AppState.updated:
           // ✅ تحديث - عرض الميزات الجديدة فقط
-            _navigateToWhatsNew(
-              isFirstTime: false,
-              features: AppUpdates.updateFeatures,
-            );
-            break;
+          _navigateToWhatsNew(
+            isFirstTime: false,
+            features: AppUpdates.updateFeatures,
+          );
+          break;
 
-          case AppState.normal:
+        case AppState.normal:
           // ✅ استخدام عادي - الذهاب مباشرة للشاشة الرئيسية
-            _navigateToMain();
-            break;
-        }
-      } catch (e) {
-        print('❌ خطأ في التحقق من حالة التطبيق: $e');
-        // في حالة الخطأ، الذهاب للشاشة الرئيسية
-        if (mounted) {
           _navigateToMain();
-        }
+          break;
       }
-    }
-
-    /// الانتقال لشاشة "ما الجديد"
-    void _navigateToWhatsNew({
-      required bool isFirstTime,
-      required List<AppFeature> features,
-    }) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WhatsNewView(
-            isFirstTime: isFirstTime,
-            newFeatures: features,
-          ),
-        ),
-      );
-    }
-
-    /// الانتقال للشاشة الرئيسية
-    void _navigateToMain() {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MainView(),
-        ),
-      );
-    }
-
-    @override
-    Widget build(BuildContext context) {
-      return const Scaffold(
-        body: SplashItemBuilder(),
-      );
+    } catch (e) {
+      print('❌ خطأ في التحقق من حالة التطبيق: $e');
+      // في حالة الخطأ، الذهاب للشاشة الرئيسية
+      if (mounted) {
+        _navigateToMain();
+      }
     }
   }
 
+  /// الانتقال لشاشة "ما الجديد"
+  void _navigateToWhatsNew({
+    required bool isFirstTime,
+    required List<AppFeature> features,
+  }) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WhatsNewView(
+          isFirstTime: isFirstTime,
+          newFeatures: features,
+        ),
+      ),
+    );
+  }
 
+  /// الانتقال للشاشة الرئيسية
+  void _navigateToMain() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MainView(),
+      ),
+    );
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: SplashItemBuilder(),
+    );
+  }
+}

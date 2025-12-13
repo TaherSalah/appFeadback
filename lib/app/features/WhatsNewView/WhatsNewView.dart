@@ -1,3 +1,5 @@
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/utils/style/k_color.dart';
 import '../splash_view/splash.dart';
@@ -16,7 +18,8 @@ class WhatsNewView extends StatefulWidget {
   State<WhatsNewView> createState() => _WhatsNewViewState();
 }
 
-class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMixin {
+class _WhatsNewViewState extends State<WhatsNewView>
+    with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -136,18 +139,19 @@ class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMix
               margin: EdgeInsets.symmetric(horizontal: 2.w),
               decoration: BoxDecoration(
                 color: _currentPage >= index
-                    ? Theme.of(context).primaryColor
-                    : Colors.grey.shade300,
+                    ? KColors.primaryColor
+                    : Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.circular(10),
                 // ✅ ظل خفيف للشريط النشط
                 boxShadow: _currentPage == index
                     ? [
-                  BoxShadow(
-                    color: Theme.of(context).primaryColor.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
+                        BoxShadow(
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
                     : null,
               ),
             ),
@@ -220,7 +224,7 @@ class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMix
                   feature.title,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.cairo(
-                    fontSize: 20.sp,
+                    fontSize: ResponsiveUtil.isTablet(context) ? 15.sp : 20.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? KColors.primaryColor : Colors.black87,
                   ),
@@ -247,7 +251,7 @@ class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMix
                   feature.description,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.cairo(
-                    fontSize: 15.sp,
+                    fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 15.sp,
                     color: Colors.grey.shade700,
                     height: 1.5,
                   ),
@@ -264,6 +268,8 @@ class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMix
 
   // ✅ أزرار التنقل مع أنيميشن
   Widget _buildAnimatedNavigationButtons() {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 600),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -286,7 +292,8 @@ class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMix
             if (_currentPage < widget.newFeatures.length - 1)
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 300),
-                opacity: _currentPage < widget.newFeatures.length - 1 ? 1.0 : 0.0,
+                opacity:
+                    _currentPage < widget.newFeatures.length - 1 ? 1.0 : 0.0,
                 child: TextButton(
                   onPressed: () {
                     _pageController.animateToPage(
@@ -296,12 +303,14 @@ class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMix
                     );
                   },
                   style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                   ),
                   child: Text(
                     'تخطي',
                     style: GoogleFonts.cairo(
-                      fontSize: 16.sp,
+                      fontSize:
+                          ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
                       color: Colors.grey.shade600,
                     ),
                   ),
@@ -348,11 +357,16 @@ class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMix
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: isDark
+                      ? Theme.of(context).primaryColor
+                      : KColors.primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                      horizontal:
+                          ResponsiveUtil.isTablet(context) ? 15.w : 24.w,
+                      vertical: 12.h),
                   elevation: 5,
                   shadowColor: Theme.of(context).primaryColor.withOpacity(0.4),
                 ),
@@ -360,9 +374,12 @@ class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMix
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      _currentPage < widget.newFeatures.length - 1 ? 'التالي' : 'ابدأ الآن',
+                      _currentPage < widget.newFeatures.length - 1
+                          ? 'التالي'
+                          : 'ابدأ الآن',
                       style: GoogleFonts.cairo(
-                        fontSize: 16.sp,
+                        fontSize:
+                            ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
@@ -371,13 +388,15 @@ class _WhatsNewViewState extends State<WhatsNewView> with TickerProviderStateMix
                     // ✅ أيقونة متحركة
                     AnimatedRotation(
                       duration: const Duration(milliseconds: 300),
-                      turns: _currentPage < widget.newFeatures.length - 1 ? 0 : 0.5,
+                      turns: _currentPage < widget.newFeatures.length - 1
+                          ? 0
+                          : 0.5,
                       child: Icon(
                         _currentPage < widget.newFeatures.length - 1
                             ? Icons.arrow_forward_ios
                             : Icons.start,
                         color: Colors.white,
-                        size: 18.sp,
+                        size: ResponsiveUtil.isTablet(context) ? 15.sp : 18.sp,
                       ),
                     ),
                   ],
