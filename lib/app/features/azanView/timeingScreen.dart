@@ -1126,8 +1126,8 @@ class _AdhanSettingsDialogState extends State<AdhanSettingsDialog> {
   Future<void> _load() async {
     final prefs = await AdhanWorkManagerService().getAdhanPreferences();
     setState(() {
-      enableFajr = prefs['enableFajrAdhan'];
-      enableNormal = prefs['enableNormalAdhan'];
+      enableFajr = prefs.getBool('enableFajrAdhan') ?? true;
+      enableNormal = prefs.getBool('enableNormalAdhan') ?? true;
     });
   }
 

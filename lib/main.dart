@@ -15,8 +15,6 @@ import 'package:muslimdaily/app/features/prayer_view/post_prayer_azkar.dart';
 import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:muslimdaily/app/features/sabah_view/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
-import 'package:muslimdaily/app/features/splash_view/splash.dart';
-
 import 'package:quran_library/quran.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -35,6 +33,8 @@ import 'app/features/Khatmah/data/khatmah_model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:workmanager/workmanager.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 //
 //
 
@@ -251,12 +251,19 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 //     );
 //   });
 // }
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hijri/hijri_calendar.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const AppBootstrapper());
 }
 
-/// ✅ ويدجت لتهيئة التطبيق وعرض شاشة تحميل لتجنب الشاشة السوداء
 class AppBootstrapper extends StatefulWidget {
   const AppBootstrapper({super.key});
 
@@ -278,23 +285,18 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
     try {
       await _initAppServices();
       if (mounted) {
-        setState(() {
-          _isInitComplete = true;
-        });
+        setState(() => _isInitComplete = true);
       }
     } catch (e, s) {
       print('❌ خطأ في تهيئة التطبيق: $e\n$s');
       if (mounted) {
-        setState(() {
-          _error = e.toString();
-        });
+        setState(() => _error = e.toString());
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // 1️⃣ حالة الخطأ
     if (_error != null) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -320,47 +322,43 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
       );
     }
 
-    // 2️⃣ حالة التحميل (Splash مؤقت)
     if (!_isInitComplete) {
       return ScreenUtilInit(
-          designSize: const Size(375, 812),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          builder: (context, child) {
-            return const MaterialApp(
-              debugShowCheckedModeBanner: false,
-              home: Scaffold(
-                backgroundColor: Colors.white,
-                body: SplashItemBuilder(),
-              ),
-            );
-          });
+        designSize: const Size(375, 812),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return const MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: Scaffold(
+              backgroundColor: Colors.white,
+              body: SplashItemBuilder(),
+            ),
+          );
+        },
+      );
     }
 
-    // 3️⃣ تشغيل التطبيق الفعلي
     return BlocProvider<CentralizedCubit>(
       create: (context) => CentralizedCubit(
         sharedPreferences: Di.sharedPreferences,
       )..localization(),
       child: BlocBuilder<CentralizedCubit, CentralizedState>(
-        builder: (context, state) {
-          return const MashkahApp();
-        },
+        builder: (context, state) => const MashkahApp(),
       ),
     );
   }
 }
 
-/// ✅ دالة التهيئة (تم نقل محتوى main القديم هنا)
 Future<void> _initAppServices() async {
-  // ✅ 1) تهيئة تخصيصات النظام
+  // ✅ 1) تخصيصات النظام
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
   ));
 
-  // ✅ 2) تهيئة البيانات والمكتبات
+  // ✅ 2) تهيئة البيانات
   HijriCalendar.setLocal('ar_SA');
   await Di.init();
   await initializeDateFormatting();
@@ -378,70 +376,46 @@ Future<void> _initAppServices() async {
     await Hive.openBox('khatmahPlans');
   }
 
-  // ✅ 4) طلب أذونات الإشعارات
-  bool allowed = await AwesomeNotifications().isNotificationAllowed();
-  if (!allowed) {
-    await AwesomeNotifications().requestPermissionToSendNotifications(
-      channelKey: 'adhan_channel',
-    );
-  }
+  // ✅ 4) تهيئة AwesomeNotifications أولاً قبل أي استخدام
+  await _initializeAwesomeNotifications();
 
-  // ✅ 5) تهيئة الإشعارات
-  await _initializeNotifications();
+  // ✅ 5) AndroidAlarmManager
+  await AndroidAlarmManager.initialize();
 
-  // ✅ 6) تهيئة Workmanager
-  await Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: false,
-  );
-
-  // ✅ 7) تهيئة خدمة الأذان
+  // ✅ 6) خدمة الأذان
   await AdhanWorkManagerService().initialize();
 
-  // ✅ 8) تهيئة مكتبة القرآن
+  // ✅ 7) مكتبة القرآن
   await QuranLibrary.init();
 
   // ✅ 8) قفل التدوير
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  // ✅ 9) جدولة التذكيرات اليومية (بعد تهيئة AwesomeNotifications)
+  await _setupDailyReminders();
 }
 
-// ✅ دالة منفصلة لتهيئة الإشعارات
-Future<void> _initializeNotifications() async {
+// ═══════════════════════════════════════════════════════════
+// ✅ تهيئة AwesomeNotifications مع جميع القنوات
+// ═══════════════════════════════════════════════════════════
+Future<void> _initializeAwesomeNotifications() async {
   try {
     await AwesomeNotifications().initialize(
-      // null أو مسار الـ launch
       null,
-
-      // قنوات الإشعارات
       [
         // 🌅 قناة أذان الفجر
         NotificationChannel(
-          // channelKey: 'fajr_adhan_channel',
-          // channelName: 'أذان الفجر',
-          // channelDescription: 'تشغيل أذان الفجر',
-          // importance: NotificationImportance.Max,
-          // defaultColor: Colors.orange,
-          // ledColor: Colors.orange,
-          // playSound: true,
-          // soundSource: 'resource://raw/fajr_adhan',
-          // enableVibration: true,
-          // enableLights: true,
-          // locked: true,
-          // criticalAlerts: true,
-
           channelKey: 'fajr_adhan_channel',
           channelName: 'أذان الفجر',
           channelDescription: 'تشغيل أذان الفجر',
           importance: NotificationImportance.Max,
-          // icon: 'resource://drawable/ic_stat_logoapp',
-          // أو استخدم أيقونة التطبيق
-          // largeIcon: 'resource://mipmap/launcher_icon',
           playSound: true,
-          soundSource: 'resource://raw/fajr', // ✅ بدون .mp3
+          soundSource: 'resource://raw/fajr',
           enableVibration: true,
           enableLights: true,
           ledColor: Colors.orange,
           defaultPrivacy: NotificationPrivacy.Public,
+          criticalAlerts: true,
         ),
 
         // 🕌 قناة الأذان العادي
@@ -457,44 +431,363 @@ Future<void> _initializeNotifications() async {
           enableVibration: true,
           enableLights: true,
           locked: true,
+          criticalAlerts: true,
         ),
 
-        // 📿 قناة التذكيرات اليومية
+        // 📿 قناة الأذكار والتذكيرات
         NotificationChannel(
-          channelKey: 'reminder_channel',
-          channelName: 'تذكيرات يومية',
-          channelDescription: 'تذكير بذكر الله والصلاة على النبي',
+          channelKey: 'athkar_channel',
+          channelName: 'الأذكار اليومية',
+          channelDescription: 'تذكير بالأذكار اليومية',
           importance: NotificationImportance.High,
           defaultColor: Colors.blue,
           ledColor: Colors.blue,
           playSound: true,
-          // soundSource: 'resource://raw/reminder',
-          enableVibration: false,
+          enableVibration: true,
+          enableLights: true,
+        ),
+
+        // 🤲 قناة الصلاة على النبي
+        NotificationChannel(
+          channelKey: 'salawat_channel',
+          channelName: 'الصلاة على النبي',
+          channelDescription: 'تذكير بالصلاة على النبي',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.teal,
+          ledColor: Colors.teal,
+          playSound: true,
+          soundSource: 'resource://raw/athan',
+          enableVibration: true,
+          enableLights: true,
+        ),
+
+        // 📖 قناة القرآن
+        NotificationChannel(
+          channelKey: 'quran_channel',
+          channelName: 'ورد القرآن',
+          channelDescription: 'تذكير بالورد اليومي',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.purple,
+          ledColor: Colors.purple,
+          playSound: true,
+          enableVibration: true,
+          enableLights: true,
+        ),
+
+        // 📿 قناة الحديث اليومي
+        NotificationChannel(
+          channelKey: 'hadith_channel',
+          channelName: 'الحديث اليومي',
+          channelDescription: 'تذكير بحديث اليوم',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.amber,
+          ledColor: Colors.amber,
+          playSound: true,
+          enableVibration: true,
           enableLights: true,
         ),
       ],
-
-      // ✅ إعداد المستمعين بشكل صحيح
-      debug: false,
+      debug: true, // ✅ فعّل debug للتأكد من القنوات
     );
 
     // ✅ إعداد المستمعين
     AwesomeNotifications().setListeners(
       onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-      onNotificationCreatedMethod:
-          NotificationController.onNotificationCreatedMethod,
-      onNotificationDisplayedMethod:
-          NotificationController.onNotificationDisplayedMethod,
-      onDismissActionReceivedMethod:
-          NotificationController.onDismissActionReceivedMethod,
+      onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
     );
 
+    // ✅ طلب الأذونات
+    bool allowed = await AwesomeNotifications().isNotificationAllowed();
+    if (!allowed) {
+      await AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+
     print('✅ تم تهيئة AwesomeNotifications بنجاح');
-  } catch (e) {
+  } catch (e, stackTrace) {
     print('❌ خطأ في تهيئة الإشعارات: $e');
+    print('Stack Trace: $stackTrace');
+    rethrow;
   }
 }
 
+// ═══════════════════════════════════════════════════════════
+// ✅ جدولة التذكيرات اليومية
+// ═══════════════════════════════════════════════════════════
+Future<void> _setupDailyReminders() async {
+  try {
+    // 🌅 أذكار الصباح - 9 صباحاً
+    await _scheduleDailyNotification(
+      id: 1,
+      channelKey: 'athkar_channel',
+      title: '🌅 أذكار الصباح',
+
+      body: 'حان وقت أذكار الصباح، بارك الله في صباحك',
+      hour: 9,
+      minute: 0,
+      payload: {'route': 'morning_athkar'},
+    );
+
+    // 🌙 أذكار المساء - 6 مساءً
+    await _scheduleDailyNotification(
+      id: 2,
+      channelKey: 'athkar_channel',
+      title: '🌙 أذكار المساء',
+      body: 'حان وقت أذكار المساء، جعل الله مساءك مباركاً',
+      hour: 18,
+      minute: 0,
+      payload: {'route': 'evening_athkar'},
+    );
+
+    // 📖 ورد القرآن - 8 مساءً
+    await _scheduleDailyNotification(
+      id: 3,
+      channelKey: 'quran_channel',
+      title: '📖 ورد القرآن اليومي',
+      body: 'لا تنسَ وردك اليومي من القرآن الكريم',
+      hour: 20,
+      minute: 0,
+      payload: {'route': 'quran_wird'},
+    );
+
+    // 📿 حديث اليوم - 12 ظهراً
+    await _scheduleDailyNotification(
+      id: 4,
+      channelKey: 'hadith_channel',
+      title: '📿 حديث اليوم',
+      body: 'اطلع على الحديث الشريف لهذا اليوم',
+      hour: 12,
+      minute: 0,
+      payload: {'route': 'daily_hadith'},
+    );
+
+    // 😴 أذكار النوم - 10 مساءً
+    await _scheduleDailyNotification(
+      id: 6,
+      channelKey: 'athkar_channel',
+      title: '😴 أذكار النوم',
+      body: 'حان وقت أذكار النوم، تصبح على خير',
+      hour: 22,
+      minute: 0,
+      payload: {'route': 'sleep_athkar'},
+    );
+
+    // 🌙 قيام الليل - 11 مساءً
+    await _scheduleDailyNotification(
+      id: 7,
+      channelKey: 'athkar_channel',
+      title: '🌙 قيام الليل',
+      body: 'وقت قيام الليل، تقبل الله طاعاتكم',
+      hour: 23,
+      minute: 0,
+      payload: {'route': 'qiyam_reminder'},
+    );
+
+    // 🤲 الصلاة على النبي - كل ساعة (أو كل دقيقة للاختبار)
+    // await _scheduleHourlySalawat();
+    await _scheduleMinutelySalawatTest(); // للاختبار فقط
+
+    print('✅ تم جدولة جميع التذكيرات اليومية');
+  } catch (e, stackTrace) {
+    print('❌ خطأ في جدولة التذكيرات: $e');
+    print('Stack Trace: $stackTrace');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ✅ دالة جدولة إشعار يومي متكرر
+// ═══════════════════════════════════════════════════════════
+Future<void> _scheduleDailyNotification({
+  required int id,
+  required String channelKey,
+  required String title,
+  required String body,
+  required int hour,
+  required int minute,
+  Map<String, String>? payload,
+}) async {
+  try {
+    final now = DateTime.now();
+    var scheduledDate = DateTime(now.year, now.month, now.day, hour, minute);
+
+    // إذا الوقت فات، جدّله بكره
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        icon: 'resource://mipmap/launcher_icon',
+
+        id: id,
+        channelKey: channelKey,
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.Default,
+        payload: payload,
+        criticalAlert: channelKey.contains('adhan'),
+      ),
+      schedule: NotificationCalendar(
+        year: scheduledDate.year,
+        month: scheduledDate.month,
+        day: scheduledDate.day,
+        hour: scheduledDate.hour,
+        minute: scheduledDate.minute,
+        second: 0,
+        repeats: true, // ✅ يتكرر يومياً
+        preciseAlarm: true,
+      ),
+    );
+
+    print('✅ تم جدولة: $title في الساعة $hour:$minute');
+  } catch (e) {
+    print('❌ خطأ في جدولة $title: $e');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ✅ الصلاة على النبي - كل ساعة
+// ═══════════════════════════════════════════════════════════
+Future<void> _scheduleHourlySalawat() async {
+  try {
+    for (int hour = 0; hour < 24; hour++) {
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 100 + hour,
+          channelKey: 'salawat_channel',
+          title: 'ﷺ',
+          body: 'اللهم صل وسلم على نبينا محمد',
+          notificationLayout: NotificationLayout.Default,
+          payload: {'route': 'salawat'},
+        ),
+        schedule: NotificationCalendar(
+          hour: hour,
+          minute: 0,
+          second: 0,
+          repeats: true,
+          preciseAlarm: true,
+        ),
+      );
+    }
+    print('✅ تم جدولة الصلاة على النبي كل ساعة');
+  } catch (e) {
+    print('❌ خطأ في جدولة الصلاة على النبي: $e');
+  }
+}
+
+// 🧪 اختبار: كل دقيقة
+Future<void> _scheduleMinutelySalawatTest() async {
+  try {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 888,
+        channelKey: 'salawat_channel',
+        icon: 'resource://mipmap/launcher_icon',
+        title: 'ﷺ',
+        body: 'اللهم صل وسلم على نبينا محمد',
+        notificationLayout: NotificationLayout.Default,
+        payload: {'route': 'salawat'},
+      ),
+      schedule: NotificationInterval(
+        interval: Duration(hours: 1), // كل 60 ثانية
+        repeats: true,
+        preciseAlarm: true,
+      ),
+    );
+    print('🧪 تم جدولة اختبار الصلاة على النبي كل دقيقة');
+  } catch (e) {
+    print('❌ خطأ في جدولة الاختبار: $e');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ✅ جدولة الأذان (للاستخدام من AdhanService)
+// ═══════════════════════════════════════════════════════════
+Future<void> scheduleAzan(DateTime prayerTime, String prayerName) async {
+  try {
+    final channelKey = prayerName == 'الفجر' ? 'fajr_adhan_channel' : 'adhan_channel';
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: prayerTime.millisecondsSinceEpoch % 100000,
+        channelKey: channelKey,
+        title: 'حان الآن وقت $prayerName',
+        body: 'الله أكبر الله أكبر',
+        notificationLayout: NotificationLayout.Default,
+        criticalAlert: true,
+        wakeUpScreen: true,
+        fullScreenIntent: true,
+        payload: {'prayer': prayerName},
+      ),
+      schedule: NotificationCalendar.fromDate(
+        date: prayerTime,
+        preciseAlarm: true,
+      ),
+    );
+    print('✅ تم جدولة أذان $prayerName: ${prayerTime.toString()}');
+  } catch (e) {
+    print('❌ خطأ في جدولة أذان $prayerName: $e');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ✅ NotificationController - معالجة الإشعارات
+// ═══════════════════════════════════════════════════════════
+@pragma('vm:entry-point')
+class NotificationController {
+  @pragma('vm:entry-point')
+  static Future<void> onNotificationCreatedMethod(
+      ReceivedNotification receivedNotification) async {
+    print('📱 إشعار جديد: ${receivedNotification.id}');
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> onNotificationDisplayedMethod(
+      ReceivedNotification receivedNotification) async {
+    print('📱 تم عرض الإشعار: ${receivedNotification.title}');
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> onDismissActionReceivedMethod(
+      ReceivedAction receivedAction) async {
+    print('📱 تم إغلاق الإشعار: ${receivedAction.id}');
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
+    print('🎯 تم الضغط على الإشعار: ${receivedAction.payload}');
+
+    final navigator = CentralizedCubit.navigatorKey.currentState;
+    if (navigator == null) return;
+
+    final route = receivedAction.payload?['route'] ?? '';
+
+    switch (route) {
+      case 'morning_athkar':
+        navigator.push(MaterialPageRoute(builder: (_) => const AzkarSabah()));
+        break;
+      case 'evening_athkar':
+        navigator.push(MaterialPageRoute(builder: (_) => const AzkarMassa()));
+        break;
+      case 'quran_wird':
+        navigator.push(MaterialPageRoute(builder: (_) => const QuranView()));
+        break;
+      case 'daily_hadith':
+        navigator.push(MaterialPageRoute(builder: (_) => const HadithView()));
+        break;
+      case 'sleep_athkar':
+        navigator.push(MaterialPageRoute(builder: (_) => const SleepAzkar()));
+        break;
+      case 'qiyam_reminder':
+        navigator.push(MaterialPageRoute(builder: (_) => const QuranView()));
+        break;
+      case 'salawat':
+        navigator.push(MaterialPageRoute(builder: (_) => const MainView()));
+        break;
+    }
+  }
+}
 void checkWhatsNew(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
   final lastVersion = prefs.getString("last_version");
@@ -512,6 +805,9 @@ void checkWhatsNew(BuildContext context) async {
     prefs.setString("last_version", currentVersion);
   }
 }
+
+
+// في نهاية main.dart، بعد دالة main()
 
 // void showWhatsNew(BuildContext context) {
 //   showModalBottomSheet(
@@ -627,350 +923,6 @@ void checkWhatsNew(BuildContext context) async {
 //
 
 // إعداد الإشعارات الافتراضية
-Future<void> _setupDefaultNotifications() async {
-  final notificationService = NotificationService();
-
-  // جدولة أذكار الصباح - الساعة 9 صباحاً
-  await notificationService.scheduleMorningAthkar(9, 0);
-
-  // جدولة أذكار المساء - الساعة 6 مساءً
-  await notificationService.scheduleEveningAthkar(18, 0);
-
-  // جدولة ورد القرآن - الساعة 8 مساءً
-  await notificationService.scheduleDailyQuranWird(20, 0);
-
-  // جدولة حديث اليوم - الساعة 12 ظهراً
-  await notificationService.scheduleDailyHadith(12, 0);
-
-  // جدولة أذكار النوم - الساعة 10 مساءً
-  await notificationService.scheduleSleepAthkar(22, 0);
-
-  // جدولة قيام الليل - الساعة 11 مساءً
-  await notificationService.scheduleQiyamReminder(23, 0);
-
-  // جدولة الصلاة على النبي كل ساعة
-  await notificationService.scheduleHourlySalawat();
-}
-
-class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
-  factory NotificationService() => _instance;
-  NotificationService._internal();
-
-  final FlutterLocalNotificationsPlugin _notifications =
-      FlutterLocalNotificationsPlugin();
-
-  // تهيئة الإشعارات
-  Future<void> initialize() async {
-    tz.initializeTimeZones();
-
-    // إعدادات Android
-    const androidSettings =
-        AndroidInitializationSettings('@mipmap/launcher_icon');
-
-    // إعدادات iOS
-    const iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
-
-    const initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
-
-    await _notifications.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: _onNotificationTapped,
-    );
-
-    // طلب الأذونات
-    await _requestPermissions();
-  }
-
-  // طلب الأذونات
-  Future<void> _requestPermissions() async {
-    if (await Permission.notification.isDenied) {
-      await Permission.notification.request();
-    }
-  }
-
-  // عند النقر على الإشعار
-  void _onNotificationTapped(NotificationResponse response) {
-    print('تم النقر على الإشعار: ${response.payload}');
-
-    final navigator = CentralizedCubit.navigatorKey.currentState;
-    if (navigator == null) return;
-
-    if (response.payload == 'morning_athkar') {
-      navigator.push(
-        MaterialPageRoute(builder: (context) => const AzkarSabah()),
-      );
-    }
-    if (response.payload == 'evening_athkar') {
-      navigator.push(
-        MaterialPageRoute(builder: (context) => const AzkarMassa()),
-      );
-    }
-    if (response.payload == 'quran_wird') {
-      navigator.push(
-        MaterialPageRoute(builder: (context) => const QuranView()),
-      );
-    }
-    if (response.payload == 'after_prayer') {
-      navigator.push(
-        MaterialPageRoute(builder: (context) => const PrayerAzkar()),
-      );
-    }
-    if (response.payload == 'daily_hadith') {
-      navigator.push(
-        MaterialPageRoute(builder: (context) => const HadithView()),
-      );
-    }
-    if (response.payload == 'sleep_athkar') {
-      navigator.push(
-        MaterialPageRoute(builder: (context) => const SleepAzkar()),
-      );
-    }
-    if (response.payload == 'qiyam_reminder') {
-      // توجيه للمصحف أو الشاشة الرئيسية
-      navigator.push(
-        MaterialPageRoute(builder: (context) => const QuranView()),
-      );
-    }
-    if (response.payload == 'salawat') {
-      // توجيه للشاشة الرئيسية
-      navigator.push(
-        MaterialPageRoute(builder: (context) => const MainView()),
-      );
-    }
-  }
-
-  // جدولة أذكار الصباح
-  Future<void> scheduleMorningAthkar(int hour, int minute) async {
-    await _scheduleNotification(
-      id: 1,
-      title: '🌅 أذكار الصباح',
-      body: 'حان وقت أذكار الصباح، بارك الله في صباحك',
-      hour: hour,
-      minute: minute,
-      payload: 'morning_athkar',
-    );
-  }
-
-  // جدولة أذكار المساء
-  Future<void> scheduleEveningAthkar(int hour, int minute) async {
-    await _scheduleNotification(
-      id: 2,
-      title: '🌙 أذكار المساء',
-      body: 'حان وقت أذكار المساء، جعل الله مساءك مباركاً',
-      hour: hour,
-      minute: minute,
-      payload: 'evening_athkar',
-    );
-  }
-
-  // جدولة ورد قراني يومي
-  Future<void> scheduleDailyQuranWird(int hour, int minute) async {
-    await _scheduleNotification(
-      id: 3,
-      title: '📖 ورد القرآن اليومي',
-      body: 'لا تنسَ وردك اليومي من القرآن الكريم',
-      hour: hour,
-      minute: minute,
-      payload: 'quran_wird',
-    );
-  }
-
-  // جدولة تنبيه بعد صلاة
-  Future<void> scheduleAfterPrayerReminder(
-      String prayerName, int afterMinutes) async {
-    // هنا يمكنك حساب الوقت بناءً على وقت الصلاة
-    // مثال: بعد صلاة الفجر بـ 15 دقيقة
-    await _scheduleNotification(
-      id: 10,
-      title: '🤲 تذكير بعد صلاة $prayerName',
-      body: 'وقت الأذكار والدعاء بعد الصلاة',
-      hour: 6, // مثال
-      minute: 15,
-      payload: 'after_prayer',
-    );
-  }
-
-  // جدولة تنبيه بحديث يومي
-  Future<void> scheduleDailyHadith(int hour, int minute) async {
-    await _scheduleNotification(
-      id: 4,
-      title: '📿 حديث اليوم',
-      body: 'اطلع على الحديث الشريف لهذا اليوم',
-      hour: hour,
-      minute: minute,
-      payload: 'daily_hadith',
-    );
-  }
-
-  // جدولة أذكار النوم
-  Future<void> scheduleSleepAthkar(int hour, int minute) async {
-    await _scheduleNotification(
-      id: 6,
-      title: '😴 أذكار النوم',
-      body: 'حان وقت أذكار النوم، تصبح على خير',
-      hour: hour,
-      minute: minute,
-      payload: 'sleep_athkar',
-    );
-  }
-
-  // جدولة قيام الليل
-  Future<void> scheduleQiyamReminder(int hour, int minute) async {
-    await _scheduleNotification(
-      id: 7,
-      title: '🌙 قيام الليل',
-      body: 'وقت قيام الليل، تقبل الله طاعاتكم',
-      hour: hour,
-      minute: minute,
-      payload: 'qiyam_reminder',
-    );
-  }
-
-  // جدولة الصلاة على النبي
-  Future<void> scheduleHourlySalawat() async {
-    const androidDetails = AndroidNotificationDetails(
-      'salawat_channel',
-      'الصلاة على النبي',
-      channelDescription: 'تذكير بالصلاة على النبي كل ساعة',
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/launcher_icon',
-      playSound: true,
-    );
-    const iosDetails = DarwinNotificationDetails();
-
-    await _notifications.periodicallyShow(
-      8,
-      'ﷺ',
-      'اللهم صل وسلم على نبينا محمد',
-      RepeatInterval.hourly,
-      const NotificationDetails(android: androidDetails, iOS: iosDetails),
-      payload: 'salawat',
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    );
-  }
-
-  // الدالة الأساسية للجدولة
-  Future<void> _scheduleNotification({
-    required int id,
-    required String title,
-    required String body,
-    required int hour,
-    required int minute,
-    String? payload,
-  }) async {
-    await _notifications.zonedSchedule(
-      id,
-      title,
-      body,
-      _nextInstanceOfTime(hour, minute),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'athkar_channel',
-          'أذكار وأوراد',
-          channelDescription: 'إشعارات الأذكار والأوراد اليومية',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
-          // استخدام الصوت الافتراضي
-          playSound: true,
-          enableVibration: true,
-        ),
-        iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-
-      // uiLocalNotificationDateInterpretation:
-      // UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
-      payload: payload,
-    );
-  }
-
-  // حساب الوقت التالي للتنبيه
-  tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduledDate = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      hour,
-      minute,
-    );
-
-    // إذا كان الوقت قد مضى اليوم، جدوله لليوم التالي
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-
-    return scheduledDate;
-  }
-
-  // إلغاء إشعار معين
-  Future<void> cancelNotification(int id) async {
-    await _notifications.cancel(id);
-  }
-
-  // إلغاء جميع الإشعارات
-  Future<void> cancelAllNotifications() async {
-    await _notifications.cancelAll();
-  }
-
-  // عرض إشعار فوري (للتجربة)
-  Future<void> showInstantNotification(String title, String body) async {
-    const androidDetails = AndroidNotificationDetails(
-        'instant_channel', 'إشعارات فورية',
-        importance: Importance.high,
-        priority: Priority.high,
-        icon: "@mipmap/launcher_icon");
-
-    const iosDetails = DarwinNotificationDetails();
-
-    await _notifications.show(
-      0,
-      title,
-      body,
-      const NotificationDetails(android: androidDetails, iOS: iosDetails),
-    );
-  }
-
-  // الحصول على الإشعارات المجدولة
-  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
-    return await _notifications.pendingNotificationRequests();
-  }
-
-  // دالة عامة للجدولة (للاستخدام المرن)
-  Future<void> scheduleNotification({
-    required int id,
-    required String title,
-    required String body,
-    required int hour,
-    required int minute,
-    String? payload,
-  }) async {
-    await _scheduleNotification(
-      id: id,
-      title: title,
-      body: body,
-      hour: hour,
-      minute: minute,
-      payload: payload,
-    );
-  }
-}
 
 //# دليل إعداد WorkManager للأذان التلقائي
 //
@@ -1139,55 +1091,3 @@ class NotificationService {
 //)
 //```
 
-Future scheduleAzan(DateTime prayerTime, String prayerName) async {
-  await AwesomeNotifications().createNotification(
-    content: NotificationContent(
-      id: prayerTime.millisecondsSinceEpoch % 100000,
-      channelKey: 'azan_channel',
-      title: 'حان الآن وقت $prayerName',
-      body: 'الله أكبر الله أكبر',
-      notificationLayout: NotificationLayout.Default,
-    ),
-    schedule: NotificationCalendar.fromDate(
-      date: prayerTime,
-      preciseAlarm: true,
-    ),
-  );
-}
-// في نهاية main.dart، بعد دالة main()
-
-@pragma('vm:entry-point')
-class NotificationController {
-  @pragma('vm:entry-point')
-  static Future<void> onNotificationCreatedMethod(
-      ReceivedNotification receivedNotification) async {
-    print('📱 إشعار جديد: ${receivedNotification.id}');
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> onNotificationDisplayedMethod(
-      ReceivedNotification receivedNotification) async {
-    print('📱 تم عرض الإشعار: ${receivedNotification.title}');
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> onDismissActionReceivedMethod(
-      ReceivedAction receivedAction) async {
-    print('📱 تم إغلاق الإشعار: ${receivedAction.id}');
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> onActionReceivedMethod(
-      ReceivedAction receivedAction) async {
-    print('🎯 ضغط على زر: ${receivedAction.buttonKeyPressed}');
-
-    switch (receivedAction.buttonKeyPressed) {
-      case 'STOP_ADHAN':
-        print('🛑 إيقاف الأذان');
-        break;
-      case 'REMIND_LATER':
-        print('⏰ تذكير لاحق');
-        break;
-    }
-  }
-}
