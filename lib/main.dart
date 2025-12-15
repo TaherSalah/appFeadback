@@ -486,6 +486,19 @@ Future<void> _initializeAwesomeNotifications() async {
           enableVibration: true,
           enableLights: true,
         ),
+
+        // 💰 قناة الزكاة
+        NotificationChannel(
+          channelKey: 'zakat_reminder_channel',
+          channelName: 'تذكير الزكاة',
+          channelDescription: 'تذكير سنوي لموعد الزكاة',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.teal,
+          ledColor: Colors.teal,
+          playSound: true,
+          enableVibration: true,
+          enableLights: true,
+        ),
       ],
       debug: true, // ✅ فعّل debug للتأكد من القنوات
     );
@@ -493,9 +506,12 @@ Future<void> _initializeAwesomeNotifications() async {
     // ✅ إعداد المستمعين
     AwesomeNotifications().setListeners(
       onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-      onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
-      onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
-      onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
+      onNotificationCreatedMethod:
+          NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod:
+          NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod:
+          NotificationController.onDismissActionReceivedMethod,
     );
 
     // ✅ طلب الأذونات
@@ -522,7 +538,6 @@ Future<void> _setupDailyReminders() async {
       id: 1,
       channelKey: 'athkar_channel',
       title: '🌅 أذكار الصباح',
-
       body: 'حان وقت أذكار الصباح، بارك الله في صباحك',
       hour: 9,
       minute: 0,
@@ -619,7 +634,6 @@ Future<void> _scheduleDailyNotification({
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         icon: 'resource://mipmap/launcher_icon',
-
         id: id,
         channelKey: channelKey,
         title: title,
@@ -706,7 +720,8 @@ Future<void> _scheduleMinutelySalawatTest() async {
 // ═══════════════════════════════════════════════════════════
 Future<void> scheduleAzan(DateTime prayerTime, String prayerName) async {
   try {
-    final channelKey = prayerName == 'الفجر' ? 'fajr_adhan_channel' : 'adhan_channel';
+    final channelKey =
+        prayerName == 'الفجر' ? 'fajr_adhan_channel' : 'adhan_channel';
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -755,7 +770,8 @@ class NotificationController {
   }
 
   @pragma('vm:entry-point')
-  static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
+  static Future<void> onActionReceivedMethod(
+      ReceivedAction receivedAction) async {
     print('🎯 تم الضغط على الإشعار: ${receivedAction.payload}');
 
     final navigator = CentralizedCubit.navigatorKey.currentState;
@@ -788,6 +804,7 @@ class NotificationController {
     }
   }
 }
+
 void checkWhatsNew(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
   final lastVersion = prefs.getString("last_version");

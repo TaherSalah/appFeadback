@@ -32,6 +32,7 @@ import '../../../features/rokia_view/rokia.dart';
 import '../../../features/sabah_view/azkar_sabah.dart';
 import '../../../features/sleep_view/sleep_azkar.dart';
 import '../../../features/splash_view/splash.dart';
+import '../../../features/zakat_view/zakat_calculator_view.dart';
 import '../../shard/exports/all_exports.dart';
 
 class Routes {
@@ -70,6 +71,7 @@ class Routes {
   static const String packageInfoRoute = "/packageInfoView";
   static const String quranKhitamRoute = "/QuranKhitamView";
   static const String tafsirQuranRoute = "/TafsirQuranView";
+  static const String zakatCalculatorRoute = "/ZakatCalculator";
 }
 
 class QuranRadioPlayerArgs {
@@ -187,6 +189,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const About());
       case '/QuranRadioView':
         return MaterialPageRoute(builder: (_) => const QuranRadioView());
+
+      case Routes.zakatCalculatorRoute:
+        return MaterialPageRoute(builder: (_) => const ZakatCalculatorView());
 
       default:
         return unDefinedRoute();

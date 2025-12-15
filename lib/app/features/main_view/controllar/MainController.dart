@@ -29,6 +29,10 @@ class MainController extends ControllerMVC {
   String? selectedCountry;
   String? selectedCity;
 
+  // إعدادات الحساب
+  CalculationMethod selectedMethod = CalculationMethod.egyptian;
+  Madhab selectedMadhab = Madhab.shafi;
+
   PrayerTimes? prayerTimes;
   double progressValue = 0.0;
   String remainingTimeText = "";
@@ -109,13 +113,29 @@ class MainController extends ControllerMVC {
     //   "navigate": "/QuranChannalPlayerView"
     // },
     {
+      "title": "حاسبة الزكاة",
+      "icon": "assets/images/zakat.png",
+      "navigate": Routes.zakatCalculatorRoute
+    },
+    {
       "title": "عَنَّا",
       "icon": "assets/images/info (1).png",
       "navigate": "/about"
     },
   ];
 
-  static const _arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+  static const _arabicDigits = [
+    '٠',
+    '١',
+    '٢',
+    '٣',
+    '٤',
+    '٥',
+    '٦',
+    '٧',
+    '٨',
+    '٩'
+  ];
   String toArabicDigits(String s) =>
       s.replaceAllMapped(RegExp(r'\d'), (m) => _arabicDigits[int.parse(m[0]!)]);
 
@@ -145,19 +165,73 @@ class MainController extends ControllerMVC {
     });
 
     _loadCountriesAndLocation();
+    _loadSettings(); // تحميل إعدادات الحساب
+  }
+
+  // تحميل إعدادات الحساب والمذهب
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // المذهب
+    final madhabIndex = prefs.getInt('madhab') ?? 0;
+    selectedMadhab = madhabIndex == 1 ? Madhab.hanafi : Madhab.shafi;
+
+    // طريقة الحساب (نحاول استرجاعها من المؤشر المحفوظ، أو نخمنها من المعلمات إذا لم يوجد)
+    final methodIndex = prefs.getInt('calculation_method_index');
+    if (methodIndex != null &&
+        methodIndex >= 0 &&
+        methodIndex < CalculationMethod.values.length) {
+      selectedMethod = CalculationMethod.values[methodIndex];
+    } else {
+      // الافتراضي
+      selectedMethod = CalculationMethod.egyptian;
+    }
+
+    calculatePrayerTimes();
+    setState(() {});
+  }
+
+  // حفظ إعدادات الحساب
+  Future<void> updateCalcSettings({
+    required CalculationMethod method,
+    required Madhab madhab,
+  }) async {
+    selectedMethod = method;
+    selectedMadhab = madhab;
+
+    final prefs = await SharedPreferences.getInstance();
+    final params = method.getParameters();
+
+    // حفظ المؤشرات للواجهة
+    await prefs.setInt(
+        'calculation_method_index', CalculationMethod.values.indexOf(method));
+    await prefs.setInt('madhab', madhab == Madhab.hanafi ? 1 : 0);
+
+    // حفظ القيم التفصيلية للـ WorkManager
+    await prefs.setDouble('fajr_angle', params.fajrAngle);
+    await prefs.setDouble('isha_angle', params.ishaAngle ?? 0.0);
+    if (params.ishaInterval > 0) {
+      await prefs.setInt('isha_interval', params.ishaInterval);
+    } else {
+      await prefs.remove('isha_interval');
+    }
+
+    // إعادة الحساب والجدولة
+    calculatePrayerTimes();
+    setState(() {});
   }
 
   String get hijriDate => hijri == null
       ? ''
       : toArabicDigits(
-    '${hijri!.hDay} ${hijri!.getLongMonthName()} ${hijri!.hYear} هـ',
-  );
+          '${hijri!.hDay} ${hijri!.getLongMonthName()} ${hijri!.hYear} هـ',
+        );
 
   // تحميل الدول + قراءة الموقع المخزون (إن وجد)
   Future<void> _loadCountriesAndLocation() async {
     try {
       final String response =
-      await rootBundle.loadString('assets/images/egypt_governorates.json');
+          await rootBundle.loadString('assets/images/egypt_governorates.json');
       final data = json.decode(response) as Map<String, dynamic>;
       countries = data;
 
@@ -167,11 +241,12 @@ class MainController extends ControllerMVC {
 
       // دولة افتراضية: مصر إن وجدت، وإلا أول دولة
       final defaultCountry =
-      countries.keys.contains('مصر') ? 'مصر' : countries.keys.first;
+          countries.keys.contains('مصر') ? 'مصر' : countries.keys.first;
 
-      selectedCountry = savedCountry != null && countries.keys.contains(savedCountry)
-          ? savedCountry
-          : defaultCountry;
+      selectedCountry =
+          savedCountry != null && countries.keys.contains(savedCountry)
+              ? savedCountry
+              : defaultCountry;
 
       cities = (countries[selectedCountry!] as Map<String, dynamic>)
         ..removeWhere((k, v) => v == null);
@@ -204,8 +279,8 @@ class MainController extends ControllerMVC {
   }) async {
     if (!countries.containsKey(country)) return;
 
-    final Map<String, dynamic> cityMap =
-    (countries[country] as Map<String, dynamic>)
+    final Map<String, dynamic> cityMap = (countries[country]
+        as Map<String, dynamic>)
       ..removeWhere((k, v) => v == null);
 
     if (!cityMap.containsKey(city)) return;
@@ -219,40 +294,16 @@ class MainController extends ControllerMVC {
     setState(() {});
   }
 
-  /// إعادة قراءة الموقع من SharedPreferences ثم إعادة حساب المواقيت
-  // Future<void> refreshPrayerTimesFromPrefs() async {
-  //   if (countries.isEmpty) {
-  //     await _loadCountriesAndLocation();
-  //     return;
-  //   }
-  //
-  //   final p = await SharedPreferences.getInstance();
-  //   final savedCountry = p.getString(_kCountryKey);
-  //   final savedCity = p.getString(_kCityKey);
-  //
-  //   if (savedCountry != null && countries.containsKey(savedCountry)) {
-  //     final Map<String, dynamic> cityMap =
-  //     (countries[savedCountry] as Map<String, dynamic>)
-  //       ..removeWhere((k, v) => v == null);
-  //
-  //     if (savedCity != null && cityMap.containsKey(savedCity)) {
-  //       selectedCountry = savedCountry;
-  //       cities = cityMap;
-  //       selectedCity = savedCity;
-  //     }
-  //   }
-  //
-  //   calculatePrayerTimes();
-  //   setState(() {});
-  // }
-
   void calculatePrayerTimes() {
     if (selectedCity == null) return;
 
     final lat = (cities[selectedCity]!["lat"]).toDouble();
     final lng = (cities[selectedCity]!["lng"]).toDouble();
     final coordinates = Coordinates(lat, lng);
-    final params = CalculationMethod.egyptian.getParameters();
+
+    // استخدام الإعدادات الحالية
+    final params = selectedMethod.getParameters();
+    params.madhab = selectedMadhab;
     final date = DateComponents.from(DateTime.now());
     final times = PrayerTimes(coordinates, date, params);
 
@@ -345,10 +396,9 @@ class MainController extends ControllerMVC {
       setState(() {
         progressValue = progress.clamp(0.0, 1.0);
         remainingTimeText =
-        "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
-        nextPrayer = isIqama
-            ? " الإقامة لصلاة $upcomingPrayerName"
-            : upcomingPrayerName;
+            "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
+        nextPrayer =
+            isIqama ? " الإقامة لصلاة $upcomingPrayerName" : upcomingPrayerName;
       });
     });
   }
@@ -380,6 +430,7 @@ class MainController extends ControllerMVC {
       ' من $zakarType \n\n$azkarConten\n\n$azkarContenDes',
     );
   }
+
   Future<void> refreshPrayerTimesFromPrefs() async {
     // لو لسه الدول ما اتحملتش، استعمل نفس لوجيك التحميل الأساسي
     if (countries.isEmpty) {
@@ -392,8 +443,8 @@ class MainController extends ControllerMVC {
     final savedCity = prefs.getString('selected_city');
 
     if (savedCountry != null && countries.containsKey(savedCountry)) {
-      final Map<String, dynamic> cityMap =
-      (countries[savedCountry] as Map<String, dynamic>)
+      final Map<String, dynamic> cityMap = (countries[savedCountry]
+          as Map<String, dynamic>)
         ..removeWhere((k, v) => v == null);
 
       if (savedCity != null && cityMap.containsKey(savedCity)) {
@@ -403,8 +454,8 @@ class MainController extends ControllerMVC {
       }
     }
 
-    calculatePrayerTimes();   // يعيد حساب المواقيت بناء على المكان الجديد
-    setState(() {});          // يخبّر كل الـ Views اللي راكبة على هذا الكنترولر
+    calculatePrayerTimes(); // يعيد حساب المواقيت بناء على المكان الجديد
+    setState(() {}); // يخبّر كل الـ Views اللي راكبة على هذا الكنترولر
   }
 
   @override

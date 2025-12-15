@@ -96,8 +96,8 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
 
       // ✅ 3) حساب مواقيت الصلاة
       final coordinates = Coordinates(lat, lng);
-      final calculationParams = CalculationMethod.egyptian.getParameters();
-      calculationParams.madhab = Madhab.shafi;
+      final calculationParams = con.selectedMethod.getParameters();
+      calculationParams.madhab = con.selectedMadhab;
 
       // ✅ 4) حفظ البيانات
       await AdhanWorkManagerService().saveCoordinates(lat, lng);
@@ -274,6 +274,243 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
   //   );
   // }
 
+  // ⚙️ نافذة إعدادات الحساب
+  void _showCalculationSettings() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return StatefulBuilder(
+          builder: (context, setStateSheet) {
+            return Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    '⚙️ إعدادات الحساب',
+                    style: GoogleFonts.cairo(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // طريقة الحساب
+                  Text(
+                    'طريقة الحساب',
+                    style: GoogleFonts.cairo(
+                      fontSize: 14.sp,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMethodDropdown(isDark, setStateSheet),
+
+                  const SizedBox(height: 16),
+
+                  // المذهب
+                  Text(
+                    'المذهب (صلاة العصر)',
+                    style: GoogleFonts.cairo(
+                      fontSize: 14.sp,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMadhabDropdown(isDark, setStateSheet),
+
+                  const SizedBox(height: 30),
+
+                  // زر الحفظ
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: () {
+                        // حفظ وتحديث
+                        con.updateCalcSettings(
+                          method: con.selectedMethod,
+                          madhab: con.selectedMadhab,
+                        );
+                        _scheduleAllPrayerNotifications(); // إعادة الجدولة
+                        Navigator.pop(context);
+                        KHelper.showSuccess(
+                            message: "تم تحديث طريقة الحساب بنجاح");
+                      },
+                      child: Text(
+                        'حفظ التغييرات',
+                        style: GoogleFonts.cairo(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMethodDropdown(
+      bool isDark, void Function(void Function()) setStateSheet) {
+    // قائمة الطرق المعربة
+    final Map<CalculationMethod, String> methods = {
+      CalculationMethod.egyptian: "الهيئة المصرية العامة للمساحة",
+      CalculationMethod.muslim_world_league: "رابطة العالم الإسلامي",
+      CalculationMethod.umm_al_qura: "أم القرى (مكة المكرمة)",
+      CalculationMethod.karachi: "جامعة العلوم الإسلامية، كراتشي",
+      CalculationMethod.dubai: "دبي",
+      CalculationMethod.kuwait: "الكويت",
+      CalculationMethod.north_america: "أمريكا الشمالية (ISNA)",
+      CalculationMethod.singapore: "سنغافورة",
+      CalculationMethod.turkey: "تركيا",
+      CalculationMethod.tehran: "طهران",
+      CalculationMethod.qatar: "قطر",
+    };
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black.withOpacity(0.2) : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.white10 : Colors.grey.shade300,
+        ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<CalculationMethod>(
+          isExpanded: true,
+          hint: Text('اختر الطريقة'),
+          items: methods.entries.map((item) {
+            return DropdownMenuItem<CalculationMethod>(
+              value: item.key,
+              child: Text(
+                item.value,
+                style: GoogleFonts.cairo(
+                  fontSize: 13.sp,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          }).toList(),
+          value: con.selectedMethod,
+          onChanged: (value) {
+            if (value != null) {
+              setStateSheet(() {
+                con.selectedMethod = value;
+              });
+            }
+          },
+          buttonStyleData: const ButtonStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            height: 50,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            maxHeight: 400,
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF334155) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMadhabDropdown(
+      bool isDark, void Function(void Function()) setStateSheet) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black.withOpacity(0.2) : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.white10 : Colors.grey.shade300,
+        ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<Madhab>(
+          isExpanded: true,
+          items: [
+            DropdownMenuItem(
+              value: Madhab.shafi,
+              child: Text(
+                'الشافعي / المالكي / الحنبلي (الجمهور)',
+                style: GoogleFonts.cairo(
+                  fontSize: 13.sp,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ),
+            DropdownMenuItem(
+              value: Madhab.hanafi,
+              child: Text(
+                'الحنفي',
+                style: GoogleFonts.cairo(
+                  fontSize: 13.sp,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ),
+          ],
+          value: con.selectedMadhab,
+          onChanged: (value) {
+            if (value != null) {
+              setStateSheet(() {
+                con.selectedMadhab = value;
+              });
+            }
+          },
+          buttonStyleData: const ButtonStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            height: 50,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF334155) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     // لا داعي لـ dispose WorkManager
@@ -330,6 +567,11 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
             //               },
             //             ),
 
+            IconButton(
+              icon: const Icon(Icons.settings),
+              tooltip: 'إعدادات الحساب',
+              onPressed: _showCalculationSettings,
+            ),
             IconButton(
               icon: const Icon(Icons.refresh),
               tooltip: 'إعادة جدولة الإشعارات',

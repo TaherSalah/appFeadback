@@ -10,7 +10,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:safeSpace/core/Utilities/toast_helper.dart';
 // import 'package:safeSpace/features/view/contactUser/emergencyView.dart';
 
-
 // class MyFirebaseMessagingService {
 //   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 //   static final FlutterLocalNotificationsPlugin
@@ -122,8 +121,8 @@ import 'package:timezone/timezone.dart' as tz;
 
 class MyFirebaseMessagingService {
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin
+      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   // Request notification permissions
   // static Future<void> requestPermission() async {
@@ -154,7 +153,8 @@ class MyFirebaseMessagingService {
     } else if (settings.authorizationStatus == AuthorizationStatus.denied) {
       // ignore: avoid_print
       print("❌ تم رفض الإشعارات");
-    } else if (settings.authorizationStatus == AuthorizationStatus.notDetermined) {
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.notDetermined) {
       print("❓ لم يتم تحديد الإذن بعد");
     }
   }
@@ -166,10 +166,10 @@ class MyFirebaseMessagingService {
     tz.setLocalLocation(tz.getLocation(tz.local.name));
 
     const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const InitializationSettings settings =
-    InitializationSettings(android: androidSettings);
+        InitializationSettings(android: androidSettings);
 
     await _flutterLocalNotificationsPlugin.initialize(
       settings,
@@ -187,7 +187,9 @@ class MyFirebaseMessagingService {
       debugPrint("User opened app via notification: ${message.data}");
     });
 
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
       if (message != null) {
         debugPrint("App opened from terminated state: ${message.data}");
       }
@@ -196,7 +198,8 @@ class MyFirebaseMessagingService {
     await subscribeToTopic("user");
   }
 
-  static Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  static Future<void> firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
     await Firebase.initializeApp();
     debugPrint("Handling background message: ${message.messageId}");
   }
@@ -218,7 +221,8 @@ class MyFirebaseMessagingService {
 
   // Show Local Notification immediately
   static Future<void> showNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
       'channel_id',
       'channel_name',
       importance: Importance.max,
@@ -227,7 +231,7 @@ class MyFirebaseMessagingService {
     );
 
     const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidDetails);
+        NotificationDetails(android: androidDetails);
 
     await _flutterLocalNotificationsPlugin.show(
       0,
@@ -236,40 +240,6 @@ class MyFirebaseMessagingService {
       notificationDetails,
     );
   }
-
-  // ✅ Schedule Local Notification
-  // static Future<void> scheduleLocalNotification({
-  //   required int id,
-  //   required String title,
-  //   required String body,
-  //   required DateTime scheduledDateTime,
-  // }) async {
-  //   await _flutterLocalNotificationsPlugin.zonedSchedule(
-  //     id,
-  //     title,
-  //     body,
-  //     tz.TZDateTime.from(scheduledDateTime, tz.local),
-  //     const NotificationDetails(
-  //       android: AndroidNotificationDetails(
-  //         'scheduled_channel_id',
-  //         'Scheduled Notifications',
-  //         channelDescription: 'Channel for scheduled local notifications',
-  //         importance: Importance.max,
-  //         priority: Priority.high,
-  //         icon: '@mipmap/ic_launcher',
-  //       ),
-  //     ),
-  //
-  //     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,  // أكثر دقة حتى لو الجهاز في وضع النوم
-  //     uiLocalNotificationDateInterpretation:
-  //     UILocalNotificationDateInterpretation.absoluteTime,
-  //     matchDateTimeComponents: DateTimeComponents.time, // لتكرار يومي
-  //   );
-  // }
-
-
-
-
 }
 
 // class NotificationsHelper {
