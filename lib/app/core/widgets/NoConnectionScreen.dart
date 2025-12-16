@@ -1,25 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hijri/hijri_calendar.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
-import 'package:quran_library/quran.dart';
-import 'package:rate_my_app/rate_my_app.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'package:permission_handler/permission_handler.dart';
-
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:flutter/material.dart';
-import 'package:workmanager/workmanager.dart';
 
 import '../localization/localization_manager.dart';
 import '../utils/style/responsive_util.dart';

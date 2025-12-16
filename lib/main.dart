@@ -1,40 +1,5 @@
 // import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:hijri/hijri_calendar.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
-import 'package:muslimdaily/app/features/hadith/hadith_view.dart';
-import 'package:muslimdaily/app/features/main_view/MainView.dart';
-import 'package:muslimdaily/app/features/messa_view/azkar_massa.dart';
-import 'package:muslimdaily/app/features/prayer_view/post_prayer_azkar.dart';
-import 'package:muslimdaily/app/features/quran/quranView.dart';
-import 'package:muslimdaily/app/features/sabah_view/azkar_sabah.dart';
-import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
-import 'package:quran_library/quran.dart';
-import 'package:rate_my_app/rate_my_app.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'package:permission_handler/permission_handler.dart';
-import 'app.dart';
-import 'app/features/sleep_view/sleep_azkar.dart';
-import 'app/core/cache/shard_pref/shardpref_obj.dart';
-import 'app/core/cubit/centralized_cubit.dart';
-import 'app/core/utils/services_locator.dart';
-import 'app/features/azanView/adhan_callback.dart';
-import 'app/features/azanView/adhan_workmanager_service.dart';
-
-import 'app/features/Khatmah/data/khatmah_model.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-
-import 'package:workmanager/workmanager.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
 //
 //
 
@@ -108,156 +73,28 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 //   });
 // }
 import 'package:awesome_notifications/awesome_notifications.dart';
-
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//
-//
-//
-//   // ✅ 1) تهيئة AwesomeNotifications مع قناتين
-//   await AwesomeNotifications().initialize(
-//     null,
-//     [
-//       // 🌅 قناة أذان الفجر
-//       NotificationChannel(
-//         channelKey: 'fajr_adhan_channel',
-//         channelName: 'أذان الفجر',
-//         channelDescription: 'تشغيل أذان الفجر',
-//         importance: NotificationImportance.Max,
-//         // icon: 'resource://drawable/ic_stat_logoapp',
-//         // أو استخدم أيقونة التطبيق
-//         // largeIcon: 'resource://mipmap/launcher_icon',
-//         playSound: true,
-//         soundSource: 'resource://raw/fajr', // ✅ بدون .mp3
-//         enableVibration: true,
-//         enableLights: true,
-//         ledColor: Colors.orange,
-//         defaultPrivacy: NotificationPrivacy.Public,
-//
-//
-//       ),
-//
-//       // 🕌 قناة الأذان العادي
-//       NotificationChannel(
-//         channelKey: 'adhan_channel',
-//         channelName: 'أذان الصلاة',
-//         channelDescription: 'تشغيل صوت الأذان',
-//         importance: NotificationImportance.Max,
-//         defaultPrivacy: NotificationPrivacy.Public,
-//
-//         playSound: true,
-//         // icon: 'resource://drawable/ic_stat_logoapp',
-//         // أو استخدم أيقونة التطبيق
-//         soundSource: 'resource://raw/athan', // ✅ بدون .mp3
-//         enableVibration: true,
-//         enableLights: true,
-//         ledColor: Colors.green,
-//       ),
-//     ],
-//     debug: true, // ✅ اتركها true للتجربة
-//   );
-//
-//   // ✅ 2) طلب الأذونات
-//   bool allowed = await AwesomeNotifications().isNotificationAllowed();
-//   if (!allowed) {
-//     await AwesomeNotifications().requestPermissionToSendNotifications(
-//       channelKey: 'adhan_channel',
-//     );
-//   }
-//
-//
-//   // ✅ 3) تهيئة Workmanager للخلفية
-//   await Workmanager().initialize(
-//     callbackDispatcher,
-//     isInDebugMode: true, // غيرها لـ false في الإنتاج
-//   );
-//
-//   // ✅ 4) إعداد مستمع للإشعارات (اختياري)
-//   AwesomeNotifications().setListeners(
-//     onActionReceivedMethod: (ReceivedAction receivedAction) async {
-//       if (receivedAction.buttonKeyPressed == 'STOP_ADHAN') {
-//         print('🛑 تم إيقاف الأذان بواسطة المستخدم');
-//       }
-//     },
-//   );
-//
-//   await QuranLibrary.init();
-//   // AwesomeNotifications().initialize(
-//   //   null,
-//   //   [
-//   //     NotificationChannel(
-//   //       channelKey: 'azan_channel',
-//   //       channelName: 'أذان الصلاة',
-//   //       channelDescription: 'تشغيل صوت الأذان',
-//   //       importance: NotificationImportance.Max,
-//   //       playSound: true,
-//   //       soundSource: 'resource://raw/athan',
-//   //     ),
-//   //   ],
-//   // );
-//   // Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-//   // ✅ 1) تهيئة الإشعارات أولاً
-//   // await NotificationService().initialize();
-//
-//   // // ✅ 2) تهيئة Workmanager للأذان (هام جداً!)
-//   // await Workmanager().initialize(
-//   //   callbackDispatcher,  // ← الدالة اللي فوق
-//   //   isInDebugMode: false, // خليها true للتجربة أول مرة
-//   // );
-//   //
-//   // // ✅ 3) تهيئة خدمة الأذان
-//   // await AdhanWorkManagerService().initialize();
-//
-//   // ✅ 4) جدولة الإشعارات الافتراضية
-//   // await _setupDefaultNotifications();
-//
-//   // باقي الكود...
-//   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-//     statusBarColor: Colors.transparent,
-//     statusBarIconBrightness: Brightness.dark,
-//     systemNavigationBarColor: Colors.transparent,
-//   ));
-//
-//   HijriCalendar.setLocal('ar_SA');
-//   await Di.init();
-//   await initializeDateFormatting();
-//   await initializeDateFormatting('ar', null);
-//   await initializeDateFormatting('en', null);
-//   await SharedObj().init();
-//
-//   // Hive
-//   await Hive.initFlutter();
-//   if (!Hive.isAdapterRegistered(0)) {
-//     Hive.registerAdapter(KhatmahModelAdapter());
-//   }
-//   await Hive.openBox<KhatmahModel>('khatmahBox');
-//   if (!Hive.isBoxOpen('khatmahPlans')) {
-//     await Hive.openBox('khatmahPlans');
-//   }
-//
-//   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-//       .then((_) {
-//     runApp(
-//       BlocProvider<CentralizedCubit>(
-//         create: (context) => CentralizedCubit(
-//           sharedPreferences: Di.sharedPreferences,
-//         )..localization(),
-//         child: BlocBuilder<CentralizedCubit, CentralizedState>(
-//           builder: (context, state) {
-//             return const MashkahApp();
-//           },
-//         ),
-//       ),
-//     );
-//   });
-// }
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/features/hadith/hadith_view.dart';
+import 'package:muslimdaily/app/features/main_view/MainView.dart';
+import 'package:muslimdaily/app/features/messa_view/azkar_massa.dart';
+import 'package:muslimdaily/app/features/quran/quranView.dart';
+import 'package:muslimdaily/app/features/sabah_view/azkar_sabah.dart';
+import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:quran_library/quran.dart';
+import 'package:rate_my_app/rate_my_app.dart';
+
+import 'app.dart';
+import 'app/core/cache/shard_pref/shardpref_obj.dart';
+import 'app/core/cubit/centralized_cubit.dart';
+import 'app/core/utils/services_locator.dart';
+import 'app/features/Khatmah/data/khatmah_model.dart';
+import 'app/features/azanView/adhan_workmanager_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

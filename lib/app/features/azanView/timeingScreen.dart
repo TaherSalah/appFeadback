@@ -342,6 +342,58 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                   const SizedBox(height: 8),
                   _buildMadhabDropdown(isDark, setStateSheet),
 
+                  const SizedBox(height: 16),
+
+                  const SizedBox(height: 16),
+                  
+                  // تعديل الساعات (فارق التوقيت)
+                  Text(
+                    'تعديل الساعات (فارق التوقيت)',
+                    style: GoogleFonts.cairo(
+                      fontSize: 14.sp,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.black.withOpacity(0.2) : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade300),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+                          onPressed: () {
+                            setStateSheet(() {
+                              con.manualOffset--;
+                            });
+                          },
+                        ),
+                        Text(
+                          "${con.manualOffset > 0 ? '+' : ''}${con.manualOffset} ساعة",
+                          style: GoogleFonts.cairo(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add_circle_outline, color: Colors.green),
+                          onPressed: () {
+                            setStateSheet(() {
+                              con.manualOffset++;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
                   const SizedBox(height: 30),
 
                   // زر الحفظ
@@ -361,6 +413,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                         con.updateCalcSettings(
                           method: con.selectedMethod,
                           madhab: con.selectedMadhab,
+                          offset: con.manualOffset,
                         );
                         _scheduleAllPrayerNotifications(); // إعادة الجدولة
                         Navigator.pop(context);
@@ -1131,7 +1184,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                   ),
                   child: Text(
                     intl.DateFormat('h:mm a')
-                        .format(prayer["time"] as DateTime),
+                        .format((prayer["time"] as DateTime).toLocal()),
                     style: GoogleFonts.cairo(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,

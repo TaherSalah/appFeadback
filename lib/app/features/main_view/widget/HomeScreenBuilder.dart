@@ -16,6 +16,14 @@ import '../controllar/MainController.dart';
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import 'PrayerHeaderSection.dart';
+import 'SoulComfortWidget.dart';
+import 'DailyGiftWidget.dart';
+import 'AllahNameWidget.dart';
+import 'QuizWidget.dart';
+import 'WorshipTrackerWidget.dart';
+import 'JannahPlanterWidget.dart';
+import 'KidsEntryPointWidget.dart';
+import 'FridayCompanionWidget.dart';
 
 
 
@@ -196,6 +204,17 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                       children: [
                         // const SizedBox(height: 10),
                         // const SizedBox(height: 10),
+                        // const SizedBox(height: 10),
+                        
+                        // 🔥 رفيق الجمعة (يظهر فقط يوم الجمعة)
+                        const FridayCompanionWidget(),
+
+                        // 🔥 صندوق الهدايا اليومي
+                        const DailyGiftWidget(),
+
+                         // 🔥 جدول الطاعات
+                        const WorshipTrackerWidget(),
+
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: isTab ? 10.w : 5.0),
@@ -245,6 +264,32 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                             height: MediaQuery.sizeOf(context).width > 600
                                 ? 25
                                 : 20),
+                                
+                        // 🔥 قسم بماذا تشعر اليوم؟
+                        const SoulComfortWidget(),
+                        
+                        const SizedBox(height: 10),
+
+                        // 🔥 قسم تعرف على ربك
+                        const AllahNameWidget(),
+
+                        const SizedBox(height: 10),
+                        
+                        // 🔥 قسم غراس الجنة
+                        const JannahPlanterWidget(),
+
+                        const SizedBox(height: 10),
+
+                        // 🔥 قسم سؤال التحدي
+                        const QuizWidget(),
+                        
+                        const SizedBox(height: 10),
+
+                        // 🔥 مدخل ركن الأطفال (في صفحة منفصلة)
+                        const KidsEntryPointWidget(),
+
+                        const SizedBox(height: 20),
+
                         const AzkarQuranWidget(),
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 15),

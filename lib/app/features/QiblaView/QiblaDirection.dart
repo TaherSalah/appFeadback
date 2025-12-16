@@ -19,6 +19,7 @@ import 'package:geocoding/geocoding.dart';
 
 import '../../core/shard/constanc/app_style.dart';
 import '../../core/widgets/kButtons.dart';
+import 'ARQiblaCameraWidget.dart';
 
 
 // class QiblaDirection extends StatefulWidget {
@@ -254,6 +255,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
   String? _locationName;
   bool _isLoading = true;
   String _errorMessage = '';
+  bool _isARMode = false;
 
   StreamSubscription<CompassEvent>? _compassSubscription;
 
@@ -460,6 +462,20 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           elevation: 0,
           actions: [
             IconButton(
+              icon: Icon(_isARMode ? Icons.compass_calibration : Icons.camera_alt),
+              tooltip: _isARMode ? "الوضع الكلاسيكي" : "AR وضع",
+              onPressed: () {
+                setState(() {
+                  _isARMode = !_isARMode;
+                });
+                Fluttertoast.showToast(
+                  msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
+                  backgroundColor: Colors.amber,
+                  textColor: Colors.black
+                );
+              },
+            ),
+            IconButton(
               icon: Icon(Icons.refresh),
               onPressed: _initLocationAndCompass,
             ),
@@ -469,7 +485,12 @@ class _QiblaDirectionState extends State<QiblaDirection> {
             ? _buildLoadingWidget(isDark)
             : _errorMessage.isNotEmpty
             ? _buildErrorWidget(isDark)
-            : _buildCompassWidget(isDark, size, angle),
+            : _isARMode 
+                ? ARQiblaCameraWidget(
+                    qiblaDirection: _qiblaDirection ?? 0, 
+                    heading: _heading ?? 0
+                  )
+                : _buildCompassWidget(isDark, size, angle),
       ),
     );
   }

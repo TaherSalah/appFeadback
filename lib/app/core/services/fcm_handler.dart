@@ -5,7 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:googleapis_auth/auth_io.dart' as auth;
 // import 'package:safeSpace/core/Utilities/toast_helper.dart';
 // import 'package:safeSpace/features/view/contactUser/emergencyView.dart';
@@ -119,128 +119,128 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-class MyFirebaseMessagingService {
-  static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  static final FlutterLocalNotificationsPlugin
-      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  // Request notification permissions
-  // static Future<void> requestPermission() async {
-  //   NotificationSettings settings = await _messaging.requestPermission(
-  //     alert: true,
-  //     badge: true,
-  //     sound: true,
-  //     announcement: false,
-  //   );
-  //
-  //   if (settings.authorizationStatus == AuthorizationStatus.denied) {
-  //     debugPrint("User denied notifications.");
-  //   } else {
-  //     debugPrint("User granted notifications: ${settings.authorizationStatus}");
-  //   }
-  // }
-  static Future<void> requestPermission() async {
-    NotificationSettings settings = await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    print("🔔 الإذن الحالي: ${settings.authorizationStatus}");
-
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print("✅ تم السماح بالإشعارات");
-    } else if (settings.authorizationStatus == AuthorizationStatus.denied) {
-      // ignore: avoid_print
-      print("❌ تم رفض الإشعارات");
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.notDetermined) {
-      print("❓ لم يتم تحديد الإذن بعد");
-    }
-  }
-
-  // Initialize Firebase Messaging
-  static Future<void> initialize() async {
-    // Timezone setup for scheduled notifications
-    tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation(tz.local.name));
-
-    const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const InitializationSettings settings =
-        InitializationSettings(android: androidSettings);
-
-    await _flutterLocalNotificationsPlugin.initialize(
-      settings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        debugPrint("Notification Clicked: ${response.payload}");
-      },
-    );
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint("Foreground Notification: ${message.notification?.title}");
-      showNotification(message);
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint("User opened app via notification: ${message.data}");
-    });
-
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
-      if (message != null) {
-        debugPrint("App opened from terminated state: ${message.data}");
-      }
-    });
-
-    await subscribeToTopic("user");
-  }
-
-  static Future<void> firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    await Firebase.initializeApp();
-    debugPrint("Handling background message: ${message.messageId}");
-  }
-
-  static fcmToken(fcmToken) =>
-      FirebaseMessaging.instance.getToken().then((fcmToken) {
-        debugPrint("FCM Token: $fcmToken");
-      });
-
-  static Future<void> subscribeToTopic(String topic) async {
-    await _messaging.subscribeToTopic(topic);
-    debugPrint("Subscribed to topic: $topic");
-  }
-
-  static Future<void> unsubscribeFromTopic(String topic) async {
-    await _messaging.unsubscribeFromTopic(topic);
-    debugPrint("Unsubscribed from topic: $topic");
-  }
-
-  // Show Local Notification immediately
-  static Future<void> showNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-      'channel_id',
-      'channel_name',
-      importance: Importance.max,
-      priority: Priority.high,
-      icon: "@mipmap/launcher_icon",
-    );
-
-    const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails);
-
-    await _flutterLocalNotificationsPlugin.show(
-      0,
-      message.notification?.title,
-      message.notification?.body,
-      notificationDetails,
-    );
-  }
-}
+// class MyFirebaseMessagingService {
+//   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+//   static final FlutterLocalNotificationsPlugin
+//       _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+//
+//   // Request notification permissions
+//   // static Future<void> requestPermission() async {
+//   //   NotificationSettings settings = await _messaging.requestPermission(
+//   //     alert: true,
+//   //     badge: true,
+//   //     sound: true,
+//   //     announcement: false,
+//   //   );
+//   //
+//   //   if (settings.authorizationStatus == AuthorizationStatus.denied) {
+//   //     debugPrint("User denied notifications.");
+//   //   } else {
+//   //     debugPrint("User granted notifications: ${settings.authorizationStatus}");
+//   //   }
+//   // }
+//   static Future<void> requestPermission() async {
+//     NotificationSettings settings = await _messaging.requestPermission(
+//       alert: true,
+//       badge: true,
+//       sound: true,
+//     );
+//
+//     print("🔔 الإذن الحالي: ${settings.authorizationStatus}");
+//
+//     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+//       print("✅ تم السماح بالإشعارات");
+//     } else if (settings.authorizationStatus == AuthorizationStatus.denied) {
+//       // ignore: avoid_print
+//       print("❌ تم رفض الإشعارات");
+//     } else if (settings.authorizationStatus ==
+//         AuthorizationStatus.notDetermined) {
+//       print("❓ لم يتم تحديد الإذن بعد");
+//     }
+//   }
+//
+//   // Initialize Firebase Messaging
+//   static Future<void> initialize() async {
+//     // Timezone setup for scheduled notifications
+//     tz.initializeTimeZones();
+//     tz.setLocalLocation(tz.getLocation(tz.local.name));
+//
+//     const AndroidInitializationSettings androidSettings =
+//         AndroidInitializationSettings('@mipmap/ic_launcher');
+//
+//     const InitializationSettings settings =
+//         InitializationSettings(android: androidSettings);
+//
+//     await _flutterLocalNotificationsPlugin.initialize(
+//       settings,
+//       onDidReceiveNotificationResponse: (NotificationResponse response) {
+//         debugPrint("Notification Clicked: ${response.payload}");
+//       },
+//     );
+//
+//     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+//       debugPrint("Foreground Notification: ${message.notification?.title}");
+//       showNotification(message);
+//     });
+//
+//     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+//       debugPrint("User opened app via notification: ${message.data}");
+//     });
+//
+//     FirebaseMessaging.instance
+//         .getInitialMessage()
+//         .then((RemoteMessage? message) {
+//       if (message != null) {
+//         debugPrint("App opened from terminated state: ${message.data}");
+//       }
+//     });
+//
+//     await subscribeToTopic("user");
+//   }
+//
+//   static Future<void> firebaseMessagingBackgroundHandler(
+//       RemoteMessage message) async {
+//     await Firebase.initializeApp();
+//     debugPrint("Handling background message: ${message.messageId}");
+//   }
+//
+//   static fcmToken(fcmToken) =>
+//       FirebaseMessaging.instance.getToken().then((fcmToken) {
+//         debugPrint("FCM Token: $fcmToken");
+//       });
+//
+//   static Future<void> subscribeToTopic(String topic) async {
+//     await _messaging.subscribeToTopic(topic);
+//     debugPrint("Subscribed to topic: $topic");
+//   }
+//
+//   static Future<void> unsubscribeFromTopic(String topic) async {
+//     await _messaging.unsubscribeFromTopic(topic);
+//     debugPrint("Unsubscribed from topic: $topic");
+//   }
+//
+//   // Show Local Notification immediately
+//   static Future<void> showNotification(RemoteMessage message) async {
+//     const AndroidNotificationDetails androidDetails =
+//         AndroidNotificationDetails(
+//       'channel_id',
+//       'channel_name',
+//       importance: Importance.max,
+//       priority: Priority.high,
+//       icon: "@mipmap/launcher_icon",
+//     );
+//
+//     const NotificationDetails notificationDetails =
+//         NotificationDetails(android: androidDetails);
+//
+//     await _flutterLocalNotificationsPlugin.show(
+//       0,
+//       message.notification?.title,
+//       message.notification?.body,
+//       notificationDetails,
+//     );
+//   }
+// }
 
 // class NotificationsHelper {
 //   // creat instance of fbm

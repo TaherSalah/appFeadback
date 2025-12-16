@@ -32,6 +32,7 @@ class MainController extends ControllerMVC {
   // إعدادات الحساب
   CalculationMethod selectedMethod = CalculationMethod.egyptian;
   Madhab selectedMadhab = Madhab.shafi;
+  int manualOffset = 0; // تعديل الساعات يدوياً
 
   PrayerTimes? prayerTimes;
   double progressValue = 0.0;
@@ -114,7 +115,7 @@ class MainController extends ControllerMVC {
     // },
     {
       "title": "حاسبة الزكاة",
-      "icon": "assets/images/zakat.png",
+      "icon": "assets/images/icons8-zakat-34.png",
       "navigate": Routes.zakatCalculatorRoute
     },
     {
@@ -175,6 +176,7 @@ class MainController extends ControllerMVC {
     // المذهب
     final madhabIndex = prefs.getInt('madhab') ?? 0;
     selectedMadhab = madhabIndex == 1 ? Madhab.hanafi : Madhab.shafi;
+    manualOffset = prefs.getInt('manual_offset') ?? 0;
 
     // طريقة الحساب (نحاول استرجاعها من المؤشر المحفوظ، أو نخمنها من المعلمات إذا لم يوجد)
     final methodIndex = prefs.getInt('calculation_method_index');
@@ -195,9 +197,11 @@ class MainController extends ControllerMVC {
   Future<void> updateCalcSettings({
     required CalculationMethod method,
     required Madhab madhab,
+    required int offset,
   }) async {
     selectedMethod = method;
     selectedMadhab = madhab;
+    manualOffset = offset;
 
     final prefs = await SharedPreferences.getInstance();
     final params = method.getParameters();
@@ -206,6 +210,7 @@ class MainController extends ControllerMVC {
     await prefs.setInt(
         'calculation_method_index', CalculationMethod.values.indexOf(method));
     await prefs.setInt('madhab', madhab == Madhab.hanafi ? 1 : 0);
+    await prefs.setInt('manual_offset', offset);
 
     // حفظ القيم التفصيلية للـ WorkManager
     await prefs.setDouble('fajr_angle', params.fajrAngle);
@@ -308,13 +313,16 @@ class MainController extends ControllerMVC {
     final times = PrayerTimes(coordinates, date, params);
 
     final nowLocal = DateTime.now();
+    final offset = Duration(hours: manualOffset);
+
     final prayers = {
-      "الفجر": times.fajr,
-      "الشروق": times.sunrise,
-      "الظهر": times.dhuhr,
-      "العصر": times.asr,
-      "المغرب": times.maghrib,
-      "العشاء": times.isha,
+      "الفجر": times.fajr.add(offset),
+      "الشروق": times.sunrise.add(offset),
+// ... (rest is same)
+      "الظهر": times.dhuhr.add(offset),
+      "العصر": times.asr.add(offset),
+      "المغرب": times.maghrib.add(offset),
+      "العشاء": times.isha.add(offset),
     };
 
     DateTime? next;
@@ -404,7 +412,7 @@ class MainController extends ControllerMVC {
   }
 
   String formatTime(DateTime t) =>
-      toArabicDigits(DateFormat('hh:mm a', 'ar').format(t));
+      toArabicDigits(DateFormat('hh:mm a', 'ar').format(t.toLocal()));
 
   DateTime getIqamaTime(String prayerName, DateTime adhanTime) {
     switch (prayerName) {

@@ -170,17 +170,21 @@ class AdhanWorkManagerService {
     try {
       final coords = coordinates ?? await _getSavedCoordinates();
       final calculationParams = params ?? await _getSavedCalculationParams();
+      
+      final prefs = await SharedPreferences.getInstance();
+      final manualOffset = prefs.getInt('manual_offset') ?? 0;
+      final offset = Duration(hours: manualOffset);
 
       final components = DateComponents(date.year, date.month, date.day);
       final prayerTimes = PrayerTimes(coords, components, calculationParams);
 
       return {
         // 'الفجر': DateTime.now().add(Duration(seconds: 2)),
-        'الفجر': prayerTimes.fajr,
-        'الظهر': prayerTimes.dhuhr,
-        'العصر': prayerTimes.asr,
-        'المغرب': prayerTimes.maghrib,
-        'العشاء': prayerTimes.isha,
+        'الفجر': prayerTimes.fajr.add(offset),
+        'الظهر': prayerTimes.dhuhr.add(offset),
+        'العصر': prayerTimes.asr.add(offset),
+        'المغرب': prayerTimes.maghrib.add(offset),
+        'العشاء': prayerTimes.isha.add(offset),
       };
     } catch (e) {
       print('❌ خطأ في حساب أوقات الصلاة: $e');
@@ -411,6 +415,7 @@ class AdhanWorkManagerService {
   }
 
   String _formatTime(DateTime time) {
+    time = time.toLocal();
     final hour =
         time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
     final minute = time.minute.toString().padLeft(2, '0');
