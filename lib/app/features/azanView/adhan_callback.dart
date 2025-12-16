@@ -12,7 +12,10 @@ void alarmCallback(int id) async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
 
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     print("🔊 [AlarmCallback] بدء معالجة الأذان (ID: $id)");
+    print("🕐 الوقت الحالي: ${DateTime.now()}");
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     // 1️⃣ استرجاع البيانات
     final prefs = await SharedPreferences.getInstance();
@@ -20,14 +23,17 @@ void alarmCallback(int id) async {
     final cityName = prefs.getString('city_name_$id') ?? '';
     final prayerTime = prefs.getString('prayer_time_$id') ?? '';
 
-    print("📋 البيانات: $prayerName - $cityName - $prayerTime");
+    print("📋 البيانات المسترجعة:");
+    print("   🕌 الصلاة: $prayerName");
+    print("   📍 المدينة: $cityName");
+    print("   ⏰ الوقت: $prayerTime");
 
     // 2️⃣ تهيئة AwesomeNotifications
     await _initAwesomeNotifications();
 
-    // 3️⃣ تحديد نوع الأذان
-    final isFajr = prayerName.contains('الفجر');
-    final channelKey = isFajr ? 'fajr_adhan_channel' : 'adhan_channel';
+    // 3️⃣ تحديد القناة المناسبة
+    final bool isFajr = prayerName.contains('الفجر');
+    String channelKey = isFajr ? 'fajr_adhan_channel_v2' : 'adhan_channel_v2';
 
     print("🔔 إرسال إشعار على قناة: $channelKey");
 
@@ -38,8 +44,8 @@ void alarmCallback(int id) async {
       content: NotificationContent(
         id: notificationId,
         channelKey: channelKey,
-        title: isFajr ? '🌅 حان الآن موعد أذان الفجر' : '🕌 حان الآن موعد أذان $prayerName',
-        body: '$cityName - $prayerTime\n${_getPrayerDescription(prayerName)}',
+        title: isFajr ? '\u200F🌅 حان الآن موعد أذان الفجر' : '\u200F🕌 حان الآن موعد أذان $prayerName',
+        body: '\u200F$cityName - $prayerTime\n${_getPrayerDescription(prayerName)}',
         notificationLayout: NotificationLayout.BigText,
         wakeUpScreen: true,
         fullScreenIntent: true,

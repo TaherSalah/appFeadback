@@ -601,25 +601,31 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
             ),
           ),
           actions: [
-            // في TimingScreen، أضف زر:
-            //             IconButton(
-            //               icon: Icon(Icons.notifications_active),
-            //               onPressed: () async {
-            //                 await AwesomeNotifications().createNotification(
-            //                   content: NotificationContent(
-            //                     // ⭐ أضف الأيقونة
-            //                     icon: 'resource://drawable/ic_stat_logoapp',
-            //                     // أو استخدم أيقونة التطبيق
-            //                     largeIcon: 'resource://mipmap/launcher_icon',
-            //                     id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-            //                     channelKey: 'fajr_adhan_channel',
-            //                     title: 'اختبار أذان الفجر',
-            //                     body: 'هل الصوت يعمل؟',
-            //                   ),
-            //                 );
-            //               },
-            //             ),
-
+            // زر اختبار الأذان 🧪
+            IconButton(
+              icon: const Icon(Icons.bug_report, color: Colors.orange),
+              tooltip: 'اختبار الأذان (10 ثوانٍ)',
+              onPressed: () async {
+                try {
+                  final success = await AdhanWorkManagerService().scheduleTestAdhan(secondsFromNow: 10);
+                  if (!mounted) return;
+                  
+                  if (success) {
+                    KHelper.showSuccess(
+                      message: '🧪 تم جدولة أذان تجريبي بعد 10 ثوانٍ\nانتظر وتأكد من الصوت!',
+                    );
+                  } else {
+                    KHelper.showError(
+                      message: '❌ فشلت جدولة الأذان التجريبي\nتحقق من الأذونات',
+                    );
+                  }
+                } catch (e) {
+                  if (!mounted) return;
+                  KHelper.showError(message: 'خطأ: $e');
+                }
+              },
+            ),
+            
             IconButton(
               icon: const Icon(Icons.settings),
               tooltip: 'إعدادات الحساب',

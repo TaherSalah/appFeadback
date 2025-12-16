@@ -204,16 +204,17 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                       children: [
                         // const SizedBox(height: 10),
                         // const SizedBox(height: 10),
-                        // const SizedBox(height: 10),
-                        
+                        const SizedBox(height: 10),
+                        // 🔥 قسم بماذا تشعر اليوم؟
+                        const SoulComfortWidget(),
                         // 🔥 رفيق الجمعة (يظهر فقط يوم الجمعة)
                         const FridayCompanionWidget(),
 
                         // 🔥 صندوق الهدايا اليومي
-                        const DailyGiftWidget(),
+                        // const DailyGiftWidget(),
 
                          // 🔥 جدول الطاعات
-                        const WorshipTrackerWidget(),
+                        // const WorshipTrackerWidget(),
 
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -265,8 +266,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                 ? 25
                                 : 20),
                                 
-                        // 🔥 قسم بماذا تشعر اليوم؟
-                        const SoulComfortWidget(),
+
                         
                         const SizedBox(height: 10),
 
@@ -276,14 +276,14 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                         const SizedBox(height: 10),
                         
                         // 🔥 قسم غراس الجنة
-                        const JannahPlanterWidget(),
+                        // const JannahPlanterWidget(),
 
-                        const SizedBox(height: 10),
+                        // const SizedBox(height: 10),
 
                         // 🔥 قسم سؤال التحدي
-                        const QuizWidget(),
+                        // const QuizWidget(),
                         
-                        const SizedBox(height: 10),
+                        // const SizedBox(height: 10),
 
                         // 🔥 مدخل ركن الأطفال (في صفحة منفصلة)
                         const KidsEntryPointWidget(),

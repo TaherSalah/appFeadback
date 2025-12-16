@@ -14,8 +14,8 @@ class _SplashItemBuilderState extends State<SplashItemBuilder> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity.w,
-      height: double.infinity.h,
+      width: double.infinity,
+      height: double.infinity,
       // color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

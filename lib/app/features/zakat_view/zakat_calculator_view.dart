@@ -87,6 +87,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   final GlobalKey _repaintBoundaryKey = GlobalKey();
 
   // Controllers for Gold Prices
+  final TextEditingController _goldPrice24Controller = TextEditingController();
   final TextEditingController _goldPrice21Controller = TextEditingController();
   final TextEditingController _goldPrice18Controller = TextEditingController();
   final TextEditingController _silverPriceController =
@@ -108,6 +109,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   // Controllers for Gold Weight
   final TextEditingController _goldWeight18Controller = TextEditingController();
   final TextEditingController _goldWeight21Controller = TextEditingController();
+  final TextEditingController _goldWeight24Controller = TextEditingController();
 
   // Controllers for Silver Weight
   final TextEditingController _silverWeightController = TextEditingController();
@@ -344,13 +346,14 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
       return double.tryParse(text) ?? 0.0;
     }
 
+    double price24 = parse(_goldPrice24Controller);
     double price21 = parse(_goldPrice21Controller);
     double price18 = parse(_goldPrice18Controller);
     double silverPrice = parse(_silverPriceController);
 
     // ✅ Reset if Mandatory Price is missing
     if (_isGoldStandard) {
-      if (price21 <= 0) {
+      if (price24 <= 0) { // Nisab depends on 24 now
         _resetValues();
         return;
       }
@@ -371,6 +374,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
     double weight18 = parse(_goldWeight18Controller);
     double weight21 = parse(_goldWeight21Controller);
+    double weight24 = parse(_goldWeight24Controller);
     double weightSilver = parse(_silverWeightController);
 
     double rentMonthly = parse(_realEstateRentController);
@@ -389,7 +393,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
     // 2. Calculate Nisab
     if (_isGoldStandard) {
-      _nisabValue = 85 * price21;
+      _nisabValue = 85 * price24; // Standard is 85g of 24K
     } else {
       _nisabValue = 595 * silverPrice;
     }
@@ -400,7 +404,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     double assetsAndMoney = money + tradeGoods + stocks + bonds + profits;
 
     // Gold value
-    double goldValue = (weight18 * price18) + (weight21 * price21);
+    double goldValue = (weight18 * price18) + (weight21 * price21) + (weight24 * price24);
 
     // Silver value
     double silverValue = weightSilver * silverPrice;
@@ -484,6 +488,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
      _profitsController.clear();
      _goldWeight18Controller.clear();
      _goldWeight21Controller.clear();
+     _goldWeight24Controller.clear();
+     _goldPrice24Controller.clear(); // Clear price too if needed, or keep it? Better clear for "Reset All"
      _silverWeightController.clear();
      _realEstateRentController.clear();
      _cropsValueController.clear();
@@ -494,6 +500,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
      _sheepController.clear();
      _fitrMembersController.clear();
      _fitrValueController.clear();
+     
+     _irrigationMethod = 1; // Reset to default
 
      _resetValues();
      _calculate(); // Recalculate to zero everything out
@@ -839,33 +847,40 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   const SizedBox(height: 12),
 
                   // Gold Prices Row
+                  Text(
+                      "أسعار الذهب (الجرام) - أدخل عيار 24 لحساب النصاب",
+                      style: GoogleFonts.cairo(
+                          fontSize: 12.sp, color: Colors.grey[600]),
+                      textAlign: TextAlign.center),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
-                          child: Text(
-                              "سعر جرام 18 اليوم (${_selectedCurrency.symbol})",
-                              style: GoogleFonts.cairo(
-                                  fontSize: 12.sp, color: Colors.grey[600]),
-                              textAlign: TextAlign.center)),
-                      const SizedBox(width: 10),
+                          child: Column(
+                            children: [
+                              Text("عيار 24 (للنصاب)", style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.amber[800])),
+                              const SizedBox(height: 4),
+                              _buildSmallInput(_goldPrice24Controller, isDark, "سعر 24"),
+                            ],
+                          )),
+                      const SizedBox(width: 8),
                       Expanded(
-                          child: Text(
-                              "سعر جرام 21 اليوم (${_selectedCurrency.symbol})",
-                              style: GoogleFonts.cairo(
-                                  fontSize: 12.sp, color: Colors.grey[600]),
-                              textAlign: TextAlign.center)),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                  Row(
-                    children: [
+                          child: Column(
+                            children: [
+                              Text("عيار 21", style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey)),
+                              const SizedBox(height: 4),
+                              _buildSmallInput(_goldPrice21Controller, isDark, "سعر 21"),
+                            ],
+                          )),
+                      const SizedBox(width: 8),
                       Expanded(
-                          child: _buildSmallInput(
-                              _goldPrice18Controller, isDark, "أدخل السعر")),
-                      const SizedBox(width: 10),
-                      Expanded(
-                          child: _buildSmallInput(
-                              _goldPrice21Controller, isDark, "أدخل السعر")),
+                          child: Column(
+                            children: [
+                              Text("عيار 18", style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey)),
+                              const SizedBox(height: 4),
+                              _buildSmallInput(_goldPrice18Controller, isDark, "سعر 18"),
+                            ],
+                          )),
                     ],
                   ),
 
@@ -1011,19 +1026,26 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   ),
                   const SizedBox(height: 8),
                   // Weights
-                  _buildInputRow(
-                    label: "وزن الذهب الذي تملكه من عيار 18",
-                    controller: _goldWeight18Controller,
+                   _buildInputRow(
+                    label: "وزن الذهب عيار 24",
+                    controller: _goldWeight24Controller,
                     isDark: isDark,
-                    suffix: "الجرام",
-                    labelPrefix: "وحدة القياس",
+                    suffix: "جرام",
+                    labelPrefix: "السبائك الخالصة",
                   ),
                   _buildInputRow(
-                    label: "وزن الذهب الذي تملكه من عيار 21",
+                    label: "وزن الذهب عيار 21",
                     controller: _goldWeight21Controller,
                     isDark: isDark,
-                    suffix: "الجرام",
-                    labelPrefix: "وحدة القياس",
+                    suffix: "جرام",
+                    labelPrefix: "المشغولات",
+                  ),
+                  _buildInputRow(
+                    label: "وزن الذهب عيار 18",
+                    controller: _goldWeight18Controller,
+                    isDark: isDark,
+                    suffix: "جرام",
+                    labelPrefix: "المشغولات",
                   ),
                 ],
                 isDark: isDark,
@@ -1117,23 +1139,23 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                 title: "زكاة الأنعام (المواشي)",
                 children: [
                   _buildInputRow(
-                     label: "إبل (جمال)",
+                     label: "عدد رؤوس الإبل",
                      controller: _camelsController,
                      isDark: isDark,
-                     suffix: "عدد",
+                     suffix: "رأس",
                   ),
                   const SizedBox(width: 8),
                   _buildInputRow(
-                     label: "بقر",
+                     label: "عدد رؤوس البقر",
                      controller: _cowsController,
                      isDark: isDark,
-                     suffix: "عدد",
+                     suffix: "رأس",
                   ),
                   _buildInputRow(
-                    label: "غنم (ماعز/ضأن)",
+                    label: "عدد رؤوس الغنم",
                     controller: _sheepController,
                     isDark: isDark,
-                    suffix: "عدد",
+                    suffix: "رأس",
                   ),
                   if (_zakatCattleResult.isNotEmpty)
                     Container(
@@ -1320,7 +1342,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
             children: [
               Text(
                   _isGoldStandard
-                      ? "نصاب الزكاة (85 جرام عيار 21)"
+                      ? "نصاب الزكاة (85 جرام عيار 24)"
                       : "نصاب الزكاة (595 جرام فضة)",
                   style: GoogleFonts.cairo(
                       fontSize: 12.sp,

@@ -28,7 +28,7 @@ dependencies:
   share_plus: ^7.2.1
 
   # Widget
-#  home_widget: ^0.8.1
+  home_widget: ^0.8.1
   adhan:
   firebase_messaging: ^15.2.4
 #  flutter_local_notifications: ^19.5.0
@@ -103,7 +103,7 @@ dependencies:
       ref: main
       url: https://github.com/alheekmahlib/quran_library.git
   table_calendar: ^3.0.2
-  fl_chart:
+  fl_chart: ^1.1.1
   package_info_plus: ^9.0.0
   upgrader: ^12.3.0
   version: ^3.0.2

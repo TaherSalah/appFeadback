@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -230,68 +231,102 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
         ? const Color(0xFF121212) 
         : (_selectedGender == 'boy' ? const Color(0xFFE3F2FD) : const Color(0xFFFCE4EC));
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        title: Text(
-          "ركن المسلم الصغير 🦸‍♂️",
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        // backgroundColor: bgColor,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+          ),
+          child: AppBar(
+            // actions: [
+            //   IconButton(
+            //     icon: const Icon(Icons.refresh),
+            //     tooltip: 'إعادة العداد',
+            //     onPressed: con.resetPrayer,
+            //   ),
+            // ],
+      
+            leading: CupertinoNavigationBarBackButton(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+            centerTitle: true,
+            title: Text(
+              "ركن المسلم الصغير",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
+          ),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: isDark ? Colors.white : themeColor),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.person_pin, color: isDark ? Colors.white : themeColor),
-            onPressed: _showAvatarSelection,
-          )
-        ],
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                _buildProfileCard(isDark),
-                const SizedBox(height: 20),
-                _buildTrophySection(isDark),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    const Icon(Icons.map, size: 20, color: Colors.grey),
-                    const SizedBox(width: 8),
-                    Text(
-                      "رحلة الأبطال 🗺️",
-                      style: GoogleFonts.cairo(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
+      
+        // appBar: AppBar(
+        //   title: Text(
+        //     "ركن المسلم الصغير 🦸‍♂️",
+        //     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        //   ),
+        //   backgroundColor: Colors.transparent,
+        //   elevation: 0,
+        //   centerTitle: true,
+        //   leading: IconButton(
+        //     icon: Icon(Icons.arrow_back_ios, color: isDark ? Colors.white : themeColor),
+        //     onPressed: () => Navigator.pop(context),
+        //   ),
+        //   actions: [
+        //     IconButton(
+        //       icon: Icon(Icons.person_pin, color: isDark ? Colors.white : themeColor),
+        //       onPressed: _showAvatarSelection,
+        //     )
+        //   ],
+        // ),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _buildProfileCard(isDark),
+                  const SizedBox(height: 20),
+                  _buildTrophySection(isDark),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      const Icon(Icons.map, size: 20, color: Colors.grey),
+                      const SizedBox(width: 8),
+                      Text(
+                        "رحلة الأبطال 🗺️",
+                        style: GoogleFonts.cairo(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                ...List.generate(_levels.length, (index) => _buildLevelCard(index, isDark)),
-                const SizedBox(height: 40),
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  ...List.generate(_levels.length, (index) => _buildLevelCard(index, isDark)),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
-          ),
-          
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _confettiController,
-              blastDirectionality: BlastDirectionality.explosive,
-              shouldLoop: false,
-              colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange, Colors.purple],
+            
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _confettiController,
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false,
+                colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange, Colors.purple],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
