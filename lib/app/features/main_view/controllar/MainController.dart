@@ -119,6 +119,11 @@ class MainController extends ControllerMVC {
       "navigate": Routes.zakatCalculatorRoute
     },
     {
+      "title": "المساجد القريبة",
+      "icon": "assets/images/mosque.png",
+      "navigate": "/mosquesMap"
+    },
+    {
       "title": "عَنَّا",
       "icon": "assets/images/info (1).png",
       "navigate": "/about"

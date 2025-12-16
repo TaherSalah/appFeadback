@@ -33,6 +33,7 @@ import '../../../features/sabah_view/azkar_sabah.dart';
 import '../../../features/sleep_view/sleep_azkar.dart';
 import '../../../features/splash_view/splash.dart';
 import '../../../features/zakat_view/zakat_calculator_view.dart';
+import '../../../features/mosques_nearby/MosquesMapScreen.dart';
 import '../../shard/exports/all_exports.dart';
 
 class Routes {
@@ -192,6 +193,9 @@ class RouteGenerator {
 
       case Routes.zakatCalculatorRoute:
         return MaterialPageRoute(builder: (_) => const ZakatCalculatorView());
+      
+      case '/mosquesMap':
+        return MaterialPageRoute(builder: (_) => const MosquesMapScreen());
 
       default:
         return unDefinedRoute();
