@@ -8,6 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:confetti/confetti.dart';
 
 import '../../../core/utils/style/responsive_util.dart';
+import 'StoriesScreen.dart';
+import 'GamesMenuScreen.dart';
+import 'VirtualShopScreen.dart';
+import 'DailyChallengesScreen.dart';
+import 'DailyStreakWidget.dart';
+import 'VirtualPetWidget.dart';
+import 'AchievementAlbumScreen.dart';
+import 'HadithsForKidsScreen.dart';
+import 'DailyDuasScreen.dart';
 
 class KidsCornerScreen extends StatefulWidget {
   const KidsCornerScreen({super.key});
@@ -19,8 +28,11 @@ class KidsCornerScreen extends StatefulWidget {
 class _KidsCornerScreenState extends State<KidsCornerScreen> {
   late ConfettiController _confettiController;
   int _totalStars = 0;
+  int _completedStories = 0;
+  int _completedGames = 0;
+  int _currentStreakDays = 0;
   String _selectedGender = 'boy'; // 'boy' or 'girl'
-  
+
   // Levels Categories - Expanded to 9 Levels
   final List<Map<String, dynamic>> _levels = [
     {
@@ -29,10 +41,20 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.water_drop,
       "color": const Color(0xFF4DB6AC),
       "tasks": [
-         {"id": "t1_1", "title": "غسلت أسناني 🦷", "points": 5, "done": false},
-         {"id": "t1_2", "title": "قلت بسم الله قبل الأكل 🍎", "points": 5, "done": false},
-         {"id": "t1_3", "title": "قلت الحمد لله بعد الأكل 🤲", "points": 5, "done": false},
-         {"id": "t1_4", "title": "نمت مبكراً 🛌", "points": 10, "done": false},
+        {"id": "t1_1", "title": "غسلت أسناني 🦷", "points": 5, "done": false},
+        {
+          "id": "t1_2",
+          "title": "قلت بسم الله قبل الأكل 🍎",
+          "points": 5,
+          "done": false
+        },
+        {
+          "id": "t1_3",
+          "title": "قلت الحمد لله بعد الأكل 🤲",
+          "points": 5,
+          "done": false
+        },
+        {"id": "t1_4", "title": "نمت مبكراً 🛌", "points": 10, "done": false},
       ]
     },
     {
@@ -41,10 +63,30 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.mosque,
       "color": const Color(0xFF7986CB),
       "tasks": [
-         {"id": "t2_1", "title": "توضأت بشكل صحيح 💧", "points": 10, "done": false},
-         {"id": "t2_2", "title": "صليت الصلاة في وقتها 🕌", "points": 15, "done": false},
-         {"id": "t2_3", "title": "دعوت لوالدي بعد الصلاة ❤️", "points": 10, "done": false},
-         {"id": "t2_4", "title": "رتبت سجادة الصلاة 🛏️", "points": 10, "done": false},
+        {
+          "id": "t2_1",
+          "title": "توضأت بشكل صحيح 💧",
+          "points": 10,
+          "done": false
+        },
+        {
+          "id": "t2_2",
+          "title": "صليت الصلاة في وقتها 🕌",
+          "points": 15,
+          "done": false
+        },
+        {
+          "id": "t2_3",
+          "title": "دعوت لوالدي بعد الصلاة ❤️",
+          "points": 10,
+          "done": false
+        },
+        {
+          "id": "t2_4",
+          "title": "رتبت سجادة الصلاة 🛏️",
+          "points": 10,
+          "done": false
+        },
       ]
     },
     {
@@ -53,10 +95,30 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.volunteer_activism,
       "color": const Color(0xFFFFA726),
       "tasks": [
-         {"id": "t3_1", "title": "قبلت يد أمي/أبي 😘", "points": 20, "done": false},
-         {"id": "t3_2", "title": "لم أغضب اليوم 😊", "points": 15, "done": false},
-         {"id": "t3_3", "title": "أماطة الأذى عن الطريق 🍂", "points": 10, "done": false},
-         {"id": "t3_4", "title": "تصدقت بجزء من مصروفي 🪙", "points": 20, "done": false},
+        {
+          "id": "t3_1",
+          "title": "قبلت يد أمي/أبي 😘",
+          "points": 20,
+          "done": false
+        },
+        {
+          "id": "t3_2",
+          "title": "لم أغضب اليوم 😊",
+          "points": 15,
+          "done": false
+        },
+        {
+          "id": "t3_3",
+          "title": "أماطة الأذى عن الطريق 🍂",
+          "points": 10,
+          "done": false
+        },
+        {
+          "id": "t3_4",
+          "title": "تصدقت بجزء من مصروفي 🪙",
+          "points": 20,
+          "done": false
+        },
       ]
     },
     {
@@ -65,10 +127,30 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.menu_book_rounded,
       "color": const Color(0xFF8D6E63),
       "tasks": [
-         {"id": "t4_1", "title": "راجعت سورة قصيرة 📖", "points": 20, "done": false},
-         {"id": "t4_2", "title": "استمعت للقرآن 5 دقائق 🎧", "points": 15, "done": false},
-         {"id": "t4_3", "title": "حفظت آية جديدة ✨", "points": 25, "done": false},
-         {"id": "t4_4", "title": "وضعت المصحف في مكان مرتفع ☝️", "points": 10, "done": false},
+        {
+          "id": "t4_1",
+          "title": "راجعت سورة قصيرة 📖",
+          "points": 20,
+          "done": false
+        },
+        {
+          "id": "t4_2",
+          "title": "استمعت للقرآن 5 دقائق 🎧",
+          "points": 15,
+          "done": false
+        },
+        {
+          "id": "t4_3",
+          "title": "حفظت آية جديدة ✨",
+          "points": 25,
+          "done": false
+        },
+        {
+          "id": "t4_4",
+          "title": "وضعت المصحف في مكان مرتفع ☝️",
+          "points": 10,
+          "done": false
+        },
       ]
     },
     {
@@ -77,10 +159,30 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.family_restroom,
       "color": const Color(0xFFEC407A),
       "tasks": [
-         {"id": "t5_1", "title": "اتصلت بجدي/جدتي 📞", "points": 30, "done": false},
-         {"id": "t5_2", "title": "لعبت مع أخي/أختي بلطف 🧸", "points": 20, "done": false},
-         {"id": "t5_3", "title": "ساعدت في تحضير الطعام 🥗", "points": 25, "done": false},
-         {"id": "t5_4", "title": "قلت كلاماً طيباً لأهلي 💬", "points": 15, "done": false},
+        {
+          "id": "t5_1",
+          "title": "اتصلت بجدي/جدتي 📞",
+          "points": 30,
+          "done": false
+        },
+        {
+          "id": "t5_2",
+          "title": "لعبت مع أخي/أختي بلطف 🧸",
+          "points": 20,
+          "done": false
+        },
+        {
+          "id": "t5_3",
+          "title": "ساعدت في تحضير الطعام 🥗",
+          "points": 25,
+          "done": false
+        },
+        {
+          "id": "t5_4",
+          "title": "قلت كلاماً طيباً لأهلي 💬",
+          "points": 15,
+          "done": false
+        },
       ]
     },
     {
@@ -89,10 +191,30 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.diamond,
       "color": const Color(0xFF9C27B0),
       "tasks": [
-         {"id": "t6_1", "title": "صمت جزءاً من اليوم 🥤🚫", "points": 40, "done": false},
-         {"id": "t6_2", "title": "صليت النوافل (السنن) 🕌", "points": 35, "done": false},
-         {"id": "t6_3", "title": "علمت صديقي حديثاً شريفاً 🤝", "points": 30, "done": false},
-         {"id": "t6_4", "title": "ذكرت الله 100 مرة 📿", "points": 30, "done": false},
+        {
+          "id": "t6_1",
+          "title": "صمت جزءاً من اليوم 🥤🚫",
+          "points": 40,
+          "done": false
+        },
+        {
+          "id": "t6_2",
+          "title": "صليت النوافل (السنن) 🕌",
+          "points": 35,
+          "done": false
+        },
+        {
+          "id": "t6_3",
+          "title": "علمت صديقي حديثاً شريفاً 🤝",
+          "points": 30,
+          "done": false
+        },
+        {
+          "id": "t6_4",
+          "title": "ذكرت الله 100 مرة 📿",
+          "points": 30,
+          "done": false
+        },
       ]
     },
     // NEW LEVELS
@@ -102,10 +224,30 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.science,
       "color": const Color(0xFF0288D1), // Light Blue
       "tasks": [
-         {"id": "t7_1", "title": "تأملت في السماء والنجوم 🌌", "points": 20, "done": false},
-         {"id": "t7_2", "title": "سقيت زرعاً أو حيواناً 🌱", "points": 25, "done": false},
-         {"id": "t7_3", "title": "قرأت معلومة مفيدة 📚", "points": 20, "done": false},
-         {"id": "t7_4", "title": "قلت سبحان الله على خلقه 🦜", "points": 20, "done": false},
+        {
+          "id": "t7_1",
+          "title": "تأملت في السماء والنجوم 🌌",
+          "points": 20,
+          "done": false
+        },
+        {
+          "id": "t7_2",
+          "title": "سقيت زرعاً أو حيواناً 🌱",
+          "points": 25,
+          "done": false
+        },
+        {
+          "id": "t7_3",
+          "title": "قرأت معلومة مفيدة 📚",
+          "points": 20,
+          "done": false
+        },
+        {
+          "id": "t7_4",
+          "title": "قلت سبحان الله على خلقه 🦜",
+          "points": 20,
+          "done": false
+        },
       ]
     },
     {
@@ -114,10 +256,30 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.light_mode,
       "color": const Color(0xFFFFD600), // Yellow/Gold
       "tasks": [
-         {"id": "t8_1", "title": "استخدمت السواك 🦷", "points": 30, "done": false},
-         {"id": "t8_2", "title": "دخلت المنزل باليمين 🦶", "points": 20, "done": false},
-         {"id": "t8_3", "title": "ابتسمت (تبسمك صدقة) 😊", "points": 20, "done": false},
-         {"id": "t8_4", "title": "قلت دعاء الدخول/الخروج 🤲", "points": 25, "done": false},
+        {
+          "id": "t8_1",
+          "title": "استخدمت السواك 🦷",
+          "points": 30,
+          "done": false
+        },
+        {
+          "id": "t8_2",
+          "title": "دخلت المنزل باليمين 🦶",
+          "points": 20,
+          "done": false
+        },
+        {
+          "id": "t8_3",
+          "title": "ابتسمت (تبسمك صدقة) 😊",
+          "points": 20,
+          "done": false
+        },
+        {
+          "id": "t8_4",
+          "title": "قلت دعاء الدخول/الخروج 🤲",
+          "points": 25,
+          "done": false
+        },
       ]
     },
     {
@@ -126,28 +288,91 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.flag,
       "color": const Color(0xFFC62828), // Red
       "tasks": [
-         {"id": "t9_1", "title": "قلت الصدق دائماً ✅", "points": 40, "done": false},
-         {"id": "t9_2", "title": "حافظت على الوعد 🤝", "points": 40, "done": false},
-         {"id": "t9_3", "title": "نظفت مكاني بعد اللعب 🧹", "points": 30, "done": false},
-         {"id": "t9_4", "title": "سامحت من أخطأ في حقي ❤️", "points": 50, "done": false},
+        {
+          "id": "t9_1",
+          "title": "قلت الصدق دائماً ✅",
+          "points": 40,
+          "done": false
+        },
+        {
+          "id": "t9_2",
+          "title": "حافظت على الوعد 🤝",
+          "points": 40,
+          "done": false
+        },
+        {
+          "id": "t9_3",
+          "title": "نظفت مكاني بعد اللعب 🧹",
+          "points": 30,
+          "done": false
+        },
+        {
+          "id": "t9_4",
+          "title": "سامحت من أخطأ في حقي ❤️",
+          "points": 50,
+          "done": false
+        },
       ]
     },
   ];
 
   // Trophies / Badges
   final List<Map<String, dynamic>> _allTrophies = [
-    {"id": "badge_1", "title": "بداية بطل", "desc": "اجمع 50 نجمة", "icon": Icons.star, "required": 50, "unlocked": false},
-    {"id": "badge_2", "title": "حارس الصلاة", "desc": "اجمع 150 نجمة", "icon": Icons.shield, "required": 150, "unlocked": false},
-    {"id": "badge_3", "title": "قلب ذهبي", "desc": "اجمع 300 نجمة", "icon": Icons.favorite, "required": 300, "unlocked": false},
-    {"id": "badge_4", "title": "عالم مبدع", "desc": "اجمع 500 نجمة", "icon": Icons.school, "required": 500, "unlocked": false},
-    {"id": "badge_5", "title": "حافظ العهد", "desc": "اجمع 800 نجمة", "icon": Icons.handshake, "required": 800, "unlocked": false},
-    {"id": "badge_6", "title": "أسطورة", "desc": "اجمع 1500 نجمة", "icon": Icons.workspace_premium, "required": 1500, "unlocked": false},
+    {
+      "id": "badge_1",
+      "title": "بداية بطل",
+      "desc": "اجمع 50 نجمة",
+      "icon": Icons.star,
+      "required": 50,
+      "unlocked": false
+    },
+    {
+      "id": "badge_2",
+      "title": "حارس الصلاة",
+      "desc": "اجمع 150 نجمة",
+      "icon": Icons.shield,
+      "required": 150,
+      "unlocked": false
+    },
+    {
+      "id": "badge_3",
+      "title": "قلب ذهبي",
+      "desc": "اجمع 300 نجمة",
+      "icon": Icons.favorite,
+      "required": 300,
+      "unlocked": false
+    },
+    {
+      "id": "badge_4",
+      "title": "عالم مبدع",
+      "desc": "اجمع 500 نجمة",
+      "icon": Icons.school,
+      "required": 500,
+      "unlocked": false
+    },
+    {
+      "id": "badge_5",
+      "title": "حافظ العهد",
+      "desc": "اجمع 800 نجمة",
+      "icon": Icons.handshake,
+      "required": 800,
+      "unlocked": false
+    },
+    {
+      "id": "badge_6",
+      "title": "أسطورة",
+      "desc": "اجمع 1500 نجمة",
+      "icon": Icons.workspace_premium,
+      "required": 1500,
+      "unlocked": false
+    },
   ];
 
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 3));
     _loadProgress();
   }
 
@@ -162,15 +387,15 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
     setState(() {
       _totalStars = prefs.getInt('kids_total_stars') ?? 0;
       _selectedGender = prefs.getString('kids_gender') ?? 'boy';
-      
+
       final savedTasks = prefs.getString('kids_tasks_v2');
       if (savedTasks != null) {
         final decoded = jsonDecode(savedTasks) as Map<String, dynamic>;
         for (var level in _levels) {
           for (var task in level['tasks']) {
-             if (decoded.containsKey(task['id'])) {
-               task['done'] = decoded[task['id']];
-             }
+            if (decoded.containsKey(task['id'])) {
+              task['done'] = decoded[task['id']];
+            }
           }
         }
       }
@@ -207,7 +432,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       _levels[levelIndex]['tasks'][taskIndex]['done'] = true;
       final points = _levels[levelIndex]['tasks'][taskIndex]['points'] as int;
       _totalStars += points;
-      
+
       _checkTrophies();
       _confettiController.play();
     });
@@ -223,16 +448,20 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
   }
 
   Color _getThemeColor() {
-    return _selectedGender == 'boy' ? const Color(0xFF2196F3) : const Color(0xFFE91E63);
+    return _selectedGender == 'boy'
+        ? const Color(0xFF2196F3)
+        : const Color(0xFFE91E63);
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final themeColor = _getThemeColor();
-    final bgColor = isDark 
-        ? const Color(0xFF121212) 
-        : (_selectedGender == 'boy' ? const Color(0xFFE3F2FD) : const Color(0xFFFCE4EC));
+    final bgColor = isDark
+        ? const Color(0xFF121212)
+        : (_selectedGender == 'boy'
+            ? const Color(0xFFE3F2FD)
+            : const Color(0xFFFCE4EC));
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -250,31 +479,32 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
             //     onPressed: con.resetPrayer,
             //   ),
             // ],
-      
+
             leading: CupertinoNavigationBarBackButton(
               color: Theme.of(context).brightness == Brightness.dark
                   ? Colors.white
                   : Colors.black,
             ),
             centerTitle: true,
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.person_pin, color: isDark ? Colors.white : themeColor),
-                  onPressed: _showAvatarSelection,
-                )
-              ],
+            actions: [
+              IconButton(
+                icon: Icon(Icons.person_pin,
+                    color: isDark ? Colors.white : themeColor),
+                onPressed: _showAvatarSelection,
+              )
+            ],
             title: Text(
               "ركن المسلم الصغير",
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
         ),
-      
+
         // appBar: AppBar(
         //   title: Text(
         //     "ركن المسلم الصغير 🦸‍♂️",
@@ -301,9 +531,18 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               child: Column(
                 children: [
                   _buildProfileCard(isDark),
+                  const SizedBox(height: 12),
+                  const DailyStreakWidget(),
+                  const SizedBox(height: 12),
+                  VirtualPetWidget(totalStars: _totalStars),
                   const SizedBox(height: 20),
                   _buildTrophySection(isDark),
                   const SizedBox(height: 20),
+
+                  // قسم القصص والألعاب
+                  _buildStoriesAndGamesSection(isDark),
+                  const SizedBox(height: 20),
+
                   Row(
                     children: [
                       const Icon(Icons.map, size: 20, color: Colors.grey),
@@ -311,7 +550,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                       Text(
                         "رحلة الأبطال 🗺️",
                         style: GoogleFonts.cairo(
-                          fontSize:ResponsiveUtil.isTablet(context)?12.sp: 18.sp,
+                          fontSize:
+                              ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : Colors.black87,
                         ),
@@ -319,19 +559,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  ...List.generate(_levels.length, (index) => _buildLevelCard(index, isDark)),
+                  ...List.generate(_levels.length,
+                      (index) => _buildLevelCard(index, isDark)),
                   const SizedBox(height: 40),
                 ],
               ),
             ),
-            
             Align(
               alignment: Alignment.topCenter,
               child: ConfettiWidget(
                 confettiController: _confettiController,
                 blastDirectionality: BlastDirectionality.explosive,
                 shouldLoop: false,
-                colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange, Colors.purple],
+                colors: const [
+                  Colors.green,
+                  Colors.blue,
+                  Colors.pink,
+                  Colors.orange,
+                  Colors.purple
+                ],
               ),
             ),
           ],
@@ -346,15 +592,18 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        decoration:  BoxDecoration(
-          color:AppThemeColors.cardBackgroundColor(context),
+        decoration: BoxDecoration(
+          color: AppThemeColors.cardBackgroundColor(context),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        padding:  EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("اختر بطلك", style: GoogleFonts.cairo(fontSize:  ResponsiveUtil.isTablet(context)?14.sp:18.sp, fontWeight: FontWeight.bold)),
+            Text("اختر بطلك",
+                style: GoogleFonts.cairo(
+                    fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 18.sp,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -367,9 +616,15 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   },
                   child: Column(
                     children: [
-                      CircleAvatar(radius: 40, backgroundColor: Colors.blue.withOpacity(0.2), child: const Text("👦", style: TextStyle(fontSize: 40))),
+                      CircleAvatar(
+                          radius: 40,
+                          backgroundColor: Colors.blue.withOpacity(0.2),
+                          child:
+                              const Text("👦", style: TextStyle(fontSize: 40))),
                       const SizedBox(height: 8),
-                      Text("ولد", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                      Text("ولد",
+                          style:
+                              GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -381,9 +636,15 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   },
                   child: Column(
                     children: [
-                      CircleAvatar(radius: 40, backgroundColor: Colors.pink.withOpacity(0.2), child: const Text("🧕", style: TextStyle(fontSize: 40))),
+                      CircleAvatar(
+                          radius: 40,
+                          backgroundColor: Colors.pink.withOpacity(0.2),
+                          child:
+                              const Text("🧕", style: TextStyle(fontSize: 40))),
                       const SizedBox(height: 8),
-                      Text("بنت", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                      Text("بنت",
+                          style:
+                              GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -407,14 +668,17 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(25),
-        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 5))],
+        boxShadow: const [
+          BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 5))
+        ],
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 45,
             backgroundColor: Colors.white,
-            child: Text(_selectedGender == 'boy' ? "👦" : "🧕", style: const TextStyle(fontSize: 50)),
+            child: Text(_selectedGender == 'boy' ? "👦" : "🧕",
+                style: const TextStyle(fontSize: 50)),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -423,13 +687,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               children: [
                 Text(
                   "المستوى: ${_getRankTitle()}",
-                  style: GoogleFonts.cairo(fontSize: ResponsiveUtil.isTablet(context)?10.sp: 18.sp, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.cairo(
+                      fontSize:
+                          ResponsiveUtil.isTablet(context) ? 10.sp : 18.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 5),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
-                  child: Text("⭐ $_totalStars نقطة", style: GoogleFonts.cairo(fontSize: ResponsiveUtil.isTablet(context)?10.sp:14.sp, color: Colors.white, fontWeight: FontWeight.bold)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Text("⭐ $_totalStars نقطة",
+                      style: GoogleFonts.cairo(
+                          fontSize:
+                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -441,7 +717,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
 
   Widget _buildTrophySection(bool isDark) {
     return SizedBox(
-      height:ResponsiveUtil.isTablet(context)?125: 110,
+      height: ResponsiveUtil.isTablet(context) ? 125 : 110,
       child: ListView.separated(
         itemCount: _allTrophies.length,
         scrollDirection: Axis.horizontal,
@@ -450,28 +726,44 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           final trophy = _allTrophies[index];
           final unlocked = trophy['unlocked'];
           return Container(
-            width:ResponsiveUtil.isTablet(context)?125: 90,
+            width: ResponsiveUtil.isTablet(context) ? 125 : 90,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2C3E50) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: unlocked ? Colors.amber : Colors.grey.withOpacity(0.3), width: 2),
-              boxShadow: [
-                 if(unlocked) BoxShadow(color: Colors.amber.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 4))
-              ]
-            ),
+                color: isDark ? const Color(0xFF2C3E50) : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                    color:
+                        unlocked ? Colors.amber : Colors.grey.withOpacity(0.3),
+                    width: 2),
+                boxShadow: [
+                  if (unlocked)
+                    BoxShadow(
+                        color: Colors.amber.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4))
+                ]),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(trophy['icon'], size: 35, color: unlocked ? Colors.amber : Colors.grey),
+                Icon(trophy['icon'],
+                    size: 35, color: unlocked ? Colors.amber : Colors.grey),
                 const SizedBox(height: 5),
-                Text(
-                  trophy['title'], 
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize:ResponsiveUtil.isTablet(context)?8.sp: 10.sp, fontWeight: FontWeight.bold, color: unlocked ? (isDark ? Colors.white : Colors.black87) : Colors.grey),
-                  maxLines: 1, 
-                  overflow: TextOverflow.ellipsis
-                ),
-                Text("${trophy['required']}", style: GoogleFonts.cairo(fontSize: ResponsiveUtil.isTablet(context)?7.sp: 10.sp, fontWeight: FontWeight.bold, color: unlocked ? Colors.amber : Colors.grey)),
+                Text(trophy['title'],
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.cairo(
+                        fontSize:
+                            ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp,
+                        fontWeight: FontWeight.bold,
+                        color: unlocked
+                            ? (isDark ? Colors.white : Colors.black87)
+                            : Colors.grey),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
+                Text("${trophy['required']}",
+                    style: GoogleFonts.cairo(
+                        fontSize:
+                            ResponsiveUtil.isTablet(context) ? 7.sp : 10.sp,
+                        fontWeight: FontWeight.bold,
+                        color: unlocked ? Colors.amber : Colors.grey)),
               ],
             ),
           );
@@ -493,9 +785,14 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isLevelComplete ? Colors.green : color.withOpacity(0.3), width: isLevelComplete ? 2 : 1.5),
+        border: Border.all(
+            color: isLevelComplete ? Colors.green : color.withOpacity(0.3),
+            width: isLevelComplete ? 2 : 1.5),
         boxShadow: [
-          BoxShadow(color: (isLevelComplete ? Colors.green : color).withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(
+              color: (isLevelComplete ? Colors.green : color).withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4)),
         ],
       ),
       child: Theme(
@@ -508,56 +805,292 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               CircularProgressIndicator(
                 value: progress,
                 backgroundColor: color.withOpacity(0.1),
-                valueColor: AlwaysStoppedAnimation(isLevelComplete ? Colors.green : color),
+                valueColor: AlwaysStoppedAnimation(
+                    isLevelComplete ? Colors.green : color),
                 strokeWidth: 4,
               ),
-              if(isLevelComplete) const Icon(Icons.star, size: 16, color: Colors.green)
+              if (isLevelComplete)
+                const Icon(Icons.star, size: 16, color: Colors.green)
             ],
           ),
           title: Text(
             level['title'],
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: ResponsiveUtil.isTablet(context)?10.sp:16.sp, color: isDark ? Colors.white : Colors.black87),
+            style: GoogleFonts.cairo(
+                fontWeight: FontWeight.bold,
+                fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
+                color: isDark ? Colors.white : Colors.black87),
           ),
           subtitle: Text(
-            isLevelComplete ? "رائع! أنهيت المستوى 🏆" : "$completedCount / ${tasks.length} مكتمل",
-            style: GoogleFonts.cairo(fontSize:ResponsiveUtil.isTablet(context)?8.sp: 12.sp, color: isLevelComplete ? Colors.green : Colors.grey, fontWeight: isLevelComplete ? FontWeight.bold : FontWeight.normal),
+            isLevelComplete
+                ? "رائع! أنهيت المستوى 🏆"
+                : "$completedCount / ${tasks.length} مكتمل",
+            style: GoogleFonts.cairo(
+                fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                color: isLevelComplete ? Colors.green : Colors.grey,
+                fontWeight:
+                    isLevelComplete ? FontWeight.bold : FontWeight.normal),
           ),
           children: tasks.map<Widget>((task) {
-            final isDone = task['done'];
-            return Container(
-               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-               decoration: BoxDecoration(
-                 color: isDone ? (isLevelComplete ? Colors.green.withOpacity(0.1) : color.withOpacity(0.1)) : Colors.transparent,
-                 borderRadius: BorderRadius.circular(12),
-                 border: Border.all(color: isDone ? (isLevelComplete ? Colors.green : color) : Colors.grey.withOpacity(0.2))
-               ),
-               child: ListTile(
-                onTap: () => _toggleTask(index, tasks.indexOf(task)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                title: Text(
-                  task['title'],
-                  style: GoogleFonts.cairo(
-                    fontSize: ResponsiveUtil.isTablet(context)?8.sp:14.sp,
-                    fontWeight: isDone ? FontWeight.bold : FontWeight.normal,
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                ),
-                trailing: Container(
-                  padding: const EdgeInsets.all(6),
+                final isDone = task['done'];
+                return Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isDone ? (isLevelComplete ? Colors.green : color) : Colors.grey.withOpacity(0.2),
-                    shape: BoxShape.circle,
+                      color: isDone
+                          ? (isLevelComplete
+                              ? Colors.green.withOpacity(0.1)
+                              : color.withOpacity(0.1))
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: isDone
+                              ? (isLevelComplete ? Colors.green : color)
+                              : Colors.grey.withOpacity(0.2))),
+                  child: ListTile(
+                    onTap: () => _toggleTask(index, tasks.indexOf(task)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                    title: Text(
+                      task['title'],
+                      style: GoogleFonts.cairo(
+                        fontSize:
+                            ResponsiveUtil.isTablet(context) ? 8.sp : 14.sp,
+                        fontWeight:
+                            isDone ? FontWeight.bold : FontWeight.normal,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                    trailing: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: isDone
+                            ? (isLevelComplete ? Colors.green : color)
+                            : Colors.grey.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isDone ? Icons.check : Icons.star_border,
+                        color: isDone ? Colors.white : Colors.grey,
+                        size: 18,
+                      ),
+                    ),
+                    visualDensity: VisualDensity.compact,
                   ),
-                  child: Icon(
-                    isDone ? Icons.check : Icons.star_border,
-                    color: isDone ? Colors.white : Colors.grey,
-                    size: 18,
-                  ),
+                );
+              }).toList() +
+              [const SizedBox(height: 10)],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStoriesAndGamesSection(bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.auto_stories, size: 20, color: Colors.orange),
+            const SizedBox(width: 8),
+            Text(
+              "المرح والتعلم 🎮",
+              style: GoogleFonts.cairo(
+                fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildFeatureCard(
+                title: "قصص إسلامية",
+                emoji: "📚",
+                color: const Color(0xFFFF9800),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => StoriesScreen(
+                        onStoryCompleted: () async {
+                          setState(() => _completedStories++);
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setInt(
+                              'completed_stories', _completedStories);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                isDark: isDark,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildFeatureCard(
+                title: "ألعاب تعليمية",
+                emoji: "🎮",
+                color: const Color(0xFF9C27B0),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const GamesMenuScreen()),
+                  );
+                },
+                isDark: isDark,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildFeatureCard(
+                title: "المتجر",
+                emoji: "🏪",
+                color: const Color(0xFF00BCD4),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => VirtualShopScreen(
+                        currentStars: _totalStars,
+                        onPurchase: (cost) {
+                          setState(() {
+                            _totalStars -= cost;
+                          });
+                          _saveProgress();
+                        },
+                      ),
+                    ),
+                  );
+                },
+                isDark: isDark,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildFeatureCard(
+                title: "التحديات",
+                emoji: "⚡",
+                color: const Color(0xFFE91E63),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const DailyChallengesScreen()),
+                  );
+                },
+                isDark: isDark,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // Achievement Album Button
+        _buildFeatureCard(
+          title: "ألبوم الإنجازات",
+          emoji: "📸",
+          color: const Color(0xFFFF5722),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AchievementAlbumScreen(
+                  totalStars: _totalStars,
+                  unlockedBadges:
+                      _allTrophies.where((t) => t['unlocked']).toList(),
+                  completedStories: 0, // كمّل لو عندك counter
+                  completedGames: 0,
+                  streakDays: 0, // كمّل لو عندك
                 ),
-                visualDensity: VisualDensity.compact,
               ),
             );
-          }).toList() + [const SizedBox(height: 10)],
+          },
+          isDark: isDark,
+        ),
+        const SizedBox(height: 12),
+
+        // Hadiths for Kids
+        _buildFeatureCard(
+          title: "أحاديث للأطفال",
+          emoji: "📿",
+          color: const Color(0xFF009688),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const HadithsForKidsScreen()),
+            );
+          },
+          isDark: isDark,
+        ),
+        const SizedBox(height: 12),
+
+        // Daily Duas
+        _buildFeatureCard(
+          title: "أدعية يومية",
+          emoji: "🤲",
+          color: const Color(0xFF9C27B0),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const DailyDuasScreen()),
+            );
+          },
+          isDark: isDark,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFeatureCard({
+    required String title,
+    required String emoji,
+    required Color color,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [color, color.withOpacity(0.7)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Text(
+              emoji,
+              style: const TextStyle(fontSize: 40),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: GoogleFonts.cairo(
+                fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
