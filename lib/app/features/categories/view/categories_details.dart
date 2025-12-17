@@ -4,9 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/features/categories/data/repo/categories_repo_immp.dart';
 
-import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/localization/localization_manager.dart';
-import '../../../core/shard/constanc/app_style.dart';
 import '../../../core/utils/constent/router.dart';
 import '../../../core/utils/style/k_color.dart';
 import '../../../core/utils/style/responsive_util.dart';
@@ -77,7 +75,8 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
             orElse: () {
               return const TextWidget(title: 'other error ');
             },
-            hadithCatrgoriesLoading: (value) => KLoading.progressIOSIndicator(context: context),
+            hadithCatrgoriesLoading: (value) =>
+                KLoading.progressIOSIndicator(context: context),
             hadithCatrgoriesError: (value) => TextWidget(title: value.failure),
             hadithCatrgoriesSuccess: (value) {
               List ids = value.allHadithCategorieModal?.data
@@ -90,14 +89,14 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
               return CustomScrollView(
                 slivers: [
                   SliverAppBar(
-                      leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black,),
+                      leading: CupertinoNavigationBarBackButton(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                      ),
                       title: TextWidget(
                         title: categoriesDetailsPrams?.subCategoriesName,
-                        color: isDark
-                            ? KColors.whiteColor
-                            : KColors.blackColor,
+                        color: isDark ? KColors.whiteColor : KColors.blackColor,
                         fontWeight: FontWeight.bold,
                         fontFamily: "me",
                         fontSize:
@@ -107,7 +106,6 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                         Padding(
                             padding: const EdgeInsets.only(left: 10),
                             child: Card(
-
                                 shape: const BeveledRectangleBorder(
                                     borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(5),
@@ -120,7 +118,9 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                                     child: TextWidget(
                                         title:
                                             '${LocalizationManager.call("count-hadiths")} : ${categoriesDetailsPrams?.subCategoriesCount}',
-                                        color: isDark? Colors.white:KColors.blackColor,
+                                        color: isDark
+                                            ? Colors.white
+                                            : KColors.blackColor,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: "me",
                                         fontSize:
@@ -163,9 +163,12 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                                             ?.data?[index].id);
                                   },
                                   child: Card(
-                                      shape: BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
-
-                                    color: AppThemeColors.cardBackgroundColor(context),
+                                      shape: BeveledRectangleBorder(
+                                          borderRadius:
+                                              BorderRadiusGeometry.circular(
+                                                  15)),
+                                      color: AppThemeColors.cardBackgroundColor(
+                                          context),
                                       shadowColor:
                                           KColors.whiteColor.withOpacity(0.6),
                                       elevation: 2,

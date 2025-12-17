@@ -337,7 +337,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
     final shareFullTextFancy = """
 🌺✨🌿✨🌺✨🌿✨🌺✨🌿
 
-📿 *${fullText}*
+📿 *$fullText*
 
 🌿✨🌸✨🌿✨🌸✨🌿✨
 
@@ -382,7 +382,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                       ]
                     : [
                         // baseColor.withOpacity(0.06), // لمسة لون خفيفة
-                        Color(0xFFF7F1E1),
+                        const Color(0xFFF7F1E1),
                         Colors.white,
                       ],
               ),
@@ -503,8 +503,6 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
 //
 // 🌸🌿🌸🌿🌸🌿🌸🌿🌸
 // """;
-
-
 
                           shareText(shareFullTextFancy);
                         },

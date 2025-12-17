@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:adhan/adhan.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
@@ -123,18 +124,19 @@ class AdhanWorkManagerService {
         int prayerIndex = 0;
         for (var entry in prayerTimes.entries) {
           print('📋 محاولة جدولة: ${entry.key} - ${_formatTime(entry.value)}');
-          final scheduled = await _schedulePrayer(
+          final error = await _schedulePrayer(
             prayerName: entry.key,
             prayerTime: entry.value,
             dayOffset: day,
             prayerIndex: prayerIndex,
             cityName: cityName,
           );
-          if (scheduled) {
+          if (error == null) {
             scheduledCount++;
             print('   ✅ تم الجدولة');
           } else {
-            print('   ⏭️ تم تخطيها (الوقت مرّ)');
+            print('   ❌ فشل الجدولة: $error');
+            // print('   ⏭️ تم تخطيها (الوقت مرّ)');
           }
           prayerIndex++;
         }
@@ -148,7 +150,7 @@ class AdhanWorkManagerService {
   }
 
   /// جدولة إشعار الأذان مباشرة (Native Scheduling)
-  Future<bool> _schedulePrayer({
+  Future<String?> _schedulePrayer({
     required String prayerName,
     required DateTime prayerTime,
     required int dayOffset,
@@ -160,7 +162,7 @@ class AdhanWorkManagerService {
 
     // تأكد أن الوقت لم يمر (مع هامش صغير 5 ثواني للاختبارات الفورية)
     if (prayerTime.isBefore(now.subtract(Duration(seconds: 5)))) {
-      return false; // الوقت فات
+      return "الوقت المحدد للصلاة قد مر بالفعل"; // الوقت فات
     }
 
     try {
@@ -168,20 +170,21 @@ class AdhanWorkManagerService {
       final uniqueId = 1000 + (dayOffset * 10) + prayerIndex;
 
       // تحديد القناة المناسبة
-      // 1098 = اختبار، الفجر له قناة خاصة
       final bool isFajr = prayerName.contains('الفجر');
+
+      // ✅ تصحيح القنوات: استخدام V2 دائمًا
       final String channelKey = useTestCallback
           ? 'adhan_channel_v2'
-          : // ✅ استخدام قناة الأذان للاختبار للتأكد من الصوت
-          (isFajr ? 'fajr_adhan_channel_v2' : 'adhan_channel_v2');
+          : (isFajr ? 'fajr_adhan_channel_v2' : 'adhan_channel_v2');
 
       print(
-          '📅 جدولة Native ($uniqueId): $prayerName @ ${_formatTime(prayerTime)}');
+          '📅 جدولة Native ($uniqueId): $prayerName @ ${_formatTime(prayerTime)} on $channelKey');
 
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: uniqueId,
           channelKey: channelKey,
+          icon: 'resource://drawable/ic_stat_logoapp', // ✅ إضافة الأيقونة صراحة
           title: '\u200Fحان الآن وقت صلاة $prayerName',
           body: '\u200Fفي مدينة ${cityName ?? "القاهرة"}',
           category: NotificationCategory.Alarm, // مهم جداً للأذان
@@ -189,10 +192,14 @@ class AdhanWorkManagerService {
           fullScreenIntent: true,
           criticalAlert: true,
           autoDismissible: false,
+          locked: true, // ✅ منع الحذف بالخطأ
+          displayOnBackground: true,
+          displayOnForeground: true,
           // ✅ تخصيص المدة حسب نوع الأذان (الفجر أطول)
           timeoutAfter: isFajr
-              ? Duration(minutes: 5, seconds: 30) // زيادة المدة للفجر
-              : Duration(minutes: 3), // زيادة المدة لباقي الصلوات
+              ? Duration(minutes: 4) // زيادة المدة للفجر
+              : Duration(
+                  minutes: 3,seconds: 50), // زيادة المدة لباقي الصلوات لتجنب انقطاع الصوت
           payload: {
             'prayer_name': prayerName,
             'prayer_time': _formatTime(prayerTime),
@@ -208,10 +215,10 @@ class AdhanWorkManagerService {
       );
 
       print('✅ تم الجدولة بنجاح (Native)');
-      return true;
+      return null; // ✅ نجاح (لا يوجد خطأ)
     } catch (e) {
       print('❌ خطأ في جدولة $prayerName: $e');
-      return false;
+      return e.toString(); // ❌ إرجاع نص الخطأ
     }
   }
 
@@ -353,33 +360,54 @@ class AdhanWorkManagerService {
   // ==========================================
 
   /// جدولة أذان تجريبي للاختبار (بعد عدد معين من الثواني)
-  Future<bool> scheduleTestAdhan({int secondsFromNow = 10}) async {
+  /// جدولة أذان تجريبي للاختبار (بعد عدد معين من الثواني)
+  Future<String?> scheduleTestAdhan({int secondsFromNow = 10}) async {
     try {
       final testTime = DateTime.now().add(Duration(seconds: secondsFromNow));
+      final controlTime = testTime.add(Duration(seconds: 5)); // بعده بـ 5 ثواني
       final cityName = await _getCityName();
 
-      print('🧪 جدولة أذان تجريبي بعد $secondsFromNow ثانية...');
-      print('🧪 الوقت المجدول: ${_formatTime(testTime)}');
+      print('🧪 جدولة أذان تجريبي + إشعار تحكم...');
 
-      final scheduled = await _schedulePrayer(
+      // 1. الأذان الأصلي
+      final error = await _schedulePrayer(
         prayerName: '🧪 اختبار الأذان',
         prayerTime: testTime,
         dayOffset: 0,
-        prayerIndex: 98, // رقم خاص للاختبار (changed from 99)
+        prayerIndex: 98,
         cityName: cityName,
-        useTestCallback: true, // استخدام callback الاختبار
+        useTestCallback: true,
       );
 
-      if (scheduled) {
-        print('✅ تم جدولة أذان الاختبار بنجاح');
-        return true;
+      // 2. إشعار تحكم (Control Notification) - بسيط جداً
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 99999,
+          icon: 'resource://mipmap/launcher_icon',
+
+          channelKey: 'athkar_channel', // قناة عادية شغالة عند المستخدم
+          title: '🛠️ إشعار فحص النظام',
+          body:
+              'لو شوفت الإشعار ده وماشوفتش الأذان، يبقى المشكلة في إعدادات قناة الأذان (الصوت/التنبيه).',
+          category: NotificationCategory.Message,
+          wakeUpScreen: true,
+        ),
+        schedule: NotificationCalendar.fromDate(
+          date: controlTime,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      );
+
+      if (error == null) {
+        print('✅ تم جدولة الاختبارين');
+        return null;
       } else {
-        print('❌ فشلت جدولة أذان الاختبار');
-        return false;
+        return error;
       }
     } catch (e) {
-      print('❌ خطأ في جدولة أذان الاختبار: $e');
-      return false;
+      print('❌ خطأ في جدولة الاختبار: $e');
+      return e.toString();
     }
   }
 
@@ -392,12 +420,14 @@ class AdhanWorkManagerService {
         await AwesomeNotifications().cancel(i);
       }
 
-      // وتنظيف أي alarms قديمة لضمان عدم التضارب
-      try {
-        for (int i = 1000; i < 1100; i++) {
-          await AndroidAlarmManager.cancel(i);
-        }
-      } catch (_) {}
+      // وتنظيف أي alarms قديمة لضمان عدم التضارب (Android Only)
+      if (Platform.isAndroid) {
+        try {
+          for (int i = 1000; i < 1100; i++) {
+            await AndroidAlarmManager.cancel(i);
+          }
+        } catch (_) {}
+      }
 
       print('🗑️ تم إلغاء جميع جدولة الأذان');
     } catch (e) {

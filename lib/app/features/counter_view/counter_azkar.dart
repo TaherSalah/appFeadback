@@ -42,12 +42,15 @@ class _AzkarCounterState extends State<AzkarCounter> {
           //     ),
           //   ),
           // ),
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(
+                MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
             child: AppBar(
-              leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,),
+              leading: CupertinoNavigationBarBackButton(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              ),
               centerTitle: true,
               title: Text(
                 AppString.KCounter,
@@ -55,16 +58,14 @@ class _AzkarCounterState extends State<AzkarCounter> {
                     color: Colors.green,
                     fontWeight: FontWeight.bold,
                     fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+                        MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
               ),
-            ), ),
+            ),
+          ),
           body: const CounterWidgetBuilder2()),
     );
   }
 }
-
-
-
 
 class CounterWidgetBuilder2 extends StatefulWidget {
   const CounterWidgetBuilder2({super.key});
@@ -103,8 +104,6 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
             // العداد
             Stack(
               children: [
-
-
                 // Positioned.fill(child:
                 //
                 //
@@ -139,7 +138,7 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                     SizedBox(height: isTablet ? 40.h : 2.h),
 
                     // السبحه
-                    TasbeehRealPlus(),
+                    const TasbeehRealPlus(),
                   ],
                 ),
               ],
@@ -166,12 +165,12 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
             child: Container(
               width: isTablet ? 140.w : 120.w,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFF1E293B),
-                    const Color(0xFF334155),
+                    Color(0xFF1E293B),
+                    Color(0xFF334155),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20.r),
@@ -236,7 +235,6 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
       ),
     );
   }
-
 
   void _showZikrDetails(BuildContext context, int index) {
     showModalBottomSheet(
@@ -352,15 +350,14 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
     );
   }
 }
-Widget buildCounterDisplay({dynamic counter}) {
 
+Widget buildCounterDisplay({dynamic counter}) {
   return Consumer<AzkarProvider>(
     builder: (context, controller, child) {
       bool isTablet = ResponsiveUtil.isTablet(context);
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
-
-        crossAxisAlignment:  CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // // تاج العداد
           // Icon(
@@ -375,12 +372,12 @@ Widget buildCounterDisplay({dynamic counter}) {
             padding: EdgeInsets.all(isTablet ? 32.r : 24.r),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: RadialGradient(
+              gradient: const RadialGradient(
                 center: Alignment.center,
                 radius: 1.5,
                 colors: [
-                  const Color(0xFF1E293B),
-                  const Color(0xFF0F172A),
+                  Color(0xFF1E293B),
+                  Color(0xFF0F172A),
                 ],
               ),
               boxShadow: [
@@ -401,7 +398,7 @@ Widget buildCounterDisplay({dynamic counter}) {
               ),
             ),
             child: Text(
-              '${counter}',
+              '$counter',
               style: GoogleFonts.cairo(
                 fontSize: isTablet ? 22.sp : 16.sp,
                 fontWeight: FontWeight.bold,
@@ -446,11 +443,13 @@ class ParticleEffect {
     this.color,
   });
 }
+
 class ZikrItem {
   final String text;
   final int targetCount;
   ZikrItem({required this.text, required this.targetCount});
 }
+
 class DhikrItem {
   final String text;
   final int count;
@@ -458,15 +457,16 @@ class DhikrItem {
   DhikrItem({required this.text, required this.count});
 
   Map<String, dynamic> toJson() => {
-    'text': text,
-    'count': count,
-  };
+        'text': text,
+        'count': count,
+      };
 
   factory DhikrItem.fromJson(Map<String, dynamic> json) =>
       DhikrItem(text: json['text'], count: json['count']);
 }
 
-class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderStateMixin {
+class _TasbeehRealPlusState extends State<TasbeehRealPlus>
+    with TickerProviderStateMixin {
   static const int beadsCount = 33;
   static const Duration animDur = Duration(milliseconds: 400);
 
@@ -486,20 +486,12 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
   final List<Offset> _beadPositions = [];
   final List<ParticleEffect> _particles = [];
 
-
-
-
-
-
-
-
-
   // 1. قائمة الأذكار + متغيرات التتبع
   final List<ZikrItem> zikrList = [
-  ZikrItem(text: "سبحان الله", targetCount: 33),
-  ZikrItem(text: "الحمد لله", targetCount: 33),
-  ZikrItem(text: "الله أكبر", targetCount: 34),
-  ZikrItem(text: "لا حول ولا قوة إلا بالله", targetCount: 100),
+    ZikrItem(text: "سبحان الله", targetCount: 33),
+    ZikrItem(text: "الحمد لله", targetCount: 33),
+    ZikrItem(text: "الله أكبر", targetCount: 34),
+    ZikrItem(text: "لا حول ولا قوة إلا بالله", targetCount: 100),
   ];
 
   int currentZikrIndex = 0;
@@ -532,7 +524,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     )..repeat();
-    _glowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_glowController);
+    _glowAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_glowController);
 
     _particleController = AnimationController(
       duration: const Duration(milliseconds: 1500),
@@ -547,7 +540,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
       duration: const Duration(milliseconds: 3000),
       vsync: this,
     )..repeat();
-    _shimmerAnimation = Tween<double>(begin: -2.0, end: 2.0).animate(_shimmerController);
+    _shimmerAnimation =
+        Tween<double>(begin: -2.0, end: 2.0).animate(_shimmerController);
   }
 
   @override
@@ -669,21 +663,18 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
       focusColor: Colors.transparent,
       onTap: () {
         _moveToNextBead();
-        setState(() {
-
-        });
+        setState(() {});
       },
-
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(height:isTablet? 5.h:20),
+          SizedBox(height: isTablet ? 5.h : 20),
 
           // مؤشر الإحصائيات المحسّن
           _buildStatsCard(isTablet),
-          SizedBox(height:isTablet? 30.h:60),
+          SizedBox(height: isTablet ? 30.h : 60),
 
           // المسبحة الدائرية
           SizedBox(
@@ -694,9 +685,7 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                 _calculateBeadPositions(size);
 
                 return Stack(
-
                   children: [
-
                     // طبقة توهج خلفية متعددة الألوان
                     // Positioned.fill(
                     //   child: AnimatedBuilder(
@@ -758,7 +747,7 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                     // حلقة وسطى بزخارف إسلامية
                     Positioned.fill(
                       child: Padding(
-                        padding: EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.all(12.0),
                         child: AnimatedBuilder(
                           animation: _glowAnimation,
                           builder: (context, child) {
@@ -767,20 +756,20 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   width: 3.w,
-                                //   gradient: LinearGradient(
-                                //     begin: Alignment.topLeft,
-                                //     end: Alignment.bottomRight,
-                                //     colors: [
-                                //       const Color(0xFF334155),
-                                //       const Color(0xFF475569),
-                                //       const Color(0xFF334155),
-                                //     ],
-                                //     stops: [
-                                //       0.0,
-                                //       (_glowAnimation.value + 0.5) % 1.0,
-                                //       1.0,
-                                //     ],
-                                //   ),
+                                  //   gradient: LinearGradient(
+                                  //     begin: Alignment.topLeft,
+                                  //     end: Alignment.bottomRight,
+                                  //     colors: [
+                                  //       const Color(0xFF334155),
+                                  //       const Color(0xFF475569),
+                                  //       const Color(0xFF334155),
+                                  //     ],
+                                  //     stops: [
+                                  //       0.0,
+                                  //       (_glowAnimation.value + 0.5) % 1.0,
+                                  //       1.0,
+                                  //     ],
+                                  //   ),
                                 ),
                                 gradient: RadialGradient(
                                   colors: [
@@ -844,7 +833,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                     // الخرزات
                     ...List.generate(beadsCount, (index) {
                       final pos = _beadPositions[index];
-                      final isPassed = index < currentBead || (currentBead == 0 && index < beadsCount);
+                      final isPassed = index < currentBead ||
+                          (currentBead == 0 && index < beadsCount);
                       final isNext = index == (currentBead + 1) % beadsCount;
 
                       return Positioned(
@@ -875,19 +865,25 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                           //   top: y - 13,
                           //   child: _buildActiveBead(size:33),
                           // );
-                          final beadSize = 33.0;
+                          const beadSize = 33.0;
                           final startPos = _beadPositions[currentBead];
-                          final nextPos = _beadPositions[(currentBead + 1) % beadsCount];
+                          final nextPos =
+                              _beadPositions[(currentBead + 1) % beadsCount];
 
-                          final x = startPos.dx + (nextPos.dx - startPos.dx) * _moveAnimation.value - beadSize/2;
-                          final y = startPos.dy + (nextPos.dy - startPos.dy) * _moveAnimation.value - beadSize/2;
+                          final x = startPos.dx +
+                              (nextPos.dx - startPos.dx) *
+                                  _moveAnimation.value -
+                              beadSize / 2;
+                          final y = startPos.dy +
+                              (nextPos.dy - startPos.dy) *
+                                  _moveAnimation.value -
+                              beadSize / 2;
 
                           return Positioned(
                             left: x,
                             top: y,
                             child: _buildActiveBead(size: beadSize),
                           );
-
                         },
                       ),
 
@@ -895,35 +891,45 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                     if (_particles.isNotEmpty)
                       ...(_beadPositions.isNotEmpty
                           ? _particles.map((particle) {
-                        final centerX = size.width / 2;
-                        final centerY = size.height / 2;
-                        return AnimatedBuilder(
-                          animation: _particleAnimation,
-                          builder: (context, child) {
-                            final distance = particle.distance * _particleAnimation.value;
-                            final opacity = 1.0 - _particleAnimation.value;
-                            return Positioned(
-                              left: centerX + cos(particle.angle) * distance - particle.size / 2,
-                              top: centerY + sin(particle.angle) * distance - particle.size / 2,
-                              child: Container(
-                                width: particle.size,
-                                height: particle.size,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: (particle.color ?? const Color(0xFFFBBF24)).withOpacity(opacity),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: (particle.color ?? const Color(0xFFFBBF24)).withOpacity(opacity * 0.5),
-                                      blurRadius: 8,
-                                      spreadRadius: 2,
+                              final centerX = size.width / 2;
+                              final centerY = size.height / 2;
+                              return AnimatedBuilder(
+                                animation: _particleAnimation,
+                                builder: (context, child) {
+                                  final distance = particle.distance *
+                                      _particleAnimation.value;
+                                  final opacity =
+                                      1.0 - _particleAnimation.value;
+                                  return Positioned(
+                                    left: centerX +
+                                        cos(particle.angle) * distance -
+                                        particle.size / 2,
+                                    top: centerY +
+                                        sin(particle.angle) * distance -
+                                        particle.size / 2,
+                                    child: Container(
+                                      width: particle.size,
+                                      height: particle.size,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: (particle.color ??
+                                                const Color(0xFFFBBF24))
+                                            .withOpacity(opacity),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: (particle.color ??
+                                                    const Color(0xFFFBBF24))
+                                                .withOpacity(opacity * 0.5),
+                                            blurRadius: 8,
+                                            spreadRadius: 2,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }).toList()
+                                  );
+                                },
+                              );
+                            }).toList()
                           : []),
 
                     // الزر المركزي المحسّن
@@ -953,7 +959,7 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
             ),
           ),
 
-          SizedBox(height:isTablet? 35.h:75),
+          SizedBox(height: isTablet ? 35.h : 75),
 
           // أزرار التحكم المحدثة
           _buildControlButtons(isTablet),
@@ -969,12 +975,12 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFF1E293B),
-                const Color(0xFF0F172A),
+                Color(0xFF1E293B),
+                Color(0xFF0F172A),
               ],
             ),
             borderRadius: BorderRadius.circular(28.r),
@@ -1043,13 +1049,12 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF94A3B8),
                       letterSpacing: 0.5,
-
-
                     ),
                   ),
                   SizedBox(height: 10.h),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -1083,14 +1088,14 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                 width: 2.5.w,
                 height: 50.h,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      const Color(0xFF475569),
-                      const Color(0xFF64748B),
-                      const Color(0xFF475569),
+                      Color(0xFF475569),
+                      Color(0xFF64748B),
+                      Color(0xFF475569),
                       Colors.transparent,
                     ],
                   ),
@@ -1140,7 +1145,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                   ),
                   SizedBox(height: 10.h),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -1186,97 +1192,101 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: isPassed
-            ? LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF10B981),
-            const Color(0xFF059669),
-          ],
-        )
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF10B981),
+                  Color(0xFF059669),
+                ],
+              )
             : isNext
-            ? RadialGradient(
-          colors: [
-            const Color(0xFF6366F1),
-            const Color(0xFF4F46E5),
-          ],
-        )
-            : LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF334155),
-            const Color(0xFF1E293B),
-          ],
-        ),
+                ? const RadialGradient(
+                    colors: [
+                      Color(0xFF6366F1),
+                      Color(0xFF4F46E5),
+                    ],
+                  )
+                : const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF334155),
+                      Color(0xFF1E293B),
+                    ],
+                  ),
         boxShadow: isPassed
             ? [
-          BoxShadow(
-            color: const Color(0xFF10B981).withOpacity(0.5),
-            blurRadius: 12,
-            spreadRadius: 2,
-          ),
-          BoxShadow(
-            color: const Color(0xFF10B981).withOpacity(0.3),
-            blurRadius: 20,
-            spreadRadius: 4,
-          ),
-        ]
+                BoxShadow(
+                  color: const Color(0xFF10B981).withOpacity(0.5),
+                  blurRadius: 12,
+                  spreadRadius: 2,
+                ),
+                BoxShadow(
+                  color: const Color(0xFF10B981).withOpacity(0.3),
+                  blurRadius: 20,
+                  spreadRadius: 4,
+                ),
+              ]
             : isNext
-            ? [
-          BoxShadow(
-            color: const Color(0xFF6366F1).withOpacity(0.5),
-            blurRadius: 12,
-            spreadRadius: 2,
-          ),
-        ]
-            : [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF6366F1).withOpacity(0.5),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.4),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
         border: Border.all(
           color: isPassed
               ? const Color(0xFF34D399)
               : isNext
-              ? const Color(0xFF818CF8)
-              : const Color(0xFF475569),
-          width: isPassed ? 3.w : isNext ? 2.5.w : 1.5.w,
+                  ? const Color(0xFF818CF8)
+                  : const Color(0xFF475569),
+          width: isPassed
+              ? 3.w
+              : isNext
+                  ? 2.5.w
+                  : 1.5.w,
         ),
       ),
       child: isPassed
           ? Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [
-              Colors.white.withOpacity(0.3),
-              Colors.transparent,
-            ],
-          ),
-        ),
-        child: Center(
-          child: Icon(
-            Icons.check_circle,
-            size: 18.sp,
-            color: Colors.white,
-          ),
-        ),
-      )
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    Colors.white.withOpacity(0.3),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.check_circle,
+                  size: 18.sp,
+                  color: Colors.white,
+                ),
+              ),
+            )
           : isNext
-          ? Center(
-        child: Container(
-          width: size * 0.4,
-          height: size * 0.4,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.3),
-          ),
-        ),
-      )
-          : null,
+              ? Center(
+                  child: Container(
+                    width: size * 0.4,
+                    height: size * 0.4,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.3),
+                    ),
+                  ),
+                )
+              : null,
     );
   }
 
@@ -1323,12 +1333,12 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: SweepGradient(
-                    colors: [
-                      const Color(0xFFFDE047),
-                      const Color(0xFFFBBF24),
-                      const Color(0xFFF59E0B),
-                      const Color(0xFFFBBF24),
-                      const Color(0xFFFDE047),
+                    colors: const [
+                      Color(0xFFFDE047),
+                      Color(0xFFFBBF24),
+                      Color(0xFFF59E0B),
+                      Color(0xFFFBBF24),
+                      Color(0xFFFDE047),
                     ],
                     transform: GradientRotation(_glowAnimation.value * 2 * pi),
                   ),
@@ -1350,7 +1360,6 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                   ),
                 ),
                 child: Stack(
-
                   children: [
                     // انعكاس الضوء
                     Positioned(
@@ -1395,12 +1404,15 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                           child: Text(
                             '${currentBead + 1}',
                             style: GoogleFonts.cairo(
-                              fontSize:ResponsiveUtil.isTablet(context)? 18.sp:11.sp,
+                              fontSize: ResponsiveUtil.isTablet(context)
+                                  ? 18.sp
+                                  : 11.sp,
                               color: const Color(0xFFF59E0B),
                               fontWeight: FontWeight.bold,
                               shadows: [
                                 Shadow(
-                                  color: const Color(0xFFFBBF24).withOpacity(0.5),
+                                  color:
+                                      const Color(0xFFFBBF24).withOpacity(0.5),
                                   blurRadius: 4,
                                 ),
                               ],
@@ -1440,7 +1452,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFF6366F1).withOpacity(0.3 * _pulseAnimation.value),
+                      const Color(0xFF6366F1)
+                          .withOpacity(0.3 * _pulseAnimation.value),
                       Colors.transparent,
                     ],
                   ),
@@ -1453,7 +1466,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFF8B5CF6).withOpacity(0.4 * _pulseAnimation.value),
+                      const Color(0xFF8B5CF6)
+                          .withOpacity(0.4 * _pulseAnimation.value),
                       Colors.transparent,
                     ],
                   ),
@@ -1466,12 +1480,12 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: SweepGradient(
-                    colors: [
-                      const Color(0xFF8B5CF6),
-                      const Color(0xFF6366F1),
-                      const Color(0xFF4F46E5),
-                      const Color(0xFF6366F1),
-                      const Color(0xFF8B5CF6),
+                    colors: const [
+                      Color(0xFF8B5CF6),
+                      Color(0xFF6366F1),
+                      Color(0xFF4F46E5),
+                      Color(0xFF6366F1),
+                      Color(0xFF8B5CF6),
                     ],
                     transform: GradientRotation(_shimmerAnimation.value),
                   ),
@@ -1504,12 +1518,12 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
                   ),
                   child: Container(
                     margin: EdgeInsets.all(4.r),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF6366F1),
-                          const Color(0xFF4F46E5),
+                          Color(0xFF6366F1),
+                          Color(0xFF4F46E5),
                         ],
                       ),
                     ),
@@ -1591,12 +1605,12 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFF1E293B),
-              const Color(0xFF0F172A),
+              Color(0xFF1E293B),
+              Color(0xFF0F172A),
             ],
           ),
           borderRadius: BorderRadius.circular(28.r),
@@ -1615,7 +1629,6 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-
             _buildControlButton(
               icon: Icons.favorite_rounded,
               label: 'تسبيح سريع',
@@ -1629,26 +1642,24 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
               isTablet: isTablet,
             ),
             SizedBox(width: 12.w),
-
             Container(
               width: 2.5.w,
               height: 60.h,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    const Color(0xFF334155),
-                    const Color(0xFF475569),
-                    const Color(0xFF334155),
+                    Color(0xFF334155),
+                    Color(0xFF475569),
+                    Color(0xFF334155),
                     Colors.transparent,
                   ],
                 ),
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-
             SizedBox(width: 12.w),
             _buildControlButton(
               icon: Icons.refresh_rounded,
@@ -1662,7 +1673,6 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
               onTap: _resetCounter,
               isTablet: isTablet,
             ),
-
           ],
         ),
       ),
@@ -1742,7 +1752,6 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus> with TickerProviderSt
     );
   }
 }
-
 
 // class TasbeehRealPlus extends StatefulWidget {
 //   const TasbeehRealPlus({super.key});

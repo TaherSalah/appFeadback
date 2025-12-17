@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:adhan/adhan.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -108,7 +109,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
         coordinates: coordinates,
         calculationParams: calculationParams,
         cityName: cityName,
-        days: 7,
+        days: 30,
       );
 
       if (mounted) {
@@ -345,7 +346,7 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                   const SizedBox(height: 16),
 
                   const SizedBox(height: 16),
-                  
+
                   // تعديل الساعات (فارق التوقيت)
                   Text(
                     'تعديل الساعات (فارق التوقيت)',
@@ -357,17 +358,23 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.black.withOpacity(0.2) : Colors.grey.shade100,
+                      color: isDark
+                          ? Colors.black.withOpacity(0.2)
+                          : Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade300),
+                      border: Border.all(
+                          color:
+                              isDark ? Colors.white10 : Colors.grey.shade300),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+                          icon: const Icon(Icons.remove_circle_outline,
+                              color: Colors.red),
                           onPressed: () {
                             setStateSheet(() {
                               con.manualOffset--;
@@ -383,7 +390,8 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.add_circle_outline, color: Colors.green),
+                          icon: const Icon(Icons.add_circle_outline,
+                              color: Colors.green),
                           onPressed: () {
                             setStateSheet(() {
                               con.manualOffset++;
@@ -604,28 +612,87 @@ class _TimingScreenState extends StateMVC<TimingScreen> {
             // زر اختبار الأذان 🧪
             IconButton(
               icon: const Icon(Icons.bug_report, color: Colors.orange),
-              tooltip: 'اختبار الأذان (10 ثوانٍ)',
+              tooltip: 'اختبار الأذان (20 ثانية)',
               onPressed: () async {
+                // 1. Check Permissions First
+                bool isAllowed =
+                    await AwesomeNotifications().isNotificationAllowed();
+                if (!isAllowed) {
+                  await AwesomeNotifications()
+                      .requestPermissionToSendNotifications();
+                  isAllowed =
+                      await AwesomeNotifications().isNotificationAllowed();
+                  if (!isAllowed) {
+                    KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
+                    return;
+                  }
+                }
+
+                // Check Exact Alarm (Android 12+)
+                /* 
+                 // requires specific package or method check usually, 
+                 // but AwesomeNotifications handles it within scheduling often.
+                 // We will rely on the try-catch block to catch 'SecurityException'.
+                 */
+
                 try {
-                  final success = await AdhanWorkManagerService().scheduleTestAdhan(secondsFromNow: 10);
+                  KHelper.showSuccess(
+                      message: 'جاري جدولة الاختبار...'); // Feedback
+
+                  final success = await AdhanWorkManagerService()
+                      .scheduleTestAdhan(secondsFromNow: 20);
                   if (!mounted) return;
-                  
-                  if (success) {
+
+                  if (success != null) {
                     KHelper.showSuccess(
-                      message: '🧪 تم جدولة أذان تجريبي بعد 10 ثوانٍ\nانتظر وتأكد من الصوت!',
+                      message:
+                          '🧪 تم جدولة أذان تجريبي بعد 20 ثانية\nانتظر وتأكد من الصوت!',
                     );
                   } else {
                     KHelper.showError(
-                      message: '❌ فشلت جدولة الأذان التجريبي\nتحقق من الأذونات',
+                      message:
+                          '❌ فشلت جدولة الأذان التجريبي\nقد يكون بسبب قيود النظام (Alarms Permission)',
                     );
                   }
                 } catch (e) {
                   if (!mounted) return;
-                  KHelper.showError(message: 'خطأ: $e');
+                  // Show exact error
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: Text('خطأ في الاختبار'),
+                      content: Text(e.toString()),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: Text('Ok'))
+                      ],
+                    ),
+                  );
                 }
               },
             ),
-            
+
+            // زر اختبار فوري (بدون جدولة) للتشخيص
+            IconButton(
+              icon: const Icon(Icons.flash_on, color: Colors.blue),
+              tooltip: 'اختبار فوري (بدون جدولة)',
+              onPressed: () async {
+                await AwesomeNotifications().createNotification(
+                  content: NotificationContent(
+                    id: 77777,
+                    channelKey: 'sabah_athkar_channel',
+                    title: '⚡ اختبار فوري',
+                    body: 'إذا وصلك هذا، فالإشعارات تعمل (المشكلة في الجدولة).',
+                    notificationLayout: NotificationLayout.Default,
+                  ),
+                );
+                if (context.mounted) {
+                  KHelper.showSuccess(message: 'تم إرسال إشعار فوري');
+                }
+              },
+            ),
+
             IconButton(
               icon: const Icon(Icons.settings),
               tooltip: 'إعدادات الحساب',

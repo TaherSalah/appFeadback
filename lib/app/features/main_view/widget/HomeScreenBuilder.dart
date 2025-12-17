@@ -8,7 +8,6 @@ import 'package:muslimdaily/app/features/quran/SurahModel.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../main.dart';
 import '../../Khatmah/data/khatmah_model.dart';
 import 'AzkarQuranWidget.dart';
 import 'OtherAzkarWidget.dart';
@@ -17,17 +16,9 @@ import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import 'PrayerHeaderSection.dart';
 import 'SoulComfortWidget.dart';
-import 'DailyGiftWidget.dart';
 import 'AllahNameWidget.dart';
-import 'QuizWidget.dart';
-import 'WorshipTrackerWidget.dart';
-import 'JannahPlanterWidget.dart';
 import 'KidsEntryPointWidget.dart';
 import 'FridayCompanionWidget.dart';
-
-
-
-
 
 class MainViewBuilder extends StatefulWidget {
   const MainViewBuilder({super.key});
@@ -213,7 +204,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                         // 🔥 صندوق الهدايا اليومي
                         // const DailyGiftWidget(),
 
-                         // 🔥 جدول الطاعات
+                        // 🔥 جدول الطاعات
                         // const WorshipTrackerWidget(),
 
                         Padding(
@@ -232,25 +223,23 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                 builder: (context, state) {
                                   return InkWell(
                                     onTap: () async {
-                                   //    NotificationService b = NotificationService();
-                                   // await   b.showInstantNotification("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo", "heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo");
-                                      bool needsInternet =
-                                          item["navigate"] ==
+                                      //    NotificationService b = NotificationService();
+                                      // await   b.showInstantNotification("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo", "heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeelo");
+                                      bool needsInternet = item["navigate"] ==
                                               Routes.categoriesRoute ||
-                                              item["navigate"] ==
-                                                  "/QuranRadioView";
+                                          item["navigate"] == "/QuranRadioView";
 
                                       (state is ConnectivityState &&
-                                          state.status ==
-                                              ConnectivityStatus
-                                                  .disconnected) ==
-                                          true &&
-                                          needsInternet
+                                                      state.status ==
+                                                          ConnectivityStatus
+                                                              .disconnected) ==
+                                                  true &&
+                                              needsInternet
                                           ? Fluttertoast.showToast(
-                                          msg:
-                                          "يرجي التحقق من اتصالك بالانترنت")
+                                              msg:
+                                                  "يرجي التحقق من اتصالك بالانترنت")
                                           : Navigator.pushNamed(
-                                          context, item['navigate']!);
+                                              context, item['navigate']!);
                                     },
                                     child: IslamicCardWidget(
                                         title: item["title"]!,
@@ -265,16 +254,14 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                             height: MediaQuery.sizeOf(context).width > 600
                                 ? 25
                                 : 20),
-                                
 
-                        
                         const SizedBox(height: 10),
 
                         // 🔥 قسم تعرف على ربك
                         const AllahNameWidget(),
 
                         const SizedBox(height: 10),
-                        
+
                         // 🔥 قسم غراس الجنة
                         // const JannahPlanterWidget(),
 
@@ -282,7 +269,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
                         // 🔥 قسم سؤال التحدي
                         // const QuizWidget(),
-                        
+
                         // const SizedBox(height: 10),
 
                         // 🔥 مدخل ركن الأطفال (في صفحة منفصلة)
@@ -295,7 +282,6 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                           padding: EdgeInsets.symmetric(vertical: 15),
                           child: OtherAzkarWidget(),
                         ),
-
                       ],
                     ),
                   ),
@@ -322,21 +308,21 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                     decoration: BoxDecoration(
                       gradient: isDark
                           ? LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          const Color(0xFF1a1a2e).withOpacity(0.98),
-                          const Color(0xFF16213e).withOpacity(0.95),
-                        ],
-                      )
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                const Color(0xFF1a1a2e).withOpacity(0.98),
+                                const Color(0xFF16213e).withOpacity(0.95),
+                              ],
+                            )
                           : LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.white.withOpacity(0.98),
-                          const Color(0xFFFFFBF0).withOpacity(0.95),
-                        ],
-                      ),
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.white.withOpacity(0.98),
+                                const Color(0xFFFFFBF0).withOpacity(0.95),
+                              ],
+                            ),
                       border: Border(
                         bottom: BorderSide(
                           color: isDark
@@ -407,7 +393,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                               child: Icon(
                                 Icons.location_on_rounded,
                                 size: isTab ? 26 : 22,
-                                color: isDark ? KColors.whiteColor : AppColors.primary,
+                                color: isDark
+                                    ? KColors.whiteColor
+                                    : AppColors.primary,
                               ),
                             ),
                             // Icon(
@@ -419,12 +407,13 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                             // ),
                             const SizedBox(width: 10),
                             TextDefaultWidget(
-                              title:  _locationText?.split(' - ').last ??
-                                  'موقع',
+                              title: _locationText?.split(' - ').last ?? 'موقع',
                               fontSize: isTab ? 8.sp : 11.sp,
                               fontFamily: "cairo",
                               fontWeight: FontWeight.bold,
-                              color: isDark ? AppColors.greyLightColor : Colors.white,
+                              color: isDark
+                                  ? AppColors.greyLightColor
+                                  : Colors.white,
                             ),
                           ]),
                           // زر الإعدادات
@@ -478,7 +467,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                             onTap: () => showThemeSheet(
                               context,
                               onLocationChanged: _onLocationChanged,
-                            ),                            borderRadius: BorderRadius.circular(30),
+                            ),
+                            borderRadius: BorderRadius.circular(30),
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
@@ -497,7 +487,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                               child: Icon(
                                 Icons.settings,
                                 size: isTab ? 26 : 22,
-                                color: isDark ? AppColors.greyLightColor : Colors.black87,
+                                color: isDark
+                                    ? AppColors.greyLightColor
+                                    : Colors.black87,
                               ),
                             ),
                           ),

@@ -48,13 +48,12 @@ class AppUpdateModel {
 // 2️⃣ SERVICE - خدمة فحص التحديثات
 // ═══════════════════════════════════════════════════════════════════════════
 
-
-
 class UpdateService {
   final Dio _dio = Dio();
 
   // 🔗 غيّر هذا الرابط لـ API الخاص بك
-  static const String UPDATE_API_URL = 'https://raw.githubusercontent.com/TaherSalah/update_app/refs/heads/master/update.json';
+  static const String UPDATE_API_URL =
+      'https://raw.githubusercontent.com/TaherSalah/update_app/refs/heads/master/update.json';
 
   /// فحص التحديثات من السيرفر
   // Future<AppUpdateModel?> checkForUpdate() async {
@@ -78,10 +77,10 @@ class UpdateService {
 
       if (response.statusCode == 200) {
         print("response.statusCode ${response.statusCode}");
-              print("response.statusCode ${response.data}");
+        print("response.statusCode ${response.data}");
         // لو response.data String → حوله ل JSON
         final Map<String, dynamic> jsonData =
-        response.data is String ? jsonDecode(response.data) : response.data;
+            response.data is String ? jsonDecode(response.data) : response.data;
 
         return AppUpdateModel.fromJson(jsonData);
       }
@@ -142,7 +141,6 @@ class UpdateService {
 // 3️⃣ WIDGET - مربع حوار التحديث
 // ═══════════════════════════════════════════════════════════════════════════
 
-
 class UpdateDialog extends StatelessWidget {
   final AppUpdateModel updateInfo;
   final bool isForced;
@@ -151,13 +149,13 @@ class UpdateDialog extends StatelessWidget {
   final bool isArabic;
 
   const UpdateDialog({
-    Key? key,
+    super.key,
     required this.updateInfo,
     required this.isForced,
     required this.onUpdate,
     this.onSkip,
     this.isArabic = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +187,9 @@ class UpdateDialog extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                isArabic ? updateInfo.updateMessage : updateInfo.updateMessageEn,
+                isArabic
+                    ? updateInfo.updateMessage
+                    : updateInfo.updateMessageEn,
                 style: const TextStyle(fontSize: 16),
               ),
               if (updateInfo.features.isNotEmpty) ...[
@@ -203,7 +203,7 @@ class UpdateDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 ...updateInfo.features.map(
-                      (feature) => Padding(
+                  (feature) => Padding(
                     padding: const EdgeInsets.only(bottom: 4),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,7 +224,8 @@ class UpdateDialog extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                    const Icon(Icons.info_outline,
+                        color: Colors.blue, size: 20),
                     const SizedBox(width: 8),
                     Text(
                       isArabic
@@ -275,10 +276,10 @@ class UpdateCheckScreen extends StatefulWidget {
   final bool isArabic;
 
   const UpdateCheckScreen({
-    Key? key,
+    super.key,
     required this.child,
     this.isArabic = true,
-  }) : super(key: key);
+  });
 
   @override
   State<UpdateCheckScreen> createState() => _UpdateCheckScreenState();
@@ -359,9 +360,9 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
         },
         onSkip: !isForced
             ? () {
-          Navigator.of(context).pop();
-          setState(() => _showApp = true);
-        }
+                Navigator.of(context).pop();
+                setState(() => _showApp = true);
+              }
             : null,
       ),
     );

@@ -1,4 +1,3 @@
-
 // =============== شاشة التسبيح المتقدمة ===============
 
 import 'package:flutter/cupertino.dart';
@@ -13,13 +12,14 @@ class TasbihScreen extends StatefulWidget {
   final Wird wird;
   final bool isDark;
 
-  TasbihScreen({required this.wird, required this.isDark});
+  const TasbihScreen({super.key, required this.wird, required this.isDark});
 
   @override
   _TasbihScreenState createState() => _TasbihScreenState();
 }
 
-class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMixin {
+class _TasbihScreenState extends State<TasbihScreen>
+    with TickerProviderStateMixin {
   late int currentDhikrIndex;
   bool isFocusMode = false;
   bool hapticEnabled = true;
@@ -178,7 +178,8 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
       builder: (dialogContext) => Directionality(
         textDirection: TextDirection.rtl,
         child: Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           backgroundColor: Colors.transparent,
           child: Stack(
             clipBehavior: Clip.none,
@@ -240,8 +241,8 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                         border: Border.all(
                             color: Colors.orange.withOpacity(0.5), width: 1.2),
                       ),
-                      child: Row(
-                        children: const [
+                      child: const Row(
+                        children: [
                           Icon(Icons.info_outline,
                               size: 18, color: Colors.orange),
                           SizedBox(width: 8),
@@ -295,9 +296,10 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                           child: ElevatedButton.icon(
                             onPressed: () {
                               // 👈 نفس منطق التخطي القديم
-                              widget.wird.adhkar[currentDhikrIndex].currentCount =
-                                  widget.wird
-                                      .adhkar[currentDhikrIndex].targetCount;
+                              widget.wird.adhkar[currentDhikrIndex]
+                                      .currentCount =
+                                  widget.wird.adhkar[currentDhikrIndex]
+                                      .targetCount;
 
                               if (currentDhikrIndex <
                                   widget.wird.adhkar.length - 1) {
@@ -389,7 +391,7 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
 
     final totalTasbihat = widget.wird.adhkar.fold<int>(
       0,
-          (sum, d) => sum + d.targetCount,
+      (sum, d) => sum + d.targetCount,
     );
     manager.updateStats(totalTasbihat);
 
@@ -413,7 +415,8 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
       builder: (context) => Directionality(
         textDirection: TextDirection.rtl,
         child: Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           backgroundColor: Colors.transparent,
           child: Stack(
             clipBehavior: Clip.none,
@@ -600,11 +603,6 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
     );
   }
 
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     final dhikr = widget.wird.adhkar[currentDhikrIndex];
@@ -618,13 +616,14 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
         await _saveProgress();
         return true;
       },
-      child:  Directionality(
+      child: Directionality(
         textDirection: TextDirection.rtl,
         child: SafeArea(
           top: false,
           bottom: true,
           child: Scaffold(
-            backgroundColor: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+            backgroundColor:
+                widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
             // appBar: isFocusMode
             //     ? null
             //     : AppBar(
@@ -639,35 +638,42 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
             //   ],
             // ),
             appBar: isFocusMode
-                  ? null
-                  :  PreferredSize(
-              preferredSize:
-              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
-              child: AppBar(
-                leading: CupertinoNavigationBarBackButton(color: isDark?Colors.white:Colors.black,),
-                  actions: [
-                    IconButton(
-                      icon: Icon(isFocusMode ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => isFocusMode = !isFocusMode),
-                      tooltip: 'وضع التركيز',
+                ? null
+                : PreferredSize(
+                    preferredSize: Size.fromHeight(
+                        MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+                    child: AppBar(
+                      leading: CupertinoNavigationBarBackButton(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                      actions: [
+                        IconButton(
+                          icon: Icon(isFocusMode
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () =>
+                              setState(() => isFocusMode = !isFocusMode),
+                          tooltip: 'وضع التركيز',
+                        ),
+                      ],
+                      centerTitle: true,
+                      title: Text(
+                        widget.wird.name,
+                        style: GoogleFonts.cairo(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.sizeOf(context).width > 600
+                                ? 12.sp
+                                : 18.sp),
+                      ),
                     ),
-                  ],
-                centerTitle: true,
-                title: Text(
-                  widget.wird.name,
-                  style: GoogleFonts.cairo(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                      fontSize:
-                      MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
-                ),
-              ),
-            ),
+                  ),
 
             body: GestureDetector(
               onTap: isCompleted ? null : incrementCount,
               child: Container(
-                color: widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+                color:
+                    widget.isDark ? Colors.grey.shade900 : Colors.teal.shade50,
                 child: Column(
                   children: [
                     if (!isFocusMode) ...[
@@ -689,11 +695,14 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                               'الذكر ${currentDhikrIndex + 1} من ${widget.wird.adhkar.length}',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: widget.isDark ? Colors.white70 : Colors.grey.shade700,
+                                color: widget.isDark
+                                    ? Colors.white70
+                                    : Colors.grey.shade700,
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
                                 color: Colors.teal.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(20),
@@ -724,7 +733,9 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                     fontSize: isFocusMode ? 40 : 32,
                                     fontWeight: FontWeight.bold,
                                     height: 2,
-                                    color: widget.isDark ? Colors.white : Colors.black87,
+                                    color: widget.isDark
+                                        ? Colors.white
+                                        : Colors.black87,
                                   ),
                                   textAlign: TextAlign.center,
                                   child: Text(dhikr.text),
@@ -732,7 +743,8 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                               ),
                               const SizedBox(height: 40),
                               ScaleTransition(
-                                scale: Tween<double>(begin: 1.0, end: 0.95).animate(
+                                scale: Tween<double>(begin: 1.0, end: 0.95)
+                                    .animate(
                                   CurvedAnimation(
                                     parent: _scaleController,
                                     curve: Curves.easeInOut,
@@ -750,7 +762,9 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.teal.withOpacity(
-                                              0.3 + (_pulseController.value * 0.2),
+                                              0.3 +
+                                                  (_pulseController.value *
+                                                      0.2),
                                             ),
                                             blurRadius: 30,
                                             spreadRadius: 10,
@@ -758,14 +772,17 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                         ],
                                       ),
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             '${dhikr.currentCount}',
                                             style: TextStyle(
                                               fontSize: isFocusMode ? 72 : 64,
                                               fontWeight: FontWeight.bold,
-                                              color: isCompleted ? Colors.green : Colors.teal,
+                                              color: isCompleted
+                                                  ? Colors.green
+                                                  : Colors.teal,
                                             ),
                                           ),
                                           if (!isFocusMode)
@@ -788,7 +805,9 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                   'اضغط في أي مكان للتسبيح',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: widget.isDark ? Colors.white60 : Colors.grey.shade600,
+                                    color: widget.isDark
+                                        ? Colors.white60
+                                        : Colors.grey.shade600,
                                   ),
                                 ),
                               ],
@@ -804,7 +823,8 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                         top: false,
                         bottom: true,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           child: Column(
                             children: [
                               // أزرار التنقل (السابق / التالي)
@@ -814,12 +834,15 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                   // زر السابق
                                   Expanded(
                                     child: ElevatedButton.icon(
-                                      onPressed: currentDhikrIndex > 0 ? _goToPreviousDhikr : null,
+                                      onPressed: currentDhikrIndex > 0
+                                          ? _goToPreviousDhikr
+                                          : null,
                                       // icon: const Icon(Icons.arrow_back),
                                       label: const TextWidget(title: 'السابق'),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.blue,
-                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 12),
                                       ),
                                     ),
                                   ),
@@ -832,7 +855,8 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                       label: const TextWidget(title: 'تخطي'),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.orange,
-                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 12),
                                       ),
                                     ),
                                   ),
@@ -840,14 +864,16 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                   // زر التالي
                                   Expanded(
                                     child: ElevatedButton.icon(
-                                      onPressed: currentDhikrIndex < widget.wird.adhkar.length - 1
+                                      onPressed: currentDhikrIndex <
+                                              widget.wird.adhkar.length - 1
                                           ? _goToNextDhikr
                                           : null,
                                       // icon: const Icon(Icons.arrow_forward),
                                       label: const TextWidget(title: 'التالي'),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.blue,
-                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 12),
                                       ),
                                     ),
                                   ),
@@ -856,7 +882,8 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                               const SizedBox(height: 15),
                               // أزرار الإعادة
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   ElevatedButton.icon(
                                     onPressed: () {
@@ -864,10 +891,12 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                       _saveProgress();
                                     },
                                     icon: const Icon(Icons.refresh),
-                                    label: const TextWidget(title: 'إعادة الحالي'),
+                                    label:
+                                        const TextWidget(title: 'إعادة الحالي'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.grey.shade600,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 10),
                                     ),
                                   ),
                                   ElevatedButton.icon(
@@ -880,33 +909,45 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                             child: Material(
                                               color: Colors.transparent,
                                               child: Container(
-                                                width: MediaQuery.of(context).size.width * 0.8,
-                                                padding: const EdgeInsets.all(20),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.8,
+                                                padding:
+                                                    const EdgeInsets.all(20),
                                                 decoration: BoxDecoration(
-                                                  color: widget.isDark ? Colors.grey.shade900 : Colors.white,
-                                                  borderRadius: BorderRadius.circular(20),
+                                                  color: widget.isDark
+                                                      ? Colors.grey.shade900
+                                                      : Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: widget.isDark
-                                                          ? Colors.black.withOpacity(0.4)
-                                                          : Colors.grey.withOpacity(0.3),
+                                                          ? Colors.black
+                                                              .withOpacity(0.4)
+                                                          : Colors.grey
+                                                              .withOpacity(0.3),
                                                       blurRadius: 10,
-                                                      offset: const Offset(0, 4),
+                                                      offset:
+                                                          const Offset(0, 4),
                                                     ),
                                                   ],
                                                 ),
-
                                                 child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   children: [
-
                                                     // ===== Title =====
                                                     Text(
                                                       "إعادة الورد؟",
                                                       style: TextStyle(
                                                         fontSize: 20,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: widget.isDark ? Colors.white : Colors.black87,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: widget.isDark
+                                                            ? Colors.white
+                                                            : Colors.black87,
                                                       ),
                                                     ),
 
@@ -915,10 +956,13 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                                     // ===== Content =====
                                                     Text(
                                                       "هل تريد إعادة الورد من البداية؟",
-                                                      textAlign: TextAlign.center,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                       style: TextStyle(
                                                         fontSize: 16,
-                                                        color: widget.isDark ? Colors.white70 : Colors.black87,
+                                                        color: widget.isDark
+                                                            ? Colors.white70
+                                                            : Colors.black87,
                                                       ),
                                                     ),
 
@@ -926,68 +970,108 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
 
                                                     // ===== Actions =====
                                                     Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-
                                                         // Cancel
                                                         Expanded(
                                                           child: InkWell(
-                                                            onTap: () => Navigator.pop(context),
+                                                            onTap: () =>
+                                                                Navigator.pop(
+                                                                    context),
                                                             child: Container(
-                                                              padding: const EdgeInsets.symmetric(
-                                                                  vertical: 12
-                                                              ),
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(12),
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      vertical:
+                                                                          12),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
                                                                 color: widget.isDark
-                                                                    ? Colors.grey.shade800
-                                                                    : Colors.grey.shade200,
+                                                                    ? Colors
+                                                                        .grey
+                                                                        .shade800
+                                                                    : Colors
+                                                                        .grey
+                                                                        .shade200,
                                                               ),
-                                                              alignment: Alignment.center,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
                                                               child: Text(
                                                                 "إلغاء",
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 16,
-                                                                  color: widget.isDark
-                                                                      ? Colors.white
-                                                                      : Colors.black87,
+                                                                  color: widget
+                                                                          .isDark
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black87,
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
                                                         ),
 
-                                                        const SizedBox(width: 10),
+                                                        const SizedBox(
+                                                            width: 10),
 
                                                         // Reset ALL
                                                         Expanded(
                                                           child: InkWell(
                                                             onTap: () {
-                                                              for (var d in widget.wird.adhkar) {
-                                                                d.currentCount = 0;
+                                                              for (var d
+                                                                  in widget.wird
+                                                                      .adhkar) {
+                                                                d.currentCount =
+                                                                    0;
                                                               }
-                                                              widget.wird.currentDhikrIndex = 0;
-                                                              widget.wird.isInProgress = false;
+                                                              widget.wird
+                                                                  .currentDhikrIndex = 0;
+                                                              widget.wird
+                                                                      .isInProgress =
+                                                                  false;
 
-                                                              setState(() => currentDhikrIndex = 0);
+                                                              setState(() =>
+                                                                  currentDhikrIndex =
+                                                                      0);
                                                               _saveProgress();
 
-                                                              Navigator.pop(context);
+                                                              Navigator.pop(
+                                                                  context);
                                                             },
                                                             child: Container(
-                                                              padding: const EdgeInsets.symmetric(
-                                                                  vertical: 12
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      vertical:
+                                                                          12),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                                color:
+                                                                    Colors.red,
                                                               ),
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(12),
-                                                                color: Colors.red,
-                                                              ),
-                                                              alignment: Alignment.center,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
                                                               child: const Text(
                                                                 "إعادة الكل",
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 16,
-                                                                  color: Colors.white,
+                                                                  color: Colors
+                                                                      .white,
                                                                 ),
                                                               ),
                                                             ),
@@ -1071,13 +1155,14 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                                       //     ],
                                       //   ),
                                       // );
-
                                     },
                                     icon: const Icon(Icons.restart_alt),
-                                    label: const TextWidget(title: 'إعادة الكل'),
+                                    label:
+                                        const TextWidget(title: 'إعادة الكل'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 10),
                                     ),
                                   ),
                                 ],
@@ -1095,5 +1180,4 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
       ),
     );
   }
-
 }

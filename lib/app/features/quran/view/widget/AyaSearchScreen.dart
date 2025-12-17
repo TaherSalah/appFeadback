@@ -76,7 +76,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
             title: Text(
               "البحث بالآية",
               style: GoogleFonts.cairo(
-                color:Colors.green,
+                color: Colors.green,
                 fontWeight: FontWeight.w700,
                 fontSize: screenWidth > 600 ? 12.sp : 18.sp,
               ),
@@ -90,13 +90,13 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
               end: Alignment.bottomCenter,
               colors: isDark
                   ? const [
-                Color(0xff05060a),
-                Color(0xff0d1514),
-              ]
+                      Color(0xff05060a),
+                      Color(0xff0d1514),
+                    ]
                   : const [
-                Color(0xfff4f6f8),
-                Color(0xfffdfcf9),
-              ],
+                      Color(0xfff4f6f8),
+                      Color(0xfffdfcf9),
+                    ],
             ),
           ),
           child: SafeArea(
@@ -129,8 +129,8 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                           ],
                           border: Border.all(
                             color: (isDark
-                                ? KColors.primaryColor
-                                : KColors.primary2Color)
+                                    ? KColors.primaryColor
+                                    : KColors.primary2Color)
                                 .withOpacity(0.6),
                           ),
                         ),
@@ -141,8 +141,8 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: (isDark
-                                    ? KColors.primaryColor
-                                    : KColors.primary2Color)
+                                        ? KColors.primaryColor
+                                        : KColors.primary2Color)
                                     .withOpacity(0.12),
                               ),
                               child: Icon(
@@ -166,7 +166,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                                   const SizedBox(height: 2),
                                   TextWidget(
                                     title:
-                                    "اكتب كلمة، جزءًا من آية، أو رقم آية.",
+                                        "اكتب كلمة، جزءًا من آية، أو رقم آية.",
                                     fontSize: isTablet ? 8.sp : 12,
                                     color: isDark
                                         ? Colors.grey[400]
@@ -195,7 +195,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                         },
                         decoration: BoxDecoration(
                           color:
-                          isDark ? const Color(0xff151515) : Colors.white,
+                              isDark ? const Color(0xff151515) : Colors.white,
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
                             color: isDark
@@ -221,8 +221,8 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                           _debounce?.cancel();
                           _debounce =
                               Timer(const Duration(milliseconds: 450), () {
-                                loadeData(searchText: value);
-                              });
+                            loadeData(searchText: value);
+                          });
                         },
                         onSubmitted: (value) => loadeData(searchText: value),
                       ),
@@ -237,35 +237,35 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                     duration: const Duration(milliseconds: 300),
                     child: ayah.isNotEmpty
                         ? ListView.separated(
-                      key: const ValueKey("results"),
-                      padding: EdgeInsets.fromLTRB(
-                        isTablet ? 18.w : 16,
-                        4,
-                        isTablet ? 18.w : 16,
-                        24,
-                      ),
-                      itemCount: ayah.length,
-                      separatorBuilder: (context, index) =>
-                      const SizedBox(height: 16),
-                      itemBuilder: (context, index) {
-                        final item = ayah[index];
-                        return _AyaResultCard(
-                          ayah: item,
-                          onTap: () {
-                            QuranLibrary().jumpToAyah(
-                              item.page,
-                              item.ayahUQNumber,
-                            );
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                    )
+                            key: const ValueKey("results"),
+                            padding: EdgeInsets.fromLTRB(
+                              isTablet ? 18.w : 16,
+                              4,
+                              isTablet ? 18.w : 16,
+                              24,
+                            ),
+                            itemCount: ayah.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 16),
+                            itemBuilder: (context, index) {
+                              final item = ayah[index];
+                              return _AyaResultCard(
+                                ayah: item,
+                                onTap: () {
+                                  QuranLibrary().jumpToAyah(
+                                    item.page,
+                                    item.ayahUQNumber,
+                                  );
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          )
                         : _EmptyState(
-                      key: const ValueKey("empty"),
-                      query: query,
-                      isDark: isDark,
-                    ),
+                            key: const ValueKey("empty"),
+                            query: query,
+                            isDark: isDark,
+                          ),
                   ),
                 ),
               ],
@@ -282,7 +282,6 @@ class _AyaResultCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const _AyaResultCard({
-    super.key,
     required this.ayah,
     required this.onTap,
   });
@@ -292,8 +291,7 @@ class _AyaResultCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isTablet = ResponsiveUtil.isTablet(context);
 
-    final Color primary =
-    isDark ? KColors.primaryColor : KColors.primary2Color;
+    final Color primary = isDark ? KColors.primaryColor : KColors.primary2Color;
 
     return Material(
       color: Colors.transparent,
@@ -308,13 +306,13 @@ class _AyaResultCard extends StatelessWidget {
               end: Alignment.bottomLeft,
               colors: isDark
                   ? [
-                const Color(0xff0d1017),
-                const Color(0xff171c25),
-              ]
+                      const Color(0xff0d1017),
+                      const Color(0xff171c25),
+                    ]
                   : [
-                const Color(0xfffefdf9),
-                const Color(0xfff4f7fb),
-              ],
+                      const Color(0xfffefdf9),
+                      const Color(0xfff4f7fb),
+                    ],
             ),
             boxShadow: [
               BoxShadow(
@@ -382,8 +380,7 @@ class _AyaResultCard extends StatelessWidget {
                             fontFamily: "me",
                             fontSize: isTablet ? 8.sp : 12.sp,
                             fontWeight: FontWeight.bold,
-                            color:
-                            isDark ? Colors.white : Colors.black87,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -401,7 +398,7 @@ class _AyaResultCard extends StatelessWidget {
                               const SizedBox(height: 2),
                               TextWidget(
                                 title:
-                                "الآية رقم ${ayah.ayahNumber} - صفحة ${ayah.page}",
+                                    "الآية رقم ${ayah.ayahNumber} - صفحة ${ayah.page}",
                                 fontSize: isTablet ? 7.sp : 11.sp,
                                 color: isDark
                                     ? Colors.grey[400]
@@ -491,9 +488,8 @@ class _AyaResultCard extends StatelessWidget {
                             TextWidget(
                               title: "اضغط للانتقال إلى هذه الآية",
                               fontSize: isTablet ? 7.sp : 11.sp,
-                              color: isDark
-                                  ? Colors.grey[400]
-                                  : Colors.grey[700],
+                              color:
+                                  isDark ? Colors.grey[400] : Colors.grey[700],
                             ),
                           ],
                         ),
@@ -550,7 +546,7 @@ class _EmptyState extends StatelessWidget {
               const SizedBox(height: 4),
               TextWidget(
                 title:
-                "اكتب أي كلمة أو جملة؛ وسنُظهر لك المواضع التي وردت في المصحف.",
+                    "اكتب أي كلمة أو جملة؛ وسنُظهر لك المواضع التي وردت في المصحف.",
                 fontSize: isTablet ? 8.sp : 13,
                 color: isDark ? Colors.grey[400] : Colors.grey[700],
                 textAlign: TextAlign.center,
@@ -567,16 +563,14 @@ class _EmptyState extends StatelessWidget {
                   TextWidget(
                     title: query,
                     fontWeight: FontWeight.w600,
-                    color:
-                    isDark ? KColors.primary : KColors.primary2Color,
+                    color: isDark ? KColors.primary : KColors.primary2Color,
                     fontSize: isTablet ? 9.sp : 15,
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               TextWidget(
-                title:
-                "حاول استخدام كلمة أخرى أو جزءًا أقصر من الآية.",
+                title: "حاول استخدام كلمة أخرى أو جزءًا أقصر من الآية.",
                 fontSize: isTablet ? 8.sp : 13,
                 color: isDark ? Colors.grey[400] : Colors.grey[700],
                 textAlign: TextAlign.center,

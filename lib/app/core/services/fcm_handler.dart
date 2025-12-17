@@ -1,10 +1,6 @@
 // import 'package:awesome_notifications/awesome_notifications.dart';
 // ignore_for_file: avoid_print
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:googleapis_auth/auth_io.dart' as auth;
 // import 'package:safeSpace/core/Utilities/toast_helper.dart';
@@ -116,8 +112,6 @@ import 'package:flutter/material.dart';
 //     );
 //   }
 // }
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 // class MyFirebaseMessagingService {
 //   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;

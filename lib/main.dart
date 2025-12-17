@@ -1,4 +1,5 @@
-// import 'package:awesome_notifications/awesome_notifications.dart';
+import 'dart:io';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 //
 //
@@ -247,7 +248,7 @@ Future<void> _initializeAwesomeNotifications() async {
           channelDescription: 'تشغيل أذان الفجر',
           importance: NotificationImportance.Max,
           playSound: true,
-          soundSource: 'resource://raw/fajr', // تأكد أن الملف fajr.mp3 موجود
+          soundSource: Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3',
           enableVibration: true,
           enableLights: true,
           ledColor: Colors.orange,
@@ -264,7 +265,8 @@ Future<void> _initializeAwesomeNotifications() async {
           defaultColor: Colors.green,
           ledColor: Colors.green,
           playSound: true,
-          soundSource: 'resource://raw/athan', // تأكد أن الملف athan.mp3 موجود
+          soundSource:
+              Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3',
           enableVibration: true,
           enableLights: true,
           locked: true,
@@ -279,8 +281,8 @@ Future<void> _initializeAwesomeNotifications() async {
           importance: NotificationImportance.High,
           defaultColor: Colors.blue,
           ledColor: Colors.blue,
-          soundSource: 'resource://raw/tasbihat', // تأكد أن الملف athan.mp3 موجود
-
+          soundSource:
+              Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -293,8 +295,8 @@ Future<void> _initializeAwesomeNotifications() async {
           importance: NotificationImportance.High,
           defaultColor: Colors.blue,
           ledColor: Colors.blue,
-          soundSource: 'resource://raw/tasbihat', // تأكد أن الملف athan.mp3 موجود
-
+          soundSource:
+              Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -307,8 +309,8 @@ Future<void> _initializeAwesomeNotifications() async {
           importance: NotificationImportance.High,
           defaultColor: Colors.blue,
           ledColor: Colors.blue,
-          soundSource: 'resource://raw/tasbihat', // تأكد أن الملف athan.mp3 موجود
-
+          soundSource:
+              Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -321,8 +323,7 @@ Future<void> _initializeAwesomeNotifications() async {
           importance: NotificationImportance.High,
           defaultColor: Colors.blue,
           ledColor: Colors.blue,
-          soundSource: 'resource://raw/qiam', // تأكد أن الملف athan.mp3 موجود
-
+          soundSource: Platform.isAndroid ? 'resource://raw/qiam' : 'qiam.mp3',
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -337,7 +338,8 @@ Future<void> _initializeAwesomeNotifications() async {
           defaultColor: Colors.teal,
           ledColor: Colors.teal,
           playSound: true,
-          soundSource: 'resource://raw/profet',
+          soundSource:
+              Platform.isAndroid ? 'resource://raw/profet' : 'profet.mp3',
           enableVibration: true,
           enableLights: true,
         ),
@@ -469,7 +471,6 @@ Future<void> _setupDailyReminders() async {
       body: 'وقت قيام الليل، تقبل الله طاعاتكم',
       hour: 23,
       minute: 0,
-
       payload: {'route': 'qiyam_reminder'},
     );
 
@@ -578,7 +579,7 @@ Future<void> _scheduleMinutelySalawatTest() async {
         payload: {'route': 'salawat'},
       ),
       schedule: NotificationInterval(
-        interval: Duration(hours: 1), // كل 60 ثانية
+        interval: const Duration(hours: 1), // كل 60 ثانية
         repeats: true,
         preciseAlarm: true,
       ),
@@ -696,7 +697,6 @@ void checkWhatsNew(BuildContext context) async {
     prefs.setString("last_version", currentVersion);
   }
 }
-
 
 // في نهاية main.dart، بعد دالة main()
 
@@ -1007,9 +1007,9 @@ const List<String> dailyHadiths = [
   'عن أنس بن مالك، قال: " كان النبي صلى الله عليه وسلم إذا دخل الخلاء، قال: اللهم إني أعوذ بك " قال شعبة: وقد قال مرة أخرى: «أعوذ بالله من الخبث والخبيث - أو الخبث والخبائث -».',
   "عن أنس بن مالك، قال: قال رسول الله صلى الله عليه وسلم: «من ترك الكذب وهو باطل، بني له قصر في ربض الجنة، ومن ترك المراء وهو محق، بني له في وسطها، ومن حسن خلقة، بني له في أعلاها»",
   "عن جابر، قال: قال رسول الله صلى الله عليه وسلم: «من كذب علي متعمدا، فليتبوأ مقعده من النار»"
-  "عن أبي سلمة، أن أبا هريرة، قال لرجل: يا ابن أخي، «إذا حدثتك عن رسول الله صلى الله عليه وسلم حديثا، فلا تضرب له الأمثال»قال: أبو الحسن، حدثنا يحيى بن عبد الله الكرابيسي قال: حدثنا علي بن الجعد، عن شعبة، عن عمرو بن مرة، مثل حديث علي رضي الله تعالى عنه"
-  "عن أبي الدرداء، قال: خرج علينا رسول الله صلى الله عليه وسلم، ونحن نذكر الفقر ونتخوفه، فقال: «آلفقر تخافون؟ والذي نفسي بيده، لتصبن عليكم الدنيا صبا، حتى لا يزيغ قلب أحدكم إزاغة إلا هيه، وايم الله، لقد تركتكم على مثل البيضاء، ليلها ونهارها سواء» قال أبو الدرداء: صدق والله رسول الله صلى الله عليه وسلم: «تركنا والله على مثل البيضاء، ليلها ونهارها سواء»"
-  "قال رسول الله ﷺ: (ما أمرتكم به فخذوه، وما نهيتكم عنه فانتهوا).",
+      "عن أبي سلمة، أن أبا هريرة، قال لرجل: يا ابن أخي، «إذا حدثتك عن رسول الله صلى الله عليه وسلم حديثا، فلا تضرب له الأمثال»قال: أبو الحسن، حدثنا يحيى بن عبد الله الكرابيسي قال: حدثنا علي بن الجعد، عن شعبة، عن عمرو بن مرة، مثل حديث علي رضي الله تعالى عنه"
+      "عن أبي الدرداء، قال: خرج علينا رسول الله صلى الله عليه وسلم، ونحن نذكر الفقر ونتخوفه، فقال: «آلفقر تخافون؟ والذي نفسي بيده، لتصبن عليكم الدنيا صبا، حتى لا يزيغ قلب أحدكم إزاغة إلا هيه، وايم الله، لقد تركتكم على مثل البيضاء، ليلها ونهارها سواء» قال أبو الدرداء: صدق والله رسول الله صلى الله عليه وسلم: «تركنا والله على مثل البيضاء، ليلها ونهارها سواء»"
+      "قال رسول الله ﷺ: (ما أمرتكم به فخذوه، وما نهيتكم عنه فانتهوا).",
   "قال رسول الله ﷺ: (يسروا ولا تعسروا، وبشروا، ولا تنفروا).",
   "عن جابر بن عبد الله، قال: كان رسول الله صلى الله عليه وسلم: إذا خطب احمرت عيناه، وعلا صوته، واشتد غضبه، كأنه منذر جيش يقول: «صبحكم مساكم» ويقول: «بعثت أنا والساعة كهاتين، ويقرن بين إصبعيه السبابة والوسطى» ثم يقول: «أما بعد، فإن خير الأمور كتاب الله، وخير الهدي هدي محمد، وشر الأمور محدثاتها، وكل بدعة ضلالة» وكان يقول: «من ترك مالا فلأهله، ومن ترك دينا أو ضياعا، فعلي وإلي»",
   "قال رسول الله ﷺ: (يسروا ولا تعسروا، وبشروا، ولا تنفروا).",
@@ -1017,7 +1017,7 @@ const List<String> dailyHadiths = [
   "قال رسول الله ﷺ: (إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى).",
   "قال رسول الله ﷺ: (الكلمة الطيبة صدقة).",
   "عن علي، عن النبي صلى الله عليه وسلم قال: «من حدث عني حديثا وهو يرى أنه كذب، فهو أحد الكاذبين»"
-  "قال رسول الله ﷺ: (المسلم من سلم المسلمون من لسانه ويده).",
+      "قال رسول الله ﷺ: (المسلم من سلم المسلمون من لسانه ويده).",
   "قال رسول الله ﷺ: (لا يؤمن أحدكم حتى يحب لأخيه ما يحب لنفسه).",
   "قال رسول الله ﷺ: (اتق الله حيثما كنت، وأتبع السيئة الحسنة تمحها).",
   "قال رسول الله ﷺ: (الدال على الخير كفاعله).",
@@ -1028,7 +1028,6 @@ const List<String> dailyHadiths = [
   "قال رسول الله ﷺ: (من سلك طريقاً يلتمس فيه علماً سهل الله له به طريقاً إلى الجنة).",
   "قال رسول الله ﷺ: (من اتبع جنازة مسلم، إيمانا واحتسابا، وكان معه حتى يصلى عليها ويفرغ من دفنها، فإنه يرجع من الأجر بقيراطين، كل قيراط مثل أحد، ومن صلى عليها ثم رجع قبل أن تدفن، فإنه يرجع بقيراط).",
   "قال رسول الله ﷺ: (إذا أحسن أحدكم إسلامه: فكل حسنة يعملها تكتب له بعشر أمثالها إلى سبع مائة ضعف، وكل سيئة يعملها تكتب له بمثلها).",
-
 ];
 
 // ==========================================
@@ -1037,10 +1036,10 @@ const List<String> dailyHadiths = [
 Future<void> _scheduleHadithSeries() async {
   try {
     print("📅 جاري جدولة سلسلة الأحاديث لـ 30 يوماً...");
-    
+
     // 1️⃣ إلغاء الجدولة القديمة للأحاديث (نستخدم IDs من 500 إلى 550)
     for (int i = 500; i < 550; i++) {
-        await AwesomeNotifications().cancel(i);
+      await AwesomeNotifications().cancel(i);
     }
 
     final now = DateTime.now();
@@ -1055,7 +1054,7 @@ Future<void> _scheduleHadithSeries() async {
     // 2️⃣ جدولة حديث مختلف لكل يوم لمدة 30 يوم
     for (int i = 0; i < 30; i++) {
       final scheduledDate = baselineTime.add(Duration(days: i));
-      
+
       // اختيار حديث من القائمة بالترتيب (لو القائمة خلصت نعيد من الأول)
       final hadithText = dailyHadiths[i % dailyHadiths.length];
 
@@ -1073,12 +1072,11 @@ Future<void> _scheduleHadithSeries() async {
         schedule: NotificationCalendar.fromDate(
           date: scheduledDate,
           allowWhileIdle: true,
-          preciseAlarm: true, 
+          preciseAlarm: true,
         ),
       );
     }
     print("✅ تم جدولة الأحاديث بنجاح");
-    
   } catch (e) {
     print("❌ خطأ في جدولة الأحاديث: $e");
   }

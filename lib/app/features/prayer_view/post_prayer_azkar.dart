@@ -9,7 +9,6 @@ import '../../core/shard/widgets/ui_animations.dart';
 import '../../core/utils/style/k_color.dart';
 import '../sleep_view/sleep_azkar.dart';
 
-
 class PrayerAzkar extends StatefulWidget {
   const PrayerAzkar({super.key});
 
@@ -42,7 +41,6 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
               onPressed: con.resetPrayer,
             ),
           ],
-
           leading: CupertinoNavigationBarBackButton(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white
@@ -54,94 +52,83 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
             style: GoogleFonts.cairo(
               color: Colors.green,
               fontWeight: FontWeight.bold,
-              fontSize:
-              MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
             ),
           ),
         ),
       ),
-
       body: allDone
           ? DoneDialogWidget(
-        onPressedRepeat: con.resetPrayer,
-        doneText: AppString.KZakarPrayerFeaturesDes,
-        KZakarFeaturesTitle: AppString.KPrayerDaialogText,
-        KDaialogText: AppString.KZakarPrayerFeaturesTitle,
-      )
-      // قائمة أذكار ما بعد الصلاة
+              onPressedRepeat: con.resetPrayer,
+              doneText: AppString.KZakarPrayerFeaturesDes,
+              KZakarFeaturesTitle: AppString.KPrayerDaialogText,
+              KDaialogText: AppString.KZakarPrayerFeaturesTitle,
+            )
+          // قائمة أذكار ما بعد الصلاة
           : Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0.w),
-          ),
-          Expanded(
-            child: ListView.separated(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0.w),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (context, zPrayerIndex) {
+                      // الذكر خلص لما عدّاده <= 0
+                      final bool isDone =
+                          Azkary.azkarPrayerRepate[zPrayerIndex] <= 0;
 
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, zPrayerIndex) {
-                // الذكر خلص لما عدّاده <= 0
-                final bool isDone =
-                    Azkary.azkarPrayerRepate[zPrayerIndex] <= 0;
+                      final Color cardColor = isDone
+                          ? const Color(AppStyle.yellowColor)
+                          : (isDark
+                              ? Colors.black
+                              : const Color(AppStyle.whiteColor));
 
-                final Color cardColor = isDone
-                    ? const Color(AppStyle.yellowColor)
-                    : (isDark
-                    ? Colors.black
-                    : const Color(AppStyle.whiteColor));
+                      const Color primaryColorLocal =
+                          Color(AppStyle.primaryColor);
 
+                      final Color cardAccent = isDone
+                          ? const Color(AppStyle.yellowColor)
+                          : (isDark ? Colors.black : primaryColorLocal);
 
-                final Color primaryColorLocal =
-                const Color(AppStyle.primaryColor);
+                      final Color chipBg = isDone
+                          ? const Color(AppStyle.yellowColor)
+                          : (isDark ? Colors.black : const Color(0xFFECFDF3));
 
-                final Color cardAccent = isDone
-                    ? const Color(AppStyle.yellowColor)
-                    : (isDark
-                    ? Colors.black
-                    : primaryColorLocal);
+                      final Color chipText = isDone
+                          ? Colors.black
+                          : (isDark ? Colors.white : KColors.primaryColor);
 
-                final Color chipBg = isDone
-                    ? const Color(AppStyle.yellowColor)
-                    : (isDark
-                    ? Colors.black
-                    : const Color(0xFFECFDF3));
-
-                final Color chipText = isDone
-                    ? Colors.black
-                    : (isDark
-                    ? Colors.white
-                    : KColors.primaryColor);
-
-                return ScrollAppearAnimation(
-                  duration: const Duration(milliseconds: 700),
-                  child: GestureDetector(
-                    onTap: () {
-                      con.decrementPrayer(zPrayerIndex);
+                      return ScrollAppearAnimation(
+                        duration: const Duration(milliseconds: 700),
+                        child: GestureDetector(
+                          onTap: () {
+                            con.decrementPrayer(zPrayerIndex);
+                          },
+                          child: AzkerItemBuilder(
+                            azkarTitle: Azkary.azkarPrayer[zPrayerIndex],
+                            azkarDes: Azkary.azkarPrayerDes[zPrayerIndex],
+                            fontSize: fontSize,
+                            azkarRepate: isDone
+                                ? '0'
+                                : '${Azkary.azkarPrayerRepate[zPrayerIndex]}',
+                            color: cardAccent,
+                            repertColor: chipText,
+                            repertColor2: chipBg,
+                          ),
+                        ),
+                      );
                     },
-                    child: AzkerItemBuilder(
-                      azkarTitle: Azkary.azkarPrayer[zPrayerIndex],
-                      azkarDes: Azkary.azkarPrayerDes[zPrayerIndex],
-                      fontSize: fontSize,
-                      azkarRepate: isDone
-                          ? '0'
-                          : '${Azkary.azkarPrayerRepate[zPrayerIndex]}',
-                      color: cardAccent,
-                      repertColor: chipText,
-                      repertColor2: chipBg,
-                    ),
+                    separatorBuilder: (context, zPrayerIndex) =>
+                        SizedBox(height: 15.h),
+                    itemCount: Azkary.azkarPrayer.length,
                   ),
-                );
-              },
-              separatorBuilder: (context, zPrayerIndex) =>
-                  SizedBox(height: 15.h),
-              itemCount: Azkary.azkarPrayer.length,
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }
-
 
 // class PrayerAzkar extends StatefulWidget {
 //   const PrayerAzkar({super.key});

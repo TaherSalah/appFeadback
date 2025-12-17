@@ -21,7 +21,7 @@ class MosquesMapScreen extends StatefulWidget {
 class _MosquesMapScreenState extends State<MosquesMapScreen> {
   final MapController _mapController = MapController();
   final MosqueService _mosqueService = MosqueService();
-  
+
   List<Mosque> _mosques = [];
   Position? _userPosition;
   bool _isLoading = true;
@@ -47,18 +47,19 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
         permission = await Geolocator.requestPermission();
       }
 
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
         Fluttertoast.showToast(msg: "تم رفض إذن الموقع");
         return;
       }
 
       Position position = await Geolocator.getCurrentPosition();
-      
+
       if (mounted) {
         setState(() {
           _userPosition = position;
         });
-        
+
         _fetchMosques();
       }
     } catch (e) {
@@ -73,7 +74,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
 
   Future<void> _fetchMosques() async {
     if (_userPosition == null) return;
-    
+
     setState(() {
       _isLoading = true;
     });
@@ -89,7 +90,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
         _mosques = mosques;
         _isLoading = false;
       });
-      
+
       Fluttertoast.showToast(msg: "تم العثور على ${mosques.length} مسجد");
     }
   }
@@ -98,7 +99,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
     setState(() {
       _selectedMosque = mosque;
     });
-    
+
     // Animate to mosque location
     _mapController.move(
       LatLng(mosque.latitude, mosque.longitude),
@@ -107,7 +108,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
   }
 
   void _openDirections(Mosque mosque) async {
-    final url = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=${mosque.latitude},${mosque.longitude}');
+    final url = Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=${mosque.latitude},${mosque.longitude}');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
@@ -147,7 +149,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                   FlutterMap(
                     mapController: _mapController,
                     options: MapOptions(
-                      initialCenter: LatLng(_userPosition!.latitude, _userPosition!.longitude),
+                      initialCenter: LatLng(
+                          _userPosition!.latitude, _userPosition!.longitude),
                       initialZoom: 14,
                       minZoom: 10,
                       maxZoom: 18,
@@ -155,16 +158,18 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                     children: [
                       // OpenStreetMap Tiles
                       TileLayer(
-                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         userAgentPackageName: 'com.rafiq.muslimdaily',
                       ),
-                      
+
                       // Markers
                       MarkerLayer(
                         markers: [
                           // User location marker
                           Marker(
-                            point: LatLng(_userPosition!.latitude, _userPosition!.longitude),
+                            point: LatLng(_userPosition!.latitude,
+                                _userPosition!.longitude),
                             width: 60,
                             height: 60,
                             child: const Icon(
@@ -173,7 +178,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                               size: 40,
                             ),
                           ),
-                          
+
                           // Mosque markers
                           ..._mosques.map((mosque) {
                             final isSelected = _selectedMosque?.id == mosque.id;
@@ -185,7 +190,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                 onTap: () => _onMosqueSelected(mosque),
                                 child: Icon(
                                   Icons.mosque,
-                                  color: isSelected ? Colors.amber : Colors.green,
+                                  color:
+                                      isSelected ? Colors.amber : Colors.green,
                                   size: isSelected ? 50 : 40,
                                 ),
                               ),
@@ -206,7 +212,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                       decoration: BoxDecoration(
                         color: isDark ? Colors.grey[850] : Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(color: Colors.black26, blurRadius: 8),
                         ],
                       ),
@@ -214,14 +220,16 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                         children: [
                           Text(
                             "نطاق البحث: ${(_searchRadius / 1000).toStringAsFixed(1)} كم",
-                            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                            style:
+                                GoogleFonts.cairo(fontWeight: FontWeight.bold),
                           ),
                           Slider(
                             value: _searchRadius,
                             min: 1000,
                             max: 10000,
                             divisions: 9,
-                            label: "${(_searchRadius / 1000).toStringAsFixed(0)} كم",
+                            label:
+                                "${(_searchRadius / 1000).toStringAsFixed(0)} كم",
                             onChanged: (value) {
                               setState(() {
                                 _searchRadius = value;
@@ -245,8 +253,9 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                       return Container(
                         decoration: BoxDecoration(
                           color: isDark ? Colors.grey[900] : Colors.white,
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                          boxShadow: [
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(20)),
+                          boxShadow: const [
                             BoxShadow(color: Colors.black26, blurRadius: 10),
                           ],
                         ),
@@ -262,12 +271,14 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),
-                            
+
                             // Title
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "المساجد القريبة (${_mosques.length})",
@@ -280,14 +291,15 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                     const SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
                                     ),
                                 ],
                               ),
                             ),
-                            
+
                             const Divider(),
-                            
+
                             // Mosque List
                             Expanded(
                               child: _mosques.isEmpty
@@ -302,17 +314,26 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                       itemCount: _mosques.length,
                                       itemBuilder: (context, index) {
                                         final mosque = _mosques[index];
-                                        final isSelected = _selectedMosque?.id == mosque.id;
-                                        
+                                        final isSelected =
+                                            _selectedMosque?.id == mosque.id;
+
                                         return Container(
-                                          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 4),
                                           decoration: BoxDecoration(
                                             color: isSelected
-                                                ? (isDark ? Colors.green[900] : Colors.green[50])
-                                                : (isDark ? Colors.grey[850] : Colors.grey[100]),
-                                            borderRadius: BorderRadius.circular(12),
+                                                ? (isDark
+                                                    ? Colors.green[900]
+                                                    : Colors.green[50])
+                                                : (isDark
+                                                    ? Colors.grey[850]
+                                                    : Colors.grey[100]),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                             border: Border.all(
-                                              color: isSelected ? Colors.green : Colors.transparent,
+                                              color: isSelected
+                                                  ? Colors.green
+                                                  : Colors.transparent,
                                               width: 2,
                                             ),
                                           ),
@@ -320,27 +341,35 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                             leading: Container(
                                               padding: const EdgeInsets.all(8),
                                               decoration: BoxDecoration(
-                                                color: Colors.green.withOpacity(0.2),
+                                                color: Colors.green
+                                                    .withOpacity(0.2),
                                                 shape: BoxShape.circle,
                                               ),
-                                              child: const Icon(Icons.mosque, color: Colors.green),
+                                              child: const Icon(Icons.mosque,
+                                                  color: Colors.green),
                                             ),
                                             title: Text(
                                               mosque.name,
-                                              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                                              style: GoogleFonts.cairo(
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             subtitle: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 if (mosque.address.isNotEmpty)
                                                   Text(
                                                     mosque.address,
-                                                    style: GoogleFonts.cairo(fontSize: 12),
+                                                    style: GoogleFonts.cairo(
+                                                        fontSize: 12),
                                                   ),
                                                 const SizedBox(height: 4),
                                                 Row(
                                                   children: [
-                                                    const Icon(Icons.location_on, size: 14, color: Colors.grey),
+                                                    const Icon(
+                                                        Icons.location_on,
+                                                        size: 14,
+                                                        color: Colors.grey),
                                                     const SizedBox(width: 4),
                                                     Text(
                                                       "${mosque.distance.toStringAsFixed(2)} كم",
@@ -354,10 +383,13 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                               ],
                                             ),
                                             trailing: IconButton(
-                                              icon: const Icon(Icons.directions, color: Colors.blue),
-                                              onPressed: () => _openDirections(mosque),
+                                              icon: const Icon(Icons.directions,
+                                                  color: Colors.blue),
+                                              onPressed: () =>
+                                                  _openDirections(mosque),
                                             ),
-                                            onTap: () => _onMosqueSelected(mosque),
+                                            onTap: () =>
+                                                _onMosqueSelected(mosque),
                                           ),
                                         );
                                       },

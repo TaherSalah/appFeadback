@@ -1,9 +1,4 @@
-import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-
-import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
-
-
 
 class IslamicHeaderWidget extends StatelessWidget {
   final String? gregorian;

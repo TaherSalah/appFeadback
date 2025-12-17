@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:upgrader/upgrader.dart';
@@ -47,7 +45,6 @@ class _MashkahAppState extends State<MashkahApp> {
 
   @override
   Widget build(BuildContext context) {
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: ScreenUtilInit(
@@ -62,41 +59,44 @@ class _MashkahAppState extends State<MashkahApp> {
                   value: rateService,
                   child: BlocBuilder<CentralizedCubit, CentralizedState>(
                       builder: (context, state) {
-                        final cubit = CentralizedCubit.get(context);
+                    final cubit = CentralizedCubit.get(context);
 
-                        return UpgradeAlert(
-                          child: MaterialApp(
-                            // useInheritedMediaQuery: true,
-                            // locale: DevicePreview.locale(context),
-                            // builder: DevicePreview.appBuilder,
-                            navigatorKey: CentralizedCubit.navigatorKey,
-                            title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
-                            debugShowCheckedModeBanner: false,
-                            onGenerateRoute: (settings) =>
-                                RouteGenerator.getRoute(settings, context),
-                            initialRoute: Routes.splashRoute,
-                            theme: AppTheme.light,
-                            darkTheme: AppTheme.dark,
-                            themeMode: cubit.themeMode(),
+                    return UpgradeAlert(
+                      child: MaterialApp(
+                        // useInheritedMediaQuery: true,
+                        // locale: DevicePreview.locale(context),
+                        // builder: DevicePreview.appBuilder,
+                        navigatorKey: CentralizedCubit.navigatorKey,
+                        title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
+                        debugShowCheckedModeBanner: false,
+                        onGenerateRoute: (settings) =>
+                            RouteGenerator.getRoute(settings, context),
+                        initialRoute: Routes.splashRoute,
+                        theme: AppTheme.light,
+                        darkTheme: AppTheme.dark,
+                        themeMode: cubit.themeMode(),
 
-                            // ⭐ اضيف الـ builder هنا
-                            builder: (context, child) {
-                              return MediaQuery(
-                                data: MediaQuery.of(context).copyWith(
-                                  textScaler: MediaQuery.textScalerOf(context).clamp(
-                                    minScaleFactor: 0.8,
-                                    maxScaleFactor: 1.2, // أو 1.0 لو عايزه ثابت تمامًا
-                                  ),
-                                ),
-                                child: child!,
-                              );
-                            },
-                          ),
-                        );
-                      }),
+                        // ⭐ اضيف الـ builder هنا
+                        builder: (context, child) {
+                          return MediaQuery(
+                            data: MediaQuery.of(context).copyWith(
+                              textScaler:
+                                  MediaQuery.textScalerOf(context).clamp(
+                                minScaleFactor: 0.8,
+                                maxScaleFactor:
+                                    1.2, // أو 1.0 لو عايزه ثابت تمامًا
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      ),
+                    );
+                  }),
                 ));
           }),
-    );  }
+    );
+  }
 }
 
 List<SingleChildWidget> provider = [

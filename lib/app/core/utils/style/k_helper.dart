@@ -65,27 +65,38 @@ class KHelper {
   }
 
   ///***  Show Toast message ***///
-  static showError({required String message, Color? backgroundColor,ToastGravity? gravity,Toast? toastLength,Color? textColor,double? fontSize}) async {
+  static showError(
+      {required String message,
+      Color? backgroundColor,
+      ToastGravity? gravity,
+      Toast? toastLength,
+      Color? textColor,
+      double? fontSize}) async {
     Fluttertoast.showToast(
         msg: message,
-        toastLength:toastLength?? Toast.LENGTH_LONG,
-        gravity: gravity??ToastGravity.SNACKBAR,
+        toastLength: toastLength ?? Toast.LENGTH_LONG,
+        gravity: gravity ?? ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 2,
         backgroundColor: backgroundColor ?? Colors.redAccent,
-        textColor:textColor?? Colors.white,
-        fontSize:fontSize?? 16.sp);
+        textColor: textColor ?? Colors.white,
+        fontSize: fontSize ?? 16.sp);
   }
 
-  static showSuccess({required String message, Color? backgroundColor,ToastGravity? gravity,Toast? toastLength,Color? textColor,double? fontSize}) async {
+  static showSuccess(
+      {required String message,
+      Color? backgroundColor,
+      ToastGravity? gravity,
+      Toast? toastLength,
+      Color? textColor,
+      double? fontSize}) async {
     Fluttertoast.showToast(
         msg: message,
-        toastLength:toastLength?? Toast.LENGTH_LONG,
-        gravity:gravity?? ToastGravity.SNACKBAR,
+        toastLength: toastLength ?? Toast.LENGTH_LONG,
+        gravity: gravity ?? ToastGravity.SNACKBAR,
         timeInSecForIosWeb: 2,
-
         backgroundColor: backgroundColor ?? Colors.green,
-        textColor:textColor?? Colors.white,
-        fontSize: fontSize??16.sp);
+        textColor: textColor ?? Colors.white,
+        fontSize: fontSize ?? 16.sp);
   }
 
   static showErrorFlushBar(BuildContext context, String message) {
@@ -95,12 +106,12 @@ class KHelper {
 
     Flushbar(
       message: message,
-      icon: Icon(Icons.error_outline, color: Colors.white),
+      icon: const Icon(Icons.error_outline, color: Colors.white),
       backgroundColor: backgroundColor,
       flushbarPosition: FlushbarPosition.TOP,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       flushbarStyle: FlushbarStyle.FLOATING,
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       borderRadius: BorderRadius.circular(8),
     ).show(context);
   }
@@ -112,12 +123,12 @@ class KHelper {
 
     Flushbar(
       message: message,
-      icon: Icon(Icons.check_circle_outline, color: Colors.white),
+      icon: const Icon(Icons.check_circle_outline, color: Colors.white),
       backgroundColor: backgroundColor,
       flushbarPosition: FlushbarPosition.TOP,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       flushbarStyle: FlushbarStyle.FLOATING,
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       borderRadius: BorderRadius.circular(8),
     ).show(context);
   }
@@ -129,12 +140,12 @@ class KHelper {
 
     Flushbar(
       message: message,
-      icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
+      icon: const Icon(Icons.warning_amber_rounded, color: Colors.white),
       backgroundColor: backgroundColor,
       flushbarPosition: FlushbarPosition.TOP,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       flushbarStyle: FlushbarStyle.FLOATING,
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       borderRadius: BorderRadius.circular(8),
     ).show(context);
   }
@@ -146,15 +157,17 @@ class KHelper {
 
     Flushbar(
       message: message,
-      icon: Icon(Icons.info_outline, color: Colors.white),
+      icon: const Icon(Icons.info_outline, color: Colors.white),
       backgroundColor: backgroundColor,
       flushbarPosition: FlushbarPosition.TOP,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       flushbarStyle: FlushbarStyle.FLOATING,
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       borderRadius: BorderRadius.circular(8),
     ).show(context);
-  }  ///***  get time AmOrPm ***///
+  }
+
+  ///***  get time AmOrPm ***///
   static final timeAmOrPm = DateTime.now().hour < 12 ? 'am' : "pm";
 
   ///*** says good morning ***///
@@ -244,6 +257,7 @@ class KHelper {
       },
     );
   }
+
   static showBottomSheetCustomWidget2({
     bool showDivider = true,
     required BuildContext context,
@@ -259,18 +273,21 @@ class KHelper {
     showModalBottomSheet(
       context: context,
       backgroundColor: backgroundColor ?? Colors.transparent,
-      isScrollControlled: true,                 // ✅ لازم
+      isScrollControlled: true, // ✅ لازم
       isDismissible: isDismissible ?? true,
-      useSafeArea: true,                        // ✅ يحترم الحواف
+      useSafeArea: true, // ✅ يحترم الحواف
       builder: (BuildContext sheetContext) {
-        final bottomInset = MediaQuery.of(sheetContext).viewInsets.bottom; // ✅ خُد ارتفاع الكيبورد
+        final bottomInset = MediaQuery.of(sheetContext)
+            .viewInsets
+            .bottom; // ✅ خُد ارتفاع الكيبورد
 
-        return AnimatedPadding(                 // ✅ يرفع الـsheet فوق الكيبورد
+        return AnimatedPadding(
+          // ✅ يرفع الـsheet فوق الكيبورد
           padding: EdgeInsets.only(bottom: bottomInset),
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOut,
           child: DraggableScrollableSheet(
-            expand: false,                      // ✅ مهم مع الكيبورد
+            expand: false, // ✅ مهم مع الكيبورد
             initialChildSize: initialChildSize ?? 0.6,
             minChildSize: minChildSize ?? 0.3,
             maxChildSize: maxChildSize ?? 0.95, // ✅ اسمح بارتفاع كبير
@@ -278,7 +295,8 @@ class KHelper {
               return Container(
                 decoration: BoxDecoration(
                   color: Theme.of(sheetContext).cardColor,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(50)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(50)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.12),
@@ -293,7 +311,8 @@ class KHelper {
                     const SizedBox(height: 12),
                     if (showDivider)
                       Container(
-                        width: 70, height: 3,
+                        width: 70,
+                        height: 3,
                         decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.5),
                           borderRadius: BorderRadius.circular(2),
@@ -313,9 +332,11 @@ class KHelper {
                     Expanded(
                       child: SingleChildScrollView(
                         controller: scrollController,
-                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag, // ✅
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag, // ✅
                         padding: const EdgeInsets.symmetric(horizontal: 13),
-                        child: child(sheetContext), // ✅ مرّر sheetContext الصحيح
+                        child:
+                            child(sheetContext), // ✅ مرّر sheetContext الصحيح
                       ),
                     ),
 
@@ -329,6 +350,7 @@ class KHelper {
       },
     );
   }
+
   ///***Cupertino Full Width Alert Dialog ***///
   static void showFullWidthAlertDialog({
     required BuildContext context,

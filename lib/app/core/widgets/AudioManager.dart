@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
@@ -172,14 +171,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 //     _player.dispose();
 //   }
 // }
-import 'dart:async';
-import 'dart:io';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:just_audio/just_audio.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AudioManager {
   static final AudioManager _instance = AudioManager._internal();
@@ -194,12 +185,11 @@ class AudioManager {
   Stream<PlayerState> get playerStateStream => _player.playerStateStream;
 
   /// Stream جاهز للـ buffering
-  Stream<bool> get bufferingStream =>
-      _player.playerStateStream
-          .map((state) =>
-      state.processingState == ProcessingState.loading ||
+  Stream<bool> get bufferingStream => _player.playerStateStream
+      .map((state) =>
+          state.processingState == ProcessingState.loading ||
           state.processingState == ProcessingState.buffering)
-          .distinct();
+      .distinct();
 
   // ================= Internal state =================
   Duration _position = Duration.zero;
@@ -244,13 +234,11 @@ class AudioManager {
     _playerStateSub = _player.playerStateStream.listen((state) {
       final processing = state.processingState;
 
-      _isPlaying =
-          state.playing && processing != ProcessingState.completed;
+      _isPlaying = state.playing && processing != ProcessingState.completed;
 
       // تحديث حالة الـ buffering هنا
-      _isBuffering =
-          processing == ProcessingState.loading ||
-              processing == ProcessingState.buffering;
+      _isBuffering = processing == ProcessingState.loading ||
+          processing == ProcessingState.buffering;
 
       if (processing == ProcessingState.completed) {
         _position = Duration.zero;
@@ -274,9 +262,7 @@ class AudioManager {
         return;
       }
 
-      if (_position > Duration.zero &&
-          !_isPlaying &&
-          _currentUrl == url) {
+      if (_position > Duration.zero && !_isPlaying && _currentUrl == url) {
         await _player.seek(_position);
         await _player.play();
         return;
@@ -305,8 +291,7 @@ class AudioManager {
   }) async {
     try {
       final uri = Uri.parse(url);
-      final response =
-      await http.get(uri).timeout(const Duration(seconds: 40));
+      final response = await http.get(uri).timeout(const Duration(seconds: 40));
 
       if (response.statusCode != 200) {
         throw Exception('فشل تحميل الملف الصوتي (كود ${response.statusCode})');

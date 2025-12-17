@@ -10,7 +10,7 @@ import 'data/Wird.dart';
 class AddWirdScreen extends StatefulWidget {
   final bool isDark;
 
-  AddWirdScreen({required this.isDark});
+  const AddWirdScreen({super.key, required this.isDark});
 
   @override
   _AddWirdScreenState createState() => _AddWirdScreenState();
@@ -23,45 +23,45 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
 
   // final List<String> categories = ['صباح', 'مساء', 'نوم', 'عام', 'مخصص'];
   final List<String> categories = [
-    'صَبَاح',                   // صباح
-    'مَسَاء',                   // مساء
-    'نَوْم',                     // نوم
-    'عَام',                      // عام
-    'مُخَصَّص',                  // مخصص
-    'بَعْدَ الصَّلَاة',           // بعد الصلاة
-    'قَبْلَ الطَّعَام',           // قبل الطعام
-    'بَعْدَ الطَّعَام',           // بعد الطعام
-    'عِنْدَ الضِّيق',             // عند الضيق
-    'عِنْدَ القَلَق',             // عند القلق
-    'عِنْدَ النَّوْم',             // عند النوم
-    'عِنْدَ الاسْتِيقاظ',          // عند الاستيقاظ
-    'أَيَّام الْعِيد',            // أيام العيد
-    'رَمَضَان',                   // رمضان
-    'ذِكْرٌ عَامّ',                // ذكر عام
-    'ذِكْرٌ مُنْفَرِد',             // ذكر منفرد
-    'بَعْدَ الوُضُوء',             // بعد الوضوء
-    'قَبْلَ الوُضُوء',             // قبل الوضوء
-    'عِنْدَ السَّفَر',             // عند السفر
+    'صَبَاح', // صباح
+    'مَسَاء', // مساء
+    'نَوْم', // نوم
+    'عَام', // عام
+    'مُخَصَّص', // مخصص
+    'بَعْدَ الصَّلَاة', // بعد الصلاة
+    'قَبْلَ الطَّعَام', // قبل الطعام
+    'بَعْدَ الطَّعَام', // بعد الطعام
+    'عِنْدَ الضِّيق', // عند الضيق
+    'عِنْدَ القَلَق', // عند القلق
+    'عِنْدَ النَّوْم', // عند النوم
+    'عِنْدَ الاسْتِيقاظ', // عند الاستيقاظ
+    'أَيَّام الْعِيد', // أيام العيد
+    'رَمَضَان', // رمضان
+    'ذِكْرٌ عَامّ', // ذكر عام
+    'ذِكْرٌ مُنْفَرِد', // ذكر منفرد
+    'بَعْدَ الوُضُوء', // بعد الوضوء
+    'قَبْلَ الوُضُوء', // قبل الوضوء
+    'عِنْدَ السَّفَر', // عند السفر
     'عِنْدَ الْوُجُودِ فِي المَسْجِد', // عند وجودك في المسجد
-    'فِي الطَّرِيق',               // في الطريق
-    'فِي الْمَدْرَسَة',            // في المدرسة
-    'فِي الْعَمَل',               // في العمل
-    'عِنْدَ الشِّدَّة',             // عند الشدة
-    'عِنْدَ الْفَرَح',             // عند الفرح
-    'عِنْدَ الْحُزْن',             // عند الحزن
-    'عِنْدَ الْمَرَض',             // عند المرض
-    'فِي الْجَمَاعَة',            // في الجماعة
-    'خِصّ بِاللَّيْل',             // خص بالليل
-    'خِصّ بِالنَّهَار',             // خص بالنهار
-    'أَيَّام الجُمُعَة',           // أيام الجمعة
-    'أَيَّام الشَّهْر الحَرَام',     // أيام الشهر الحرام
-    'أَيَّام رَمَضَان',            // أيام رمضان
-    'أَيَّام الْحَجّ',             // أيام الحج
-    'فِي الْبَيْت',               // في البيت
-    'فِي السُّوق',                 // في السوق
-    'فِي الْحَقْل',               // في الحقل
-    'عِنْدَ الْوِلَادَة',          // عند الولادة
-    'أَيَّام مُخْتَلِفَة',          // أيام مختلفة
+    'فِي الطَّرِيق', // في الطريق
+    'فِي الْمَدْرَسَة', // في المدرسة
+    'فِي الْعَمَل', // في العمل
+    'عِنْدَ الشِّدَّة', // عند الشدة
+    'عِنْدَ الْفَرَح', // عند الفرح
+    'عِنْدَ الْحُزْن', // عند الحزن
+    'عِنْدَ الْمَرَض', // عند المرض
+    'فِي الْجَمَاعَة', // في الجماعة
+    'خِصّ بِاللَّيْل', // خص بالليل
+    'خِصّ بِالنَّهَار', // خص بالنهار
+    'أَيَّام الجُمُعَة', // أيام الجمعة
+    'أَيَّام الشَّهْر الحَرَام', // أيام الشهر الحرام
+    'أَيَّام رَمَضَان', // أيام رمضان
+    'أَيَّام الْحَجّ', // أيام الحج
+    'فِي الْبَيْت', // في البيت
+    'فِي السُّوق', // في السوق
+    'فِي الْحَقْل', // في الحقل
+    'عِنْدَ الْوِلَادَة', // عند الولادة
+    'أَيَّام مُخْتَلِفَة', // أيام مختلفة
   ];
   final List<Map<String, dynamic>> suggestedAdhkar = [
     {'text': 'سُبْحَانَ اللهِ', 'count': 33},
@@ -75,16 +75,32 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
     {'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ', 'count': 100},
     {'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ وَآلِ مُحَمَّدٍ', 'count': 100},
     {'text': 'اللّهُـمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', 'count': 100},
-    {'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِهِ وَأَصْحَابِهِ', 'count': 100},
+    {
+      'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِهِ وَأَصْحَابِهِ',
+      'count': 100
+    },
     {'text': 'سُبْحَانَ اللهِ الْعَظِيمِ', 'count': 50},
     {'text': 'اللّهُـمَّ صَلِّ عَلَى النَّبِيِّ وَسَلِّمْ', 'count': 100},
-    {'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ وَبَارِكْ عَلَيْهِ', 'count': 100},
-    {'text': 'اللّهُـمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ', 'count': 100},
-    {'text': 'سُبْحَانَ اللهِ وَالْحَمْدُ لِلّهِ وَاللهُ أَكْبَرُ', 'count': 100},
+    {
+      'text': 'اللّهُـمَّ صَلِّ عَلَى مُحَمَّدٍ وَبَارِكْ عَلَيْهِ',
+      'count': 100
+    },
+    {
+      'text':
+          'اللّهُـمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ',
+      'count': 100
+    },
+    {
+      'text': 'سُبْحَانَ اللهِ وَالْحَمْدُ لِلّهِ وَاللهُ أَكْبَرُ',
+      'count': 100
+    },
     {'text': 'لَا إِلَهَ إِلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ', 'count': 100},
-    {'text': 'سُبْحَانَ اللهِ وَالْحَمْدُ لِلّهِ وَاللهُ أَكْبَرُ وَلا حَوْلَ وَلا قُوَّةَ إِلَّا بِاللهِ', 'count': 100},
+    {
+      'text':
+          'سُبْحَانَ اللهِ وَالْحَمْدُ لِلّهِ وَاللهُ أَكْبَرُ وَلا حَوْلَ وَلا قُوَّةَ إِلَّا بِاللهِ',
+      'count': 100
+    },
   ];
-
 
   void addCustomDhikr() {
     showDialog(
@@ -97,7 +113,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Dialog(
-            insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            insetPadding:
+                const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             backgroundColor: Colors.transparent,
             child: Stack(
               clipBehavior: Clip.none,
@@ -112,9 +129,10 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                       end: Alignment.bottomLeft,
                       colors: isDark
                           ? [
-                        const Color(0xFF1C1C2D), // Deep blue/dark purple
-                        const Color(0xFF2A2A46), // Darker shade of blue/purple
-                      ]
+                              const Color(0xFF1C1C2D), // Deep blue/dark purple
+                              const Color(
+                                  0xFF2A2A46), // Darker shade of blue/purple
+                            ]
                           : [const Color(0xFFFFF2F2), const Color(0xFFFFE1E1)],
                     ),
                     boxShadow: [
@@ -142,11 +160,13 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                       // Text input for Dhikr text
                       TextField(
                         controller: textController,
-                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                        style: TextStyle(
+                            color: isDark ? Colors.white : Colors.black),
                         decoration: InputDecoration(
                           labelText: 'نص الذكر',
                           border: const OutlineInputBorder(),
-                          labelStyle: TextStyle(color: isDark ? Colors.white70 : null),
+                          labelStyle:
+                              TextStyle(color: isDark ? Colors.white70 : null),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -154,11 +174,13 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                       // Text input for repetition count
                       TextField(
                         controller: countController,
-                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                        style: TextStyle(
+                            color: isDark ? Colors.white : Colors.black),
                         decoration: InputDecoration(
                           labelText: 'عدد التكرارات',
                           border: const OutlineInputBorder(),
-                          labelStyle: TextStyle(color: isDark ? Colors.white70 : null),
+                          labelStyle:
+                              TextStyle(color: isDark ? Colors.white70 : null),
                         ),
                         keyboardType: TextInputType.number,
                       ),
@@ -172,18 +194,23 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                               onPressed: () => Navigator.pop(context),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                  color: isDark
+                                      ? Colors.grey.shade400
+                                      : Colors.grey.shade600,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(14),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 11),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 11),
                               ),
                               child: Text(
                                 'إلغاء',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: isDark ? Colors.white : Colors.grey.shade800,
+                                  color: isDark
+                                      ? Colors.white
+                                      : Colors.grey.shade800,
                                 ),
                               ),
                             ),
@@ -197,7 +224,9 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                     selectedAdhkar.add(Dhikr(
                                       id: DateTime.now().toString(),
                                       text: textController.text,
-                                      targetCount: int.tryParse(countController.text) ?? 33,
+                                      targetCount:
+                                          int.tryParse(countController.text) ??
+                                              33,
                                     ));
                                   });
                                 }
@@ -211,7 +240,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(14),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 11),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 11),
                               ),
                             ),
                           ),
@@ -262,6 +292,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final screenWidth = MediaQuery.sizeOf(context).width;
@@ -270,7 +301,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: isDark ? Colors.grey.shade900 : const Color(0xFFF5F5F5),
+        backgroundColor:
+            isDark ? Colors.grey.shade900 : const Color(0xFFF5F5F5),
         // appBar: PreferredSize(
         //   preferredSize: Size.fromHeight(isTablet ? 80 : 60),
         //   child: Container(
@@ -328,14 +360,13 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               color: isDark ? Colors.white : Colors.black,
             ),
             centerTitle: true,
-
             title: Text(
               "إضافة ورد جديد",
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -360,9 +391,9 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                             color: const Color(0xFF00897B).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.drive_file_rename_outline,
-                            color: const Color(0xFF00897B),
+                            color: Color(0xFF00897B),
                             size: 20,
                           ),
                         ),
@@ -390,7 +421,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                           color: isDark ? Colors.white38 : Colors.grey.shade400,
                         ),
                         filled: true,
-                        fillColor: isDark ? Colors.grey.shade800 : Colors.grey.shade50,
+                        fillColor:
+                            isDark ? Colors.grey.shade800 : Colors.grey.shade50,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -398,7 +430,9 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
-                            color: isDark ? Colors.grey.shade700 : Colors.grey.shade200,
+                            color: isDark
+                                ? Colors.grey.shade700
+                                : Colors.grey.shade200,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -434,9 +468,9 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                             color: const Color(0xFF00897B).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.category_rounded,
-                            color: const Color(0xFF00897B),
+                            color: Color(0xFF00897B),
                             size: 20,
                           ),
                         ),
@@ -468,21 +502,24 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                             decoration: BoxDecoration(
                               gradient: isSelected
                                   ? const LinearGradient(
-                                colors: [Color(0xFF00897B), Color(0xFF00695C)],
-                              )
+                                      colors: [
+                                        Color(0xFF00897B),
+                                        Color(0xFF00695C)
+                                      ],
+                                    )
                                   : null,
                               color: isSelected
                                   ? null
                                   : isDark
-                                  ? Colors.grey.shade800
-                                  : Colors.grey.shade100,
+                                      ? Colors.grey.shade800
+                                      : Colors.grey.shade100,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: isSelected
                                     ? Colors.transparent
                                     : isDark
-                                    ? Colors.grey.shade700
-                                    : Colors.grey.shade300,
+                                        ? Colors.grey.shade700
+                                        : Colors.grey.shade300,
                               ),
                             ),
                             child: Text(
@@ -491,9 +528,11 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                 color: isSelected
                                     ? Colors.white
                                     : isDark
-                                    ? Colors.white70
-                                    : Colors.black87,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                        ? Colors.white70
+                                        : Colors.black87,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.w500,
                                 fontSize: isTablet ? 11.sp : 14,
                               ),
                             ),
@@ -521,9 +560,9 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                             color: const Color(0xFF00897B).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.format_quote_rounded,
-                            color: const Color(0xFF00897B),
+                            color: Color(0xFF00897B),
                             size: 20,
                           ),
                         ),
@@ -542,7 +581,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
 
                     // عرض الأذكار في قائمة بطاقات أنيقة
                     ...suggestedAdhkar.map((dhikr) {
-                      final isSelected = selectedAdhkar.any((d) => d.text == dhikr['text']);
+                      final isSelected =
+                          selectedAdhkar.any((d) => d.text == dhikr['text']);
                       return Container(
                         margin: const EdgeInsets.only(bottom: 12),
                         child: Material(
@@ -551,7 +591,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  selectedAdhkar.removeWhere((d) => d.text == dhikr['text']);
+                                  selectedAdhkar.removeWhere(
+                                      (d) => d.text == dhikr['text']);
                                 } else {
                                   selectedAdhkar.add(Dhikr(
                                     id: DateTime.now().toString(),
@@ -567,33 +608,37 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                               decoration: BoxDecoration(
                                 gradient: isSelected
                                     ? const LinearGradient(
-                                  colors: [Color(0xFF00897B), Color(0xFF00695C)],
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomLeft,
-                                )
+                                        colors: [
+                                          Color(0xFF00897B),
+                                          Color(0xFF00695C)
+                                        ],
+                                        begin: Alignment.topRight,
+                                        end: Alignment.bottomLeft,
+                                      )
                                     : null,
                                 color: isSelected
                                     ? null
                                     : isDark
-                                    ? Colors.grey.shade800
-                                    : Colors.grey.shade50,
+                                        ? Colors.grey.shade800
+                                        : Colors.grey.shade50,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
                                   color: isSelected
                                       ? Colors.transparent
                                       : isDark
-                                      ? Colors.grey.shade700
-                                      : Colors.grey.shade200,
+                                          ? Colors.grey.shade700
+                                          : Colors.grey.shade200,
                                   width: 1.5,
                                 ),
                                 boxShadow: isSelected
                                     ? [
-                                  BoxShadow(
-                                    color: const Color(0xFF00897B).withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ]
+                                        BoxShadow(
+                                          color: const Color(0xFF00897B)
+                                              .withOpacity(0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ]
                                     : null,
                               ),
                               child: Row(
@@ -604,7 +649,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? Colors.white.withOpacity(0.2)
-                                          : const Color(0xFF00897B).withOpacity(0.1),
+                                          : const Color(0xFF00897B)
+                                              .withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Icon(
@@ -620,7 +666,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                   // نص الذكر
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           dhikr['text'],
@@ -630,8 +677,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                             color: isSelected
                                                 ? Colors.white
                                                 : isDark
-                                                ? Colors.white
-                                                : Colors.black87,
+                                                    ? Colors.white
+                                                    : Colors.black87,
                                             height: 1.6,
                                           ),
                                         ),
@@ -642,7 +689,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                               Icons.repeat_rounded,
                                               size: 16,
                                               color: isSelected
-                                                  ? Colors.white.withOpacity(0.9)
+                                                  ? Colors.white
+                                                      .withOpacity(0.9)
                                                   : const Color(0xFF00897B),
                                             ),
                                             const SizedBox(width: 4),
@@ -651,7 +699,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                               style: GoogleFonts.cairo(
                                                 fontSize: isTablet ? 10.sp : 13,
                                                 color: isSelected
-                                                    ? Colors.white.withOpacity(0.9)
+                                                    ? Colors.white
+                                                        .withOpacity(0.9)
                                                     : const Color(0xFF00897B),
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -677,17 +726,17 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                         color: isSelected
                                             ? Colors.white
                                             : isDark
-                                            ? Colors.grey.shade600
-                                            : Colors.grey.shade400,
+                                                ? Colors.grey.shade600
+                                                : Colors.grey.shade400,
                                         width: 2,
                                       ),
                                     ),
                                     child: isSelected
                                         ? const Icon(
-                                      Icons.check,
-                                      color: Color(0xFF00897B),
-                                      size: 18,
-                                    )
+                                            Icons.check,
+                                            color: Color(0xFF00897B),
+                                            size: 18,
+                                          )
                                         : null,
                                   ),
                                 ],
@@ -696,7 +745,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                           ),
                         ),
                       );
-                    }).toList(),
+                    }),
 
                     const SizedBox(height: 8),
 
@@ -725,7 +774,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(6),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF00897B).withOpacity(0.1),
+                                    color: const Color(0xFF00897B)
+                                        .withOpacity(0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
@@ -770,9 +820,9 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                               color: const Color(0xFF00897B).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.playlist_add_check_rounded,
-                              color: const Color(0xFF00897B),
+                              color: Color(0xFF00897B),
                               size: 20,
                             ),
                           ),
@@ -818,7 +868,9 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                             color: isDark ? Colors.grey.shade800 : Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: isDark ? Colors.grey.shade700 : Colors.grey.shade200,
+                              color: isDark
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade200,
                             ),
                           ),
                           child: ListTile(
@@ -831,12 +883,16 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                               height: 40,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFF00897B), Color(0xFF00695C)],
+                                  colors: [
+                                    Color(0xFF00897B),
+                                    Color(0xFF00695C)
+                                  ],
                                 ),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF00897B).withOpacity(0.3),
+                                    color: const Color(0xFF00897B)
+                                        .withOpacity(0.3),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -873,7 +929,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                               ),
                             ),
                             trailing: IconButton(
-                              icon: const Icon(Icons.delete_outline, color: Colors.red),
+                              icon: const Icon(Icons.delete_outline,
+                                  color: Colors.red),
                               onPressed: () {
                                 setState(() => selectedAdhkar.remove(dhikr));
                               },
@@ -894,36 +951,37 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                   gradient: selectedAdhkar.isEmpty
                       ? null
                       : const LinearGradient(
-                    colors: [Color(0xFF00897B), Color(0xFF00695C)],
-                  ),
+                          colors: [Color(0xFF00897B), Color(0xFF00695C)],
+                        ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: selectedAdhkar.isEmpty
                       ? null
                       : [
-                    BoxShadow(
-                      color: const Color(0xFF00897B).withOpacity(0.4),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                          BoxShadow(
+                            color: const Color(0xFF00897B).withOpacity(0.4),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                 ),
                 child: ElevatedButton.icon(
                   onPressed: selectedAdhkar.isEmpty
                       ? null
                       : () {
-                    if (nameController.text.isEmpty) {
-                      KHelper.showSuccess(message: 'الرجاء إدخال اسم الورد');
-                      return;
-                    }
-                    final wird = Wird(
-                      id: DateTime.now().toString(),
-                      name: nameController.text,
-                      adhkar: selectedAdhkar,
-                      createdAt: DateTime.now(),
-                      category: selectedCategory,
-                    );
-                    Navigator.pop(context, wird);
-                  },
+                          if (nameController.text.isEmpty) {
+                            KHelper.showSuccess(
+                                message: 'الرجاء إدخال اسم الورد');
+                            return;
+                          }
+                          final wird = Wird(
+                            id: DateTime.now().toString(),
+                            name: nameController.text,
+                            adhkar: selectedAdhkar,
+                            createdAt: DateTime.now(),
+                            category: selectedCategory,
+                          );
+                          Navigator.pop(context, wird);
+                        },
                   icon: const Icon(Icons.check_circle_outline, size: 24),
                   label: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -962,7 +1020,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         // color: isDark ? Colors.grey.shade800 : Colors.white,
-        color:  AppThemeColors.cardBackgroundColor(context),
+        color: AppThemeColors.cardBackgroundColor(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(

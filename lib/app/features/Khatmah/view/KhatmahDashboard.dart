@@ -529,7 +529,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
 
     final List<dynamic> raw = jsonDecode(json);
     final List<List<int>> plan =
-    raw.map<List<int>>((e) => (e as List).cast<int>()).toList();
+        raw.map<List<int>>((e) => (e as List).cast<int>()).toList();
 
     return PlanData(days: days, currentDayIndex: currentDayIndex, plan: plan);
   }
@@ -605,7 +605,8 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
         return Directionality(
           textDirection: TextDirection.rtl,
           child: AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             title: Column(
               children: [
                 Lottie.asset("assets/json/congrats.json"),
@@ -626,7 +627,14 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
               //   onPressed: () => Navigator.pop(context),
               //   child: Text("موافق", style: GoogleFonts.cairo()),
               // ),
-              Center(child: KButtons.circularIconButton(fillColor: KColors.primaryColor,iconSize: 35,iconData: CupertinoIcons.check_mark_circled,radius: 60,onPressed: ()=>Navigator.pop(context),iconColor: Colors.white))
+              Center(
+                  child: KButtons.circularIconButton(
+                      fillColor: KColors.primaryColor,
+                      iconSize: 35,
+                      iconData: CupertinoIcons.check_mark_circled,
+                      radius: 60,
+                      onPressed: () => Navigator.pop(context),
+                      iconColor: Colors.white))
             ],
           ),
         );
@@ -750,7 +758,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
           Card(
             margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             elevation: 3,
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -761,7 +769,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                     lineWidth: 10,
                     percent: progressPercent > 1 ? 1 : progressPercent,
                     center:
-                    Text("${(progressPercent * 100).toStringAsFixed(1)}%"),
+                        Text("${(progressPercent * 100).toStringAsFixed(1)}%"),
                     progressColor: Colors.green,
                   ),
                   Row(
@@ -771,7 +779,9 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(height: 15,),
+                            const SizedBox(
+                              height: 15,
+                            ),
                             TextWidget(
                               title: k.title,
                               fontWeight: FontWeight.bold,
@@ -826,7 +836,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                           text: "اذهب لورد اليوم",
                           icon: CupertinoIcons.play_arrow,
                           onTap:
-                          k.isCompleted ? null : () => _goToTodayAjzaa(k),
+                              k.isCompleted ? null : () => _goToTodayAjzaa(k),
                           bgColor: KColors.primaryColor,
                           fontSize: 14.sp,
                           fontColor: Colors.white,
@@ -925,7 +935,8 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                       newMap['currentDayIndex'] = 0;
                       plansBox.put(k.id, newMap);
                     }
-                    KHelper.showSuccess(message: "تم اعاده التعيين ${k?.title} بنجاح");
+                    KHelper.showSuccess(
+                        message: "تم اعاده التعيين ${k.title} بنجاح");
 
                     setState(() {});
                   },
@@ -948,10 +959,10 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
-            leading:  CupertinoNavigationBarBackButton(
-              color:isDark? Colors.white :Colors.black,
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
             ),
             actions: [
               IconButton(
@@ -970,64 +981,63 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize:
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
         ),
         body: currentList.isEmpty
             ? Center(
-          child: Column(
-            spacing: 25,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset("assets/json/Koran im Ramadan lesen.json"),
-              TextWidget(
-                title: "لاتوجد اي ختمات قد قمت بإنشأها من قبل ",
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-              ),
-              TextWidget(
-                title: "قم بانشاء ختمتك الان.",
-                fontSize: 14.sp,
-                height: 0.6,
-                fontWeight: FontWeight.bold,
-              ),
-              Center(
-                child: SizedBox(
-                  width: MediaQuery.sizeOf(context).width / 2,
-                  child: CustomButton(
-                    fontSize: 14.sp,
-                    verticalPadding: 10,
-                    backgroundColor: KColors.primaryColor,
-                    width: MediaQuery.sizeOf(context).width / 3,
-                    title: "انشاء ختمة جديدة",
-                    borderColor: KColors.primaryColor,
-                    onTap: () => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                        const CreateKhatmahScreen(),
+                child: Column(
+                  spacing: 25,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Lottie.asset("assets/json/Koran im Ramadan lesen.json"),
+                    TextWidget(
+                      title: "لاتوجد اي ختمات قد قمت بإنشأها من قبل ",
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    TextWidget(
+                      title: "قم بانشاء ختمتك الان.",
+                      fontSize: 14.sp,
+                      height: 0.6,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    Center(
+                      child: SizedBox(
+                        width: MediaQuery.sizeOf(context).width / 2,
+                        child: CustomButton(
+                          fontSize: 14.sp,
+                          verticalPadding: 10,
+                          backgroundColor: KColors.primaryColor,
+                          width: MediaQuery.sizeOf(context).width / 3,
+                          title: "انشاء ختمة جديدة",
+                          borderColor: KColors.primaryColor,
+                          onTap: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CreateKhatmahScreen(),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        )
+              )
             : ListView.builder(
-          padding: const EdgeInsets.only(top: 12, bottom: 80),
-          itemCount: currentList.length,
-          itemBuilder: (_, i) {
-            final k = currentList[i];
-            final index = box.values.toList().indexOf(k);
-            return _buildKhatmahCard(k, index);
-          },
-        ),
+                padding: const EdgeInsets.only(top: 12, bottom: 80),
+                itemCount: currentList.length,
+                itemBuilder: (_, i) {
+                  final k = currentList[i];
+                  final index = box.values.toList().indexOf(k);
+                  return _buildKhatmahCard(k, index);
+                },
+              ),
       ),
     );
   }
 }
-

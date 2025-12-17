@@ -39,26 +39,26 @@ class AdhanAudio {
   });
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'sheikh': sheikh,
-    'url': url,
-    'type': type,
-    'size': size,
-    'isDownloaded': isDownloaded,
-    'localPath': localPath,
-  };
+        'id': id,
+        'name': name,
+        'sheikh': sheikh,
+        'url': url,
+        'type': type,
+        'size': size,
+        'isDownloaded': isDownloaded,
+        'localPath': localPath,
+      };
 
   factory AdhanAudio.fromJson(Map<String, dynamic> json) => AdhanAudio(
-    id: json['id'],
-    name: json['name'],
-    sheikh: json['sheikh'],
-    url: json['url'],
-    type: json['type'],
-    size: json['size'],
-    isDownloaded: json['isDownloaded'] ?? false,
-    localPath: json['localPath'],
-  );
+        id: json['id'],
+        name: json['name'],
+        sheikh: json['sheikh'],
+        url: json['url'],
+        type: json['type'],
+        size: json['size'],
+        isDownloaded: json['isDownloaded'] ?? false,
+        localPath: json['localPath'],
+      );
 }
 
 // =====================================
@@ -145,9 +145,9 @@ class AdhanLibraryService {
 
   /// تحميل أذان
   Future<String?> downloadAdhan(
-      AdhanAudio adhan, {
-        Function(double progress)? onProgress,
-      }) async {
+    AdhanAudio adhan, {
+    Function(double progress)? onProgress,
+  }) async {
     try {
       print('📥 بدء تحميل: ${adhan.name}');
 
@@ -161,7 +161,8 @@ class AdhanLibraryService {
       }
 
       // تحميل الملف
-      final request = await http.Client().send(http.Request('GET', Uri.parse(adhan.url)));
+      final request =
+          await http.Client().send(http.Request('GET', Uri.parse(adhan.url)));
       final total = request.contentLength ?? 0;
       var received = 0;
 
@@ -301,7 +302,8 @@ class AdhanLibraryService {
 // =====================================
 
 class AdhanWorkManagerService {
-  static final AdhanWorkManagerService _instance = AdhanWorkManagerService._internal();
+  static final AdhanWorkManagerService _instance =
+      AdhanWorkManagerService._internal();
   factory AdhanWorkManagerService() => _instance;
   AdhanWorkManagerService._internal();
 
@@ -329,7 +331,7 @@ class AdhanWorkManagerService {
 
     // البحث عن الأذان في المكتبة
     final adhan = AdhanLibraryService.availableAdhans.firstWhere(
-          (a) => a.id == selectedId,
+      (a) => a.id == selectedId,
       orElse: () => AdhanLibraryService.availableAdhans.first,
     );
 
@@ -378,7 +380,8 @@ class AdhanWorkManagerService {
       // الحصول على مسار الأذان المختار
       final adhanPath = await getAdhanPath(adhanType);
 
-      final uniqueId = 'adhan_${prayerName}_day${dayOffset}_${prayerTime.millisecondsSinceEpoch}';
+      final uniqueId =
+          'adhan_${prayerName}_day${dayOffset}_${prayerTime.millisecondsSinceEpoch}';
 
       await Workmanager().registerOneOffTask(
         uniqueId,
@@ -459,10 +462,10 @@ class AdhanWorkManagerService {
 
   // باقي الدوال من الكود السابق...
   Future<Map<String, DateTime>> _getPrayerTimesForDate(
-      DateTime date, {
-        Coordinates? coordinates,
-        CalculationParameters? params,
-      }) async {
+    DateTime date, {
+    Coordinates? coordinates,
+    CalculationParameters? params,
+  }) async {
     try {
       final coords = coordinates ?? await _getSavedCoordinates();
       final calculationParams = params ?? await _getSavedCalculationParams();
@@ -537,12 +540,14 @@ class AdhanWorkManagerService {
       ishaAngle: ishaAngle,
       ishaInterval: prefs.getInt('isha_interval') ?? 0,
     );
-    params.madhab = (prefs.getInt('madhab') ?? 0) == 0 ? Madhab.shafi : Madhab.hanafi;
+    params.madhab =
+        (prefs.getInt('madhab') ?? 0) == 0 ? Madhab.shafi : Madhab.hanafi;
     return params;
   }
 
   String _formatTime(DateTime time) {
-    final hour = time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
+    final hour =
+        time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
     final minute = time.minute.toString().padLeft(2, '0');
     final period = time.hour >= 12 ? 'م' : 'ص';
     return '$hour:$minute $period';
@@ -564,7 +569,7 @@ dynamic eval(String data) {
 // =====================================
 
 class AdhanLibraryScreen extends StatefulWidget {
-  const AdhanLibraryScreen({Key? key}) : super(key: key);
+  const AdhanLibraryScreen({super.key});
 
   @override
   State<AdhanLibraryScreen> createState() => _AdhanLibraryScreenState();
@@ -611,7 +616,7 @@ class _AdhanLibraryScreenState extends State<AdhanLibraryScreen> {
         length: 2,
         child: Column(
           children: [
-            TabBar(
+            const TabBar(
               tabs: [
                 Tab(text: '🌅 أذان الفجر'),
                 Tab(text: '🕌 الأذان العادي'),
@@ -663,10 +668,9 @@ class _AdhanLibraryScreenState extends State<AdhanLibraryScreen> {
                 Text(adhan.sheikh),
                 Text(
                   libraryService.formatSize(adhan.size),
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                if (progress != null)
-                  LinearProgressIndicator(value: progress),
+                if (progress != null) LinearProgressIndicator(value: progress),
               ],
             ),
             trailing: Row(
@@ -688,9 +692,7 @@ class _AdhanLibraryScreenState extends State<AdhanLibraryScreen> {
                   ),
               ],
             ),
-            onTap: adhan.isDownloaded
-                ? () => _selectAdhan(adhan, type)
-                : null,
+            onTap: adhan.isDownloaded ? () => _selectAdhan(adhan, type) : null,
           ),
         );
       },
@@ -792,7 +794,8 @@ class _AdhanLibraryScreenState extends State<AdhanLibraryScreen> {
           children: [
             Text('الحجم الكلي: ${libraryService.formatSize(cacheSize)}'),
             const SizedBox(height: 16),
-            Text('الأذانات المحملة: ${AdhanLibraryService.availableAdhans.where((a) => a.isDownloaded).length}'),
+            Text(
+                'الأذانات المحملة: ${AdhanLibraryService.availableAdhans.where((a) => a.isDownloaded).length}'),
           ],
         ),
         actions: [
@@ -816,4 +819,3 @@ class _AdhanLibraryScreenState extends State<AdhanLibraryScreen> {
     );
   }
 }
-

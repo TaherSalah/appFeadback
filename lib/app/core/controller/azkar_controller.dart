@@ -17,14 +17,15 @@ class AzkarProvider extends ChangeNotifier {
       throw Exception('Could not launch $url');
     }
   }
+
   AzkarProvider() {
     // حفظ القيم الأصلية لكل نوع أذكار
-    _initialSleepRepate  = List<int>.from(Azkary.azkarSleepRepate);
-    _initialSabahRepate  = List<int>.from(Azkary.azkarSabahRepate);
-    _initialMassaRepate  = List<int>.from(Azkary.azkarMassaRepate);
-    _initialOtherRepate  = List<int>.from(Azkary.azkarRepate);
+    _initialSleepRepate = List<int>.from(Azkary.azkarSleepRepate);
+    _initialSabahRepate = List<int>.from(Azkary.azkarSabahRepate);
+    _initialMassaRepate = List<int>.from(Azkary.azkarMassaRepate);
+    _initialOtherRepate = List<int>.from(Azkary.azkarRepate);
     _initialPrayerRepate = List<int>.from(Azkary.azkarPrayerRepate);
-    _initialQuranRepate  = List<int>.from(Azkary.rokiaQuranRepe);
+    _initialQuranRepate = List<int>.from(Azkary.rokiaQuranRepe);
   }
 
   late List<int> _initialSleepRepate;
@@ -33,12 +34,12 @@ class AzkarProvider extends ChangeNotifier {
   late List<int> _initialOtherRepate;
   late List<int> _initialPrayerRepate;
   late List<int> _initialQuranRepate;
-  bool get isSleepDone  => Azkary.azkarSleepRepate.every((c) => c <= 0);
-  bool get isSabahDone  => Azkary.azkarSabahRepate.every((c) => c <= 0);
-  bool get isMessaDone  => Azkary.azkarMassaRepate.every((c) => c <= 0);
-  bool get isOtherDone  => Azkary.azkarRepate.every((c) => c <= 0);
+  bool get isSleepDone => Azkary.azkarSleepRepate.every((c) => c <= 0);
+  bool get isSabahDone => Azkary.azkarSabahRepate.every((c) => c <= 0);
+  bool get isMessaDone => Azkary.azkarMassaRepate.every((c) => c <= 0);
+  bool get isOtherDone => Azkary.azkarRepate.every((c) => c <= 0);
   bool get isPrayerDone => Azkary.azkarPrayerRepate.every((c) => c <= 0);
-  bool get isQuranDone  => Azkary.rokiaQuranRepe.every((c) => c <= 0);
+  bool get isQuranDone => Azkary.rokiaQuranRepe.every((c) => c <= 0);
 
   AzkarRemoteServices azkarRemoteServices = AzkarRemoteServices();
   int counter = 0;
@@ -185,8 +186,6 @@ class AzkarProvider extends ChangeNotifier {
     }
   }
 
-
-
   void resetSleep() {
     Azkary.azkarSleepRepate = List<int>.from(_initialSleepRepate);
     KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
@@ -219,7 +218,6 @@ class AzkarProvider extends ChangeNotifier {
     Azkary.azkarPrayerRepate = List<int>.from(_initialPrayerRepate);
     notifyListeners();
     KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
-
   }
 
   void resetQuran() {
@@ -228,8 +226,6 @@ class AzkarProvider extends ChangeNotifier {
 
     notifyListeners();
   }
-
-
 
   ///**** counter methods ****///
 
@@ -298,7 +294,7 @@ zakarShared(
 Widget alertDefDialog(String number, String type) {
   return AnimatedWrapper(
     type: UiAnimationType.shake,
-    duration: Duration(seconds: 5),
+    duration: const Duration(seconds: 5),
     child: AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

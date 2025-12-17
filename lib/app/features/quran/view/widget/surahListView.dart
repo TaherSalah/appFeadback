@@ -52,14 +52,14 @@ class _SurahListScreenState extends State<SurahListScreen> {
       child: Scaffold(
         // backgroundColor: AppStyle.bgColors,
 
-
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
           child: AppBar(
-
-            leading:  CupertinoNavigationBarBackButton(
-              color: Theme.of(context).brightness == Brightness.dark? Colors.white:Colors.black,
+            leading: CupertinoNavigationBarBackButton(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
             centerTitle: true,
             title: Text(
@@ -74,10 +74,11 @@ class _SurahListScreenState extends State<SurahListScreen> {
         ),
         body: isLoading == true
             ? Center(
-                child: KLoading.progressIOSIndicator(radius: 15.r,context: context),
+                child: KLoading.progressIOSIndicator(
+                    radius: 15.r, context: context),
               )
             : ListView.separated(
-          separatorBuilder: (context, index) => Divider(),
+                separatorBuilder: (context, index) => const Divider(),
                 physics: const BouncingScrollPhysics(),
                 itemCount: surahInfoList.length,
                 itemBuilder: (ctx, index) {
@@ -103,7 +104,9 @@ class _SurahListScreenState extends State<SurahListScreen> {
                               SvgPicture.asset("assets/icons/suraNum.svg"),
                               TextWidget(
                                 title: "${index + 1}",
-                                fontSize:ResponsiveUtil.isTablet(context)?9.sp: 14.sp,
+                                fontSize: ResponsiveUtil.isTablet(context)
+                                    ? 9.sp
+                                    : 14.sp,
                               ),
                             ],
                           ),
@@ -114,14 +117,18 @@ class _SurahListScreenState extends State<SurahListScreen> {
                               children: [
                                 TextWidget(
                                     fontFamily: "me",
-                                    fontSize: ResponsiveUtil.isTablet(context)?9.sp: 17.5.sp,
+                                    fontSize: ResponsiveUtil.isTablet(context)
+                                        ? 9.sp
+                                        : 17.5.sp,
                                     fontWeight: FontWeight.bold,
                                     title: surahs[index]),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: TextWidget(
                                       fontFamily: "me",
-                                      fontSize:ResponsiveUtil.isTablet(context)?10.sp: 16.sp,
+                                      fontSize: ResponsiveUtil.isTablet(context)
+                                          ? 10.sp
+                                          : 16.sp,
                                       fontWeight: FontWeight.w500,
                                       title:
                                           " اياتها ${surah.totalVerses.toString()}"),
@@ -149,7 +156,9 @@ class _SurahListScreenState extends State<SurahListScreen> {
                                     //     // backgroundColor: AppStyle.bgColors,
                                     //   ),
                                     surahNumber: index + 1,
-                                    context: context,isDark: Theme.of(context).brightness == Brightness.dark);
+                                    context: context,
+                                    isDark: Theme.of(context).brightness ==
+                                        Brightness.dark);
                               },
                               child: const Icon(Icons.info_outline),
                             ),

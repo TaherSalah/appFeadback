@@ -2,19 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import Clipboard functionality
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/features/hadithDetails/view/controller/hadith_details_bloc.dart';
 import 'package:muslimdaily/app/features/hadithDetails/view/controller/hadith_details_state.dart';
 import 'package:muslimdaily/app/features/hadithDetails/view/widget/details_view_item_builder.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:slide_to_act/slide_to_act.dart';
-import '../../core/cubit/centralized_cubit.dart';
 import '../../core/localization/localization_manager.dart';
-import '../../core/shard/constanc/app_style.dart';
 import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/k_helper.dart';
-import '../../core/utils/style/responsive_util.dart';
-import '../../core/widgets/custom_text_widget.dart';
 import 'data/repo/hadith_details_repo_immp.dart';
 
 class HadithDetailsView extends StatelessWidget {
@@ -64,33 +58,42 @@ class HadithDetailsView extends StatelessWidget {
                           //           textAlign: TextAlign.right,
                           //           title: '! تم نسخ الحديث إلى الحافظة')),
                           // );
-                          KHelper.showSuccess(message: 'تم نسخ الحديث إلى الحافظة!');
-
+                          KHelper.showSuccess(
+                              message: 'تم نسخ الحديث إلى الحافظة!');
                         });
                       }
 
                       return ExpandableFab(
-
                           key: key,
                           openButtonBuilder: RotateFloatingActionButtonBuilder(
                             child: const Icon(Icons.menu),
                             fabSize: ExpandableFabSize.regular,
-                            foregroundColor: Theme.of(context).brightness == Brightness.dark? Colors.white : KColors.primaryColor,
-                            backgroundColor:Theme.of(context).brightness == Brightness.dark? Colors.black: KColors.primaryColor,
+                            foregroundColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : KColors.primaryColor,
+                            backgroundColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.black
+                                    : KColors.primaryColor,
                             shape: const CircleBorder(),
                           ),
                           closeButtonBuilder: RotateFloatingActionButtonBuilder(
                             child: const Icon(Icons.close),
                             fabSize: ExpandableFabSize.regular,
-                            foregroundColor: Theme.of(context).brightness == Brightness.dark? Colors.white : KColors.primaryColor,
-                            backgroundColor:Theme.of(context).brightness == Brightness.dark? Colors.black: KColors.primaryColor,
+                            foregroundColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : KColors.primaryColor,
+                            backgroundColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.black
+                                    : KColors.primaryColor,
                             shape: const CircleBorder(),
                           ),
                           overlayStyle: ExpandableFabOverlayStyle(
-
                               color: Colors.black.withOpacity(0.5), blur: 5),
                           pos: ExpandableFabPos.left,
-
                           onOpen: () {
                             debugPrint('onOpen');
                           },
@@ -103,7 +106,6 @@ class HadithDetailsView extends StatelessWidget {
                           afterClose: () {
                             debugPrint('afterClose');
                           },
-
                           children: [
                             FloatingActionButton.small(
                               backgroundColor: Colors.black,
@@ -168,7 +170,6 @@ class HadithContentShare {
   });
 }
 
-
 // void onShare(
 //     {required BuildContext context,
 //     required String hadithContent,
@@ -222,8 +223,8 @@ $hadithText
   );
 }
 
-
-void copyHadithToClipboard(BuildContext context, {required String hadithText, String? hadithTitle}) {
+void copyHadithToClipboard(BuildContext context,
+    {required String hadithText, String? hadithTitle}) {
   final copyText = """
 🌺✨🌿✨🌺✨🌿✨🌺✨🌿
 

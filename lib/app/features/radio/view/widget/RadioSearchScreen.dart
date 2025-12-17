@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
-import 'package:muslimdaily/app/core/localization/localization_manager.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
@@ -48,10 +46,10 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
         // ),
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
-            leading:  CupertinoNavigationBarBackButton(
-              color:isDark? Colors.white :Colors.black,
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
             ),
             // actions: [
             //   IconButton(
@@ -70,7 +68,8 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize:
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -115,14 +114,14 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
             if (ayah.isNotEmpty) ...[
               Expanded(
                 child: ListView.separated(
-                  separatorBuilder: (context, index) => const SizedBox(
-                    height: 15
-                  ),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 15),
                   itemCount: ayah.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        QuranLibrary().jumpToAyah(ayah[index].page, ayah[index].ayahUQNumber);
+                        QuranLibrary().jumpToAyah(
+                            ayah[index].page, ayah[index].ayahUQNumber);
                         Navigator.pop(context);
                       },
                       child: Stack(
@@ -144,11 +143,18 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                                 child: Text.rich(TextSpan(children: [
                                   TextSpan(
                                       text: ayah[index].ayaTextEmlaey,
-                                      style: TextStyle(fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)?9.sp:14.sp,)),
+                                      style: TextStyle(
+                                        fontFamily: "me",
+                                        fontSize:
+                                            ResponsiveUtil.isTablet(context)
+                                                ? 9.sp
+                                                : 14.sp,
+                                      )),
                                   TextSpan(
                                       text:
                                           "(${ayah[index].ayahNumber.toString()}) ",
-                                      style: const TextStyle(color: Colors.green)),
+                                      style:
+                                          const TextStyle(color: Colors.green)),
                                 ])),
                               ),
                             ),
@@ -167,10 +173,12 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 4),
                                   child: TextWidget(
-                                    fontSize: ResponsiveUtil.isTablet(context)?9.sp:14.sp,
-
+                                    fontSize: ResponsiveUtil.isTablet(context)
+                                        ? 9.sp
+                                        : 14.sp,
                                     textAlign: TextAlign.center,
-                                    title: "الصفحة ${ayah[index].page.toString()}",
+                                    title:
+                                        "الصفحة ${ayah[index].page.toString()}",
                                     fontFamily: "me",
                                   ),
                                 ),
@@ -191,7 +199,9 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 4),
                                   child: TextWidget(
-                                    fontSize: ResponsiveUtil.isTablet(context)?9.sp:14.sp,
+                                    fontSize: ResponsiveUtil.isTablet(context)
+                                        ? 9.sp
+                                        : 14.sp,
                                     textAlign: TextAlign.center,
                                     title: ayah[index].arabicName.toString(),
                                     fontFamily: "me",

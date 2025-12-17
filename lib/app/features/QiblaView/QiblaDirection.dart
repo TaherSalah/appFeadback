@@ -21,7 +21,6 @@ import '../../core/shard/constanc/app_style.dart';
 import '../../core/widgets/kButtons.dart';
 import 'ARQiblaCameraWidget.dart';
 
-
 // class QiblaDirection extends StatefulWidget {
 //   const QiblaDirection({super.key});
 //
@@ -308,7 +307,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           permission == LocationPermission.deniedForever) {
         if (mounted) {
           setState(() {
-            _errorMessage = "تم رفض إذن الموقع. يرجى السماح بالوصول إلى الموقع من إعدادات التطبيق.";
+            _errorMessage =
+                "تم رفض إذن الموقع. يرجى السماح بالوصول إلى الموقع من إعدادات التطبيق.";
             _isLoading = false;
           });
         }
@@ -324,7 +324,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       print('Position: ${position.latitude}, ${position.longitude}');
 
       // 4. حساب اتجاه القبلة
-      _qiblaDirection = _calculateQiblaDirection(position.latitude, position.longitude);
+      _qiblaDirection =
+          _calculateQiblaDirection(position.latitude, position.longitude);
       print('Qibla direction: $_qiblaDirection');
 
       // 5. الحصول على اسم الموقع
@@ -351,7 +352,6 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
       // 6. تشغيل البوصلة
       _startCompass();
-
     } catch (e) {
       print('Error in init: $e');
       if (mounted) {
@@ -380,7 +380,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       }
 
       // الاشتراك في أحداث البوصلة
-      _compassSubscription = FlutterCompass.events!.listen((CompassEvent event) {
+      _compassSubscription =
+          FlutterCompass.events!.listen((CompassEvent event) {
         print('Compass event: ${event.heading}');
 
         if (mounted) {
@@ -398,7 +399,6 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           });
         }
       });
-
     } catch (e) {
       print('Error starting compass: $e');
       if (mounted) {
@@ -462,21 +462,21 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           elevation: 0,
           actions: [
             IconButton(
-              icon: Icon(_isARMode ? Icons.compass_calibration : Icons.camera_alt),
+              icon: Icon(
+                  _isARMode ? Icons.compass_calibration : Icons.camera_alt),
               tooltip: _isARMode ? "الوضع الكلاسيكي" : "AR وضع",
               onPressed: () {
                 setState(() {
                   _isARMode = !_isARMode;
                 });
                 Fluttertoast.showToast(
-                  msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
-                  backgroundColor: Colors.amber,
-                  textColor: Colors.black
-                );
+                    msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
+                    backgroundColor: Colors.amber,
+                    textColor: Colors.black);
               },
             ),
             IconButton(
-              icon: Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh),
               onPressed: _initLocationAndCompass,
             ),
           ],
@@ -484,13 +484,12 @@ class _QiblaDirectionState extends State<QiblaDirection> {
         body: _isLoading
             ? _buildLoadingWidget(isDark)
             : _errorMessage.isNotEmpty
-            ? _buildErrorWidget(isDark)
-            : _isARMode 
-                ? ARQiblaCameraWidget(
-                    qiblaDirection: _qiblaDirection ?? 0, 
-                    heading: _heading ?? 0
-                  )
-                : _buildCompassWidget(isDark, size, angle),
+                ? _buildErrorWidget(isDark)
+                : _isARMode
+                    ? ARQiblaCameraWidget(
+                        qiblaDirection: _qiblaDirection ?? 0,
+                        heading: _heading ?? 0)
+                    : _buildCompassWidget(isDark, size, angle),
       ),
     );
   }
@@ -505,7 +504,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           //     isDark ? Colors.greenAccent : Colors.green[700]!,
           //   ),
           // ),
-          KLoading.progressIOSIndicator(context: context,radius: 20),
+          KLoading.progressIOSIndicator(context: context, radius: 20),
           const SizedBox(height: 20),
           Text(
             "جاري تحميل بيانات القبلة...",
@@ -526,7 +525,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               // color: Colors.red,
               size: 64,
@@ -550,12 +549,11 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                   backgroundColor: KColors.primaryColor,
                   width: MediaQuery.sizeOf(context).width / 3,
                   title: "إعادة المحاولة",
-                  borderColor:KColors.primaryColor ,
+                  borderColor: KColors.primaryColor,
                   onTap: _initLocationAndCompass,
                 ),
               ),
             ),
-
           ],
         ),
       ),
@@ -563,8 +561,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
   }
 
   Widget _buildCompassWidget(bool isDark, Size size, double? angle) {
-    final baseColor = const Color(AppStyle.primaryColor);
-
+    const baseColor = Color(AppStyle.primaryColor);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -596,14 +593,14 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                         end: Alignment.bottomLeft,
                         colors: isDark
                             ? const [
-                          Color(0xFF020617),
-                          Color(0xFF0F172A),
-                        ]
+                                Color(0xFF020617),
+                                Color(0xFF0F172A),
+                              ]
                             : [
-                          // baseColor.withOpacity(0.06), // لمسة لون خفيفة
-                          Color(0xFFF7F1E1),
-                          Colors.white,
-                        ],
+                                // baseColor.withOpacity(0.06), // لمسة لون خفيفة
+                                const Color(0xFFF7F1E1),
+                                Colors.white,
+                              ],
                       ),
                       // border: Border.all(
                       //   color: baseColor.withOpacity(isDark ? 0.5 : 0.3),
@@ -624,7 +621,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                   if (angle != null)
                     Transform.rotate(
                       angle: vector.radians(angle),
-                      child: Container(
+                      child: SizedBox(
                         width: size.width * 0.6,
                         height: size.width * 0.6,
                         child: Stack(
@@ -633,11 +630,15 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                               child: Icon(
                                 Icons.navigation,
                                 size: 50,
-                                color: isDark ? Colors.greenAccent : Colors.green[700]!,
+                                color: isDark
+                                    ? Colors.greenAccent
+                                    : Colors.green[700]!,
                               ),
                             ),
                             // اتجاهات البوصلة
-                            ..._buildCompassDirections(size.width * 0.7, isDark),                          ],
+                            ..._buildCompassDirections(
+                                size.width * 0.7, isDark),
+                          ],
                         ),
                       ),
                     )
@@ -693,7 +694,6 @@ class _QiblaDirectionState extends State<QiblaDirection> {
   Widget _buildInfoContent(bool isDark, double? angle) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-
       children: [
         // معلومات الموقع
         if (_locationName != null)
@@ -740,9 +740,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                   : Colors.orange.withOpacity(0.2),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (angle < 10 || angle > 350)
-                    ? Colors.green
-                    : Colors.orange,
+                color:
+                    (angle < 10 || angle > 350) ? Colors.green : Colors.orange,
               ),
             ),
             child: Row(
@@ -859,6 +858,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       ),
     ];
   }
+
   Widget _buildInfoRow(IconData icon, String title, String value, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -868,14 +868,23 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       ),
       child: Row(
         children: [
-          Icon(icon, color: isDark ? Colors.greenAccent : Colors.green[700], size: 20),
+          Icon(icon,
+              color: isDark ? Colors.greenAccent : Colors.green[700], size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: GoogleFonts.cairo(fontSize: 12, color: isDark ? Colors.grey[400] : Colors.grey[600])),
-                Text(value, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black), overflow: TextOverflow.ellipsis),
+                Text(title,
+                    style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600])),
+                Text(value,
+                    style: GoogleFonts.cairo(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black),
+                    overflow: TextOverflow.ellipsis),
               ],
             ),
           ),
@@ -887,7 +896,10 @@ class _QiblaDirectionState extends State<QiblaDirection> {
   Widget _buildAngleInfo(String title, String value, bool isDark) {
     return Column(
       children: [
-        Text(title, style: GoogleFonts.cairo(fontSize: 12, color: isDark ? Colors.grey[400] : Colors.grey[600])),
+        Text(title,
+            style: GoogleFonts.cairo(
+                fontSize: 12,
+                color: isDark ? Colors.grey[400] : Colors.grey[600])),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -895,7 +907,11 @@ class _QiblaDirectionState extends State<QiblaDirection> {
             color: isDark ? Colors.grey[800] : Colors.grey[100],
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Text(value, style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? Colors.greenAccent : Colors.green[700])),
+          child: Text(value,
+              style: GoogleFonts.cairo(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.greenAccent : Colors.green[700])),
         ),
       ],
     );

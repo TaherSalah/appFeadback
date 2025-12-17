@@ -35,7 +35,6 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
     _init();
   }
 
-
   late List<BookmarkModel> books;
   Future<void> _init() async {
     await QuranLibrary.init();
@@ -170,7 +169,8 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
     try {
       await QuranLibrary.init();
 
-      final bookmarksMap = BookmarksCtrl.instance.bookmarks; // Map<int, List<BookmarkModel>>
+      final bookmarksMap =
+          BookmarksCtrl.instance.bookmarks; // Map<int, List<BookmarkModel>>
       // دمج كل القوائم في قائمة واحدة
       final bookmarks = bookmarksMap.values.expand((list) => list).toList();
 
@@ -187,8 +187,8 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
   @override
   Widget build(BuildContext context) {
     final query = searchKey.text.trim();
-    bool isDark =  Theme.of(context).brightness == Brightness.dark;
-    print("Bookmarks ==== >${books}");
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    print("Bookmarks ==== >$books");
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -213,7 +213,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -234,10 +234,14 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                       itemCount: ayah.length,
                       // physics: const BouncingScrollPhysics(), // تمكين التمرير
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: ResponsiveUtil.isTablet(context) ? 6 : 3, // يقلّل الأعمدة → الكروت أوسع
+                        crossAxisCount: ResponsiveUtil.isTablet(context)
+                            ? 6
+                            : 3, // يقلّل الأعمدة → الكروت أوسع
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 30,
-                        mainAxisExtent: ResponsiveUtil.isTablet(context) ? 150 : 130, // ارتفاع ثابت مناسب
+                        mainAxisExtent: ResponsiveUtil.isTablet(context)
+                            ? 150
+                            : 130, // ارتفاع ثابت مناسب
                       ),
                       itemBuilder: (context, index) {
                         // final Map<int, int> colorMap = {
@@ -249,7 +253,8 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                         final b = ayah[index];
 
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 2),
                           child: InkWell(
                             onTap: () {
                               QuranLibrary().jumpToAyah(b.page, b.ayahId);
@@ -262,32 +267,45 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                               children: [
                                 Card(
                                   color: Color(b.colorCode),
-                                  shadowColor: KColors.whiteColor.withOpacity(0.6),
+                                  shadowColor:
+                                      KColors.whiteColor.withOpacity(0.6),
                                   elevation: 2,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 10),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-
                                         TextWidget(
                                           title: b.name,
                                           color: isDark
                                               ? KColors.black2Color
                                               : KColors.primary2Color,
                                           fontWeight: FontWeight.w600,
-                                          fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 13.sp,
+                                          fontSize:
+                                              MediaQuery.sizeOf(context).width >
+                                                      600
+                                                  ? 6.sp
+                                                  : 13.sp,
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 4),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 4),
                                           child: TextWidget(
-                                            title: "رقم الاية (${b.ayahNumber})",
+                                            title:
+                                                "رقم الاية (${b.ayahNumber})",
                                             color: isDark
                                                 ? KColors.blackColor
                                                 : KColors.primary2Color,
                                             fontWeight: FontWeight.w600,
-                                            fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 13.sp,
+                                            fontSize: MediaQuery.sizeOf(context)
+                                                        .width >
+                                                    600
+                                                ? 6.sp
+                                                : 13.sp,
                                           ),
                                         ),
                                         TextWidget(
@@ -296,7 +314,11 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                                               ? KColors.black2Color
                                               : KColors.primary2Color,
                                           fontWeight: FontWeight.w600,
-                                          fontSize: MediaQuery.sizeOf(context).width > 600 ? 6.sp : 13.sp,
+                                          fontSize:
+                                              MediaQuery.sizeOf(context).width >
+                                                      600
+                                                  ? 6.sp
+                                                  : 13.sp,
                                         ),
                                       ],
                                     ),
@@ -308,14 +330,20 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                                   bottom: -20,
                                   child: InkWell(
                                     onTap: () async {
-                                      QuranLibrary().removeBookmark(bookmarkId: ayah[index].id);
+                                      QuranLibrary().removeBookmark(
+                                          bookmarkId: ayah[index].id);
                                       await loadBookmarksData(); // تعيد القراءة بعد مسح الكاش
                                     },
-
                                     child: CircleAvatar(
-                                      backgroundColor: Theme.of(context).brightness == Brightness.dark?Colors.black : Colors.white,
+                                      backgroundColor:
+                                          Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.black
+                                              : Colors.white,
                                       foregroundColor: Color(b.colorCode),
-                                      child: const Icon(Icons.delete_forever_outlined, size: 30),
+                                      child: const Icon(
+                                          Icons.delete_forever_outlined,
+                                          size: 30),
                                     ),
                                   ),
                                 ),
@@ -331,52 +359,66 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                     textDirection: TextDirection.rtl,
                     child: Center(
                       child: Column(
-
-
                         children: [
                           SizedBox(
                             height: 200,
                             width: 200,
-                            child: Lottie.asset("assets/json/file-searching.json"),
+                            child:
+                                Lottie.asset("assets/json/file-searching.json"),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.w, vertical: 5),
                             child: query.isEmpty
                                 ? Column(
-                              children: [
-                                TextWidget(
-                                  title: "لا يوجد علامات محفوظه حالية",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 14,
-                                ),
-                              ],
-                            )
+                                    children: [
+                                      TextWidget(
+                                        title: "لا يوجد علامات محفوظه حالية",
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            ResponsiveUtil.isTablet(context)
+                                                ? 8.sp
+                                                : 14,
+                                      ),
+                                    ],
+                                  )
                                 : Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    TextWidget(
-                                      title: "لا يوجد نتائج عن ",
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 14,
-                                    ),
-                                    TextWidget(
-                                      title: query,
-                                      fontWeight: FontWeight.w600,
-                                      color: CentralizedCubit.isDarkMode
-                                          ? KColors.primary
-                                          : KColors.primary2Color,
-                                      fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 14,
-                                    ),
-                                  ],
-                                ),
-                                TextWidget(
-                                  title: "يمكنك البحث عن أي كلمة في القرأن",
-                                  fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12,
-                                ),
-                              ],
-                            ),
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          TextWidget(
+                                            title: "لا يوجد نتائج عن ",
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                ResponsiveUtil.isTablet(context)
+                                                    ? 8.sp
+                                                    : 14,
+                                          ),
+                                          TextWidget(
+                                            title: query,
+                                            fontWeight: FontWeight.w600,
+                                            color: CentralizedCubit.isDarkMode
+                                                ? KColors.primary
+                                                : KColors.primary2Color,
+                                            fontSize:
+                                                ResponsiveUtil.isTablet(context)
+                                                    ? 8.sp
+                                                    : 14,
+                                          ),
+                                        ],
+                                      ),
+                                      TextWidget(
+                                        title:
+                                            "يمكنك البحث عن أي كلمة في القرأن",
+                                        fontSize:
+                                            ResponsiveUtil.isTablet(context)
+                                                ? 8.sp
+                                                : 12,
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ],
                       ),
@@ -391,4 +433,3 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
     );
   }
 }
-

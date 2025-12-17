@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,10 +15,8 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../../core/widgets/NoConnectionScreen.dart';
 
-
 class QuranChannalPlayerView extends StatefulWidget {
   const QuranChannalPlayerView({super.key});
-
 
   @override
   State<QuranChannalPlayerView> createState() => _QuranChannalPlayerViewState();
@@ -43,6 +40,7 @@ class _QuranChannalPlayerViewState extends State<QuranChannalPlayerView> {
     super.dispose();
     // centralizedCubit.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
@@ -50,69 +48,77 @@ class _QuranChannalPlayerViewState extends State<QuranChannalPlayerView> {
     return BlocBuilder<CentralizedCubit, CentralizedState>(
       builder: (context, state) {
         return state is ConnectivityState &&
-            state.status == ConnectivityStatus.disconnected
-            ? const NoConnectionScreen():  PopScope(
-          child: Directionality(
-            textDirection:  TextDirection.rtl,
-            child: Scaffold(
-              // backgroundColor: AppStyle.bgColors,
-              appBar: PreferredSize(
-                preferredSize:
-                Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
-                child: AppBar(
-                  leading: const CupertinoNavigationBarBackButton(
-                    color: Colors.black,
-                  ),
-                  // actions: [
-                  //   IconButton(
-                  //     onPressed: () => Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => CreateKhatmahScreen(),
-                  //       ),
-                  //     ),
-                  //     icon: const Icon(Icons.add),
-                  //   )
-                  // ],
-                  centerTitle: true,
-                  title: Text(
-                    "اذاعة القران الكريم ",
-                    style: GoogleFonts.cairo(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                state.status == ConnectivityStatus.disconnected
+            ? const NoConnectionScreen()
+            : PopScope(
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Scaffold(
+                    // backgroundColor: AppStyle.bgColors,
+                    appBar: PreferredSize(
+                      preferredSize: Size.fromHeight(
+                          MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+                      child: AppBar(
+                        leading: const CupertinoNavigationBarBackButton(
+                          color: Colors.black,
+                        ),
+                        // actions: [
+                        //   IconButton(
+                        //     onPressed: () => Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => CreateKhatmahScreen(),
+                        //       ),
+                        //     ),
+                        //     icon: const Icon(Icons.add),
+                        //   )
+                        // ],
+                        centerTitle: true,
+                        title: Text(
+                          "اذاعة القران الكريم ",
+                          style: GoogleFonts.cairo(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.sizeOf(context).width > 600
+                                ? 12.sp
+                                : 18.sp,
+                          ),
+                        ),
+                      ),
                     ),
+
+                    key: scaffoldState,
+                    // appBar: AppBar(
+                    //     centerTitle: true,
+                    //     title: Padding(
+                    //       padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    //       child: Image.asset(
+                    //         AssetsManager.logo,
+                    //         height: 70.h,
+                    //         width: 70.w,
+                    //       ),
+                    //     ),
+                    //     leading: const SizedBox()),
+                    body: const SafeArea(
+                        child: QuranRadioPlayer(
+                      title: "widget.title",
+                      streamUrl:
+                          "https://win.holol.com/live/quran/playlist.m3u8",
+                    )),
                   ),
                 ),
-              ),
-
-              key: scaffoldState,
-              // appBar: AppBar(
-              //     centerTitle: true,
-              //     title: Padding(
-              //       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              //       child: Image.asset(
-              //         AssetsManager.logo,
-              //         height: 70.h,
-              //         width: 70.w,
-              //       ),
-              //     ),
-              //     leading: const SizedBox()),
-              body:  SafeArea(child: QuranRadioPlayer(title:"widget.title",streamUrl: "https://win.holol.com/live/quran/playlist.m3u8",)),
-            ),
-          ),
-        );
+              );
       },
     );
   }
 }
 
-
 class QuranRadioPlayer extends StatefulWidget {
   const QuranRadioPlayer({
     super.key,
     this.title = "إذاعة القرآن",
-    this.streamUrl = "https://backup.qurango.net/radio/mohammad_alabdullah_albizi",
+    this.streamUrl =
+        "https://backup.qurango.net/radio/mohammad_alabdullah_albizi",
     this.accentColor,
     this.compact = false,
   });
@@ -252,7 +258,7 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
     final iconSize = widget.compact ? 34.0 : 44.0;
 
     return Padding(
-      padding:  EdgeInsets.all(cardPadding),
+      padding: EdgeInsets.all(cardPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -272,66 +278,68 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: TextWidget(title:
-                widget.title,
-                
+                child: TextWidget(
+                  title: widget.title,
                   fontSize: widget.compact ? 8.sp : 14.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-
             ],
           ),
           const SizedBox(height: 12),
-
           Card(
             elevation: 6,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             // margin: const EdgeInsets.all(12),
             child: Padding(
-              padding: EdgeInsets.all(0),
+              padding: const EdgeInsets.all(0),
               child: StreamBuilder<PlayerState>(
                 stream: _playerStateStream,
                 builder: (context, snapshot) {
                   final state = snapshot.data ?? _player.playerState;
-                  final isBuffering = state.processingState == ProcessingState.loading ||
-                      state.processingState == ProcessingState.buffering;
+                  final isBuffering =
+                      state.processingState == ProcessingState.loading ||
+                          state.processingState == ProcessingState.buffering;
 
                   return Column(
                     mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-
                       Stack(
                         alignment: Alignment.topRight,
                         children: [
-
                           ClipRRect(
-
-                              borderRadius:  BorderRadius.all(Radius.circular(20)),
-                              child: Image.asset("assets/images/unnamed.jpg",width: MediaQuery.sizeOf(context).width,fit: BoxFit.contain,)),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20)),
+                              child: Image.asset(
+                                "assets/images/unnamed.jpg",
+                                width: MediaQuery.sizeOf(context).width,
+                                fit: BoxFit.contain,
+                              )),
                           Positioned(
                             top: 10,
                             left: 10,
-
                             child: Row(
                               children: [
-
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 6),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   child: Row(
                                     spacing: 10,
                                     children: [
-                                      LiveIndicator(),
-                                      TextWidget(title:
-                                      _statusText(state),
+                                      const LiveIndicator(),
+                                      TextWidget(
+                                        title: _statusText(state),
                                         color: Colors.white,
-                                        fontSize:ResponsiveUtil.isTablet(context)?8.sp: 12.sp,
+                                        fontSize:
+                                            ResponsiveUtil.isTablet(context)
+                                                ? 8.sp
+                                                : 12.sp,
                                         fontWeight: FontWeight.w600,
-
                                       ),
                                     ],
                                   ),
@@ -339,7 +347,6 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
                               ],
                             ),
                           ),
-
                         ],
                       ),
                       // Header
@@ -377,16 +384,33 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
                                   const SizedBox(
                                     width: 18,
                                     height: 18,
-                                    child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white),
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2.4, color: Colors.white),
                                   ),
                                   const SizedBox(width: 10),
-                                   TextWidget(title:"جارٍ التحميل…",fontSize: ResponsiveUtil.isTablet(context)?8.sp: 14.sp,),
+                                  TextWidget(
+                                    title: "جارٍ التحميل…",
+                                    fontSize: ResponsiveUtil.isTablet(context)
+                                        ? 8.sp
+                                        : 14.sp,
+                                  ),
                                 ] else ...[
-                                  Icon(_player.playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                                      color: Colors.white, size: iconSize),
+                                  Icon(
+                                      _player.playing
+                                          ? Icons.pause_rounded
+                                          : Icons.play_arrow_rounded,
+                                      color: Colors.white,
+                                      size: iconSize),
                                   const SizedBox(width: 6),
-                                  TextWidget(title:_player.playing ? "إيقاف مؤقت" : "تشغيل",color: Colors.white, fontWeight: FontWeight.w700,fontSize: ResponsiveUtil.isTablet(context)?8.sp: 14.sp)
-
+                                  TextWidget(
+                                      title: _player.playing
+                                          ? "إيقاف مؤقت"
+                                          : "تشغيل",
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: ResponsiveUtil.isTablet(context)
+                                          ? 8.sp
+                                          : 14.sp)
                                 ]
                               ],
                             ),
@@ -398,7 +422,8 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
 
                       // Volume
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 10),
                         child: Row(
                           children: [
                             const Icon(Icons.volume_down_rounded),
@@ -421,14 +446,18 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
 
                       // Tiny hint
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 10),
                         child: Align(
                           alignment: Alignment.center,
-                          child: TextWidget(title:
-                            "بث مباشر – لا يدعم التقديم أو الترجيع",
+                          child: TextWidget(
+                              title: "بث مباشر – لا يدعم التقديم أو الترجيع",
                               fontSize: 12,
-                              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.8)
-                          ),
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.color
+                                  ?.withOpacity(0.8)),
                         ),
                       ),
                     ],
@@ -442,6 +471,7 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
     );
   }
 }
+
 class LiveIndicator extends StatefulWidget {
   const LiveIndicator({super.key});
 
@@ -477,7 +507,7 @@ class _LiveIndicatorState extends State<LiveIndicator>
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _animation,
-      child: CircleAvatar(
+      child: const CircleAvatar(
         backgroundColor: Colors.redAccent,
         radius: 5,
       ),

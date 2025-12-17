@@ -1,17 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import 'package:quran_library/quran.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
-import '../../../core/utils/style/k_color.dart';
-import '../../../core/utils/style/responsive_util.dart';
-import '../../../core/widgets/custom_text_widget.dart';
 import '../../messa_view/azkar_massa.dart';
-
-
-
-
 
 class AzkarQuranWidget extends StatefulWidget {
   const AzkarQuranWidget({super.key});
@@ -80,15 +71,21 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
           child: Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
-              image:isDark?null: const DecorationImage(image: AssetImage("assets/images/pattern.webp",),fit: BoxFit.cover,opacity: 0.2),
-
-              borderRadius: BorderRadius.circular(10),
-              border: const BorderDirectional(
-                start: BorderSide(color: CupertinoColors.systemGreen, width: 3),
-              ),
-              // color: Theme.of(context).cardColor,
-              color: AppThemeColors.cardBackgroundColor(context)
-            ),
+                image: isDark
+                    ? null
+                    : const DecorationImage(
+                        image: AssetImage(
+                          "assets/images/pattern.webp",
+                        ),
+                        fit: BoxFit.cover,
+                        opacity: 0.2),
+                borderRadius: BorderRadius.circular(10),
+                border: const BorderDirectional(
+                  start:
+                      BorderSide(color: CupertinoColors.systemGreen, width: 3),
+                ),
+                // color: Theme.of(context).cardColor,
+                color: AppThemeColors.cardBackgroundColor(context)),
             width: MediaQuery.sizeOf(context).width,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
@@ -98,13 +95,18 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
                   Text(
                     "أدعية من القرآن",
                     style: GoogleFonts.cairo(
-                        fontWeight: FontWeight.bold, fontSize:MediaQuery.sizeOf(context).width >600?10.sp: 15.sp),
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.sizeOf(context).width > 600
+                            ? 10.sp
+                            : 15.sp),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     quranicAzkar[currentIndex],
                     textAlign: TextAlign.justify,
-                    style: TextStyle(fontSize:MediaQuery.sizeOf(context).width >600?25: 16),
+                    style: TextStyle(
+                        fontSize:
+                            MediaQuery.sizeOf(context).width > 600 ? 25 : 16),
                   ),
                 ],
               ),
@@ -234,5 +236,3 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
     );
   }
 }
-
-

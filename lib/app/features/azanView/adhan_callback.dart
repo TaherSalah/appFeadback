@@ -44,8 +44,11 @@ void alarmCallback(int id) async {
       content: NotificationContent(
         id: notificationId,
         channelKey: channelKey,
-        title: isFajr ? '\u200F🌅 حان الآن موعد أذان الفجر' : '\u200F🕌 حان الآن موعد أذان $prayerName',
-        body: '\u200F$cityName - $prayerTime\n${_getPrayerDescription(prayerName)}',
+        title: isFajr
+            ? '\u200F🌅 حان الآن موعد أذان الفجر'
+            : '\u200F🕌 حان الآن موعد أذان $prayerName',
+        body:
+            '\u200F$cityName - $prayerTime\n${_getPrayerDescription(prayerName)}',
         notificationLayout: NotificationLayout.BigText,
         wakeUpScreen: true,
         fullScreenIntent: true,
@@ -89,7 +92,6 @@ void alarmCallback(int id) async {
     );
 
     print("✅ اكتمل callback الأذان");
-
   } catch (e, s) {
     print("❌ خطأ في alarmCallback: $e");
     print("Stack: $s");
@@ -100,31 +102,32 @@ void alarmCallback(int id) async {
 Future<void> _initAwesomeNotifications() async {
   try {
     await AwesomeNotifications().initialize(
-      null,
+      'resource://drawable/ic_stat_logoapp',
       [
         // 🌅 أذان الفجر
         NotificationChannel(
-          channelKey: 'fajr_adhan_channel',
+          channelKey: 'fajr_adhan_channel_v2', // ✅ مطابقة مع main.dart
           channelName: 'أذان الفجر',
           channelDescription: 'تشغيل أذان الفجر',
           importance: NotificationImportance.Max,
           playSound: true,
-          soundSource: 'resource://raw/fajr', // ✅ الصوت من raw folder
+          soundSource: 'resource://raw/fajr',
           enableVibration: true,
           enableLights: true,
           ledColor: Colors.orange,
           criticalAlerts: true,
           locked: true,
+          defaultPrivacy: NotificationPrivacy.Public,
         ),
 
         // 🕌 الأذان العادي
         NotificationChannel(
-          channelKey: 'adhan_channel',
+          channelKey: 'adhan_channel_v2', // ✅ مطابقة مع main.dart
           channelName: 'أذان الصلاة',
           channelDescription: 'تشغيل صوت الأذان',
           importance: NotificationImportance.Max,
           playSound: true,
-          soundSource: 'resource://raw/athan', // ✅ الصوت من raw folder
+          soundSource: 'resource://raw/athan',
           enableVibration: true,
           enableLights: true,
           ledColor: Colors.green,
@@ -208,7 +211,8 @@ class BatteryOptimizationHelper {
     }
   }
 
-  static Future<void> showBatteryOptimizationDialog(BuildContext context) async {
+  static Future<void> showBatteryOptimizationDialog(
+      BuildContext context) async {
     final isDisabled = await isBatteryOptimizationDisabled();
     if (isDisabled || !context.mounted) return;
 
@@ -220,10 +224,12 @@ class BatteryOptimizationHelper {
       builder: (ctx) => Directionality(
         textDirection: TextDirection.rtl,
         child: AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: Row(
             children: [
-              Icon(Icons.battery_alert, color: Colors.orange.shade700, size: 28),
+              Icon(Icons.battery_alert,
+                  color: Colors.orange.shade700, size: 28),
               const SizedBox(width: 8),
               const Expanded(child: Text('⚠️ تنبيه هام')),
             ],
@@ -246,7 +252,10 @@ class BatteryOptimizationHelper {
                 ),
                 child: const Text(
                   '📌 في الإعدادات، ابحث عن اسم التطبيق واختر "عدم التحسين" أو "Don\'t optimize"',
-                  style: TextStyle(fontSize: 13, color: Colors.green, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.green,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
             ],

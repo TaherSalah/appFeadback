@@ -34,8 +34,8 @@ class _JozzsListScreenState extends State<JozzsListScreen> {
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
-            leading:  CupertinoNavigationBarBackButton(
-              color:isDark? Colors.white: Colors.black,
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
             ),
             centerTitle: true,
             title: Text(
@@ -49,7 +49,7 @@ class _JozzsListScreenState extends State<JozzsListScreen> {
           ),
         ),
         body: ListView.separated(
-          separatorBuilder: (context, index) => Divider(),
+          separatorBuilder: (context, index) => const Divider(),
           physics: const BouncingScrollPhysics(),
           itemCount: jozzs.length,
           itemBuilder: (ctx, index) {

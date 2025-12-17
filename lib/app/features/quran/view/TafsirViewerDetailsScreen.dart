@@ -41,9 +41,9 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
   Future<void> _init() async {
     // مهم: تهيئة التفسير مرة واحدة
     // await _ql().;
-   // _selectedTafsirIndex = _ql.tafsirSelected; // موجودة عندك بالفعل
+    // _selectedTafsirIndex = _ql.tafsirSelected; // موجودة عندك بالفعل
     final names = _ql.tafsirAndTraslationsCollection; // قائمة التفسيرات
-     _selectedTafsirIndex = 0; // ابتدائيًا مثلا 0
+    _selectedTafsirIndex = 0; // ابتدائيًا مثلا 0
 
     // اضبط الصفحة المبدئية
     final startPage = (widget.initialPage != null &&
@@ -65,7 +65,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
 
   Future<void> _loadPageAyahs() async {
     // NOTE: الميثود تحت بتتوقع رقم صفحة (١–٦٠٤) حسب تعريف مكتبتك
-    final list = _ql.getPageAyahsByPageNumber(pageNumber: _pageNumber); // ✅ لازم await
+    final list =
+        _ql.getPageAyahsByPageNumber(pageNumber: _pageNumber); // ✅ لازم await
     _pageAyahs = List<AyahModel>.from(list);
     if (mounted) setState(() {});
   }
@@ -309,11 +310,11 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                           ),
                           // الحدود العادية (اختياري للمقارنة)
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
+                            borderSide: const BorderSide(color: Colors.grey),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey),
+                            borderSide: const BorderSide(color: Colors.grey),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           isDense: true, // يقلل الارتفاع
@@ -367,11 +368,14 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('إلغاء',style: TextStyle(fontFamily: "cairo"),),
+              child: const Text(
+                'إلغاء',
+                style: TextStyle(fontFamily: "cairo"),
+              ),
             ),
             ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor:WidgetStatePropertyAll(Colors.indigo) ,
+              style: const ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(Colors.indigo),
               ),
               onPressed: () {
                 // مهم: ما نقفلش غير لو Valid
@@ -380,7 +384,10 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                   Navigator.pop(context, value);
                 }
               },
-              child: const Text('اذهب',style: TextStyle(fontFamily: "cairo"),),
+              child: const Text(
+                'اذهب',
+                style: TextStyle(fontFamily: "cairo"),
+              ),
             ),
           ],
         ),
@@ -401,8 +408,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     await QuranLibrary().showTafsir(
-
-      isDark:true ,
+      isDark: true,
       context: context,
       // surahNum: surahNum,
       ayahNum: ayahNum,
@@ -417,7 +423,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     if (!_inited) {
-      return  Scaffold(body: Center(child: KLoading.progressIOSIndicator(context: context)));
+      return Scaffold(
+          body: Center(child: KLoading.progressIOSIndicator(context: context)));
     }
 
     final names = _ql.tafsirAndTraslationsCollection; // List<TafsirNameModel>
@@ -427,7 +434,10 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          leading:  CupertinoNavigationBarBackButton(color: Theme.of(context).brightness == Brightness.dark ?Colors.white :Colors.black),
+          leading: CupertinoNavigationBarBackButton(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black),
           centerTitle: true,
           title: Text(
             "تفسير الايات",
@@ -441,7 +451,10 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
             IconButton(
               tooltip: 'اذهب إلى صفحة',
               onPressed: _gotoPageDialog,
-              icon:  Icon(Icons.find_in_page,size: ResponsiveUtil.isTablet(context)?15.sp:20.sp,),
+              icon: Icon(
+                Icons.find_in_page,
+                size: ResponsiveUtil.isTablet(context) ? 15.sp : 20.sp,
+              ),
             ),
           ],
         ),
@@ -519,13 +532,13 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                     radius: 30,
                     child: Column(
                       children: [
-                        Text(
+                        const Text(
                           'صفحة',
                           style: TextStyle(fontFamily: "me"),
                         ),
                         Text(
                           _pageNumber.toString(),
-                          style: TextStyle(fontFamily: "me"),
+                          style: const TextStyle(fontFamily: "me"),
                         ),
                       ],
                     ),
@@ -568,7 +581,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                         final AyahModel ayah = _pageAyahs[index];
 
                         final int? s = ayah.surahNumber;
-                        final int? a = ayah.ayahNumber;
+                        final int a = ayah.ayahNumber;
                         final String ayahLabel = 'س:${s ?? '-'} آ:${a ?? '-'}';
 
                         // لو نص الآية عندك اسمُه غير text غيّر السطر ده
@@ -587,10 +600,10 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                         : 20,
                                     horizontal: 8),
                                 width: MediaQuery.sizeOf(context).width,
-                                decoration:  BoxDecoration(
+                                decoration: BoxDecoration(
                                     color: Theme.of(context).cardColor,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(13))),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(13))),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0),
@@ -598,7 +611,10 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                     textAlign: TextAlign.justify,
                                     TextSpan(
                                         style: TextStyle(
-                                            height: ResponsiveUtil.isTablet(context)? 1.6:1.9,
+                                            height:
+                                                ResponsiveUtil.isTablet(context)
+                                                    ? 1.6
+                                                    : 1.9,
                                             fontFamily: "me",
                                             fontSize:
                                                 ResponsiveUtil.isTablet(context)
@@ -609,8 +625,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                             : ayahLabel,
                                         children: [
                                           TextSpan(
-                                            style:
-                                                TextStyle(color: Colors.green),
+                                            style: const TextStyle(
+                                                color: Colors.green),
                                             text: ayahText.isNotEmpty
                                                 ? ' ' "(${a.toString()})" ' '
                                                 : ayahLabel,

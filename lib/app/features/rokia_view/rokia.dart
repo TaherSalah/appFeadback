@@ -11,6 +11,7 @@ import '../../core/utils/style/k_helper.dart';
 import '../../core/utils/style/responsive_util.dart';
 import '../../core/widgets/AudioManager.dart';
 import '../sleep_view/sleep_azkar.dart';
+
 class RokiaScreen extends StatefulWidget {
   const RokiaScreen({super.key});
 
@@ -153,7 +154,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
   Widget _buildFloatingPlayButton(bool isDark) {
     final theme = Theme.of(context);
     final primaryColor =
-    isDark ? KColors.primaryColor : theme.colorScheme.primary;
+        isDark ? KColors.primaryColor : theme.colorScheme.primary;
 
     final bool isTab = ResponsiveUtil.isTablet(context);
     final bool isPlayingNow = _isPlaying;
@@ -191,8 +192,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color:
-                  primaryColor.withOpacity(isPlayingNow ? 0.55 : 0.35),
+                  color: primaryColor.withOpacity(isPlayingNow ? 0.55 : 0.35),
                   blurRadius: isPlayingNow ? 20 : 12,
                   spreadRadius: isPlayingNow ? 1.8 : 0.6,
                   offset: const Offset(0, 4),
@@ -206,23 +206,23 @@ class _RokiaScreenState extends State<RokiaScreen> {
                     ScaleTransition(scale: anim, child: child),
                 child: (!_isDownloaded && _isBuffering)
                     ? const SizedBox(
-                  key: ValueKey('loader_fab'),
-                  width: 26,
-                  height: 26,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor:
-                    AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
+                        key: ValueKey('loader_fab'),
+                        width: 26,
+                        height: 26,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
                     : Icon(
-                  isPlayingNow
-                      ? Icons.pause_rounded
-                      : Icons.play_arrow_rounded,
-                  key: ValueKey<bool>(isPlayingNow),
-                  color: Colors.white,
-                  size: 34,
-                ),
+                        isPlayingNow
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        key: ValueKey<bool>(isPlayingNow),
+                        color: Colors.white,
+                        size: 34,
+                      ),
               ),
             ),
           ),
@@ -236,15 +236,14 @@ class _RokiaScreenState extends State<RokiaScreen> {
     final bool isTab = ResponsiveUtil.isTablet(context);
     final theme = Theme.of(context);
     final primaryColor =
-    isDark ? KColors.primaryColor : theme.colorScheme.primary;
+        isDark ? KColors.primaryColor : theme.colorScheme.primary;
 
     final int durationMs = _duration.inMilliseconds;
     final int positionMs = _position.inMilliseconds;
 
     final double sliderMax = durationMs > 0 ? durationMs.toDouble() : 1.0;
-    final double sliderValue = durationMs > 0
-        ? positionMs.clamp(0, durationMs).toDouble()
-        : 0.0;
+    final double sliderValue =
+        durationMs > 0 ? positionMs.clamp(0, durationMs).toDouble() : 0.0;
 
     final modeText = _isDownloaded
         ? 'وضع أوفلاين: يمكن التشغيل بدون إنترنت.'
@@ -256,15 +255,15 @@ class _RokiaScreenState extends State<RokiaScreen> {
         : 'اضغط على زر التشغيل لسماع الرقية الشرعية';
 
     final IconData stateIcon =
-    isPlayingNow ? Icons.graphic_eq_rounded : Icons.headphones_rounded;
+        isPlayingNow ? Icons.graphic_eq_rounded : Icons.headphones_rounded;
 
     final Color stateBg = isDark
         ? (isPlayingNow
-        ? Colors.greenAccent.withOpacity(0.15)
-        : Colors.white.withOpacity(0.06))
+            ? Colors.greenAccent.withOpacity(0.15)
+            : Colors.white.withOpacity(0.06))
         : (isPlayingNow
-        ? Colors.green.withOpacity(0.10)
-        : primaryColor.withOpacity(0.08));
+            ? Colors.green.withOpacity(0.10)
+            : primaryColor.withOpacity(0.08));
 
     final Color stateFg = isDark
         ? (isPlayingNow ? Colors.greenAccent : Colors.white70)
@@ -289,9 +288,9 @@ class _RokiaScreenState extends State<RokiaScreen> {
                 colors: isDark
                     ? const [Color(0xFF020617), Color(0xFF0F172A)]
                     : [
-                  primaryColor.withOpacity(0.06),
-                  const Color(0xFFFFFFFF),
-                ],
+                        primaryColor.withOpacity(0.06),
+                        const Color(0xFFFFFFFF),
+                      ],
               ),
               border: Border.all(
                 color: primaryColor.withOpacity(isDark ? 0.5 : 0.25),
@@ -314,14 +313,15 @@ class _RokiaScreenState extends State<RokiaScreen> {
                   height: 3,
                   margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
-                    color:
-                    isDark ? Colors.white24 : Colors.black.withOpacity(0.15),
+                    color: isDark
+                        ? Colors.white24
+                        : Colors.black.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
                 Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                   child: Row(
                     children: [
                       Directionality(
@@ -371,7 +371,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                   child: Container(
                     key: ValueKey<bool>(isPlayingNow),
                     padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: stateBg,
                       borderRadius: BorderRadius.circular(999),
@@ -418,12 +418,12 @@ class _RokiaScreenState extends State<RokiaScreen> {
                       onPressed: durationMs == 0
                           ? null
                           : () async {
-                        final int newMs =
-                        (positionMs - 10000).clamp(0, durationMs);
-                        await _audioManager.seek(
-                          Duration(milliseconds: newMs),
-                        );
-                      },
+                              final int newMs =
+                                  (positionMs - 10000).clamp(0, durationMs);
+                              await _audioManager.seek(
+                                Duration(milliseconds: newMs),
+                              );
+                            },
                       icon: const Icon(Icons.replay_10_rounded),
                       iconSize: 20,
                       color: isDark
@@ -442,8 +442,8 @@ class _RokiaScreenState extends State<RokiaScreen> {
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           trackHeight: 3,
-                          thumbShape:
-                          const RoundSliderThumbShape(enabledThumbRadius: 7),
+                          thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 7),
                         ),
                         child: Slider(
                           value: sliderValue,
@@ -452,10 +452,10 @@ class _RokiaScreenState extends State<RokiaScreen> {
                           onChanged: durationMs == 0
                               ? null
                               : (v) async {
-                            await _audioManager.seek(
-                              Duration(milliseconds: v.toInt()),
-                            );
-                          },
+                                  await _audioManager.seek(
+                                    Duration(milliseconds: v.toInt()),
+                                  );
+                                },
                           activeColor: primaryColor,
                           inactiveColor: primaryColor.withOpacity(0.25),
                         ),
@@ -472,12 +472,12 @@ class _RokiaScreenState extends State<RokiaScreen> {
                       onPressed: durationMs == 0
                           ? null
                           : () async {
-                        final int newMs =
-                        (positionMs + 10000).clamp(0, durationMs);
-                        await _audioManager.seek(
-                          Duration(milliseconds: newMs),
-                        );
-                      },
+                              final int newMs =
+                                  (positionMs + 10000).clamp(0, durationMs);
+                              await _audioManager.seek(
+                                Duration(milliseconds: newMs),
+                              );
+                            },
                       icon: const Icon(Icons.forward_10_rounded),
                       iconSize: 20,
                       color: isDark
@@ -494,64 +494,63 @@ class _RokiaScreenState extends State<RokiaScreen> {
                     textDirection: ui.TextDirection.rtl,
                     child: _isDownloaded
                         ? TextButton.icon(
-                      onPressed: null,
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 6),
-                        backgroundColor: isDark
-                            ? Colors.white.withOpacity(0.05)
-                            : Colors.green.withOpacity(0.08),
-                        shape: const StadiumBorder(),
-                      ),
-                      icon: const Icon(Icons.download_done_rounded,
-                          size: 18, color: Colors.green),
-                      label: Text(
-                        'تم تحميل الرقية الشرعية، تعمل بدون إنترنت',
-                        style: GoogleFonts.notoKufiArabic(
-                          fontSize: 12,
-                          color: isDark
-                              ? Colors.greenAccent
-                              : Colors.green.shade700,
-                        ),
-                      ),
-                    )
+                            onPressed: null,
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
+                              backgroundColor: isDark
+                                  ? Colors.white.withOpacity(0.05)
+                                  : Colors.green.withOpacity(0.08),
+                              shape: const StadiumBorder(),
+                            ),
+                            icon: const Icon(Icons.download_done_rounded,
+                                size: 18, color: Colors.green),
+                            label: Text(
+                              'تم تحميل الرقية الشرعية، تعمل بدون إنترنت',
+                              style: GoogleFonts.notoKufiArabic(
+                                fontSize: 12,
+                                color: isDark
+                                    ? Colors.greenAccent
+                                    : Colors.green.shade700,
+                              ),
+                            ),
+                          )
                         : TextButton.icon(
-                      onPressed: _isDownloading ? null : _downloadAudio,
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 6),
-                        backgroundColor: isDark
-                            ? Colors.white.withOpacity(0.06)
-                            : primaryColor.withOpacity(0.08),
-                        shape: const StadiumBorder(),
-                      ),
-                      icon: _isDownloading
-                          ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                        ),
-                      )
-                          : Icon(
-                        Icons.download_rounded,
-                        size: 19,
-                        color: isDark
-                            ? Colors.greenAccent
-                            : primaryColor,
-                      ),
-                      label: Text(
-                        _isDownloading
-                            ? 'جاري تحميل الرقية الشرعية...'
-                            : 'تحميل للتشغيل بدون إنترنت',
-                        style: GoogleFonts.cairo(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color:
-                          isDark ? Colors.white : Colors.grey[900],
-                        ),
-                      ),
-                    ),
+                            onPressed: _isDownloading ? null : _downloadAudio,
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
+                              backgroundColor: isDark
+                                  ? Colors.white.withOpacity(0.06)
+                                  : primaryColor.withOpacity(0.08),
+                              shape: const StadiumBorder(),
+                            ),
+                            icon: _isDownloading
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.download_rounded,
+                                    size: 19,
+                                    color: isDark
+                                        ? Colors.greenAccent
+                                        : primaryColor,
+                                  ),
+                            label: Text(
+                              _isDownloading
+                                  ? 'جاري تحميل الرقية الشرعية...'
+                                  : 'تحميل للتشغيل بدون إنترنت',
+                              style: GoogleFonts.cairo(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Colors.grey[900],
+                              ),
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -592,8 +591,8 @@ class _RokiaScreenState extends State<RokiaScreen> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: primaryColor.withOpacity(
-                            isPlayingNow ? 0.55 : 0.35),
+                        color: primaryColor
+                            .withOpacity(isPlayingNow ? 0.55 : 0.35),
                         blurRadius: isPlayingNow ? 20 : 12,
                         spreadRadius: isPlayingNow ? 1.8 : 0.6,
                         offset: const Offset(0, 4),
@@ -607,23 +606,23 @@ class _RokiaScreenState extends State<RokiaScreen> {
                           ScaleTransition(scale: anim, child: child),
                       child: (!_isDownloaded && _isBuffering)
                           ? const SizedBox(
-                        key: ValueKey('loader'),
-                        width: 26,
-                        height: 26,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white),
-                        ),
-                      )
+                              key: ValueKey('loader'),
+                              width: 26,
+                              height: 26,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
                           : Icon(
-                        isPlayingNow
-                            ? Icons.pause_rounded
-                            : Icons.play_arrow_rounded,
-                        key: ValueKey<bool>(isPlayingNow),
-                        color: Colors.white,
-                        size: 32,
-                      ),
+                              isPlayingNow
+                                  ? Icons.pause_rounded
+                                  : Icons.play_arrow_rounded,
+                              key: ValueKey<bool>(isPlayingNow),
+                              color: Colors.white,
+                              size: 32,
+                            ),
                     ),
                   ),
                 ),
@@ -639,15 +638,14 @@ class _RokiaScreenState extends State<RokiaScreen> {
   Widget _buildFullPlayer(bool isDark) {
     final theme = Theme.of(context);
     final primaryColor =
-    isDark ? KColors.primaryColor : theme.colorScheme.primary;
+        isDark ? KColors.primaryColor : theme.colorScheme.primary;
 
     final int durationMs = _duration.inMilliseconds;
     final int positionMs = _position.inMilliseconds;
 
     final double sliderMax = durationMs > 0 ? durationMs.toDouble() : 1.0;
-    final double sliderValue = durationMs > 0
-        ? positionMs.clamp(0, durationMs).toDouble()
-        : 0.0;
+    final double sliderValue =
+        durationMs > 0 ? positionMs.clamp(0, durationMs).toDouble() : 0.0;
 
     final double fullHeight = MediaQuery.sizeOf(context).height * 0.78;
     final bool isTab = ResponsiveUtil.isTablet(context);
@@ -672,15 +670,15 @@ class _RokiaScreenState extends State<RokiaScreen> {
               end: Alignment.bottomLeft,
               colors: isDark
                   ? const [
-                Color(0xFF020617),
-                Color(0xFF0B1220),
-                Color(0xFF0F172A)
-              ]
+                      Color(0xFF020617),
+                      Color(0xFF0B1220),
+                      Color(0xFF0F172A)
+                    ]
                   : [
-                primaryColor.withOpacity(0.07),
-                const Color(0xFFFFFFFF),
-                const Color(0xFFFFFFFF),
-              ],
+                      primaryColor.withOpacity(0.07),
+                      const Color(0xFFFFFFFF),
+                      const Color(0xFFFFFFFF),
+                    ],
             ),
             border: Border.all(
               color: primaryColor.withOpacity(isDark ? 0.45 : 0.18),
@@ -717,7 +715,9 @@ class _RokiaScreenState extends State<RokiaScreen> {
                             width: 46,
                             height: 5,
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white24 : Colors.black.withOpacity(0.12),
+                              color: isDark
+                                  ? Colors.white24
+                                  : Colors.black.withOpacity(0.12),
                               borderRadius: BorderRadius.circular(999),
                             ),
                           ),
@@ -882,65 +882,65 @@ class _RokiaScreenState extends State<RokiaScreen> {
                   textDirection: ui.TextDirection.rtl,
                   child: _isDownloaded
                       ? TextButton.icon(
-                    onPressed: null,
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 7),
-                      backgroundColor: isDark
-                          ? Colors.white.withOpacity(0.05)
-                          : Colors.green.withOpacity(0.08),
-                      shape: const StadiumBorder(),
-                    ),
-                    icon: const Icon(
-                      Icons.download_done_rounded,
-                      size: 18,
-                      color: Colors.green,
-                    ),
-                    label: Text(
-                      'تم تحميل الرقية الشرعية، تعمل بدون إنترنت',
-                      style: GoogleFonts.notoKufiArabic(
-                        fontSize: 12,
-                        color: isDark
-                            ? Colors.greenAccent
-                            : Colors.green.shade700,
-                      ),
-                    ),
-                  )
+                          onPressed: null,
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 7),
+                            backgroundColor: isDark
+                                ? Colors.white.withOpacity(0.05)
+                                : Colors.green.withOpacity(0.08),
+                            shape: const StadiumBorder(),
+                          ),
+                          icon: const Icon(
+                            Icons.download_done_rounded,
+                            size: 18,
+                            color: Colors.green,
+                          ),
+                          label: Text(
+                            'تم تحميل الرقية الشرعية، تعمل بدون إنترنت',
+                            style: GoogleFonts.notoKufiArabic(
+                              fontSize: 12,
+                              color: isDark
+                                  ? Colors.greenAccent
+                                  : Colors.green.shade700,
+                            ),
+                          ),
+                        )
                       : TextButton.icon(
-                    onPressed: _isDownloading ? null : _downloadAudio,
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 7),
-                      backgroundColor: isDark
-                          ? Colors.white.withOpacity(0.06)
-                          : primaryColor.withOpacity(0.08),
-                      shape: const StadiumBorder(),
-                    ),
-                    icon: _isDownloading
-                        ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child:
-                      CircularProgressIndicator(strokeWidth: 2),
-                    )
-                        : Icon(
-                      Icons.download_rounded,
-                      size: 19,
-                      color:
-                      isDark ? Colors.greenAccent : primaryColor,
-                    ),
-                    label: Text(
-                      _isDownloading
-                          ? 'جاري تحميل الرقية الشرعية...'
-                          : 'تحميل للتشغيل بدون إنترنت',
-                      style: GoogleFonts.cairo(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color:
-                        isDark ? Colors.white : Colors.grey[900],
-                      ),
-                    ),
-                  ),
+                          onPressed: _isDownloading ? null : _downloadAudio,
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 7),
+                            backgroundColor: isDark
+                                ? Colors.white.withOpacity(0.06)
+                                : primaryColor.withOpacity(0.08),
+                            shape: const StadiumBorder(),
+                          ),
+                          icon: _isDownloading
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : Icon(
+                                  Icons.download_rounded,
+                                  size: 19,
+                                  color: isDark
+                                      ? Colors.greenAccent
+                                      : primaryColor,
+                                ),
+                          label: Text(
+                            _isDownloading
+                                ? 'جاري تحميل الرقية الشرعية...'
+                                : 'تحميل للتشغيل بدون إنترنت',
+                            style: GoogleFonts.cairo(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : Colors.grey[900],
+                            ),
+                          ),
+                        ),
                 ),
 
                 const SizedBox(height: 10),
@@ -954,12 +954,12 @@ class _RokiaScreenState extends State<RokiaScreen> {
                         onPressed: durationMs == 0
                             ? null
                             : () async {
-                          final int newMs =
-                          (positionMs - 10000).clamp(0, durationMs);
-                          await _audioManager.seek(
-                            Duration(milliseconds: newMs),
-                          );
-                        },
+                                final int newMs =
+                                    (positionMs - 10000).clamp(0, durationMs);
+                                await _audioManager.seek(
+                                  Duration(milliseconds: newMs),
+                                );
+                              },
                         icon: const Icon(Icons.replay_10_rounded),
                         color: isDark
                             ? Colors.white70
@@ -990,10 +990,10 @@ class _RokiaScreenState extends State<RokiaScreen> {
                             onChanged: durationMs == 0
                                 ? null
                                 : (v) async {
-                              await _audioManager.seek(
-                                Duration(milliseconds: v.toInt()),
-                              );
-                            },
+                                    await _audioManager.seek(
+                                      Duration(milliseconds: v.toInt()),
+                                    );
+                                  },
                             activeColor: primaryColor,
                             inactiveColor: primaryColor.withOpacity(0.25),
                           ),
@@ -1010,12 +1010,12 @@ class _RokiaScreenState extends State<RokiaScreen> {
                         onPressed: durationMs == 0
                             ? null
                             : () async {
-                          final int newMs =
-                          (positionMs + 10000).clamp(0, durationMs);
-                          await _audioManager.seek(
-                            Duration(milliseconds: newMs),
-                          );
-                        },
+                                final int newMs =
+                                    (positionMs + 10000).clamp(0, durationMs);
+                                await _audioManager.seek(
+                                  Duration(milliseconds: newMs),
+                                );
+                              },
                         icon: const Icon(Icons.forward_10_rounded),
                         color: isDark
                             ? Colors.white70
@@ -1036,12 +1036,9 @@ class _RokiaScreenState extends State<RokiaScreen> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 220),
-                    width: _isPlaying
-                        ? (isTab ? 110 : 75)
-                        : (isTab ? 102 : 70),
-                    height: _isPlaying
-                        ? (isTab ? 110 : 75)
-                        : (isTab ? 102 : 70),
+                    width: _isPlaying ? (isTab ? 110 : 75) : (isTab ? 102 : 70),
+                    height:
+                        _isPlaying ? (isTab ? 110 : 75) : (isTab ? 102 : 70),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
@@ -1052,7 +1049,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                       boxShadow: [
                         BoxShadow(
                           color:
-                          primaryColor.withOpacity(_isPlaying ? 0.6 : 0.35),
+                              primaryColor.withOpacity(_isPlaying ? 0.6 : 0.35),
                           blurRadius: _isPlaying ? 28 : 18,
                           spreadRadius: _isPlaying ? 2.2 : 0.9,
                           offset: const Offset(0, 8),
@@ -1066,23 +1063,23 @@ class _RokiaScreenState extends State<RokiaScreen> {
                             ScaleTransition(scale: anim, child: child),
                         child: (!_isDownloaded && _isBuffering)
                             ? const SizedBox(
-                          key: ValueKey('loader_full'),
-                          width: 36,
-                          height: 36,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3.2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white),
-                          ),
-                        )
+                                key: ValueKey('loader_full'),
+                                width: 36,
+                                height: 36,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3.2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
                             : Icon(
-                          _isPlaying
-                              ? Icons.pause_rounded
-                              : Icons.play_arrow_rounded,
-                          key: ValueKey<bool>(_isPlaying),
-                          color: Colors.white,
-                          size: isTab ? 50 : 44,
-                        ),
+                                _isPlaying
+                                    ? Icons.pause_rounded
+                                    : Icons.play_arrow_rounded,
+                                key: ValueKey<bool>(_isPlaying),
+                                color: Colors.white,
+                                size: isTab ? 50 : 44,
+                              ),
                       ),
                     ),
                   ),
@@ -1139,100 +1136,99 @@ class _RokiaScreenState extends State<RokiaScreen> {
                   onPressed: con.resetQuran,
                 ),
               ],
-
               title: Text(
                 AppString.KRokia,
                 style: GoogleFonts.cairo(
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
-                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                      MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
                 ),
               ),
             ),
           ),
           body: allDone
-            ? DoneDialogWidget(
-            repratBtn: "إعادة الرقية",
-            onPressedRepeat: con.resetQuran,
-            doneText: AppString.KZakarRokiaFeaturesDes,
-            KZakarFeaturesTitle: AppString.KRokiaFeaturesTitle,
-            KDaialogText: AppString.KRokiaDaialogText,
-          )
+              ? DoneDialogWidget(
+                  repratBtn: "إعادة الرقية",
+                  onPressedRepeat: con.resetQuran,
+                  doneText: AppString.KZakarRokiaFeaturesDes,
+                  KZakarFeaturesTitle: AppString.KRokiaFeaturesTitle,
+                  KDaialogText: AppString.KRokiaDaialogText,
+                )
               : Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0.w),
-              ),
-              Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.only(bottom: ResponsiveUtil.isTablet(context)? 50.h:80.h),
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, quranCurrentIndex) {
-                    final bool isDone =
-                        Azkary.rokiaQuranRepe[quranCurrentIndex] <= 0;
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0.w),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                        padding: EdgeInsets.only(
+                            bottom:
+                                ResponsiveUtil.isTablet(context) ? 50.h : 80.h),
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, quranCurrentIndex) {
+                          final bool isDone =
+                              Azkary.rokiaQuranRepe[quranCurrentIndex] <= 0;
 
-                    final Color cardColor = isDone
-                        ? const Color(AppStyle.yellowColor)
-                        : (isDark
-                        ? Colors.black
-                        : const Color(AppStyle.whiteColor));
-                    final isDarkLocal =
-                        Theme.of(context).brightness == Brightness.dark;
+                          final Color cardColor = isDone
+                              ? const Color(AppStyle.yellowColor)
+                              : (isDark
+                                  ? Colors.black
+                                  : const Color(AppStyle.whiteColor));
+                          final isDarkLocal =
+                              Theme.of(context).brightness == Brightness.dark;
 
+                          const Color primaryColorLocal =
+                              Color(AppStyle.primaryColor);
 
+                          final Color cardAccent = isDone
+                              ? const Color(AppStyle.yellowColor)
+                              : (isDarkLocal
+                                  ? Colors.black
+                                  : primaryColorLocal);
 
-                    final Color primaryColorLocal =
-                    const Color(AppStyle.primaryColor);
+                          final Color chipBg = isDone
+                              ? const Color(AppStyle.yellowColor)
+                              : (isDarkLocal
+                                  ? Colors.black
+                                  : const Color(0xFFECFDF3));
 
-                    final Color cardAccent = isDone
-                        ? const Color(AppStyle.yellowColor)
-                        : (isDarkLocal
-                        ? Colors.black
-                        : primaryColorLocal);
-
-                    final Color chipBg = isDone
-                        ? const Color(AppStyle.yellowColor)
-                        : (isDarkLocal
-                        ? Colors.black
-                        : const Color(0xFFECFDF3));
-
-                    final Color chipText = isDone
-                        ? Colors.black
-                        : (isDarkLocal
-                        ? Colors.white
-                        : KColors.primaryColor);
-                    return ScrollAppearAnimation(
-                      duration: const Duration(milliseconds: 700),
-                      child: GestureDetector(
-                        onTap: () =>
-                            con.decrementQuran(quranCurrentIndex),
-                        child: Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: AzkerItemBuilder(
-                            azkarTitle: Azkary
-                                .rokiaQuranTitle[quranCurrentIndex],
-                            azkarDes:
-                            Azkary.rokiaQuranRawi[quranCurrentIndex],
-                            fontSize: fontSize,
-                            azkarRepate: isDone
-                                ? '0'
-                                : '${Azkary.rokiaQuranRepe[quranCurrentIndex]}',
-                            color: cardAccent,
-                            repertColor: chipText,
-                            repertColor2: chipBg,
-                          ),
-                        ),
+                          final Color chipText = isDone
+                              ? Colors.black
+                              : (isDarkLocal
+                                  ? Colors.white
+                                  : KColors.primaryColor);
+                          return ScrollAppearAnimation(
+                            duration: const Duration(milliseconds: 700),
+                            child: GestureDetector(
+                              onTap: () =>
+                                  con.decrementQuran(quranCurrentIndex),
+                              child: Directionality(
+                                textDirection: TextDirection.rtl,
+                                child: AzkerItemBuilder(
+                                  azkarTitle:
+                                      Azkary.rokiaQuranTitle[quranCurrentIndex],
+                                  azkarDes:
+                                      Azkary.rokiaQuranRawi[quranCurrentIndex],
+                                  fontSize: fontSize,
+                                  azkarRepate: isDone
+                                      ? '0'
+                                      : '${Azkary.rokiaQuranRepe[quranCurrentIndex]}',
+                                  color: cardAccent,
+                                  repertColor: chipText,
+                                  repertColor2: chipBg,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (_, __) => SizedBox(height: 15.h),
+                        itemCount: Azkary.rokiaQuranTitle.length,
                       ),
-                    );
-                  },
-                  separatorBuilder: (_, __) => SizedBox(height: 15.h),
-                  itemCount: Azkary.rokiaQuranTitle.length,
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
 
           // ✅ الميني يظهر فقط بعد أول Play
           // bottomNavigationBar:
@@ -1267,8 +1263,3 @@ class _RokiaScreenState extends State<RokiaScreen> {
     );
   }
 }
-
-
-
-
-

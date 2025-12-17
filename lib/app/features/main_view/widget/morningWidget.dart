@@ -1,16 +1,9 @@
-
-
-
-
-
-
 import 'dart:math';
 
 import 'package:hijri/hijri_calendar.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 import '../../../core/shard/exports/all_exports.dart';
-import '../../../core/utils/style/k_color.dart';
 
 // class GreetingWidget extends StatefulWidget {
 //   const GreetingWidget({super.key});
@@ -178,7 +171,8 @@ class _HalalGreetingState extends State<HalalGreeting> {
         return null;
     }
   }
- var hijri = HijriCalendar.now();
+
+  var hijri = HijriCalendar.now();
 
   /// ============= تنبيهات الأيام البيض (13، 14، 15 هجري) =============
   String? _getWhiteDaysReminder() {
@@ -229,7 +223,8 @@ class _HalalGreetingState extends State<HalalGreeting> {
   void _scheduleNextGreetingUpdate() {
     final now = DateTime.now();
     final tomorrow = now.add(const Duration(days: 1));
-    final nextUpdate = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 0, 0, 5);
+    final nextUpdate =
+        DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 0, 0, 5);
 
     final durationUntilNext = nextUpdate.difference(now);
 
@@ -258,7 +253,6 @@ class _HalalGreetingState extends State<HalalGreeting> {
   }
 }
 
-
 class AdhkarReminder extends StatefulWidget {
   const AdhkarReminder({super.key});
 
@@ -268,7 +262,6 @@ class AdhkarReminder extends StatefulWidget {
 
 class _AdhkarReminderState extends State<AdhkarReminder> {
   String reminder = '';
-
 
   final List<String> randomMessages = [
     'لا تنسَ ذكر الله',

@@ -9,7 +9,6 @@ import '../../core/shard/exports/all_exports.dart';
 import '../../core/shard/widgets/ui_animations.dart';
 import '../sleep_view/sleep_azkar.dart';
 
-
 class AzkarOthers extends StatefulWidget {
   const AzkarOthers({super.key});
 
@@ -41,7 +40,6 @@ class _AzkarOthersState extends State<AzkarOthers> {
               onPressed: con.resetOther,
             ),
           ],
-
           leading: CupertinoNavigationBarBackButton(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white
@@ -59,72 +57,70 @@ class _AzkarOthersState extends State<AzkarOthers> {
         ),
       ),
       body: allDone
-          ?   DoneDialogWidget(
-      onPressedRepeat: con.resetOther,
-      doneText: AppString.KZakarOtherFeaturesDes,
-      KZakarFeaturesTitle: AppString.KAzkarDaialogText,
-      KDaialogText: AppString.KZakarFeaturesTitle,
-    )
+          ? DoneDialogWidget(
+              onPressedRepeat: con.resetOther,
+              doneText: AppString.KZakarOtherFeaturesDes,
+              KZakarFeaturesTitle: AppString.KAzkarDaialogText,
+              KDaialogText: AppString.KZakarFeaturesTitle,
+            )
           : Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0.w),
-          ),
-          Expanded(
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, zOtherIndex) {
-                // هل الذكر خلاص خلص؟
-                final bool isFinished = con.zOtherIndex >=
-                    Azkary.azkarRepate[zOtherIndex];
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0.w),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (context, zOtherIndex) {
+                      // هل الذكر خلاص خلص؟
+                      final bool isFinished =
+                          con.zOtherIndex >= Azkary.azkarRepate[zOtherIndex];
 
-                // النص اللي هيظهر في كبسولة التكرار
-                final String repeatText = isFinished
-                    ? "0"
-                    : '${Azkary.azkarRepate[zOtherIndex]}';
+                      // النص اللي هيظهر في كبسولة التكرار
+                      final String repeatText = isFinished
+                          ? "0"
+                          : '${Azkary.azkarRepate[zOtherIndex]}';
 
-                // لون الكارت حسب حالة الانتهاء
-                final Color cardColor = isFinished
-                    ? const Color(AppStyle
-                    .yellowColor) // نفس اللي كنت مستخدمه قبل كده
-                    : (isDark
-                    ? Colors.black
-                    : const Color(AppStyle.whiteColor));
+                      // لون الكارت حسب حالة الانتهاء
+                      final Color cardColor = isFinished
+                          ? const Color(AppStyle
+                              .yellowColor) // نفس اللي كنت مستخدمه قبل كده
+                          : (isDark
+                              ? Colors.black
+                              : const Color(AppStyle.whiteColor));
 
-                return ScrollAppearAnimation(
-                  duration: const Duration(milliseconds: 700),
-                  child: GestureDetector(
-                    onTap: () {
-                      // لما تضغط على الكارت يقلّل العد
-                      con.decrementOther(zOtherIndex);
+                      return ScrollAppearAnimation(
+                        duration: const Duration(milliseconds: 700),
+                        child: GestureDetector(
+                          onTap: () {
+                            // لما تضغط على الكارت يقلّل العد
+                            con.decrementOther(zOtherIndex);
+                          },
+                          child: AzkerItemBuilder(
+                            azkarTitle: Azkary.azkarOtherTitle[zOtherIndex],
+                            azkarDes: Azkary.azkarOtherDesc[zOtherIndex],
+                            azkarRepate: repeatText,
+                            fontSize: fontSize,
+                            color: cardColor,
+                            // تقدر تزبط ألوان كبسولة التكرار لو حابب
+                            repertColor: isFinished
+                                ? Colors.black
+                                : (isDark ? Colors.white : Colors.black87),
+                            repertColor2: isFinished
+                                ? const Color(AppStyle.yellowColor)
+                                : null,
+                          ),
+                        ),
+                      );
                     },
-                    child: AzkerItemBuilder(
-                      azkarTitle:
-                      Azkary.azkarOtherTitle[zOtherIndex],
-                      azkarDes:
-                      Azkary.azkarOtherDesc[zOtherIndex],
-                      azkarRepate: repeatText,
-                      fontSize: fontSize,
-                      color: cardColor,
-                      // تقدر تزبط ألوان كبسولة التكرار لو حابب
-                      repertColor: isFinished
-                          ? Colors.black
-                          : (isDark ? Colors.white : Colors.black87),
-                      repertColor2: isFinished
-                          ? const Color(AppStyle.yellowColor)
-                          : null,
-                    ),
+                    separatorBuilder: (context, zOtherIndex) =>
+                        SizedBox(height: 15.h),
+                    itemCount: Azkary.azkarOtherTitle.length,
                   ),
-                );
-              },
-              separatorBuilder: (context, zOtherIndex) =>
-                  SizedBox(height: 15.h),
-              itemCount: Azkary.azkarOtherTitle.length,
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -191,7 +187,7 @@ Widget buildOtherZakarItem({
   final shareFullTextFancy = """
 🌺✨🌿✨🌺✨🌿✨🌺✨🌿
 
-📿 *${fullText}*
+📿 *$fullText*
 
 🌿✨🌸✨🌿✨🌸✨🌿✨
 
@@ -232,7 +228,8 @@ Widget buildOtherZakarItem({
                     azkarOtherTitle,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.notoKufiArabic(
-                      fontSize: MediaQuery.sizeOf(context).width > 600 ? 9.sp : 14.sp,
+                      fontSize:
+                          MediaQuery.sizeOf(context).width > 600 ? 9.sp : 14.sp,
                       height: 3,
                     ),
                   ),
@@ -278,7 +275,8 @@ Widget buildOtherZakarItem({
           children: [
             GestureDetector(
               onTap: () async {
-                await Clipboard.setData(ClipboardData(text: shareFullTextFancy));
+                await Clipboard.setData(
+                    ClipboardData(text: shareFullTextFancy));
                 Fluttertoast.showToast(
                   msg: "تم نسخ الذكر بنجاح",
                   gravity: ToastGravity.BOTTOM,
@@ -292,9 +290,7 @@ Widget buildOtherZakarItem({
                 child: const Icon(Icons.copy, color: Colors.green, size: 20),
               ),
             ),
-
             SizedBox(width: 15.w),
-
             GestureDetector(
               onTap: () {
                 Share.share(shareFullTextFancy, subject: azkarOtherTitle);

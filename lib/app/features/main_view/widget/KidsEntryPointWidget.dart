@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import '../../../core/utils/style/responsive_util.dart';
 import 'KidsCornerScreen.dart';
 
 class KidsEntryPointWidget extends StatelessWidget {
@@ -58,7 +59,7 @@ class KidsEntryPointWidget extends StatelessWidget {
                       Text(
                         "ركن المسلم الصغير 👶",
                         style: GoogleFonts.cairo(
-                          fontSize: 16.sp,
+                          fontSize: ResponsiveUtil.isTablet(context)?10.sp:16.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -66,7 +67,7 @@ class KidsEntryPointWidget extends StatelessWidget {
                       Text(
                         "مهمات يومية، مستويات، ونجوم في انتظارك!",
                         style: GoogleFonts.cairo(
-                          fontSize: 11.sp,
+                          fontSize:ResponsiveUtil.isTablet(context)?8.sp: 11.sp,
                           color: Colors.white.withOpacity(0.9),
                         ),
                       ),

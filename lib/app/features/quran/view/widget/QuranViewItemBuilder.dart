@@ -438,7 +438,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   ),
                   // elevation: 8,
                   // shadowColor: Colors.amber.withOpacity(0.2),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.more_vert,
                     size: 22,
                   ),
@@ -606,7 +606,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               ),
             ),
             if (_isCurrentPageBookmarked)
-              Positioned(
+              const Positioned(
                 top: 0,
                 right: 160, // أو left في حال أردت
                 child: Icon(
@@ -724,7 +724,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               height: 40,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(2),
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
                     Colors.green,
                     Colors.teal,

@@ -1,5 +1,3 @@
-
-
 import 'package:muslimdaily/app/features/counter_view/counter_azkar.dart';
 
 import '../exports/all_exports.dart';
@@ -12,8 +10,6 @@ class CounterWidgetBuilder extends StatefulWidget {
 }
 
 class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
-
-
   @override
   Widget build(BuildContext context) {
     final controller = Provider.of<AzkarProvider>(context);
@@ -22,7 +18,6 @@ class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
     return GestureDetector(
       onTap: () {
         controller.incrementCount();
-
       },
       child: Stack(alignment: Alignment.center, children: [
         Image.asset(
@@ -35,9 +30,11 @@ class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
           // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             SizedBox(
-              height: MediaQuery.sizeOf(context).height/5.6,
+              height: MediaQuery.sizeOf(context).height / 5.6,
               width: MediaQuery.of(context).size.width,
               child: ListView.separated(
                   separatorBuilder: (context, index) => SizedBox(
@@ -51,7 +48,6 @@ class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
                     return Container(
                       color: Colors.transparent,
                       child: GestureDetector(
-
                         // onTap:() {
                         //   showDialog(
                         //     context: context,
@@ -117,7 +113,8 @@ class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
                             color: Colors.black.withOpacity(0.5),
                             elevation: 10,
                             child: Padding(
-                              padding:  EdgeInsets.symmetric(horizontal: 8.w,vertical: 10.h),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w, vertical: 10.h),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment:
@@ -126,12 +123,12 @@ class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
                                   Text(Azkary.azkarDescription[index],
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.cairo(
-                                          fontSize: isTablate? 9.sp:15.sp,
+                                          fontSize: isTablate ? 9.sp : 15.sp,
                                           color: Colors.white)),
                                   Text(
-                                      '  مرات التسبيح(${Azkary.azkarCount[index]})\ مرة',
+                                      '  مرات التسبيح(${Azkary.azkarCount[index]}) مرة',
                                       style: GoogleFonts.cairo(
-                                          fontSize:isTablate? 9.sp: 12.sp,
+                                          fontSize: isTablate ? 9.sp : 12.sp,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600)),
                                 ],
@@ -172,7 +169,8 @@ class _CounterWidgetBuilderState extends State<CounterWidgetBuilder> {
             SizedBox(
               height: 20.h,
             ),
-            Expanded(child: SizedBox(height: 130, child: TasbeehRealPlus())),
+            const Expanded(
+                child: SizedBox(height: 130, child: TasbeehRealPlus())),
 
             // Row(
             //   crossAxisAlignment: CrossAxisAlignment.center,

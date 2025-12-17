@@ -1,4 +1,3 @@
-
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 
 import '../exports/all_exports.dart';
@@ -13,7 +12,7 @@ class SplashItemBuilder extends StatefulWidget {
 class _SplashItemBuilderState extends State<SplashItemBuilder> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: double.infinity,
       // color: Colors.white,
@@ -42,8 +41,7 @@ class _SplashItemBuilderState extends State<SplashItemBuilder> {
           //     ),
           //   ),
           // ),
-          SizedBox(
-              child: KLoading.progressIOSIndicator(context: context)),
+          SizedBox(child: KLoading.progressIOSIndicator(context: context)),
         ],
       ),
     );

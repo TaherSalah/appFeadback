@@ -3,8 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/features/messa_view/azkar_massa.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:confetti/confetti.dart';
+
+import '../../../core/utils/style/responsive_util.dart';
 
 class KidsCornerScreen extends StatefulWidget {
   const KidsCornerScreen({super.key});
@@ -254,6 +257,12 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   : Colors.black,
             ),
             centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.person_pin, color: isDark ? Colors.white : themeColor),
+                  onPressed: _showAvatarSelection,
+                )
+              ],
             title: Text(
               "ركن المسلم الصغير",
               style: GoogleFonts.cairo(
@@ -302,7 +311,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                       Text(
                         "رحلة الأبطال 🗺️",
                         style: GoogleFonts.cairo(
-                          fontSize: 18.sp,
+                          fontSize:ResponsiveUtil.isTablet(context)?12.sp: 18.sp,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : Colors.black87,
                         ),
@@ -332,19 +341,20 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
   }
 
   void _showAvatarSelection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration:  BoxDecoration(
+          color:AppThemeColors.cardBackgroundColor(context),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        padding: const EdgeInsets.all(20),
+        padding:  EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("اختر بطلك", style: GoogleFonts.cairo(fontSize: 18.sp, fontWeight: FontWeight.bold)),
+            Text("اختر بطلك", style: GoogleFonts.cairo(fontSize:  ResponsiveUtil.isTablet(context)?14.sp:18.sp, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -413,13 +423,13 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               children: [
                 Text(
                   "المستوى: ${_getRankTitle()}",
-                  style: GoogleFonts.cairo(fontSize: 18.sp, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.cairo(fontSize: ResponsiveUtil.isTablet(context)?10.sp: 18.sp, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 5),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
-                  child: Text("⭐ $_totalStars نقطة", style: GoogleFonts.cairo(fontSize: 14.sp, color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text("⭐ $_totalStars نقطة", style: GoogleFonts.cairo(fontSize: ResponsiveUtil.isTablet(context)?10.sp:14.sp, color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -431,7 +441,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
 
   Widget _buildTrophySection(bool isDark) {
     return SizedBox(
-      height: 110,
+      height:ResponsiveUtil.isTablet(context)?125: 110,
       child: ListView.separated(
         itemCount: _allTrophies.length,
         scrollDirection: Axis.horizontal,
@@ -440,7 +450,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           final trophy = _allTrophies[index];
           final unlocked = trophy['unlocked'];
           return Container(
-            width: 90,
+            width:ResponsiveUtil.isTablet(context)?125: 90,
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF2C3E50) : Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -457,11 +467,11 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                 Text(
                   trophy['title'], 
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 10.sp, fontWeight: FontWeight.bold, color: unlocked ? (isDark ? Colors.white : Colors.black87) : Colors.grey),
+                  style: GoogleFonts.cairo(fontSize:ResponsiveUtil.isTablet(context)?8.sp: 10.sp, fontWeight: FontWeight.bold, color: unlocked ? (isDark ? Colors.white : Colors.black87) : Colors.grey),
                   maxLines: 1, 
                   overflow: TextOverflow.ellipsis
                 ),
-                Text("${trophy['required']}", style: GoogleFonts.cairo(fontSize: 10.sp, fontWeight: FontWeight.bold, color: unlocked ? Colors.amber : Colors.grey)),
+                Text("${trophy['required']}", style: GoogleFonts.cairo(fontSize: ResponsiveUtil.isTablet(context)?7.sp: 10.sp, fontWeight: FontWeight.bold, color: unlocked ? Colors.amber : Colors.grey)),
               ],
             ),
           );
@@ -506,11 +516,11 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           ),
           title: Text(
             level['title'],
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp, color: isDark ? Colors.white : Colors.black87),
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: ResponsiveUtil.isTablet(context)?10.sp:16.sp, color: isDark ? Colors.white : Colors.black87),
           ),
           subtitle: Text(
             isLevelComplete ? "رائع! أنهيت المستوى 🏆" : "$completedCount / ${tasks.length} مكتمل",
-            style: GoogleFonts.cairo(fontSize: 12.sp, color: isLevelComplete ? Colors.green : Colors.grey, fontWeight: isLevelComplete ? FontWeight.bold : FontWeight.normal),
+            style: GoogleFonts.cairo(fontSize:ResponsiveUtil.isTablet(context)?8.sp: 12.sp, color: isLevelComplete ? Colors.green : Colors.grey, fontWeight: isLevelComplete ? FontWeight.bold : FontWeight.normal),
           ),
           children: tasks.map<Widget>((task) {
             final isDone = task['done'];
@@ -527,7 +537,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                 title: Text(
                   task['title'],
                   style: GoogleFonts.cairo(
-                    fontSize: 14.sp,
+                    fontSize: ResponsiveUtil.isTablet(context)?8.sp:14.sp,
                     fontWeight: isDone ? FontWeight.bold : FontWeight.normal,
                     color: isDark ? Colors.white70 : Colors.black87,
                   ),

@@ -1,8 +1,3 @@
-
-
-
-
-
 // ===== 1. Model للذكر =====
 import 'dart:math';
 
@@ -31,26 +26,26 @@ class Zikr {
   });
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'text': text,
-    'targetCount': targetCount,
-    'isCustom': isCustom,
-    'currentProgress': currentProgress,
-    'completedCycles': completedCycles,
-    'lastUpdated': lastUpdated?.toIso8601String(),
-  };
+        'id': id,
+        'text': text,
+        'targetCount': targetCount,
+        'isCustom': isCustom,
+        'currentProgress': currentProgress,
+        'completedCycles': completedCycles,
+        'lastUpdated': lastUpdated?.toIso8601String(),
+      };
 
   factory Zikr.fromJson(Map<String, dynamic> json) => Zikr(
-    id: json['id'],
-    text: json['text'],
-    targetCount: json['targetCount'],
-    isCustom: json['isCustom'] ?? false,
-    currentProgress: json['currentProgress'] ?? 0,
-    completedCycles: json['completedCycles'] ?? 0,
-    lastUpdated: json['lastUpdated'] != null
-        ? DateTime.parse(json['lastUpdated'])
-        : null,
-  );
+        id: json['id'],
+        text: json['text'],
+        targetCount: json['targetCount'],
+        isCustom: json['isCustom'] ?? false,
+        currentProgress: json['currentProgress'] ?? 0,
+        completedCycles: json['completedCycles'] ?? 0,
+        lastUpdated: json['lastUpdated'] != null
+            ? DateTime.parse(json['lastUpdated'])
+            : null,
+      );
 
   Zikr copyWith({
     String? id,
@@ -258,7 +253,8 @@ class AzkarCounter extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () => _showAddZikrDialog(context),
-              icon: const Icon(Icons.add_circle_outline, color: Color(0xFF10B981)),
+              icon: const Icon(Icons.add_circle_outline,
+                  color: Color(0xFF10B981)),
               iconSize: 28.sp,
             ),
           ],
@@ -279,19 +275,20 @@ class AzkarCounter extends StatelessWidget {
     );
   }
 
-  Widget _buildZikrCard(BuildContext context, Zikr zikr, AzkarManagementProvider provider) {
+  Widget _buildZikrCard(
+      BuildContext context, Zikr zikr, AzkarManagementProvider provider) {
     final progress = zikr.currentProgress / zikr.targetCount;
     final isTablet = MediaQuery.sizeOf(context).width > 600;
 
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF1E293B),
-            const Color(0xFF334155),
+            Color(0xFF1E293B),
+            Color(0xFF334155),
           ],
         ),
         borderRadius: BorderRadius.circular(20.r),
@@ -346,7 +343,8 @@ class AzkarCounter extends StatelessWidget {
                                   vertical: 4.h,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF10B981).withOpacity(0.2),
+                                  color:
+                                      const Color(0xFF10B981).withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(8.r),
                                   border: Border.all(
                                     color: const Color(0xFF10B981),
@@ -370,7 +368,8 @@ class AzkarCounter extends StatelessWidget {
                                     vertical: 4.h,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFFBBF24).withOpacity(0.2),
+                                    color: const Color(0xFFFBBF24)
+                                        .withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(8.r),
                                     border: Border.all(
                                       color: const Color(0xFFFBBF24),
@@ -412,7 +411,8 @@ class AzkarCounter extends StatelessWidget {
                             iconSize: 20.sp,
                           ),
                           IconButton(
-                            onPressed: () => _showDeleteConfirmation(context, zikr, provider),
+                            onPressed: () => _showDeleteConfirmation(
+                                context, zikr, provider),
                             icon: const Icon(Icons.delete_outline),
                             color: const Color(0xFFEF4444),
                             iconSize: 20.sp,
@@ -634,7 +634,8 @@ class AzkarCounter extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 if (textController.text.isNotEmpty) {
-                  final count = int.tryParse(countController.text) ?? zikr.targetCount;
+                  final count =
+                      int.tryParse(countController.text) ?? zikr.targetCount;
                   Provider.of<AzkarManagementProvider>(context, listen: false)
                       .updateZikr(zikr.id, textController.text, count);
                   Navigator.pop(context);
@@ -657,7 +658,8 @@ class AzkarCounter extends StatelessWidget {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, Zikr zikr, AzkarManagementProvider provider) {
+  void _showDeleteConfirmation(
+      BuildContext context, Zikr zikr, AzkarManagementProvider provider) {
     showDialog(
       context: context,
       builder: (context) => Directionality(
@@ -724,7 +726,8 @@ class _UpdatedAzkarCounterState extends State<UpdatedAzkarCounter> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          preferredSize:
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: Theme.of(context).brightness == Brightness.dark
@@ -737,7 +740,8 @@ class _UpdatedAzkarCounterState extends State<UpdatedAzkarCounter> {
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize:
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
             actions: [
@@ -766,10 +770,12 @@ class UpdatedCounterWidgetBuilder extends StatefulWidget {
   const UpdatedCounterWidgetBuilder({super.key});
 
   @override
-  State<UpdatedCounterWidgetBuilder> createState() => _UpdatedCounterWidgetBuilderState();
+  State<UpdatedCounterWidgetBuilder> createState() =>
+      _UpdatedCounterWidgetBuilderState();
 }
 
-class _UpdatedCounterWidgetBuilderState extends State<UpdatedCounterWidgetBuilder> {
+class _UpdatedCounterWidgetBuilderState
+    extends State<UpdatedCounterWidgetBuilder> {
   @override
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.sizeOf(context).width > 600;
@@ -858,7 +864,8 @@ class _UpdatedCounterWidgetBuilderState extends State<UpdatedCounterWidgetBuilde
                             beadsCount: selectedZikr.targetCount,
                             currentProgress: selectedZikr.currentProgress,
                             onIncrement: () => provider.incrementProgress(),
-                            onReset: () => provider.resetProgress(selectedZikr.id),
+                            onReset: () =>
+                                provider.resetProgress(selectedZikr.id),
                           ),
                         ],
                       ),
@@ -879,12 +886,12 @@ class _UpdatedCounterWidgetBuilderState extends State<UpdatedCounterWidgetBuilde
     return Container(
       padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF1E293B),
-            const Color(0xFF334155),
+            Color(0xFF1E293B),
+            Color(0xFF334155),
           ],
         ),
         borderRadius: BorderRadius.circular(20.r),
@@ -1006,12 +1013,12 @@ class _UpdatedCounterWidgetBuilderState extends State<UpdatedCounterWidgetBuilde
           padding: EdgeInsets.all(isTablet ? 32.r : 24.r),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: RadialGradient(
+            gradient: const RadialGradient(
               center: Alignment.center,
               radius: 1.5,
               colors: [
-                const Color(0xFF1E293B),
-                const Color(0xFF0F172A),
+                Color(0xFF1E293B),
+                Color(0xFF0F172A),
               ],
             ),
             boxShadow: [
@@ -1108,7 +1115,8 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     )..repeat();
-    _glowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_glowController);
+    _glowAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_glowController);
 
     _particleController = AnimationController(
       duration: const Duration(milliseconds: 1500),
@@ -1123,7 +1131,8 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
       duration: const Duration(milliseconds: 3000),
       vsync: this,
     )..repeat();
-    _shimmerAnimation = Tween<double>(begin: -2.0, end: 2.0).animate(_shimmerController);
+    _shimmerAnimation =
+        Tween<double>(begin: -2.0, end: 2.0).animate(_shimmerController);
   }
 
   @override
@@ -1266,7 +1275,8 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
                     if (_beadPositions.isEmpty) return const SizedBox();
                     final pos = _beadPositions[index];
                     final isPassed = index < currentBead;
-                    final isNext = index == (currentBead + 1) % widget.beadsCount;
+                    final isNext =
+                        index == (currentBead + 1) % widget.beadsCount;
 
                     return Positioned(
                       left: pos.dx - 18,
@@ -1281,7 +1291,8 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
                   }),
 
                   // الخرزة النشطة
-                  if (_beadPositions.isNotEmpty && currentBead < _beadPositions.length)
+                  if (_beadPositions.isNotEmpty &&
+                      currentBead < _beadPositions.length)
                     AnimatedBuilder(
                       animation: _moveAnimation,
                       builder: (context, child) {
@@ -1289,13 +1300,16 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
                         final nextIndex = (currentBead + 1) % widget.beadsCount;
                         final nextPos = _beadPositions[nextIndex];
 
-                        final x = startPos.dx + (nextPos.dx - startPos.dx) * _moveAnimation.value;
-                        final y = startPos.dy + (nextPos.dy - startPos.dy) * _moveAnimation.value;
+                        final x = startPos.dx +
+                            (nextPos.dx - startPos.dx) * _moveAnimation.value;
+                        final y = startPos.dy +
+                            (nextPos.dy - startPos.dy) * _moveAnimation.value;
 
                         return Positioned(
                           left: x - 28,
                           top: y - 28,
-                          child: _buildActiveBead(size: 56, currentBead: currentBead),
+                          child: _buildActiveBead(
+                              size: 56, currentBead: currentBead),
                         );
                       },
                     ),
@@ -1308,21 +1322,28 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
                       return AnimatedBuilder(
                         animation: _particleAnimation,
                         builder: (context, child) {
-                          final distance = particle.distance * _particleAnimation.value;
+                          final distance =
+                              particle.distance * _particleAnimation.value;
                           final opacity = 1.0 - _particleAnimation.value;
                           return Positioned(
-                            left: centerX + cos(particle.angle) * distance - particle.size / 2,
-                            top: centerY + sin(particle.angle) * distance - particle.size / 2,
+                            left: centerX +
+                                cos(particle.angle) * distance -
+                                particle.size / 2,
+                            top: centerY +
+                                sin(particle.angle) * distance -
+                                particle.size / 2,
                             child: Container(
                               width: particle.size,
                               height: particle.size,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: (particle.color ?? const Color(0xFFFBBF24))
-                                    .withOpacity(opacity),
+                                color:
+                                    (particle.color ?? const Color(0xFFFBBF24))
+                                        .withOpacity(opacity),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: (particle.color ?? const Color(0xFFFBBF24))
+                                    color: (particle.color ??
+                                            const Color(0xFFFBBF24))
                                         .withOpacity(opacity * 0.5),
                                     blurRadius: 8,
                                     spreadRadius: 2,
@@ -1333,7 +1354,7 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
                           );
                         },
                       );
-                    }).toList(),
+                    }),
 
                   // الزر المركزي
                   Center(
@@ -1367,60 +1388,60 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
         shape: BoxShape.circle,
         gradient: isPassed
             ? const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF10B981),
-            Color(0xFF059669),
-          ],
-        )
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF10B981),
+                  Color(0xFF059669),
+                ],
+              )
             : isNext
-            ? const RadialGradient(
-          colors: [
-            Color(0xFF6366F1),
-            Color(0xFF4F46E5),
-          ],
-        )
-            : const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF334155),
-            Color(0xFF1E293B),
-          ],
-        ),
+                ? const RadialGradient(
+                    colors: [
+                      Color(0xFF6366F1),
+                      Color(0xFF4F46E5),
+                    ],
+                  )
+                : const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF334155),
+                      Color(0xFF1E293B),
+                    ],
+                  ),
         boxShadow: isPassed
             ? [
-          BoxShadow(
-            color: const Color(0xFF10B981).withOpacity(0.5),
-            blurRadius: 12,
-            spreadRadius: 2,
-          ),
-        ]
+                BoxShadow(
+                  color: const Color(0xFF10B981).withOpacity(0.5),
+                  blurRadius: 12,
+                  spreadRadius: 2,
+                ),
+              ]
             : [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.4),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
         border: Border.all(
           color: isPassed
               ? const Color(0xFF34D399)
               : isNext
-              ? const Color(0xFF818CF8)
-              : const Color(0xFF475569),
+                  ? const Color(0xFF818CF8)
+                  : const Color(0xFF475569),
           width: isPassed ? 3.w : 1.5.w,
         ),
       ),
       child: isPassed
           ? Center(
-        child: Icon(
-          Icons.check_circle,
-          size: 18.sp,
-          color: Colors.white,
-        ),
-      )
+              child: Icon(
+                Icons.check_circle,
+                size: 18.sp,
+                color: Colors.white,
+              ),
+            )
           : null,
     );
   }
@@ -1480,7 +1501,7 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
                   child: Container(
                     width: size * 0.55,
                     height: size * 0.55,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white,
                     ),
@@ -1521,7 +1542,8 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFF6366F1).withOpacity(0.3 * _pulseAnimation.value),
+                      const Color(0xFF6366F1)
+                          .withOpacity(0.3 * _pulseAnimation.value),
                       Colors.transparent,
                     ],
                   ),

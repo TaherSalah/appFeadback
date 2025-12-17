@@ -119,7 +119,7 @@ void showThemeSheet(
   final isDark = Theme.of(ctx).brightness == Brightness.dark;
 
   final Color primary = isDark ? AppColors.primary : const Color(0xFF1B5E20);
-  final Color accentGold = const Color(0xFFD4AF37);
+  const Color accentGold = Color(0xFFD4AF37);
 
   // مفاتيح SharedPreferences
   const String kCountryKey = 'selected_country';
@@ -136,7 +136,7 @@ void showThemeSheet(
   bool allowLocationUsage = true;
 
   // نفس منطق حساب المسافة من TimingScreen
-  double _haversine(double lat1, double lon1, double lat2, double lon2) {
+  double haversine(double lat1, double lon1, double lat2, double lon2) {
     const R = 6371.0;
     final dLat = (lat2 - lat1) * (math.pi / 180);
     final dLon = (lon2 - lon1) * (math.pi / 180);
@@ -149,7 +149,7 @@ void showThemeSheet(
     return R * c;
   }
 
-  Future<bool> _ensureLocationPermission() async {
+  Future<bool> ensureLocationPermission() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return false;
 
@@ -223,11 +223,11 @@ void showThemeSheet(
   }
 
   // تحديد أقرب مدينة تلقائيًا داخل الـ BottomSheet
-  Future<void> _selectByLocationInSheet(
+  Future<void> selectByLocationInSheet(
     void Function(void Function()) setState,
     BuildContext context,
   ) async {
-    final ok = await _ensureLocationPermission();
+    final ok = await ensureLocationPermission();
     if (!ok) {
       //   ScaffoldMessenger.of(context).showSnackBar(
       //     const SnackBar(
@@ -263,7 +263,7 @@ void showThemeSheet(
         final lat = (v?['lat'])?.toDouble();
         final lng = (v?['lng'])?.toDouble();
         if (lat == null || lng == null) return;
-        final d = _haversine(userLat, userLng, lat, lng);
+        final d = haversine(userLat, userLng, lat, lng);
         if (d < bestDist) {
           bestDist = d;
           bestCountry = country;
@@ -816,7 +816,7 @@ void showThemeSheet(
                                           allowLocationUsage = true;
                                         });
                                         await saveLocation(true);
-                                        await _selectByLocationInSheet(
+                                        await selectByLocationInSheet(
                                             setState, context);
                                       }
                                     },

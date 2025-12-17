@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/utils/style/responsive_util.dart';
+
 class AllahNameWidget extends StatefulWidget {
   const AllahNameWidget({super.key});
 
@@ -201,7 +203,7 @@ class _AllahNameWidgetState extends State<AllahNameWidget> {
                     child: Text(
                       _todaysName['name']!,
                       style: GoogleFonts.amiri(
-                        fontSize: 32.sp,
+                        fontSize:ResponsiveUtil.isTablet(context)?15.sp: 32.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white, // Color is ignored by ShaderMask but required
                       ),
@@ -218,7 +220,7 @@ class _AllahNameWidgetState extends State<AllahNameWidget> {
                     _todaysName['meaning']!,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.cairo(
-                      fontSize: 14.sp,
+                      fontSize: ResponsiveUtil.isTablet(context)?10.sp:14.sp,
                       color: isDark ? Colors.white70 : Colors.black87,
                       fontWeight: FontWeight.w600,
                     ),
@@ -241,9 +243,8 @@ class _AllahNameWidgetState extends State<AllahNameWidget> {
                           child: Text(
                             _todaysName['reflection']!,
                             style: GoogleFonts.cairo(
-                              fontSize: 12.sp,
+                              fontSize:ResponsiveUtil.isTablet(context)?9.sp: 12.sp,
                               color: isDark ? Colors.grey[300] : Colors.grey[800],
-                              fontStyle: FontStyle.italic,
                             ),
                           ),
                         ),

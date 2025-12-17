@@ -1,10 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 
-import '../../../core/shard/constanc/app_string.dart';
 import '../../../core/utils/style/responsive_util.dart';
 
 class Allazkarlistview extends StatelessWidget {
@@ -42,8 +38,8 @@ class Allazkarlistview extends StatelessWidget {
         preferredSize:
             Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
         child: AppBar(
-          leading:  CupertinoNavigationBarBackButton(
-            color: isDark?Colors.white: Colors.black,
+          leading: CupertinoNavigationBarBackButton(
+            color: isDark ? Colors.white : Colors.black,
           ),
           centerTitle: true,
           title: Text(
@@ -64,8 +60,8 @@ class Allazkarlistview extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 15),
                   child: SizedBox(
                     child: GridView.count(
                       crossAxisCount: 2,

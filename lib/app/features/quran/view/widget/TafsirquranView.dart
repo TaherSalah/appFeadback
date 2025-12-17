@@ -157,7 +157,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                     title: "برجاء الانتظار حتى يكتمل تنزيل التفسير",
                     fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   KLoading.progressIOSIndicator(context: context),
                 ],
               ),
@@ -192,8 +192,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('تعذّر تنزيل التفسير: $e')),
         // );
-        KHelper.showError(message:'تعذّر تنزيل التفسير: $e');
-
+        KHelper.showError(message: 'تعذّر تنزيل التفسير: $e');
       }
     } finally {
       if (mounted) setState(() => _downloading.remove(index));
@@ -235,8 +234,10 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
-            leading:
-                 CupertinoNavigationBarBackButton(color: Theme.of(context).brightness == Brightness.dark ? Colors.white:Colors.black),
+            leading: CupertinoNavigationBarBackButton(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black),
             centerTitle: true,
             title: Text(
               "كتب تفسير القرآن الكريم",
@@ -331,7 +332,9 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                                 onTap: () => _handleDownloadOrOpen(index),
                                 child: CircleAvatar(
                                   // backgroundColor: Colors.white,
-                                  radius:ResponsiveUtil.isTablet(context)? 25:21,
+                                  radius: ResponsiveUtil.isTablet(context)
+                                      ? 25
+                                      : 21,
                                   child: Builder(
                                     builder: (_) {
                                       if (isBusy) {
@@ -349,16 +352,20 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                                       }
                                       if (isDownloaded) {
                                         // ✅ تم التنزيل — أيقونة فتح
-                                        return  Icon(
+                                        return Icon(
                                           Icons.open_in_new,
-                                          size:ResponsiveUtil.isTablet(context)? 28:22,
+                                          size: ResponsiveUtil.isTablet(context)
+                                              ? 28
+                                              : 22,
                                           // color: Colors.black,
                                         );
                                       }
                                       // ⬇️ لم يُنزّل بعد — أيقونة تنزيل
-                                      return  Icon(
+                                      return Icon(
                                         Icons.download,
-                                        size:ResponsiveUtil.isTablet(context)? 28:22,
+                                        size: ResponsiveUtil.isTablet(context)
+                                            ? 28
+                                            : 22,
                                         // color: Colors.green,
                                       );
                                     },

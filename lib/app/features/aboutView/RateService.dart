@@ -525,7 +525,8 @@ class RateService {
       builder: (dialogContext) => Directionality(
         textDirection: TextDirection.rtl,
         child: Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           backgroundColor: Colors.transparent,
           child: Stack(
             clipBehavior: Clip.none,
@@ -564,7 +565,7 @@ class RateService {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '⭐'*5,
+                      '⭐' * 5,
                       style: GoogleFonts.cairo(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -601,8 +602,8 @@ class RateService {
                           width: 1.2,
                         ),
                       ),
-                      child: Row(
-                        children: const [
+                      child: const Row(
+                        children: [
                           Icon(Icons.star_rate_rounded,
                               size: 18, color: Color(0xFF00897B)),
                           SizedBox(width: 8),
@@ -639,15 +640,15 @@ class RateService {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 11),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
                             ),
                             child: Text(
                               'لاحقاً',
                               style: TextStyle(
                                 fontSize: 14,
-                                color:
-                                isDark ? Colors.white : Colors.grey.shade800,
+                                color: isDark
+                                    ? Colors.white
+                                    : Colors.grey.shade800,
                               ),
                             ),
                           ),
@@ -670,8 +671,7 @@ class RateService {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 11),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
                             ),
                           ),
                         ),
@@ -739,12 +739,14 @@ class RateService {
       if (Platform.isAndroid) {
         final hasPlayStore = await _hasPlayStore();
         final uri = hasPlayStore
-            ? Uri.parse('https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily')
+            ? Uri.parse(
+                'https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily')
             : Uri.parse('https://appgallery.huawei.com/app/C114956477');
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else if (Platform.isIOS) {
         await launchUrl(
-          Uri.parse('https://apps.apple.com/us/app/رفيق-المسلم-اليومي/id6749927338'),
+          Uri.parse(
+              'https://apps.apple.com/us/app/رفيق-المسلم-اليومي/id6749927338'),
           mode: LaunchMode.externalApplication,
         );
       }

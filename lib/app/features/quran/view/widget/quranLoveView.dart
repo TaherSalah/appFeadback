@@ -3,10 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
 import 'package:muslimdaily/app/core/utils/constent/quranLove.dart';
-import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:flutter/cupertino.dart';
-
-import '../../../../core/utils/style/responsive_util.dart';
 
 // class QuranLoveView extends StatelessWidget {
 //   const QuranLoveView({super.key});
@@ -100,12 +97,10 @@ import '../../../../core/utils/style/responsive_util.dart';
 //   }
 // }
 
-
-
 /// شاشة أساسية لعرض النصوص (فضل، دعاء، …) بشكل أنيق ومريح
 class QuranTextScreen extends StatelessWidget {
   final String title;
-  final String text,bottomText;
+  final String text, bottomText;
   final double fontSize;
   final bool showBasmala;
 
@@ -114,7 +109,8 @@ class QuranTextScreen extends StatelessWidget {
     required this.title,
     required this.text,
     this.fontSize = 16,
-    this.showBasmala = false,  required this.bottomText,
+    this.showBasmala = false,
+    required this.bottomText,
   });
 
   @override
@@ -137,12 +133,12 @@ class QuranTextScreen extends StatelessWidget {
             ),
             centerTitle: true,
             title: Text(
-                "دعاء ختم القرآن الكريم",
+              "دعاء ختم القرآن الكريم",
               style: GoogleFonts.cairo(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -181,9 +177,7 @@ class QuranTextScreen extends StatelessWidget {
                         ),
                       ],
                       border: Border.all(
-                        color: (isDark
-                            ? AppStyle.scondColors
-                            : Colors.blue)
+                        color: (isDark ? AppStyle.scondColors : Colors.blue)
                             .withOpacity(0.18),
                         width: 1,
                       ),
@@ -231,9 +225,7 @@ class QuranTextScreen extends StatelessWidget {
                                 fontFamily: "cairo",
                                 fontSize: 24.sp,
                                 height: 1.4,
-                                color: isDark
-                                    ? Colors.white
-                                    : Colors.black87,
+                                color: isDark ? Colors.white : Colors.black87,
                               ),
                             ),
                           ),
@@ -247,8 +239,8 @@ class QuranTextScreen extends StatelessWidget {
                                 gradient: LinearGradient(
                                   colors: [
                                     (isDark
-                                        ? AppStyle.scondColors
-                                        : Colors.blue)
+                                            ? AppStyle.scondColors
+                                            : Colors.blue)
                                         .withOpacity(0.3),
                                     (isDark
                                         ? AppStyle.scondColors
@@ -258,7 +250,6 @@ class QuranTextScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-
                         ],
 
                         // النص الأساسي قابل للتحديد
@@ -269,8 +260,9 @@ class QuranTextScreen extends StatelessWidget {
                             fontFamily: "cairo",
                             fontSize: fontSize.sp,
                             height: 1.8,
-                            color:
-                            isDark ? Colors.white.withOpacity(0.95) : Colors.black87,
+                            color: isDark
+                                ? Colors.white.withOpacity(0.95)
+                                : Colors.black87,
                           ),
                         ),
 
@@ -283,10 +275,9 @@ class QuranTextScreen extends StatelessWidget {
                             style: GoogleFonts.cairo(
                               fontSize: 11.sp,
                               fontWeight: FontWeight.w600,
-                              color: (isDark
-                                  ? AppStyle.scondColors
-                                  : Colors.blue)
-                                  .withOpacity(0.9),
+                              color:
+                                  (isDark ? AppStyle.scondColors : Colors.blue)
+                                      .withOpacity(0.9),
                             ),
                           ),
                         ),
@@ -311,7 +302,7 @@ class QuranLoveView extends StatelessWidget {
     // استبدال ((النص)) بـ (النص)
     return source.replaceAllMapped(
       RegExp(r"\(\((.*?)\)\)"),
-          (match) => "(${match.group(1)})",
+      (match) => "(${match.group(1)})",
     );
   }
 

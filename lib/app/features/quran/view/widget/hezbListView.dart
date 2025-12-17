@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,7 +5,6 @@ import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:quran_library/quran.dart';
-
 
 class HizbeListScreen extends StatefulWidget {
   const HizbeListScreen({super.key});
@@ -16,13 +14,9 @@ class HizbeListScreen extends StatefulWidget {
 }
 
 class _HizbeListScreenState extends State<HizbeListScreen> {
-
   final List<String> hizb = QuranLibrary.allHizb;
 
   final List<BookmarkModel> bookmark = QuranLibrary().usedBookmarks;
-
-
-
 
   @override
   void initState() {
@@ -38,13 +32,12 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
       child: Scaffold(
         // backgroundColor: AppStyle.bgColors,
 
-
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
-            leading:  CupertinoNavigationBarBackButton(
-              color:isDark? Colors.white: Colors.black,
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
             ),
             centerTitle: true,
             title: Text(
@@ -53,20 +46,19 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
-                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+                      MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
             ),
           ),
         ),
         body: ListView.separated(
-          separatorBuilder: (context, index) => Divider(),
-
-          physics: BouncingScrollPhysics(),
+          separatorBuilder: (context, index) => const Divider(),
+          physics: const BouncingScrollPhysics(),
           itemCount: hizb.length,
           itemBuilder: (ctx, index) {
             final surah = hizb[index];
 
-            return  Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 13,vertical: 8),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
               child: GestureDetector(
                 onTap: () {
                   QuranLibrary().jumpToHizb(index + 1);
@@ -83,7 +75,8 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
                         SvgPicture.asset("assets/icons/suraNum.svg"),
                         TextWidget(
                           title: "${index + 1}",
-                          fontSize:ResponsiveUtil.isTablet(context)?9.sp: 14.sp,
+                          fontSize:
+                              ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
                         ),
                       ],
                     ),
@@ -93,10 +86,10 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
                       children: [
                         TextWidget(
                             fontFamily: "me",
-                            fontSize: ResponsiveUtil.isTablet(context)?9.sp: 14.sp,
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
                             fontWeight: FontWeight.bold,
                             title: hizb[index]),
-
                       ],
                     ),
                   ],

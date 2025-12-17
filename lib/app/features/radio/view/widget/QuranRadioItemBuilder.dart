@@ -74,7 +74,6 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
 
   @override
   Widget build(BuildContext context) {
-
     final screenWidth = MediaQuery.of(context).size.width;
     int crossAxisCount;
     double childAspectRatio;
@@ -136,14 +135,13 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                 //     ),
                 //   ),
                 // ),
-leading: SizedBox(),
+                leading: const SizedBox(),
                 actions: [
-
                   InkWell(
                     onTap: () => Navigator.pop(context),
                     child: SvgPicture.asset(
                       "assets/icons/arrow.svg",
-                      color:isDark? Colors.white :Colors.black,
+                      color: isDark ? Colors.white : Colors.black,
                       height: 25,
                     ),
                   )
@@ -202,7 +200,8 @@ leading: SizedBox(),
                         child: Card(
                           elevation: 4,
                           color: AppThemeColors.cardBackgroundColor(context),
-                          shape: BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
+                          shape: BeveledRectangleBorder(
+                              borderRadius: BorderRadiusGeometry.circular(15)),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -239,10 +238,11 @@ leading: SizedBox(),
 
               // Loader صغير تحت لما نزود الدُفعات
               if (_isLoadingMore && itemCount > 0 && itemCount < total)
-                 SliverToBoxAdapter(
+                SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child:KLoading.progressIOSIndicator(context: context) ),
+                    child: Center(
+                        child: KLoading.progressIOSIndicator(context: context)),
                   ),
                 ),
             ],
@@ -252,5 +252,3 @@ leading: SizedBox(),
     );
   }
 }
-
-

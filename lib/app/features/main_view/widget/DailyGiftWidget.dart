@@ -11,7 +11,8 @@ class DailyGiftWidget extends StatefulWidget {
   State<DailyGiftWidget> createState() => _DailyGiftWidgetState();
 }
 
-class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProviderStateMixin {
+class _DailyGiftWidgetState extends State<DailyGiftWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   bool _isOpened = false;
 
@@ -20,37 +21,43 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProv
     {
       "type": "سنة مهجورة",
       "title": "الشرب على ثلاث دفعات",
-      "content": "كان النبي ﷺ يشرب في ثلاثة أنفاس، ويقول: «إنه أروى وأبرأ وأمرأ». (رواه مسلم)",
+      "content":
+          "كان النبي ﷺ يشرب في ثلاثة أنفاس، ويقول: «إنه أروى وأبرأ وأمرأ». (رواه مسلم)",
       "action": "سأطبقها اليوم 💧"
     },
     {
       "type": "كنز من كنوز الجنة",
       "title": "لا حول ولا قوة إلا بالله",
-      "content": "قال النبي ﷺ: «ألا أدلك على كنز من كنوز الجنة؟ لا حول ولا قوة إلا بالله».",
+      "content":
+          "قال النبي ﷺ: «ألا أدلك على كنز من كنوز الجنة؟ لا حول ولا قوة إلا بالله».",
       "action": "رددها الآن 🤲"
     },
     {
       "type": "سنة مهجورة",
       "title": "نفض الفراش قبل النوم",
-      "content": "قال النبي ﷺ: «إذا أوى أحدكم إلى فراشه فلينفض فراشه بداخلة إزاره، فإنه لا يدري ما خلفه عليه».",
+      "content":
+          "قال النبي ﷺ: «إذا أوى أحدكم إلى فراشه فلينفض فراشه بداخلة إزاره، فإنه لا يدري ما خلفه عليه».",
       "action": "سأفعلها الليلة 🛌"
     },
     {
       "type": "سنة مهجورة",
       "title": "الدعاء لأخيك بظهر الغيب",
-      "content": "قال النبي ﷺ: «دعوة المرء المسلم لأخيه بظهر الغيب مستجابة، عند رأسه ملك موكل كلما دعا لأخيه بخير قال الملك الموكل به: آمين ولك بمثل».",
+      "content":
+          "قال النبي ﷺ: «دعوة المرء المسلم لأخيه بظهر الغيب مستجابة، عند رأسه ملك موكل كلما دعا لأخيه بخير قال الملك الموكل به: آمين ولك بمثل».",
       "action": "سأدعو لصديق ❤️"
     },
     {
       "type": "حكمة",
       "title": "الرضا",
-      "content": "من رضي بقضاء الله جرى عليه وكان له أجر، ومن لم يرض جرى عليه وكان عليه وزر.",
+      "content":
+          "من رضي بقضاء الله جرى عليه وكان له أجر، ومن لم يرض جرى عليه وكان عليه وزر.",
       "action": "الحمد لله 🤲"
     },
-     {
+    {
       "type": "ذكر عظيم",
       "title": "كلمتان خفيفتان",
-      "content": "«كلمتان خفيفتان على اللسان، ثقيلتان في الميزان، حبيبتان إلى الرحمن: سبحان الله وبحمده، سبحان الله العظيم».",
+      "content":
+          "«كلمتان خفيفتان على اللسان، ثقيلتان في الميزان، حبيبتان إلى الرحمن: سبحان الله وبحمده، سبحان الله العظيم».",
       "action": "سبحان الله وبحمده ✨"
     },
   ];
@@ -64,11 +71,12 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProv
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     )..repeat(reverse: true);
-    
+
     // اختيار هدية عشوائية لليوم
     // (يمكن تطويرها لتعتمد على التاريخ حتى تكون ثابتة طوال اليوم)
-    final seed = DateTime.now().day + DateTime.now().month + DateTime.now().year;
-    final random = Random(seed); 
+    final seed =
+        DateTime.now().day + DateTime.now().month + DateTime.now().year;
+    final random = Random(seed);
     _todaysGift = _gifts[random.nextInt(_gifts.length)];
   }
 
@@ -112,7 +120,7 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProv
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 10),
-                     Text(
+                    Text(
                       "🎉 ربحت هدية! 🎉",
                       style: GoogleFonts.cairo(
                         fontSize: 22.sp,
@@ -122,7 +130,8 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProv
                     ),
                     const SizedBox(height: 16),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.green.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -170,7 +179,7 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProv
                         onPressed: () {
                           Navigator.pop(context);
                           setState(() {
-                            _isOpened = true; 
+                            _isOpened = true;
                           });
                         },
                         child: Text(
@@ -187,12 +196,13 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProv
                 ),
               ),
               // أيقونة شريط في الأعلى
-              Positioned(
+              const Positioned(
                 top: -25,
                 child: CircleAvatar(
                   radius: 30,
-                  backgroundColor: const Color(0xFFFFD700),
-                  child: const Icon(Icons.card_giftcard, color: Colors.white, size: 30),
+                  backgroundColor: Color(0xFFFFD700),
+                  child:
+                      Icon(Icons.card_giftcard, color: Colors.white, size: 30),
                 ),
               ),
             ],
@@ -217,9 +227,12 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProv
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: isDark 
-                  ? [const Color(0xFF2C3E50), const Color(0xFF4CA1AF)] 
-                  : [const Color(0xFFFFE0B2), const Color(0xFFFFCC80)], // برتقالي فاتح
+              colors: isDark
+                  ? [const Color(0xFF2C3E50), const Color(0xFF4CA1AF)]
+                  : [
+                      const Color(0xFFFFE0B2),
+                      const Color(0xFFFFCC80)
+                    ], // برتقالي فاتح
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -239,7 +252,8 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProv
                 animation: _controller,
                 builder: (context, child) {
                   return Transform.translate(
-                    offset: Offset(0, -3 * _controller.value), // حركة بسيطة للأعلى والأسفل
+                    offset: Offset(
+                        0, -3 * _controller.value), // حركة بسيطة للأعلى والأسفل
                     child: child,
                   );
                 },
@@ -279,7 +293,8 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget> with SingleTickerProv
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.orange),
+              const Icon(Icons.arrow_forward_ios_rounded,
+                  size: 16, color: Colors.orange),
             ],
           ),
         ),

@@ -1,24 +1,12 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
-import '../../../core/utils/style/k_color.dart';
 import '../../../core/utils/style/k_helper.dart';
-import '../../../core/utils/style/responsive_util.dart';
-import '../../../core/widgets/custom_text_widget.dart';
 import '../../messa_view/azkar_massa.dart';
-
-
 
 class OtherAzkarWidget extends StatefulWidget {
   const OtherAzkarWidget({super.key});
-
-
-
-
 
   @override
   _OtherAzkarWidgetState createState() => _OtherAzkarWidgetState();
@@ -113,7 +101,14 @@ class _OtherAzkarWidgetState extends State<OtherAzkarWidget> {
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              image:isDark?null: const DecorationImage(image: AssetImage("assets/images/pattern.webp",),fit: BoxFit.cover,opacity: 0.2),
+              image: isDark
+                  ? null
+                  : const DecorationImage(
+                      image: AssetImage(
+                        "assets/images/pattern.webp",
+                      ),
+                      fit: BoxFit.cover,
+                      opacity: 0.2),
 
               borderRadius: BorderRadius.circular(10),
               border: const BorderDirectional(
@@ -130,13 +125,18 @@ class _OtherAzkarWidgetState extends State<OtherAzkarWidget> {
                   Text(
                     "أدعية مختارة",
                     style: GoogleFonts.cairo(
-                        fontWeight: FontWeight.bold, fontSize:MediaQuery.sizeOf(context).width >600?10.sp:  15.sp),
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.sizeOf(context).width > 600
+                            ? 10.sp
+                            : 15.sp),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     azkar[currentIndex],
                     textAlign: TextAlign.justify,
-                    style: TextStyle(fontSize: MediaQuery.sizeOf(context).width >600?25: 16),
+                    style: TextStyle(
+                        fontSize:
+                            MediaQuery.sizeOf(context).width > 600 ? 25 : 16),
                   ),
                 ],
               ),
@@ -260,7 +260,6 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
             ),
           ),
         ),
-
       ],
     );
   }
@@ -720,4 +719,3 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
 //     );
 //   }
 // }
-

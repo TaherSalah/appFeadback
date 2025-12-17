@@ -9,6 +9,7 @@ import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
+
 class DrawerModle {
   final IconData? icon;
   final String title;
@@ -43,12 +44,12 @@ class DrawerWidget extends StatefulWidget {
   final bool initiallyExpanded;
 
   const DrawerWidget(
-      this.selectItmeRoute, {
-        super.key,
-        required this.sections,
-        this.isReplacement = false,
-        this.initiallyExpanded = false, // الافتراضي زي ما هو (صغير)
-      });
+    this.selectItmeRoute, {
+    super.key,
+    required this.sections,
+    this.isReplacement = false,
+    this.initiallyExpanded = false, // الافتراضي زي ما هو (صغير)
+  });
 
   @override
   State<DrawerWidget> createState() => _DrawerWidgetState();
@@ -70,8 +71,12 @@ class _DrawerWidgetState extends State<DrawerWidget>
     final double screenWidth = MediaQuery.of(context).size.width;
 
     // تحديد قيم begin و end بناءً على حجم الشاشة
-    double beginValue = screenWidth < 600 ? 85 : 100; // إذا كان الهاتف، يبدأ من 85 وإذا كان التابلت يبدأ من 100
-    double endValue = screenWidth < 600 ? 250 : 450; // إذا كان الهاتف، ينتهي عند 250 وإذا كان التابلت ينتهي عند 350
+    double beginValue = screenWidth < 600
+        ? 85
+        : 100; // إذا كان الهاتف، يبدأ من 85 وإذا كان التابلت يبدأ من 100
+    double endValue = screenWidth < 600
+        ? 250
+        : 450; // إذا كان الهاتف، ينتهي عند 250 وإذا كان التابلت ينتهي عند 350
 
     _isExpanded = widget.initiallyExpanded;
 
@@ -167,7 +172,8 @@ class _DrawerWidgetState extends State<DrawerWidget>
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Drawer(
                 width: _widthAnimation.value,
-                backgroundColor: isDark ? Color(0xFF020617): Colors.white,
+                backgroundColor:
+                    isDark ? const Color(0xFF020617) : Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
@@ -189,7 +195,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         children: [
                           ...widget.sections.map(
-                                (section) =>
+                            (section) =>
                                 _buildSection(context, theme, section, isDark),
                           ),
                           const SizedBox(height: 20),
@@ -206,8 +212,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
     );
   }
 
-  Widget _buildHeader(
-      BuildContext context, ThemeData theme, bool isDark) {
+  Widget _buildHeader(BuildContext context, ThemeData theme, bool isDark) {
     bool isTab = ResponsiveUtil.isTablet(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 12),
@@ -235,7 +240,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                   TextDefaultWidget(
                     title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
                     fontWeight: FontWeight.bold,
-                    fontSize: isTab?15.sp:20.sp,
+                    fontSize: isTab ? 15.sp : 20.sp,
                     fontFamily: "me",
                     color: isDark ? Colors.white : AppColors.primary,
                   ),
@@ -243,7 +248,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                   TextDefaultWidget(
                     title: "اقرأ وتدبّر",
                     fontWeight: FontWeight.w600,
-                    fontSize: isTab?12.sp:17.sp,
+                    fontSize: isTab ? 12.sp : 17.sp,
                     fontFamily: "me",
                     color: isDark ? Colors.white : AppColors.primary,
                   ),
@@ -264,7 +269,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                 child: Icon(
                   _isExpanded ? Icons.menu_open : Icons.menu,
                   color: theme.colorScheme.primary,
-                  size: isTab? 45:24,
+                  size: isTab ? 45 : 24,
                 ),
               ),
             ),
@@ -282,8 +287,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
       children: [
         if (_widthAnimation.value > 180)
           Padding(
-            padding:
-            const EdgeInsets.only(right: 12, top: 16, bottom: 8),
+            padding: const EdgeInsets.only(right: 12, top: 16, bottom: 8),
             child: Row(
               children: [
                 Container(
@@ -298,7 +302,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                 TextDefaultWidget(
                   title: section.title,
                   fontWeight: FontWeight.w600,
-                  fontSize: isTab?10.sp:17.sp,
+                  fontSize: isTab ? 10.sp : 17.sp,
                   fontFamily: "cairo",
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -311,12 +315,10 @@ class _DrawerWidgetState extends State<DrawerWidget>
             .map((item) => _buildDrawerItem(context, theme, item, isDark)),
         if (_widthAnimation.value > 180)
           Padding(
-            padding: const EdgeInsets.symmetric(
-                vertical: 8, horizontal: 12),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: Divider(
               thickness: 0.5,
-              color:
-              theme.colorScheme.onSurface.withOpacity(0.1),
+              color: theme.colorScheme.onSurface.withOpacity(0.1),
             ),
           )
         else
@@ -325,14 +327,13 @@ class _DrawerWidgetState extends State<DrawerWidget>
     );
   }
 
-  Widget _buildDrawerItem(BuildContext context, ThemeData theme,
-      DrawerModle item, bool isDark) {
+  Widget _buildDrawerItem(
+      BuildContext context, ThemeData theme, DrawerModle item, bool isDark) {
     final isSelected = item.route == widget.selectItmeRoute;
     bool isTab = ResponsiveUtil.isTablet(context);
 
     return Padding(
-      padding:
-      const EdgeInsets.symmetric(vertical: 3, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 4),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -344,12 +345,9 @@ class _DrawerWidgetState extends State<DrawerWidget>
               return;
             }
 
-            if (item.route != null &&
-                item.route!.isNotEmpty &&
-                !isSelected) {
+            if (item.route != null && item.route!.isNotEmpty && !isSelected) {
               if (widget.isReplacement || item.isRepl) {
-                Navigator.of(context)
-                    .pushReplacementNamed(item.route!);
+                Navigator.of(context).pushReplacementNamed(item.route!);
               } else {
                 Navigator.of(context).pushNamed(item.route!);
               }
@@ -358,28 +356,24 @@ class _DrawerWidgetState extends State<DrawerWidget>
           borderRadius: BorderRadius.circular(12),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(
-                horizontal: 12, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: BoxDecoration(
               gradient: isSelected
                   ? LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  theme.colorScheme.primary
-                      .withOpacity(0.15),
-                  theme.colorScheme.primary
-                      .withOpacity(0.08),
-                ],
-              )
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        theme.colorScheme.primary.withOpacity(0.15),
+                        theme.colorScheme.primary.withOpacity(0.08),
+                      ],
+                    )
                   : null,
               borderRadius: BorderRadius.circular(12),
               border: isSelected
                   ? Border.all(
-                color: theme.colorScheme.primary
-                    .withOpacity(0.3),
-                width: 1,
-              )
+                      color: theme.colorScheme.primary.withOpacity(0.3),
+                      width: 1,
+                    )
                   : null,
             ),
             child: Row(
@@ -388,10 +382,8 @@ class _DrawerWidgetState extends State<DrawerWidget>
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? theme.colorScheme.primary
-                        .withOpacity(0.2)
-                        : theme.colorScheme.onSurface
-                        .withOpacity(0.05),
+                        ? theme.colorScheme.primary.withOpacity(0.2)
+                        : theme.colorScheme.onSurface.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -399,7 +391,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                     color: isSelected
                         ? theme.colorScheme.primary
                         : theme.iconTheme.color?.withOpacity(0.7),
-                    size: isTab?30:20,
+                    size: isTab ? 30 : 20,
                   ),
                 ),
                 if (_isExpanded) const SizedBox(width: 12),
@@ -408,7 +400,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
                     child: TextDefaultWidget(
                       title: item.title,
                       fontWeight: FontWeight.w400,
-                      fontSize:isTab? 12.sp:17.sp,
+                      fontSize: isTab ? 12.sp : 17.sp,
                       fontFamily: "me",
                       color: isDark ? Colors.white : Colors.black,
                     ),
@@ -814,4 +806,3 @@ class _DrawerWidgetState extends State<DrawerWidget>
 //     );
 //   }
 // }
-

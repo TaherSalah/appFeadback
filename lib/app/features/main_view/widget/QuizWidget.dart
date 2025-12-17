@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,7 +20,12 @@ class _QuizWidgetState extends State<QuizWidget> {
     },
     {
       "question": "من هو النبي الذي ألقي في النار ولم يحترق؟",
-      "options": ["موسى عليه السلام", "إبراهيم عليه السلام", "يوسف عليه السلام", "يونس عليه السلام"],
+      "options": [
+        "موسى عليه السلام",
+        "إبراهيم عليه السلام",
+        "يوسف عليه السلام",
+        "يونس عليه السلام"
+      ],
       "answer": "إبراهيم عليه السلام"
     },
     {
@@ -29,14 +33,24 @@ class _QuizWidgetState extends State<QuizWidget> {
       "options": ["4 أركان", "5 أركان", "6 أركان", "7 أركان"],
       "answer": "5 أركان"
     },
-     {
+    {
       "question": "ما هي الصلاة التي ليس فيها ركوع ولا سجود؟",
-      "options": ["صلاة الاستسقاء", "صلاة الجنازة", "صلاة العيد", "سجود التلاوة"],
+      "options": [
+        "صلاة الاستسقاء",
+        "صلاة الجنازة",
+        "صلاة العيد",
+        "سجود التلاوة"
+      ],
       "answer": "صلاة الجنازة"
     },
     {
       "question": "من هو خاتم الأنبياء والمرسلين؟",
-      "options": ["عيسى عليه السلام", "موسى عليه السلام", "محمد ﷺ", "إبراهيم عليه السلام"],
+      "options": [
+        "عيسى عليه السلام",
+        "موسى عليه السلام",
+        "محمد ﷺ",
+        "إبراهيم عليه السلام"
+      ],
       "answer": "محمد ﷺ"
     },
     {
@@ -54,7 +68,8 @@ class _QuizWidgetState extends State<QuizWidget> {
   void initState() {
     super.initState();
     // اختيار سؤال عشوائي يومي
-    final seed = DateTime.now().day + DateTime.now().month + DateTime.now().year + 5; 
+    final seed =
+        DateTime.now().day + DateTime.now().month + DateTime.now().year + 5;
     final random = Random(seed);
     _todaysQuestion = questions[random.nextInt(questions.length)];
   }
@@ -77,7 +92,7 @@ class _QuizWidgetState extends State<QuizWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text(
+          Text(
             "سؤال التحدي اليومي 🧠",
             style: GoogleFonts.cairo(
               fontSize: 16.sp,
@@ -106,7 +121,8 @@ class _QuizWidgetState extends State<QuizWidget> {
             child: Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.indigo.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(15),
@@ -134,8 +150,9 @@ class _QuizWidgetState extends State<QuizWidget> {
                 ...(_todaysQuestion['options'] as List<String>).map((option) {
                   final isSelected = _selectedOption == option;
                   final isCorrect = option == correctAnswer;
-                  
-                  Color borderColor = isDark ? Colors.white12 : Colors.grey.shade300;
+
+                  Color borderColor =
+                      isDark ? Colors.white12 : Colors.grey.shade300;
                   Color bgColor = Colors.transparent;
                   IconData? icon;
 
@@ -158,7 +175,8 @@ class _QuizWidgetState extends State<QuizWidget> {
                       borderRadius: BorderRadius.circular(12),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
                         decoration: BoxDecoration(
                           color: bgColor,
                           borderRadius: BorderRadius.circular(12),
@@ -167,16 +185,20 @@ class _QuizWidgetState extends State<QuizWidget> {
                         child: Row(
                           children: [
                             if (icon != null) ...[
-                              Icon(icon, color: isCorrect ? Colors.green : Colors.red, size: 20),
+                              Icon(icon,
+                                  color: isCorrect ? Colors.green : Colors.red,
+                                  size: 20),
                               const SizedBox(width: 8),
                             ],
                             Expanded(
                               child: Text(
                                 option,
                                 style: GoogleFonts.cairo(
-                                  fontSize: 14.sp, // Reduced font size to avoid overflow
+                                  fontSize: 14
+                                      .sp, // Reduced font size to avoid overflow
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? Colors.white70 : Colors.black87,
+                                  color:
+                                      isDark ? Colors.white70 : Colors.black87,
                                 ),
                               ),
                             ),
@@ -198,7 +220,7 @@ class _QuizWidgetState extends State<QuizWidget> {
                       ),
                     ),
                   ),
-                   if (_isAnswered && _selectedOption != correctAnswer)
+                if (_isAnswered && _selectedOption != correctAnswer)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: Text(

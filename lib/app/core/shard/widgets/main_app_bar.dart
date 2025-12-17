@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 
-
 import '../exports/all_exports.dart';
 import 'def_text_widget.dart';
 
@@ -65,7 +64,7 @@ PreferredSizeWidget mainAppBarWidget(
                               textAlign: TextAlign.right,
                               title: e,
                               fontSize: 12.5,
-                              color: isDark? Colors.white:Colors.black,
+                              color: isDark ? Colors.white : Colors.black,
                             ));
                       }).toList(),
                       value: selectedFontSize,
@@ -89,7 +88,9 @@ PreferredSizeWidget mainAppBarWidget(
                       dropdownStyleData: DropdownStyleData(
                         elevation: 1,
                         decoration: BoxDecoration(
-                          color:isDark? Theme.of(context).cardColor :  Color(0xfffaedcd),
+                          color: isDark
+                              ? Theme.of(context).cardColor
+                              : const Color(0xfffaedcd),
 
                           // Set the background color for the dropdown menu
                           borderRadius: BorderRadius.circular(

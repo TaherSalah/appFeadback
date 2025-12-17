@@ -172,7 +172,7 @@ class RouteGenerator {
       case '/allazkarlistview':
         return MaterialPageRoute(builder: (_) => const Allazkarlistview());
       case '/qiblaDirection':
-        return MaterialPageRoute(builder: (_) => QiblaDirection());
+        return MaterialPageRoute(builder: (_) => const QiblaDirection());
 
       case '/azkarCounter':
         return MaterialPageRoute(builder: (_) => const AzkarCounter());
@@ -193,7 +193,7 @@ class RouteGenerator {
 
       case Routes.zakatCalculatorRoute:
         return MaterialPageRoute(builder: (_) => const ZakatCalculatorView());
-      
+
       case '/mosquesMap':
         return MaterialPageRoute(builder: (_) => const MosquesMapScreen());
 

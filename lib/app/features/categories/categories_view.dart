@@ -8,7 +8,6 @@ import '../../core/shard/constanc/app_style.dart';
 import '../../core/shard/exports/all_exports.dart';
 import 'data/repo/categories_repo_immp.dart';
 
-
 class CategoriesView extends StatelessWidget {
   const CategoriesView({super.key});
 
@@ -27,6 +26,6 @@ class CategoriesView extends StatelessWidget {
                 // backgroundColor: AppStyle.bgColors,
 
                 key: scaffoldState,
-                body: CategoriesViewItemBuilder())));
+                body: const CategoriesViewItemBuilder())));
   }
 }

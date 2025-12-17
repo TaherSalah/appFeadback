@@ -16,6 +16,8 @@ import 'data/Wird.dart';
 import 'data/WirdManager.dart';
 
 class WirdHomeScreen extends StatefulWidget {
+  const WirdHomeScreen({super.key});
+
   @override
   _WirdHomeScreenState createState() => _WirdHomeScreenState();
 }
@@ -500,8 +502,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
                           width: 1.2,
                         ),
                       ),
-                      child: Row(
-                        children: const [
+                      child: const Row(
+                        children: [
                           Icon(Icons.info_outline, size: 18, color: Colors.red),
                           SizedBox(width: 8),
                           Expanded(

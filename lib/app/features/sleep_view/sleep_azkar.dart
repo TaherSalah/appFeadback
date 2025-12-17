@@ -9,7 +9,6 @@ import '../../core/utils/style/k_helper.dart';
 import '../../core/utils/style/responsive_util.dart';
 import '../../core/widgets/AudioManager.dart';
 
-
 class SleepAzkar extends StatefulWidget {
   const SleepAzkar({super.key});
 
@@ -111,7 +110,8 @@ class _SleepAzkarState extends State<SleepAzkar> {
 
     final hasNet = await _audioManager.hasConnection();
     if (!hasNet) {
-      KHelper.showError(message: 'لا يوجد اتصال بالإنترنت، لا يمكن التحميل الآن.');
+      KHelper.showError(
+          message: 'لا يوجد اتصال بالإنترنت، لا يمكن التحميل الآن.');
       return;
     }
 
@@ -152,7 +152,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
   Widget _buildFloatingPlayButton(bool isDark) {
     final theme = Theme.of(context);
     final primaryColor =
-    isDark ? KColors.primaryColor : theme.colorScheme.primary;
+        isDark ? KColors.primaryColor : theme.colorScheme.primary;
 
     final bool isTab = ResponsiveUtil.isTablet(context);
     final bool isPlayingNow = _isPlaying;
@@ -190,8 +190,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color:
-                  primaryColor.withOpacity(isPlayingNow ? 0.55 : 0.35),
+                  color: primaryColor.withOpacity(isPlayingNow ? 0.55 : 0.35),
                   blurRadius: isPlayingNow ? 20 : 12,
                   spreadRadius: isPlayingNow ? 1.8 : 0.6,
                   offset: const Offset(0, 4),
@@ -205,23 +204,23 @@ class _SleepAzkarState extends State<SleepAzkar> {
                     ScaleTransition(scale: anim, child: child),
                 child: (!_isDownloaded && _isBuffering)
                     ? const SizedBox(
-                  key: ValueKey('loader_fab'),
-                  width: 26,
-                  height: 26,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor:
-                    AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
+                        key: ValueKey('loader_fab'),
+                        width: 26,
+                        height: 26,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
                     : Icon(
-                  isPlayingNow
-                      ? Icons.pause_rounded
-                      : Icons.play_arrow_rounded,
-                  key: ValueKey<bool>(isPlayingNow),
-                  color: Colors.white,
-                  size: 34,
-                ),
+                        isPlayingNow
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        key: ValueKey<bool>(isPlayingNow),
+                        color: Colors.white,
+                        size: 34,
+                      ),
               ),
             ),
           ),
@@ -652,15 +651,14 @@ class _SleepAzkarState extends State<SleepAzkar> {
   Widget _buildFullPlayer(bool isDark) {
     final theme = Theme.of(context);
     final primaryColor =
-    isDark ? KColors.primaryColor : theme.colorScheme.primary;
+        isDark ? KColors.primaryColor : theme.colorScheme.primary;
 
     final int durationMs = _duration.inMilliseconds;
     final int positionMs = _position.inMilliseconds;
 
     final double sliderMax = durationMs > 0 ? durationMs.toDouble() : 1.0;
-    final double sliderValue = durationMs > 0
-        ? positionMs.clamp(0, durationMs).toDouble()
-        : 0.0;
+    final double sliderValue =
+        durationMs > 0 ? positionMs.clamp(0, durationMs).toDouble() : 0.0;
 
     final double fullHeight = MediaQuery.sizeOf(context).height * 0.78;
     final bool isTab = ResponsiveUtil.isTablet(context);
@@ -685,15 +683,15 @@ class _SleepAzkarState extends State<SleepAzkar> {
               end: Alignment.bottomLeft,
               colors: isDark
                   ? const [
-                Color(0xFF020617),
-                Color(0xFF0B1220),
-                Color(0xFF0F172A),
-              ]
+                      Color(0xFF020617),
+                      Color(0xFF0B1220),
+                      Color(0xFF0F172A),
+                    ]
                   : [
-                primaryColor.withOpacity(0.07),
-                const Color(0xFFFFFFFF),
-                const Color(0xFFFFFFFF),
-              ],
+                      primaryColor.withOpacity(0.07),
+                      const Color(0xFFFFFFFF),
+                      const Color(0xFFFFFFFF),
+                    ],
             ),
             border: Border.all(
               color: primaryColor.withOpacity(isDark ? 0.45 : 0.18),
@@ -730,7 +728,9 @@ class _SleepAzkarState extends State<SleepAzkar> {
                             width: 46,
                             height: 5,
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white24 : Colors.black.withOpacity(0.12),
+                              color: isDark
+                                  ? Colors.white24
+                                  : Colors.black.withOpacity(0.12),
                               borderRadius: BorderRadius.circular(999),
                             ),
                           ),
@@ -757,7 +757,6 @@ class _SleepAzkarState extends State<SleepAzkar> {
                     ),
                   ),
                 ),
-
 
                 const SizedBox(height: 10),
 
@@ -895,65 +894,65 @@ class _SleepAzkarState extends State<SleepAzkar> {
                   textDirection: ui.TextDirection.rtl,
                   child: _isDownloaded
                       ? TextButton.icon(
-                    onPressed: null,
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 7),
-                      backgroundColor: isDark
-                          ? Colors.white.withOpacity(0.05)
-                          : Colors.green.withOpacity(0.08),
-                      shape: const StadiumBorder(),
-                    ),
-                    icon: const Icon(
-                      Icons.download_done_rounded,
-                      size: 18,
-                      color: Colors.green,
-                    ),
-                    label: Text(
-                      'تم تحميل الأذكار، تعمل بدون إنترنت',
-                      style: GoogleFonts.notoKufiArabic(
-                        fontSize: 12,
-                        color: isDark
-                            ? Colors.greenAccent
-                            : Colors.green.shade700,
-                      ),
-                    ),
-                  )
+                          onPressed: null,
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 7),
+                            backgroundColor: isDark
+                                ? Colors.white.withOpacity(0.05)
+                                : Colors.green.withOpacity(0.08),
+                            shape: const StadiumBorder(),
+                          ),
+                          icon: const Icon(
+                            Icons.download_done_rounded,
+                            size: 18,
+                            color: Colors.green,
+                          ),
+                          label: Text(
+                            'تم تحميل الأذكار، تعمل بدون إنترنت',
+                            style: GoogleFonts.notoKufiArabic(
+                              fontSize: 12,
+                              color: isDark
+                                  ? Colors.greenAccent
+                                  : Colors.green.shade700,
+                            ),
+                          ),
+                        )
                       : TextButton.icon(
-                    onPressed: _isDownloading ? null : _downloadAudio,
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 7),
-                      backgroundColor: isDark
-                          ? Colors.white.withOpacity(0.06)
-                          : primaryColor.withOpacity(0.08),
-                      shape: const StadiumBorder(),
-                    ),
-                    icon: _isDownloading
-                        ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child:
-                      CircularProgressIndicator(strokeWidth: 2),
-                    )
-                        : Icon(
-                      Icons.download_rounded,
-                      size: 19,
-                      color:
-                      isDark ? Colors.greenAccent : primaryColor,
-                    ),
-                    label: Text(
-                      _isDownloading
-                          ? 'جاري تحميل أذكار النوم...'
-                          : 'تحميل للتشغيل بدون إنترنت',
-                      style: GoogleFonts.cairo(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color:
-                        isDark ? Colors.white : Colors.grey[900],
-                      ),
-                    ),
-                  ),
+                          onPressed: _isDownloading ? null : _downloadAudio,
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 7),
+                            backgroundColor: isDark
+                                ? Colors.white.withOpacity(0.06)
+                                : primaryColor.withOpacity(0.08),
+                            shape: const StadiumBorder(),
+                          ),
+                          icon: _isDownloading
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : Icon(
+                                  Icons.download_rounded,
+                                  size: 19,
+                                  color: isDark
+                                      ? Colors.greenAccent
+                                      : primaryColor,
+                                ),
+                          label: Text(
+                            _isDownloading
+                                ? 'جاري تحميل أذكار النوم...'
+                                : 'تحميل للتشغيل بدون إنترنت',
+                            style: GoogleFonts.cairo(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : Colors.grey[900],
+                            ),
+                          ),
+                        ),
                 ),
 
                 const SizedBox(height: 10),
@@ -967,12 +966,12 @@ class _SleepAzkarState extends State<SleepAzkar> {
                         onPressed: durationMs == 0
                             ? null
                             : () async {
-                          final int newMs =
-                          (positionMs - 10000).clamp(0, durationMs);
-                          await _audioManager.seek(
-                            Duration(milliseconds: newMs),
-                          );
-                        },
+                                final int newMs =
+                                    (positionMs - 10000).clamp(0, durationMs);
+                                await _audioManager.seek(
+                                  Duration(milliseconds: newMs),
+                                );
+                              },
                         icon: const Icon(Icons.replay_10_rounded),
                         color: isDark
                             ? Colors.white70
@@ -1003,10 +1002,10 @@ class _SleepAzkarState extends State<SleepAzkar> {
                             onChanged: durationMs == 0
                                 ? null
                                 : (v) async {
-                              await _audioManager.seek(
-                                Duration(milliseconds: v.toInt()),
-                              );
-                            },
+                                    await _audioManager.seek(
+                                      Duration(milliseconds: v.toInt()),
+                                    );
+                                  },
                             activeColor: primaryColor,
                             inactiveColor: primaryColor.withOpacity(0.25),
                           ),
@@ -1023,12 +1022,12 @@ class _SleepAzkarState extends State<SleepAzkar> {
                         onPressed: durationMs == 0
                             ? null
                             : () async {
-                          final int newMs =
-                          (positionMs + 10000).clamp(0, durationMs);
-                          await _audioManager.seek(
-                            Duration(milliseconds: newMs),
-                          );
-                        },
+                                final int newMs =
+                                    (positionMs + 10000).clamp(0, durationMs);
+                                await _audioManager.seek(
+                                  Duration(milliseconds: newMs),
+                                );
+                              },
                         icon: const Icon(Icons.forward_10_rounded),
                         color: isDark
                             ? Colors.white70
@@ -1049,12 +1048,9 @@ class _SleepAzkarState extends State<SleepAzkar> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 220),
-                    width: _isPlaying
-                        ? (isTab ? 110 : 75)
-                        : (isTab ? 102 : 70),
-                    height: _isPlaying
-                        ? (isTab ? 110 : 75)
-                        : (isTab ? 102 : 70),
+                    width: _isPlaying ? (isTab ? 110 : 75) : (isTab ? 102 : 70),
+                    height:
+                        _isPlaying ? (isTab ? 110 : 75) : (isTab ? 102 : 70),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
@@ -1065,7 +1061,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
                       boxShadow: [
                         BoxShadow(
                           color:
-                          primaryColor.withOpacity(_isPlaying ? 0.6 : 0.35),
+                              primaryColor.withOpacity(_isPlaying ? 0.6 : 0.35),
                           blurRadius: _isPlaying ? 28 : 18,
                           spreadRadius: _isPlaying ? 2.2 : 0.9,
                           offset: const Offset(0, 8),
@@ -1079,23 +1075,23 @@ class _SleepAzkarState extends State<SleepAzkar> {
                             ScaleTransition(scale: anim, child: child),
                         child: (!_isDownloaded && _isBuffering)
                             ? const SizedBox(
-                          key: ValueKey('loader_full'),
-                          width: 36,
-                          height: 36,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3.2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white),
-                          ),
-                        )
+                                key: ValueKey('loader_full'),
+                                width: 36,
+                                height: 36,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3.2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
                             : Icon(
-                          _isPlaying
-                              ? Icons.pause_rounded
-                              : Icons.play_arrow_rounded,
-                          key: ValueKey<bool>(_isPlaying),
-                          color: Colors.white,
-                          size: isTab ? 50 : 44,
-                        ),
+                                _isPlaying
+                                    ? Icons.pause_rounded
+                                    : Icons.play_arrow_rounded,
+                                key: ValueKey<bool>(_isPlaying),
+                                color: Colors.white,
+                                size: isTab ? 50 : 44,
+                              ),
                       ),
                     ),
                   ),
@@ -1152,85 +1148,86 @@ class _SleepAzkarState extends State<SleepAzkar> {
                   onPressed: con.resetSleep,
                 ),
               ],
-
               title: Text(
                 AppString.KSleep,
                 style: GoogleFonts.cairo(
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
-                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                      MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
                 ),
               ),
             ),
           ),
           body: allDone
               ? DoneDialogWidget(
-            onPressedRepeat: con.resetSleep,
-            doneText: AppString.doneText,
-            KZakarFeaturesTitle: AppString.KZakarSleepFeaturesTitle,
-            KDaialogText: AppString.KSleepDaialogText,
-          )
+                  onPressedRepeat: con.resetSleep,
+                  doneText: AppString.doneText,
+                  KZakarFeaturesTitle: AppString.KZakarSleepFeaturesTitle,
+                  KDaialogText: AppString.KSleepDaialogText,
+                )
               : Column(
-            children: [
-              Padding(padding: EdgeInsets.symmetric(vertical: 8.0.w)),
-              Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.only(bottom: ResponsiveUtil.isTablet(context)? 50.h:80.h),
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, zSleepIndex) {
-                    final isDarkLocal =
-                        Theme.of(context).brightness == Brightness.dark;
+                  children: [
+                    Padding(padding: EdgeInsets.symmetric(vertical: 8.0.w)),
+                    Expanded(
+                      child: ListView.separated(
+                        padding: EdgeInsets.only(
+                            bottom:
+                                ResponsiveUtil.isTablet(context) ? 50.h : 80.h),
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, zSleepIndex) {
+                          final isDarkLocal =
+                              Theme.of(context).brightness == Brightness.dark;
 
-                    final bool isDone =
-                        Azkary.azkarSleepRepate[zSleepIndex] <= 0;
+                          final bool isDone =
+                              Azkary.azkarSleepRepate[zSleepIndex] <= 0;
 
-                    final Color primaryColorLocal =
-                    const Color(AppStyle.primaryColor);
+                          const Color primaryColorLocal =
+                              Color(AppStyle.primaryColor);
 
-                    final Color cardAccent = isDone
-                        ? const Color(AppStyle.yellowColor)
-                        : (isDarkLocal
-                        ? Colors.black
-                        : primaryColorLocal);
+                          final Color cardAccent = isDone
+                              ? const Color(AppStyle.yellowColor)
+                              : (isDarkLocal
+                                  ? Colors.black
+                                  : primaryColorLocal);
 
-                    final Color chipBg = isDone
-                        ? const Color(AppStyle.yellowColor)
-                        : (isDarkLocal
-                        ? Colors.black
-                        : const Color(0xFFECFDF3));
+                          final Color chipBg = isDone
+                              ? const Color(AppStyle.yellowColor)
+                              : (isDarkLocal
+                                  ? Colors.black
+                                  : const Color(0xFFECFDF3));
 
-                    final Color chipText = isDone
-                        ? Colors.black
-                        : (isDarkLocal
-                        ? Colors.white
-                        : KColors.primaryColor);
+                          final Color chipText = isDone
+                              ? Colors.black
+                              : (isDarkLocal
+                                  ? Colors.white
+                                  : KColors.primaryColor);
 
-                    return ScrollAppearAnimation(
-                      duration: const Duration(milliseconds: 700),
-                      child: GestureDetector(
-                        onTap: () => con.decrementSleep(zSleepIndex),
-                        child: AzkerItemBuilder(
-                          azkarTitle: Azkary.azkarSleep[zSleepIndex],
-                          azkarDes: Azkary.azkarSleepDes[zSleepIndex],
-                          fontSize: fontSize,
-                          azkarRepate: isDone
-                              ? '0'
-                              : '${Azkary.azkarSleepRepate[zSleepIndex]}',
-                          color: cardAccent,
-                          repertColor: chipText,
-                          repertColor2: chipBg,
-                        ),
+                          return ScrollAppearAnimation(
+                            duration: const Duration(milliseconds: 700),
+                            child: GestureDetector(
+                              onTap: () => con.decrementSleep(zSleepIndex),
+                              child: AzkerItemBuilder(
+                                azkarTitle: Azkary.azkarSleep[zSleepIndex],
+                                azkarDes: Azkary.azkarSleepDes[zSleepIndex],
+                                fontSize: fontSize,
+                                azkarRepate: isDone
+                                    ? '0'
+                                    : '${Azkary.azkarSleepRepate[zSleepIndex]}',
+                                color: cardAccent,
+                                repertColor: chipText,
+                                repertColor2: chipBg,
+                              ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (_, __) => SizedBox(height: 15.h),
+                        itemCount: Azkary.azkarSleep.length,
                       ),
-                    );
-                  },
-                  separatorBuilder: (_, __) => SizedBox(height: 15.h),
-                  itemCount: Azkary.azkarSleep.length,
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
 
           // ✅ الميني يظهر فقط بعد أول Play
           // bottomNavigationBar:
@@ -1264,12 +1261,18 @@ class _SleepAzkarState extends State<SleepAzkar> {
   }
 }
 
-
 class DoneDialogWidget extends StatelessWidget {
-  const DoneDialogWidget({super.key, this.onPressedRepeat, required this.doneText, required this.KZakarFeaturesTitle, required this.KDaialogText,  this.repratBtn,});
-final  void Function()? onPressedRepeat;
-final String doneText,KZakarFeaturesTitle,KDaialogText;
-final String? repratBtn;
+  const DoneDialogWidget({
+    super.key,
+    this.onPressedRepeat,
+    required this.doneText,
+    required this.KZakarFeaturesTitle,
+    required this.KDaialogText,
+    this.repratBtn,
+  });
+  final void Function()? onPressedRepeat;
+  final String doneText, KZakarFeaturesTitle, KDaialogText;
+  final String? repratBtn;
   @override
   Widget build(BuildContext context) {
     bool isTab = ResponsiveUtil.isTablet(context);
@@ -1277,18 +1280,21 @@ final String? repratBtn;
       textDirection: TextDirection.rtl,
       child: Center(
         child: SingleChildScrollView(
-
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Center(child: Image.asset(doneZakar,)),
-              Icon(Icons.check_circle,color: Colors.green,size: 45.sp,),
+              Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 45.sp,
+              ),
               SizedBox(height: 10.h),
               Text(
                 KDaialogText,
                 style: GoogleFonts.cairo(
                   fontWeight: FontWeight.bold,
-                  fontSize:isTab? 10.sp:15.sp,
+                  fontSize: isTab ? 10.sp : 15.sp,
                 ),
               ),
               SizedBox(height: 15.h),
@@ -1297,7 +1303,7 @@ final String? repratBtn;
                 style: GoogleFonts.cairo(
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
-                  fontSize:isTab? 9.5.sp: 18.sp,
+                  fontSize: isTab ? 9.5.sp : 18.sp,
                 ),
               ),
               SizedBox(height: 10.h),
@@ -1308,14 +1314,15 @@ final String? repratBtn;
                 endIndent: 150,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
                 child: Text(
                   doneText,
                   textAlign: TextAlign.justify,
                   style: TextStyle(
                     fontFamily: AppStyle.fontFamily,
                     height: 1.8,
-                    fontSize:isTab? 10.sp: 17.5.sp,
+                    fontSize: isTab ? 10.sp : 17.5.sp,
                   ),
                 ),
               ),
@@ -1323,143 +1330,146 @@ final String? repratBtn;
               SizedBox(height: 20.h),
 
               // الأزرار: إعادة / إنهاء
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28.r),
-            gradient: const LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                Color(0xFF022C22), // أخضر غامق مائل للأزرق
-                Color(0xFF064E3B),
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.18),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
-              ),
-            ],
-            border: Border.all(
-              color: Colors.white.withOpacity(0.12),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              // زر إعادة الأذكار
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: onPressedRepeat,
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: Colors.white.withOpacity(0.06),
-                    padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24.r),
-                    ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28.r),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      Color(0xFF022C22), // أخضر غامق مائل للأزرق
+                      Color(0xFF064E3B),
+                    ],
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // دائرة للأيقونة
-                      Container(
-                        padding: EdgeInsets.all(6.r),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.18),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.12),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    // زر إعادة الأذكار
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: onPressedRepeat,
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: Colors.white.withOpacity(0.06),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.h, horizontal: 10.w),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.r),
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.refresh_rounded,
-                          size: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Flexible(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                            repratBtn??  'إعادة الأذكار',
-                              style: GoogleFonts.cairo(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w700,
+                            // دائرة للأيقونة
+                            Container(
+                              padding: EdgeInsets.all(6.r),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withOpacity(0.14),
+                              ),
+                              child: const Icon(
+                                Icons.refresh_rounded,
+                                size: 18,
                                 color: Colors.white,
                               ),
                             ),
-                            Text(
-                              'من البداية',
-                              style: GoogleFonts.cairo(
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white.withOpacity(0.85),
+                            SizedBox(width: 8.w),
+                            Flexible(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    repratBtn ?? 'إعادة الأذكار',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    'من البداية',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.white.withOpacity(0.85),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-
-              SizedBox(width: 10.w),
-
-              // زر إنهاء
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: Colors.white.withOpacity(0.45),
-                      width: 1.1,
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24.r),
-                    ),
-                    backgroundColor: Colors.white.withOpacity(0.04),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(6.r),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.1),
-                        ),
-                        child: const Icon(
-                          Icons.check_rounded,
-                          size: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Flexible(
-                        child: Text(
-                          'إنهاء',
-                          style: GoogleFonts.cairo(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+
+                    SizedBox(width: 10.w),
+
+                    // زر إنهاء
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: Colors.white.withOpacity(0.45),
+                            width: 1.1,
                           ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.h, horizontal: 10.w),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.r),
+                          ),
+                          backgroundColor: Colors.white.withOpacity(0.04),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(6.r),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withOpacity(0.1),
+                              ),
+                              child: const Icon(
+                                Icons.check_rounded,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Flexible(
+                              child: Text(
+                                'إنهاء',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ),
+              )
             ],
-          ),
-        )],
           ),
         ),
       ),

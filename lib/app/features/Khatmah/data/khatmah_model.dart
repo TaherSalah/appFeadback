@@ -83,7 +83,6 @@ import 'package:hive/hive.dart';
 //   }
 // }
 // flutter pub run build_runner watch --delete-conflicting-outputs
-import 'package:hive/hive.dart';
 
 part 'khatmah_model.g.dart'; // مهم جدًا
 
