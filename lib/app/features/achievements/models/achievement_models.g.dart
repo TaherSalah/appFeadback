@@ -173,3 +173,160 @@ class ChallengeAdapter extends TypeAdapter<Challenge> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+class AchievementTypeAdapter extends TypeAdapter<AchievementType> {
+  @override
+  final int typeId = 16;
+
+  @override
+  AchievementType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return AchievementType.prayer;
+      case 1:
+        return AchievementType.quran;
+      case 2:
+        return AchievementType.azkar;
+      case 3:
+        return AchievementType.charity;
+      case 4:
+        return AchievementType.learning;
+      case 5:
+        return AchievementType.streaks;
+      case 6:
+        return AchievementType.special;
+      default:
+        return AchievementType.prayer;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, AchievementType obj) {
+    switch (obj) {
+      case AchievementType.prayer:
+        writer.writeByte(0);
+        break;
+      case AchievementType.quran:
+        writer.writeByte(1);
+        break;
+      case AchievementType.azkar:
+        writer.writeByte(2);
+        break;
+      case AchievementType.charity:
+        writer.writeByte(3);
+        break;
+      case AchievementType.learning:
+        writer.writeByte(4);
+        break;
+      case AchievementType.streaks:
+        writer.writeByte(5);
+        break;
+      case AchievementType.special:
+        writer.writeByte(6);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AchievementTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class AchievementRarityAdapter extends TypeAdapter<AchievementRarity> {
+  @override
+  final int typeId = 17;
+
+  @override
+  AchievementRarity read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return AchievementRarity.common;
+      case 1:
+        return AchievementRarity.rare;
+      case 2:
+        return AchievementRarity.epic;
+      case 3:
+        return AchievementRarity.legendary;
+      default:
+        return AchievementRarity.common;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, AchievementRarity obj) {
+    switch (obj) {
+      case AchievementRarity.common:
+        writer.writeByte(0);
+        break;
+      case AchievementRarity.rare:
+        writer.writeByte(1);
+        break;
+      case AchievementRarity.epic:
+        writer.writeByte(2);
+        break;
+      case AchievementRarity.legendary:
+        writer.writeByte(3);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AchievementRarityAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class ChallengeTypeAdapter extends TypeAdapter<ChallengeType> {
+  @override
+  final int typeId = 18;
+
+  @override
+  ChallengeType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return ChallengeType.daily;
+      case 1:
+        return ChallengeType.weekly;
+      case 2:
+        return ChallengeType.monthly;
+      default:
+        return ChallengeType.daily;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, ChallengeType obj) {
+    switch (obj) {
+      case ChallengeType.daily:
+        writer.writeByte(0);
+        break;
+      case ChallengeType.weekly:
+        writer.writeByte(1);
+        break;
+      case ChallengeType.monthly:
+        writer.writeByte(2);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ChallengeTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

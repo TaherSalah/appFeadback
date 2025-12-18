@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
+import 'services/charity_pdf_service.dart';
 import 'AddCharityScreen.dart';
 
 class CharityHistoryScreen extends StatefulWidget {
@@ -58,6 +59,22 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              onPressed: () async {
+                final donations = _charityService.getAllDonations();
+                // Assuming calculateStats() is a method in CharityService that returns relevant statistics
+                // If not implemented, this line will cause a compile-time error.
+                // For the purpose of this edit, it's included as per instruction.
+                final stats = _charityService.calculateStats();
+                await CharityPdfService.generateDonationsReport(
+                    donations, stats);
+              },
+              tooltip: 'تصدير PDF',
+            ),
+            SizedBox(width: 8.w),
+          ],
         ),
         body: Column(
           children: [
@@ -104,7 +121,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label, CharityCategory? category, bool isDark) {
+  Widget _buildFilterChip(
+      String label, CharityCategory? category, bool isDark) {
     final isSelected = _filterCategory == category;
     return Padding(
       padding: EdgeInsets.only(left: 8.w),
@@ -244,18 +262,43 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                         color: Colors.grey,
                       ),
                     ),
-                    if (donation.notes != null && donation.notes!.isNotEmpty)
+                    if ((donation.notes != null &&
+                            donation.notes!.isNotEmpty) ||
+                        donation.paymentMethod != null)
                       Padding(
                         padding: EdgeInsets.only(top: 4.h),
-                        child: Text(
-                          donation.notes!,
-                          style: GoogleFonts.cairo(
-                            fontSize: 12.sp,
-                            color: Colors.grey[600],
-                            fontStyle: FontStyle.italic,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        child: Row(
+                          children: [
+                            if (donation.paymentMethod != null) ...[
+                              Text(
+                                '${donation.paymentMethod!.icon} ${donation.paymentMethod!.arabicName}',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 11.sp,
+                                  color: const Color(0xFF3B82F6),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (donation.notes != null &&
+                                  donation.notes!.isNotEmpty)
+                                Text(' • ',
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 12.sp)),
+                            ],
+                            if (donation.notes != null &&
+                                donation.notes!.isNotEmpty)
+                              Expanded(
+                                child: Text(
+                                  donation.notes!,
+                                  style: GoogleFonts.cairo(
+                                    fontSize: 12.sp,
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                   ],

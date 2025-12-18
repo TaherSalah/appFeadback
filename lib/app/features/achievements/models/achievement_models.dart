@@ -3,21 +3,34 @@ import 'package:hive/hive.dart';
 part 'achievement_models.g.dart';
 
 /// أنواع الإنجازات
+@HiveType(typeId: 16)
 enum AchievementType {
+  @HiveField(0)
   prayer, // صلاة
+  @HiveField(1)
   quran, // قرآن
+  @HiveField(2)
   azkar, // أذكار
-  charity, // صدقة  
+  @HiveField(3)
+  charity, // صدقة
+  @HiveField(4)
   learning, // تعلم
+  @HiveField(5)
   streaks, // سلاسل متواصلة
+  @HiveField(6)
   special, // خاص
 }
 
 /// مستوى الإنجاز
+@HiveType(typeId: 17)
 enum AchievementRarity {
+  @HiveField(0)
   common, // عادي
+  @HiveField(1)
   rare, // نادر
+  @HiveField(2)
   epic, // أسطوري
+  @HiveField(3)
   legendary, // خرافي
 }
 
@@ -126,9 +139,13 @@ class UserProgress {
 }
 
 /// تحدٍ
+@HiveType(typeId: 18)
 enum ChallengeType {
+  @HiveField(0)
   daily, // يومي
+  @HiveField(1)
   weekly, // أسبوعي
+  @HiveField(2)
   monthly, // شهري
 }
 

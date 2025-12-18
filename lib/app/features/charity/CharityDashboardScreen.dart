@@ -9,6 +9,9 @@ import 'CharityHistoryScreen.dart';
 import 'CharityStoriesScreen.dart';
 import 'CharityPlatformsScreen.dart';
 import 'RecurringCharityScreen.dart';
+import 'MonthlyGoalScreen.dart';
+import 'ReminderSettingsScreen.dart';
+import 'AchievementsScreen.dart';
 
 class CharityDashboardScreen extends StatefulWidget {
   const CharityDashboardScreen({super.key});
@@ -52,16 +55,35 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
         appBar: AppBar(
           title: Text(
-            'مُساعد الصدقة الذكي 🤲',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.sp,
-            ),
+            'متتبع الصدقات 🤲',
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
           actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications_active_outlined),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const ReminderSettingsScreen()),
+                ).then((_) => _loadData());
+              },
+              tooltip: 'إعدادات التذكير',
+            ),
+            SizedBox(width: 8.w),
+            IconButton(
+              icon: const Icon(Icons.emoji_events_outlined),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AchievementsScreen()),
+                );
+              },
+              tooltip: 'الإنجازات',
+            ),
             IconButton(
               icon: const Icon(Icons.history),
               onPressed: () {
@@ -98,6 +120,10 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
 
                         // إحصائيات سريعة
                         _buildQuickStats(isDark),
+                        SizedBox(height: 20.h),
+
+                        // الهدف الشهري
+                        _buildMonthlyGoalCard(isDark),
                         SizedBox(height: 20.h),
 
                         // Streak
@@ -286,6 +312,125 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMonthlyGoalCard(bool isDark) {
+    final goal = _charityService.getMonthlyGoal();
+    final progress =
+        _charityService.getGoalProgress(_stats?.totalThisMonth ?? 0);
+
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const MonthlyGoalScreen()),
+        ).then((_) => _loadData());
+      },
+      borderRadius: BorderRadius.circular(20.r),
+      child: Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF2D3748) : Colors.white,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: const Color(0xFF10B981).withOpacity(0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text('🎯', style: TextStyle(fontSize: 24.sp)),
+                    SizedBox(width: 12.w),
+                    Text(
+                      'الهدف الشهري',
+                      style: GoogleFonts.cairo(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Icon(Icons.chevron_left, color: Colors.grey, size: 24.sp),
+              ],
+            ),
+            SizedBox(height: 20.h),
+            if (goal == null)
+              Center(
+                child: Column(
+                  children: [
+                    Text(
+                      'لم يتم تحديد هدف لهذا الشهر',
+                      style: GoogleFonts.cairo(color: Colors.grey),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const MonthlyGoalScreen()),
+                        ).then((_) => _loadData());
+                      },
+                      child: Text(
+                        'اضبط هدفك الآن',
+                        style: GoogleFonts.cairo(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF10B981),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${(_stats?.totalThisMonth ?? 0).toStringAsFixed(0)} جنيه',
+                        style: GoogleFonts.cairo(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF10B981),
+                        ),
+                      ),
+                      Text(
+                        'من ${goal.amount.toStringAsFixed(0)} جنيه',
+                        style: GoogleFonts.cairo(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10.r),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: Colors.grey.withOpacity(0.1),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Color(0xFF10B981),
+                      ),
+                      minHeight: 12.h,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'لقد حققت ${(progress * 100).toStringAsFixed(0)}% من هدفك الشهري! ✨',
+                    style: GoogleFonts.cairo(
+                      fontSize: 12.sp,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }

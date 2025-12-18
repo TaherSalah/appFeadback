@@ -275,10 +275,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                         const CharityEntryWidget(),
                         const SizedBox(height: 10),
 
-                        const AchievementsEntryWidget(),
-                        const SizedBox(height: 10),
 
-                        const DuasEntryWidget(),
 
                         // 🔥 مدخل ركن الأطفال (في صفحة منفصلة)
                         const KidsEntryPointWidget(),

@@ -2,6 +2,48 @@ import 'package:hive/hive.dart';
 
 part 'charity_models.g.dart';
 
+/// طرق الدفع
+enum PaymentMethod {
+  cash, // نقدي
+  card, // بطاقة
+  eWallet, // محفظة إلكترونية
+  bankTransfer, // تحويل بنكي
+  check, // شيك
+}
+
+/// امتداد للحصول على اسم طريقة الدفع بالعربية
+extension PaymentMethodExtension on PaymentMethod {
+  String get arabicName {
+    switch (this) {
+      case PaymentMethod.cash:
+        return 'نقدي';
+      case PaymentMethod.card:
+        return 'بطاقة ائتمان';
+      case PaymentMethod.eWallet:
+        return 'محفظة إلكترونية';
+      case PaymentMethod.bankTransfer:
+        return 'تحويل بنكي';
+      case PaymentMethod.check:
+        return 'شيك';
+    }
+  }
+
+  String get icon {
+    switch (this) {
+      case PaymentMethod.cash:
+        return '💵';
+      case PaymentMethod.card:
+        return '💳';
+      case PaymentMethod.eWallet:
+        return '📱';
+      case PaymentMethod.bankTransfer:
+        return '🏦';
+      case PaymentMethod.check:
+        return '📝';
+    }
+  }
+}
+
 /// فئات الصدقة
 enum CharityCategory {
   zakat, // زكاة المال
@@ -90,6 +132,9 @@ class CharityDonation extends HiveObject {
   @HiveField(5)
   final String currency; // EGP, SAR, USD, etc.
 
+  @HiveField(6)
+  final int? paymentMethodIndex; // طريقة الدفع
+
   CharityDonation({
     required this.id,
     required this.amount,
@@ -97,11 +142,17 @@ class CharityDonation extends HiveObject {
     required this.date,
     this.notes,
     this.currency = 'EGP',
+    this.paymentMethodIndex,
   });
-  
+
   // Helper getter for category
   CharityCategory get category => CharityCategory.values[categoryIndex];
-  
+
+  // Helper getter for payment method
+  PaymentMethod? get paymentMethod => paymentMethodIndex != null
+      ? PaymentMethod.values[paymentMethodIndex!]
+      : null;
+
   // Helper factory with category
   factory CharityDonation.withCategory({
     required String id,
@@ -110,6 +161,7 @@ class CharityDonation extends HiveObject {
     required DateTime date,
     String? notes,
     String currency = 'EGP',
+    PaymentMethod? paymentMethod,
   }) {
     return CharityDonation(
       id: id,
@@ -118,6 +170,7 @@ class CharityDonation extends HiveObject {
       date: date,
       notes: notes,
       currency: currency,
+      paymentMethodIndex: paymentMethod?.index,
     );
   }
 
@@ -130,6 +183,7 @@ class CharityDonation extends HiveObject {
       'date': date.toIso8601String(),
       'notes': notes,
       'currency': currency,
+      'paymentMethod': paymentMethodIndex,
     };
   }
 
@@ -142,6 +196,7 @@ class CharityDonation extends HiveObject {
       date: DateTime.parse(map['date'] as String),
       notes: map['notes'] as String?,
       currency: map['currency'] as String? ?? 'EGP',
+      paymentMethodIndex: map['paymentMethod'] as int?,
     );
   }
 }
@@ -276,4 +331,54 @@ class RecurringCharity extends HiveObject {
       lastDonatedDate: lastDonatedDate ?? this.lastDonatedDate,
     );
   }
+}
+
+/// نموذج الهدف الشهري
+@HiveType(typeId: 22)
+class MonthlyGoal extends HiveObject {
+  @HiveField(0)
+  final double amount;
+
+  @HiveField(1)
+  final int month;
+
+  @HiveField(2)
+  final int year;
+
+  MonthlyGoal({
+    required this.amount,
+    required this.month,
+    required this.year,
+  });
+}
+
+/// نموذج الإنجاز
+@HiveType(typeId: 23)
+class CharityAchievement extends HiveObject {
+  @HiveField(0)
+  final String id;
+
+  @HiveField(1)
+  final String title;
+
+  @HiveField(2)
+  final String description;
+
+  @HiveField(3)
+  final String icon;
+
+  @HiveField(4)
+  final DateTime unlockedDate;
+
+  @HiveField(5)
+  final double? goalValue; // القيمة المطلوبة للفتح (مثلاً 1000 جنيه)
+
+  CharityAchievement({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.unlockedDate,
+    this.goalValue,
+  });
 }

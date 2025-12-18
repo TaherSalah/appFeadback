@@ -20,6 +20,7 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
   final CharityService _charityService = CharityService();
 
   CharityCategory _selectedCategory = CharityCategory.sadaqah;
+  PaymentMethod? _selectedPaymentMethod;
   DateTime _selectedDate = DateTime.now();
   String _currency = 'EGP';
   bool _saving = false;
@@ -34,6 +35,7 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
       _amountController.text = widget.donation!.amount.toString();
       _notesController.text = widget.donation!.notes ?? '';
       _selectedCategory = widget.donation!.category;
+      _selectedPaymentMethod = widget.donation!.paymentMethod;
       _selectedDate = widget.donation!.date;
       _currency = widget.donation!.currency;
     }
@@ -58,6 +60,7 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
       date: _selectedDate,
       notes: _notesController.text.isEmpty ? null : _notesController.text,
       currency: 'EGP',
+      paymentMethod: _selectedPaymentMethod,
     );
 
     if (widget.donation != null) {
@@ -89,7 +92,8 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
+        backgroundColor:
+            isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
         appBar: AppBar(
           title: Text(
             widget.donation != null ? 'تعديل الصدقة' : 'إضافة صدقة جديدة',
@@ -232,6 +236,70 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
 
                 SizedBox(height: 24.h),
 
+                // طريقة الدفع
+                _buildSectionTitle('💳 طريقة الدفع (اختياري)'),
+                SizedBox(height: 12.h),
+                Wrap(
+                  spacing: 8.w,
+                  runSpacing: 8.h,
+                  children: PaymentMethod.values.map((method) {
+                    final isSelected = method == _selectedPaymentMethod;
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          if (isSelected) {
+                            _selectedPaymentMethod = null;
+                          } else {
+                            _selectedPaymentMethod = method;
+                          }
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 12.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFF3B82F6)
+                              : (isDark
+                                  ? const Color(0xFF2D3748)
+                                  : Colors.white),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: isSelected
+                                ? const Color(0xFF3B82F6)
+                                : Colors.grey.shade300,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              method.icon,
+                              style: TextStyle(fontSize: 18.sp),
+                            ),
+                            SizedBox(width: 6.w),
+                            Text(
+                              method.arabicName,
+                              style: GoogleFonts.cairo(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: isSelected
+                                    ? Colors.white
+                                    : (isDark ? Colors.white : Colors.black87),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+
+                SizedBox(height: 24.h),
+
                 // التاريخ
                 _buildSectionTitle('📅 التاريخ'),
                 SizedBox(height: 12.h),
@@ -287,7 +355,8 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                 _buildSectionTitle('📝 ملاحظات (اختياري)'),
                 SizedBox(height: 12.h),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF2D3748) : Colors.white,
                     borderRadius: BorderRadius.circular(16.r),

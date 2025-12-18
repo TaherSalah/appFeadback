@@ -81,7 +81,6 @@ class AchievementAlbumScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Stats grid
             GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -96,8 +95,7 @@ class AchievementAlbumScreen extends StatelessWidget {
                   '$completedStories',
                   Colors.blue,
                   isDark,
-                    context
-
+                  context,
                 ),
                 _buildStatCard(
                   '🎮',
@@ -105,8 +103,7 @@ class AchievementAlbumScreen extends StatelessWidget {
                   '$completedGames',
                   Colors.purple,
                   isDark,
-                    context
-
+                  context,
                 ),
                 _buildStatCard(
                   '🔥',
@@ -114,7 +111,7 @@ class AchievementAlbumScreen extends StatelessWidget {
                   '$streakDays يوم',
                   Colors.orange,
                   isDark,
-                  context
+                  context,
                 ),
                 _buildStatCard(
                   '🏅',
@@ -122,8 +119,7 @@ class AchievementAlbumScreen extends StatelessWidget {
                   '${unlockedBadges.length}',
                   Colors.green,
                   isDark,
-                    context
-
+                  context,
                 ),
               ],
             ),
@@ -237,8 +233,8 @@ class AchievementAlbumScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(
-      String emoji, String label, String value, Color color, bool isDark,context) {
+  Widget _buildStatCard(String emoji, String label, String value, Color color,
+      bool isDark, context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

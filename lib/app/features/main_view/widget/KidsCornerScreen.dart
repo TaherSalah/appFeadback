@@ -14,9 +14,10 @@ import 'VirtualShopScreen.dart';
 import 'DailyChallengesScreen.dart';
 import 'DailyStreakWidget.dart';
 import 'VirtualPetWidget.dart';
-import 'AchievementAlbumScreen.dart';
 import 'HadithsForKidsScreen.dart';
 import 'DailyDuasScreen.dart';
+
+enum KidsView { home, journey, activities, trophies }
 
 class KidsCornerScreen extends StatefulWidget {
   const KidsCornerScreen({super.key});
@@ -32,6 +33,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
   int _completedGames = 0;
   int _currentStreakDays = 0;
   String _selectedGender = 'boy'; // 'boy' or 'girl'
+  KidsView _currentView = KidsView.home;
 
   // Levels Categories - Expanded to 9 Levels
   final List<Map<String, dynamic>> _levels = [
@@ -387,6 +389,9 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
     setState(() {
       _totalStars = prefs.getInt('kids_total_stars') ?? 0;
       _selectedGender = prefs.getString('kids_gender') ?? 'boy';
+      _completedStories = prefs.getInt('completed_stories') ?? 0;
+      _completedGames = prefs.getInt('completed_games') ?? 0;
+      _currentStreakDays = prefs.getInt('streak_days') ?? 0;
 
       final savedTasks = prefs.getString('kids_tasks_v2');
       if (savedTasks != null) {
@@ -453,6 +458,13 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
         : const Color(0xFFE91E63);
   }
 
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return "صباح الخير يا بطل! ☀️";
+    if (hour < 17) return "أهلاً بك يا بطل! 👋";
+    return "مساء النور يا بطل! ✨";
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -465,120 +477,243 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
 
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-        // backgroundColor: bgColor,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(
-            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
-          ),
-          child: AppBar(
-            // actions: [
-            //   IconButton(
-            //     icon: const Icon(Icons.refresh),
-            //     tooltip: 'إعادة العداد',
-            //     onPressed: con.resetPrayer,
-            //   ),
-            // ],
-
-            leading: CupertinoNavigationBarBackButton(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black,
+      child: PopScope(
+        canPop: _currentView == KidsView.home,
+        onPopInvoked: (didPop) {
+          if (didPop) return;
+          if (_currentView != KidsView.home) {
+            setState(() => _currentView = KidsView.home);
+          }
+        },
+        child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
             ),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                icon: Icon(Icons.person_pin,
-                    color: isDark ? Colors.white : themeColor),
-                onPressed: _showAvatarSelection,
-              )
-            ],
-            title: Text(
-              "ركن المسلم الصغير",
-              style: GoogleFonts.cairo(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+            child: AppBar(
+              leading: _currentView == KidsView.home
+                  ? CupertinoNavigationBarBackButton(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () =>
+                          setState(() => _currentView = KidsView.home),
+                    ),
+              centerTitle: true,
+              actions: [
+                if (_currentView == KidsView.home)
+                  IconButton(
+                    icon: Icon(Icons.person_pin,
+                        color: isDark ? Colors.white : themeColor),
+                    onPressed: _showAvatarSelection,
+                  )
+              ],
+              title: Text(
+                _getViewTitle(),
+                style: GoogleFonts.cairo(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                      MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                ),
               ),
             ),
+          ),
+          body: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: _buildCurrentView(isDark),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  shouldLoop: false,
+                  colors: const [
+                    Colors.green,
+                    Colors.blue,
+                    Colors.pink,
+                    Colors.orange,
+                    Colors.purple
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
 
-        // appBar: AppBar(
-        //   title: Text(
-        //     "ركن المسلم الصغير 🦸‍♂️",
-        //     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-        //   ),
-        //   backgroundColor: Colors.transparent,
-        //   elevation: 0,
-        //   centerTitle: true,
-        //   leading: IconButton(
-        //     icon: Icon(Icons.arrow_back_ios, color: isDark ? Colors.white : themeColor),
-        //     onPressed: () => Navigator.pop(context),
-        //   ),
-        //   actions: [
-        //     IconButton(
-        //       icon: Icon(Icons.person_pin, color: isDark ? Colors.white : themeColor),
-        //       onPressed: _showAvatarSelection,
-        //     )
-        //   ],
-        // ),
-        body: Stack(
+  String _getViewTitle() {
+    switch (_currentView) {
+      case KidsView.home:
+        return "ركن المسلم الصغير";
+      case KidsView.journey:
+        return "رحلة الأبطال 🗺️";
+      case KidsView.activities:
+        return "المرح والتعلم 🎮";
+      case KidsView.trophies:
+        return "إنجازاتي 🏆";
+    }
+  }
+
+  Widget _buildCurrentView(bool isDark) {
+    switch (_currentView) {
+      case KidsView.home:
+        return _buildDashboard(isDark);
+      case KidsView.journey:
+        return _buildJourneyContent(isDark);
+      case KidsView.activities:
+        return _buildActivitiesContent(isDark);
+      case KidsView.trophies:
+        return _buildTrophiesContent(isDark);
+    }
+  }
+
+  Widget _buildDashboard(bool isDark) {
+    return Column(
+      key: const ValueKey('home'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _getGreeting(),
+          style: GoogleFonts.cairo(
+            fontSize: 22.sp,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.green.shade800,
+          ),
+        ),
+        const SizedBox(height: 12),
+        _buildProfileCard(isDark),
+        const SizedBox(height: 16),
+        const DailyStreakWidget(),
+        const SizedBox(height: 12),
+        VirtualPetWidget(totalStars: _totalStars),
+        const SizedBox(height: 24),
+        Row(
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  _buildProfileCard(isDark),
-                  const SizedBox(height: 12),
-                  const DailyStreakWidget(),
-                  const SizedBox(height: 12),
-                  VirtualPetWidget(totalStars: _totalStars),
-                  const SizedBox(height: 20),
-                  _buildTrophySection(isDark),
-                  const SizedBox(height: 20),
-
-                  // قسم القصص والألعاب
-                  _buildStoriesAndGamesSection(isDark),
-                  const SizedBox(height: 20),
-
-                  Row(
-                    children: [
-                      const Icon(Icons.map, size: 20, color: Colors.grey),
-                      const SizedBox(width: 8),
-                      Text(
-                        "رحلة الأبطال 🗺️",
-                        style: GoogleFonts.cairo(
-                          fontSize:
-                              ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  ...List.generate(_levels.length,
-                      (index) => _buildLevelCard(index, isDark)),
-                  const SizedBox(height: 40),
-                ],
+            const Icon(Icons.stars, color: Colors.amber),
+            const SizedBox(width: 8),
+            Text(
+              "اختر مغامرتك اليوم 🚀",
+              style: GoogleFonts.cairo(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white70 : Colors.black87,
               ),
             ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: ConfettiWidget(
-                confettiController: _confettiController,
-                blastDirectionality: BlastDirectionality.explosive,
-                shouldLoop: false,
-                colors: const [
-                  Colors.green,
-                  Colors.blue,
-                  Colors.pink,
-                  Colors.orange,
-                  Colors.purple
+          ],
+        ),
+        const SizedBox(height: 12),
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 1.1,
+          children: [
+            _buildQuickNavCard(
+              title: "رحلة الأبطال",
+              emoji: "🗺️",
+              color: Colors.blue,
+              onTap: () => setState(() => _currentView = KidsView.journey),
+            ),
+            _buildQuickNavCard(
+              title: "المرح والتعلم",
+              emoji: "🎮",
+              color: Colors.orange,
+              onTap: () => setState(() => _currentView = KidsView.activities),
+            ),
+            _buildQuickNavCard(
+              title: "ألبوم الإنجازات",
+              emoji: "🏆",
+              color: Colors.purple,
+              onTap: () => setState(() => _currentView = KidsView.trophies),
+            ),
+            _buildQuickNavCard(
+              title: "أدعية يومية",
+              emoji: "🤲",
+              color: Colors.teal,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DailyDuasScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget _buildQuickNavCard({
+    required String title,
+    required String emoji,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(28),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [color.withOpacity(0.2), color.withOpacity(0.05)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: color.withOpacity(0.4), width: 2.5),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
                 ],
               ),
+              child: Text(emoji, style: const TextStyle(fontSize: 40)),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: GoogleFonts.cairo(
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+                color: HSLColor.fromColor(color)
+                    .withLightness((HSLColor.fromColor(color).lightness - 0.2)
+                        .clamp(0.0, 1.0))
+                    .toColor(),
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -586,8 +721,480 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
     );
   }
 
+  Widget _buildJourneyContent(bool isDark) {
+    return Column(
+      key: const ValueKey('journey'),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.blue.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.blue.withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              const Text("🗺️", style: TextStyle(fontSize: 30)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  "تتبع المسار لتصبح بطلاً خارقاً! أكمل كل مستوى لفتح المستوى التالي.",
+                  style: GoogleFonts.cairo(
+                    fontSize: 13.sp,
+                    color: isDark ? Colors.white70 : Colors.blue.shade900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 30),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _levels.length,
+          itemBuilder: (context, index) {
+            final level = _levels[index];
+            final isEven = index % 2 == 0;
+            final isLast = index == _levels.length - 1;
+
+            return _buildPathLevelNode(level, index, isEven, isLast, isDark);
+          },
+        ),
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildPathLevelNode(Map<String, dynamic> level, int index, bool isEven,
+      bool isLast, bool isDark) {
+    final color = level['color'] as Color;
+    final tasks = level['tasks'] as List;
+    final completedCount = tasks.where((t) => t['done']).length;
+    final progress = completedCount / tasks.length;
+    final isLevelComplete = progress == 1.0;
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment:
+              isEven ? MainAxisAlignment.start : MainAxisAlignment.end,
+          children: [
+            if (!isEven) const Spacer(),
+            GestureDetector(
+              onTap: () {
+                // Show floating task list or dialog
+                _showLevelTasksDialog(index, isDark);
+              },
+              child: Column(
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 90.w,
+                        height: 90.w,
+                        decoration: BoxDecoration(
+                          color:
+                              isDark ? const Color(0xFF1E293B) : Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: (isLevelComplete ? Colors.green : color)
+                                  .withOpacity(0.3),
+                              blurRadius: 15,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                          border: Border.all(
+                            color: isLevelComplete ? Colors.green : color,
+                            width: 4,
+                          ),
+                        ),
+                        child: Icon(
+                          level['icon'],
+                          size: 40,
+                          color: isLevelComplete ? Colors.green : color,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color:
+                                isLevelComplete ? Colors.green : Colors.amber,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Icon(
+                            isLevelComplete ? Icons.check : Icons.lock_open,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    level['title'].split(':')[1].trim(),
+                    style: GoogleFonts.cairo(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  Text(
+                    "$completedCount / ${tasks.length}",
+                    style: GoogleFonts.cairo(
+                      fontSize: 11.sp,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isEven) const Spacer(),
+          ],
+        ),
+        if (!isLast)
+          Container(
+            height: 60,
+            width: 2,
+            margin: EdgeInsets.only(
+              right: isEven ? 0 : 45.w,
+              left: isEven ? 45.w : 0,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  isLevelComplete ? Colors.green : color,
+                  (_levels[index + 1]['tasks'] as List).every((t) => t['done'])
+                      ? Colors.green
+                      : (_levels[index + 1]['color'] as Color),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _showLevelTasksDialog(int index, bool isDark) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(builder: (context, setModalState) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E293B) : Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 50,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Icon(_levels[index]['icon'],
+                      size: 30, color: _levels[index]['color']),
+                  const SizedBox(width: 12),
+                  Text(
+                    _levels[index]['title'],
+                    style: GoogleFonts.cairo(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: ListView(
+                  children:
+                      (_levels[index]['tasks'] as List).map<Widget>((task) {
+                    final taskIndex =
+                        (_levels[index]['tasks'] as List).indexOf(task);
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        color: task['done']
+                            ? Colors.green.withOpacity(0.1)
+                            : Colors.grey.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: task['done']
+                              ? Colors.green
+                              : Colors.grey.withOpacity(0.2),
+                        ),
+                      ),
+                      child: ListTile(
+                        onTap: () {
+                          _toggleTask(index, taskIndex);
+                          setModalState(() {});
+                        },
+                        leading: Icon(
+                          task['done']
+                              ? Icons.check_circle
+                              : Icons.radio_button_unchecked,
+                          color: task['done'] ? Colors.green : Colors.grey,
+                        ),
+                        title: Text(
+                          task['title'],
+                          style: GoogleFonts.cairo(
+                            fontWeight: task['done']
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            decoration: task['done']
+                                ? TextDecoration.lineThrough
+                                : null,
+                          ),
+                        ),
+                        trailing: Text(
+                          "+${task['points']} ⭐",
+                          style: GoogleFonts.cairo(
+                              color: Colors.amber, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildTrophiesContent(bool isDark) {
+    final unlockedBadges = _allTrophies.where((t) => t['unlocked']).toList();
+    return Column(
+      key: const ValueKey('trophies'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Overall stats Header
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.orange.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Text('🏆', style: TextStyle(fontSize: 45)),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'إجمالي النجوم',
+                      style: GoogleFonts.cairo(
+                        fontSize: 14.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      '$_totalStars ⭐',
+                      style: GoogleFonts.cairo(
+                        fontSize: 28.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Stats grid
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.2,
+          children: [
+            _buildStatCard(
+                '📚', 'قصص مقروءة', '$_completedStories', Colors.blue, isDark),
+            _buildStatCard('🎮', 'ألعاب مكتملة', '$_completedGames',
+                Colors.purple, isDark),
+            _buildStatCard('🔥', 'أطول سلسلة', '$_currentStreakDays يوم',
+                Colors.orange, isDark),
+            _buildStatCard('🏅', 'شارات مفتوحة', '${unlockedBadges.length}',
+                Colors.green, isDark),
+          ],
+        ),
+        const SizedBox(height: 32),
+
+        // Badges section
+        Text(
+          'أوسمتك المستحقة 🏅',
+          style: GoogleFonts.cairo(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        if (unlockedBadges.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(24),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E293B) : Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              children: [
+                const Text('🎯', style: TextStyle(fontSize: 40)),
+                const SizedBox(height: 12),
+                Text(
+                  'لا توجد شارات بعد\nابدأ بجمع النجوم والتحديات!',
+                  style: GoogleFonts.cairo(
+                    fontSize: 14.sp,
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          )
+        else
+          ...unlockedBadges.map((badge) => Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                      color: Colors.amber.withOpacity(0.5), width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.amber.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          badge['icon'] as IconData,
+                          color: Colors.amber,
+                          size: 25,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            badge['title'] ?? '',
+                            style: GoogleFonts.cairo(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            badge['desc'] ?? '',
+                            style: GoogleFonts.cairo(
+                              fontSize: 12.sp,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.check_circle,
+                        color: Colors.green, size: 24),
+                  ],
+                ),
+              )),
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(
+      String emoji, String label, String value, Color color, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3), width: 2),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 30)),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: GoogleFonts.cairo(
+              fontSize: 11.sp,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            value,
+            style: GoogleFonts.cairo(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showAvatarSelection() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -715,384 +1322,134 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
     );
   }
 
-  Widget _buildTrophySection(bool isDark) {
-    return SizedBox(
-      height: ResponsiveUtil.isTablet(context) ? 125 : 110,
-      child: ListView.separated(
-        itemCount: _allTrophies.length,
-        scrollDirection: Axis.horizontal,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final trophy = _allTrophies[index];
-          final unlocked = trophy['unlocked'];
-          return Container(
-            width: ResponsiveUtil.isTablet(context) ? 125 : 90,
-            decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2C3E50) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                    color:
-                        unlocked ? Colors.amber : Colors.grey.withOpacity(0.3),
-                    width: 2),
-                boxShadow: [
-                  if (unlocked)
-                    BoxShadow(
-                        color: Colors.amber.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4))
-                ]),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(trophy['icon'],
-                    size: 35, color: unlocked ? Colors.amber : Colors.grey),
-                const SizedBox(height: 5),
-                Text(trophy['title'],
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
-                        fontSize:
-                            ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp,
-                        fontWeight: FontWeight.bold,
-                        color: unlocked
-                            ? (isDark ? Colors.white : Colors.black87)
-                            : Colors.grey),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-                Text("${trophy['required']}",
-                    style: GoogleFonts.cairo(
-                        fontSize:
-                            ResponsiveUtil.isTablet(context) ? 7.sp : 10.sp,
-                        fontWeight: FontWeight.bold,
-                        color: unlocked ? Colors.amber : Colors.grey)),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildLevelCard(int index, bool isDark) {
-    final level = _levels[index];
-    final color = level['color'] as Color;
-    final tasks = level['tasks'] as List;
-    final completedCount = tasks.where((t) => t['done']).length;
-    final progress = completedCount / tasks.length;
-    final isLevelComplete = progress == 1.0;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-            color: isLevelComplete ? Colors.green : color.withOpacity(0.3),
-            width: isLevelComplete ? 2 : 1.5),
-        boxShadow: [
-          BoxShadow(
-              color: (isLevelComplete ? Colors.green : color).withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4)),
-        ],
-      ),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          initiallyExpanded: index <= 1, // Expand first two
-          leading: Stack(
-            alignment: Alignment.center,
-            children: [
-              CircularProgressIndicator(
-                value: progress,
-                backgroundColor: color.withOpacity(0.1),
-                valueColor: AlwaysStoppedAnimation(
-                    isLevelComplete ? Colors.green : color),
-                strokeWidth: 4,
-              ),
-              if (isLevelComplete)
-                const Icon(Icons.star, size: 16, color: Colors.green)
-            ],
-          ),
-          title: Text(
-            level['title'],
-            style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
-                color: isDark ? Colors.white : Colors.black87),
-          ),
-          subtitle: Text(
-            isLevelComplete
-                ? "رائع! أنهيت المستوى 🏆"
-                : "$completedCount / ${tasks.length} مكتمل",
-            style: GoogleFonts.cairo(
-                fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
-                color: isLevelComplete ? Colors.green : Colors.grey,
-                fontWeight:
-                    isLevelComplete ? FontWeight.bold : FontWeight.normal),
-          ),
-          children: tasks.map<Widget>((task) {
-                final isDone = task['done'];
-                return Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  decoration: BoxDecoration(
-                      color: isDone
-                          ? (isLevelComplete
-                              ? Colors.green.withOpacity(0.1)
-                              : color.withOpacity(0.1))
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: isDone
-                              ? (isLevelComplete ? Colors.green : color)
-                              : Colors.grey.withOpacity(0.2))),
-                  child: ListTile(
-                    onTap: () => _toggleTask(index, tasks.indexOf(task)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                    title: Text(
-                      task['title'],
-                      style: GoogleFonts.cairo(
-                        fontSize:
-                            ResponsiveUtil.isTablet(context) ? 8.sp : 14.sp,
-                        fontWeight:
-                            isDone ? FontWeight.bold : FontWeight.normal,
-                        color: isDark ? Colors.white70 : Colors.black87,
-                      ),
-                    ),
-                    trailing: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: isDone
-                            ? (isLevelComplete ? Colors.green : color)
-                            : Colors.grey.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        isDone ? Icons.check : Icons.star_border,
-                        color: isDone ? Colors.white : Colors.grey,
-                        size: 18,
-                      ),
-                    ),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                );
-              }).toList() +
-              [const SizedBox(height: 10)],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStoriesAndGamesSection(bool isDark) {
+  Widget _buildActivitiesContent(bool isDark) {
     return Column(
+      key: const ValueKey('activities'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            const Icon(Icons.auto_stories, size: 20, color: Colors.orange),
-            const SizedBox(width: 8),
-            Text(
-              "المرح والتعلم 🎮",
-              style: GoogleFonts.cairo(
-                fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _buildFeatureCard(
-                title: "قصص إسلامية",
-                emoji: "📚",
-                color: const Color(0xFFFF9800),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => StoriesScreen(
-                        onStoryCompleted: () async {
-                          setState(() => _completedStories++);
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setInt(
-                              'completed_stories', _completedStories);
-                        },
-                      ),
-                    ),
-                  );
-                },
-                isDark: isDark,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildFeatureCard(
-                title: "ألعاب تعليمية",
-                emoji: "🎮",
-                color: const Color(0xFF9C27B0),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const GamesMenuScreen()),
-                  );
-                },
-                isDark: isDark,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _buildFeatureCard(
-                title: "المتجر",
-                emoji: "🏪",
-                color: const Color(0xFF00BCD4),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => VirtualShopScreen(
-                        currentStars: _totalStars,
-                        onPurchase: (cost) {
-                          setState(() {
-                            _totalStars -= cost;
-                          });
-                          _saveProgress();
-                        },
-                      ),
-                    ),
-                  );
-                },
-                isDark: isDark,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildFeatureCard(
-                title: "التحديات",
-                emoji: "⚡",
-                color: const Color(0xFFE91E63),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const DailyChallengesScreen()),
-                  );
-                },
-                isDark: isDark,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Achievement Album Button
-        _buildFeatureCard(
-          title: "ألبوم الإنجازات",
-          emoji: "📸",
-          color: const Color(0xFFFF5722),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => AchievementAlbumScreen(
-                  totalStars: _totalStars,
-                  unlockedBadges:
-                      _allTrophies.where((t) => t['unlocked']).toList(),
-                  completedStories: 0, // كمّل لو عندك counter
-                  completedGames: 0,
-                  streakDays: 0, // كمّل لو عندك
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.orange.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.orange.withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              const Text("🎮", style: TextStyle(fontSize: 30)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  "هنا تجد كل المتعة والتعلم! اختر نشاطاً لتبدأ رحلتك.",
+                  style: GoogleFonts.cairo(
+                    fontSize: 13.sp,
+                    color: isDark ? Colors.white70 : Colors.orange.shade900,
+                  ),
                 ),
               ),
-            );
-          },
-          isDark: isDark,
-        ),
-        const SizedBox(height: 12),
-
-        // Hadiths for Kids
-        _buildFeatureCard(
-          title: "أحاديث للأطفال",
-          emoji: "📿",
-          color: const Color(0xFF009688),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const HadithsForKidsScreen()),
-            );
-          },
-          isDark: isDark,
-        ),
-        const SizedBox(height: 12),
-
-        // Daily Duas
-        _buildFeatureCard(
-          title: "أدعية يومية",
-          emoji: "🤲",
-          color: const Color(0xFF9C27B0),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const DailyDuasScreen()),
-            );
-          },
-          isDark: isDark,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFeatureCard({
-    required String title,
-    required String emoji,
-    required Color color,
-    required VoidCallback onTap,
-    required bool isDark,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [color, color.withOpacity(0.7)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            ],
           ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
-        child: Column(
+        const SizedBox(height: 24),
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.9,
           children: [
-            Text(
-              emoji,
-              style: const TextStyle(fontSize: 40),
+            _buildQuickNavCard(
+              title: "قصص إسلامية",
+              emoji: "📚",
+              color: const Color(0xFFFF9800),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => StoriesScreen(
+                      onStoryCompleted: () async {
+                        setState(() => _completedStories++);
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setInt(
+                            'completed_stories', _completedStories);
+                      },
+                    ),
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: GoogleFonts.cairo(
-                fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.center,
+            _buildQuickNavCard(
+              title: "ألعاب تعليمية",
+              emoji: "🎮",
+              color: const Color(0xFF9C27B0),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GamesMenuScreen()),
+                );
+              },
+            ),
+            _buildQuickNavCard(
+              title: "المتجر",
+              emoji: "🏪",
+              color: const Color(0xFF00BCD4),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => VirtualShopScreen(
+                      currentStars: _totalStars,
+                      onPurchase: (cost) {
+                        setState(() {
+                          _totalStars -= cost;
+                        });
+                        _saveProgress();
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            _buildQuickNavCard(
+              title: "التحديات",
+              emoji: "⚡",
+              color: const Color(0xFFE91E63),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const DailyChallengesScreen()),
+                );
+              },
+            ),
+            _buildQuickNavCard(
+              title: "أحاديث للأطفال",
+              emoji: "📿",
+              color: const Color(0xFF009688),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const HadithsForKidsScreen()),
+                );
+              },
+            ),
+            _buildQuickNavCard(
+              title: "أدعية يومية",
+              emoji: "🤲",
+              color: const Color(0xFF673AB7),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DailyDuasScreen()),
+                );
+              },
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 40),
+      ],
     );
   }
 }

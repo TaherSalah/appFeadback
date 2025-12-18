@@ -73,7 +73,6 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 //             )));
 //   });
 // }
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -99,6 +98,7 @@ import 'app/features/charity/models/charity_models.dart';
 import 'app/features/achievements/models/achievement_models.dart';
 import 'app/features/duas/models/dua_models.dart';
 import 'app/features/azanView/adhan_workmanager_service.dart';
+import 'package:muslimdaily/app/features/charity/CharityDashboardScreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -209,12 +209,18 @@ Future<void> _initAppServices() async {
 
   // ✅ 3) Hive
   await Hive.initFlutter();
-  
+
   // Register existing adapters
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(KhatmahModelAdapter());
   }
-  
+  if (!Hive.isAdapterRegistered(22)) {
+    Hive.registerAdapter(MonthlyGoalAdapter());
+  }
+  if (!Hive.isAdapterRegistered(23)) {
+    Hive.registerAdapter(CharityAchievementAdapter());
+  }
+
   // Register new feature adapters
   if (!Hive.isAdapterRegistered(10)) {
     Hive.registerAdapter(CharityDonationAdapter());
@@ -237,9 +243,18 @@ Future<void> _initAppServices() async {
   if (!Hive.isAdapterRegistered(21)) {
     Hive.registerAdapter(RecurringCharityAdapter());
   }
-  
+  if (!Hive.isAdapterRegistered(16)) {
+    Hive.registerAdapter(AchievementTypeAdapter());
+  }
+  if (!Hive.isAdapterRegistered(17)) {
+    Hive.registerAdapter(AchievementRarityAdapter());
+  }
+  if (!Hive.isAdapterRegistered(18)) {
+    Hive.registerAdapter(ChallengeTypeAdapter());
+  }
+
   // Note: CharityCategory enum is handled automatically by CharityDonationAdapter
-  
+
   // Open existing boxes
   await Hive.openBox<KhatmahModel>('khatmahBox');
   if (!Hive.isBoxOpen('khatmahPlans')) {
@@ -748,6 +763,10 @@ class NotificationController {
         break;
       case 'salawat':
         navigator.push(MaterialPageRoute(builder: (_) => const MainView()));
+        break;
+      case 'charity_dashboard':
+        navigator.push(
+            MaterialPageRoute(builder: (_) => const CharityDashboardScreen()));
         break;
     }
   }
