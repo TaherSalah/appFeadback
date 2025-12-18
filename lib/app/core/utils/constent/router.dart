@@ -12,6 +12,7 @@ import 'package:muslimdaily/app/features/radio/view/widget/RadioSearchScreen.dar
 
 import '../../../features/WirdView/WirdHomeScreen.dart';
 import '../../../features/aboutView/about.dart';
+import '../../../features/aboutView/SupportDeveloperScreen.dart';
 import '../../../features/azanView/timeingScreen.dart';
 import '../../../features/categories/categories_view.dart';
 import '../../../features/categories/view/categories_details.dart';
@@ -199,6 +200,9 @@ class RouteGenerator {
 
       case '/about':
         return MaterialPageRoute(builder: (_) => const About());
+      case '/supportDeveloper':
+        return MaterialPageRoute(
+            builder: (_) => const SupportDeveloperScreen());
       case '/QuranRadioView':
         return MaterialPageRoute(builder: (_) => const QuranRadioView());
 
@@ -210,7 +214,8 @@ class RouteGenerator {
 
       // === Charity Routes ===
       case '/charityDashboard':
-        return MaterialPageRoute(builder: (_) => const CharityDashboardScreen());
+        return MaterialPageRoute(
+            builder: (_) => const CharityDashboardScreen());
       case '/addCharity':
         return MaterialPageRoute(builder: (_) => const AddCharityScreen());
       case '/charityHistory':
@@ -218,15 +223,18 @@ class RouteGenerator {
       case '/charityStories':
         return MaterialPageRoute(builder: (_) => const CharityStoriesScreen());
       case '/charityPlatforms':
-        return MaterialPageRoute(builder: (_) => const CharityPlatformsScreen());
+        return MaterialPageRoute(
+            builder: (_) => const CharityPlatformsScreen());
       case '/recurring-charity': // Added route for RecurringCharityScreen
-        return MaterialPageRoute(builder: (_) =>  const RecurringCharityScreen());
+        return MaterialPageRoute(
+            builder: (_) => const RecurringCharityScreen());
 
       // === Achievements Routes ===
       case '/achievements':
         return MaterialPageRoute(builder: (_) => const AchievementsScreen());
       case '/challenges':
-        return MaterialPageRoute(builder: (_) => const ChallengesManagementScreen());
+        return MaterialPageRoute(
+            builder: (_) => const ChallengesManagementScreen());
       case '/leaderboard':
         return MaterialPageRoute(builder: (_) => const LeaderboardScreen());
 

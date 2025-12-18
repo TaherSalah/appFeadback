@@ -16,7 +16,6 @@ class AboutItemBuilder extends StatefulWidget {
 class _AboutItemBuilderState extends State<AboutItemBuilder> {
   @override
   Widget build(BuildContext context) {
-
     void shareGooglePlay() {
       const msg = '''
 📱✨ تطبيق *رَفِيقُ المُسْلِمِ اليَوْمِيّ* — القرآن والأذكار اليومية في مكان واحد! ✨📱
@@ -53,238 +52,367 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
       Share.share(msg, subject: 'رَفِيقُ المُسْلِمِ اليَوْمِيّ');
     }
 
-
     final con = Provider.of<AzkarProvider>(context);
-    final bool isTablate = MediaQuery.sizeOf(context).width > 600;
+    final bool isTablate = ResponsiveUtil.isTablet(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Center(
-            child: SizedBox(
-              height: 150.h,
-              width: 150.w,
-              child: Image.asset(
-                azkaryLogo,
-                height: 150.h,
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Column(
+        children: [
+          // Hero Header Section
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 40.h),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: isDark
+                    ? [const Color(0xFF1B5E20), const Color(0xFF0D2311)]
+                    : [const Color(0xFFE8F5E9), const Color(0xFFC8E6C9)],
+              ),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(50),
+                bottomRight: Radius.circular(50),
               ),
             ),
-          ),
-        ),
-        Text(
-          "رَفِيقُ المُسْلِمِ اليَوْمِيُ",
-          style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold, fontSize: isTablate ? 9.sp : 14.sp),
-        ),
-        Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Expanded(child: myDivider()),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        AppString.KAppAbout,
-                        style: GoogleFonts.cairo(
-                            fontWeight: FontWeight.bold,
-                            fontSize: isTablate ? 9.sp : 14.sp),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
-                    ),
-                    Expanded(child: myDivider()),
-                  ],
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                TextDefaultWidget(
-                  color: isDark?Colors.white:Colors.black,
-
-                  height: 2,
-                  textAlign: TextAlign.justify,
-                  title: AppString.KAboutText,
-                  fontFamily: "me",
-                  fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
-                  fontWeight: ResponsiveUtil.isTablet(context)
-                      ? FontWeight.w600
-                      : FontWeight.w500,
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                Row(
-                  children: [
-                    Expanded(child: myDivider()),
-                    Padding(
-                      padding: const EdgeInsets.all(7.0),
-                      child: Text(
-                        AppString.KSadka,
-                        style: GoogleFonts.cairo(
-
-                            fontWeight: FontWeight.bold,
-                            fontSize: isTablate ? 9.sp : 14.sp),
-                      ),
-                    ),
-                    Expanded(child: myDivider()),
-                  ],
-                ),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 18.0.w),
-                    child: TextDefaultWidget(
-                      height: 2,
-                      textAlign: TextAlign.justify,
-                      title: AppString.KAboutText2,
-                      color: isDark?Colors.white:Colors.black,
-                      fontFamily: "me",
-                      fontSize:
-                          ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
-                      fontWeight: ResponsiveUtil.isTablet(context)
-                          ? FontWeight.w600
-                          : FontWeight.w500,
-                    )),
-                Row(
-                  children: [
-                    Expanded(child: myDivider()),
-                    Padding(
-                      padding: const EdgeInsets.all(7.0),
-                      child: Text(
-                        AppString.KContact,
-                        style: GoogleFonts.cairo(
-                            fontWeight: FontWeight.bold,
-                            fontSize: isTablate ? 9.sp : 14.sp),
-                      ),
-                    ),
-                    Expanded(child: myDivider()),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0.w),
-                      child: InkWell(
-                          onTap: () async {
-                            await con.launchInWeb(Uri.parse(
-                                'https://www.facebook.com/taher.salah.7927'));
-                          },
-                          child: SvgPicture.asset(facebook)),
-                    ),
-                    InkWell(
-                        onTap: () async {
-                          await con.launchInWeb(
-                              Uri.parse('https://wa.me/+201094529752'));
-                        },
-                        child: Image.asset(
-                          whatsApp,
-                          height: 40,
-                        )),
-                  ],
-                ),
-                SizedBox(
-                  height: 7.h,
-                ),
-                Row(
-                  children: [
-                    Expanded(child: myDivider()),
-                    Padding(
-                      padding: const EdgeInsets.all(7.0),
-                      child: Text(
-                        "شارك التطبيق",
-                        style: GoogleFonts.cairo(
-                            fontWeight: FontWeight.bold,
-                            fontSize: isTablate ? 9.sp : 14.sp),
-                      ),
-                    ),
-                    Expanded(child: myDivider()),
-                  ],
-                ),
-                SizedBox(height: 10.h),
-
-// زر قيّم التطبيق
-                Center(
-                  child: ElevatedButton.icon(
-                    style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(KColors.primaryColor)),
-                    icon: const Icon(Icons.star_rate_rounded),
-                    label: Text(
-                      'قيّم التطبيق',
-                      style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: isTablate ? 9.sp : 14.sp),
-                    ),
-                    onPressed: () => context.read<RateService>().askForReview(context),
-                  ),
-                ),
-
-                Row(
-                  children: [
-                    Expanded(child: myDivider()),
-                    Padding(
-                      padding: const EdgeInsets.all(7.0),
-                      child: Text(
-                        "شارك التطبيق",
-                        style: GoogleFonts.cairo(
-                            fontWeight: FontWeight.bold,
-                            fontSize: isTablate ? 9.sp : 14.sp),
-                      ),
-                    ),
-                    Expanded(child: myDivider()),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InkWell(
-                          onTap: shareGooglePlay,
-                          child: Image.asset(
-                            googlePlay,
-                            height: 40,
-                          )),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0.w),
-                        child: InkWell(
-                            onTap: shareAppGallery,
-                            child: Image.asset(huaweiGallary,height: 40,)),
-                      ),
-                      InkWell(
-                          onTap: shareAppStore,
-                          child: Image.asset(
-                            appleStore,
-                            height: 40,
-                          )),
                     ],
                   ),
+                  child: Image.asset(
+                    azkaryLogo,
+                    height: 90.h,
+                  ),
                 ),
-                Row(
-                  children: [
-                    Expanded(child: myDivider()),
-                    Padding(
-                      padding: const EdgeInsets.all(7.0),
-                      child: Text(
-                        AppString.KDevlop,
-                        style: GoogleFonts.cairo(
-                            fontWeight: FontWeight.bold,
-                            fontSize: isTablate ? 9.sp : 14.sp),
-                      ),
-                    ),
-                    Expanded(child: myDivider()),
-                  ],
-                ),
-                SizedBox(
-                  height: 7.h,
+                SizedBox(height: 16.h),
+                Text(
+                  "رَفِيقُ المُسْلِمِ اليَوْمِيُ",
+                  style: GoogleFonts.cairo(
+                    fontWeight: FontWeight.bold,
+                    fontSize: isTablate ? 12.sp : 18.sp,
+                    color: isDark ? Colors.white : Colors.green.shade900,
+                  ),
                 ),
                 Text(
-                  AppString.KAppRights,
-                  style: GoogleFonts.merienda(fontSize: ResponsiveUtil.isTablet(context)?8.sp :10.sp),
+                  "إصدار 2.1.0",
+                  style: GoogleFonts.cairo(
+                    fontSize: 12.sp,
+                    color: isDark ? Colors.white70 : Colors.green.shade700,
+                  ),
                 ),
               ],
             ),
           ),
+
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                // About App Card
+                _buildInfoCard(
+                  context,
+                  title: AppString.KAppAbout,
+                  icon: Icons.info_outline_rounded,
+                  content: AppString.KAboutText,
+                  isDark: isDark,
+                  isTablate: isTablate,
+                ),
+                SizedBox(height: 16.h),
+
+                // Sadka Jariya Card
+                _buildInfoCard(
+                  context,
+                  title: AppString.KSadka,
+                  icon: Icons.volunteer_activism_outlined,
+                  content: AppString.KAboutText2,
+                  isDark: isDark,
+                  isTablate: isTablate,
+                  cardColor: Colors.amber.withOpacity(0.1),
+                  iconColor: Colors.amber.shade800,
+                ),
+                SizedBox(height: 24.h),
+
+                // Support Section
+                _buildSectionTitle(
+                    "ادعم المشروع", Icons.favorite_rounded, Colors.redAccent),
+                SizedBox(height: 12.h),
+                _buildActionButton(
+                  context,
+                  title: "ادعم استمرار وتطوير التطبيق",
+                  icon: Icons.card_giftcard_rounded,
+                  color: Colors.redAccent,
+                  onTap: () =>
+                      Navigator.pushNamed(context, '/supportDeveloper'),
+                ),
+                SizedBox(height: 24.h),
+
+                // Contact Section
+                _buildSectionTitle(AppString.KContact,
+                    Icons.alternate_email_rounded, Colors.blue),
+                SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildSocialButton(
+                        context,
+                        title: "فيسبوك",
+                        icon: facebook,
+                        isSvg: true,
+                        
+                        color: const Color(0xFF1877F2),
+                        onTap: () => con.launchInWeb(Uri.parse(
+                            'https://www.facebook.com/taher.salah.7927')),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: _buildSocialButton(
+                        context,
+                        title: "واتساب",
+                        icon: whatsApp,
+                        isSvg: false,
+                        color: const Color(0xFF25D366),
+                        onTap: () => con.launchInWeb(
+                            Uri.parse('https://wa.me/+201094529752')),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24.h),
+
+                // Share Section
+                _buildSectionTitle(
+                    "شارك الثواب", Icons.share_rounded, Colors.green),
+                SizedBox(height: 12.h),
+                _buildActionButton(
+                  context,
+                  title: "قيّم التطبيق على المتجر",
+                  icon: Icons.star_rounded,
+                  color: Colors.amber.shade700,
+                  onTap: () =>
+                      context.read<RateService>().askForReview(context),
+                ),
+                SizedBox(height: 12.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildStoreIcon(googlePlay, shareGooglePlay),
+                    _buildStoreIcon(huaweiGallary, shareAppGallery),
+                    _buildStoreIcon(appleStore, shareAppStore),
+                  ],
+                ),
+                SizedBox(height: 30.h),
+
+                // Rights Section
+                Divider(color: isDark ? Colors.white10 : Colors.grey.shade300),
+                SizedBox(height: 10.h),
+                Text(
+                  AppString.KAppRights,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.cairo(
+                    fontSize: 10.sp,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20.h),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title, IconData icon, Color color) {
+    return Row(
+      children: [
+        Icon(icon, size: 20.sp, color: color),
+        SizedBox(width: 8.w),
+        Text(
+          title,
+          style: GoogleFonts.cairo(
+            fontWeight: FontWeight.bold,
+            fontSize: 14.sp,
+          ),
         ),
       ],
+    );
+  }
+
+  Widget _buildInfoCard(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required String content,
+    required bool isDark,
+    required bool isTablate,
+    Color? cardColor,
+    Color? iconColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: cardColor ?? (isDark ? const Color(0xFF1E293B) : Colors.white),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark ? Colors.white12 : Colors.grey.shade200,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: iconColor ?? KColors.primaryColor, size: 22.sp),
+              SizedBox(width: 10.w),
+              Text(
+                title,
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.sp,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          Text(
+            content,
+            textAlign: TextAlign.justify,
+            style: GoogleFonts.cairo(
+              fontSize: 13.sp,
+              height: 1.6,
+              color: isDark ? Colors.white70 : Colors.black54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white, size: 22),
+            SizedBox(width: 12.w),
+            Text(
+              title,
+              style: GoogleFonts.cairo(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialButton(
+    BuildContext context, {
+    required String title,
+    required String icon,
+    required bool isSvg,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.2)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            isSvg
+                ? SvgPicture.asset(icon, height: 20, color: color)
+                : Image.asset(icon, height: 20),
+            SizedBox(width: 8.w),
+            Text(
+              title,
+              style: GoogleFonts.cairo(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 12.sp,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStoreIcon(String icon, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          child: Image.asset(icon, height: 30),
+        ),
+      ),
     );
   }
 }
