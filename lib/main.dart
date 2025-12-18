@@ -95,6 +95,9 @@ import 'app/core/cache/shard_pref/shardpref_obj.dart';
 import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/utils/services_locator.dart';
 import 'app/features/Khatmah/data/khatmah_model.dart';
+import 'app/features/charity/models/charity_models.dart';
+import 'app/features/achievements/models/achievement_models.dart';
+import 'app/features/duas/models/dua_models.dart';
 import 'app/features/azanView/adhan_workmanager_service.dart';
 
 Future<void> main() async {
@@ -206,13 +209,44 @@ Future<void> _initAppServices() async {
 
   // ✅ 3) Hive
   await Hive.initFlutter();
+  
+  // Register existing adapters
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(KhatmahModelAdapter());
   }
+  
+  // Register new feature adapters
+  if (!Hive.isAdapterRegistered(10)) {
+    Hive.registerAdapter(CharityDonationAdapter());
+  }
+  if (!Hive.isAdapterRegistered(11)) {
+    Hive.registerAdapter(AchievementAdapter());
+  }
+  if (!Hive.isAdapterRegistered(12)) {
+    Hive.registerAdapter(UserProgressAdapter());
+  }
+  if (!Hive.isAdapterRegistered(13)) {
+    Hive.registerAdapter(ChallengeAdapter());
+  }
+  if (!Hive.isAdapterRegistered(14)) {
+    Hive.registerAdapter(CustomDuaAdapter());
+  }
+  if (!Hive.isAdapterRegistered(15)) {
+    Hive.registerAdapter(DuaReminderAdapter());
+  }
+  if (!Hive.isAdapterRegistered(21)) {
+    Hive.registerAdapter(RecurringCharityAdapter());
+  }
+  
+  // Note: CharityCategory enum is handled automatically by CharityDonationAdapter
+  
+  // Open existing boxes
   await Hive.openBox<KhatmahModel>('khatmahBox');
   if (!Hive.isBoxOpen('khatmahPlans')) {
     await Hive.openBox('khatmahPlans');
   }
+
+  // ✅ Note: Charity, Achievements, and Duas boxes are opened by their respective services
 
   // ✅ 4) تهيئة AwesomeNotifications أولاً قبل أي استخدام
   await _initializeAwesomeNotifications();
@@ -378,6 +412,45 @@ Future<void> _initializeAwesomeNotifications() async {
           importance: NotificationImportance.High,
           defaultColor: Colors.teal,
           ledColor: Colors.teal,
+          playSound: true,
+          enableVibration: true,
+          enableLights: true,
+        ),
+
+        // 🤲 قناة الصدقة
+        NotificationChannel(
+          channelKey: 'charity_reminder_channel',
+          channelName: 'تذكير الصدقة اليومية',
+          channelDescription: 'تذكير بالصدقة اليومية',
+          importance: NotificationImportance.High,
+          defaultColor: const Color(0xFF10B981),
+          ledColor: const Color(0xFF10B981),
+          playSound: true,
+          enableVibration: true,
+          enableLights: true,
+        ),
+
+        // 🏆 قناة الإنجازات
+        NotificationChannel(
+          channelKey: 'achievement_unlocked_channel',
+          channelName: 'إنجاز جديد',
+          channelDescription: 'إشعار عند فتح إنجاز جديد',
+          importance: NotificationImportance.High,
+          defaultColor: const Color(0xFF8B5CF6),
+          ledColor: const Color(0xFF8B5CF6),
+          playSound: true,
+          enableVibration: true,
+          enableLights: true,
+        ),
+
+        // 🤲 قناة تذكير الأدعية
+        NotificationChannel(
+          channelKey: 'dua_reminder_channel',
+          channelName: 'تذكير بالأدعية',
+          channelDescription: 'تذكير بالأدعية المخصصة',
+          importance: NotificationImportance.High,
+          defaultColor: const Color(0xFF6366F1),
+          ledColor: const Color(0xFF6366F1),
           playSound: true,
           enableVibration: true,
           enableLights: true,

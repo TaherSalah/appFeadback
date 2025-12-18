@@ -15,6 +15,7 @@ import '../../../features/aboutView/about.dart';
 import '../../../features/azanView/timeingScreen.dart';
 import '../../../features/categories/categories_view.dart';
 import '../../../features/categories/view/categories_details.dart';
+import '../../../features/charity/RecurringCharityScreen.dart';
 import '../../../features/counter_view/counter_azkar.dart';
 import '../../../features/hadith/hadith_view.dart';
 import '../../../features/hadithDetails/hadith_details_view.dart';
@@ -34,6 +35,16 @@ import '../../../features/sleep_view/sleep_azkar.dart';
 import '../../../features/splash_view/splash.dart';
 import '../../../features/zakat_view/zakat_calculator_view.dart';
 import '../../../features/mosques_nearby/MosquesMapScreen.dart';
+import '../../../features/charity/CharityDashboardScreen.dart';
+import '../../../features/charity/AddCharityScreen.dart';
+import '../../../features/charity/CharityHistoryScreen.dart';
+import '../../../features/charity/CharityStoriesScreen.dart';
+import '../../../features/charity/CharityPlatformsScreen.dart';
+import '../../../features/achievements/AchievementsScreen.dart';
+import '../../../features/achievements/ChallengesManagementScreen.dart';
+import '../../../features/achievements/LeaderboardScreen.dart';
+import '../../../features/duas/DuasMainScreen.dart';
+import '../../../features/duas/DuaDetailScreen.dart';
 import '../../shard/exports/all_exports.dart';
 
 class Routes {
@@ -196,6 +207,32 @@ class RouteGenerator {
 
       case '/mosquesMap':
         return MaterialPageRoute(builder: (_) => const MosquesMapScreen());
+
+      // === Charity Routes ===
+      case '/charityDashboard':
+        return MaterialPageRoute(builder: (_) => const CharityDashboardScreen());
+      case '/addCharity':
+        return MaterialPageRoute(builder: (_) => const AddCharityScreen());
+      case '/charityHistory':
+        return MaterialPageRoute(builder: (_) => const CharityHistoryScreen());
+      case '/charityStories':
+        return MaterialPageRoute(builder: (_) => const CharityStoriesScreen());
+      case '/charityPlatforms':
+        return MaterialPageRoute(builder: (_) => const CharityPlatformsScreen());
+      case '/recurring-charity': // Added route for RecurringCharityScreen
+        return MaterialPageRoute(builder: (_) =>  const RecurringCharityScreen());
+
+      // === Achievements Routes ===
+      case '/achievements':
+        return MaterialPageRoute(builder: (_) => const AchievementsScreen());
+      case '/challenges':
+        return MaterialPageRoute(builder: (_) => const ChallengesManagementScreen());
+      case '/leaderboard':
+        return MaterialPageRoute(builder: (_) => const LeaderboardScreen());
+
+      // === Duas Routes ===
+      case '/duasMain':
+        return MaterialPageRoute(builder: (_) => const DuasMainScreen());
 
       default:
         return unDefinedRoute();

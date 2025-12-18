@@ -9,7 +9,10 @@ import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Khatmah/data/khatmah_model.dart';
+import 'AchievementsEntryWidget.dart';
 import 'AzkarQuranWidget.dart';
+import 'CharityEntryWidget.dart';
+import 'DuasEntryWidget.dart';
 import 'OtherAzkarWidget.dart';
 import '../controllar/MainController.dart';
 import '../../../core/cubit/centralized_cubit.dart';
@@ -269,8 +272,13 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
                         // 🔥 قسم سؤال التحدي
                         // const QuizWidget(),
+                        const CharityEntryWidget(),
+                        const SizedBox(height: 10),
 
-                        // const SizedBox(height: 10),
+                        const AchievementsEntryWidget(),
+                        const SizedBox(height: 10),
+
+                        const DuasEntryWidget(),
 
                         // 🔥 مدخل ركن الأطفال (في صفحة منفصلة)
                         const KidsEntryPointWidget(),
