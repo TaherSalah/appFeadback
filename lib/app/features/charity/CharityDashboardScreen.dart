@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../core/utils/style/k_color.dart';
+import '../../core/widgets/kButtons.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 import 'AddCharityScreen.dart';
@@ -51,52 +54,118 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
-        appBar: AppBar(
-          title: Text(
-            'متتبع الصدقات 🤲',
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        // backgroundColor:
+        //     isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
+        // appBar: AppBar(
+        //   title: Text(
+        //     'متتبع الصدقات 🤲',
+        //     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        //   ),
+        //   centerTitle: true,
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        //   actions: [
+        //     IconButton(
+        //       icon: const Icon(Icons.notifications_active_outlined),
+        //       onPressed: () {
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //               builder: (_) => const ReminderSettingsScreen()),
+        //         ).then((_) => _loadData());
+        //       },
+        //       tooltip: 'إعدادات التذكير',
+        //     ),
+        //     SizedBox(width: 8.w),
+        //     IconButton(
+        //       icon: const Icon(Icons.emoji_events_outlined),
+        //       onPressed: () {
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(builder: (_) => const AchievementsScreen()),
+        //         );
+        //       },
+        //       tooltip: 'الإنجازات',
+        //     ),
+        //     IconButton(
+        //       icon: const Icon(Icons.history),
+        //       onPressed: () {
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //             builder: (_) => const CharityHistoryScreen(),
+        //           ),
+        //         ).then((_) => _loadData());
+        //       },
+        //     ),
+        //   ],
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.notifications_active_outlined),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const ReminderSettingsScreen()),
+                    ).then((_) => _loadData());
+                  },
+                  tooltip: 'إعدادات التذكير',
+                ),
+                SizedBox(width: 8.w),
+                IconButton(
+                  icon: const Icon(Icons.emoji_events_outlined),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AchievementsScreen()),
+                    );
+                  },
+                  tooltip: 'الإنجازات',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.history),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const CharityHistoryScreen(),
+                      ),
+                    ).then((_) => _loadData());
+                  },
+                ),
+              ],
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => CreateKhatmahScreen(),
+            //       ),
+            //     ),
+            //     icon: const Icon(Icons.add),
+            //   )
+            // ],
+            centerTitle: true,
+            title: Text(
+              'متتبع الصدقات',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
           ),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications_active_outlined),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const ReminderSettingsScreen()),
-                ).then((_) => _loadData());
-              },
-              tooltip: 'إعدادات التذكير',
-            ),
-            SizedBox(width: 8.w),
-            IconButton(
-              icon: const Icon(Icons.emoji_events_outlined),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AchievementsScreen()),
-                );
-              },
-              tooltip: 'الإنجازات',
-            ),
-            IconButton(
-              icon: const Icon(Icons.history),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const CharityHistoryScreen(),
-                  ),
-                ).then((_) => _loadData());
-              },
-            ),
-          ],
         ),
+
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : RefreshIndicator(
@@ -117,6 +186,21 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                           _buildDueRecurringSection(isDark),
                           SizedBox(height: 20.h),
                         ],
+                        Center(
+                          child: CustomButton(
+                            borderColor: Theme.of(context).cardColor,
+                            backgroundColor: KColors.primaryColor,
+                            width: MediaQuery.sizeOf(context).width / 3,
+                            title: "إضافة صدقة",
+                            onTap: () {
+                              Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const AddCharityScreen()),
+                                    ).then((_) => _loadData());
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
 
                         // إحصائيات سريعة
                         _buildQuickStats(isDark),
@@ -146,18 +230,34 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                   ),
                 ),
               ),
-        floatingActionButton: FloatingActionButton.extended(
+        // floatingActionButton: FloatingActionButton.extended(
+        //   onPressed: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (_) => const AddCharityScreen()),
+        //     ).then((_) => _loadData());
+        //   },
+        //   icon: const Icon(Icons.add),
+        //   label: Text(
+        //     'إضافة صدقة',
+        //     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        //   ),
+        //   backgroundColor: const Color(0xFF10B981),
+        // ),
+        floatingActionButton: FloatingActionButton.small(
+
+          child: const Icon(Icons.add),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const AddCharityScreen()),
             ).then((_) => _loadData());
           },
-          icon: const Icon(Icons.add),
-          label: Text(
-            'إضافة صدقة',
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-          ),
+          // icon: const Icon(Icons.add),
+          // label: Text(
+          //   'إضافة صدقة',
+          //   style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          // ),
           backgroundColor: const Color(0xFF10B981),
         ),
       ),
@@ -244,6 +344,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
               textAlign: TextAlign.center,
             ),
           ),
+
         ],
       ),
     );
@@ -357,7 +458,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                     ),
                   ],
                 ),
-                Icon(Icons.chevron_left, color: Colors.grey, size: 24.sp),
+                Icon(Icons.chevron_right, color: Colors.grey, size: 24.sp),
               ],
             ),
             SizedBox(height: 20.h),

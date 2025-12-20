@@ -117,9 +117,7 @@ import '../../../core/shard/exports/all_exports.dart';
 //               fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 17.sp,
 //             ),
 //           ),
-//
-//           // مسافة صغيرة بين التحية والتذكير
-//           if (reminder.isNotEmpty) const SizedBox(width: 8),
+//ل//           if (reminder.isNotEmpty) const SizedBox(width: 8),
 //
 //           // التذكير (لو موجود)
 //           if (reminder.isNotEmpty)

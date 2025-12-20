@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -42,129 +43,135 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-          ),
-          padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, MediaQuery.of(context).viewInsets.bottom + 20.h),
-          child: SingleChildScrollView( // الحل لمشكلة الـ Overflow
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 50.w,
-                    height: 5.h,
-                    margin: EdgeInsets.symmetric(vertical: 10.h),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                  ),
-                ),
-                Text(
-                  existing == null ? 'إضافة التزام صدقة جديد 🤲' : 'تعديل التزام الصدقة',
-                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 18.sp),
-                ),
-                SizedBox(height: 15.h),
-                _buildTextField(titleController, 'اسم الصدقة (مثلاً: كفالة يتيم)', Icons.title),
-                SizedBox(height: 12.h),
-                _buildTextField(amountController, 'المقدار الشهري (جنيه)', Icons.attach_money, isNumber: true),
-                
-                SizedBox(height: 20.h),
-                Text('الفئة 📁:', style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold)),
-                SizedBox(height: 8.h),
-                SizedBox(
-                  height: 45.h,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: CharityCategory.values.length,
-                    itemBuilder: (context, index) {
-                      final category = CharityCategory.values[index];
-                      final isSelected = selectedCategory == category;
-                      return _buildChoiceChip(
-                        category.arabicName, 
-                        category.emoji, 
-                        isSelected, 
-                        () => setModalState(() => selectedCategory = category)
-                      );
-                    },
-                  ),
-                ),
-
-                SizedBox(height: 20.h),
-                Text('يوم التذكير (1-31) 📅:', style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold)),
-                SizedBox(height: 8.h),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                  ),
-                  itemCount: 31, // تم التحديث لـ 31 يوم
-                  itemBuilder: (context, index) {
-                    final day = index + 1;
-                    final isSelected = selectedDay == day;
-                    return GestureDetector(
-                      onTap: () => setModalState(() => selectedDay = day),
+        builder: (context, setModalState) => Directionality(
+          textDirection: TextDirection.rtl,
+          child: SafeArea(
+            bottom: true,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+              ),
+              padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, MediaQuery.of(context).viewInsets.bottom + 20.h),
+              child: SingleChildScrollView( // الحل لمشكلة الـ Overflow
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
                       child: Container(
+                        width: 50.w,
+                        height: 5.h,
+                        margin: EdgeInsets.symmetric(vertical: 10.h),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFF10B981) : Colors.grey.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                          border: isSelected ? Border.all(color: Colors.white, width: 2) : null,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          day.toString(),
-                          style: GoogleFonts.cairo(
-                            color: isSelected ? Colors.white : Colors.black,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            fontSize: 12.sp,
-                          ),
+                          color: Colors.grey.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
                       ),
-                    );
-                  },
-                ),
-                SizedBox(height: 25.h),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (titleController.text.isEmpty || amountController.text.isEmpty) return;
-                      
-                      final recurring = RecurringCharity(
-                        id: existing?.id ?? _charityService.generateId(),
-                        title: titleController.text,
-                        amount: double.parse(amountController.text).toDouble(),
-                        categoryIndex: selectedCategory.index,
-                        dayOfMonth: selectedDay,
-                        isActive: existing?.isActive ?? true,
-                      );
-
-                      if (existing == null) {
-                        await _charityService.addRecurringCharity(recurring);
-                      } else {
-                        await _charityService.updateRecurringCharity(recurring);
-                      }
-                      
-                      if (mounted) Navigator.pop(context);
-                      _loadData();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-                      elevation: 2,
                     ),
-                    child: Text('حفظ الالتزام ✅', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.sp)),
-                  ),
+                    Text(
+                      existing == null ? 'إضافة التزام صدقة جديد 🤲' : 'تعديل التزام الصدقة',
+                      style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 18.sp),
+                    ),
+                    SizedBox(height: 15.h),
+                    _buildTextField(titleController, 'اسم الصدقة (مثلاً: كفالة يتيم)', Icons.title),
+                    SizedBox(height: 12.h),
+                    _buildTextField(amountController, 'المقدار الشهري (جنيه)', Icons.attach_money, isNumber: true),
+
+                    SizedBox(height: 20.h),
+                    Text('الفئة 📁:', style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8.h),
+                    SizedBox(
+                      height: 45.h,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: CharityCategory.values.length,
+                        itemBuilder: (context, index) {
+                          final category = CharityCategory.values[index];
+                          final isSelected = selectedCategory == category;
+                          return _buildChoiceChip(
+                            category.arabicName,
+                            category.emoji,
+                            isSelected,
+                            () => setModalState(() => selectedCategory = category)
+                          );
+                        },
+                      ),
+                    ),
+
+                    SizedBox(height: 20.h),
+                    Text('يوم التذكير (1-31) 📅:', style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8.h),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 7,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                      ),
+                      itemCount: 31, // تم التحديث لـ 31 يوم
+                      itemBuilder: (context, index) {
+                        final day = index + 1;
+                        final isSelected = selectedDay == day;
+                        return GestureDetector(
+                          onTap: () => setModalState(() => selectedDay = day),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: isSelected ? const Color(0xFF10B981) : Colors.grey.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                              border: isSelected ? Border.all(color: Colors.white, width: 2) : null,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              day.toString(),
+                              style: GoogleFonts.cairo(
+                                color: isSelected ? Colors.white : Colors.black,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 25.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (titleController.text.isEmpty || amountController.text.isEmpty) return;
+
+                          final recurring = RecurringCharity(
+                            id: existing?.id ?? _charityService.generateId(),
+                            title: titleController.text,
+                            amount: double.parse(amountController.text).toDouble(),
+                            categoryIndex: selectedCategory.index,
+                            dayOfMonth: selectedDay,
+                            isActive: existing?.isActive ?? true,
+                          );
+
+                          if (existing == null) {
+                            await _charityService.addRecurringCharity(recurring);
+                          } else {
+                            await _charityService.updateRecurringCharity(recurring);
+                          }
+
+                          if (mounted) Navigator.pop(context);
+                          _loadData();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF10B981),
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+                          elevation: 2,
+                        ),
+                        child: Text('حفظ الالتزام', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.sp)),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -174,27 +181,60 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('الصدقات الدورية', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              tooltip: 'تجربة الإشعارات',
-              icon: const Icon(Icons.notification_add_outlined),
-              onPressed: () async {
-                // Testing notifications logic was removed from service, so this will either do nothing or we should remove the button too.
-                // Keeping it for now but removing the call if service method is gone.
-              },
+        // appBar: AppBar(
+        //   title: Text('الصدقات الدورية', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        //   centerTitle: true,
+        //   actions: [
+        //     IconButton(
+        //       tooltip: 'تجربة الإشعارات',
+        //       icon: const Icon(Icons.notification_add_outlined),
+        //       onPressed: () async {
+        //         // Testing notifications logic was removed from service, so this will either do nothing or we should remove the button too.
+        //         // Keeping it for now but removing the call if service method is gone.
+        //       },
+        //     ),
+        //   ],
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
             ),
-          ],
+              actions: [
+                IconButton(
+                  tooltip: 'تجربة الإشعارات',
+                  icon: const Icon(Icons.notification_add_outlined),
+                  onPressed: () async {
+                    // Testing notifications logic was removed from service, so this will either do nothing or we should remove the button too.
+                    // Keeping it for now but removing the call if service method is gone.
+                  },
+                ),
+              ],
+
+            centerTitle: true,
+            title: Text(
+              'الصدقات الدورية',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
+          ),
         ),
+
         floatingActionButton: FloatingActionButton(
           onPressed: () => _addOrEditRecurring(null),
           backgroundColor: const Color(0xFF10B981),
-          child: const Icon(Icons.add, color: Colors.white),
+          child: const Icon(Icons.add),
         ),
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())

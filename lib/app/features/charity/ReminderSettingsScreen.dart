@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -78,17 +79,48 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
-        appBar: AppBar(
-          title: Text(
-            'إعدادات التذكير 🔔',
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        // backgroundColor:
+        //     isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
+        // appBar: AppBar(
+        //   title: Text(
+        //     'إعدادات التذكير 🔔',
+        //     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        //   ),
+        //   centerTitle: true,
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => CreateKhatmahScreen(),
+            //       ),
+            //     ),
+            //     icon: const Icon(Icons.add),
+            //   )
+            // ],
+            centerTitle: true,
+            title: Text(
+              'إعدادات التذكير ',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
           ),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
         ),
+
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : ListView(

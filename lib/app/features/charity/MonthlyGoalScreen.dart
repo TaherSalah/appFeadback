@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -63,93 +64,127 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
       child: Scaffold(
         backgroundColor:
             isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
-        appBar: AppBar(
-          title: Text(
-            'هدف الصدقة الشهري 🎯',
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        // appBar: AppBar(
+        //   title: Text(
+        //     'هدف الصدقة الشهري 🎯',
+        //     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        //   ),
+        //   centerTitle: true,
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => CreateKhatmahScreen(),
+            //       ),
+            //     ),
+            //     icon: const Icon(Icons.add),
+            //   )
+            // ],
+            centerTitle: true,
+            title: Text(
+              'هدف الصدقة الشهري',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
           ),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
         ),
+
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : Padding(
                 padding: EdgeInsets.all(20.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'حدد هدفك المالي للصدقة هذا الشهر',
-                      style: GoogleFonts.cairo(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'تحديد هدف يساعدك على المداومة والتحفيز على العطاء المستمر.',
-                      style: GoogleFonts.cairo(
-                        fontSize: 13.sp,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    SizedBox(height: 24.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF2D3748) : Colors.white,
-                        borderRadius: BorderRadius.circular(16.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                          ),
-                        ],
-                      ),
-                      child: TextFormField(
-                        controller: _goalController,
-                        keyboardType: TextInputType.number,
+                child: SafeArea(
+                  bottom: true,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'حدد هدفك المالي للصدقة هذا الشهر',
                         style: GoogleFonts.cairo(
-                          fontSize: 24.sp,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF10B981),
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'مثلاً: 1000',
-                          suffixText: 'جنيه',
-                          suffixStyle: GoogleFonts.cairo(
-                            fontSize: 16.sp,
-                            color: Colors.grey,
-                          ),
-                          border: InputBorder.none,
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56.h,
-                      child: ElevatedButton(
-                        onPressed: _saveGoal,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF10B981),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                          elevation: 0,
+                      SizedBox(height: 8.h),
+                      Text(
+                        'تحديد هدف يساعدك على المداومة والتحفيز على العطاء المستمر.',
+                        style: GoogleFonts.cairo(
+                          fontSize: 13.sp,
+                          color: Colors.grey,
                         ),
-                        child: Text(
-                          'حفظ الهدف الشهري',
+                      ),
+                      SizedBox(height: 24.h),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF2D3748) : Colors.white,
+                          borderRadius: BorderRadius.circular(16.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                            ),
+                          ],
+                        ),
+                        child: TextFormField(
+                          controller: _goalController,
+                          keyboardType: TextInputType.number,
                           style: GoogleFonts.cairo(
-                            fontSize: 18.sp,
+                            fontSize: 24.sp,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: const Color(0xFF10B981),
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'مثلاً: 1000',
+                            suffixText: 'جنيه',
+                            suffixStyle: GoogleFonts.cairo(
+                              fontSize: 16.sp,
+                              color: Colors.grey,
+                            ),
+                            border: InputBorder.none,
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      const Spacer(),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56.h,
+                        child: ElevatedButton(
+                          onPressed: _saveGoal,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF10B981),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            'حفظ الهدف الشهري',
+                            style: GoogleFonts.cairo(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
       ),

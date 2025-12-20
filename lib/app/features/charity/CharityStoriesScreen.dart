@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,18 +28,49 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
       child: Scaffold(
         backgroundColor:
             isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
-        appBar: AppBar(
-          title: Text(
-            'قصص ملهمة عن الصدقة 📖',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.sp,
+        // appBar: AppBar(
+        //   title: Text(
+        //     'قصص ملهمة عن الصدقة 📖',
+        //     style: GoogleFonts.cairo(
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: 20.sp,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => CreateKhatmahScreen(),
+            //       ),
+            //     ),
+            //     icon: const Icon(Icons.add),
+            //   )
+            // ],
+            centerTitle: true,
+            title: Text(
+              'قصص ملهمة عن الصدقة',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
             ),
           ),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
         ),
+
         body: Column(
           children: [
             // Filter tabs
@@ -197,143 +229,146 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.r),
         ),
-        child: Container(
-          constraints: BoxConstraints(maxHeight: 600.h),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header
-              Container(
-                padding: EdgeInsets.all(20.w),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: _getGradientColors(story.category),
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(20.r),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Text(story.emoji, style: TextStyle(fontSize: 40.sp)),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: Text(
-                        story.title,
-                        style: GoogleFonts.cairo(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // المحتوى
-              Expanded(
-                child: SingleChildScrollView(
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Container(
+            constraints: BoxConstraints(maxHeight: 600.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
                   padding: EdgeInsets.all(20.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: _getGradientColors(story.category),
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20.r),
+                    ),
+                  ),
+                  child: Row(
                     children: [
-                      Text(
-                        story.content,
-                        style: GoogleFonts.cairo(
-                          fontSize: 14.sp,
-                          height: 2.0,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                        textAlign: TextAlign.justify,
-                      ),
-                      SizedBox(height: 16.h),
-                      Container(
-                        padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
-                          color: _getGradientColors(story.category)[0]
-                              .withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.menu_book,
-                              size: 20.sp,
-                              color: _getGradientColors(story.category)[0],
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              story.source,
-                              style: GoogleFonts.cairo(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                                color: _getGradientColors(story.category)[0],
-                              ),
-                            ),
-                          ],
+                      Text(story.emoji, style: TextStyle(fontSize: 40.sp)),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Text(
+                          story.title,
+                          style: GoogleFonts.cairo(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-
-              // الأزرار
-              Padding(
-                padding: EdgeInsets.all(16.w),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Share.share(
-                            '${story.title}\n\n${story.content}\n\n${story.source}',
-                          );
-                        },
-                        icon: const Icon(Icons.share),
-                        label: Text(
-                          'مشاركة',
-                          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _getGradientColors(story.category)[0],
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          side: BorderSide(
-                            color: _getGradientColors(story.category)[0],
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                        ),
-                        child: Text(
-                          'إغلاق',
+          
+                // المحتوى
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(20.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          story.content,
                           style: GoogleFonts.cairo(
-                            fontWeight: FontWeight.bold,
-                            color: _getGradientColors(story.category)[0],
+                            fontSize: 14.sp,
+                            height: 2.0,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                          textAlign: TextAlign.justify,
+                        ),
+                        SizedBox(height: 16.h),
+                        Container(
+                          padding: EdgeInsets.all(12.w),
+                          decoration: BoxDecoration(
+                            color: _getGradientColors(story.category)[0]
+                                .withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.menu_book,
+                                size: 20.sp,
+                                color: _getGradientColors(story.category)[0],
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                story.source,
+                                style: GoogleFonts.cairo(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: _getGradientColors(story.category)[0],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+          
+                // الأزرار
+                Padding(
+                  padding: EdgeInsets.all(16.w),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Share.share(
+                              '${story.title}\n\n${story.content}\n\n${story.source}',
+                            );
+                          },
+                          icon: const Icon(Icons.share),
+                          label: Text(
+                            'مشاركة',
+                            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _getGradientColors(story.category)[0],
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            side: BorderSide(
+                              color: _getGradientColors(story.category)[0],
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          child: Text(
+                            'إغلاق',
+                            style: GoogleFonts.cairo(
+                              fontWeight: FontWeight.bold,
+                              color: _getGradientColors(story.category)[0],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
