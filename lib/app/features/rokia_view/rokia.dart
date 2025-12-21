@@ -1207,6 +1207,7 @@ class _RokiaScreenState extends State<RokiaScreen> {
                               child: Directionality(
                                 textDirection: TextDirection.rtl,
                                 child: AzkerItemBuilder(
+                                  azkarName: "الرقية الشرعية" ,
                                   azkarTitle:
                                       Azkary.rokiaQuranTitle[quranCurrentIndex],
                                   azkarDes:

@@ -19,6 +19,7 @@ import '../../../../core/widgets/head_title_item_builder.dart';
 import '../../../../core/widgets/image_widget.dart';
 import '../../../messa_view/azkar_massa.dart';
 import '../../hadith_details_view.dart';
+import 'package:muslimdaily/app/features/share_card/PremiumShareCard.dart';
 import '../controller/hadith_details_bloc.dart';
 import '../controller/hadith_details_state.dart';
 
@@ -188,6 +189,24 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                 ),
                               ),
                             ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.image_outlined,
+                                color: isDark
+                                    ? Colors.amber
+                                    : Colors.amber.shade700),
+                            onPressed: () {
+                              final bloc = HadithDetailsBloc.get(context);
+                              showGeneralDialog(
+                                context: context,
+                                pageBuilder: (context, anim1, anim2) =>
+                                    PremiumShareCard(
+                                      azkarName: "حديث شريف",
+                                  text: bloc.hadithDetailsModal?.hadeeth ?? "",
+                                  source: "حديث شريف - رفيق المسلم",
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

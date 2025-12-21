@@ -281,9 +281,7 @@ class SettingsView extends StatelessWidget {
                           subtitle: 'الإصدار 2.0.0',
                           iconColor: Colors.teal[400]!,
                           onTap: () {
-                            Navigator.pushNamed(context, 'about');
-                            // TODO: Add About Screen navigation
-                            Navigator.pushNamed(context, "/about");
+                            Navigator.pushNamed(context, '/about');
                           },
                         ),
                       ],

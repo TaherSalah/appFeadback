@@ -106,6 +106,8 @@ class _PrayerAzkarState extends State<PrayerAzkar> {
                             con.decrementPrayer(zPrayerIndex);
                           },
                           child: AzkerItemBuilder(
+                            azkarName: "أذكار الصلاة",
+
                             azkarTitle: Azkary.azkarPrayer[zPrayerIndex],
                             azkarDes: Azkary.azkarPrayerDes[zPrayerIndex],
                             fontSize: fontSize,

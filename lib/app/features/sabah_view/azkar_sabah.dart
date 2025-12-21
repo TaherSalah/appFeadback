@@ -791,6 +791,8 @@ class _AzkarSabahState extends State<AzkarSabah> {
                             child: GestureDetector(
                               onTap: () => con.decrementSabah(zSabahIndex),
                               child: AzkerItemBuilder(
+                                azkarName: "أذكار الصباح",
+
                                 azkarTitle: Azkary.azkarSabah[zSabahIndex],
                                 azkarDes: Azkary.azkarSabahDes[zSabahIndex],
                                 fontSize: fontSize,

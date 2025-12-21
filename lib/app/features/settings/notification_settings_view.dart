@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 
 class NotificationSettingsView extends StatefulWidget {
   const NotificationSettingsView({super.key});
@@ -14,7 +16,7 @@ class NotificationSettingsView extends StatefulWidget {
 class _NotificationSettingsViewState extends State<NotificationSettingsView> {
   final SettingsService _settings = SettingsService();
 
-  // الحالة المحلية للواجهة
+  // Local state for UI
   late bool isAdhanEnabled;
   late bool isAzkarSabahEnabled;
   late bool isAzkarMassaEnabled;
@@ -23,13 +25,15 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
   late bool isSalatAlaNabiEnabled;
   late int salatFrequency;
 
+  bool _hasChanges = false;
+
   @override
   void initState() {
     super.initState();
-    _loadSettings();
+    _loadCurrentSettings();
   }
 
-  void _loadSettings() {
+  void _loadCurrentSettings() {
     setState(() {
       isAdhanEnabled = _settings.isAdhanEnabled;
       isAzkarSabahEnabled = _settings.isAzkarSabahEnabled;
@@ -38,7 +42,28 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       isQiyamEnabled = _settings.isQiyamEnabled;
       isSalatAlaNabiEnabled = _settings.isSalatAlaNabiEnabled;
       salatFrequency = _settings.getSalatAlaNabiMinutes();
+      _hasChanges = false;
     });
+  }
+
+  Future<void> _saveAll() async {
+    try {
+      await _settings.setAdhanEnabled(isAdhanEnabled);
+      await _settings.setAzkarSabahEnabled(isAzkarSabahEnabled);
+      await _settings.setAzkarMassaEnabled(isAzkarMassaEnabled);
+      await _settings.setAzkarSleepEnabled(isAzkarSleepEnabled);
+      await _settings.setQiyamEnabled(isQiyamEnabled);
+      await _settings.setSalatAlaNabiEnabled(isSalatAlaNabiEnabled);
+      await _settings.setSalatAlaNabiMinutes(salatFrequency);
+
+      // Trigger notification rescheduling
+      await NotificationManager().rescheduleAll();
+
+      KHelper.showSuccess(message: 'تم حفظ الإعدادات وتحديث التنبيهات بنجاح');
+      setState(() => _hasChanges = false);
+    } catch (e) {
+      KHelper.showError(message: 'حدث خطأ أثناء حفظ الإعدادات');
+    }
   }
 
   @override
@@ -81,154 +106,201 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                     ],
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListView(
-              children: [
-                SizedBox(height: MediaQuery.of(context).padding.top + 60),
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ListView(
+                    children: [
+                      SizedBox(height: MediaQuery.of(context).padding.top + 60),
 
-                // 🕋 الأذان
-                _buildSectionHeader(context, 'الصلوات'),
-                _buildSettingsCard(
-                  context,
-                  children: [
-                    _buildSwitchTile(
-                      context,
-                      title: 'تنبيهات الأذان',
-                      subtitle: 'تفعيل إشعارات الأذان لكل الصلوات',
-                      icon: Icons.mosque_outlined,
-                      iconColor: Colors.amber[700]!,
-                      value: isAdhanEnabled,
-                      onChanged: (val) async {
-                        await _settings.setAdhanEnabled(val);
-                        setState(() => isAdhanEnabled = val);
-                      },
-                    ),
-                  ],
-                ),
+                      // 🕋 الأذان
+                      _buildSectionHeader(context, 'الصلوات'),
+                      _buildSettingsCard(
+                        context,
+                        children: [
+                          _buildSwitchTile(
+                            context,
+                            title: 'تنبيهات الأذان',
+                            subtitle: 'تفعيل إشعارات الأذان لكل الصلوات',
+                            icon: Icons.mosque_outlined,
+                            iconColor: Colors.amber[700]!,
+                            value: isAdhanEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isAdhanEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
 
-                const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                // 📿 الأذكار
-                _buildSectionHeader(context, 'الأذكار اليومية'),
-                _buildSettingsCard(
-                  context,
-                  children: [
-                    _buildSwitchTile(
-                      context,
-                      title: 'أذكار الصباح',
-                      subtitle: 'تنبيه يومي الساعة 9:00 ص',
-                      icon: Icons.wb_sunny_outlined,
-                      iconColor: Colors.orange[400]!,
-                      value: isAzkarSabahEnabled,
-                      onChanged: (val) async {
-                        await _settings.setAzkarSabahEnabled(val);
-                        setState(() => isAzkarSabahEnabled = val);
-                      },
-                    ),
-                    _buildDivider(isDark),
-                    _buildSwitchTile(
-                      context,
-                      title: 'أذكار المساء',
-                      subtitle: 'تنبيه يومي الساعة 6:00 م',
-                      icon: Icons.nights_stay_outlined,
-                      iconColor: Colors.indigo[400]!,
-                      value: isAzkarMassaEnabled,
-                      onChanged: (val) async {
-                        await _settings.setAzkarMassaEnabled(val);
-                        setState(() => isAzkarMassaEnabled = val);
-                      },
-                    ),
-                    _buildDivider(isDark),
-                    _buildSwitchTile(
-                      context,
-                      title: 'أذكار النوم',
-                      subtitle: 'تنبيه يومي الساعة 10:00 م',
-                      icon: Icons.bed_outlined,
-                      iconColor: Colors.purple[400]!,
-                      value: isAzkarSleepEnabled,
-                      onChanged: (val) async {
-                        await _settings.setAzkarSleepEnabled(val);
-                        setState(() => isAzkarSleepEnabled = val);
-                      },
-                    ),
-                    _buildDivider(isDark),
-                    _buildSwitchTile(
-                      context,
-                      title: 'قيام الليل',
-                      subtitle: 'تنبيه قبل الفجر',
-                      icon: Icons.star_border,
-                      iconColor: Colors.blue[300]!,
-                      value: isQiyamEnabled,
-                      onChanged: (val) async {
-                        await _settings.setQiyamEnabled(val);
-                        setState(() => isQiyamEnabled = val);
-                      },
-                    ),
-                  ],
-                ),
+                      // 📿 الأذكار
+                      _buildSectionHeader(context, 'الأذكار اليومية'),
+                      _buildSettingsCard(
+                        context,
+                        children: [
+                          _buildSwitchTile(
+                            context,
+                            title: 'أذكار الصباح',
+                            subtitle: 'تنبيه يومي الساعة 9:00 ص',
+                            icon: Icons.wb_sunny_outlined,
+                            iconColor: Colors.orange[400]!,
+                            value: isAzkarSabahEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isAzkarSabahEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'أذكار المساء',
+                            subtitle: 'تنبيه يومي الساعة 6:00 م',
+                            icon: Icons.nights_stay_outlined,
+                            iconColor: Colors.indigo[400]!,
+                            value: isAzkarMassaEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isAzkarMassaEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'أذكار النوم',
+                            subtitle: 'تنبيه يومي الساعة 10:00 م',
+                            icon: Icons.bed_outlined,
+                            iconColor: Colors.purple[400]!,
+                            value: isAzkarSleepEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isAzkarSleepEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'قيام الليل',
+                            subtitle: 'تنبيه قبل الفجر',
+                            icon: Icons.star_border,
+                            iconColor: Colors.blue[300]!,
+                            value: isQiyamEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isQiyamEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
 
-                const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                // 🕌 الصلاة على النبي
-                _buildSectionHeader(context, 'الصلاة على النبي ﷺ'),
-                _buildSettingsCard(
-                  context,
-                  children: [
-                    _buildSwitchTile(
-                      context,
-                      title: 'تفعيل التذكير',
-                      subtitle: 'تنبيهات متكررة للصلاة على النبي',
-                      icon: Icons.volunteer_activism_outlined,
-                      iconColor: Colors.green[500]!,
-                      value: isSalatAlaNabiEnabled,
-                      onChanged: (val) async {
-                        await _settings.setSalatAlaNabiEnabled(val);
-                        setState(() => isSalatAlaNabiEnabled = val);
-                      },
-                    ),
-                    if (isSalatAlaNabiEnabled) ...[
-                      _buildDivider(isDark),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'تكرار التذكير كل:',
-                              style: GoogleFonts.cairo(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? Colors.white70 : Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              height: 48, // Limit height for horizontal list
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
+                      // 🕌 الصلاة على النبي
+                      _buildSectionHeader(context, 'الصلاة على النبي ﷺ'),
+                      _buildSettingsCard(
+                        context,
+                        children: [
+                          _buildSwitchTile(
+                            context,
+                            title: 'تفعيل التذكير',
+                            subtitle: 'تنبيهات متكررة للصلاة على النبي',
+                            icon: Icons.volunteer_activism_outlined,
+                            iconColor: Colors.green[500]!,
+                            value: isSalatAlaNabiEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isSalatAlaNabiEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          if (isSalatAlaNabiEnabled) ...[
+                            _buildDivider(isDark),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _buildFrequencyChip(1),
-                                  _buildFrequencyChip(5),
-                                  _buildFrequencyChip(10),
-                                  _buildFrequencyChip(15),
-                                  _buildFrequencyChip(20),
-                                  _buildFrequencyChip(30),
-                                  _buildFrequencyChip(45),
-                                  _buildFrequencyChip(60),
+                                  Text(
+                                    'تكرار التذكير كل:',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDark
+                                          ? Colors.white70
+                                          : Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    height: 48,
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      children: [
+                                        _buildFrequencyChip(1),
+                                        _buildFrequencyChip(5),
+                                        _buildFrequencyChip(10),
+                                        _buildFrequencyChip(15),
+                                        _buildFrequencyChip(20),
+                                        _buildFrequencyChip(30),
+                                        _buildFrequencyChip(45),
+                                        _buildFrequencyChip(60),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                           ],
-                        ),
+                        ],
                       ),
-                    ],
-                  ],
-                ),
 
-                const SizedBox(height: 40),
-              ],
+                      const SizedBox(height: 100), // Space for button
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: AnimatedOpacity(
+          opacity: _hasChanges ? 1.0 : 0.5,
+          duration: const Duration(milliseconds: 300),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            width: double.infinity,
+            height: 56,
+            child: FloatingActionButton.extended(
+              onPressed: _hasChanges ? _saveAll : null,
+              backgroundColor: const Color(0xFFD4AF37),
+              elevation: _hasChanges ? 8 : 0,
+              label: Text(
+                'حفظ التغييرات',
+                style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              icon: const Icon(Icons.save_rounded, color: Colors.white),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
         ),
@@ -350,10 +422,12 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                   ? Colors.transparent
                   : Colors.grey.withOpacity(0.3),
             )),
-        onSelected: (bool selected) async {
+        onSelected: (bool selected) {
           if (selected) {
-            await _settings.setSalatAlaNabiMinutes(minutes);
-            setState(() => salatFrequency = minutes);
+            setState(() {
+              salatFrequency = minutes;
+              _hasChanges = true;
+            });
           }
         },
       ),

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/shard/widgets/ui_animations.dart';
 import '../../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/features/share_card/PremiumShareCard.dart';
 import '../SurahModel.dart';
 
 // ----------------------- Surah Detail Screen -----------------------
@@ -450,15 +451,19 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                         if (bookmarkId == widget.surah.id) {
                           // إزالة البوك مارك
                           await removeBookmark(); // أنشئ دالة removeBookmark()
-                          KHelper.showError(message: "تَمَّ حَذْفُ عَلَامَةِ سُورَةِ ${widget.surah.name} بِنَجَاحٍ");
+                          KHelper.showError(
+                              message:
+                                  "تَمَّ حَذْفُ عَلَامَةِ سُورَةِ ${widget.surah.name} بِنَجَاحٍ");
 
                           bookmarkId = null;
                         } else {
                           // حفظ البوك مارك
-                          await saveBookmark(widget.surah.id,widget.surah.name);
+                          await saveBookmark(
+                              widget.surah.id, widget.surah.name);
                           bookmarkId = widget.surah.id;
-                          KHelper.showSuccess(message: "تَمَّ إِضَافَةُ عَلَامَةِ سُورَةِ ${widget.surah.name} بِنَجَاحٍ");
-
+                          KHelper.showSuccess(
+                              message:
+                                  "تَمَّ إِضَافَةُ عَلَامَةِ سُورَةِ ${widget.surah.name} بِنَجَاحٍ");
                         }
 
                         setState(() {});
@@ -555,6 +560,43 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.copy,
+                                size: 20,
+                                color: isDark ? Colors.white54 : Colors.grey),
+                            onPressed: () {
+                              Clipboard.setData(
+                                  ClipboardData(text: verse.text));
+                              KHelper.showSuccess(
+                                  message: "تم نسخ الآية الكريمة");
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.image_outlined,
+                                size: 22,
+                                color: isDark
+                                    ? Colors.amber.withOpacity(0.7)
+                                    : Colors.amber.shade700),
+                            onPressed: () {
+                              showGeneralDialog(
+                                context: context,
+                                pageBuilder: (context, anim1, anim2) =>
+                                    PremiumShareCard(
+                                      azkarName: "",
+                                  text: verse.text,
+                                  source:
+                                      "سورة ${widget.surah.name} - آية ${index + 1}",
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      const Divider(thickness: 0.5, indent: 50, endIndent: 50),
                     ],
                   ),
                 ),
@@ -669,22 +711,27 @@ class _FontSizeDropdownState extends State<FontSizeDropdown> {
   }
 }
 
-Future<void> saveBookmark(int verseId,String verseName,) async {
+Future<void> saveBookmark(
+  int verseId,
+  String verseName,
+) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setInt('bookmark_verseId', verseId);
   await prefs.setString('bookmark_verseName', verseName);
 }
+
 Future<void> saveSurahList(List<SurahModel> surahList) async {
   final prefs = await SharedPreferences.getInstance();
-  final List<String> jsonList = surahList.map((surah) => jsonEncode(surah.toJson())).toList();
+  final List<String> jsonList =
+      surahList.map((surah) => jsonEncode(surah.toJson())).toList();
   await prefs.setStringList('saved_surahs', jsonList);
 }
+
 Future<void> saveSingleSurah(SurahModel surah) async {
   final prefs = await SharedPreferences.getInstance();
   final jsonString = jsonEncode(surah.toJson());
   await prefs.setString('bookmarked_surah', jsonString);
 }
-
 
 Future<int?> getBookmark() async {
   final prefs = await SharedPreferences.getInstance();
@@ -695,5 +742,4 @@ Future<void> removeBookmark() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.remove('bookmark_verseId');
   await prefs.remove('bookmark_verseName');
-
 }

@@ -148,59 +148,83 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Colors.orange.shade400,
-            Colors.deepOrange.shade500,
-          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [const Color(0xFF2C3E50), const Color(0xFF000000)]
+              : [const Color(0xFFFF9A8B), const Color(0xFFFF6A88)],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: (isDark ? Colors.black : const Color(0xFFFF6A88))
+                .withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
           ),
         ],
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1.5,
+        ),
       ),
       child: Row(
         children: [
           Container(
-            width: 60,
-            height: 60,
+            width: 70,
+            height: 70,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withOpacity(0.15),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
             ),
             child: const Center(
               child: Text(
                 '🔥',
-                style: TextStyle(fontSize: 35),
+                style: TextStyle(fontSize: 40),
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'السلسلة اليومية',
+                  'التزامك اليومي',
                   style: GoogleFonts.cairo(
-                    fontSize: ResponsiveUtil.isTablet(context) ? 11.sp : 16.sp,
+                    fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withOpacity(0.9),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '$_streakDays يوم متتالي',
+                  style: GoogleFonts.cairo(
+                    fontSize: ResponsiveUtil.isTablet(context) ? 18.sp : 22.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '$_streakDays يوم متتالي',
+                  _streakDays > 0
+                      ? 'ما شاء الله! استمر في التقدم'
+                      : 'ابدأ رحلتك اليوم!',
                   style: GoogleFonts.cairo(
-                    fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontSize: 11.sp,
+                    color: Colors.white.withOpacity(0.7),
                   ),
                 ),
               ],

@@ -854,6 +854,7 @@ class _AzkarMassaState extends State<AzkarMassa> {
                             child: GestureDetector(
                               onTap: () => con.decrementMessa(zMessaIndex),
                               child: AzkerItemBuilder(
+                                azkarName: "أذكار المساء",
                                 azkarTitle: Azkary.azkarMassa[zMessaIndex],
                                 azkarDes: Azkary.azkarMassaDes[zMessaIndex],
                                 fontSize: fontSize,

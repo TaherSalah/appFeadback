@@ -16,17 +16,20 @@ class LocationSettingsView extends StatefulWidget {
 }
 
 class _LocationSettingsViewState extends State<LocationSettingsView> {
-  // مفاتيح SharedPreferences
   static const String kCountryKey = 'selected_country';
   static const String kCityKey = 'selected_city';
   static const String kAllowLocationKey = 'allow_location_usage';
 
   Map<String, dynamic> countries = {};
   Map<String, dynamic> cities = {};
-  String? selectedCountry;
-  String? selectedCity;
+
+  // Local state
+  String? tempCountry;
+  String? tempCity;
+  bool tempAllowLocationUsage = true;
+
   bool isLocationLoading = true;
-  bool allowLocationUsage = true;
+  bool _hasChanges = false;
 
   @override
   void initState() {
@@ -67,11 +70,12 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
       if (mounted) {
         setState(() {
           countries = loadedCountries;
-          selectedCountry = country;
+          tempCountry = country;
           cities = loadedCities;
-          selectedCity = city;
-          allowLocationUsage = savedAllow ?? true;
+          tempCity = city;
+          tempAllowLocationUsage = savedAllow ?? true;
           isLocationLoading = false;
+          _hasChanges = false;
         });
       }
     } catch (e) {
@@ -83,17 +87,18 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
     }
   }
 
-  Future<void> saveLocation(bool saveAllow) async {
+  Future<void> _saveLocationChanges() async {
     final prefs = await SharedPreferences.getInstance();
-    if (selectedCountry != null) {
-      await prefs.setString(kCountryKey, selectedCountry!);
+    if (tempCountry != null) {
+      await prefs.setString(kCountryKey, tempCountry!);
     }
-    if (selectedCity != null) {
-      prefs.setString(kCityKey, selectedCity!);
+    if (tempCity != null) {
+      await prefs.setString(kCityKey, tempCity!);
     }
-    if (saveAllow) {
-      await prefs.setBool(kAllowLocationKey, allowLocationUsage);
-    }
+    await prefs.setBool(kAllowLocationKey, tempAllowLocationUsage);
+
+    KHelper.showSuccess(message: 'تم حفظ إعدادات الموقع بنجاح');
+    setState(() => _hasChanges = false);
   }
 
   double haversine(double lat1, double lon1, double lat2, double lon2) {
@@ -130,48 +135,56 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
       KHelper.showError(
           message: 'تعذّر استخدام الموقع. تحقق من الصلاحيات وخدمة الموقع.');
       setState(() {
-        allowLocationUsage = false;
+        tempAllowLocationUsage = false;
       });
-      await saveLocation(true);
       return;
     }
 
-    final pos = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('جاري تحديد موقعك الحالي...')),
     );
-    final userLat = pos.latitude;
-    final userLng = pos.longitude;
 
-    String? bestCountry;
-    String? bestCity;
-    double bestDist = double.infinity;
+    try {
+      final pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+        timeLimit: const Duration(seconds: 10),
+      );
+      final userLat = pos.latitude;
+      final userLng = pos.longitude;
 
-    countries.forEach((country, cityMap) {
-      final Map<String, dynamic> m = cityMap ?? {};
-      m.forEach((cityName, v) {
-        final lat = (v?['lat'])?.toDouble();
-        final lng = (v?['lng'])?.toDouble();
-        if (lat == null || lng == null) return;
-        final d = haversine(userLat, userLng, lat, lng);
-        if (d < bestDist) {
-          bestDist = d;
-          bestCountry = country;
-          bestCity = cityName;
-        }
+      String? bestCountry;
+      String? bestCity;
+      double bestDist = double.infinity;
+
+      countries.forEach((country, cityMap) {
+        final Map<String, dynamic> m = cityMap ?? {};
+        m.forEach((cityName, v) {
+          final lat = (v?['lat'])?.toDouble();
+          final lng = (v?['lng'])?.toDouble();
+          if (lat == null || lng == null) return;
+          final d = haversine(userLat, userLng, lat, lng);
+          if (d < bestDist) {
+            bestDist = d;
+            bestCountry = country;
+            bestCity = cityName;
+          }
+        });
       });
-    });
 
-    if (bestCountry != null && bestCity != null) {
-      setState(() {
-        selectedCountry = bestCountry;
-        cities = (countries[selectedCountry!] as Map<String, dynamic>)
-          ..removeWhere((k, v) => v == null);
-        selectedCity = bestCity;
-      });
-      await saveLocation(true);
-      KHelper.showSuccess(message: 'تم تحديد الموقع: $bestCountry - $bestCity');
-    } else {
-      KHelper.showError(message: 'لم يتم العثور على مدينة مناسبة في البيانات.');
+      if (bestCountry != null && bestCity != null) {
+        setState(() {
+          tempCountry = bestCountry;
+          cities = (countries[tempCountry!] as Map<String, dynamic>)
+            ..removeWhere((k, v) => v == null);
+          tempCity = bestCity;
+          tempAllowLocationUsage = true;
+          _hasChanges = true;
+        });
+        KHelper.showSuccess(message: 'تم العثور على موقعك: $bestCity');
+      }
+    } catch (e) {
+      KHelper.showError(
+          message: 'تعذر الحصول على الموقع، يرجى المحاولة لاحقاً');
     }
   }
 
@@ -217,134 +230,177 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
           ),
           child: isLocationLoading
               ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ListView(
-                    children: [
-                      SizedBox(height: MediaQuery.of(context).padding.top + 60),
-                      _buildSectionHeader(context, 'طريقة التحديد'),
-                      _buildSettingsCard(
-                        context,
-                        children: [
-                          SwitchListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            title: Text(
-                              'تحديد تلقائي (GPS)',
-                              style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                color: isDark ? Colors.white : Colors.black87,
-                              ),
-                            ),
-                            subtitle: Text(
-                              'اختيار أقرب مدينة بناءً على موقعك الحالي',
-                              style: GoogleFonts.cairo(
-                                fontSize: 11,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            value: allowLocationUsage,
-                            activeColor: const Color(0xFFD4AF37),
-                            secondary: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.my_location,
-                                  color: Colors.blue, size: 22),
-                            ),
-                            onChanged: (val) async {
-                              if (val) {
-                                setState(() => allowLocationUsage = true);
-                                await selectByLocation();
-                              } else {
-                                setState(() => allowLocationUsage = false);
-                                await saveLocation(true);
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      _buildSectionHeader(context, 'اختيار يدوي'),
-                      _buildSettingsCard(
-                        context,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
+              : Column(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ListView(
+                          children: [
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).padding.top + 60),
+                            _buildSectionHeader(context, 'طريقة التحديد'),
+                            _buildSettingsCard(
+                              context,
                               children: [
-                                _buildDropdownField(
-                                  context,
-                                  label: 'الدولة',
-                                  value: selectedCountry,
-                                  items: countries.keys.toList(),
+                                SwitchListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  title: Text(
+                                    'تحديد تلقائي (GPS)',
+                                    style: GoogleFonts.cairo(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black87,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    'اختيار أقرب مدينة بناءً على موقعك الحالي',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 11,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  value: tempAllowLocationUsage,
+                                  activeColor: const Color(0xFFD4AF37),
+                                  secondary: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue.withOpacity(0.15),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Icon(Icons.my_location,
+                                        color: Colors.blue, size: 22),
+                                  ),
                                   onChanged: (val) async {
-                                    if (val == null) return;
-                                    final newCities = (countries[val]
-                                        as Map<String, dynamic>)
-                                      ..removeWhere((k, v) => v == null);
-                                    setState(() {
-                                      selectedCountry = val;
-                                      cities = newCities;
-                                      selectedCity = cities.keys.isNotEmpty
-                                          ? cities.keys.first
-                                          : null;
-                                    });
-                                    await saveLocation(false);
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                                _buildDropdownField(
-                                  context,
-                                  label: 'المدينة',
-                                  value: selectedCity,
-                                  items: cities.keys.toList(),
-                                  onChanged: (val) async {
-                                    if (val == null) return;
-                                    setState(() => selectedCity = val);
-                                    await saveLocation(false);
+                                    if (val) {
+                                      await selectByLocation();
+                                    } else {
+                                      setState(() {
+                                        tempAllowLocationUsage = false;
+                                        _hasChanges = true;
+                                      });
+                                    }
                                   },
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                      if (selectedCountry != null && selectedCity != null) ...[
-                        const SizedBox(height: 24),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFD4AF37).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color(0xFFD4AF37).withOpacity(0.3),
+                            const SizedBox(height: 24),
+                            _buildSectionHeader(context, 'اختيار يدوي'),
+                            _buildSettingsCard(
+                              context,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    children: [
+                                      _buildDropdownField(
+                                        context,
+                                        label: 'الدولة',
+                                        value: tempCountry,
+                                        items: countries.keys.toList(),
+                                        onChanged: (val) {
+                                          if (val == null) return;
+                                          final newCities = (countries[val]
+                                              as Map<String, dynamic>)
+                                            ..removeWhere((k, v) => v == null);
+                                          setState(() {
+                                            tempCountry = val;
+                                            cities = newCities;
+                                            tempCity = cities.keys.isNotEmpty
+                                                ? cities.keys.first
+                                                : null;
+                                            _hasChanges = true;
+                                          });
+                                        },
+                                      ),
+                                      const SizedBox(height: 16),
+                                      _buildDropdownField(
+                                        context,
+                                        label: 'المدينة',
+                                        value: tempCity,
+                                        items: cities.keys.toList(),
+                                        onChanged: (val) {
+                                          if (val == null) return;
+                                          setState(() {
+                                            tempCity = val;
+                                            _hasChanges = true;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.check_circle_outline,
-                                  color: Color(0xFFD4AF37)),
-                              const SizedBox(width: 8),
-                              Text(
-                                'الموقع الحالي: $selectedCountry - $selectedCity',
-                                style: GoogleFonts.cairo(
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFFD4AF37),
-                                  fontSize: 14,
+                            if (tempCountry != null && tempCity != null) ...[
+                              const SizedBox(height: 24),
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color(0xFFD4AF37).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: const Color(0xFFD4AF37)
+                                        .withOpacity(0.3),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.location_on_outlined,
+                                        color: Color(0xFFD4AF37)),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'الموقع المختار: $tempCountry - $tempCity',
+                                      style: GoogleFonts.cairo(
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFFD4AF37),
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
-                          ),
+                            const SizedBox(height: 100),
+                          ],
                         ),
-                      ],
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: AnimatedOpacity(
+          opacity: _hasChanges ? 1.0 : 0.5,
+          duration: const Duration(milliseconds: 300),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            width: double.infinity,
+            height: 56,
+            child: FloatingActionButton.extended(
+              onPressed: _hasChanges ? _saveLocationChanges : null,
+              backgroundColor: const Color(0xFFD4AF37),
+              elevation: _hasChanges ? 8 : 0,
+              label: Text(
+                'حفظ خيارات الموقع',
+                style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              icon: const Icon(Icons.check_rounded, color: Colors.white),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
         ),
       ),
     );

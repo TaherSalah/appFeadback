@@ -1209,6 +1209,7 @@ class _SleepAzkarState extends State<SleepAzkar> {
                             child: GestureDetector(
                               onTap: () => con.decrementSleep(zSleepIndex),
                               child: AzkerItemBuilder(
+                                azkarName: "أذكار النوم",
                                 azkarTitle: Azkary.azkarSleep[zSleepIndex],
                                 azkarDes: Azkary.azkarSleepDes[zSleepIndex],
                                 fontSize: fontSize,
