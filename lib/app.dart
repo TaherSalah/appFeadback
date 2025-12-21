@@ -12,7 +12,7 @@ import 'app/features/categories/data/repo/categories_repo_immp.dart';
 import 'app/features/categories/view/controller/categories_bloc.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 
-import 'main.dart';
+// import 'main.dart';
 
 class MashkahApp extends StatefulWidget {
   const MashkahApp({super.key});
@@ -27,9 +27,9 @@ class _MashkahAppState extends State<MashkahApp> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      checkWhatsNew(context);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   checkWhatsNew(context);
+    // });
     final rateMyApp = RateMyApp(
       preferencesPrefix: 'rateMyApp',
       minDays: 3,

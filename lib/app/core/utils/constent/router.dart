@@ -32,6 +32,7 @@ import '../../../features/quran/view/widget/AyaSearchScreen.dart';
 import '../../../features/quran/view/widget/TafsirquranView.dart';
 import '../../../features/rokia_view/rokia.dart';
 import '../../../features/sabah_view/azkar_sabah.dart';
+import '../../../features/settings/settings_view.dart';
 import '../../../features/sleep_view/sleep_azkar.dart';
 import '../../../features/splash_view/splash.dart';
 import '../../../features/zakat_view/zakat_calculator_view.dart';
@@ -85,6 +86,7 @@ class Routes {
   static const String quranKhitamRoute = "/QuranKhitamView";
   static const String tafsirQuranRoute = "/TafsirQuranView";
   static const String zakatCalculatorRoute = "/ZakatCalculator";
+  static const String settingsRoute = "/settings";
 }
 
 class QuranRadioPlayerArgs {
@@ -160,6 +162,9 @@ class RouteGenerator {
 
       case '/compplateKhatna':
         return MaterialPageRoute(builder: (_) => const ComplateKhatmaView());
+
+        case '/settingsRoute':
+        return MaterialPageRoute(builder: (_) => const SettingsView());
 
       case '/WirdHomeScreen':
         return MaterialPageRoute(builder: (_) => WirdHomeScreen());

@@ -1,5 +1,6 @@
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rate_my_app/rate_my_app.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 // ============================================
 // 📁 lib/core/services/version_service.dart
 // ============================================
@@ -301,6 +302,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
+    FlutterNativeSplash.remove();
     _checkAppStateAndNavigate();
     super.initState();
     // Timer(
