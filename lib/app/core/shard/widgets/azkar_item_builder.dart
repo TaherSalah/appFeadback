@@ -308,7 +308,8 @@ class AzkerItemBuilder extends StatefulWidget {
     this.fontSize,
     this.color,
     this.repertColor,
-    this.repertColor2,  this.azkarName,
+    this.repertColor2,
+    this.azkarName,
   });
 
   @override
@@ -478,9 +479,9 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                             context: context,
                             pageBuilder: (context, anim1, anim2) =>
                                 PremiumShareCard(
-                                  azkarName: widget.azkarName??"",
-                              text: widget.azkarTitle,
-                              source: widget.azkarDes,
+                              azkarName: widget.azkarName ?? "",
+                              text: widget.azkarDes,
+                              source: widget.azkarTitle,
                             ),
                           );
                         },
@@ -670,4 +671,3 @@ class _AzkarOrnamentDivider extends StatelessWidget {
     );
   }
 }
-
