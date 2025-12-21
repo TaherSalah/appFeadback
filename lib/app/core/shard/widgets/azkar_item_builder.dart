@@ -480,8 +480,8 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                             pageBuilder: (context, anim1, anim2) =>
                                 PremiumShareCard(
                               azkarName: widget.azkarName ?? "",
-                              text: widget.azkarDes,
-                              source: widget.azkarTitle,
+                              text: widget.azkarTitle,
+                              source: widget.azkarDes,
                             ),
                           );
                         },

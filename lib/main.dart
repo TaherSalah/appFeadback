@@ -16,11 +16,13 @@ import 'app/features/achievements/models/achievement_models.dart';
 import 'app/features/duas/models/dua_models.dart';
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:quran_library/quran.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
+  await  QuranLibrary.init();
   try {
     await _initAppServices();
   } catch (e, s) {

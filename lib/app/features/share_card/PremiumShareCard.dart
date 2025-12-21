@@ -246,85 +246,36 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                 ),
                               ),
 
-                              SizedBox(height: 45.h),
-
+                              SizedBox(height: 14.h),
+                              Image.asset(
+                                "assets/images/logoApp.png",
+                                height: 55.h,
+                                width: 55.h,
+                                color: Colors.white,
+                              ),
+                              Text(
+                                "رفيق المسلم اليومي",
+                                style: GoogleFonts.cairo(
+                                  color: Colors.white,
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               // App Branding Section
-                              Container(
-                                padding: EdgeInsets.all(16.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.05),
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  border: Border.all(
-                                      color: Colors.white.withOpacity(0.1),
-                                      width: 1),
-                                ),
-                                child: Row(
-                                  children: [
-                                    // QR Code Placeholder Area
-                                    Container(
-                                      padding: EdgeInsets.all(6.r),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(12.r),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.2),
-                                            blurRadius: 10,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Icon(
-                                        Icons.qr_code_2_rounded,
-                                        size: 45.r,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    SizedBox(width: 16.w),
-                                    // Logo and Name
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Image.asset(
-                                                "assets/images/logoApp.png",
-                                                height: 35.h,
-                                                width: 35.h,
-                                                color: Colors.white,
-                                              ),
-                                              SizedBox(width: 8.w),
-                                              Text(
-                                                "رفيق المسلم اليومي",
-                                                style: GoogleFonts.cairo(
-                                                  color: Colors.white,
-                                                  fontSize: 13.sp,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 8.h),
-                                          Row(
-                                            children: [
-                                              _buildStoreIcon(
-                                                  "assets/images/playstore.png"),
-                                              SizedBox(width: 8.w),
-                                              _buildStoreIcon(
-                                                  "assets/images/app-store.png"),
-                                              SizedBox(width: 8.w),
-                                              _buildStoreIcon(
-                                                  "assets/images/huawei.png"),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              SizedBox(height: 20.h),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _buildStoreIcon(
+                                      "assets/images/playstore.png"),
+                                  SizedBox(width: 8.w),
+                                  _buildStoreIcon(
+                                      "assets/images/app-store.png"),
+                                  SizedBox(width: 8.w),
+                                  _buildStoreIcon(
+                                      "assets/images/huawei.png"),
+                                ],
                               ),
                               SizedBox(height: 12.h),
                               Text(

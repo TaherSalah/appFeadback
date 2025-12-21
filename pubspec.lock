@@ -293,10 +293,10 @@ packages:
     dependency: transitive
     description:
       name: camera_avfoundation
-      sha256: "035b90c1e33c2efad7548f402572078f6e514d4f82be0a315cd6c6af7e855aa8"
+      sha256: "0efb057a1fecdbf9b697272fbf79afbd47ac0e7bd69b4d900d3f304b31d93bad"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.22+6"
+    version: "0.9.22+7"
   camera_platform_interface:
     dependency: transitive
     description:
@@ -1706,7 +1706,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "021484cbf5c64f0fdd174127e18012e6bc24450c"
+      resolved-ref: "2bf6ebb838e034cad77e370f68d165ac593674bf"
       url: "https://github.com/alheekmahlib/quran_library.git"
     source: git
     version: "2.3.2"
@@ -2223,10 +2223,10 @@ packages:
     dependency: transitive
     description:
       name: video_player_android
-      sha256: "8587f7b1e1ad7a7b8f7a7e153bd6de8607168f865f0bd983ef1f92efd3f4a02c"
+      sha256: ee4fd520b0cafa02e4a867a0f882092e727cdaa1a2d24762171e787f8a502b0a
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.0"
+    version: "2.9.1"
   video_player_avfoundation:
     dependency: transitive
     description:

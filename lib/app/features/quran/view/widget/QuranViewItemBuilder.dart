@@ -204,9 +204,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    QuranLibrary.init();
-  }
 
+  }
   Future<void> _loadPages() async {
     final prefs = await SharedPreferences.getInstance();
     final lastPage = prefs.getInt('last_page') ?? 0; // افتراضي الصفحة الأولى
