@@ -12,6 +12,7 @@ import 'package:muslimdaily/app/features/radio/view/widget/RadioSearchScreen.dar
 
 import '../../../features/WirdView/WirdHomeScreen.dart';
 import '../../../features/aboutView/about.dart';
+import '../../../features/aboutView/SupportDeveloperScreen.dart';
 import '../../../features/azanView/timeingScreen.dart';
 import '../../../features/categories/categories_view.dart';
 import '../../../features/categories/view/categories_details.dart';
@@ -31,6 +32,7 @@ import '../../../features/quran/view/widget/AyaSearchScreen.dart';
 import '../../../features/quran/view/widget/TafsirquranView.dart';
 import '../../../features/rokia_view/rokia.dart';
 import '../../../features/sabah_view/azkar_sabah.dart';
+import '../../../features/settings/settings_view.dart';
 import '../../../features/sleep_view/sleep_azkar.dart';
 import '../../../features/splash_view/splash.dart';
 import '../../../features/zakat_view/zakat_calculator_view.dart';
@@ -84,6 +86,7 @@ class Routes {
   static const String quranKhitamRoute = "/QuranKhitamView";
   static const String tafsirQuranRoute = "/TafsirQuranView";
   static const String zakatCalculatorRoute = "/ZakatCalculator";
+  static const String settingsRoute = "/settings";
 }
 
 class QuranRadioPlayerArgs {
@@ -160,6 +163,9 @@ class RouteGenerator {
       case '/compplateKhatna':
         return MaterialPageRoute(builder: (_) => const ComplateKhatmaView());
 
+        case '/settingsRoute':
+        return MaterialPageRoute(builder: (_) => const SettingsView());
+
       case '/WirdHomeScreen':
         return MaterialPageRoute(builder: (_) => WirdHomeScreen());
 
@@ -199,6 +205,9 @@ class RouteGenerator {
 
       case '/about':
         return MaterialPageRoute(builder: (_) => const About());
+      case '/supportDeveloper':
+        return MaterialPageRoute(
+            builder: (_) => const SupportDeveloperScreen());
       case '/QuranRadioView':
         return MaterialPageRoute(builder: (_) => const QuranRadioView());
 
@@ -210,7 +219,8 @@ class RouteGenerator {
 
       // === Charity Routes ===
       case '/charityDashboard':
-        return MaterialPageRoute(builder: (_) => const CharityDashboardScreen());
+        return MaterialPageRoute(
+            builder: (_) => const CharityDashboardScreen());
       case '/addCharity':
         return MaterialPageRoute(builder: (_) => const AddCharityScreen());
       case '/charityHistory':
@@ -218,15 +228,18 @@ class RouteGenerator {
       case '/charityStories':
         return MaterialPageRoute(builder: (_) => const CharityStoriesScreen());
       case '/charityPlatforms':
-        return MaterialPageRoute(builder: (_) => const CharityPlatformsScreen());
+        return MaterialPageRoute(
+            builder: (_) => const CharityPlatformsScreen());
       case '/recurring-charity': // Added route for RecurringCharityScreen
-        return MaterialPageRoute(builder: (_) =>  const RecurringCharityScreen());
+        return MaterialPageRoute(
+            builder: (_) => const RecurringCharityScreen());
 
       // === Achievements Routes ===
       case '/achievements':
         return MaterialPageRoute(builder: (_) => const AchievementsScreen());
       case '/challenges':
-        return MaterialPageRoute(builder: (_) => const ChallengesManagementScreen());
+        return MaterialPageRoute(
+            builder: (_) => const ChallengesManagementScreen());
       case '/leaderboard':
         return MaterialPageRoute(builder: (_) => const LeaderboardScreen());
 

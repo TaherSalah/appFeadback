@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:muslimdaily/app/features/settings/settings_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
@@ -185,10 +186,15 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                       nextPrayer: con.nextPrayer,
                       remainingTime: con.remainingTimeText,
                       location: _locationText ?? 'لم يتم تحديد الموقع',
-                      onSettingsTap: () => showThemeSheet(
-                        context,
-                        onLocationChanged: _onLocationChanged,
-                      ),
+                      onSettingsTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsView(),
+                          ),
+                        );
+                        _onLocationChanged();
+                      },
                     ),
                   ),
 
@@ -274,8 +280,6 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                         // const QuizWidget(),
                         const CharityEntryWidget(),
                         const SizedBox(height: 10),
-
-
 
                         // 🔥 مدخل ركن الأطفال (في صفحة منفصلة)
                         const KidsEntryPointWidget(),
@@ -469,10 +473,15 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                           //   ),
                           // ),
                           InkWell(
-                            onTap: () => showThemeSheet(
-                              context,
-                              onLocationChanged: _onLocationChanged,
-                            ),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SettingsView(),
+                                ),
+                              );
+                              _onLocationChanged();
+                            },
                             borderRadius: BorderRadius.circular(30),
                             child: Container(
                               padding: const EdgeInsets.all(8),

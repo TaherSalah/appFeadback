@@ -124,9 +124,9 @@ class MainController extends ControllerMVC {
       "navigate": "/mosquesMap"
     },
     {
-      "title": "عَنَّا",
+      "title": "الاعدادات",
       "icon": "assets/images/info (1).png",
-      "navigate": "/about"
+      "navigate": "/settingsRoute"
     },
   ];
 

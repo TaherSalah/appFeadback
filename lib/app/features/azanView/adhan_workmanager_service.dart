@@ -1,14 +1,11 @@
 import 'dart:io';
-import 'dart:math';
+
 import 'package:adhan/adhan.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'adhan_callback.dart';
-
-// ==========================================
-// 🧪 Callback مبسط للاختبار
-// ==========================================
-import 'package:awesome_notifications/awesome_notifications.dart'; // تأكد من استيراد المكتبة
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:muslimdaily/app/core/services/settings_service.dart';
 
 // ==========================================
 // 🧪 Callback مبسط للاختبار
@@ -60,6 +57,16 @@ class AdhanWorkManagerService {
   }) async {
     try {
       print('🚀 بدء تهيئة خدمة الأذان Exact Alarm...');
+
+      // تهيئة SettingsService
+      await SettingsService().init();
+
+      // التحقق من تفعيل الأذان
+      if (!SettingsService().isAdhanEnabled) {
+        print('🔕 الأذان معطل من الإعدادات. لن يتم جدولة أي شيء.');
+        await cancelAll(); // ضمان إلغاء القديم
+        return;
+      }
 
       // 1️⃣ إلغاء أي مهام قديمة
       await cancelAll();
@@ -199,7 +206,8 @@ class AdhanWorkManagerService {
           timeoutAfter: isFajr
               ? Duration(minutes: 4) // زيادة المدة للفجر
               : Duration(
-                  minutes: 3,seconds: 50), // زيادة المدة لباقي الصلوات لتجنب انقطاع الصوت
+                  minutes: 3,
+                  seconds: 50), // زيادة المدة لباقي الصلوات لتجنب انقطاع الصوت
           payload: {
             'prayer_name': prayerName,
             'prayer_time': _formatTime(prayerTime),
