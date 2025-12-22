@@ -6,6 +6,9 @@ import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:muslimdaily/app/core/services/image_share_service.dart';
 
 class ShareWirdDialog extends StatefulWidget {
   final String dhikrText;
@@ -23,24 +26,33 @@ class ShareWirdDialog extends StatefulWidget {
 
 class _ShareWirdDialogState extends State<ShareWirdDialog> {
   final GlobalKey _globalKey = GlobalKey();
-
-  // قائمة الخلفيات المقترحة من مجلد الأصول
-  final List<String> _backgrounds = [
-    "assets/images/beautiful-view-sunset-light.jpg",
-    "assets/images/inspiring-view-morning-light.jpg",
-    "assets/images/natural-view-night_1112329-37092.jpg",
-    "assets/images/1.jpg",
-    "assets/images/2.jpg",
-    "assets/images/3.jpg",
-    "assets/images/4.jpg",
-    "assets/images/5.jpg",
-    "assets/images/6.jpg",
-  ];
-
+  late List<ShareImageItem> _backgrounds;
   int _selectedImageIndex = 0;
   bool _isSharing = false;
+  final Set<int> _loadedIndices = {};
+  final Set<int> _failedIndices = {};
+
+  // Personalization States
+  String _selectedFont = "Amiri";
+  double _bgDimming = 0.3;
+
+  final List<String> _fonts = ["Amiri", "Cairo", "Changa", "Lateef", "Tajawal"];
+
+  @override
+  void initState() {
+    super.initState();
+    _backgrounds = ImageShareService.getAllBackgrounds();
+    // Local images are always considered loaded
+    for (int i = 0; i < _backgrounds.length; i++) {
+      if (!_backgrounds[i].isRemote) {
+        _loadedIndices.add(i);
+      }
+    }
+  }
 
   Future<void> _captureAndShare() async {
+    if (!_loadedIndices.contains(_selectedImageIndex)) return;
+    
     setState(() {
       _isSharing = true;
     });
@@ -109,14 +121,9 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
             key: _globalKey,
             child: Container(
               width: double.infinity,
-              // نسبة أبعاد مربعة أو مستطيلة مناسبة للمشاركة (إنستجرام/واتساب)
-              // aspectRatio: 1,
+              constraints: const BoxConstraints(minHeight: 300),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(
-                  image: AssetImage(_backgrounds[_selectedImageIndex]),
-                  fit: BoxFit.cover,
-                ),
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
@@ -127,10 +134,64 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
               ),
               child: Stack(
                 children: [
-                  // طبقة تعتيم خفيفة لتحسين قراءة النص
+                   // 1. Fallback / Base Layer
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        ImageShareService.localBackgrounds[0],
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+
+                  // 2. Remote Image Layer (with loading handling)
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: _backgrounds[_selectedImageIndex].isRemote 
+                        ? CachedNetworkImage(
+                            imageUrl: _backgrounds[_selectedImageIndex].path,
+                            cacheManager: ImageShareService.customCacheManager,
+                            fit: BoxFit.cover,
+                            imageBuilder: (context, imageProvider) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (mounted && !_loadedIndices.contains(_selectedImageIndex)) {
+                                  setState(() => _loadedIndices.add(_selectedImageIndex));
+                                }
+                              });
+                              return Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                                ),
+                              );
+                            },
+                            placeholder: (context, url) => Container(color: Colors.black26),
+                            errorWidget: (context, url, error) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (mounted && !_failedIndices.contains(_selectedImageIndex)) {
+                                  setState(() => _failedIndices.add(_selectedImageIndex));
+                                }
+                              });
+                              return Container(
+                                color: Colors.black45,
+                                child: const Center(
+                                  child: Icon(Icons.cloud_off, color: Colors.white54, size: 40),
+                                ),
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            _backgrounds[_selectedImageIndex].path,
+                            fit: BoxFit.cover,
+                          ),
+                    ),
+                  ),
+
+                  // 3. طبقة تعتيم خفيفة لتحسين قراءة النص
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withOpacity(_bgDimming),
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -146,7 +207,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
                         Text(
                           widget.dhikrText,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.amiri(
+                          style: GoogleFonts.getFont(
+                            _selectedFont,
                             textStyle: const TextStyle(
                               fontSize: 24,
                               color: Colors.white,
@@ -168,7 +230,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
                             const SizedBox(width: 8),
                             Text(
                               "رفيق المسلم",
-                              style: GoogleFonts.cairo(
+                              style: GoogleFonts.getFont(
+                                _selectedFont,
                                 color: Colors.white,
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -184,7 +247,62 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
+
+          // Internet Requirement Hint
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.wifi, color: Colors.teal.withOpacity(0.7), size: 14),
+              const SizedBox(width: 6),
+              Text(
+                "خلفيات إضافية (تحتاج اتصال بالإنترنت) ✨",
+                style: GoogleFonts.cairo(
+                  color: widget.isDark ? Colors.white70 : Colors.black54,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          const SizedBox(height: 10),
+
+          // تخصيص الخط والشفافية
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                ..._fonts.map((f) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: ActionChip(
+                    label: Text(f, style: GoogleFonts.getFont(f, color: _selectedFont == f ? Colors.white : (widget.isDark ? Colors.white70 : Colors.black87), fontSize: 11)),
+                    onPressed: () => setState(() => _selectedFont = f),
+                    backgroundColor: _selectedFont == f ? Colors.teal : (widget.isDark ? Colors.grey[800] : Colors.grey[200]),
+                  ),
+                )),
+              ],
+            ),
+          ),
+          
+          Row(
+            children: [
+              Icon(Icons.opacity, color: widget.isDark ? Colors.white70 : Colors.black54, size: 18),
+              Expanded(
+                child: Slider(
+                  value: _bgDimming,
+                  onChanged: (val) => setState(() => _bgDimming = val),
+                  min: 0.0,
+                  max: 0.8,
+                  activeColor: Colors.teal,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 5),
 
           // قائمة اختيار الخلفيات
           Container(
@@ -199,28 +317,89 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
               itemCount: _backgrounds.length,
               itemBuilder: (context, index) {
                 final isSelected = _selectedImageIndex == index;
+                final isCurrentRemote = _backgrounds[index].isRemote;
+                final isFailed = _failedIndices.contains(index);
                 return GestureDetector(
                   onTap: () {
-                    setState(() {
-                      _selectedImageIndex = index;
-                    });
+                    if (isFailed) {
+                      // Manual Retry: Clear from failed and select to trigger re-fetch
+                      setState(() {
+                        _failedIndices.remove(index);
+                        _selectedImageIndex = index;
+                      });
+                    } else {
+                      setState(() {
+                        _selectedImageIndex = index;
+                      });
+                    }
                   },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: 60,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: isSelected
-                          ? Border.all(color: Colors.teal, width: 3)
-                          : null,
-                      image: DecorationImage(
-                        image: AssetImage(_backgrounds[index]),
-                        fit: BoxFit.cover,
+                  child: Opacity(
+                    opacity: isFailed ? 0.3 : 1.0,
+                    child: SizedBox(
+                      width: 60,
+                      child: Stack(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: 60,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: isSelected
+                                  ? Border.all(color: Colors.teal, width: 3)
+                                  : null,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: isCurrentRemote 
+                                ? CachedNetworkImage(
+                                    imageUrl: _backgrounds[index].path,
+                                    cacheManager: ImageShareService.customCacheManager,
+                                    fit: BoxFit.cover,
+                                    imageBuilder: (context, imageProvider) {
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        if (mounted && !_loadedIndices.contains(index)) {
+                                          setState(() => _loadedIndices.add(index));
+                                        }
+                                      });
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                                        ),
+                                      );
+                                    },
+                                    placeholder: (context, url) => Shimmer.fromColors(
+                                      baseColor: Colors.grey[800]!,
+                                      highlightColor: Colors.grey[700]!,
+                                      child: Container(color: Colors.white),
+                                    ),
+                                    errorWidget: (context, url, error) {
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        if (mounted && !_failedIndices.contains(index)) {
+                                          setState(() => _failedIndices.add(index));
+                                        }
+                                      });
+                                      return Container(
+                                        color: Colors.black45,
+                                        child: const Icon(Icons.refresh, color: Colors.white, size: 18),
+                                      );
+                                    },
+                                  )
+                                : Image.asset(
+                                    _backgrounds[index].path,
+                                    fit: BoxFit.cover,
+                                  ),
+                            ),
+                          ),
+                          // Offline Ready Indicator
+                          if (_loadedIndices.contains(index))
+                            Positioned(
+                              top: 2,
+                              right: 2,
+                              child: const Icon(Icons.check_circle, color: Colors.greenAccent, size: 12),
+                            ),
+                        ],
                       ),
                     ),
-                    child: isSelected
-                        ? Container(color: Colors.teal.withOpacity(0.3))
-                        : null,
                   ),
                 );
               },
@@ -233,16 +412,20 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: _isSharing ? null : _captureAndShare,
+              onPressed: (_isSharing || !_loadedIndices.contains(_selectedImageIndex)) ? null : _captureAndShare,
               icon: _isSharing
                   ? const SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                           color: Colors.white, strokeWidth: 2))
-                  : const Icon(Icons.share, color: Colors.white),
+                  : (!_loadedIndices.contains(_selectedImageIndex) 
+                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white54, strokeWidth: 2))
+                      : const Icon(Icons.share, color: Colors.white)),
               label: Text(
-                _isSharing ? "جاري التجهيز..." : "مشاركة الصورة",
+                _isSharing 
+                    ? "جاري التجهيز..." 
+                    : (!_loadedIndices.contains(_selectedImageIndex) ? "جاري التحميل..." : "مشاركة الصورة"),
                 style: const TextStyle(
                     fontFamily: "cairo",
                     color: Colors.white,
@@ -250,6 +433,7 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
+                disabledBackgroundColor: Colors.grey[800],
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

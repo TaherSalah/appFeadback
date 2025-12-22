@@ -143,20 +143,20 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                   cardColor: Colors.amber.withOpacity(0.1),
                   iconColor: Colors.amber.shade800,
                 ),
-                SizedBox(height: 24.h),
-
-                // Support Section
-                _buildSectionTitle(
-                    "ادعم المشروع", Icons.favorite_rounded, Colors.redAccent),
-                SizedBox(height: 12.h),
-                _buildActionButton(
-                  context,
-                  title: "ادعم استمرار وتطوير التطبيق",
-                  icon: Icons.card_giftcard_rounded,
-                  color: Colors.redAccent,
-                  onTap: () =>
-                      Navigator.pushNamed(context, '/supportDeveloper'),
-                ),
+                // SizedBox(height: 24.h),
+                //
+                // // Support Section
+                // _buildSectionTitle(
+                //     "ادعم المشروع", Icons.favorite_rounded, Colors.redAccent),
+                // SizedBox(height: 12.h),
+                // _buildActionButton(
+                //   context,
+                //   title: "ادعم استمرار وتطوير التطبيق",
+                //   icon: Icons.card_giftcard_rounded,
+                //   color: Colors.redAccent,
+                //   onTap: () =>
+                //       Navigator.pushNamed(context, '/supportDeveloper'),
+                // ),
                 SizedBox(height: 24.h),
 
                 // Contact Section
@@ -201,7 +201,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                   context,
                   title: "قيّم التطبيق على المتجر",
                   icon: Icons.star_rounded,
-                  color: Colors.amber.shade700,
+                  // color: Colors.amber.shade700,
+                  color: KColors.primaryColor,
                   onTap: () =>
                       context.read<RateService>().askForReview(context),
                 ),

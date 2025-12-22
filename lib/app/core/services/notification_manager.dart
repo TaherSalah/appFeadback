@@ -22,7 +22,7 @@ class NotificationManager {
     await _settingsService.init();
 
     await AwesomeNotifications().initialize(
-      'resource://drawable/ic_stat_logoapp',
+      Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
       [
         // 🌅 قناة أذان الفجر
         NotificationChannel(
@@ -179,6 +179,43 @@ class NotificationManager {
     if (!allowed) {
       await AwesomeNotifications().requestPermissionToSendNotifications();
     }
+  }
+
+  Future<bool> checkAndRequestExactAlarmPermission() async {
+    bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+    if (!isAllowed) {
+      await AwesomeNotifications().requestPermissionToSendNotifications();
+      isAllowed = await AwesomeNotifications().isNotificationAllowed();
+    }
+    return isAllowed;
+  }
+
+  Future<void> requestIgnoreBatteryOptimizations() async {
+    if (Platform.isAndroid) {
+       await AwesomeNotifications().showAlarmPage();
+    }
+  }
+
+  Future<void> scheduleInstantTestNotification() async {
+    DateTime testTime = DateTime.now().add(const Duration(seconds: 10));
+    
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 9999,
+        channelKey: 'fajr_adhan_channel_v2',
+        title: '🔔 اختبار فوري',
+        body: 'إذا وصلك هذا الصوت، فنظام المنبهات يعمل بنجاح!',
+        category: NotificationCategory.Alarm,
+        wakeUpScreen: true,
+        fullScreenIntent: true,
+        criticalAlert: true,
+      ),
+      schedule: NotificationCalendar.fromDate(
+        date: testTime,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
   }
 
   /// Cancels all existing scheduled notifications (Azkar & Salawat) and reschedules them
@@ -480,16 +517,13 @@ class NotificationManager {
           await AwesomeNotifications().createNotification(
             content: NotificationContent(
               id: 2000 + (day * 10) + r,
-              channelKey: 'fajr_adhan_channel_v2', // Use existing fajr channel for its sound
+              channelKey: 'fajr_adhan_channel_v2',
               title: '⏰ منبه الفجر المتقدم',
               body: 'حان وقت الاستيقاظ لصلاة الفجر 👋',
               category: NotificationCategory.Alarm,
               wakeUpScreen: true,
               fullScreenIntent: true,
               criticalAlert: true,
-              locked: true,
-              displayOnForeground: true,
-              displayOnBackground: true,
             ),
             schedule: NotificationCalendar(
               weekday: day,
@@ -509,6 +543,7 @@ class NotificationManager {
   // ==========================================
   // 🕌 جدولة الأذان (منقول من main.dart)
   // ==========================================
+
   Future<void> scheduleAzan(DateTime prayerTime, String prayerName) async {
     try {
       final channelKey =
@@ -592,6 +627,27 @@ class NotificationManager {
         navigator.push(
             MaterialPageRoute(builder: (_) => const CharityDashboardScreen()));
         break;
+    }
+  }
+
+  Future<void> scheduleBasicSystemTest() async {
+    print('Scheduling basic system test (no custom sound)...');
+    try {
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 8888,
+          channelKey: 'quran_channel', // Simple channel
+          title: '🔔 اختبار النظام',
+          body: 'هذا إشعار تجريبي باستخدام صوت النظام الافتراضي.',
+          category: NotificationCategory.Reminder,
+        ),
+        schedule: NotificationCalendar.fromDate(
+          date: DateTime.now().add(const Duration(seconds: 5)),
+        ),
+      );
+      print('✅ Basic system test scheduled.');
+    } catch (e) {
+      print('❌ Error scheduling basic test: $e');
     }
   }
 }

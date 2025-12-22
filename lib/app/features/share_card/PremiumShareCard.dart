@@ -4,14 +4,17 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:muslimdaily/app/core/services/image_share_service.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PremiumShareCard extends StatefulWidget {
   final String text, azkarName;
-  final String? source; // e.g., "سورة البقرة - آية 255" or "أذكار الصباح"
+  final String? source;
 
   const PremiumShareCard({
     super.key,
@@ -28,16 +31,40 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
   final GlobalKey _globalKey = GlobalKey();
   int _selectedBgIndex = 0;
   bool _isExporting = false;
+  late List<ShareImageItem> _backgrounds;
+  final Set<int> _loadedIndices = {};
+  final Set<int> _failedIndices = {};
 
-  final List<String> _backgrounds = [
-    "assets/images/beautiful-view-sunset-light.jpg",
-    "assets/images/inspiring-view-morning-light.jpg",
-    "assets/images/natural-view-night_1112329-37092.jpg",
-    "assets/images/vecteezy_islamic-arabic-green-and-white-background-with-geometric_.jpg",
-    "assets/images/vecteezy_islamic-celebration-vertical-background_.jpg",
+  // Personalization States
+  String _selectedFont = "Amiri";
+  double _bgDimming = 0.4;
+  Color _titleColor = const Color(0xFFFFD700); // Default Gold
+
+  final List<String> _fonts = ["Amiri", "Cairo", "Changa", "Lateef", "Tajawal"];
+  final List<Color> _palette = [
+    const Color(0xFFFFD700), // Gold
+    const Color(0xFFFFFFFF), // White
+    const Color(0xFFA7FFEB), // Teal Light
+    const Color(0xFFF48FB1), // Pink Light
+    const Color(0xFF90CAF9), // Blue Light
+    const Color(0xFFA5D6A7), // Green Light
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _backgrounds = ImageShareService.getAllBackgrounds();
+    // Local images are always considered loaded
+    for (int i = 0; i < _backgrounds.length; i++) {
+      if (!_backgrounds[i].isRemote) {
+        _loadedIndices.add(i);
+      }
+    }
+  }
+
   Future<void> _shareImage() async {
+    if (!_loadedIndices.contains(_selectedBgIndex)) return;
+    
     setState(() => _isExporting = true);
     try {
       RenderRepaintBoundary boundary = _globalKey.currentContext!
@@ -61,8 +88,12 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
     }
   }
 
+  bool _isImageLoading = false;
+
   @override
   Widget build(BuildContext context) {
+    bool isRemote = _backgrounds[_selectedBgIndex].isRemote;
+    
     // Dynamic Font Scaling Logic
     double dynamicFontSize = 24.sp;
     if (widget.text.length > 500) {
@@ -103,10 +134,6 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                     constraints: BoxConstraints(minHeight: 450.h),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(28.r),
-                      image: DecorationImage(
-                        image: AssetImage(_backgrounds[_selectedBgIndex]),
-                        fit: BoxFit.cover,
-                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.4),
@@ -118,7 +145,63 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                     ),
                     child: Stack(
                       children: [
-                        // Premium Overlay
+                        // 1. Fallback / Base Layer
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(28.r),
+                            child: Image.asset(
+                              ImageShareService.localBackgrounds[0],
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+
+                        // 2. Remote Image Layer (with loading handling)
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(28.r),
+                            child: isRemote 
+                              ? CachedNetworkImage(
+                                  imageUrl: _backgrounds[_selectedBgIndex].path,
+                                  cacheManager: ImageShareService.customCacheManager,
+                                  fit: BoxFit.cover,
+                                  imageBuilder: (context, imageProvider) {
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      if (mounted && !_loadedIndices.contains(_selectedBgIndex)) {
+                                        setState(() => _loadedIndices.add(_selectedBgIndex));
+                                      }
+                                    });
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                                      ),
+                                    );
+                                  },
+                                  placeholder: (context, url) {
+                                    return Container(color: Colors.black26);
+                                  },
+                                  errorWidget: (context, url, error) {
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      if (mounted && !_failedIndices.contains(_selectedBgIndex)) {
+                                        setState(() => _failedIndices.add(_selectedBgIndex));
+                                      }
+                                    });
+                                    return Container(
+                                      color: Colors.black45,
+                                      child: const Center(
+                                        child: Icon(Icons.cloud_off, color: Colors.white54, size: 40),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  _backgrounds[_selectedBgIndex].path,
+                                  fit: BoxFit.cover,
+                                ),
+                          ),
+                        ),
+
+                        // 3. Premium Overlay
                         Positioned.fill(
                           child: Container(
                             decoration: BoxDecoration(
@@ -128,8 +211,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                 end: Alignment.bottomCenter,
                                 colors: [
                                   Colors.black.withOpacity(0.1),
-                                  Colors.black.withOpacity(0.4),
-                                  Colors.black.withOpacity(0.7),
+                                  Colors.black.withOpacity(_bgDimming),
+                                  Colors.black.withOpacity(_bgDimming + 0.3 > 1.0 ? 1.0 : _bgDimming + 0.3),
                                 ],
                               ),
                             ),
@@ -147,17 +230,18 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                               if (widget.azkarName.isNotEmpty) ...[
                                 ShaderMask(
                                   shaderCallback: (bounds) =>
-                                      const LinearGradient(
+                                      LinearGradient(
                                     colors: [
-                                      Color(0xFFFFD700),
-                                      Color(0xFFFFF7AD),
-                                      Color(0xFFB8860B)
+                                      _titleColor,
+                                      _titleColor.withOpacity(0.7),
+                                      _titleColor.withOpacity(0.9),
                                     ],
                                   ).createShader(bounds),
                                   child: Text(
                                     widget.azkarName,
                                     textAlign: TextAlign.center,
-                                    style: GoogleFonts.cairo(
+                                    style: GoogleFonts.getFont(
+                                      _selectedFont,
                                       fontSize: 22.sp,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w900,
@@ -214,7 +298,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                     SelectableText(
                                       widget.text,
                                       textAlign: TextAlign.center,
-                                      style: GoogleFonts.amiri(
+                                      style: GoogleFonts.getFont(
+                                        _selectedFont,
                                         fontSize: dynamicFontSize,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -317,6 +402,25 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Internet Requirement Hint
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 10.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.cloud_download_outlined, color: Colors.amber.withOpacity(0.7), size: 14.sp),
+                            SizedBox(width: 6.w),
+                            Text(
+                              "خلفيات إضافية (تحتاج اتصال بالإنترنت) ✨",
+                              style: GoogleFonts.cairo(
+                                color: Colors.white.withOpacity(0.7),
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       // Background Selector
                       SizedBox(
                         height: 60.h,
@@ -324,22 +428,87 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                           scrollDirection: Axis.horizontal,
                           itemCount: _backgrounds.length,
                           itemBuilder: (context, index) {
+                            bool isCurrentRemote = _backgrounds[index].isRemote;
+                            bool isFailed = _failedIndices.contains(index);
                             return GestureDetector(
-                              onTap: () =>
-                                  setState(() => _selectedBgIndex = index),
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 5.w),
-                                width: 60.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14.r),
-                                  border: _selectedBgIndex == index
-                                      ? Border.all(
-                                          color: Colors.amber, width: 2.5)
-                                      : Border.all(
-                                          color: Colors.white24, width: 1),
-                                  image: DecorationImage(
-                                    image: AssetImage(_backgrounds[index]),
-                                    fit: BoxFit.cover,
+                              onTap: () {
+                                if (isFailed) {
+                                  // Manual Retry: Clear from failed and select to trigger re-fetch
+                                  setState(() {
+                                    _failedIndices.remove(index);
+                                    _selectedBgIndex = index;
+                                  });
+                                } else {
+                                  setState(() => _selectedBgIndex = index);
+                                }
+                              },
+                              child: Opacity(
+                                opacity: isFailed ? 0.3 : 1.0,
+                                child: SizedBox(
+                                  width: 60.w,
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.symmetric(horizontal: 5.w),
+                                        width: 60.w,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(14.r),
+                                          border: _selectedBgIndex == index
+                                              ? Border.all(
+                                                  color: Colors.amber, width: 2.5)
+                                              : Border.all(
+                                                  color: Colors.white24, width: 1),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(12.r),
+                                          child: isCurrentRemote 
+                                            ? CachedNetworkImage(
+                                                imageUrl: _backgrounds[index].path,
+                                                cacheManager: ImageShareService.customCacheManager,
+                                                fit: BoxFit.cover,
+                                                imageBuilder: (context, imageProvider) {
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    if (mounted && !_loadedIndices.contains(index)) {
+                                                      setState(() => _loadedIndices.add(index));
+                                                    }
+                                                  });
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                                                    ),
+                                                  );
+                                                },
+                                                placeholder: (context, url) => Shimmer.fromColors(
+                                                  baseColor: Colors.grey[800]!,
+                                                  highlightColor: Colors.grey[700]!,
+                                                  child: Container(color: Colors.white),
+                                                ),
+                                                errorWidget: (context, url, error) {
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    if (mounted && !_failedIndices.contains(index)) {
+                                                      setState(() => _failedIndices.add(index));
+                                                    }
+                                                  });
+                                                  return Container(
+                                                    color: Colors.black45,
+                                                    child: Icon(Icons.refresh, color: Colors.white, size: 20.sp),
+                                                  );
+                                                },
+                                              )
+                                            : Image.asset(
+                                                _backgrounds[index].path,
+                                                fit: BoxFit.cover,
+                                              ),
+                                        ),
+                                      ),
+                                      // Offline Ready Indicator
+                                      if (_loadedIndices.contains(index))
+                                        Positioned(
+                                          top: 4.w,
+                                          right: 4.w,
+                                          child: Icon(Icons.check_circle, color: Colors.greenAccent, size: 14.sp),
+                                        ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -347,15 +516,71 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                           },
                         ),
                       ),
-                      SizedBox(height: 16.h),
+                      
+                      SizedBox(height: 12.h),
+
+                      // Personalization Tools
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            // Font Selector
+                            ..._fonts.map((f) => Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 4.w),
+                              child: ChoiceChip(
+                                label: Text(f, style: GoogleFonts.getFont(f, color: Colors.white, fontSize: 12.sp)),
+                                selected: _selectedFont == f,
+                                onSelected: (val) => setState(() => _selectedFont = f),
+                                backgroundColor: Colors.white10,
+                                selectedColor: Colors.amber.shade800,
+                              ),
+                            )),
+                            
+                            SizedBox(width: 10.w),
+                            // Color Picker for Title
+                            ..._palette.map((c) => GestureDetector(
+                              onTap: () => setState(() => _titleColor = c),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 4.w),
+                                width: 24.w,
+                                height: 24.w,
+                                decoration: BoxDecoration(
+                                  color: c,
+                                  shape: BoxShape.circle,
+                                  border: _titleColor == c ? Border.all(color: Colors.white, width: 2) : null,
+                                ),
+                              ),
+                            )),
+                          ],
+                        ),
+                      ),
+
+                      // Opacity Slider
+                      Row(
+                        children: [
+                          Icon(Icons.opacity, color: Colors.white70, size: 16.sp),
+                          Expanded(
+                            child: Slider(
+                              value: _bgDimming,
+                              onChanged: (val) => setState(() => _bgDimming = val),
+                              min: 0.0,
+                              max: 0.8,
+                              activeColor: Colors.amber,
+                              inactiveColor: Colors.white24,
+                            ),
+                          ),
+                        ],
+                      ),
+
                       // Share Button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: _isExporting ? null : _shareImage,
+                          onPressed: (_isExporting || !_loadedIndices.contains(_selectedBgIndex)) ? null : _shareImage,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.amber.shade700,
                             foregroundColor: Colors.white,
+                            disabledBackgroundColor: Colors.grey[800],
                             padding: EdgeInsets.symmetric(vertical: 16.h),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.r),
@@ -369,9 +594,13 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                   height: 22,
                                   child: CircularProgressIndicator(
                                       strokeWidth: 2, color: Colors.white))
-                              : const Icon(Icons.share),
+                              : (!_loadedIndices.contains(_selectedBgIndex) 
+                                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54))
+                                 : const Icon(Icons.share)),
                           label: Text(
-                            _isExporting ? "جاري الحفظ..." : "مشاركة كصورة",
+                            _isExporting 
+                                ? "جاري الحفظ..." 
+                                : (!_loadedIndices.contains(_selectedBgIndex) ? "جاري التحميل..." : "مشاركة كصورة"),
                             style: GoogleFonts.cairo(
                               fontWeight: FontWeight.w900,
                               fontSize: 16.sp,

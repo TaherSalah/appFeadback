@@ -200,22 +200,24 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
                   // باقي المحتوى
                   SliverToBoxAdapter(
+
                     child: Column(
+
                       children: [
-                        // const SizedBox(height: 10),
-                        // const SizedBox(height: 10),
+
                         const SizedBox(height: 10),
                         // 🔥 قسم بماذا تشعر اليوم؟
-                        const SoulComfortWidget(),
+                        // const SoulComfortWidget(),
 
-                        // 🔥 السلسلة اليومية
-                        const DailyStreakWidget(),
+                        // // 🔥 السلسلة اليومية
+                        // const DailyStreakWidget(),
 
                         // 🔥 رفيق الجمعة (يظهر فقط يوم الجمعة)
                         const FridayCompanionWidget(),
-                        
+
                         // 🔥 منبه الفجر المتقدم
                         const AdvancedFajrAlarmWidget(),
+                        // const SizedBox(height: 10),
 
                         // 🔥 صندوق الهدايا اليومي
                         // const DailyGiftWidget(),
@@ -227,6 +229,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                           padding: EdgeInsets.symmetric(
                               horizontal: isTab ? 10.w : 5.0),
                           child: GridView.count(
+                            padding: EdgeInsets.symmetric(vertical: 8),
                             crossAxisCount: 3,
                             crossAxisSpacing: isTab ? 30 : 7,
                             mainAxisSpacing: isTab ? 20 : 15,
@@ -271,7 +274,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                 ? 25
                                 : 20),
 
-                        const SizedBox(height: 10),
+                        // const SizedBox(height: 10),
 
                         // 🔥 قسم تعرف على ربك
                         const AllahNameWidget(),
