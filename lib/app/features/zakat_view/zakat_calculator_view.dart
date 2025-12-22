@@ -23,6 +23,8 @@ import 'package:url_launcher/url_launcher.dart'; //
 import '../../core/utils/style/responsive_util.dart';
 import '../messa_view/azkar_massa.dart';
 import 'zakat_pdf_service.dart';
+import 'metal_price_service.dart';
+import '../azanView/adhan_workmanager_service.dart';
 
 class ZakatRecord {
   final String date;
@@ -97,6 +99,13 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   // Settings
   bool _isGoldStandard = true; // true = Gold (85g), false = Silver (595g)
   bool _isHijriYear = true; // true = 2.5%, false = 2.577%
+  bool _isFajrEnabled = true;
+  bool _isGoldInvestment = true; // true = Investment (Zakat due), false = Ornament (No Zakat)
+  bool _isRealEstateTrading = false; // true = Trading (Market Value), false = Rental (Rent income)
+  bool _isSpeculativeStock = true; // true = Speculative (Market Value), false = Dividend (Long term)
+  bool _isLoadingPrices = false;
+  double _paidZakat = 0.0; // For Zakat Ledger
+  final MetalPriceService _metalPriceService = MetalPriceService();
 
   // Controllers for Money
   final TextEditingController _moneyController = TextEditingController();
@@ -106,6 +115,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   final TextEditingController _bondsController =
       TextEditingController(); // Or "Securities"
   final TextEditingController _profitsController = TextEditingController();
+  final TextEditingController _receivablesController = TextEditingController(); // Personal receivables
 
   // Controllers for Gold Weight
   final TextEditingController _goldWeight18Controller = TextEditingController();
@@ -118,6 +128,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   // Controllers for Real Estate
   final TextEditingController _realEstateRentController =
       TextEditingController();
+  final TextEditingController _realEstateMarketValueController =
+      TextEditingController();
 
   // Controllers for Zakat al-Fitr
   final TextEditingController _fitrMembersController = TextEditingController();
@@ -126,6 +138,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   // Controllers for Debts & Trade
   final TextEditingController _debtsController = TextEditingController();
   final TextEditingController _tradeGoodsController = TextEditingController();
+  final TextEditingController _tradeCashController = TextEditingController();
+  final TextEditingController _tradeReceivablesController = TextEditingController();
 
   // Controllers for Cattle
   final TextEditingController _camelsController = TextEditingController();
@@ -134,6 +148,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
   // Controllers for Crops
   final TextEditingController _cropsValueController = TextEditingController();
+  final TextEditingController _cropsWeightController = TextEditingController(); // Weight in KG
   // 0 = Natural (10%), 1 = Artificial (5%), 2 = Mixed (7.5%)
   int _irrigationMethod = 1;
 
@@ -160,6 +175,38 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     super.initState();
     _calculate(); // Initial calc
     _loadHistory();
+    _loadFajrSettings();
+  }
+
+  @override
+  void dispose() {
+    _goldPrice24Controller.dispose();
+    _goldPrice21Controller.dispose();
+    _goldPrice18Controller.dispose();
+    _silverPriceController.dispose();
+    _moneyController.dispose();
+    _stocksController.dispose();
+    _bondsController.dispose();
+    _profitsController.dispose();
+    _goldWeight18Controller.dispose();
+    _goldWeight21Controller.dispose();
+    _goldWeight24Controller.dispose();
+    _silverWeightController.dispose();
+    _realEstateRentController.dispose();
+    _fitrMembersController.dispose();
+    _fitrValueController.dispose();
+    _debtsController.dispose();
+    _tradeGoodsController.dispose();
+    _camelsController.dispose();
+    _cowsController.dispose();
+    _sheepController.dispose();
+    _cropsValueController.dispose();
+    _cropsWeightController.dispose();
+    _receivablesController.dispose();
+    _tradeCashController.dispose();
+    _tradeReceivablesController.dispose();
+    _realEstateMarketValueController.dispose();
+    super.dispose();
   }
 
   // --- History ---
@@ -273,6 +320,60 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     }
   }
 
+  // --- PDF ---
+  Future<void> _generatePdf() async {
+    await ZakatPdfService.generateAndPrint(
+      totalWealth: _totalWealth,
+      totalZakat: _totalZakat,
+      nisabValue: _nisabValue,
+      currencySymbol: _selectedCurrency.symbol,
+      isHijri: _isHijriYear,
+      reachedNisab: (_totalWealth >= _nisabValue && _nisabValue > 0) || _zakatCattleResult.isNotEmpty || _zakatCrops > 0,
+      money: (double.tryParse(_moneyController.text.replaceAll(',', '')) ?? 0) + (double.tryParse(_receivablesController.text.replaceAll(',', '')) ?? 0),
+      gold: _zakatGold > 0 ? (double.tryParse(_goldWeight24Controller.text) ?? 0) : 0, // Simplified for PDF
+      silver: _zakatSilver > 0 ? (double.tryParse(_silverWeightController.text) ?? 0) : 0,
+      assets: _zakatAssets,
+      realEstate: _zakatRealEstate,
+      crops: _zakatCrops,
+      cattleDetails: _zakatCattleResult,
+      fitrTotal: _zakatFitrTotal,
+    );
+  }
+
+  // --- Automatic Price Fetch ---
+  Future<void> _updatePrices() async {
+    setState(() => _isLoadingPrices = true);
+    try {
+      final prices = await _metalPriceService.fetchPricesInUSD();
+      final rate = await _metalPriceService.fetchExchangeRate(_selectedCurrency.code);
+      
+      setState(() {
+        double gold24USD = prices['gold']!;
+        double silverUSD = prices['silver']!;
+        
+        // Convert to selected currency
+        double gold24 = gold24USD * rate;
+        double silver = silverUSD * rate;
+
+        _goldPrice24Controller.text = _formatValue(gold24);
+        _goldPrice21Controller.text = _formatValue(gold24 * (21 / 24));
+        _goldPrice18Controller.text = _formatValue(gold24 * (18 / 24));
+        _silverPriceController.text = _formatValue(silver);
+      });
+      
+      _calculate();
+      KHelper.showSuccess(message: "تم تحديث الأسعار بنجاح طبقاً لسعر الصرف اليوم");
+    } catch (e) {
+      KHelper.showError(message: e.toString().replaceAll("Exception: ", ""));
+    } finally {
+      setState(() => _isLoadingPrices = false);
+    }
+  }
+
+  String _formatValue(double val) {
+    return intl.NumberFormat("#,##0.##", "en_US").format(val);
+  }
+
   // --- Reminder ---
   Future<void> _scheduleReminder() async {
     // Schedule for 354 days later (Hijri year Approx)
@@ -332,6 +433,32 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     }
   }
 
+  Future<void> _loadFajrSettings() async {
+    final prefs = await AdhanWorkManagerService().getAdhanPreferences();
+    if (mounted) {
+      setState(() {
+        _isFajrEnabled = prefs.getBool('enableFajrAdhan') ?? true;
+      });
+    }
+  }
+
+  Future<void> _toggleFajrAlarm() async {
+    setState(() {
+      _isFajrEnabled = !_isFajrEnabled;
+    });
+
+    await AdhanWorkManagerService().saveAdhanPreferences(
+      enableFajrAdhan: _isFajrEnabled,
+    );
+
+    KHelper.showSuccess(
+      message: _isFajrEnabled ? "تم تفعيل منبه الفجر بنجاح" : "تم إيقاف منبه الفجر",
+    );
+
+    // Update background tasks
+    await AdhanWorkManagerService().initialize();
+  }
+
   Future<void> _launchGoldPriceUrl() async {
     final Uri url = Uri.parse('https://goldprice.org/live-gold-price.html');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
@@ -343,7 +470,11 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   void _calculate() {
     // 1. Parse Inputs (Remove commas if any)
     double parse(TextEditingController c) {
-      String text = c.text.replaceAll(',', '');
+      String text = c.text.replaceAll(',', '').trim()
+          .replaceAll('٠', '0').replaceAll('١', '1').replaceAll('٢', '2')
+          .replaceAll('٣', '3').replaceAll('٤', '4').replaceAll('٥', '5')
+          .replaceAll('٦', '6').replaceAll('٧', '7').replaceAll('٨', '8')
+          .replaceAll('٩', '9');
       return double.tryParse(text) ?? 0.0;
     }
 
@@ -352,25 +483,17 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     double price18 = parse(_goldPrice18Controller);
     double silverPrice = parse(_silverPriceController);
 
-    // ✅ Reset if Mandatory Price is missing
-    if (_isGoldStandard) {
-      if (price24 <= 0) {
-        // Nisab depends on 24 now
-        _resetValues();
-        return;
-      }
-    } else {
-      if (silverPrice <= 0) {
-        _resetValues();
-        return;
-      }
-    }
+    // ✅ Check if Mandatory Price is present for Nisab
+    bool hasPrice = _isGoldStandard ? price24 > 0 : silverPrice > 0;
 
     double money = parse(_moneyController);
+    double receivables = parse(_receivablesController);
     double tradeGoods = parse(_tradeGoodsController);
+    double tradeCash = parse(_tradeCashController);
+    double tradeReceivables = parse(_tradeReceivablesController);
     double debts = parse(_debtsController);
 
-    double stocks = parse(_stocksController);
+    double stocksValue = parse(_stocksController);
     double bonds = parse(_bondsController);
     double profits = parse(_profitsController);
 
@@ -380,72 +503,108 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     double weightSilver = parse(_silverWeightController);
 
     double rentMonthly = parse(_realEstateRentController);
+    double marketValue = parse(_realEstateMarketValueController);
 
     // Crops inputs
     double cropsValue = parse(_cropsValueController);
 
     // Cattle inputs
-    int camels = int.tryParse(_camelsController.text) ?? 0;
-    int cows = int.tryParse(_cowsController.text) ?? 0;
-    int sheep = int.tryParse(_sheepController.text) ?? 0;
+    int parseCattle(String text) {
+      String normalized = text.replaceAll(',', '').trim()
+          .replaceAll('٠', '0').replaceAll('١', '1').replaceAll('٢', '2')
+          .replaceAll('٣', '3').replaceAll('٤', '4').replaceAll('٥', '5')
+          .replaceAll('٦', '6').replaceAll('٧', '7').replaceAll('٨', '8')
+          .replaceAll('٩', '9');
+      return int.tryParse(normalized) ?? 0;
+    }
+    int camels = parseCattle(_camelsController.text);
+    int cows = parseCattle(_cowsController.text);
+    int sheep = parseCattle(_sheepController.text);
 
     // Fitr Inputs
-    int fitrMembers = int.tryParse(_fitrMembersController.text) ?? 0;
+    int fitrMembers = parseCattle(_fitrMembersController.text);
     double fitrValue = parse(_fitrValueController);
 
-    // 2. Calculate Nisab
+    // 2. Calculate Nisabs
+    double goldNisabValue = 85 * price24;
+    double silverNisabValue = 595 * silverPrice;
+
     if (_isGoldStandard) {
-      _nisabValue = 85 * price24; // Standard is 85g of 24K
+      _nisabValue = goldNisabValue;
     } else {
-      _nisabValue = 595 * silverPrice;
+      _nisabValue = silverNisabValue;
     }
 
     // 3. Calculate Components Wealth
     // Net Zakatable Money & Commercial Assets
-    // (Money + Trade Goods + Stocks + Bonds + Profits) - Debts
-    double assetsAndMoney = money + tradeGoods + stocks + bonds + profits;
+    double tradeAssets = tradeGoods + tradeCash + tradeReceivables;
+    
+    // Stocks logic
+    // We use stocksValue in both cases because the UI label toggles between Market Value and Dividends
+    double zakatableStocks = stocksValue; 
 
-    // Gold value
-    double goldValue =
-        (weight18 * price18) + (weight21 * price21) + (weight24 * price24);
+    double personalLiquidAssets = money + receivables + zakatableStocks + bonds + profits;
+
+    // Gold value (Only if for investment/savings)
+    double goldValue = 0.0;
+    if (_isGoldInvestment) {
+      goldValue = (weight18 * price18) + (weight21 * price21) + (weight24 * price24);
+    }
 
     // Silver value
     double silverValue = weightSilver * silverPrice;
 
-    // Real Estate: Annual Rent
-    double realEstateZakatable = rentMonthly * 12;
+    // Real Estate: Rental vs Trading
+    double realEstateZakatable = 0.0;
+    if (_isRealEstateTrading) {
+      realEstateZakatable = marketValue; // Zakat on total current value
+    } else {
+      realEstateZakatable = rentMonthly * 12; // Zakat on annual rent
+    }
 
-    // Total Zakatable for Monetary Zakat (Money, Commerce, Gold, Silver)
-    // Note: Some scholars separate Gold/Silver, but usually they are combined for logic.
-    // Debts are deduced from the total liquid/commercial wealth.
+    // Total Liquid Wealth excluding debts
     double totalLiquidWealth =
-        assetsAndMoney + goldValue + silverValue + realEstateZakatable;
+        personalLiquidAssets + tradeAssets + goldValue + silverValue + realEstateZakatable;
     double netWealth = totalLiquidWealth - debts;
 
     // Ensure negative net wealth is zero
     if (netWealth < 0) netWealth = 0;
 
-    _totalWealth = netWealth; // Use Net Wealth for Nisab check
+    _totalWealth = netWealth;
 
     // Determine Zakat Percentage
-    // Hijri: 2.5%, Gregorian: ~2.577% (2.5775)
     double zakatPercentage = _isHijriYear ? 0.025 : 0.02577;
 
     // 4. Calculate Zakat
-    if (_totalWealth >= _nisabValue) {
-      _totalZakat = netWealth * zakatPercentage;
+    if (hasPrice) {
+      // "Lower Nisab" Principle
+      double effectiveNisab = _nisabValue;
+      bool reachedEffectiveNisab = _totalWealth >= effectiveNisab;
 
-      _zakatMoney = assetsAndMoney * zakatPercentage;
-      _zakatGold = goldValue * zakatPercentage;
-      _zakatSilver = silverValue * zakatPercentage;
-      _zakatRealEstate = realEstateZakatable * zakatPercentage;
+      if (reachedEffectiveNisab) {
+        _totalZakat = netWealth * zakatPercentage;
+        _zakatMoney = (money + receivables) * zakatPercentage;
+        _zakatAssets = (tradeAssets + zakatableStocks + bonds) * zakatPercentage;
+        _zakatGold = goldValue * zakatPercentage;
+        _zakatSilver = silverValue * zakatPercentage;
+        _zakatRealEstate = realEstateZakatable * zakatPercentage;
+      } else {
+        _zakatMoney = 0.0;
+        _zakatAssets = 0.0;
+        _zakatGold = 0.0;
+        _zakatSilver = 0.0;
+        _zakatRealEstate = 0.0;
+        _totalZakat = 0.0;
+      }
     } else {
+      // Clear Zakat amounts if price is missing
+      _totalZakat = 0.0;
       _zakatMoney = 0.0;
       _zakatAssets = 0.0;
       _zakatGold = 0.0;
       _zakatSilver = 0.0;
       _zakatRealEstate = 0.0;
-      _totalZakat = 0.0;
+      _nisabValue = 0.0;
     }
 
     // 5. Crops Zakat
@@ -454,11 +613,11 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
       cropsRate = 0.05; // Artificial
     } else if (_irrigationMethod == 2) cropsRate = 0.075; // Mixed
 
-    // We assume user enters value.
-    // Usually Crops limit is 5 Awsuq (~653 kg), but here we calculate on value provided.
-    if (cropsValue > 0) {
+    double cropsWeight = parse(_cropsWeightController);
+    // Nisab for crops is 5 Awsuq ≈ 653 KG
+    if (cropsWeight >= 653 && cropsValue > 0) {
       _zakatCrops = cropsValue * cropsRate;
-      _totalZakat += _zakatCrops; // Add to total
+      _totalZakat += _zakatCrops;
     } else {
       _zakatCrops = 0.0;
     }
@@ -482,6 +641,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     _zakatCrops = 0.0;
     _zakatFitrTotal = 0.0;
     _zakatCattleResult = "";
+    _paidZakat = 0.0;
     setState(() {});
   }
 
@@ -505,6 +665,13 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     _sheepController.clear();
     _fitrMembersController.clear();
     _fitrValueController.clear();
+    _cropsWeightController.clear();
+    _receivablesController.clear();
+    _tradeCashController.clear();
+    _tradeReceivablesController.clear();
+    _realEstateMarketValueController.clear();
+    _realEstateRentController.clear();
+    _realEstateMarketValueController.clear();
 
     _irrigationMethod = 1; // Reset to default
 
@@ -674,25 +841,16 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
     // Cows
     if (cows >= 30) {
-      // Simplified Logic for display
-      // 30-39: Tabi (1y)
-      // 40-59: Musinna (2y)
-      // 60: 2 Tabi
-      int tabi = 0;
-      int musinna = 0;
-
-      // A common algo for cows is complex, simplified version:
-      // For every 30 -> Tabi, For every 40 -> Musinna.
-      // If 30: 1 Tabi. 40: 1 Musinna. 60: 2 Tabi. 70: 1 T and 1 M. 80: 2 M.
-
       String due = "";
       if (cows < 40) {
         due = "تبيع (سنة)";
       } else if (cows < 60)
         due = "مسنة (سنتين)";
-      else
-        due = "حساب خاص (تبيع عن كل 30 ومسنة عن كل 40)";
-
+      else {
+        int tabia = cows ~/ 30;
+        int musinna = (cows % 30) ~/ 40; // Simplified
+        due = "تبيع عن كل 30 ومسنة عن كل 40";
+      }
       parts.add("البقر ($cows): $due");
     }
 
@@ -712,6 +870,160 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     }
 
     return parts.join("\n");
+  }
+
+  Widget _buildCattleResultCards(bool isDark) {
+    int parseCattle(String text) {
+      String normalized = text.replaceAll(',', '').trim()
+          .replaceAll('٠', '0').replaceAll('١', '1').replaceAll('٢', '2')
+          .replaceAll('٣', '3').replaceAll('٤', '4').replaceAll('٥', '5')
+          .replaceAll('٦', '6').replaceAll('٧', '7').replaceAll('٨', '8')
+          .replaceAll('٩', '9');
+      return int.tryParse(normalized) ?? 0;
+    }
+    int camels = parseCattle(_camelsController.text);
+    int cows = parseCattle(_cowsController.text);
+    int sheep = parseCattle(_sheepController.text);
+
+    List<Widget> cards = [];
+
+    if (camels >= 5) cards.add(_buildCattleItemCard(isDark, "إبل", camels, _getCamelDue(camels), Icons.pets));
+    if (cows >= 30) cards.add(_buildCattleItemCard(isDark, "بقر", cows, _getCowDue(cows), Icons.pets));
+    if (sheep >= 40) cards.add(_buildCattleItemCard(isDark, "غنم", sheep, _getSheepDue(sheep), Icons.pets));
+
+    if (cards.isEmpty) return const SizedBox.shrink();
+
+    return Column(children: cards);
+  }
+
+  Widget _buildCattleItemCard(bool isDark, String type, int count, String due, IconData icon) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.amber.withOpacity(0.05) : Colors.amber.shade50,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.amber.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: Colors.amber.withOpacity(0.2), shape: BoxShape.circle),
+            child: Icon(icon, color: Colors.amber.shade800, size: 24),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("$type (العدد: $count)", style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 13.sp)),
+                Text("المستخرج شرعاً: $due", style: GoogleFonts.cairo(color: Colors.amber.shade900, fontSize: 14.sp, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  String _getCamelDue(int n) {
+    if (n < 5) return "لا زكاة";
+    if (n < 10) return "شاة واحدة";
+    if (n < 15) return "شاتان";
+    if (n < 20) return "3 شياه";
+    if (n < 25) return "4 شياه";
+    if (n < 36) return "بنت مخاض (سنة)";
+    if (n < 46) return "بنت لبون (سنتين)";
+    if (n < 61) return "حقة (3 سنوات)";
+    if (n < 76) return "جذعة (4 سنوات)";
+    if (n < 91) return "بنتا لبون";
+    if (n < 121) return "حقتان";
+    return "3 بنات لبون";
+  }
+
+  String _getCowDue(int n) {
+     if (n < 30) return "لا زكاة";
+     if (n < 40) return "تبيع (ذو سنة)";
+     if (n < 60) return "مسنة (ذات سنتين)";
+     return "تبيع عن كل 30 ومسنة عن كل 40";
+  }
+
+  String _getSheepDue(int n) {
+    if (n < 40) return "لا زكاة";
+    if (n < 121) return "شاة واحدة";
+    if (n < 201) return "شاتان";
+    if (n < 400) return "3 شياه";
+    return "شاة عن كل 100";
+  }
+
+  void _showProfessionalZakatGuide(bool isDark) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.75,
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0F172A) : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
+          ),
+          child: Column(
+            children: [
+              Container(width: 40, height: 4, margin: const EdgeInsets.symmetric(vertical: 12), decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(24),
+                  children: [
+                    Text("زكاة المهن الحرة والرواتب 💼", style: GoogleFonts.cairo(fontSize: 18.sp, fontWeight: FontWeight.bold, color: KColors.primaryColor)),
+                    const SizedBox(height: 16),
+                    _buildGuideItem(
+                      "كيف أحسب زكاة دخلي الشهري؟",
+                      "إذا كنت تمتلك دخلاً متغيراً أو راتباً شهرياً، هناك طريقتان لحساب الزكاة:",
+                    ),
+                    _buildGuideItem(
+                      "الطريقة الأولى (الأسهل):",
+                      "أن تحدد يوماً واحداً في السنة (مثلاً 1 رمضان) وتحسب كل ما تملكه في هذا اليوم وتخرج عنه 2.5% إذا بلغ النصاب، بغض النظر عن وقت دخول كل مبلغ.",
+                    ),
+                    _buildGuideItem(
+                      "الطريقة الثانية (الأدق):",
+                      "أن تخرج الزكاة عن كل مبلغ ادخرته بعد مرور سنة قمرية كاملة (حول) على ملكك له. وهذا يتطلب سجلاً دقيقاً لكل شهر.",
+                    ),
+                    _buildGuideItem(
+                      "ملاحظة هامة:",
+                      "الزكاة تجب على (المبلغ المدخر) الفائض عن حاجتك الأصلية الذي بلغ النصاب وحال عليه الحول، وليس على إجمالي الراتب الذي تنفقه شهرياً.",
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(backgroundColor: KColors.primaryColor, foregroundColor: Colors.white, minimumSize: const Size(double.infinity, 50)),
+                      child: Text("فهمت، شكراً", style: GoogleFonts.cairo()),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGuideItem(String title, String content) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 14.sp)),
+          const SizedBox(height: 4),
+          Text(content, style: GoogleFonts.cairo(fontSize: 13.sp, height: 1.5, color: Colors.grey.shade700)),
+        ],
+      ),
+    );
   }
 
   @override
@@ -801,6 +1113,42 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               _buildSectionCard(
                 title: "إعدادات الأسعار (مطلوب)",
                 children: [
+                   // Update Prices Button
+                  InkWell(
+                    onTap: _isLoadingPrices ? null : _updatePrices,
+                    child: Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: KColors.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: KColors.primaryColor.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (_isLoadingPrices)
+                            const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          else
+                             Icon(Icons.cloud_download_outlined, color: KColors.primaryColor, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            _isLoadingPrices ? "جاري التحديث..." : "تحديث الأسعار تلقائياً للان",
+                            style: GoogleFonts.cairo(
+                              color: KColors.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   // Toggle Standard
                   Container(
                     padding: const EdgeInsets.all(4),
@@ -988,9 +1336,40 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               _buildSectionCard(
                 title: "زكاة المال",
                 children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            "ملاحظة: لا تجب الزكاة في الحاجات الأصلية كالمسكن الشخصي، السيارات، والأثاث.",
+                            style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.orange.shade800),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   _buildInputRow(
-                    label: "قيمة المال الذي أملكه",
+                    label: "الأموال النقدية (كاش/بنك)",
                     controller: _moneyController,
+                    isDark: isDark,
+                    suffix: _selectedCurrency.name,
+                    trailing: IconButton(
+                      icon: Icon(Icons.help_outline, size: 20, color: KColors.primaryColor),
+                      onPressed: () => _showProfessionalZakatGuide(isDark),
+                      tooltip: "كيف أحسب زكاة راتبي/مهنتي؟",
+                    ),
+                  ),
+                  _buildInputRow(
+                    label: "مبالغ مستحقة لك عند الغير (ديون جيدة)",
+                    controller: _receivablesController,
                     isDark: isDark,
                     suffix: _selectedCurrency.name,
                   ),
@@ -1004,14 +1383,36 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               _buildSectionCard(
                 title: "زكاة الأصول والممتلكات",
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("طبيعة الاستثمار:", style: GoogleFonts.cairo(fontSize: 12.sp)),
+                        Row(
+                          children: [
+                            _buildToggleBtn("مضاربة", _isSpeculativeStock, () {
+                              setState(() => _isSpeculativeStock = true);
+                              _calculate();
+                            }),
+                            const SizedBox(width: 8),
+                            _buildToggleBtn("استثمار طويل", !_isSpeculativeStock, () {
+                              setState(() => _isSpeculativeStock = false);
+                              _calculate();
+                            }),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   _buildInputRow(
-                    label: "قيمة الأسهم التي أمتلكها في السوق",
+                    label: _isSpeculativeStock ? "القيمة السوقية للأسهم" : "إجمالي الأرباح الموزعة",
                     controller: _stocksController,
                     isDark: isDark,
                     suffix: _selectedCurrency.name,
                   ),
                   _buildInputRow(
-                    label: "قيمة السندات التي أمتلكها في السوق",
+                    label: "قيمة السندات التي أمتلكها",
                     controller: _bondsController,
                     isDark: isDark,
                     suffix: _selectedCurrency.name,
@@ -1030,20 +1431,52 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
               // --- 2.2 Trade & Debts ---
               _buildSectionCard(
-                title: "عروض التجارة والديون",
+                title: "زكاة عروض التجارة والديون",
                 children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            "ملاحظة: زكاة التجارة على (الكاش + البضائع بسعر البيع + الديون الجيدة). الأصول الثابتة (أثاث، مبيعات، ماكينات) لا زكاة عليها.",
+                            style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.orange.shade800),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   _buildInputRow(
-                    label: "قيمة عروض التجارة (بضائع للبيع)",
+                    label: "الكاش الموجود في النشاط التجاري",
+                    controller: _tradeCashController,
+                    isDark: isDark,
+                    suffix: _selectedCurrency.name,
+                  ),
+                  _buildInputRow(
+                    label: "قيمة البضائع (بسعر البيع الحالي)",
                     controller: _tradeGoodsController,
                     isDark: isDark,
                     suffix: _selectedCurrency.name,
                   ),
                   _buildInputRow(
-                    label: "الديون والالتزامات (تُخصم من الزكاة)",
+                    label: "مبالغ مستحقة للنشاط عند العملاء",
+                    controller: _tradeReceivablesController,
+                    isDark: isDark,
+                    suffix: _selectedCurrency.name,
+                  ),
+                  _buildInputRow(
+                    label: "الديون والالتزامات للغير (تُخصم)",
                     controller: _debtsController,
                     isDark: isDark,
                     suffix: _selectedCurrency.name,
-                    isNegative: true, // Visual indicator
+                    isNegative: true,
                   ),
                 ],
                 isDark: isDark,
@@ -1071,6 +1504,43 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("غرض اقتناء الذهب:", style: GoogleFonts.cairo(fontSize: 12.sp)),
+                        Row(
+                          children: [
+                            _buildToggleBtn("ادخار/استثمار", _isGoldInvestment, () {
+                              setState(() => _isGoldInvestment = true);
+                              _calculate();
+                            }),
+                            const SizedBox(width: 8),
+                            _buildToggleBtn("زينة شخصية", !_isGoldInvestment, () {
+                              setState(() => _isGoldInvestment = false);
+                              _calculate();
+                            }),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (!_isGoldInvestment)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "ملاحظة: ذهب الزينة المعتاد لا زكاة فيه عند جمهور الفقهاء. إذا كان الوزن كبيراً جداً (خارج المعتاد) يُفضل احتسابه كادخار.",
+                          style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.blue.shade800),
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 8),
                   // Weights
                   _buildInputRow(
@@ -1117,15 +1587,69 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
               const SizedBox(height: 16),
 
-              // --- 4. Real Estate Section ---
+               // --- 4. Real Estate Section ---
               _buildSectionCard(
-                title: "زكاة العقارات المملوكة",
+                title: "زكاة العقارات والأراضي",
                 children: [
-                  _buildInputRow(
-                    label: "قيمة إيجار العقار الشهري الذي امتلكه",
-                    controller: _realEstateRentController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("نوع العقار:", style: GoogleFonts.cairo(fontSize: 12.sp)),
+                        Row(
+                          children: [
+                            _buildToggleBtn("للإيجار", !_isRealEstateTrading, () {
+                              setState(() => _isRealEstateTrading = false);
+                              _calculate();
+                            }),
+                            const SizedBox(width: 8),
+                            _buildToggleBtn("للمتاجرة", _isRealEstateTrading, () {
+                              setState(() => _isRealEstateTrading = true);
+                              _calculate();
+                            }),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (!_isRealEstateTrading)
+                    _buildInputRow(
+                      label: "متوسط الإيجار الشهري للعقار",
+                      controller: _realEstateRentController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    )
+                  else
+                    _buildInputRow(
+                      label: "القيمة السوقية الحالية للعقار",
+                      controller: _realEstateMarketValueController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.info_outline, size: 16, color: Colors.blue),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _isRealEstateTrading 
+                                ? "المتاجرة: زكاتك على القيمة الإجمالية." 
+                                : "للإيجار: زكاتك على صافي الإيراد السنوي.",
+                              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.blue.shade700),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
                 isDark: isDark,
@@ -1181,10 +1705,24 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   ),
                   const SizedBox(height: 16),
                   _buildInputRow(
+                    label: "وزن المحصول",
+                    controller: _cropsWeightController,
+                    isDark: isDark,
+                    suffix: "كيلوجرام",
+                  ),
+                  _buildInputRow(
                     label: "قيمة المحصول",
                     controller: _cropsValueController,
                     isDark: isDark,
                     suffix: _selectedCurrency.name,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 12.0),
+                    child: Text(
+                      "* لا تجب الزكاة إلا إذا بلغ المحصول 5 أوسق (653 كجم تقريباً)",
+                      style: GoogleFonts.cairo(
+                          fontSize: 10.sp, color: Colors.grey),
+                    ),
                   ),
                 ],
                 isDark: isDark,
@@ -1196,45 +1734,51 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               _buildSectionCard(
                 title: "زكاة الأنعام (المواشي)",
                 children: [
+                   Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            "ملاحظة: الزكاة في السائمة (التي ترعى) فقط. أما المعلوفة (التي تشتري لها علفاً أغلب العام) فلا زكاة فيها.",
+                            style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.orange.shade800),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   _buildInputRow(
                     label: "عدد رؤوس الإبل",
                     controller: _camelsController,
                     isDark: isDark,
                     suffix: "رأس",
+                    labelPrefix: "النصاب: 5 رؤوس",
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(height: 8),
                   _buildInputRow(
                     label: "عدد رؤوس البقر",
                     controller: _cowsController,
                     isDark: isDark,
                     suffix: "رأس",
+                    labelPrefix: "النصاب: 30 رأس",
                   ),
+                  const SizedBox(height: 8),
                   _buildInputRow(
                     label: "عدد رؤوس الغنم",
                     controller: _sheepController,
                     isDark: isDark,
                     suffix: "رأس",
+                    labelPrefix: "النصاب: 40 رأس",
                   ),
-                  if (_zakatCattleResult.isNotEmpty)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      margin: const EdgeInsets.only(top: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.amber),
-                      ),
-                      child: Text(
-                        _zakatCattleResult,
-                        style: GoogleFonts.cairo(
-                            fontSize: 14.sp,
-                            color: isDark
-                                ? Colors.amberAccent
-                                : Colors.amber.shade900,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )
+                  if (_camelsController.text.isNotEmpty || _cowsController.text.isNotEmpty || _sheepController.text.isNotEmpty)
+                    _buildCattleResultCards(isDark),
                 ],
                 isDark: isDark,
               ),
@@ -1301,59 +1845,59 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               _buildResultSection(isDark, formatMoney),
 
               // --- Actions (Share, Save, Reminder) ---
-              if (_totalZakat > 0) ...[
-                const SizedBox(height: 20),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildActionButton(
-                        isDark: isDark,
-                        icon: Icons.share,
-                        label: "مشاركة",
-                        onTap: _shareResult,
-                      ),
-                      // const SizedBox(width: 10),
-                      // _buildActionButton(
-                      //   isDark: isDark,
-                      //   icon: Icons.save,
-                      //   label: "حفظ",
-                      //   onTap: _saveToHistory,
-                      // ),
-                      const SizedBox(width: 10),
-                      _buildActionButton(
-                        isDark: isDark,
-                        icon: Icons.alarm,
-                        label: "منبه الحول",
-                        onTap: _scheduleReminder,
-                      ),
-                      const SizedBox(width: 10),
-                      _buildActionButton(
-                        isDark: isDark,
-                        icon: Icons.picture_as_pdf,
-                        label: "تحميل تقرير",
-                        onTap: () => ZakatPdfService.generateAndPrint(
-                          totalWealth: _totalWealth,
-                          totalZakat: _totalZakat,
-                          nisabValue: _nisabValue,
-                          currencySymbol: _selectedCurrency.symbol,
-                          isHijri: _isHijriYear,
-                          reachedNisab: _totalWealth >= _nisabValue,
-                          money: _zakatMoney,
-                          gold: _zakatGold,
-                          silver: _zakatSilver,
-                          assets: _zakatAssets,
-                          realEstate: _zakatRealEstate,
-                          crops: _zakatCrops,
-                          cattleDetails: _zakatCattleResult,
-                          fitrTotal: _zakatFitrTotal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              // if (_totalZakat > 0) ...[
+              //   const SizedBox(height: 20),
+              //   SingleChildScrollView(
+              //     scrollDirection: Axis.horizontal,
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         _buildActionButton(
+              //           isDark: isDark,
+              //           icon: Icons.share,
+              //           label: "مشاركة",
+              //           onTap: _shareResult,
+              //         ),
+              //         // const SizedBox(width: 10),
+              //         // _buildActionButton(
+              //         //   isDark: isDark,
+              //         //   icon: Icons.save,
+              //         //   label: "حفظ",
+              //         //   onTap: _saveToHistory,
+              //         // ),
+              //         const SizedBox(width: 10),
+              //         _buildActionButton(
+              //           isDark: isDark,
+              //           icon: Icons.alarm,
+              //           label: "منبه الحول",
+              //           onTap: _scheduleReminder,
+              //         ),
+              //         const SizedBox(width: 10),
+              //         _buildActionButton(
+              //           isDark: isDark,
+              //           icon: Icons.picture_as_pdf,
+              //           label: "تحميل تقرير",
+              //           onTap: () => ZakatPdfService.generateAndPrint(
+              //             totalWealth: _totalWealth,
+              //             totalZakat: _totalZakat,
+              //             nisabValue: _nisabValue,
+              //             currencySymbol: _selectedCurrency.symbol,
+              //             isHijri: _isHijriYear,
+              //             reachedNisab: _totalWealth >= _nisabValue,
+              //             money: _zakatMoney,
+              //             gold: _zakatGold,
+              //             silver: _zakatSilver,
+              //             assets: _zakatAssets,
+              //             realEstate: _zakatRealEstate,
+              //             crops: _zakatCrops,
+              //             cattleDetails: _zakatCattleResult,
+              //             fitrTotal: _zakatFitrTotal,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ],
 
               // --- Info Text ---
               _buildInfoText(isDark),
@@ -1387,38 +1931,82 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   }
 
   Widget _buildNisabCard(bool isDark, String Function(double) formatter) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(AppStyle.primaryColor).withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-            color: const Color(AppStyle.primaryColor).withOpacity(0.2)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    double goldNisab = 85 * (double.tryParse(_goldPrice24Controller.text.replaceAll(',', '')) ?? 0);
+    double silverNisab = 595 * (double.tryParse(_silverPriceController.text.replaceAll(',', '')) ?? 0);
+
+    bool showRecommendation = _isGoldStandard && 
+                            _totalWealth >= silverNisab && 
+                            _totalWealth < goldNisab &&
+                            silverNisab > 0;
+
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(AppStyle.primaryColor).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+                color: const Color(AppStyle.primaryColor).withOpacity(0.2)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                  _isGoldStandard
-                      ? "نصاب الزكاة (85 جرام عيار 24)"
-                      : "نصاب الزكاة (595 جرام فضة)",
-                  style: GoogleFonts.cairo(
-                      fontSize: ResponsiveUtil.isTablet(context)?9.sp:12.sp,
-                      color: const Color(AppStyle.primaryColor))),
-              Text("${formatter(_nisabValue)} ${_selectedCurrency.symbol}",
-                  style: GoogleFonts.cairo(
-                      fontSize:ResponsiveUtil.isTablet(context)?10.sp: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(AppStyle.primaryColor))),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        _isGoldStandard
+                            ? "نصاب الزكاة (85 جرام ذهب 24)"
+                            : "نصاب الزكاة (595 جرام فضة)",
+                        style: GoogleFonts.cairo(
+                            fontSize: ResponsiveUtil.isTablet(context)?9.sp:12.sp,
+                            color: const Color(AppStyle.primaryColor))),
+                    Text("${formatter(_nisabValue)} ${_selectedCurrency.symbol}",
+                        style: GoogleFonts.cairo(
+                            fontSize:ResponsiveUtil.isTablet(context)?10.sp: 18.sp,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(AppStyle.primaryColor))),
+                  ],
+                ),
+              ),
+              if (goldNisab > 0 && silverNisab > 0)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      _isGoldStandard ? "نصاب الفضة: ${formatter(silverNisab)}" : "نصاب الذهب: ${formatter(goldNisab)}",
+                      style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey),
+                    ),
+                  ],
+                ),
             ],
           ),
-          Icon(Icons.info_outline,
-              color: const Color(AppStyle.primaryColor).withOpacity(0.5)),
-        ],
-      ),
+        ),
+        if (showRecommendation)
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.amber.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.amber.withOpacity(0.5)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.warning_amber_rounded, color: Colors.amber),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    "ثروتك بلغت نصاب الفضة ولم تبلغ نصاب الذهب. يُنصح بإخراج الزكاة (الأحظ للفقراء) في عروض التجارة والنقود.",
+                    style: GoogleFonts.cairo(fontSize: 11.sp, height: 1.4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 
@@ -1507,6 +2095,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     required String suffix,
     String? labelPrefix,
     bool isNegative = false,
+    Widget? trailing,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -1537,6 +2126,10 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   ),
                 ),
               ),
+              if (trailing != null) ...[
+                const SizedBox(width: 8),
+                trailing,
+              ],
             ],
           ),
           const SizedBox(height: 8),
@@ -1608,21 +2201,78 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   }
 
   Widget _buildResultSection(bool isDark, String Function(double) formatter) {
-    if (_totalWealth == 0) {
-      if (_nisabValue > 0) {
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Text(
-            "أدخل تفاصيل ممتلكاتك (مال، ذهب، أصول...) لظهور البطاقة",
-            textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(color: Colors.grey, fontSize: 14.sp),
-          ),
-        );
-      }
-      return const SizedBox.shrink();
+    bool hasAnyInput = _totalWealth > 0 || 
+                      _zakatCrops > 0 || 
+                      _zakatFitrTotal > 0 || 
+                      _zakatCattleResult.isNotEmpty ||
+                      _moneyController.text.isNotEmpty ||
+                      _receivablesController.text.isNotEmpty ||
+                      _tradeGoodsController.text.isNotEmpty ||
+                      _tradeCashController.text.isNotEmpty ||
+                      _tradeReceivablesController.text.isNotEmpty ||
+                      _stocksController.text.isNotEmpty ||
+                      _goldWeight24Controller.text.isNotEmpty ||
+                      _silverWeightController.text.isNotEmpty ||
+                      _camelsController.text.isNotEmpty ||
+                      _cowsController.text.isNotEmpty ||
+                      _sheepController.text.isNotEmpty;
+
+    if (!hasAnyInput) {
+      // Only show the "guide" message if wealth is 0 and no controllers have text
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Text(
+          "أدخل تفاصيل ممتلكاتك (مال، ذهب، بضائع...) لظهور البطاقة",
+          textAlign: TextAlign.center,
+          style: GoogleFonts.cairo(color: Colors.grey, fontSize: 14.sp),
+        ),
+      );
     }
 
-    bool reachedNisab = _totalWealth >= _nisabValue;
+    // Check if prices are missing
+    bool priceMissing = _isGoldStandard 
+        ? (double.tryParse(_goldPrice24Controller.text.replaceAll(',', '')) ?? 0) <= 0
+        : (double.tryParse(_silverPriceController.text.replaceAll(',', '')) ?? 0) <= 0;
+
+    if (priceMissing && _totalWealth > 0) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: Colors.blue.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.blue.withOpacity(0.3)),
+        ),
+        child: Column(
+          children: [
+            const Icon(Icons.calculate_outlined, color: Colors.blue, size: 40),
+            const SizedBox(height: 12),
+            Text(
+              "يرجى إدخال سعر الذهب/الفضة الحالي في \"إعدادات الأسعار\" في الأعلى ليتمكن التطبيق من معرفة بلوغ النصاب وحساب الزكاة.",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "إجمالي ثروتك الحالية: ${formatter(_totalWealth)} ${_selectedCurrency.symbol}",
+              style: GoogleFonts.cairo(color: Colors.blue.shade700, fontSize: 13.sp),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Use the effective logic from _calculate
+    double silverNisabValue = 595 * (double.tryParse(_silverPriceController.text.replaceAll(',', '')) ?? 0);
+    double effectiveNisab = _isGoldStandard ? _nisabValue : _nisabValue; // Already set in _calculate
+    
+    // Check if we reached Nisab (Gold, Silver, Cattle, or Crops)
+    bool reachedNisab = (_totalWealth >= _nisabValue && _nisabValue > 0) || 
+                        _zakatCattleResult.isNotEmpty || 
+                        _zakatCrops > 0;
+    
+    // Check if there's ANY Zakat due from any source
+    bool anyZakatDue = _totalZakat > 0 || _zakatCattleResult.isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -1695,7 +2345,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
                   // Total Wealth
                   _buildReceiptRow(
-                      "💰 إجمالي الثروة",
+                      _zakatCattleResult.isNotEmpty ? "💰 إجمالي الثروة النقدية" : "💰 إجمالي الثروة",
                       "${formatter(_totalWealth)} ${_selectedCurrency.symbol}",
                       isDark),
 
@@ -1799,38 +2449,128 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                     const Divider(height: 30, indent: 40, endIndent: 40),
 
                     // Total Zakat
-                    Container(
-                      margin: const EdgeInsets.all(16),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppThemeColors.cardBackgroundColor(context),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: const Color(AppStyle.primaryColor)),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            "قيمة الزكاة المستحقة (${_isHijriYear ? 'هجري' : 'ميلادي'})",
-                            style: GoogleFonts.cairo(
-                              fontSize: 14.sp,
-                              color: const Color(AppStyle.primaryColor),
+                    if (anyZakatDue)
+                      Container(
+                        margin: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppThemeColors.cardBackgroundColor(context),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: const Color(AppStyle.primaryColor)),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              "إجمالي قيمة الزكاة المستحقة (${_isHijriYear ? 'هجري' : 'ميلادي'})",
+                              style: GoogleFonts.cairo(
+                                fontSize: 14.sp,
+                                color: const Color(AppStyle.primaryColor),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "${formatter(_totalZakat)} ${_selectedCurrency.symbol}",
-                            style: GoogleFonts.cairo(
-                              fontSize: 24.sp,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(AppStyle.primaryColor),
+                            const SizedBox(height: 4),
+                             Text(
+                              "${formatter(_totalZakat)} ${_selectedCurrency.symbol}",
+                              style: GoogleFonts.cairo(
+                                fontSize: 24.sp,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(AppStyle.primaryColor),
+                              ),
                             ),
+                            if (_paidZakat > 0) ...[
+                              const Divider(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("تم دفع:", style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey)),
+                                  Text("${formatter(_paidZakat)} ${_selectedCurrency.symbol}", style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.teal, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("المتبقي:", style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold)),
+                                  Text("${formatter(_totalZakat - _paidZakat)} ${_selectedCurrency.symbol}", style: GoogleFonts.cairo(fontSize: 16.sp, color: Colors.red, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ],
+                            if (_zakatCattleResult.isNotEmpty && _totalZakat == 0)
+                               Text(
+                                "(راجع تفاصيل زكاة الأنعام أعلاه)",
+                                style: GoogleFonts.cairo(
+                                  fontSize: 10.sp,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                          ],
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(
+                          "لم تبلغ ممتلكاتك النصاب الشرعي بعد، لا تجب عليك الزكاة حالياً.",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.cairo(
+                            color: Colors.orange.shade700,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
                           ),
-                        ],
+                        ),
                       ),
-                    ),
                   ],
 
+                  const SizedBox(height: 10),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildCircleActionButton(
+                          icon: Icons.share,
+                          label: "مشاركة",
+                          onTap: _shareResult,
+                          color: Colors.blue,
+                        ),
+                        const SizedBox(width: 12),
+                        _buildCircleActionButton(
+                          icon: Icons.picture_as_pdf,
+                          label: "تقرير PDF",
+                          onTap: _generatePdf,
+                          color: Colors.red,
+                        ),
+                        const SizedBox(width: 12),
+                        _buildCircleActionButton(
+                          icon: Icons.history,
+                          label: "السجل",
+                          onTap: () => _showHistorySheet(isDark),
+                          color: Colors.orange,
+                        ),
+                        const SizedBox(width: 12),
+                        _buildCircleActionButton(
+                          icon: _isFajrEnabled ? Icons.notifications_active : Icons.notifications_off,
+                          label: "منبه الفجر",
+                          onTap: _toggleFajrAlarm,
+                          color: _isFajrEnabled ? Colors.purple : Colors.grey,
+                        ),
+                        const SizedBox(width: 12),
+                        _buildCircleActionButton(
+                          icon: Icons.alarm,
+                          label: "منبه الحول",
+                          onTap: _scheduleReminder,
+                          color: Colors.green,
+                        ),
+                        const SizedBox(width: 12),
+                        _buildCircleActionButton(
+                          icon: Icons.payments_outlined,
+                          label: "تسجيل دفع",
+                          onTap: () => _showRecordPaymentSheet(isDark),
+                          color: Colors.teal,
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   Text(
                     "تقبل الله منا ومنكم صالح الأعمال",
@@ -1987,6 +2727,83 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     );
   }
 
+  void _showRecordPaymentSheet(bool isDark) {
+    final TextEditingController amountController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0F172A) : Colors.white,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("تسجيل مبلغ مدفوع من الزكاة", style: GoogleFonts.cairo(fontSize: 18.sp, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                _buildSmallInput(amountController, isDark, "أدخل المبلغ الذي دفعته"),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    double amount = double.tryParse(amountController.text.replaceAll(',', '')) ?? 0.0;
+                    if (amount > 0) {
+                      setState(() => _paidZakat += amount);
+                      Navigator.pop(context);
+                      KHelper.showSuccess(message: "تم تسجيل الدفعة بنجاح");
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, minimumSize: const Size(double.infinity, 50)),
+                  child: Text("تأكيد التسجيل", style: GoogleFonts.cairo(color: Colors.white)),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() => _paidZakat = 0);
+                    Navigator.pop(context);
+                  },
+                  child: Text("تصفير المدفوعات", style: GoogleFonts.cairo(color: Colors.red)),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCircleActionButton(
+      {required IconData icon,
+      required String label,
+      required VoidCallback onTap,
+      required Color color}) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: GoogleFonts.cairo(fontSize: 10.sp, color: color),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildReceiptRow(String label, String value, bool isDark,
       {bool isSub = false}) {
     return Padding(
@@ -2070,7 +2887,14 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
           ),
           const SizedBox(height: 10),
           Text(
-            "حاسبة الزكاة على تطبيقنا، تمكنك من حساب قيمة الزكاة الخاصة بك بعد كتابة المال أو المبلغ الذي تملكه بعد تحقق نصاب الزكاة، وكما يمكنك أيضاً من حساب قيمة زكاة الذهب من خلال إدخال مقدار الذهب وبالتالي تتعرف على قيمة الزكاة الواجبة عليها. ويمكنك حساب الزكاة للممتلكات الخاصة بك أو الأسهم أو السندات بكتابة قيمة السهم أو السند، وبعد ذلك يظهر لك قيمة الزكاة الخاصة بها.\n\n* يرجى التواصل مع جهة أو دار فتوى شرعية حتى تتحقق من شروط وضوابط الزكاة الواجبة.",
+            "حاسبة الزكاة على تطبيقنا، تمكنك من حساب قيمة الزكاة المالية، الذهب، عروض التجارة، الزروع، والأنعام بشكل احترافي ودقيق.\n\n"
+            "ملاحظات هامة للدقة:\n"
+            "* ذهب الزينة المعتاد لا زكاة فيه (يمكنك استثناؤه بالخيار الجديد).\n"
+            "* الأسهم: إذا كنت مضارباً تُحسب الزكاة على كامل القيمة السوقية، أما إذا كنت مستثمراً طويل الأجل فالزكاة على الأرباح الموزعة فقط.\n"
+            "* الديون: أضفنا خانة للديون التي لك عند الناس (المضمونة) لتُحسب ضمن زكاتك، والديون التي عليك تُخصم تلقائياً.\n"
+            "* عروض التجارة: يفضل حسابها بدقة (كاش في النشاط + بضائع بسعر البيع + ديون النشاط).\n"
+            "* نصاب الفضة: يظهر لك تنبيه (الأحظ للفقراء) إذا بلغت ثروتك نصاب الفضة ولم تبلغ نصاب الذهب.\n\n"
+            "* يرجى التواصل مع جهة أو دار فتوى شرعية للتحقق من الحالات الخاصة.",
             style: GoogleFonts.cairo(
               fontSize: ResponsiveUtil.isTablet(context)?9.sp:13.sp,
               height: 1.6,

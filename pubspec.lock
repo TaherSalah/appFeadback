@@ -1704,11 +1704,10 @@ packages:
   quran_library:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: "2bf6ebb838e034cad77e370f68d165ac593674bf"
-      url: "https://github.com/alheekmahlib/quran_library.git"
-    source: git
+      name: quran_library
+      sha256: acdd421e3fd7191f439d1ceec811c468bf36676478d96c027013e34ae9fd007f
+      url: "https://pub.dev"
+    source: hosted
     version: "2.3.2"
   rate_my_app:
     dependency: "direct main"

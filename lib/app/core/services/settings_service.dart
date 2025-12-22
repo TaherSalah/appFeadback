@@ -14,6 +14,12 @@ class SettingsService {
   static const String _kIsAzkarSleepEnabled = 'is_azkar_sleep_enabled';
   static const String _kIsQiyamEnabled = 'is_qiyam_enabled';
   static const String _kIsSalatAlaNabiEnabled = 'is_salat_ala_nabi_enabled';
+  
+  static const String _kFajrAlarmEnabled = 'fajr_alarm_enabled';
+  static const String _kFajrAlarmHour = 'fajr_alarm_hour';
+  static const String _kFajrAlarmMinute = 'fajr_alarm_minute';
+  static const String _kFajrAlarmDays = 'fajr_alarm_days';
+  static const String _kFajrAlarmRepetitions = 'fajr_alarm_repetitions';
   // static const String _kSalatAlaNabiFrequencyMinutes = 'salat_ala_nabi_frequency_minutes';
 
   Future<void> init() async {
@@ -65,4 +71,28 @@ class SettingsService {
   Future<void> setSalatAlaNabiMinutes(int minutes) async {
     await _prefs.setInt(_kSalatAlaNabiFrequencyMinutes, minutes);
   }
+
+  // --- Advanced Fajr Alarm ---
+  bool get isFajrAlarmEnabled => _prefs.getBool(_kFajrAlarmEnabled) ?? false;
+  Future<void> setFajrAlarmEnabled(bool value) async =>
+      await _prefs.setBool(_kFajrAlarmEnabled, value);
+
+  int get fajrAlarmHour => _prefs.getInt(_kFajrAlarmHour) ?? 4;
+  Future<void> setFajrAlarmHour(int value) async =>
+      await _prefs.setInt(_kFajrAlarmHour, value);
+
+  int get fajrAlarmMinute => _prefs.getInt(_kFajrAlarmMinute) ?? 0;
+  Future<void> setFajrAlarmMinute(int value) async =>
+      await _prefs.setInt(_kFajrAlarmMinute, value);
+
+  List<int> get fajrAlarmDays =>
+      _prefs.getStringList(_kFajrAlarmDays)?.map(int.parse).toList() ??
+      [1, 2, 3, 4, 5, 6, 7];
+  Future<void> setFajrAlarmDays(List<int> days) async =>
+      await _prefs.setStringList(
+          _kFajrAlarmDays, days.map((e) => e.toString()).toList());
+
+  int get fajrAlarmRepetitions => _prefs.getInt(_kFajrAlarmRepetitions) ?? 1;
+  Future<void> setFajrAlarmRepetitions(int value) async =>
+      await _prefs.setInt(_kFajrAlarmRepetitions, value);
 }

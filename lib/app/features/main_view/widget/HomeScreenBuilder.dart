@@ -22,6 +22,7 @@ import 'AllahNameWidget.dart';
 import 'KidsEntryPointWidget.dart';
 import 'FridayCompanionWidget.dart';
 import 'DailyStreakWidget.dart';
+import 'AdvancedFajrAlarmWidget.dart';
 
 class MainViewBuilder extends StatefulWidget {
   const MainViewBuilder({super.key});
@@ -212,6 +213,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
                         // 🔥 رفيق الجمعة (يظهر فقط يوم الجمعة)
                         const FridayCompanionWidget(),
+                        
+                        // 🔥 منبه الفجر المتقدم
+                        const AdvancedFajrAlarmWidget(),
 
                         // 🔥 صندوق الهدايا اليومي
                         // const DailyGiftWidget(),

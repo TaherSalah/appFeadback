@@ -152,6 +152,18 @@ class NotificationManager {
           enableVibration: true,
           enableLights: true,
         ),
+        // 💰 قناة تذكير الزكاة
+        NotificationChannel(
+          channelKey: 'zakat_reminder_channel',
+          channelName: 'تذكير الزكاة',
+          channelDescription: 'تذكير بمرور الحول على الزكاة',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.green,
+          ledColor: Colors.green,
+          playSound: true,
+          enableVibration: true,
+          enableLights: true,
+        ),
       ],
       debug: true,
     );
@@ -274,6 +286,9 @@ class NotificationManager {
       if (_settingsService.isSalatAlaNabiEnabled) {
         await _scheduleSalawat();
       }
+
+      // ⏰ منبه الفجر المتقدم
+      await _scheduleAdvancedFajrAlarm();
     } catch (e, stackTrace) {
       print('❌ Error in scheduling reminders: $e');
       print(stackTrace);
@@ -432,6 +447,63 @@ class NotificationManager {
         allowWhileIdle: true,
       ),
     );
+  }
+
+  Future<void> scheduleAdvancedFajrAlarm() async {
+     await _settingsService.init();
+     await _scheduleAdvancedFajrAlarm();
+  }
+
+  Future<void> _scheduleAdvancedFajrAlarm() async {
+    // 1. Cancel existing advanced fajr alarms (IDs 2000-2100)
+    for (int i = 2000; i < 2100; i++) {
+       await AwesomeNotifications().cancel(i);
+    }
+
+    if (!_settingsService.isFajrAlarmEnabled) return;
+
+    final hour = _settingsService.fajrAlarmHour;
+    final minute = _settingsService.fajrAlarmMinute;
+    final days = _settingsService.fajrAlarmDays; // 1-7 (Mon-Sun)
+    final repetitions = _settingsService.fajrAlarmRepetitions;
+
+    print('🕒 Scheduling Advanced Fajr Alarm at $hour:$minute for days: $days with $repetitions repetitions');
+
+    for (int day in days) {
+       for (int r = 0; r < repetitions; r++) {
+          // Sneoze style: every 5 minutes
+          int offsetMinutes = r * 5;
+          int totalMin = minute + offsetMinutes;
+          int finalHour = (hour + (totalMin ~/ 60)) % 24;
+          int finalMinute = totalMin % 60;
+
+          await AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: 2000 + (day * 10) + r,
+              channelKey: 'fajr_adhan_channel_v2', // Use existing fajr channel for its sound
+              title: '⏰ منبه الفجر المتقدم',
+              body: 'حان وقت الاستيقاظ لصلاة الفجر 👋',
+              category: NotificationCategory.Alarm,
+              wakeUpScreen: true,
+              fullScreenIntent: true,
+              criticalAlert: true,
+              locked: true,
+              displayOnForeground: true,
+              displayOnBackground: true,
+            ),
+            schedule: NotificationCalendar(
+              weekday: day,
+              hour: finalHour,
+              minute: finalMinute,
+              second: 0,
+              repeats: true,
+              preciseAlarm: true,
+              allowWhileIdle: true,
+            ),
+          );
+       }
+    }
+    print('✅ Advanced Fajr Alarms scheduled.');
   }
 
   // ==========================================
