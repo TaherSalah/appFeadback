@@ -3,12 +3,12 @@ import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
+import 'package:muslimdaily/app/features/shareCard/PremiumShareCard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/shard/widgets/ui_animations.dart';
 import '../../../core/utils/style/responsive_util.dart';
-import 'package:muslimdaily/app/features/share_card/PremiumShareCard.dart';
 import '../SurahModel.dart';
 
 // ----------------------- Surah Detail Screen -----------------------

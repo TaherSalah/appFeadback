@@ -17,7 +17,7 @@ class ImageShareService {
 
   // Core images that stay inside the app
   static final List<String> localBackgrounds = [
-    "assets/images/beautiful-view-sunset-light.jpg",
+    // "assets/images/beautiful-view-sunset-light.jpg",
     "assets/images/inspiring-view-morning-light.jpg",
     "assets/images/natural-view-night_1112329-37092.jpg",
   ];

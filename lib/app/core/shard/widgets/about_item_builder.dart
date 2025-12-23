@@ -206,7 +206,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                   onTap: () =>
                       context.read<RateService>().askForReview(context),
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 25.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -215,7 +215,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                     _buildStoreIcon(appleStore, shareAppStore),
                   ],
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 10.h),
 
                 // Rights Section
                 Divider(color: isDark ? Colors.white10 : Colors.grey.shade300),

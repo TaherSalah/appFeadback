@@ -21,25 +21,9 @@ export 'package:muslimdaily/app/core/shard/widgets/counter_widget_builder.dart';
 export 'dart:convert';
 export 'package:adhan/adhan.dart';
 export 'package:dropdown_button2/dropdown_button2.dart';
-
-
-
-
-
-
-
-
-
-
 export 'package:muslimdaily/app/core/shard/widgets/def_text_widget.dart';
-
-
 export 'package:muslimdaily/app/core/shard/widgets/about_item_builder.dart';
-
-
-
 export 'package:muslimdaily/app/core/shard/constanc/images_paths.dart';
-export 'package:muslimdaily/app/features/main_view/widget/IslamicCardWidget.dart';
 export 'package:muslimdaily/app/core/shard/widgets/azkar_item_builder.dart';
 export 'package:muslimdaily/app/core/model/azkary_model.dart';
 export 'package:muslimdaily/app/core/controller/azkar_controller.dart';
@@ -49,5 +33,4 @@ export 'package:muslimdaily/app/core/shard/navigation.dart';
 export 'package:muslimdaily/app/core/shard/widgets/done_widget.dart';
 export 'package:muslimdaily/app/core/shard/widgets/custom_app_bar.dart';
 export 'package:muslimdaily/app/core/shard/widgets/main_app_bar.dart';
-
 export 'package:muslimdaily/app/core/shard/constanc/app_string.dart';

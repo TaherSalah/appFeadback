@@ -1,29 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
+import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 import 'package:muslimdaily/app/features/radio/data/repo/QuranRadioRepoImmp.dart';
 import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioBloc.dart';
 import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioState.dart';
 
-import '../../../../core/cubit/centralized_cubit.dart';
-import '../../../../core/localization/localization_manager.dart';
 import '../../../../core/shard/exports/all_exports.dart';
 import '../../../../core/utils/constent/router.dart';
 import '../../../../core/utils/style/k_color.dart';
 import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/widgets/KLoading.dart';
-import '../../../../core/widgets/custom_divider_widget.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
-import '../../../../core/widgets/image_widget.dart';
-import '../../../../core/widgets/kButtons.dart';
-import '../../../categories/view/categories_details.dart';
-import '../../../categories/view/controller/categories_bloc.dart';
-import '../../../categories/view/controller/categories_state.dart';
-import '../../../messa_view/azkar_massa.dart';
 
 class QuranRadioItemBuilder extends StatefulWidget {
   const QuranRadioItemBuilder({super.key});

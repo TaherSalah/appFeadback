@@ -1,8 +1,8 @@
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/features/splashView/splash.dart';
 
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/utils/style/k_color.dart';
-import '../splash_view/splash.dart';
 
 class WhatsNewView extends StatefulWidget {
   final bool isFirstTime;

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:muslimdaily/app/core/services/image_share_service.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ShareWirdDialog extends StatefulWidget {
   final String dhikrText;
@@ -32,7 +34,6 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
   final Set<int> _loadedIndices = {};
   final Set<int> _failedIndices = {};
 
-  // Personalization States
   String _selectedFont = "Amiri";
   double _bgDimming = 0.3;
 
@@ -42,7 +43,6 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
   void initState() {
     super.initState();
     _backgrounds = ImageShareService.getAllBackgrounds();
-    // Local images are always considered loaded
     for (int i = 0; i < _backgrounds.length; i++) {
       if (!_backgrounds[i].isRemote) {
         _loadedIndices.add(i);
@@ -53,395 +53,221 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
   Future<void> _captureAndShare() async {
     if (!_loadedIndices.contains(_selectedImageIndex)) return;
     
-    setState(() {
-      _isSharing = true;
-    });
+    setState(() => _isSharing = true);
 
     try {
-      // 1. التقاط الصورة من الـ Widget
-      RenderRepaintBoundary boundary = _globalKey.currentContext!
-          .findRenderObject() as RenderRepaintBoundary;
-
-      // زيادة pixelRatio لجودة أعلى
+      RenderRepaintBoundary boundary = _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
 
       if (byteData != null) {
         final Uint8List pngBytes = byteData.buffer.asUint8List();
-
-        // 2. حفظ الصورة في ملف مؤقت
         final directory = await getTemporaryDirectory();
         final file = File('${directory.path}/dhikr_share.png');
         await file.writeAsBytes(pngBytes);
 
-        // 3. مشاركة الملف
-        await Share.shareXFiles(
-          [XFile(file.path)],
-          text: 'شارك الذكر مع من تحب',
-        );
+        await Share.shareXFiles([XFile(file.path)], text: 'شارك الذكر مع من تحب');
       }
     } catch (e) {
       debugPrint('Error sharing: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('حدث خطأ أثناء المشاركة')),
-      );
     } finally {
-      if (mounted) {
-        setState(() {
-          _isSharing = false;
-        });
-      }
+      if (mounted) setState(() => _isSharing = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = isDark ? Colors.tealAccent : const Color(0xFF00897B);
+
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // زر الإغلاق
-          Align(
-            alignment: Alignment.topLeft,
-            child: CircleAvatar(
-              backgroundColor: Colors.black54,
-              child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // منطقة المعاينة (التي سيتم التقاطها كصورة)
-          RepaintBoundary(
-            key: _globalKey,
-            child: Container(
-              width: double.infinity,
-              constraints: const BoxConstraints(minHeight: 300),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
+      insetPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
+      child: Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 24, offset: const Offset(0, 12))],
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("مشاركة الذكر", style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp, color: isDark ? Colors.white : Colors.black87)),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(CupertinoIcons.xmark_circle_fill, color: Colors.grey.withOpacity(0.5)),
+                    onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
-              child: Stack(
-                children: [
-                   // 1. Fallback / Base Layer
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.asset(
-                        ImageShareService.localBackgrounds[0],
-                        fit: BoxFit.cover,
+              SizedBox(height: 16.h),
+              RepaintBoundary(
+                key: _globalKey,
+                child: Container(
+                  width: double.infinity,
+                  height: 350.h,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))],
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: _buildBackgroundImage(_selectedImageIndex),
                       ),
-                    ),
-                  ),
-
-                  // 2. Remote Image Layer (with loading handling)
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: _backgrounds[_selectedImageIndex].isRemote 
-                        ? CachedNetworkImage(
-                            imageUrl: _backgrounds[_selectedImageIndex].path,
-                            cacheManager: ImageShareService.customCacheManager,
-                            fit: BoxFit.cover,
-                            imageBuilder: (context, imageProvider) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                if (mounted && !_loadedIndices.contains(_selectedImageIndex)) {
-                                  setState(() => _loadedIndices.add(_selectedImageIndex));
-                                }
-                              });
-                              return Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-                                ),
-                              );
-                            },
-                            placeholder: (context, url) => Container(color: Colors.black26),
-                            errorWidget: (context, url, error) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                if (mounted && !_failedIndices.contains(_selectedImageIndex)) {
-                                  setState(() => _failedIndices.add(_selectedImageIndex));
-                                }
-                              });
-                              return Container(
-                                color: Colors.black45,
-                                child: const Center(
-                                  child: Icon(Icons.cloud_off, color: Colors.white54, size: 40),
-                                ),
-                              );
-                            },
-                          )
-                        : Image.asset(
-                            _backgrounds[_selectedImageIndex].path,
-                            fit: BoxFit.cover,
-                          ),
-                    ),
-                  ),
-
-                  // 3. طبقة تعتيم خفيفة لتحسين قراءة النص
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(_bgDimming),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-
-                  // المحتوى
-                  Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Spacer(),
-                        // نص الذكر
-                        Text(
-                          widget.dhikrText,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.getFont(
-                            _selectedFont,
-                            textStyle: const TextStyle(
-                              fontSize: 24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              height: 1.5,
-                            ),
-                          ),
-                        ),
-                        const Spacer(),
-                        // اللوجو واسم التطبيق
-                        Row(
+                      Container(color: Colors.black.withOpacity(_bgDimming)),
+                      Padding(
+                        padding: EdgeInsets.all(24.w),
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset(
-                              "assets/images/logoApp.png",
-                              height: 40,
-                              width: 40,
-                            ),
-                            const SizedBox(width: 8),
+                            const Spacer(),
                             Text(
-                              "رفيق المسلم",
-                              style: GoogleFonts.getFont(
-                                _selectedFont,
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              widget.dhikrText,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.getFont(_selectedFont, fontSize: 22.sp, color: Colors.white, fontWeight: FontWeight.bold, height: 1.5),
+                            ),
+                            const Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset("assets/images/logoApp.png", height: 32.h, width: 32.h),
+                                SizedBox(width: 8.w),
+                                Text("رفيق المسلم", style: GoogleFonts.cairo(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.bold)),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 15),
-
-          // Internet Requirement Hint
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.wifi, color: Colors.teal.withOpacity(0.7), size: 14),
-              const SizedBox(width: 6),
-              Text(
-                "خلفيات إضافية (تحتاج اتصال بالإنترنت) ✨",
-                style: GoogleFonts.cairo(
-                  color: widget.isDark ? Colors.white70 : Colors.black54,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-
-          const SizedBox(height: 10),
-
-          // تخصيص الخط والشفافية
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                ..._fonts.map((f) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: ActionChip(
-                    label: Text(f, style: GoogleFonts.getFont(f, color: _selectedFont == f ? Colors.white : (widget.isDark ? Colors.white70 : Colors.black87), fontSize: 11)),
-                    onPressed: () => setState(() => _selectedFont = f),
-                    backgroundColor: _selectedFont == f ? Colors.teal : (widget.isDark ? Colors.grey[800] : Colors.grey[200]),
-                  ),
-                )),
-              ],
-            ),
-          ),
-          
-          Row(
-            children: [
-              Icon(Icons.opacity, color: widget.isDark ? Colors.white70 : Colors.black54, size: 18),
-              Expanded(
-                child: Slider(
-                  value: _bgDimming,
-                  onChanged: (val) => setState(() => _bgDimming = val),
-                  min: 0.0,
-                  max: 0.8,
-                  activeColor: Colors.teal,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 5),
-
-          // قائمة اختيار الخلفيات
-          Container(
-            height: 80,
-            decoration: BoxDecoration(
-              color: widget.isDark ? Colors.grey[850] : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            padding: const EdgeInsets.all(8),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _backgrounds.length,
-              itemBuilder: (context, index) {
-                final isSelected = _selectedImageIndex == index;
-                final isCurrentRemote = _backgrounds[index].isRemote;
-                final isFailed = _failedIndices.contains(index);
-                return GestureDetector(
-                  onTap: () {
-                    if (isFailed) {
-                      // Manual Retry: Clear from failed and select to trigger re-fetch
-                      setState(() {
-                        _failedIndices.remove(index);
-                        _selectedImageIndex = index;
-                      });
-                    } else {
-                      setState(() {
-                        _selectedImageIndex = index;
-                      });
-                    }
-                  },
-                  child: Opacity(
-                    opacity: isFailed ? 0.3 : 1.0,
-                    child: SizedBox(
-                      width: 60,
-                      child: Stack(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: 60,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: isSelected
-                                  ? Border.all(color: Colors.teal, width: 3)
-                                  : null,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: isCurrentRemote 
-                                ? CachedNetworkImage(
-                                    imageUrl: _backgrounds[index].path,
-                                    cacheManager: ImageShareService.customCacheManager,
-                                    fit: BoxFit.cover,
-                                    imageBuilder: (context, imageProvider) {
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        if (mounted && !_loadedIndices.contains(index)) {
-                                          setState(() => _loadedIndices.add(index));
-                                        }
-                                      });
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-                                        ),
-                                      );
-                                    },
-                                    placeholder: (context, url) => Shimmer.fromColors(
-                                      baseColor: Colors.grey[800]!,
-                                      highlightColor: Colors.grey[700]!,
-                                      child: Container(color: Colors.white),
-                                    ),
-                                    errorWidget: (context, url, error) {
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        if (mounted && !_failedIndices.contains(index)) {
-                                          setState(() => _failedIndices.add(index));
-                                        }
-                                      });
-                                      return Container(
-                                        color: Colors.black45,
-                                        child: const Icon(Icons.refresh, color: Colors.white, size: 18),
-                                      );
-                                    },
-                                  )
-                                : Image.asset(
-                                    _backgrounds[index].path,
-                                    fit: BoxFit.cover,
-                                  ),
-                            ),
-                          ),
-                          // Offline Ready Indicator
-                          if (_loadedIndices.contains(index))
-                            Positioned(
-                              top: 2,
-                              right: 2,
-                              child: const Icon(Icons.check_circle, color: Colors.greenAccent, size: 12),
-                            ),
-                        ],
                       ),
-                    ),
+                    ],
                   ),
-                );
-              },
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // زر المشاركة
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: (_isSharing || !_loadedIndices.contains(_selectedImageIndex)) ? null : _captureAndShare,
-              icon: _isSharing
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 2))
-                  : (!_loadedIndices.contains(_selectedImageIndex) 
-                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white54, strokeWidth: 2))
-                      : const Icon(Icons.share, color: Colors.white)),
-              label: Text(
-                _isSharing 
-                    ? "جاري التجهيز..." 
-                    : (!_loadedIndices.contains(_selectedImageIndex) ? "جاري التحميل..." : "مشاركة الصورة"),
-                style: const TextStyle(
-                    fontFamily: "cairo",
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                disabledBackgroundColor: Colors.grey[800],
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-            ),
+              SizedBox(height: 20.h),
+              _buildControlSection(isDark, primaryColor),
+              SizedBox(height: 24.h),
+              _buildShareButton(primaryColor),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackgroundImage(int index) {
+    if (_backgrounds[index].isRemote) {
+      return CachedNetworkImage(
+        imageUrl: _backgrounds[index].path,
+        cacheManager: ImageShareService.customCacheManager,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => Container(color: Colors.grey[800], child: const Center(child: CupertinoActivityIndicator(color: Colors.white))),
+        errorWidget: (context, url, error) => Container(color: Colors.grey[800], child: const Icon(Icons.error_outline, color: Colors.white54)),
+        imageBuilder: (context, imageProvider) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && !_loadedIndices.contains(index)) setState(() => _loadedIndices.add(index));
+          });
+          return Container(decoration: BoxDecoration(image: DecorationImage(image: imageProvider, fit: BoxFit.cover)));
+        },
+      );
+    }
+    return Image.asset(_backgrounds[index].path, fit: BoxFit.cover);
+  }
+
+  Widget _buildControlSection(bool isDark, Color primaryColor) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("تخصيص التصميم", style: GoogleFonts.cairo(fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.grey)),
+        SizedBox(height: 12.h),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: _fonts.map((f) => Padding(
+              padding: EdgeInsets.only(left: 8.w),
+              child: ChoiceChip(
+                label: Text(f, style: GoogleFonts.getFont(f, fontSize: 10.sp)),
+                selected: _selectedFont == f,
+                onSelected: (val) => setState(() => _selectedFont = f),
+                selectedColor: primaryColor,
+                labelStyle: TextStyle(color: _selectedFont == f ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black87)),
+                backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.1),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                side: BorderSide.none,
+              ),
+            )).toList(),
+          ),
+        ),
+        SizedBox(height: 16.h),
+        Row(
+          children: [
+            Icon(CupertinoIcons.circle_lefthalf_fill, size: 16.sp, color: Colors.grey),
+            Expanded(
+              child: Slider(
+                value: _bgDimming,
+                min: 0.1,
+                max: 0.8,
+                activeColor: primaryColor,
+                onChanged: (val) => setState(() => _bgDimming = val),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+        Text("الخلفيات", style: GoogleFonts.cairo(fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.grey)),
+        SizedBox(height: 12.h),
+        SizedBox(
+          height: 60.h,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _backgrounds.length,
+            itemBuilder: (context, index) {
+              final isSelected = _selectedImageIndex == index;
+              return GestureDetector(
+                onTap: () => setState(() => _selectedImageIndex = index),
+                child: Container(
+                  width: 60.h,
+                  margin: EdgeInsets.only(left: 10.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: isSelected ? primaryColor : Colors.transparent, width: 2),
+                    image: DecorationImage(
+                      image: _backgrounds[index].isRemote 
+                        ? CachedNetworkImageProvider(_backgrounds[index].path, cacheManager: ImageShareService.customCacheManager)
+                        : AssetImage(_backgrounds[index].path) as ImageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: isSelected ? Center(child: Icon(Icons.check_circle_rounded, color: primaryColor, size: 20.sp)) : null,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShareButton(Color primaryColor) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: (_isSharing || !_loadedIndices.contains(_selectedImageIndex)) ? null : _captureAndShare,
+        icon: _isSharing 
+          ? const CupertinoActivityIndicator(color: Colors.white) 
+          : const Icon(CupertinoIcons.share),
+        label: Text(_isSharing ? "جاري التجهيز..." : "مشاركة الصورة", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryColor,
+          foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 14.h),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        ),
       ),
     );
   }

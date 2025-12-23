@@ -16,7 +16,7 @@ import '../../../../core/widgets/custom_divider_widget.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 import '../../../../core/widgets/image_widget.dart';
 import '../../../../core/widgets/kButtons.dart';
-import '../../../messa_view/azkar_massa.dart';
+import '../../../messaView/azkar_massa.dart';
 import '../categories_details.dart';
 import '../controller/categories_bloc.dart';
 import '../controller/categories_state.dart';

@@ -1,8 +1,11 @@
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart'; // Ensure this is imported or use 'cairo' string if package not available
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
+import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 
@@ -16,39 +19,71 @@ class SettingsView extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: Text(
-            'الإعدادات',
-            style: GoogleFonts.cairo(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+        // extendBodyBehindAppBar: true,
+        // appBar: AppBar(
+        //   title: Text(
+        //     'الإعدادات',
+        //     style: GoogleFonts.cairo(
+        //       fontSize: 20,
+        //       fontWeight: FontWeight.bold,
+        //       color: isDark ? Colors.white : Colors.black87,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        //   backgroundColor: Colors.transparent,
+        //   elevation: 0,
+        //   leading: BackButton(color: isDark ? Colors.white : Colors.black87),
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          child: AppBar(
+            leading:  CupertinoNavigationBarBackButton(
+              color: isDark?Colors.white : Colors.black,
+            ),
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => CreateKhatmahScreen(),
+            //       ),
+            //     ),
+            //     icon: const Icon(Icons.add),
+            //   )
+            // ],
+            centerTitle: true,
+            title: Text(
+              "الإعدادات",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.sizeOf(context).width > 600
+                    ? 12.sp
+                    : 18.sp,
+              ),
             ),
           ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: BackButton(color: isDark ? Colors.white : Colors.black87),
         ),
+
         body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: isDark
-                  ? [
-                      const Color(0xFF0F172A),
-                      const Color(0xFF1E293B),
-                      const Color(0xFF0F172A)
-                    ]
-                  : [
-                      const Color(0xFFF8F9FA),
-                      const Color(0xFFE9ECEF),
-                      const Color(0xFFF8F9FA)
-                    ],
-            ),
-          ),
+          // decoration: BoxDecoration(
+          //   gradient: LinearGradient(
+          //     begin: Alignment.topCenter,
+          //     end: Alignment.bottomCenter,
+          //     colors: isDark
+          //         ? [
+          //             const Color(0xFF0F172A),
+          //             const Color(0xFF1E293B),
+          //             const Color(0xFF0F172A)
+          //           ]
+          //         : [
+          //             const Color(0xFFF8F9FA),
+          //             const Color(0xFFE9ECEF),
+          //             const Color(0xFFF8F9FA)
+          //           ],
+          //   ),
+          // ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: BlocBuilder<CentralizedCubit, CentralizedState>(
@@ -59,7 +94,7 @@ class SettingsView extends StatelessWidget {
 
                 return ListView(
                   children: [
-                    SizedBox(height: MediaQuery.of(context).padding.top + 60),
+                    SizedBox(height: MediaQuery.of(context).padding.top + 10),
 
                     // 🔔 قسم التنبيهات والموقع
                     _buildSectionHeader(context, 'عام'),
@@ -142,38 +177,42 @@ class SettingsView extends StatelessWidget {
                                     : Colors.grey.shade300,
                               ),
                             ),
-                            child: DropdownButton<ThemeMode>(
-                              value: currentTheme,
-                              icon: const Icon(Icons.keyboard_arrow_down,
-                                  size: 18),
-                              underline: const SizedBox(),
-                              isDense: true,
-                              dropdownColor: isDark
-                                  ? const Color(0xFF1E293B)
-                                  : Colors.white,
-                              style: GoogleFonts.cairo(
-                                color: isDark ? Colors.white : Colors.black87,
-                                fontSize: 12,
+                            child: Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: DropdownButton<ThemeMode>(
+                                value: currentTheme,
+                                icon: const Icon(Icons.keyboard_arrow_down,
+                                    size: 18),
+                                underline: const SizedBox(),
+                                isDense: true,
+
+                                dropdownColor: isDark
+                                    ? const Color(0xFF1E293B)
+                                    : Colors.white,
+                                style: GoogleFonts.cairo(
+                                  color: isDark ? Colors.white : Colors.black87,
+                                  fontSize: 12,
+                                ),
+                                onChanged: (ThemeMode? newValue) {
+                                  if (newValue != null) {
+                                    cubit.setThemeMode(newValue);
+                                  }
+                                },
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: ThemeMode.system,
+                                    child: Text('تلقائي'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: ThemeMode.light,
+                                    child: Text('فاتح ☀️'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: ThemeMode.dark,
+                                    child: Text('داكن 🌙'),
+                                  ),
+                                ],
                               ),
-                              onChanged: (ThemeMode? newValue) {
-                                if (newValue != null) {
-                                  cubit.setThemeMode(newValue);
-                                }
-                              },
-                              items: const [
-                                DropdownMenuItem(
-                                  value: ThemeMode.system,
-                                  child: Text('تلقائي'),
-                                ),
-                                DropdownMenuItem(
-                                  value: ThemeMode.light,
-                                  child: Text('فاتح ☀️'),
-                                ),
-                                DropdownMenuItem(
-                                  value: ThemeMode.dark,
-                                  child: Text('داكن 🌙'),
-                                ),
-                              ],
                             ),
                           ),
                         ),
@@ -318,7 +357,8 @@ class SettingsView extends StatelessWidget {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B).withOpacity(0.6) : Colors.white,
+        // color: isDark ? const Color(0xFF1E293B).withOpacity(0.6) : Colors.white,
+        color: AppThemeColors.cardBackgroundColor(context),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,

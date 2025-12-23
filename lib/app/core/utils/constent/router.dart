@@ -1,6 +1,11 @@
 import 'package:muslimdaily/app/features/Khatmah/view/ComplateKhatmaView.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/KhatmahDashboard.dart';
 import 'package:muslimdaily/app/features/channal/view/QuranChannalPlayerView.dart';
+import 'package:muslimdaily/app/features/mainView/MainView.dart';
+import 'package:muslimdaily/app/features/mainView/view/FajrAlarmScreen.dart';
+import 'package:muslimdaily/app/features/mainView/widget/AllAzkarListView.dart';
+import 'package:muslimdaily/app/features/otherView/azkar_other.dart';
+import 'package:muslimdaily/app/features/prayerView/post_prayer_azkar.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/AyaBookmarkScreen.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/JozzsListView.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/hezbListView.dart';
@@ -9,35 +14,30 @@ import 'package:muslimdaily/app/features/quran/view/widget/surahListView.dart';
 import 'package:muslimdaily/app/features/radio/QuranRadioView.dart';
 import 'package:muslimdaily/app/features/radio/view/QuranRadioPlayerView.dart';
 import 'package:muslimdaily/app/features/radio/view/widget/RadioSearchScreen.dart';
+import 'package:muslimdaily/app/features/rokiaView/rokia.dart';
+import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
+import 'package:muslimdaily/app/features/splashView/splash.dart';
+import 'package:muslimdaily/app/features/zakatView/zakat_calculator_view.dart';
 
 import '../../../features/WirdView/WirdHomeScreen.dart';
 import '../../../features/aboutView/about.dart';
 import '../../../features/aboutView/SupportDeveloperScreen.dart';
-import '../../../features/azanView/timeingScreen.dart';
+import '../../../features/azanView/azanView.dart';
 import '../../../features/categories/categories_view.dart';
 import '../../../features/categories/view/categories_details.dart';
 import '../../../features/charity/RecurringCharityScreen.dart';
-import '../../../features/counter_view/counter_azkar.dart';
+import '../../../features/counterView/counter_azkar.dart';
 import '../../../features/hadith/hadith_view.dart';
 import '../../../features/hadithDetails/hadith_details_view.dart';
-import '../../../features/main_view/MainView.dart';
-import '../../../features/main_view/widget/AllAzkarListView.dart';
-import '../../../features/main_view/view/FajrAlarmScreen.dart';
 import '../../../features/QiblaView/QiblaDirection.dart';
-import '../../../features/messa_view/azkar_massa.dart';
-import '../../../features/other_view/azkar_other.dart';
-import '../../../features/prayer_view/post_prayer_azkar.dart';
+import '../../../features/messaView/azkar_massa.dart';
 import '../../../features/quran/quranView.dart';
 
 import '../../../features/quran/view/widget/AyaSearchScreen.dart';
 import '../../../features/quran/view/widget/TafsirquranView.dart';
-import '../../../features/rokia_view/rokia.dart';
-import '../../../features/sabah_view/azkar_sabah.dart';
 import '../../../features/settings/settings_view.dart';
 import '../../../features/sleep_view/sleep_azkar.dart';
-import '../../../features/splash_view/splash.dart';
-import '../../../features/zakat_view/zakat_calculator_view.dart';
-import '../../../features/mosques_nearby/MosquesMapScreen.dart';
+import '../../../features/mosquesNearby/MosquesMapScreen.dart';
 import '../../../features/charity/CharityDashboardScreen.dart';
 import '../../../features/charity/AddCharityScreen.dart';
 import '../../../features/charity/CharityHistoryScreen.dart';
@@ -110,7 +110,7 @@ class RouteGenerator {
 
     switch (settings.name) {
       case Routes.splashRoute:
-        return MaterialPageRoute(builder: (_) => const SplashScreen());
+        return MaterialPageRoute(builder: (_) => const SplashView());
       case Routes.quranKhitamRoute:
         return MaterialPageRoute(builder: (_) => const QuranKhitamView());
       case Routes.hizbeListScreenRoute:
@@ -185,7 +185,7 @@ class RouteGenerator {
       case '/ayaBookmarkScreen':
         return MaterialPageRoute(builder: (_) => const AyaBookmarkScreen());
       case '/timingScreen':
-        return MaterialPageRoute(builder: (_) => const TimingScreen());
+        return MaterialPageRoute(builder: (_) => const AzanView());
 
       case '/allazkarlistview':
         return MaterialPageRoute(builder: (_) => const Allazkarlistview());

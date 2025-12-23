@@ -1,4 +1,5 @@
-import 'package:muslimdaily/app/features/counter_view/counter_azkar.dart';
+
+import 'package:muslimdaily/app/features/counterView/counter_azkar.dart';
 
 import '../exports/all_exports.dart';
 

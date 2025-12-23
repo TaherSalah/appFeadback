@@ -1,9 +1,13 @@
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
 class NotificationSettingsView extends StatefulWidget {
   const NotificationSettingsView({super.key});
@@ -26,6 +30,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
   late int salatFrequency;
 
   bool _hasChanges = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -47,6 +52,9 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
   }
 
   Future<void> _saveAll() async {
+    if (_isLoading) return;
+    
+    setState(() => _isLoading = true);
     try {
       await _settings.setAdhanEnabled(isAdhanEnabled);
       await _settings.setAzkarSabahEnabled(isAzkarSabahEnabled);
@@ -63,6 +71,8 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       setState(() => _hasChanges = false);
     } catch (e) {
       KHelper.showError(message: 'حدث خطأ أثناء حفظ الإعدادات');
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -73,39 +83,58 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: Text(
-            'إعدادات التنبيهات',
-            style: GoogleFonts.cairo(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+        // extendBodyBehindAppBar: true,
+        // appBar: AppBar(
+        //   title: Text(
+        //     'إعدادات التنبيهات',
+        //     style: GoogleFonts.cairo(
+        //       fontSize: 20,
+        //       fontWeight: FontWeight.bold,
+        //       color: isDark ? Colors.white : Colors.black87,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        //   backgroundColor: Colors.transparent,
+        //   elevation: 0,
+        //   leading: BackButton(color: isDark ? Colors.white : Colors.black87),
+        // ),
+        appBar: PreferredSize(
+          preferredSize:
+          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            centerTitle: true,
+            title: Text(
+              'إعدادات التنبيهات',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
             ),
           ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: BackButton(color: isDark ? Colors.white : Colors.black87),
         ),
+
         body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: isDark
-                  ? [
-                      const Color(0xFF0F172A),
-                      const Color(0xFF1E293B),
-                      const Color(0xFF0F172A)
-                    ]
-                  : [
-                      const Color(0xFFF8F9FA),
-                      const Color(0xFFE9ECEF),
-                      const Color(0xFFF8F9FA)
-                    ],
-            ),
-          ),
+          // decoration: BoxDecoration(
+          //   gradient: LinearGradient(
+          //     begin: Alignment.topCenter,
+          //     end: Alignment.bottomCenter,
+          //     colors: isDark
+          //         ? [
+          //             const Color(0xFF0F172A),
+          //             const Color(0xFF1E293B),
+          //             const Color(0xFF0F172A)
+          //           ]
+          //         : [
+          //             const Color(0xFFF8F9FA),
+          //             const Color(0xFFE9ECEF),
+          //             const Color(0xFFF8F9FA)
+          //           ],
+          //   ),
+          // ),
           child: Column(
             children: [
               Expanded(
@@ -113,7 +142,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: ListView(
                     children: [
-                      SizedBox(height: MediaQuery.of(context).padding.top + 60),
+                      SizedBox(height: MediaQuery.of(context).padding.top ),
 
                       // 🕋 الأذان
                       _buildSectionHeader(context, 'الصلوات'),
@@ -286,18 +315,30 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
             width: double.infinity,
             height: 56,
             child: FloatingActionButton.extended(
-              onPressed: _hasChanges ? _saveAll : null,
-              backgroundColor: const Color(0xFFD4AF37),
-              elevation: _hasChanges ? 8 : 0,
-              label: Text(
-                'حفظ التغييرات',
-                style: GoogleFonts.cairo(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              icon: const Icon(Icons.save_rounded, color: Colors.white),
+              onPressed: (_hasChanges && !_isLoading) ? _saveAll : null,
+              // backgroundColor: const Color(0xFFD4AF37),
+              backgroundColor: KColors.primaryColor,
+              elevation: (_hasChanges && !_isLoading) ? 8 : 0,
+              label: _isLoading
+                  ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Text(
+                      'حفظ التغييرات',
+                      style: GoogleFonts.cairo(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+              icon: _isLoading
+                  ? null
+                  : const Icon(Icons.save_rounded, color: Colors.white),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -328,7 +369,8 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B).withOpacity(0.6) : Colors.white,
+        // color: isDark ? const Color(0xFF1E293B).withOpacity(0.6) : Colors.white,
+        color: AppThemeColors.cardBackgroundColor(context),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,

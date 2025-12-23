@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
-import 'package:muslimdaily/app/features/sabah_view/azkar_sabah.dart';
-import 'package:muslimdaily/app/features/messa_view/azkar_massa.dart';
+import 'package:muslimdaily/app/features/mainView/MainView.dart';
+import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:muslimdaily/app/features/hadith/hadith_view.dart';
+import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
-import 'package:muslimdaily/app/features/main_view/MainView.dart';
 import 'package:muslimdaily/app/features/charity/CharityDashboardScreen.dart';
 
 class NotificationManager {
@@ -339,10 +339,8 @@ class NotificationManager {
     try {
       print("📅 جاري جدولة سلسلة الأحاديث لـ 30 يوماً...");
 
-      // 1️⃣ إلغاء الجدولة القديمة للأحاديث (IDs 500-550)
-      for (int i = 500; i < 550; i++) {
-        await AwesomeNotifications().cancel(i);
-      }
+      // 1️⃣ إلغاء الجدولة القديمة للأحاديث
+      await AwesomeNotifications().cancelSchedulesByChannelKey('hadith_channel');
 
       final now = DateTime.now();
       // ⏰ وقت الحديث: 11 صباحاً كل يوم
@@ -492,11 +490,8 @@ class NotificationManager {
   }
 
   Future<void> _scheduleAdvancedFajrAlarm() async {
-    // 1. Cancel existing advanced fajr alarms (IDs 2000-3000)
-    // We expanded the range to ensure no old alarms remain
-    for (int i = 2000; i < 3000; i++) {
-      await AwesomeNotifications().cancel(i);
-    }
+    // 1. Cancel existing advanced fajr alarms
+    await AwesomeNotifications().cancelSchedulesByChannelKey('fajr_adhan_channel_v2');
 
     if (!_settingsService.isFajrAlarmEnabled) {
       print("🔕 Advanced Fajr Alarm is DISABLED.");

@@ -1,11 +1,8 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/localization/localization_manager.dart';
 import '../../../../core/shard/exports/all_exports.dart';
 import '../../../../core/shard/widgets/ui_animations.dart';
@@ -17,9 +14,9 @@ import '../../../../core/widgets/custom_divider_widget.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 import '../../../../core/widgets/head_title_item_builder.dart';
 import '../../../../core/widgets/image_widget.dart';
-import '../../../messa_view/azkar_massa.dart';
+import '../../../messaView/azkar_massa.dart';
+import '../../../shareCard/PremiumShareCard.dart';
 import '../../hadith_details_view.dart';
-import 'package:muslimdaily/app/features/share_card/PremiumShareCard.dart';
 import '../controller/hadith_details_bloc.dart';
 import '../controller/hadith_details_state.dart';
 

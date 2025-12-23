@@ -542,12 +542,12 @@ class AdhanWorkManagerService {
   }
 
   /// استرجاع تفضيلات الأذان المحفوظة
-  /// (هذه الدالة تحتاج ترجع Map أو كائن مخصص حسب استخدام timeingScreen.dart)
+  /// (هذه الدالة تحتاج ترجع Map أو كائن مخصص حسب استخدام azanView.dart)
   /// بناءً على الاستخدام في الملف الآخر، يبدو أنها ترجع SharedPreferences أو كائن شبيه.
   /// لكن بناءً على الاسم، سنعيدة SharedPreferences instance لأن الكود المستخدم كان:
   /// final prefs = await ...getAdhanPreferences();
   /// وهذا يوحي بأنها كانت تعيد prefs مباشرة أو كائن به بيانات.
-  /// دعونا نتحقق من timeingScreen.dart لنفهم المتوقع.
+  /// دعونا نتحقق من azanView.dart لنفهم المتوقع.
   /// ولكن للأمان، سنعيد الـ SharedPreferences instance نفسها كما يوحي الكود.
   Future<SharedPreferences> getAdhanPreferences() async {
     return await SharedPreferences.getInstance();

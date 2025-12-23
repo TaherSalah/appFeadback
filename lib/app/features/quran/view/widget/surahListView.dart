@@ -7,7 +7,7 @@ import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart' as surahModel;
 import 'package:quran_library/quran.dart';
 
-import '../../../messa_view/azkar_massa.dart';
+import '../../../messaView/azkar_massa.dart';
 
 class SurahListScreen extends StatefulWidget {
   const SurahListScreen({super.key});
