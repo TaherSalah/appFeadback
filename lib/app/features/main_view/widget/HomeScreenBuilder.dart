@@ -22,7 +22,7 @@ import 'AllahNameWidget.dart';
 import 'KidsEntryPointWidget.dart';
 import 'FridayCompanionWidget.dart';
 import 'DailyStreakWidget.dart';
-import 'AdvancedFajrAlarmWidget.dart';
+import 'FajrAlarmEntryWidget.dart';
 
 class MainViewBuilder extends StatefulWidget {
   const MainViewBuilder({super.key});
@@ -200,11 +200,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
                   // باقي المحتوى
                   SliverToBoxAdapter(
-
                     child: Column(
-
                       children: [
-
                         const SizedBox(height: 10),
                         // 🔥 قسم بماذا تشعر اليوم؟
                         // const SoulComfortWidget(),
@@ -216,7 +213,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                         const FridayCompanionWidget(),
 
                         // 🔥 منبه الفجر المتقدم
-                        const AdvancedFajrAlarmWidget(),
+                        // const FajrAlarmEntryWidget(),
                         // const SizedBox(height: 10),
 
                         // 🔥 صندوق الهدايا اليومي

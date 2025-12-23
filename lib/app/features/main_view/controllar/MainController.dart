@@ -124,6 +124,11 @@ class MainController extends ControllerMVC {
       "navigate": "/mosquesMap"
     },
     {
+      "title": "منبه الفجر",
+      "icon": "assets/icons/bell.png",
+      "navigate": "/fajrAlarm"
+    },
+    {
       "title": "الاعدادات",
       "icon": "assets/images/info (1).png",
       "navigate": "/settingsRoute"

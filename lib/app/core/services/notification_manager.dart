@@ -192,13 +192,13 @@ class NotificationManager {
 
   Future<void> requestIgnoreBatteryOptimizations() async {
     if (Platform.isAndroid) {
-       await AwesomeNotifications().showAlarmPage();
+      await AwesomeNotifications().showAlarmPage();
     }
   }
 
   Future<void> scheduleInstantTestNotification() async {
     DateTime testTime = DateTime.now().add(const Duration(seconds: 10));
-    
+
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 9999,
@@ -487,57 +487,80 @@ class NotificationManager {
   }
 
   Future<void> scheduleAdvancedFajrAlarm() async {
-     await _settingsService.init();
-     await _scheduleAdvancedFajrAlarm();
+    await _settingsService.init();
+    await _scheduleAdvancedFajrAlarm();
   }
 
   Future<void> _scheduleAdvancedFajrAlarm() async {
-    // 1. Cancel existing advanced fajr alarms (IDs 2000-2100)
-    for (int i = 2000; i < 2100; i++) {
-       await AwesomeNotifications().cancel(i);
+    // 1. Cancel existing advanced fajr alarms (IDs 2000-3000)
+    // We expanded the range to ensure no old alarms remain
+    for (int i = 2000; i < 3000; i++) {
+      await AwesomeNotifications().cancel(i);
     }
 
-    if (!_settingsService.isFajrAlarmEnabled) return;
+    if (!_settingsService.isFajrAlarmEnabled) {
+      print("🔕 Advanced Fajr Alarm is DISABLED.");
+      return;
+    }
 
     final hour = _settingsService.fajrAlarmHour;
     final minute = _settingsService.fajrAlarmMinute;
     final days = _settingsService.fajrAlarmDays; // 1-7 (Mon-Sun)
     final repetitions = _settingsService.fajrAlarmRepetitions;
 
-    print('🕒 Scheduling Advanced Fajr Alarm at $hour:$minute for days: $days with $repetitions repetitions');
+    // Default 5 minutes interval, but we could make it settings based later
+    const int intervalMinutes = 5;
+
+    print(
+        '🕒 Scheduling Advanced Fajr Alarm at $hour:$minute for days: $days with $repetitions repetitions (Interval: ${intervalMinutes}m)');
 
     for (int day in days) {
-       for (int r = 0; r < repetitions; r++) {
-          // Sneoze style: every 5 minutes
-          int offsetMinutes = r * 5;
-          int totalMin = minute + offsetMinutes;
-          int finalHour = (hour + (totalMin ~/ 60)) % 24;
-          int finalMinute = totalMin % 60;
+      for (int r = 0; r < repetitions; r++) {
+        // Calculate offset time
+        int offsetMinutes = r * intervalMinutes;
+        int totalMin = minute + offsetMinutes;
 
-          await AwesomeNotifications().createNotification(
-            content: NotificationContent(
-              id: 2000 + (day * 10) + r,
-              channelKey: 'fajr_adhan_channel_v2',
-              title: '⏰ منبه الفجر المتقدم',
-              body: 'حان وقت الاستيقاظ لصلاة الفجر 👋',
-              category: NotificationCategory.Alarm,
-              wakeUpScreen: true,
-              fullScreenIntent: true,
-              criticalAlert: true,
-            ),
-            schedule: NotificationCalendar(
-              weekday: day,
-              hour: finalHour,
-              minute: finalMinute,
-              second: 0,
-              repeats: true,
-              preciseAlarm: true,
-              allowWhileIdle: true,
-            ),
-          );
-       }
+        int finalHour = (hour + (totalMin ~/ 60)) % 24;
+        int finalMinute = totalMin % 60;
+
+        // Generate unique ID:
+        // Day (1-7) * 100 -> 100, 200... 700
+        // Repetition (0-9) -> 0, 1...
+        // Base 2000
+        // Example: Monday (1), 1st rep (0) -> 2100
+        // Example: Monday (1), 2nd rep (1) -> 2101
+        int uniqueId = 2000 + (day * 100) + r;
+
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: uniqueId,
+            channelKey: 'fajr_adhan_channel_v2',
+            title: '⏰ منبه الفجر المتقدم',
+            body: r == 0
+                ? 'حان وقت الاستيقاظ لصلاة الفجر 👋'
+                : 'تذكير إضافي: صلاة الفجر خير من النوم 🕌', // Different body for snoozes
+            category: NotificationCategory.Alarm,
+            wakeUpScreen: true,
+            fullScreenIntent: true,
+            criticalAlert: true,
+            autoDismissible: false, // User must dismiss it
+            locked: true, // Requires interaction
+          ),
+          schedule: NotificationCalendar(
+            weekday: day,
+            hour: finalHour,
+            minute: finalMinute,
+            second: 0,
+            repeats: true,
+            preciseAlarm: true,
+            allowWhileIdle: true,
+          ),
+        );
+        print(
+            "✅ Scheduled Alarm ID: $uniqueId for Day: $day at $finalHour:$finalMinute");
+      }
     }
-    print('✅ Advanced Fajr Alarms scheduled.');
+    print('✅ All Advanced Fajr Alarms scheduled successfully.');
   }
 
   // ==========================================

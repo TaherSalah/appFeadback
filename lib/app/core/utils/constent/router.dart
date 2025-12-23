@@ -22,6 +22,7 @@ import '../../../features/hadith/hadith_view.dart';
 import '../../../features/hadithDetails/hadith_details_view.dart';
 import '../../../features/main_view/MainView.dart';
 import '../../../features/main_view/widget/AllAzkarListView.dart';
+import '../../../features/main_view/view/FajrAlarmScreen.dart';
 import '../../../features/QiblaView/QiblaDirection.dart';
 import '../../../features/messa_view/azkar_massa.dart';
 import '../../../features/other_view/azkar_other.dart';
@@ -46,7 +47,6 @@ import '../../../features/achievements/AchievementsScreen.dart';
 import '../../../features/achievements/ChallengesManagementScreen.dart';
 import '../../../features/achievements/LeaderboardScreen.dart';
 import '../../../features/duas/DuasMainScreen.dart';
-import '../../../features/duas/DuaDetailScreen.dart';
 import '../../shard/exports/all_exports.dart';
 
 class Routes {
@@ -87,6 +87,7 @@ class Routes {
   static const String tafsirQuranRoute = "/TafsirQuranView";
   static const String zakatCalculatorRoute = "/ZakatCalculator";
   static const String settingsRoute = "/settings";
+  static const String fajrAlarmRoute = "/fajrAlarm";
 }
 
 class QuranRadioPlayerArgs {
@@ -163,7 +164,7 @@ class RouteGenerator {
       case '/compplateKhatna':
         return MaterialPageRoute(builder: (_) => const ComplateKhatmaView());
 
-        case '/settingsRoute':
+      case '/settingsRoute':
         return MaterialPageRoute(builder: (_) => const SettingsView());
 
       case '/WirdHomeScreen':
@@ -208,6 +209,8 @@ class RouteGenerator {
       case '/supportDeveloper':
         return MaterialPageRoute(
             builder: (_) => const SupportDeveloperScreen());
+      case Routes.fajrAlarmRoute:
+        return MaterialPageRoute(builder: (_) => const FajrAlarmScreen());
       case '/QuranRadioView':
         return MaterialPageRoute(builder: (_) => const QuranRadioView());
 
