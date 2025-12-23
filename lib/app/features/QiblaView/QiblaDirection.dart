@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:vector_math/vector_math.dart' as vector;
 
@@ -541,7 +542,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                 Text(
                   _getDirectionMessage(angle),
                   style: GoogleFonts.cairo(
-                    fontSize: 16,
+                    fontSize: ResponsiveUtil.isTablet(context)? 16:14,
                     fontWeight: FontWeight.bold,
                     color: (angle < 10 || angle > 350)
                         ? Colors.green

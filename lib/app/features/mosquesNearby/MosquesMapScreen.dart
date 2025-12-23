@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -127,25 +128,39 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "المساجد القريبة",
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.my_location),
-              onPressed: () {
-                if (_userPosition != null) {
-                  _mapController.move(
-                    LatLng(_userPosition!.latitude, _userPosition!.longitude),
-                    14,
-                  );
-                }
-              },
+
+        appBar: PreferredSize(
+          preferredSize:
+          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
             ),
-          ],
+            centerTitle: true,
+            title: Text(
+              "المساجد القريبة",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
+            actions: [
+    IconButton(
+                    icon: const Icon(Icons.my_location),
+                    onPressed: () {
+                      if (_userPosition != null) {
+                        _mapController.move(
+                          LatLng(_userPosition!.latitude, _userPosition!.longitude),
+                          14,
+                        );
+                      }
+                    },
+                  ),
+            ],
+          ),
         ),
+
         body: _userPosition == null
             ? const Center(child: CircularProgressIndicator())
             : Stack(

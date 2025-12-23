@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 
@@ -195,39 +199,62 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: Text(
-            'إعدادات الموقع',
-            style: GoogleFonts.cairo(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+        // extendBodyBehindAppBar: true,
+        // appBar: AppBar(
+        //   title: Text(
+        //     'إعدادات الموقع',
+        //     style: GoogleFonts.cairo(
+        //       fontSize: 20,
+        //       fontWeight: FontWeight.bold,
+        //       color: isDark ? Colors.white : Colors.black87,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        //   backgroundColor: Colors.transparent,
+        //   elevation: 0,
+        //   leading: BackButton(color: isDark ? Colors.white : Colors.black87),
+        // ),
+        appBar: PreferredSize(
+          preferredSize:
+          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
             ),
+            centerTitle: true,
+            title: Text(
+              'إعدادات الموقع',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
+            actions: [
+
+
+            ],
           ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: BackButton(color: isDark ? Colors.white : Colors.black87),
         ),
+
         body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: isDark
-                  ? [
-                      const Color(0xFF0F172A),
-                      const Color(0xFF1E293B),
-                      const Color(0xFF0F172A)
-                    ]
-                  : [
-                      const Color(0xFFF8F9FA),
-                      const Color(0xFFE9ECEF),
-                      const Color(0xFFF8F9FA)
-                    ],
-            ),
-          ),
+          // decoration: BoxDecoration(
+          //   gradient: LinearGradient(
+          //     begin: Alignment.topCenter,
+          //     end: Alignment.bottomCenter,
+          //     colors: isDark
+          //         ? [
+          //             const Color(0xFF0F172A),
+          //             const Color(0xFF1E293B),
+          //             const Color(0xFF0F172A)
+          //           ]
+          //         : [
+          //             const Color(0xFFF8F9FA),
+          //             const Color(0xFFE9ECEF),
+          //             const Color(0xFFF8F9FA)
+          //           ],
+          //   ),
+          // ),
           child: isLocationLoading
               ? const Center(child: CircularProgressIndicator())
               : Column(
@@ -385,7 +412,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
             height: 56,
             child: FloatingActionButton.extended(
               onPressed: _hasChanges ? _saveLocationChanges : null,
-              backgroundColor: const Color(0xFFD4AF37),
+              // backgroundColor: const Color(0xFFD4AF37),
+              backgroundColor: KColors.primaryColor,
               elevation: _hasChanges ? 8 : 0,
               label: Text(
                 'حفظ خيارات الموقع',
@@ -395,7 +423,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                   color: Colors.white,
                 ),
               ),
-              icon: const Icon(Icons.check_rounded, color: Colors.white),
+              // icon: const Icon(Icons.check_rounded, color: Colors.white),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -426,7 +454,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B).withOpacity(0.6) : Colors.white,
+        // color: isDark ? const Color(0xFF1E293B).withOpacity(0.6) : Colors.white,
+        color: AppThemeColors.cardBackgroundColor(context),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
