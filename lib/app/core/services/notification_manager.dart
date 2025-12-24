@@ -592,10 +592,33 @@ class NotificationManager {
   }
 
   // --- Static Listeners ---
+
+
   @pragma('vm:entry-point')
   static Future<void> onNotificationCreatedMethod(
       ReceivedNotification receivedNotification) async {
-    // print('📱 Notification Created: ${receivedNotification.id}');
+    print('🔔 Notification Created: ${receivedNotification.id}');
+    
+    // Check if this is an Adhan notification with route
+    final route = receivedNotification.payload?['route'];
+    if (route == 'adhan_screen') {
+      // Check if overlay is enabled
+      final settings = SettingsService();
+      await settings.init();
+      
+      if (settings.isAdhanOverlayEnabled) {
+        final navigator = CentralizedCubit.navigatorKey.currentState;
+        if (navigator != null) {
+          navigator.push(MaterialPageRoute(
+            builder: (_) => AdhanOverlayScreen(
+              prayerName: receivedNotification.payload?['prayerName'],
+              cityName: receivedNotification.payload?['cityName'],
+              prayerTime: receivedNotification.payload?['prayer_time'],
+            ),
+          ));
+        }
+      }
+    }
   }
 
   @pragma('vm:entry-point')
