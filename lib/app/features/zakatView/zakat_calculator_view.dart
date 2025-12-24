@@ -1529,29 +1529,18 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               _buildSectionCard(
                 title: "زكاة الذهب",
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: _launchGoldPriceUrl,
-                      icon: const Icon(Icons.link, size: 16),
-                      label: Text("تحقق من سعر الذهب اليوم",
-                          style: GoogleFonts.cairo(
-                              fontSize: 12.sp,
-                              decoration: TextDecoration.underline)),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 10,
+                      runSpacing: 10,
                       children: [
-                        Text("غرض اقتناء الذهب:", style: GoogleFonts.cairo(fontSize: 12.sp)),
+                        Text("غرض اقتناء الذهب:",
+                            style: GoogleFonts.cairo(fontSize: 12.sp)),
                         Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             _buildToggleBtn("ادخار/استثمار", _isGoldInvestment, () {
                               setState(() => _isGoldInvestment = true);
@@ -2566,6 +2555,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
                     child: Row(
+                      spacing: 15,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildCircleActionButton(
@@ -2574,35 +2564,35 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           onTap: _shareResult,
                           color: Colors.blue,
                         ),
-                        const SizedBox(width: 12),
+                        // const SizedBox(width: 12),
                         _buildCircleActionButton(
                           icon: Icons.picture_as_pdf,
                           label: "تقرير PDF",
                           onTap: _generatePdf,
                           color: Colors.red,
                         ),
-                        const SizedBox(width: 12),
+                        // const SizedBox(width: 12),
                         _buildCircleActionButton(
                           icon: Icons.history,
                           label: "السجل",
                           onTap: () => _showHistorySheet(isDark),
                           color: Colors.orange,
                         ),
-                        const SizedBox(width: 12),
-                        _buildCircleActionButton(
-                          icon: _isFajrEnabled ? Icons.notifications_active : Icons.notifications_off,
-                          label: "منبه الفجر",
-                          onTap: _toggleFajrAlarm,
-                          color: _isFajrEnabled ? Colors.purple : Colors.grey,
-                        ),
-                        const SizedBox(width: 12),
+                        // const SizedBox(width: 12),
+                        // _buildCircleActionButton(
+                        //   icon: _isFajrEnabled ? Icons.notifications_active : Icons.notifications_off,
+                        //   label: "منبه الفجر",
+                        //   onTap: _toggleFajrAlarm,
+                        //   color: _isFajrEnabled ? Colors.purple : Colors.grey,
+                        // ),
+                        // const SizedBox(width: 12),
                         _buildCircleActionButton(
                           icon: Icons.alarm,
                           label: "منبه الحول",
                           onTap: _scheduleReminder,
                           color: Colors.green,
                         ),
-                        const SizedBox(width: 12),
+                        // const SizedBox(width: 12),
                         _buildCircleActionButton(
                           icon: Icons.payments_outlined,
                           label: "تسجيل دفع",

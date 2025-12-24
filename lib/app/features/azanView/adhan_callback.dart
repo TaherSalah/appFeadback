@@ -54,14 +54,16 @@ void alarmCallback(int id) async {
         fullScreenIntent: true,
         criticalAlert: true,
         category: NotificationCategory.Alarm,
-        locked: true,
-        autoDismissible: false,
+        locked: false,
+        autoDismissible: true,
         backgroundColor: isFajr ? Colors.orange : Colors.green,
         color: Colors.white,
         payload: {
           'prayerName': prayerName,
           'cityName': cityName,
+          'prayer_time': prayerTime, // ✅ Added for overlay
           'id': id.toString(),
+          'route': 'adhan_screen', // ✅ توجيه لصفحة الأذان الجديد
         },
       ),
       actionButtons: [

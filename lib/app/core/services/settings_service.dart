@@ -61,6 +61,13 @@ class SettingsService {
     await _prefs.setBool(_kIsSalatAlaNabiEnabled, value);
   }
 
+  // --- Adhan Overlay ---
+  static const String _kIsAdhanOverlayEnabled = 'is_adhan_overlay_enabled';
+  bool get isAdhanOverlayEnabled => _prefs.getBool(_kIsAdhanOverlayEnabled) ?? true;
+  Future<void> setAdhanOverlayEnabled(bool value) async {
+    await _prefs.setBool(_kIsAdhanOverlayEnabled, value);
+  }
+
   static const String _kSalatAlaNabiFrequencyMinutes =
       'salat_ala_nabi_frequency_minutes';
 

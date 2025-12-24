@@ -25,6 +25,7 @@ import 'KidsEntryPointWidget.dart';
 import 'FridayCompanionWidget.dart';
 import 'DailyStreakWidget.dart';
 import 'FajrAlarmEntryWidget.dart';
+import '../../azanView/view/adhan_overlay_screen.dart';
 
 class MainViewBuilder extends StatefulWidget {
   const MainViewBuilder({super.key});
@@ -527,7 +528,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
             ],
           ),
         ),
-      ),
-    );
+      /// TODO:- for test Adhan Overlay Screen
+     ));
   }
 }

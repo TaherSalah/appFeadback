@@ -27,17 +27,16 @@ class ZakatPdfService {
   }) async {
     final pdf = pw.Document();
 
-    // Load Arabic Font (Use a standard font helper or load from assets if possible)
-    // For simplicity in this step, we will use a built-in font or try to load one.
-    // In a real app, you MUST load a TTF font that supports Arabic.
-    // We will assume "Arial" or similar is available or use `PdfGoogleFonts`.
-    // Since we can't easily fetch internet fonts here without risk, we'll try to use a standard font
-    // or if the app has assets, use them. The app HAS assets: assets/fonts/cairo/Cairo-Regular.ttf
-    
     final fontData = await rootBundle.load("assets/fonts/cairo/Cairo-Regular.ttf");
     final ttf = pw.Font.ttf(fontData);
     final boldFontData = await rootBundle.load("assets/fonts/cairo/Cairo-Bold.ttf");
     final ttfBold = pw.Font.ttf(boldFontData);
+
+    // Load Images
+    final logoImage = await imageFromAssetBundle('assets/images/ic_stat_notify.png');
+    final appStoreImage = await imageFromAssetBundle('assets/images/app-store.png');
+    final playStoreImage = await imageFromAssetBundle('assets/images/playstore.png');
+    final huaweiImage = await imageFromAssetBundle('assets/images/huawei.png'); 
 
     pdf.addPage(
       pw.Page(
@@ -55,7 +54,7 @@ class ZakatPdfService {
               pw.Container(
                 padding: const pw.EdgeInsets.all(20),
                 decoration: pw.BoxDecoration(
-                  color: PdfColors.green800,
+                  color: PdfColors.black,
                   borderRadius: pw.BorderRadius.circular(10),
                 ),
                 child: pw.Row(
@@ -69,12 +68,20 @@ class ZakatPdfService {
                                 color: PdfColors.white,
                                 fontSize: 24,
                                 fontWeight: pw.FontWeight.bold)),
-                        pw.Text(" تطبيق رفيق المسلم اليومي",
+                        pw.Text("رفيق المسلم اليومي",
                             style: pw.TextStyle(
-                                color: PdfColors.white, fontSize: 14)),
+                                color: PdfColors.white, fontSize: 16)),
+                        pw.SizedBox(height: 5),
+                         pw.Text("حملة لتنال الأجر",
+                            style: pw.TextStyle(
+                                color: PdfColors.amber200, fontSize: 12)),       
                       ],
                     ),
-                    pw.PdfLogo(), // Placeholder logo
+                    pw.Container(
+                      height: 90,
+                      width: 90,
+                      child: pw.Image(logoImage),
+                    ),
                   ],
                 ),
               ),
@@ -181,8 +188,23 @@ class ZakatPdfService {
 
               pw.Spacer(),
               pw.Divider(),
+              
+              // Stores Row
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text("حمل التطبيق الآن:", style: const pw.TextStyle(fontSize: 10)),
+                  pw.SizedBox(width: 10),
+                  pw.Container(height: 20, child: pw.Image(playStoreImage)),
+                  pw.SizedBox(width: 10),
+                  pw.Container(height: 20, child: pw.Image(appStoreImage)),
+                  pw.SizedBox(width: 10),
+                  pw.Container(height: 20, child: pw.Image(huaweiImage)),
+                ]
+              ),
+              pw.SizedBox(height: 5),
               pw.Text(
-                "هذا التقرير صادر إلكترونياً من تطبيق رفيق المسلم. يُنصح بمراجعة أهل العلم للتأكد من التفاصيل الفقهية الدقيقة.",
+                "هذا التقرير صادر إلكترونياً من تطبيق رفيق المسلم اليومي. يُنصح بمراجعة أهل العلم للتأكد من التفاصيل الفقهية الدقيقة.",
                 style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
                 textAlign: pw.TextAlign.center,
               ),

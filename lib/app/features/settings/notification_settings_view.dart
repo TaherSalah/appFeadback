@@ -22,6 +22,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
 
   // Local state for UI
   late bool isAdhanEnabled;
+  late bool isAdhanOverlayEnabled;
   late bool isAzkarSabahEnabled;
   late bool isAzkarMassaEnabled;
   late bool isAzkarSleepEnabled;
@@ -41,6 +42,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
   void _loadCurrentSettings() {
     setState(() {
       isAdhanEnabled = _settings.isAdhanEnabled;
+      isAdhanOverlayEnabled = _settings.isAdhanOverlayEnabled;
       isAzkarSabahEnabled = _settings.isAzkarSabahEnabled;
       isAzkarMassaEnabled = _settings.isAzkarMassaEnabled;
       isAzkarSleepEnabled = _settings.isAzkarSleepEnabled;
@@ -57,6 +59,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
     setState(() => _isLoading = true);
     try {
       await _settings.setAdhanEnabled(isAdhanEnabled);
+      await _settings.setAdhanOverlayEnabled(isAdhanOverlayEnabled);
       await _settings.setAzkarSabahEnabled(isAzkarSabahEnabled);
       await _settings.setAzkarMassaEnabled(isAzkarMassaEnabled);
       await _settings.setAzkarSleepEnabled(isAzkarSleepEnabled);
@@ -159,6 +162,21 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                             onChanged: (val) {
                               setState(() {
                                 isAdhanEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'شاشة الأذان المنبثقة',
+                            subtitle: 'عرض شاشة كاملة عند الأذان',
+                            icon: Icons.fullscreen,
+                            iconColor: Colors.teal[600]!,
+                            value: isAdhanOverlayEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isAdhanOverlayEnabled = val;
                                 _hasChanges = true;
                               });
                             },

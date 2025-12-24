@@ -10,6 +10,7 @@ import 'package:muslimdaily/app/features/hadith/hadith_view.dart';
 import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
 import 'package:muslimdaily/app/features/charity/CharityDashboardScreen.dart';
+import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
 
 class NotificationManager {
   static final NotificationManager _instance = NotificationManager._internal();
@@ -538,8 +539,8 @@ class NotificationManager {
             wakeUpScreen: true,
             fullScreenIntent: true,
             criticalAlert: true,
-            autoDismissible: false, // User must dismiss it
-            locked: true, // Requires interaction
+            autoDismissible: true, // User must dismiss it
+            locked: false, // Requires interaction
           ),
           schedule: NotificationCalendar(
             weekday: day,
@@ -644,6 +645,20 @@ class NotificationManager {
       case 'charity_dashboard':
         navigator.push(
             MaterialPageRoute(builder: (_) => const CharityDashboardScreen()));
+        break;
+      case 'adhan_screen':
+        // Check if overlay is enabled in settings
+        final settings = SettingsService();
+        await settings.init();
+        if (settings.isAdhanOverlayEnabled) {
+          navigator.push(MaterialPageRoute(
+            builder: (_) => AdhanOverlayScreen(
+              prayerName: receivedAction.payload?['prayerName'],
+              cityName: receivedAction.payload?['cityName'],
+              prayerTime: receivedAction.payload?['prayer_time'],
+            ),
+          ));
+        }
         break;
     }
   }
