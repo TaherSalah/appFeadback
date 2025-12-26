@@ -129,6 +129,11 @@ class MainController extends ControllerMVC {
       "navigate": "/fajrAlarm"
     },
     {
+      "title": "كتب الحديث",
+      "icon": "assets/images/kaaba.png",
+      "navigate": "/NineBooksScreen"
+    },
+    {
       "title": "الاعدادات",
       "icon": "assets/images/app.png",
       "navigate": "/settingsRoute"

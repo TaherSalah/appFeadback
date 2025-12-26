@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -10,6 +11,8 @@ import '../apis_services/api_services.dart';
 import '../cache/shard_pref/shardpref_obj.dart';
 import '../cubit/api_client/api_client_bloc.dart';
 import '../cubit/bloc_observer.dart';
+import 'objectbox.dart';
+import '../../features/hadith_books/controllers/books_controller.dart';
 
 // final sl = GetIt.instance;
 
@@ -42,6 +45,16 @@ abstract class Di {
     _i.registerLazySingleton(() => sharedPreferences);
     _i.registerLazySingleton(() => DioClientImpl(apiClientBloc: _i()));
     _i.registerLazySingleton(() => ApiClientBloc());
+
+    // ObjectBox for Hadith Books
+    final objBox = await ObjBox.create();
+    _i.registerSingleton<ObjBox>(objBox);
+    Get.put<ObjBox>(objBox);
+
+    // Ensure BooksController gets the store if it was already initialized
+    if (Get.isRegistered<BooksController>()) {
+      Get.find<BooksController>().setStore(objBox.store);
+    }
   }
 
   static DioClientImpl get dioClient => _i.get<DioClientImpl>();

@@ -32,6 +32,9 @@ import '../../../features/hadithDetails/hadith_details_view.dart';
 import '../../../features/QiblaView/QiblaDirection.dart';
 import '../../../features/messaView/azkar_massa.dart';
 import '../../../features/quran/quranView.dart';
+import '../../../features/hadith_books/presentation/nine_books_screen.dart';
+import '../../../features/hadith_books/presentation/details/collection_details_screen.dart';
+import '../../../features/hadith_books/presentation/read_view.dart';
 
 import '../../../features/quran/view/widget/AyaSearchScreen.dart';
 import '../../../features/quran/view/widget/TafsirquranView.dart';
@@ -213,6 +216,13 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const FajrAlarmScreen());
       case '/QuranRadioView':
         return MaterialPageRoute(builder: (_) => const QuranRadioView());
+
+      case '/NineBooksScreen':
+        return MaterialPageRoute(builder: (_) => const NineBooksScreen());
+      case '/CollectionDetailsScreen':
+        return MaterialPageRoute(builder: (_) => const CollectionDetailsScreen());
+      case '/ReadView':
+        return MaterialPageRoute(builder: (_) => ReadView());
 
       case Routes.zakatCalculatorRoute:
         return MaterialPageRoute(builder: (_) => const ZakatCalculatorView());

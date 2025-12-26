@@ -22,6 +22,14 @@ dependencies:
   in_app_review: ^2.0.8
   flutter_screenutil:
   http:
+  objectbox: ^2.5.0
+  objectbox_flutter_libs: ^2.5.0
+  gap: ^3.0.1
+  flutter_staggered_animations: ^1.0.0
+  uuid: ^4.3.3
+  path: ^1.9.0
+  flutter_cache_manager: ^3.3.1
+
 
 
   # Share
@@ -138,6 +146,8 @@ dev_dependencies:
   build_runner: ^2.4.8
   freezed: ^2.4.6
   json_serializable: ^6.7.1
+  objectbox_generator: ^2.5.0
+
 flutter:
 
   uses-material-design: true
@@ -147,6 +157,24 @@ flutter:
     - assets/json/
     - assets/icons/
     - assets/athan/
+    - assets/svg/
+    - assets/svg/book_name/
+    - assets/svg/hijri/
+    - assets/json/books_data/abudawud_books/
+    - assets/json/books_data/adab_books/
+    - assets/json/books_data/ahmad_books/
+    - assets/json/books_data/bukhari_books/
+    - assets/json/books_data/bulugh_books/
+    - assets/json/books_data/darimi_books/
+    - assets/json/books_data/forty_books/
+    - assets/json/books_data/ibnmajah_books/
+    - assets/json/books_data/malik_books/
+    - assets/json/books_data/mishkat_books/
+    - assets/json/books_data/muslim_books/
+    - assets/json/books_data/nasai_books/
+    - assets/json/books_data/riyadussalihin_books/
+    - assets/json/books_data/shamail_books/
+    - assets/json/books_data/tirmidhi_books/
 
   fonts:
     - family: maja
