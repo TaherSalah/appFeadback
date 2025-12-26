@@ -9,7 +9,11 @@ import '../../../core/shard/constanc/app_style.dart';
 import '../controllers/books_controller.dart';
 import '../controllers/extensions/books_getters_extension.dart';
 import 'widgets/chapters_widget.dart';
+import 'bookmarks_view.dart';
+import 'search_view.dart';
 // import '../../core/utils/helpers/notifications_manager.dart'; // Stubbed
+
+
 
 import 'package:flutter/cupertino.dart';
 
@@ -43,6 +47,36 @@ class ReadView extends StatelessWidget {
           ),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchView(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.bookmarks,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const BookmarksView(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       extendBodyBehindAppBar: false,
       body: Column(

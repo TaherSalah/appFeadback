@@ -504,10 +504,47 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "8:5096747983696790277",
+      "lastPropertyId": "5:997281658842579399",
+      "name": "BookmarkModel",
+      "properties": [
+        {
+          "id": "1:2677260972005193891",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:9170855992869740334",
+          "name": "category",
+          "type": 9
+        },
+        {
+          "id": "3:7452637977286557968",
+          "name": "note",
+          "type": 9
+        },
+        {
+          "id": "4:1773478814288887773",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "5:997281658842579399",
+          "name": "hadithId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "7:9223196194048186749",
+          "relationTarget": "ARHadithModel"
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "7:4176367185372955030",
-  "lastIndexId": "6:8557786350588478354",
+  "lastEntityId": "8:5096747983696790277",
+  "lastIndexId": "7:9223196194048186749",
   "lastRelationId": "2:5276487986925670381",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

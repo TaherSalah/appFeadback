@@ -18,6 +18,7 @@ import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 import 'app/features/hadith_books/data/models/ar_hadith_model.dart';
 import 'app/features/hadith_books/data/models/bn_hadith_model.dart';
 import 'app/features/hadith_books/data/models/book_obj_model.dart';
+import 'app/features/hadith_books/data/models/bookmark_model.dart';
 import 'app/features/hadith_books/data/models/collection_lang.dart';
 import 'app/features/hadith_books/data/models/collection_model.dart';
 import 'app/features/hadith_books/data/models/en_hadith_model.dart';
@@ -532,6 +533,42 @@ final _entities = <obx_int.ModelEntity>[
             relationTarget: 'Collection')
       ],
       relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(8, 5096747983696790277),
+      name: 'BookmarkModel',
+      lastPropertyId: const obx_int.IdUid(5, 997281658842579399),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 2677260972005193891),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 9170855992869740334),
+            name: 'category',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 7452637977286557968),
+            name: 'note',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 1773478814288887773),
+            name: 'createdAt',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 997281658842579399),
+            name: 'hadithId',
+            type: 11,
+            flags: 520,
+            indexId: const obx_int.IdUid(7, 9223196194048186749),
+            relationTarget: 'ARHadithModel')
+      ],
+      relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[])
 ];
 
@@ -570,8 +607,8 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(7, 4176367185372955030),
-      lastIndexId: const obx_int.IdUid(6, 8557786350588478354),
+      lastEntityId: const obx_int.IdUid(8, 5096747983696790277),
+      lastIndexId: const obx_int.IdUid(7, 9223196194048186749),
       lastRelationId: const obx_int.IdUid(2, 5276487986925670381),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [],
@@ -1148,6 +1185,48 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0);
           object.collection.attach(store);
           return object;
+        }),
+    BookmarkModel: obx_int.EntityDefinition<BookmarkModel>(
+        model: _entities[7],
+        toOneRelations: (BookmarkModel object) => [object.hadith],
+        toManyRelations: (BookmarkModel object) => {},
+        getId: (BookmarkModel object) => object.id,
+        setId: (BookmarkModel object, int id) {
+          object.id = id;
+        },
+        objectToFB: (BookmarkModel object, fb.Builder fbb) {
+          final categoryOffset = fbb.writeString(object.category);
+          final noteOffset =
+              object.note == null ? null : fbb.writeString(object.note!);
+          fbb.startTable(6);
+          fbb.addInt64(0, object.id ?? 0);
+          fbb.addOffset(1, categoryOffset);
+          fbb.addOffset(2, noteOffset);
+          fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
+          fbb.addInt64(4, object.hadith.targetId);
+          fbb.finish(fbb.endTable());
+          return object.id ?? 0;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 4);
+          final categoryParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final noteParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 8);
+          final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
+          final object = BookmarkModel(
+              id: idParam,
+              category: categoryParam,
+              note: noteParam,
+              createdAt: createdAtParam);
+          object.hadith.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
+          object.hadith.attach(store);
+          return object;
         })
   };
 
@@ -1524,4 +1603,27 @@ class URHadithModel_ {
   /// see [URHadithModel.collection]
   static final collection = obx.QueryRelationToOne<URHadithModel, Collection>(
       _entities[6].properties[14]);
+}
+
+/// [BookmarkModel] entity fields to define ObjectBox queries.
+class BookmarkModel_ {
+  /// see [BookmarkModel.id]
+  static final id =
+      obx.QueryIntegerProperty<BookmarkModel>(_entities[7].properties[0]);
+
+  /// see [BookmarkModel.category]
+  static final category =
+      obx.QueryStringProperty<BookmarkModel>(_entities[7].properties[1]);
+
+  /// see [BookmarkModel.note]
+  static final note =
+      obx.QueryStringProperty<BookmarkModel>(_entities[7].properties[2]);
+
+  /// see [BookmarkModel.createdAt]
+  static final createdAt =
+      obx.QueryDateProperty<BookmarkModel>(_entities[7].properties[3]);
+
+  /// see [BookmarkModel.hadith]
+  static final hadith = obx.QueryRelationToOne<BookmarkModel, ARHadithModel>(
+      _entities[7].properties[4]);
 }

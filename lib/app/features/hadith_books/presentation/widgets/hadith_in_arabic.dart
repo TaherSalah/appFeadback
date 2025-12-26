@@ -42,6 +42,89 @@ class HadithInArabic extends StatelessWidget {
     );
   }
 
+  Future<void> _showCategoryDialog(BuildContext context, ARHadithModel hadith) async {
+    final categories = [
+      'أخلاق',
+      'عبادات',
+      'فضائل',
+      'أحكام',
+      'سيرة نبوية',
+      'دعاء',
+      'عام',
+    ];
+
+    String? selectedCategory = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final baseColor = KColors.primaryColor;
+        
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+          child: Container(
+            padding: EdgeInsets.all(20.r),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0F172A) : Colors.white,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'اختر التصنيف',
+                  style: GoogleFonts.cairo(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                ...categories.map((category) {
+                  return InkWell(
+                    onTap: () => Navigator.pop(context, category),
+                    child: Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(bottom: 10.h),
+                      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+                      decoration: BoxDecoration(
+                        color: baseColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: baseColor.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        category,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.cairo(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selectedCategory != null) {
+      await booksCtrl.toggleBookmark(hadith, category: selectedCategory);
+      Fluttertoast.showToast(
+        msg: "تم حفظ الحديث في: $selectedCategory",
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green.shade600,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -198,35 +281,61 @@ $otherLangHadithText
                   SizedBox(height: 30.h),
 
                   // Action Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _ActionButton(
-                        icon: Icons.copy_rounded,
-                        label: "نسخ",
-                        onTap: () => copyText(shareFullText),
-                      ),
-                      _ActionButton(
-                        icon: Icons.image_outlined,
-                        label: "صورة",
-                        onTap: () {
-                          showGeneralDialog(
-                            context: context,
-                            pageBuilder: (context, anim1, anim2) =>
-                                PremiumShareCard(
-                              azkarName: arabicHadith.bookName,
-                              text: arabicHadith.hadithText,
-                              source: arabicHadith.grade1,
-                            ),
-                          );
-                        },
-                      ),
-                      _ActionButton(
-                        icon: Icons.share_rounded,
-                        label: "مشاركة",
-                        onTap: () => shareText(shareFullText, "حديث نبوي شريف"),
-                      ),
-                    ],
+                  GetBuilder<BooksController>(
+                    builder: (ctrl) {
+                      final isBookmarked = ctrl.isBookmarked(arabicHadith.id ?? 0);
+                      
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _ActionButton(
+                            icon: Icons.copy_rounded,
+                            label: "نسخ",
+                            onTap: () => copyText(shareFullText),
+                          ),
+                          _ActionButton(
+                            icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                            label: isBookmarked ? "محفوظ" : "حفظ",
+                            onTap: () async {
+                              if (!isBookmarked) {
+                                // Show category selection dialog
+                                await _showCategoryDialog(context, arabicHadith);
+                              } else {
+                                // Remove bookmark
+                                await ctrl.toggleBookmark(arabicHadith);
+                                Fluttertoast.showToast(
+                                  msg: "تم إلغاء حفظ الحديث",
+                                  gravity: ToastGravity.BOTTOM,
+                                  backgroundColor: Colors.orange.shade600,
+                                  textColor: Colors.white,
+                                );
+                              }
+                            },
+                            isHighlighted: isBookmarked,
+                          ),
+                          _ActionButton(
+                            icon: Icons.image_outlined,
+                            label: "صورة",
+                            onTap: () {
+                              showGeneralDialog(
+                                context: context,
+                                pageBuilder: (context, anim1, anim2) =>
+                                    PremiumShareCard(
+                                  azkarName: arabicHadith.bookName,
+                                  text: arabicHadith.hadithText,
+                                  source: arabicHadith.grade1,
+                                ),
+                              );
+                            },
+                          ),
+                          _ActionButton(
+                            icon: Icons.share_rounded,
+                            label: "مشاركة",
+                            onTap: () => shareText(shareFullText, "حديث نبوي شريف"),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -266,11 +375,13 @@ class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final bool isHighlighted;
 
   const _ActionButton({
     required this.icon,
     required this.label,
     required this.onTap,
+    this.isHighlighted = false,
   });
 
   @override
@@ -285,16 +396,20 @@ class _ActionButton extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30.r),
-          color: isDark
-              ? Colors.white.withOpacity(0.04)
-              : primary.withOpacity(0.06),
+          color: isHighlighted
+              ? primary.withOpacity(0.2)
+              : (isDark
+                  ? Colors.white.withOpacity(0.04)
+                  : primary.withOpacity(0.06)),
         ),
         child: Row(
           children: [
             Icon(
               icon,
               size: 18.sp,
-              color: isDark ? Colors.greenAccent : primary,
+              color: isHighlighted
+                  ? primary
+                  : (isDark ? Colors.greenAccent : primary),
             ),
             SizedBox(width: 6.w),
             Text(
@@ -302,7 +417,9 @@ class _ActionButton extends StatelessWidget {
               style: GoogleFonts.cairo(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : Colors.grey[900],
+                color: isHighlighted
+                    ? primary
+                    : (isDark ? Colors.white70 : Colors.grey[900]),
               ),
             ),
           ],

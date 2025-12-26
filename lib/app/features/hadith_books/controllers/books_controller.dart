@@ -21,6 +21,8 @@ import '../data/models/ur_hadith_model.dart';
 
 // Assuming objectbox.g.dart is in the root of the project by default or correctly placed
 import '../../../../../objectbox.g.dart';
+import '../data/models/bookmark_model.dart';
+
 
 class BooksController extends GetxController {
   static BooksController get instance =>
@@ -139,6 +141,159 @@ class BooksController extends GetxController {
     lastReadedHadithsWorker.dispose();
     super.dispose();
   }
+
+  // ============================================
+  // Bookmarks Management Methods
+  // ============================================
+
+  /// Toggle bookmark for a hadith
+  Future<bool> toggleBookmark(ARHadithModel hadith, {String category = 'عام'}) async {
+    try {
+      final bookmarkBox = store.box<BookmarkModel>();
+      
+      // Check if already bookmarked
+      final existingBookmark = bookmarkBox
+          .query(BookmarkModel_.hadith.equals(hadith.id!))
+          .build()
+          .findFirst();
+      
+      if (existingBookmark != null) {
+        // Remove bookmark
+        bookmarkBox.remove(existingBookmark.id!);
+        update();
+        return false; // Unbookmarked
+      } else {
+        // Add bookmark
+        final bookmark = BookmarkModel(
+          category: category,
+          createdAt: DateTime.now(),
+        );
+        bookmark.hadith.target = hadith;
+        bookmarkBox.put(bookmark);
+        update();
+        return true; // Bookmarked
+      }
+    } catch (e) {
+      log('Error toggling bookmark: $e', name: 'BooksController');
+      return false;
+    }
+  }
+
+  /// Check if a hadith is bookmarked
+  bool isBookmarked(int hadithId) {
+    try {
+      final bookmarkBox = store.box<BookmarkModel>();
+      final bookmark = bookmarkBox
+          .query(BookmarkModel_.hadith.equals(hadithId))
+          .build()
+          .findFirst();
+      return bookmark != null;
+    } catch (e) {
+      log('Error checking bookmark: $e', name: 'BooksController');
+      return false;
+    }
+  }
+
+  /// Get all bookmarks, optionally filtered by category
+  List<BookmarkModel> getBookmarks({String? category}) {
+    try {
+      final bookmarkBox = store.box<BookmarkModel>();
+      
+      if (category != null && category.isNotEmpty) {
+        return bookmarkBox
+            .query(BookmarkModel_.category.equals(category))
+            .order(BookmarkModel_.createdAt, flags: Order.descending)
+            .build()
+            .find();
+      } else {
+        return bookmarkBox
+            .query()
+            .order(BookmarkModel_.createdAt, flags: Order.descending)
+            .build()
+            .find();
+      }
+    } catch (e) {
+      log('Error getting bookmarks: $e', name: 'BooksController');
+      return [];
+    }
+  }
+
+  /// Get all unique bookmark categories
+  List<String> getBookmarkCategories() {
+    try {
+      final bookmarks = getBookmarks();
+      final categories = bookmarks.map((b) => b.category).toSet().toList();
+      categories.sort();
+      return categories;
+    } catch (e) {
+      log('Error getting categories: $e', name: 'BooksController');
+      return [];
+    }
+  }
+
+  /// Update bookmark category
+  Future<void> updateBookmarkCategory(int bookmarkId, String newCategory) async {
+    try {
+      final bookmarkBox = store.box<BookmarkModel>();
+      final bookmark = bookmarkBox.get(bookmarkId);
+      
+      if (bookmark != null) {
+        // Create a new bookmark with updated category
+        final updatedBookmark = BookmarkModel(
+          id: bookmark.id,
+          category: newCategory,
+          note: bookmark.note,
+          createdAt: bookmark.createdAt,
+        );
+        updatedBookmark.hadith.target = bookmark.hadith.target;
+        
+        bookmarkBox.put(updatedBookmark);
+        update();
+      }
+    } catch (e) {
+      log('Error updating bookmark category: $e', name: 'BooksController');
+    }
+  }
+
+  /// Update bookmark note
+  Future<void> updateBookmarkNote(int bookmarkId, String? newNote) async {
+    try {
+      final bookmarkBox = store.box<BookmarkModel>();
+      final bookmark = bookmarkBox.get(bookmarkId);
+      
+      if (bookmark != null) {
+        final updatedBookmark = BookmarkModel(
+          id: bookmark.id,
+          category: bookmark.category,
+          note: newNote,
+          createdAt: bookmark.createdAt,
+        );
+        updatedBookmark.hadith.target = bookmark.hadith.target;
+        
+        bookmarkBox.put(updatedBookmark);
+        update();
+      }
+    } catch (e) {
+      log('Error updating bookmark note: $e', name: 'BooksController');
+    }
+  }
+
+  /// Delete a bookmark
+  Future<void> deleteBookmark(int bookmarkId) async {
+    try {
+      final bookmarkBox = store.box<BookmarkModel>();
+      bookmarkBox.remove(bookmarkId);
+      update();
+    } catch (e) {
+      log('Error deleting bookmark: $e', name: 'BooksController');
+    }
+  }
+
+  /// Get bookmark count
+  int getBookmarkCount({String? category}) {
+    return getBookmarks(category: category).length;
+  }
+
 
   Future<void> loadBooksForCollection(Collection collection) async {
     final hadithCount = store.box<ARHadithModel>().query(ARHadithModel_.collection.equals(collection.id!)).build().count();
