@@ -25,7 +25,7 @@ class HadithsPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final baseColor = KColors.primaryColor;
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
