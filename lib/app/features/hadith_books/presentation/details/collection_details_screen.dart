@@ -21,26 +21,7 @@ class CollectionDetailsScreen extends StatelessWidget {
     // Simplified logic: We assume we are showing a Collection, not ExplanationBook
     final booksCtrl = Get.find<BooksController>();
     final collection = booksCtrl.currentCollection; // Assuming currentCollection is set before nav
-    // But Wait, BooksCover calls setAndShowCollectionByCollectionId?
-    // I need to verify how BooksCover navigates.
-    // In original code: booksCtrl.setAndShowCollectionByCollectionId calls Get.to(CollectionDetailsScreen)
-    // AND sets currentCollectionId.
-    // So 'collection' getter on controller should work if currentCollectionId is set.
-    
-    // HOWEVER, I didn't verify if I added setAndShowCollectionByCollectionId to extension!
-    // I missed that method in BooksUiHelper porting earlier.
-    // I will add it to the extension OR handle it in BooksCover.
-    // Since I'm writing this screen now, I will assume currentCollectionId IS SET.
-    
-    // But aboutBook might be tricky. Sunnati used currentBookAbout getter.
-    // I need to check Collection model.
-    // Collection model has 'shortIntro' in CollectionLang? 
-    // Wait, original code: `sl<SunnatiBooksController>().currentCollection.currentBookAbout;`
-    // I need to check `currentBookAbout` extension on Collection?
-    // It was likely in `collection_extensions.dart`.
-    // I'll default to usage of 'collection.name' or similar if I don't have the extension.
-    // I'll use collection.arAndEnName for now.
-    
+
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColorDark,
       body: Container(

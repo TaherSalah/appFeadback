@@ -2,7 +2,7 @@ class Constants {
   static const List<String> collectionsGroupsTitles = [
     'الكنب الستة',
     'الكنب التسعة',
-    'otherBooks'
+    'كتب اخري'
   ];
   static const List<String> explanationGroupsTitles = [
     'sahihAlBukhari',

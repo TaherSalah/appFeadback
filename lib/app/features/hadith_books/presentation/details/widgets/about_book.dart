@@ -20,6 +20,7 @@ class AboutBook extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         title: Row(
+
           children: [
             Icon(
               Icons.menu_book_rounded,
@@ -28,7 +29,7 @@ class AboutBook extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              'aboutBook'.tr,
+              'عن الكتاب',
               style: TextStyle(
                     fontFamily: 'kufi',
                     fontSize: ResponsiveUtil.isTablet(context) ? 18 : 24,

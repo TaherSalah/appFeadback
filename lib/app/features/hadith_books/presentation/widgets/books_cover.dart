@@ -42,6 +42,7 @@ Widget customSvg(String path, {double? height}) {
 Widget bookNameLogo(BuildContext context, String id, Color color, String collectionName) {
   return SvgPicture.asset(
     'assets/svg/book_name/$id.svg',
+    color: Colors.white,
     fit: BoxFit.contain,
     placeholderBuilder: (context) {
       return Container(
@@ -91,7 +92,7 @@ class BooksCover extends StatelessWidget {
           // Section Title
           Align(
             alignment: Alignment.centerRight,
-            child: Padding(
+            child:  Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
                 title.tr,
@@ -158,7 +159,7 @@ class BooksCover extends StatelessWidget {
                                 
                                 // Book Title (Centered correctly)
                                 Positioned(
-                                  top: ResponsiveUtil.isTablet(context) ? 40 : 35,
+                                  top: ResponsiveUtil.isTablet(context) ? 40 : 45,
                                   child: SizedBox(
                                     height: ResponsiveUtil.isTablet(context) ? 70 : 60,
                                     width: ResponsiveUtil.isTablet(context) ? 80 : 70,

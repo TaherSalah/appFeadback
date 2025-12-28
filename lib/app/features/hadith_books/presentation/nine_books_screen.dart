@@ -54,20 +54,20 @@ class NineBooksScreen extends StatelessWidget {
                 children: [
                   // Display "Six Books" (Index 0 in Constants)
                   BooksCover(
-                    booksColor: Colors.red,
+                    // booksColor: Colors.red,
                     title: Constants.collectionsGroupsTitles[0],
                   ),
                   const Gap(10),
                   // Display "Nine Books" (Index 1 in Constants)
                   BooksCover(
-                    booksColor: Colors.red,
+                    // booksColor: Colors.red,
 
                     title: Constants.collectionsGroupsTitles[1],
                   ),
                   const Gap(10),
                   // Display "Other Books" (Index 2 in Constants)
                   BooksCover(
-                    booksColor: Colors.red,
+                    // booksColor: Colors.red,
 
                     title: Constants.collectionsGroupsTitles[2],
                   ),
