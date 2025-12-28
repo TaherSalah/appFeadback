@@ -294,7 +294,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                         const SizedBox(height: 10),
 
                         // 🔥 مدخل ركن الأطفال (في صفحة منفصلة)
-                        const KidsEntryPointWidget(),
+                        // const KidsEntryPointWidget(),
 
                         const SizedBox(height: 20),
 

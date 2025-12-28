@@ -1,7 +1,7 @@
 class Constants {
   static const List<String> collectionsGroupsTitles = [
-    'sixBooks',
-    'nineBooks',
+    'الكنب الستة',
+    'الكنب التسعة',
     'otherBooks'
   ];
   static const List<String> explanationGroupsTitles = [

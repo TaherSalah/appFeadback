@@ -82,68 +82,70 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
     return Scaffold(
       backgroundColor: const Color(0xFF0F172A),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // العنوان الرئيسي
-            // Text(
-            //   'سبحة الأذكار',
-            //   style: GoogleFonts.cairo(
-            //     fontSize: isTablet ? 32.sp : 28.sp,
-            //     color: Colors.white,
-            //     fontWeight: FontWeight.bold,
-            //     letterSpacing: 1.2,
-            //   ),
-            // ),
-            // SizedBox(height: isTablet ? 20.h : 10.h),
-            //
-            // // شريط الأذكار
-            // _buildAzkarBar(context),
-            // SizedBox(height: isTablet ? 30.h : 20.h),
+        child: SingleChildScrollView(
+          child:Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // العنوان الرئيسي
+              // Text(
+              //   'سبحة الأذكار',
+              //   style: GoogleFonts.cairo(
+              //     fontSize: isTablet ? 32.sp : 28.sp,
+              //     color: Colors.white,
+              //     fontWeight: FontWeight.bold,
+              //     letterSpacing: 1.2,
+              //   ),
+              // ),
+              // SizedBox(height: isTablet ? 20.h : 10.h),
+              //
+              // // شريط الأذكار
+              // _buildAzkarBar(context),
+              // SizedBox(height: isTablet ? 30.h : 20.h),
 
-            // العداد
-            Stack(
-              children: [
-                // Positioned.fill(child:
-                //
-                //
-                // Container(
-                //   // height: MediaQuery.of(context).size.height,
-                //   width: MediaQuery.of(context).size.width,
-                //   padding: const EdgeInsets.all(10),
-                //   decoration: BoxDecoration(
-                //     image: const DecorationImage(image: AssetImage("assets/images/pattern.webp",),fit: BoxFit.cover,opacity: 0.3),
-                //
-                //     borderRadius: BorderRadius.circular(10),
-                //     border: const BorderDirectional(
-                //       start: BorderSide(color: Color(0xffd6bb7a), width: 3),
-                //     ),
-                //     // color: Theme.of(context).cardColor,
-                //     color: AppThemeColors.cardBackgroundColor(context),
-                //   ),
-                //   child:SizedBox(),
-                // ),
-                // ),
-                Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.4), // غمّق الصورة
+              // العداد
+              Stack(
+                children: [
+                  // Positioned.fill(child:
+                  //
+                  //
+                  // Container(
+                  //   // height: MediaQuery.of(context).size.height,
+                  //   width: MediaQuery.of(context).size.width,
+                  //   padding: const EdgeInsets.all(10),
+                  //   decoration: BoxDecoration(
+                  //     image: const DecorationImage(image: AssetImage("assets/images/pattern.webp",),fit: BoxFit.cover,opacity: 0.3),
+                  //
+                  //     borderRadius: BorderRadius.circular(10),
+                  //     border: const BorderDirectional(
+                  //       start: BorderSide(color: Color(0xffd6bb7a), width: 3),
+                  //     ),
+                  //     // color: Theme.of(context).cardColor,
+                  //     color: AppThemeColors.cardBackgroundColor(context),
+                  //   ),
+                  //   child:SizedBox(),
+                  // ),
+                  // ),
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black.withOpacity(0.4), // غمّق الصورة
+                    ),
                   ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // العداد المركزي
-                    // _buildCounterDisplay(),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // العداد المركزي
+                      // _buildCounterDisplay(),
 
-                    SizedBox(height: isTablet ? 40.h : 2.h),
+                      SizedBox(height: isTablet ? 40.h : 2.h),
 
-                    // السبحه
-                    const TasbeehRealPlus(),
-                  ],
-                ),
-              ],
-            ),
-          ],
+                      // السبحه
+                      const TasbeehRealPlus(),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          )
         ),
       ),
     );

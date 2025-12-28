@@ -140,58 +140,61 @@ class BooksCover extends StatelessWidget {
                                     )),
                                 child: Row(
                                   children: [
+                                    // SizedBox(
+                                    //   width: ResponsiveUtil.isTablet(context) ? 25 : 45,
+                                    //   child: Padding(
+                                    //     padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                    //     child: FittedBox(
+                                    //       fit: BoxFit.scaleDown,
+                                    //       child: RotatedBox(
+                                    //         quarterTurns: 3,
+                                    //         child: Text(
+                                    //           collectionsGroup[index].bookName,
+                                    //           style: TextStyle(
+                                    //             fontSize: ResponsiveUtil.isTablet(context) ? 12.0 : 16,
+                                    //             fontFamily: 'kufi',
+                                    //             fontWeight: FontWeight.w600,
+                                    //             color: Theme.of(context).primaryColorDark,
+                                    //           ),
+                                    //           textAlign: TextAlign.justify,
+                                    //           textDirection: TextDirection.rtl,
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
                                     SizedBox(
-                                      width: ResponsiveUtil.isTablet(context) ? 25 : 45,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 12.0),
-                                        child: FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          child: RotatedBox(
-                                            quarterTurns: 3,
-                                            child: Text(
-                                              collectionsGroup[index].bookName,
-                                              style: TextStyle(
-                                                fontSize: ResponsiveUtil.isTablet(context) ? 12.0 : 16,
-                                                fontFamily: 'kufi',
-                                                fontWeight: FontWeight.w600,
-                                                color: Theme.of(context).primaryColorDark,
+                                      width: ResponsiveUtil.isTablet(context) ? 120 : 120,
+                                      child: Hero(
+                                        tag: 'book-tag-:${collectionsGroup[index].id!}',
+                                        child: Material(
+                                          color: Colors.transparent,
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              customSvgWithColor(
+                                                SvgPath.svgBookCover,
+                                                height: ResponsiveUtil.isTablet(context) ? 130.0 : 115,
+                                                color: booksColor ?? Theme.of(context).primaryColor, // Fallback color
                                               ),
-                                              textAlign: TextAlign.justify,
-                                              textDirection: TextDirection.rtl,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Hero(
-                                      tag: 'book-tag-:${collectionsGroup[index].id!}',
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            customSvgWithColor(
-                                              SvgPath.svgBookCover,
-                                              height: ResponsiveUtil.isTablet(context) ? 130.0 : 170,
-                                              color: booksColor ?? Theme.of(context).primaryColor, // Fallback color
-                                            ),
-                                            customSvg(SvgPath.svgBookCoverLogo,
-                                                height: ResponsiveUtil.isTablet(context) ? 130.0 : 170),
-                                            Transform.translate(
-                                              offset: ResponsiveUtil.isTablet(context)
-                                                  ? const Offset(-5, 10)
-                                                  : const Offset(-10, 0),
-                                              child: SizedBox(
-                                                height: ResponsiveUtil.isTablet(context) ? 60 : 120,
-                                                width: ResponsiveUtil.isTablet(context) ? 70 : 110,
-                                                child: bookNameLogo(
-                                                  '${max(0, collectionsGroup[index].id! - 1)}',
-                                                  const Color(0xFF3C2A21),
-                                                  collectionsGroup[index].bookName
+                                              customSvg(SvgPath.svgBookCoverLogo,
+                                                  height: ResponsiveUtil.isTablet(context) ? 130.0 : 100),
+                                              Transform.translate(
+                                                offset: ResponsiveUtil.isTablet(context)
+                                                    ? const Offset(-5, 10)
+                                                    : const Offset(-10, 0),
+                                                child: SizedBox(
+                                                  height: ResponsiveUtil.isTablet(context) ? 60 : 60,
+                                                  width: ResponsiveUtil.isTablet(context) ? 70 : 60,
+                                                  child: bookNameLogo(
+                                                    '${max(0, collectionsGroup[index].id! - 1)}',
+                                                    const Color(0xFF3C2A21),
+                                                    collectionsGroup[index].bookName
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
