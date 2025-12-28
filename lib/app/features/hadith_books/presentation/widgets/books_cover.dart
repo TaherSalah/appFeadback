@@ -3,14 +3,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
+
 import '../../../../core/utils/style/responsive_util.dart';
+import '../../../../core/utils/style/k_style.dart';
+import '../../../../core/utils/style/k_color.dart';
 import '../../controllers/books_controller.dart';
 import '../../controllers/extensions/books_getters_extension.dart';
 import '../../data/models/collection_model.dart';
 
-// Helper for SVG rendering since original extensions are missing
+// Helper for SVG rendering
 Widget customSvgWithColor(String path, {double? height, Color? color}) {
   return SvgPicture.asset(
     path,
@@ -36,29 +39,25 @@ Widget customSvg(String path, {double? height}) {
   );
 }
 
-Widget bookNameLogo(String id, Color color, String collectionName) {
-  print('Loading SVG: assets/svg/book_name/$id.svg'); // Debug log
+Widget bookNameLogo(BuildContext context, String id, Color color, String collectionName) {
   return SvgPicture.asset(
     'assets/svg/book_name/$id.svg',
-    // Temporarily removed colorFilter to test if it's causing issues
-    // colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
     fit: BoxFit.contain,
     placeholderBuilder: (context) {
-      print('Placeholder shown for: $id'); // Debug log
       return Container(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-          border: Border.all(color: color.withOpacity(0.5), width: 1.5),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Center(
           child: Text(
-            collectionName.substring(0, min(2, collectionName.length)).toUpperCase(),
-            style: TextStyle(
+            collectionName.substring(0, min(10, collectionName.length)), // Increased length text
+            textAlign: TextAlign.center,
+            style: KTextStyle.of(context).body2.copyWith(
               color: color,
               fontWeight: FontWeight.bold,
-              fontSize: 22,
-              fontFamily: 'cairo'
+              fontSize: ResponsiveUtil.isTablet(context) ? 14 : 16,
+              height: 1.2,
             ),
           ),
         ),
@@ -72,7 +71,6 @@ class SvgPath {
   static const String svgBookCoverLogo = 'assets/svg/bookCoverLogo.svg';
 }
 
-// Simplified BooksCover for Collections only
 class BooksCover extends StatelessWidget {
   final String title;
   final Color? booksColor;
@@ -86,127 +84,101 @@ class BooksCover extends StatelessWidget {
     List<Collection> collectionsGroup = booksCtrl.getCollectionsGroupByTitle(title);
     if (collectionsGroup.isEmpty) return const SizedBox.shrink();
 
-    // Stubbing CheckRtlLayout for now, defaulting to align right for Arabic context usually or center
-    Alignment hAlign = Alignment.centerRight; // Default for Arabic lists usually
-
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
       child: Column(
         children: [
+          // Section Title
           Align(
-            alignment: hAlign,
+            alignment: Alignment.centerRight,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
-                title.tr, // Ensure .tr is available via Get
-                style: TextStyle(
-                  fontSize: ResponsiveUtil.isTablet(context) ? 15.0 : 19,
-                  fontFamily: 'kufi',
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                title.tr,
+                style: KTextStyle.of(context).subtitle.copyWith(
+                  fontSize: ResponsiveUtil.isTablet(context) ? 18.0 : 20,
+                  color: KColors.of(context).primary,
                 ),
               ),
             ),
           ),
+          
+          // Books Grid/List
           Align(
             alignment: Alignment.center,
             child: Wrap(
-              alignment: WrapAlignment.start,
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 16,
               children: List.generate(
                 collectionsGroup.length,
-                (index) => Column(
-                  children: [
-                    AnimationLimiter(
-                      child: AnimationConfiguration.staggeredList(
-                        position: index,
-                        duration: const Duration(milliseconds: 450),
-                        child: SlideAnimation(
-                          verticalOffset: 50.0,
-                          child: FadeInAnimation(
-                            child: GestureDetector(
-                              onTap: () => booksCtrl.setAndShowCollectionByCollectionId(
-                                  collectionsGroup[index].id!,
-                                  collectionsGroup[index].id!),
-
-                              child: Container(
-                                height: ResponsiveUtil.isTablet(context) ? 135 : 120,
-                                width: ResponsiveUtil.isTablet(context) ? 120 : 120,
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 4.0, vertical: 16.0),
-                                decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.onSurface,
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(8.0),
-                                    )),
-                                child: Row(
-                                  children: [
-                                    // SizedBox(
-                                    //   width: ResponsiveUtil.isTablet(context) ? 25 : 45,
-                                    //   child: Padding(
-                                    //     padding: const EdgeInsets.symmetric(vertical: 12.0),
-                                    //     child: FittedBox(
-                                    //       fit: BoxFit.scaleDown,
-                                    //       child: RotatedBox(
-                                    //         quarterTurns: 3,
-                                    //         child: Text(
-                                    //           collectionsGroup[index].bookName,
-                                    //           style: TextStyle(
-                                    //             fontSize: ResponsiveUtil.isTablet(context) ? 12.0 : 16,
-                                    //             fontFamily: 'kufi',
-                                    //             fontWeight: FontWeight.w600,
-                                    //             color: Theme.of(context).primaryColorDark,
-                                    //           ),
-                                    //           textAlign: TextAlign.justify,
-                                    //           textDirection: TextDirection.rtl,
-                                    //         ),
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    SizedBox(
-                                      width: ResponsiveUtil.isTablet(context) ? 120 : 120,
-                                      child: Hero(
-                                        tag: 'book-tag-:${collectionsGroup[index].id!}',
-                                        child: Material(
-                                          color: Colors.transparent,
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: [
-                                              customSvgWithColor(
-                                                SvgPath.svgBookCover,
-                                                height: ResponsiveUtil.isTablet(context) ? 130.0 : 115,
-                                                color: booksColor ?? Theme.of(context).primaryColor, // Fallback color
-                                              ),
-                                              customSvg(SvgPath.svgBookCoverLogo,
-                                                  height: ResponsiveUtil.isTablet(context) ? 130.0 : 100),
-                                              Transform.translate(
-                                                offset: ResponsiveUtil.isTablet(context)
-                                                    ? const Offset(-5, 10)
-                                                    : const Offset(-10, 0),
-                                                child: SizedBox(
-                                                  height: ResponsiveUtil.isTablet(context) ? 60 : 60,
-                                                  width: ResponsiveUtil.isTablet(context) ? 70 : 60,
-                                                  child: bookNameLogo(
-                                                    '${max(0, collectionsGroup[index].id! - 1)}',
-                                                    const Color(0xFF3C2A21),
-                                                    collectionsGroup[index].bookName
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
+                (index) => AnimationLimiter(
+                  child: AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 450),
+                    child: SlideAnimation(
+                      verticalOffset: 50.0,
+                      child: FadeInAnimation(
+                        child: GestureDetector(
+                          onTap: () => booksCtrl.setAndShowCollectionByCollectionId(
+                              collectionsGroup[index].id!,
+                              collectionsGroup[index].id!),
+                          child: Container(
+                            height: ResponsiveUtil.isTablet(context) ? 160 : 140,
+                            width: ResponsiveUtil.isTablet(context) ? 130 : 110,
+                            decoration: BoxDecoration(
+                                // color: Theme.of(context).cardColor,
+                                color: AppThemeColors.cardBackgroundColor(context),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(12.0),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  )
+                                ]
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Book Cover Base Color
+                                customSvgWithColor(
+                                  SvgPath.svgBookCover,
+                                  height: ResponsiveUtil.isTablet(context) ? 140.0 : 125,
+                                  color: booksColor ?? KColors.of(context).primary,
+                                ),
+                                
+                                // Decorative Pattern
+                                customSvg(
+                                  SvgPath.svgBookCoverLogo,
+                                  height: ResponsiveUtil.isTablet(context) ? 140.0 : 110
+                                ),
+                                
+                                // Book Title (Centered correctly)
+                                Positioned(
+                                  top: ResponsiveUtil.isTablet(context) ? 40 : 35,
+                                  child: SizedBox(
+                                    height: ResponsiveUtil.isTablet(context) ? 70 : 60,
+                                    width: ResponsiveUtil.isTablet(context) ? 80 : 70,
+                                    child: Center(
+                                      child: bookNameLogo(
+                                        context,
+                                        '${max(0, collectionsGroup[index].id! - 1)}',
+                                        const Color(0xFF3C2A21), // Dark brown for text contrasts well with primary
+                                        collectionsGroup[index].bookName
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

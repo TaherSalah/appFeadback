@@ -37,17 +37,28 @@
 - **التفسير**: تفسير الآيات القرآنية
 
 ### 📚 الأحاديث النبوية
-- **مكتبة الحديث**: الوصول إلى مجموعة واسعة من كتب الحديث:
-  - صحيح البخاري
-  - صحيح مسلم
-  - سنن أبي داود
-  - سنن الترمذي
-  - سنن النسائي
-  - سنن ابن ماجه
-  - مسند أحمد
-  - الأربعين النووية
-  - رياض الصالحين
-  - وغيرها...
+- **مكتبة الحديث**: الوصول إلى **15 كتاب** من أمهات كتب الحديث:
+  
+  **الكتب الستة:**
+  - صحيح البخاري (Sahih Bukhari)
+  - صحيح مسلم (Sahih Muslim)
+  - سنن أبي داود (Sunan Abu Dawood)
+  - سنن الترمذي (Sunan Tirmidhi)
+  - سنن النسائي (Sunan Nasai)
+  - سنن ابن ماجه (Sunan Ibn Majah)
+  
+  **الكتب التسعة (إضافة 3 كتب):**
+  - موطأ مالك (Muwatta Malik)
+  - مسند أحمد (Musnad Ahmad)
+  - سنن الدارمي (Sunan ad-Darimi)
+  
+  **مجموعات أخرى مهمة (إضافة 6 كتب):**
+  - الأربعين النووية (40 Hadith Nawawi)
+  - رياض الصالحين (Riyad as-Salihin)
+  - مشكاة المصابيح (Mishkat al-Masabih)
+  - الأدب المفرد (Al-Adab al-Mufrad)
+  - الشمائل المحمدية (Shamail Muhammadiyah)
+  - بلوغ المرام (Bulugh al-Maram)
 
 ### 🌙 أسماء الله الحسنى
 - **رحلة تفاعلية**: تجربة غامرة لاستكشاف أسماء الله الحسنى
@@ -319,17 +330,28 @@ lib/
 - **Tafsir**: Quranic verse interpretations
 
 ### 📚 Prophetic Hadiths
-- **Hadith Library**: Access to a wide collection of Hadith books:
-  - Sahih Bukhari
-  - Sahih Muslim
-  - Sunan Abu Dawood
-  - Sunan Tirmidhi
-  - Sunan Nasai
-  - Sunan Ibn Majah
-  - Musnad Ahmad
-  - 40 Hadith Nawawi
-  - Riyad as-Salihin
-  - And more...
+- **Hadith Library**: Access to **15 major** authentic Hadith collections:
+  
+  **The Six Books (الكتب الستة):**
+  - Sahih Bukhari (صحيح البخاري)
+  - Sahih Muslim (صحيح مسلم)
+  - Sunan Abu Dawood (سنن أبي داود)
+  - Sunan Tirmidhi (سنن الترمذي)
+  - Sunan Nasai (سنن النسائي)
+  - Sunan Ibn Majah (سنن ابن ماجه)
+  
+  **The Nine Books (additional 3 books):**
+  - Muwatta Malik (موطأ مالك)
+  - Musnad Ahmad (مسند أحمد)
+  - Sunan ad-Darimi (سنن الدارمي)
+  
+  **Other Important Collections (additional 6 books):**
+  - 40 Hadith Nawawi (الأربعين النووية)
+  - Riyad as-Salihin (رياض الصالحين)
+  - Mishkat al-Masabih (مشكاة المصابيح)
+  - Al-Adab al-Mufrad (الأدب المفرد)
+  - Shamail Muhammadiyah (الشمائل المحمدية)
+  - Bulugh al-Maram (بلوغ المرام)
 
 ### 🌙 Allah's Beautiful Names
 - **Interactive Journey**: Immersive experience exploring Allah's 99 names
