@@ -9,6 +9,7 @@ import 'package:lottie/lottie.dart';
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/localization/localization_manager.dart';
 import '../../../../core/utils/constent/router.dart';
+import '../../../../core/utils/style/app_theme_colors.dart';
 import '../../../../core/utils/style/k_color.dart';
 import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/widgets/KLoading.dart';

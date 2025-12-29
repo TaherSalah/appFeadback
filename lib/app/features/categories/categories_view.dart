@@ -4,7 +4,7 @@ import 'package:muslimdaily/app/features/categories/view/controller/categories_b
 import 'package:muslimdaily/app/features/categories/view/widget/categories_view_item_builder.dart';
 
 import '../../core/localization/localization_manager.dart';
-import '../../core/shard/constanc/app_style.dart';
+
 import '../../core/shard/exports/all_exports.dart';
 import 'data/repo/categories_repo_immp.dart';
 

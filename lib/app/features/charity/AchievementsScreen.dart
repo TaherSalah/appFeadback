@@ -125,6 +125,16 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
 
         body: Stack(
           children: [
+            // Subtle Pattern Background
+            Positioned.fill(
+              child: Opacity(
+                opacity: isDark ? 0.05 : 0.08,
+                child: Image.asset(
+                  'assets/images/8180jjj00005.webp',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
             _loading
                 ? const Center(child: CircularProgressIndicator())
                 : _buildBody(isDark),
@@ -258,16 +268,17 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color:
-              isUnlocked ? Colors.amber.withOpacity(0.5) : Colors.transparent,
-          width: 2,
+              isUnlocked ? const Color(0xFFD4AF37) : Colors.transparent,
+          width: 1.5,
         ),
         boxShadow: [
-          if (isUnlocked)
-            BoxShadow(
-              color: Colors.amber.withOpacity(0.1),
-              blurRadius: 8,
-              spreadRadius: 2,
-            ),
+          BoxShadow(
+            color: isUnlocked 
+                ? const Color(0xFFD4AF37).withOpacity(0.1) 
+                : Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(

@@ -159,13 +159,14 @@ extension BooksGettersExtension on BooksController {
     
     // Store offset and limit for logging
     final queryOffset = shouldScrollToCustomIndex ? 0 : arabicHadiths.length;
-    final queryLimit = shouldScrollToCustomIndex ? selectedHadith!.hadithNumberInBook : 10;
+    final queryLimit = shouldScrollToCustomIndex ? selectedHadith!.hadithNumber : 10;
     
     final normalQuery = (store
             .box<ARHadithModel>()
             .query(ARHadithModel_.bookNumber.equals(currentBookNumber))
           ..link(ARHadithModel_.collection,
-              Collection_.id.equals(currentCollectionId)))
+              Collection_.id.equals(currentCollectionId))
+          ..order(ARHadithModel_.hadithNumber))
         .build()
       ..offset = queryOffset
       ..limit = queryLimit;
@@ -187,11 +188,12 @@ extension BooksGettersExtension on BooksController {
                 .box<ENHadithModel>()
                 .query(ENHadithModel_.bookNumber.equals(currentBookNumber))
               ..link(ENHadithModel_.collection,
-                  Collection_.id.equals(currentCollectionId)))
+                  Collection_.id.equals(currentCollectionId))
+            ..order(ENHadithModel_.hadithNumber))
             .build()
           ..offset = tempEnglishHadiths.length
           ..limit = shouldScrollToCustomIndex
-              ? selectedHadith!.hadithNumberInBook
+              ? selectedHadith!.hadithNumber
               : 10;
         normalQuery.findAsync().then((v) => tempEnglishHadiths.addAll(v));
         break;
@@ -201,11 +203,12 @@ extension BooksGettersExtension on BooksController {
                 .box<URHadithModel>()
                 .query(URHadithModel_.bookNumber.equals(currentBookNumber))
               ..link(URHadithModel_.collection,
-                  Collection_.id.equals(currentCollectionId)))
+                  Collection_.id.equals(currentCollectionId))
+            ..order(URHadithModel_.hadithNumber))
             .build()
           ..offset = tempUrduHadiths.length
           ..limit = shouldScrollToCustomIndex
-              ? selectedHadith!.hadithNumberInBook
+              ? selectedHadith!.hadithNumber
               : 10;
         normalQuery.findAsync().then((v) => tempUrduHadiths.addAll(v));
         break;
@@ -214,11 +217,12 @@ extension BooksGettersExtension on BooksController {
                 .box<BNHadithModel>()
                 .query(BNHadithModel_.bookNumber.equals(currentBookNumber))
               ..link(BNHadithModel_.collection,
-                  Collection_.id.equals(currentCollectionId)))
+                  Collection_.id.equals(currentCollectionId))
+            ..order(BNHadithModel_.hadithNumber))
             .build()
           ..offset = tempBanglaHadiths.length
           ..limit = shouldScrollToCustomIndex
-              ? selectedHadith!.hadithNumberInBook
+              ? selectedHadith!.hadithNumber
               : 10;
         normalQuery.findAsync().then((v) => tempBanglaHadiths.addAll(v));
         break;
@@ -254,21 +258,9 @@ extension BooksGettersExtension on BooksController {
     
     Navigator.push(
       CentralizedCubit.navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => ReadView()),
+      MaterialPageRoute(builder: (context) => const ReadView()),
     );
     
-    if (shouldScrollToCustomIndex && selectedHadith != null) {
-      arabicHadiths
-          .sort((a, b) => a.hadithNumberInBook.compareTo(b.hadithNumberInBook)); // Ensure Property exists
-      await Future.delayed(const Duration(milliseconds: 700));
-      if (bookChaptersPageViewCrl.positions.isNotEmpty) {
-        bookChaptersPageViewCrl.animateToPage(
-            selectedHadith!.hadithNumberInBook, 
-            duration: const Duration(milliseconds: 600),
-            curve: Curves.ease);
-      }
-      update();
-    }
   }
 
   Future<void> setAndShowCollectionByCollectionId(int collectionId, int idFromList) async {
@@ -312,12 +304,45 @@ extension BooksGettersExtension on BooksController {
   // But we copied assets locally, so they are "loaded" if we parse them.
   // The original logic checked Splash screen progress or addedColectionsBookNames.
   // We can default to true for now since we expect local assets.
-}
 
-extension HadithNumberHelpers on ARHadithModel {
-     // Helper getter if needed, e.g. hadithNumberInBook
-     // Original logic was likely in an extension or model.
-     // Let's assume it's just 'hadithNumber' or we need to check 'hadith_number_in_book.dart'
-     
-     int get hadithNumberInBook => hadithNumber; 
+  Future<void> navigateToHadith(ARHadithModel hadith) async {
+    // 1. Set context (Collection & Book)
+    currentCollectionId = hadith.collection.targetId;
+    currentBookNumber = hadith.bookNumber;
+
+    // 2. Prepare for scrolling
+    shouldScrollToCustomIndex = true;
+    selectedHadith = hadith;
+
+    // 3. Reset and Load Data - WAIT for it
+    arabicHadiths.clear();
+    await getAndSetMoreHadiths(clearOlds: true);
+
+    // 4. Calculate target index logic
+    int targetPage = 0;
+    // Try to find index in loaded list
+    final index = arabicHadiths.indexWhere((h) => h.id == hadith.id);
+    
+    if (index != -1) {
+       targetPage = index + 1; // +1 because index 0 is book title
+    } else {
+       // Fallback: use hadithNumber directly
+       targetPage = hadith.hadithNumber;
+    }
+
+    // 5. Navigate to ReadView with initialPage
+    Navigator.push(
+      CentralizedCubit.navigatorKey.currentContext!,
+      MaterialPageRoute(
+        builder: (context) => ReadView(initialPage: targetPage),
+      ),
+    );
+    
+    // Reset flag immediately after navigation is initiated
+    // This allows subsequent loads to work normally (offset-based)
+    shouldScrollToCustomIndex = false;
+    
+    // Trigger UI update to ensure consistent state
+    update();
+  }
 }

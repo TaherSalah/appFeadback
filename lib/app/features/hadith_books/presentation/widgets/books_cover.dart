@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
+import '../../../../core/shard/exports/all_exports.dart';
 import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/utils/style/k_style.dart';
 import '../../../../core/utils/style/k_color.dart';
@@ -82,6 +84,8 @@ class BooksCover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     List<Collection> collectionsGroup = booksCtrl.getCollectionsGroupByTitle(title);
     if (collectionsGroup.isEmpty) return const SizedBox.shrink();
 
@@ -89,18 +93,43 @@ class BooksCover extends StatelessWidget {
       width: MediaQuery.sizeOf(context).width,
       child: Column(
         children: [
-          // Section Title
-          Align(
-            alignment: Alignment.centerRight,
-            child:  Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text(
-                title.tr,
-                style: KTextStyle.of(context).subtitle.copyWith(
-                  fontSize: ResponsiveUtil.isTablet(context) ? 18.0 : 20,
-                  color: KColors.of(context).primary,
+          // Section Title with Decoration
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 1,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primary.withOpacity(0), AppColors.primary.withOpacity(0.3)],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  child: Text(
+                    title.tr,
+                    style: GoogleFonts.cairo(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    height: 1,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primary.withOpacity(0.3), AppColors.primary.withOpacity(0)],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           
@@ -109,33 +138,32 @@ class BooksCover extends StatelessWidget {
             alignment: Alignment.center,
             child: Wrap(
               alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 16,
+              spacing: 12.w,
+              runSpacing: 16.h,
               children: List.generate(
                 collectionsGroup.length,
                 (index) => AnimationLimiter(
                   child: AnimationConfiguration.staggeredList(
                     position: index,
                     duration: const Duration(milliseconds: 450),
-                    child: SlideAnimation(
-                      verticalOffset: 50.0,
+                    child: ScaleAnimation(
+                      scale: 0.9,
                       child: FadeInAnimation(
                         child: GestureDetector(
                           onTap: () => booksCtrl.setAndShowCollectionByCollectionId(
                               collectionsGroup[index].id!,
                               collectionsGroup[index].id!),
                           child: Container(
-                            height: ResponsiveUtil.isTablet(context) ? 160 : 140,
-                            width: ResponsiveUtil.isTablet(context) ? 130 : 110,
                             decoration: BoxDecoration(
-                                // color: Theme.of(context).cardColor,
-                                color: AppThemeColors.cardBackgroundColor(context),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(12.0),
+                                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                                borderRadius: BorderRadius.circular(16.r),
+                                border: Border.all(
+                                  color: isDark ? Colors.white24 : const Color(0xFFD4AF37).withOpacity(0.4),
+                                  width: 1.2,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withOpacity(0.06),
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
                                   )
@@ -145,10 +173,13 @@ class BooksCover extends StatelessWidget {
                               alignment: Alignment.center,
                               children: [
                                 // Book Cover Base Color
-                                customSvgWithColor(
-                                  SvgPath.svgBookCover,
-                                  height: ResponsiveUtil.isTablet(context) ? 140.0 : 125,
-                                  color: booksColor ?? KColors.of(context).primary,
+                                Padding(
+                                  padding: EdgeInsets.all(8.r),
+                                  child: customSvgWithColor(
+                                    SvgPath.svgBookCover,
+                                    height: ResponsiveUtil.isTablet(context) ? 140.0 : 125,
+                                    color: booksColor ?? KColors.of(context).primary,
+                                  ),
                                 ),
                                 
                                 // Decorative Pattern
@@ -167,7 +198,7 @@ class BooksCover extends StatelessWidget {
                                       child: bookNameLogo(
                                         context,
                                         '${max(0, collectionsGroup[index].id! - 1)}',
-                                        const Color(0xFF3C2A21), // Dark brown for text contrasts well with primary
+                                        const Color(0xFF3C2A21), 
                                         collectionsGroup[index].bookName
                                       ),
                                     ),

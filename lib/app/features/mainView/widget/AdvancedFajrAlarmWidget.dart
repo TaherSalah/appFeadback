@@ -11,6 +11,8 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
 import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
+import '../../../core/utils/style/app_theme_colors.dart';
+
 class AdvancedFajrAlarmWidget extends StatefulWidget {
   const AdvancedFajrAlarmWidget({super.key});
 

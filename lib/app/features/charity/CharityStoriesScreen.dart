@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../core/utils/style/k_color.dart';
 import 'data/charity_stories_data.dart';
 
 class CharityStoriesScreen extends StatefulWidget {
@@ -71,51 +72,72 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
           ),
         ),
 
-        body: Column(
+        body: Stack(
           children: [
-            // Filter tabs
-            SizedBox(
-              height: 50.h,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                children: CharityStoriesData.categories.map((category) {
-                  final isSelected = category == _selectedCategory;
-                  return Padding(
-                    padding: EdgeInsets.only(left: 8.w),
-                    child: FilterChip(
-                      label: Text(
-                        category,
-                        style: GoogleFonts.cairo(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                          color: isSelected ? Colors.white : null,
-                        ),
-                      ),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() => _selectedCategory = category);
-                      },
-                      selectedColor: const Color(0xFF8B5CF6),
-                      backgroundColor:
-                          isDark ? const Color(0xFF2D3748) : Colors.white,
-                    ),
-                  );
-                }).toList(),
+            // Subtle Pattern Background
+            Positioned.fill(
+              child: Opacity(
+                opacity: isDark ? 0.05 : 0.08,
+                child: Image.asset(
+                  'assets/images/8180jjj00005.webp',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
+            Column(
+              children: [
+                // Filter tabs
+                SizedBox(
+                  height: 60.h,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    children: CharityStoriesData.categories.map((category) {
+                      final isSelected = category == _selectedCategory;
+                      return Padding(
+                        padding: EdgeInsets.only(left: 10.w),
+                        child: FilterChip(
+                          label: Text(
+                            category,
+                            style: GoogleFonts.cairo(
+                              fontSize: 13.sp,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                              color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+                            ),
+                          ),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            setState(() => _selectedCategory = category);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.r),
+                            side: BorderSide(
+                              color: isSelected ? Colors.transparent : (isDark ? Colors.white24 : Colors.grey.shade300),
+                            ),
+                          ),
+                          selectedColor: AppColors.primary,
+                          backgroundColor: isDark ? const Color(0xFF2D3748) : Colors.white,
+                          elevation: 2,
+                          pressElevation: 4,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
 
-            SizedBox(height: 16.h),
+                SizedBox(height: 10.h),
 
-            // القصص
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.all(16.w),
-                itemCount: _filteredStories.length,
-                itemBuilder: (context, index) {
-                  return _buildStoryCard(_filteredStories[index], isDark);
-                },
-              ),
+                // القصص
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(16.w),
+                    itemCount: _filteredStories.length,
+                    itemBuilder: (context, index) {
+                      return _buildStoryCard(_filteredStories[index], isDark);
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -124,89 +146,109 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
   }
 
   Widget _buildStoryCard(CharityStory story, bool isDark) {
-    return InkWell(
-      onTap: () => _showStoryDialog(story, isDark),
-      borderRadius: BorderRadius.circular(20.r),
-      child: Container(
-        margin: EdgeInsets.only(bottom: 16.h),
-        padding: EdgeInsets.all(20.w),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: _getGradientColors(story.category),
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(20.r),
-          boxShadow: [
-            BoxShadow(
-              color: _getGradientColors(story.category)[0].withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2D3748) : Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: const Color(0xFFD4AF37).withOpacity(0.4),
+          width: 1.2,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(story.emoji, style: TextStyle(fontSize: 32.sp)),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Text(
-                    story.title,
-                    style: GoogleFonts.cairo(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () => _showStoryDialog(story, isDark),
+        borderRadius: BorderRadius.circular(20.r),
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(10.w),
+                    decoration: BoxDecoration(
+                      color: _getStoryColor(story.category).withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(story.emoji, style: TextStyle(fontSize: 24.sp)),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          story.title,
+                          style: GoogleFonts.cairo(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : const Color(0xFF1E293B),
+                          ),
+                        ),
+                        Text(
+                          story.source,
+                          style: GoogleFonts.cairo(
+                            fontSize: 11.sp,
+                            color: isDark ? Colors.white60 : Colors.black45,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              story.content.length > 150
-                  ? '${story.content.substring(0, 150)}...'
-                  : story.content,
-              style: GoogleFonts.cairo(
-                fontSize: 13.sp,
-                color: Colors.white.withOpacity(0.95),
-                height: 1.8,
+                ],
               ),
-            ),
-            SizedBox(height: 12.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Text(
-                    story.source,
+              SizedBox(height: 16.h),
+              Text(
+                story.content.length > 150
+                    ? '${story.content.substring(0, 150)}...'
+                    : story.content,
+                style: GoogleFonts.cairo(
+                  fontSize: 13.sp,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                  height: 1.8,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    'عرض التفاصيل ⬅️',
                     style: GoogleFonts.cairo(
-                      fontSize: 11.sp,
-                      color: Colors.white,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
                     ),
                   ),
-                ),
-                Text(
-                  'اقرأ المزيد ⬅️',
-                  style: GoogleFonts.cairo(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Color _getStoryColor(String category) {
+    switch (category) {
+      case 'سيرة':
+        return const Color(0xFF8B5CF6);
+      case 'حديث':
+        return const Color(0xFF10B981);
+      case 'معاصر':
+        return const Color(0xFF3B82F6);
+      default:
+        return const Color(0xFF6366F1);
+    }
   }
 
   List<Color> _getGradientColors(String category) {

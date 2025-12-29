@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
+
+import '../../core/utils/style/k_color.dart';
+import '../../core/utils/style/app_theme_colors.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
-import 'AddCharityScreen.dart';
 
 class RecurringCharityScreen extends StatefulWidget {
   const RecurringCharityScreen({super.key});
@@ -37,6 +40,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
     final amountController = TextEditingController(text: existing?.amount.toString() ?? '');
     int selectedDay = existing?.dayOfMonth ?? 1;
     CharityCategory selectedCategory = existing?.category ?? CharityCategory.sadaqah;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     await showModalBottomSheet(
       context: context,
@@ -45,136 +49,218 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Directionality(
           textDirection: TextDirection.rtl,
-          child: SafeArea(
-            bottom: true,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-              ),
-              padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, MediaQuery.of(context).viewInsets.bottom + 20.h),
-              child: SingleChildScrollView( // الحل لمشكلة الـ Overflow
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 50.w,
-                        height: 5.h,
-                        margin: EdgeInsets.symmetric(vertical: 10.h),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppThemeColors.cardBackgroundColor(context),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+              border: Border.all(color: AppThemeColors.cardBorderColor(context), width: 1.5),
+            ),
+            padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, MediaQuery.of(context).viewInsets.bottom + 24.h),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40.w,
+                      height: 4.h,
+                      margin: EdgeInsets.only(bottom: 20.h),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
+                          color: AppColors.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10.r),
                         ),
+                        child: Icon(Icons.calendar_month, color: AppColors.primary, size: 24.sp),
                       ),
-                    ),
-                    Text(
-                      existing == null ? 'إضافة التزام صدقة جديد 🤲' : 'تعديل التزام الصدقة',
-                      style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 18.sp),
-                    ),
-                    SizedBox(height: 15.h),
-                    _buildTextField(titleController, 'اسم الصدقة (مثلاً: كفالة يتيم)', Icons.title),
-                    SizedBox(height: 12.h),
-                    _buildTextField(amountController, 'المقدار الشهري (جنيه)', Icons.attach_money, isNumber: true),
-
-                    SizedBox(height: 20.h),
-                    Text('الفئة 📁:', style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8.h),
-                    SizedBox(
-                      height: 45.h,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: CharityCategory.values.length,
-                        itemBuilder: (context, index) {
-                          final category = CharityCategory.values[index];
-                          final isSelected = selectedCategory == category;
-                          return _buildChoiceChip(
-                            category.arabicName,
-                            category.emoji,
-                            isSelected,
-                            () => setModalState(() => selectedCategory = category)
-                          );
-                        },
+                      SizedBox(width: 12.w),
+                      Text(
+                        existing == null ? 'إضافة التزام صدقة جديد ✨' : 'تعديل التزام الصدقة',
+                        style: GoogleFonts.cairo(
+                          fontWeight: FontWeight.bold, 
+                          fontSize: 18.sp,
+                          color: AppThemeColors.cardHeaderColor(context),
+                        ),
                       ),
-                    ),
+                    ],
+                  ),
+                  SizedBox(height: 24.h),
+                  
+                  _buildTextField(isDark, titleController, 'اسم الصدقة (مثلاً: كفالة يتيم)', Icons.text_fields_rounded),
+                  SizedBox(height: 16.h),
+                  _buildTextField(isDark, amountController, 'المقدار الشهري (جنيه)', Icons.payments_rounded, isNumber: true),
 
-                    SizedBox(height: 20.h),
-                    Text('يوم التذكير (1-31) 📅:', style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8.h),
-                    GridView.builder(
+                  SizedBox(height: 24.h),
+                  _buildSectionHeader(isDark, 'الفئة 📁', ''),
+                  SizedBox(height: 12.h),
+                  SizedBox(
+                    height: 50.h,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: CharityCategory.values.length,
+                      itemBuilder: (context, index) {
+                        final category = CharityCategory.values[index];
+                        final isSelected = selectedCategory == category;
+                        return _buildChoiceChip(
+                          isDark,
+                          category.arabicName,
+                          category.emoji,
+                          isSelected,
+                          () => setModalState(() => selectedCategory = category)
+                        );
+                      },
+                    ),
+                  ),
+
+                  SizedBox(height: 24.h),
+                  _buildSectionHeader(isDark, 'يوم التذكير 📅', '(يُكرر كل شهر)'),
+                  SizedBox(height: 16.h),
+                  Container(
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: AppThemeColors.patternOpacity(context),
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
+                    ),
+                    child: GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 7,
-                        mainAxisSpacing: 8,
-                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
                       ),
-                      itemCount: 31, // تم التحديث لـ 31 يوم
+                      itemCount: 31,
                       itemBuilder: (context, index) {
                         final day = index + 1;
                         final isSelected = selectedDay == day;
-                        return GestureDetector(
+                        return InkWell(
                           onTap: () => setModalState(() => selectedDay = day),
+                          borderRadius: BorderRadius.circular(12.r),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: isSelected ? const Color(0xFF10B981) : Colors.grey.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                              border: isSelected ? Border.all(color: Colors.white, width: 2) : null,
+                              color: isSelected ? AppColors.primary : AppThemeColors.patternOpacity(context),
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: isSelected ? Border.all(color: const Color(0xFFD4AF37), width: 1.5) : null,
+                              boxShadow: isSelected ? [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
+                                )
+                              ] : null,
                             ),
                             alignment: Alignment.center,
                             child: Text(
                               day.toString(),
                               style: GoogleFonts.cairo(
-                                color: isSelected ? Colors.white : Colors.black,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                fontSize: 12.sp,
+                                color: isSelected ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF64748B)),
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                                fontSize: 13.sp,
                               ),
                             ),
                           ),
                         );
                       },
                     ),
-                    SizedBox(height: 25.h),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (titleController.text.isEmpty || amountController.text.isEmpty) return;
+                  ),
+                  
+                  SizedBox(height: 32.h),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 54.h,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (titleController.text.isEmpty || amountController.text.isEmpty) {
+                          _showErrorSnackBar(context, 'برجاء أكمل البيانات المطلوبة');
+                          return;
+                        }
 
-                          final recurring = RecurringCharity(
-                            id: existing?.id ?? _charityService.generateId(),
-                            title: titleController.text,
-                            amount: double.parse(amountController.text).toDouble(),
-                            categoryIndex: selectedCategory.index,
-                            dayOfMonth: selectedDay,
-                            isActive: existing?.isActive ?? true,
-                          );
+                        double? amount = double.tryParse(amountController.text);
+                        if (amount == null || amount <= 0) {
+                          _showErrorSnackBar(context, 'برجاء إدخال مبلغ صحيح');
+                          return;
+                        }
 
-                          if (existing == null) {
-                            await _charityService.addRecurringCharity(recurring);
-                          } else {
-                            await _charityService.updateRecurringCharity(recurring);
-                          }
+                        final recurring = RecurringCharity(
+                          id: existing?.id ?? _charityService.generateId(),
+                          title: titleController.text,
+                          amount: amount,
+                          categoryIndex: selectedCategory.index,
+                          dayOfMonth: selectedDay,
+                          isActive: existing?.isActive ?? true,
+                        );
 
-                          if (mounted) Navigator.pop(context);
-                          _loadData();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF10B981),
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-                          elevation: 2,
-                        ),
-                        child: Text('حفظ الالتزام', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.sp)),
+                        if (existing == null) {
+                          await _charityService.addRecurringCharity(recurring);
+                        } else {
+                          await _charityService.updateRecurringCharity(recurring);
+                        }
+
+                        if (mounted) Navigator.pop(context);
+                        _loadData();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                        elevation: 4,
+                        shadowColor: AppColors.primary.withOpacity(0.4),
+                      ),
+                      child: Text(
+                        existing == null ? 'تفعيل الالتزام ✅' : 'حفظ التعديلات', 
+                        style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp)
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(bool isDark, String title, String subtitle) {
+    return Row(
+      children: [
+        Text(
+          title, 
+          style: GoogleFonts.cairo(
+            fontSize: 15.sp, 
+            fontWeight: FontWeight.bold,
+            color: AppThemeColors.cardHeaderColor(context),
+          )
+        ),
+        if (subtitle.isNotEmpty) ...[
+          SizedBox(width: 8.w),
+          Text(
+            subtitle, 
+            style: GoogleFonts.cairo(
+              fontSize: 11.sp, 
+              color: isDark ? Colors.white38 : Colors.black38,
+            )
+          ),
+        ],
+      ],
+    );
+  }
+
+  void _showErrorSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: GoogleFonts.cairo()),
+        backgroundColor: Colors.redAccent,
       ),
     );
   }
@@ -212,8 +298,15 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                   tooltip: 'تجربة الإشعارات',
                   icon: const Icon(Icons.notification_add_outlined),
                   onPressed: () async {
-                    // Testing notifications logic was removed from service, so this will either do nothing or we should remove the button too.
-                    // Keeping it for now but removing the call if service method is gone.
+                    await _charityService.testNotification();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('تم إرسال إشعار تجريبي ✨', style: GoogleFonts.cairo()),
+                          backgroundColor: AppColors.primary,
+                        ),
+                      );
+                    }
                   },
                 ),
               ],
@@ -236,18 +329,32 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
           backgroundColor: const Color(0xFF10B981),
           child: const Icon(Icons.add),
         ),
-        body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : _recurringCharities.isEmpty
-                ? _buildEmptyState()
-                : ListView.builder(
-                    padding: EdgeInsets.all(16.w),
-                    itemCount: _recurringCharities.length,
-                    itemBuilder: (context, index) {
-                      final item = _recurringCharities[index];
-                      return _buildRecurringCard(item);
-                    },
-                  ),
+        body: Stack(
+          children: [
+            // Subtle Pattern Background
+            Positioned.fill(
+              child: Opacity(
+                opacity: isDark ? 0.05 : 0.08,
+                child: Image.asset(
+                  'assets/images/8180jjj00005.webp',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _recurringCharities.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        padding: EdgeInsets.all(16.w),
+                        itemCount: _recurringCharities.length,
+                        itemBuilder: (context, index) {
+                          final item = _recurringCharities[index];
+                          return _buildRecurringCard(item, isDark);
+                        },
+                      ),
+          ],
+        ),
       ),
     );
   }
@@ -273,16 +380,19 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
     );
   }
 
-  Widget _buildRecurringCard(RecurringCharity item) {
+  Widget _buildRecurringCard(RecurringCharity item, bool isDark) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(16.w),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        color: AppThemeColors.cardBackgroundColor(context),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: AppThemeColors.cardBorderColor(context),
+          width: 1.2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -290,123 +400,211 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 50.w,
-                height: 50.h,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.1),
-                  shape: BoxShape.circle,
+          Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Row(
+              children: [
+                Container(
+                  width: 54.w,
+                  height: 54.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+                  ),
+                  child: Center(
+                    child: Text(item.category.emoji, style: TextStyle(fontSize: 26.sp)),
+                  ),
                 ),
-                child: Center(
-                  child: Text(item.category.emoji, style: TextStyle(fontSize: 24.sp)),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          '${item.amount} ${item.currency}',
-                          style: GoogleFonts.cairo(fontSize: 14.sp, color: const Color(0xFF10B981), fontWeight: FontWeight.bold),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title,
+                        style: GoogleFonts.cairo(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.sp,
+                          color: AppThemeColors.cardHeaderColor(context),
                         ),
-                      ],
+                      ),
+                      Text(
+                        '${item.amount} ${item.currency}',
+                        style: GoogleFonts.cairo(
+                          fontSize: 14.sp,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                CupertinoSwitch(
+                  value: item.isActive,
+                  activeColor: AppColors.primary,
+                  onChanged: (val) async {
+                    final updated = item.copyWith(isActive: val);
+                    await _charityService.updateRecurringCharity(updated);
+                    _loadData();
+                  },
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            decoration: BoxDecoration(
+              color: AppThemeColors.patternOpacity(context),
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.r)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.notifications_active_outlined, size: 16.sp, color: Colors.orange),
+                    SizedBox(width: 6.w),
+                    Text(
+                      'تذكير يوم ${item.dayOfMonth} من كل شهر',
+                      style: GoogleFonts.cairo(
+                        fontSize: 12.sp,
+                        color: isDark ? Colors.orange.shade300 : Colors.orange.shade800,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
-              ),
-              Switch(
-                value: item.isActive,
-                activeColor: const Color(0xFF10B981),
-                onChanged: (val) async {
-                  final updated = item.copyWith(isActive: val);
-                  await _charityService.updateRecurringCharity(updated);
-                  _loadData();
-                },
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          const Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.notifications_active_outlined, size: 16.sp, color: Colors.orange),
-                  SizedBox(width: 4.w),
-                  Text(
-                    'تذكير يوم ${item.dayOfMonth} من كل شهر',
-                    style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.orange),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit_outlined, size: 20.sp, color: Colors.blue),
-                    onPressed: () => _addOrEditRecurring(item),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete_outline, size: 20.sp, color: Colors.red),
-                    onPressed: () async {
-                      await _charityService.deleteRecurringCharity(item.id);
-                      _loadData();
-                    },
-                  ),
-                ],
-              ),
-            ],
+                Row(
+                  children: [
+                    _buildIconButton(
+                      icon: Icons.edit_outlined,
+                      color: Colors.blue,
+                      onTap: () => _addOrEditRecurring(item),
+                    ),
+                    SizedBox(width: 8.w),
+                    _buildIconButton(
+                      icon: Icons.delete_outline,
+                      color: Colors.red,
+                      onTap: () async {
+                        final confirm = await _showDeleteConfirm(context);
+                        if (confirm == true) {
+                          await _charityService.deleteRecurringCharity(item.id);
+                          _loadData();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool isNumber = false}) {
-    return TextField(
-      controller: controller,
-      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: const Color(0xFF10B981), size: 20.sp),
-        labelStyle: GoogleFonts.cairo(fontSize: 14.sp),
-        filled: true,
-        fillColor: Colors.grey.withOpacity(0.05),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.r),
-          borderSide: BorderSide.none,
+  Widget _buildIconButton({required IconData icon, required Color color, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8.r),
+      child: Container(
+        padding: EdgeInsets.all(6.w),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8.r),
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        child: Icon(icon, size: 18.sp, color: color),
       ),
     );
   }
 
-  Widget _buildChoiceChip(String label, String icon, bool isSelected, VoidCallback onTap) {
+  Future<bool?> _showDeleteConfirm(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: AlertDialog(
+          title: Text('حذف الالتزام', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+          content: Text('هل أنت متأكد من حذف هذا الالتزام؟', style: GoogleFonts.cairo()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text('حذف', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(bool isDark, TextEditingController controller, String label, IconData icon, {bool isNumber = false}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppThemeColors.patternOpacity(context),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+        style: GoogleFonts.cairo(
+          fontSize: 14.sp,
+          color: AppThemeColors.cardHeaderColor(context),
+        ),
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon, color: AppColors.primary, size: 20.sp),
+          labelStyle: GoogleFonts.cairo(
+            fontSize: 13.sp, 
+            color: isDark ? Colors.white38 : Colors.black38,
+          ),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChoiceChip(bool isDark, String label, String icon, bool isSelected, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 4.w),
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        margin: EdgeInsets.only(left: 10.w),
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF10B981).withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? AppColors.primary.withOpacity(0.1) : AppThemeColors.patternOpacity(context),
           borderRadius: BorderRadius.circular(15.r),
-          border: Border.all(color: isSelected ? const Color(0xFF10B981) : Colors.grey.withOpacity(0.3)),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : (isDark ? Colors.white10 : Colors.grey.shade200),
+            width: 1.5,
+          ),
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: AppColors.primary.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ] : null,
         ),
         alignment: Alignment.center,
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(icon, style: TextStyle(fontSize: 16.sp)),
-            SizedBox(width: 6.w),
-            Text(label, style: GoogleFonts.cairo(fontSize: 12.sp, color: isSelected ? const Color(0xFF10B981) : Colors.grey, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+            Text(icon, style: TextStyle(fontSize: 18.sp)),
+            SizedBox(width: 8.w),
+            Text(
+              label, 
+              style: GoogleFonts.cairo(
+                fontSize: 13.sp, 
+                color: isSelected ? AppColors.primary : (isDark ? Colors.white60 : const Color(0xFF64748B)), 
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              )
+            ),
           ],
         ),
       ),

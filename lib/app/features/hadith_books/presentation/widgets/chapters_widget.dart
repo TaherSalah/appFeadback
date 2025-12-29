@@ -1,10 +1,8 @@
-import 'dart:developer' show log;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/utils/style/k_color.dart';
 import '../../controllers/books_controller.dart';
@@ -12,20 +10,17 @@ import '../../controllers/extensions/books_getters_extension.dart';
 import '../../data/models/bn_hadith_model.dart';
 import '../../data/models/en_hadith_model.dart';
 import '../../data/models/ur_hadith_model.dart';
-import '../../../../core/shard/constanc/app_style.dart';
-import '../../../../core/utils/style/responsive_util.dart';
 import 'book_other_name.dart';
 import 'chapter_expansion_widget.dart';
 import 'hadith_in_arabic.dart';
 
 class HadithsPageView extends StatelessWidget {
-  const HadithsPageView({super.key});
+  final PageController pageController;
+  const HadithsPageView({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {
     final baseColor = KColors.primaryColor;
-
-    // final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -34,8 +29,12 @@ class HadithsPageView extends StatelessWidget {
             ? const Center(child: CircularProgressIndicator.adaptive())
             : PageView.builder(
                 itemCount: booksCtrl.currentBookHadithsCount + 1,
-                controller: booksCtrl.bookChaptersPageViewCrl,
-                onPageChanged: booksCtrl.changePage,
+                controller: pageController,
+                reverse: false, // Let Directionality handle RTL naturally
+                onPageChanged: (index) {
+                   booksCtrl.changePage(index);
+                   // If we need to sync back to controller, we could, but better to keep it decoupled
+                },
                 itemBuilder: (context, index) {
                   ENHadithModel? enLangHadith;
                   URHadithModel? urLangHadith;
@@ -55,10 +54,7 @@ class HadithsPageView extends StatelessWidget {
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'جاري التحميل...',
-                              style: GoogleFonts.cairo(fontSize: 18.sp, color: baseColor),
-                            ),
+                            const Text('جاري التحميل...'),
                             const CircularProgressIndicator.adaptive(),
                           ],
                         )
@@ -82,6 +78,7 @@ class HadithsPageView extends StatelessWidget {
                                               .babName ??
                                           'تحميل الباب...',
                                       index: index,
+                                      pageController: pageController,
                                     ),
                                     const Gap(16),
                                   ],
@@ -95,6 +92,7 @@ class HadithsPageView extends StatelessWidget {
                                                urLangHadith?.hadithText ?? 
                                                bnLangHadith?.hadithText ?? 
                                                'لا يوجد ترجمة حالياً',
+                                pageController: pageController,
                               ),
                             const Gap(40),
                           ],
@@ -155,10 +153,12 @@ class ActualHadithWidget extends StatelessWidget {
     super.key,
     required this.hadithIndex,
     required this.otherLangText,
+    required this.pageController,
   });
   
   final int hadithIndex;
   final String otherLangText;
+  final PageController pageController;
 
   @override
   Widget build(BuildContext context) {

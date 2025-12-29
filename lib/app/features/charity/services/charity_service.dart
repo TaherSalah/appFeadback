@@ -557,4 +557,19 @@ class CharityService {
     ];
     return months[month - 1];
   }
+
+  // ======== Test Methods ========
+
+  Future<void> testNotification() async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 999,
+        channelKey: 'charity_reminder_channel',
+        title: 'تجربة إشعارات الصدقة 🔔',
+        body: 'هذا إشعار تجريبي للتأكد من عمل نظام التذكير بالصدقة بنجاح ✨',
+        notificationLayout: NotificationLayout.Default,
+        category: NotificationCategory.Status,
+      ),
+    );
+  }
 }

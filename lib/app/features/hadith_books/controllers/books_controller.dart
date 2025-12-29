@@ -471,6 +471,7 @@ import '../data/models/ur_hadith_model.dart';
 // Assuming objectbox.g.dart is in the root of the project by default or correctly placed
 import '../../../../../objectbox.g.dart';
 import '../data/models/bookmark_model.dart';
+import 'extensions/books_getters_extension.dart';
 
 
 class BooksController extends GetxController {
@@ -495,8 +496,6 @@ class BooksController extends GetxController {
   int currentBookNumber = 1;
 
   final List<int> currentBookChaptersIndexes = [];
-
-  PageController bookChaptersPageViewCrl = PageController();
 
   List<Collection> allCollections = [];
 
@@ -579,8 +578,7 @@ class BooksController extends GetxController {
     currentPageIndex.value = newPageIndex;
     if (arabicHadiths.length <= newPageIndex + 3) {
       debugPrint('Getting More Hadiths...');
-      // implementation from ui_getters
-      // getAndSetMoreHadiths();
+      getAndSetMoreHadiths();
       update();
     }
   }

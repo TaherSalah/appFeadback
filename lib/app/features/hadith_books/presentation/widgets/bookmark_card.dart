@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:get/get.dart';
-
 import '../../data/models/bookmark_model.dart';
 import '../../../../core/utils/style/k_color.dart';
 import '../../controllers/books_controller.dart';
+import '../../controllers/extensions/books_getters_extension.dart';
 
 class BookmarkCard extends StatelessWidget {
   final BookmarkModel bookmark;
@@ -63,7 +62,8 @@ class BookmarkCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16.r),
           onTap: () {
-            // Navigate to the hadith detail (implement later)
+            // Navigate to the hadith detail
+             BooksController.instance.navigateToHadith(hadith);
           },
           child: Padding(
             padding: EdgeInsets.all(14.r),

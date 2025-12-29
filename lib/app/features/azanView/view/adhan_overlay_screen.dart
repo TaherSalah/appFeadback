@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/features/QiblaView/QiblaDirection.dart';
 import 'package:muslimdaily/app/features/mainView/MainView.dart';
 import 'package:muslimdaily/app/features/prayerView/post_prayer_azkar.dart';
 import 'package:muslimdaily/app/features/quran/quranView.dart';
-import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
-import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
-import 'package:muslimdaily/app/features/QiblaView/QiblaDirection.dart';
 
 class AdhanOverlayScreen extends StatefulWidget {
   final String? prayerName;

@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/hadith_books/controllers/extensions/books_getters_extension.dart';
+import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
+import '../../../../../core/shard/exports/all_exports.dart';
 import '../../../../../core/utils/style/responsive_util.dart';
 import '../../../controllers/books_controller.dart';
 
@@ -13,6 +16,8 @@ class BooksList extends StatelessWidget {
   Widget build(BuildContext context) {
     final booksCtrl = Get.find<BooksController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = AppColors.primary;
+    const Color goldColor = Color(0xFFD4AF37);
 
     return GetBuilder<BooksController>(builder: (controller) {
       if (controller.currentCollection.booksNames.isEmpty) {
@@ -23,15 +28,14 @@ class BooksList extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+                  color: baseColor,
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'جاري تحميل الكتب...',
-                  style: TextStyle(
-                    fontFamily: 'kufi',
-                    fontSize: 16,
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  style: GoogleFonts.cairo(
+                    fontSize: 16.sp,
+                    color: isDark ? Colors.white70 : Colors.black54,
                   ),
                 ),
               ],
@@ -48,7 +52,7 @@ class BooksList extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         itemCount: booksNames.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        separatorBuilder: (context, index) => SizedBox(height: 12.h),
         itemBuilder: (context, i) {
           final book = booksNames[i];
           return GestureDetector(
@@ -56,88 +60,58 @@ class BooksList extends StatelessWidget {
               double.parse(book.bookNumber).toInt(),
             ),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: isDark
-                      ? [
-                          Theme.of(context).primaryColor.withOpacity(0.08),
-                          Theme.of(context).primaryColor.withOpacity(0.03),
-                        ]
-                      : [
-                          Colors.white,
-                          Theme.of(context).primaryColor.withOpacity(0.02),
-                        ],
-                ),
-                borderRadius: BorderRadius.circular(16),
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(16.r),
                 border: Border.all(
-                  color: Theme.of(context).primaryColor.withOpacity(isDark ? 0.2 : 0.15),
-                  width: 1,
+                  color: isDark ? Colors.white24 : goldColor.withOpacity(0.5),
+                  width: 1.2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).primaryColor.withOpacity(isDark ? 0.1 : 0.08),
-                    blurRadius: 12,
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
-                  if (!isDark)
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
                 ],
               ),
               child: Row(
                 children: [
-                  // Number Badge
+                  // Gold Badge for Number
                   Container(
-                    width: 48,
-                    height: 48,
+                    width: 42.r,
+                    height: 42.r,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColor.withOpacity(0.8),
-                        ],
-                      ),
+                      color: isDark ? goldColor.withOpacity(0.15) : baseColor.withOpacity(0.1),
                       shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme.of(context).primaryColor.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+                      border: Border.all(
+                        color: isDark ? goldColor.withOpacity(0.3) : baseColor.withOpacity(0.2),
+                        width: 1,
+                      ),
                     ),
                     child: Center(
                       child: Text(
                         '${i + 1}',
-                        style: TextStyle(
-                          fontFamily: 'kufi',
-                          fontSize: ResponsiveUtil.isTablet(context) ? 16 : 18,
+                        style: GoogleFonts.cairo(
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: isDark ? goldColor : baseColor,
                         ),
                       ),
                     ),
                   ),
                   
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   
                   // Book Name
                   Expanded(
                     child: Text(
                       book.bookName,
-                      style: TextStyle(
-                        fontFamily: 'kufi',
-                        fontSize: ResponsiveUtil.isTablet(context) ? 16 : 20,
+                      style: GoogleFonts.cairo(
+                        fontSize: 15.sp,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                        color: isDark ? Colors.white : Colors.black87,
                         height: 1.4,
                       ),
                       textDirection: TextDirection.rtl,
@@ -145,20 +119,13 @@ class BooksList extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12.w),
 
-                  // Arrow
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      Icons.arrow_back_ios_rounded,
-                      size: 16,
-                      color: Theme.of(context).primaryColor,
-                    ),
+                  // Arrow icon
+                  Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 14.sp,
+                    color: isDark ? Colors.white24 : Colors.grey[300],
                   ),
                 ],
               ),

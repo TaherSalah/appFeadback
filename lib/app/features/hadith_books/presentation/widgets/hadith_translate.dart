@@ -3,7 +3,6 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/utils/style/responsive_util.dart';
-import '../../controllers/books_controller.dart';
 
 class HadithTranslate extends StatelessWidget {
   final String otherLangHadithText;

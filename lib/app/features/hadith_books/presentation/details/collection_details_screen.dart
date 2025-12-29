@@ -1,6 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+
 import '../../../../core/utils/constent/lists.dart';
 import '../../../../core/utils/style/responsive_util.dart';
 import '../../controllers/books_controller.dart';
@@ -12,106 +17,146 @@ import 'widgets/books_list.dart';
 class CollectionDetailsScreen extends StatelessWidget {
   final int? bookNumber;
   final int? bookIndex;
-  
-  const CollectionDetailsScreen(
-      {super.key, this.bookNumber, this.bookIndex});
+
+  const CollectionDetailsScreen({super.key, this.bookNumber, this.bookIndex});
 
   @override
   Widget build(BuildContext context) {
-    // Simplified logic: We assume we are showing a Collection, not ExplanationBook
     final booksCtrl = Get.find<BooksController>();
-    final collection = booksCtrl.currentCollection; // Assuming currentCollection is set before nav
+    final collection = booksCtrl.currentCollection;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColorDark,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Theme.of(context).primaryColor.withOpacity(0.1),
-              Theme.of(context).colorScheme.background,
-            ],
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+          ),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            centerTitle: true,
+            title: Text(
+              collection.bookName,
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
           ),
         ),
-        child: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              // App Bar
-              SliverAppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                pinned: false,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back, 
-                    color: Theme.of(context).primaryColor,
-                    size: 28,
-                  ),
-                  onPressed: () => Navigator.pop(context),
+
+        body: CustomScrollView(
+          slivers: [
+            // Premium SliverAppBar
+            // SliverAppBar(
+            //   expandedHeight: 140.h,
+            //   floating: false,
+            //   pinned: true,
+            //   backgroundColor: isDark ? const Color(0xFF1a1a2e) : AppColors.primary,
+            //   elevation: 0,
+            //   leading: IconButton(
+            //     icon: Icon(CupertinoIcons.back, color: Colors.white),
+            //     onPressed: () => Navigator.pop(context),
+            //   ),
+            //   flexibleSpace: FlexibleSpaceBar(
+            //     centerTitle: true,
+            //     title: Text(
+            //       collection.bookName,
+            //       style: GoogleFonts.cairo(
+            //         color: Colors.white,
+            //         fontWeight: FontWeight.bold,
+            //         fontSize: 18.sp,
+            //       ),
+            //     ),
+            //     background: Stack(
+            //       fit: StackFit.expand,
+            //       children: [
+            //         if (!isDark)
+            //           Image.asset(
+            //             "assets/images/8180jjj00005.webp",
+            //             fit: BoxFit.cover,
+            //             opacity: const AlwaysStoppedAnimation(0.2),
+            //           ),
+            //         Container(
+            //           decoration: BoxDecoration(
+            //             gradient: LinearGradient(
+            //               begin: Alignment.topCenter,
+            //               end: Alignment.bottomCenter,
+            //               colors: [
+            //                 Colors.black.withOpacity(0.3),
+            //                 Colors.transparent,
+            //               ],
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+
+            // Collection Summary/Cover
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+                child: BookName(bookDetails: collection),
+              ),
+            ),
+
+            // About Book Card
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: AboutBook(
+                  bookDetails: _getBookDetails(collection.id ?? 1),
                 ),
               ),
-              
-              // Book Cover
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: BookName(bookDetails: collection),
-                ),
-              ),
-              
-              // About Book Card
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+            ),
+
+            const SliverToBoxAdapter(child: Gap(24)),
+
+            // Books List Header
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 4.w,
+                      height: 24.h,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                    child: AboutBook(
-                      bookDetails: _getBookDetails(collection.id ?? 1),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'قائمة الكتب',
+                      style: GoogleFonts.cairo(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-              
-              const SliverToBoxAdapter(child: Gap(16)),
-              
-              // Books List Header
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                  child: Text(
-                    'booksList'.tr,
-                    style: TextStyle(
-                      fontSize: ResponsiveUtil.isTablet(context) ? 18 : 24,
-                      fontFamily: 'kufi',
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
+            ),
+
+            // Books List
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              sliver: const SliverToBoxAdapter(
+                child: BooksList(),
               ),
-              
-              // Books List
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                sliver: SliverToBoxAdapter(
-                  child: BooksList(),
-                ),
-              ),
-              
-              const SliverToBoxAdapter(child: Gap(32)),
-            ],
-          ),
+            ),
+
+            const SliverToBoxAdapter(child: Gap(40)),
+          ],
         ),
       ),
     );
@@ -121,7 +166,8 @@ class CollectionDetailsScreen extends StatelessWidget {
     // Collection IDs are 1-indexed, booksList is 0-indexed
     final bookIndex = collectionId - 1;
     if (bookIndex >= 0 && bookIndex < booksList.length) {
-      return booksList[bookIndex]['details'] ?? 'لا توجد معلومات متاحة عن هذا الكتاب';
+      return booksList[bookIndex]['details'] ??
+          'لا توجد معلومات متاحة عن هذا الكتاب';
     }
     return 'لا توجد معلومات متاحة عن هذا الكتاب';
   }

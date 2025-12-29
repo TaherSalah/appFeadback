@@ -1,15 +1,9 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
-import '../../core/shard/constanc/app_string.dart';
 import '../../core/shard/exports/all_exports.dart';
-import '../../core/shard/widgets/ui_animations.dart';
-import '../../core/widgets/custom_text_widget.dart';
-import '../messaView/azkar_massa.dart';
 
 class AzkarCounter extends StatefulWidget {
   const AzkarCounter({super.key});

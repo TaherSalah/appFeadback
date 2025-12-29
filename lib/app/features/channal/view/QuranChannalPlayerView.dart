@@ -1,12 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
-import 'package:muslimdaily/app/features/radio/view/widget/QuranRadioItemBuilder.dart';
-import 'package:muslimdaily/main.dart';
 import 'package:muslimdaily/app/core/widgets/QuranRadioPlayer.dart';
 
 import '../../../core/widgets/NoConnectionScreen.dart';

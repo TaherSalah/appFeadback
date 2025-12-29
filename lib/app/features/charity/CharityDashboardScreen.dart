@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../core/utils/style/k_color.dart';
+import '../../core/utils/style/app_theme_colors.dart';
 import '../../core/widgets/kButtons.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
@@ -170,64 +171,67 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             ? const Center(child: CircularProgressIndicator())
             : RefreshIndicator(
                 onRefresh: _loadData,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: EdgeInsets.all(16.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // اقتراح الصدقة اليومية
-                        _buildDailySuggestionCard(isDark),
-                        SizedBox(height: 20.h),
-
-                        // صدقات مستحقة اليوم (الصدقات الدورية)
-                        if (_dueRecurring.isNotEmpty) ...[
-                          _buildDueRecurringSection(isDark),
-                          SizedBox(height: 20.h),
-                        ],
-                        Center(
-                          child: CustomButton(
-                            borderColor: Theme.of(context).cardColor,
-                            backgroundColor: KColors.primaryColor,
-                            width: MediaQuery.sizeOf(context).width / 3,
-                            title: "إضافة صدقة",
-                            onTap: () {
-                              Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (_) => const AddCharityScreen()),
-                                    ).then((_) => _loadData());
-                            },
-                          ),
+                child: Stack(
+                  children: [
+                    // Subtle Pattern Background
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: isDark ? 0.05 : 0.08,
+                        child: Image.asset(
+                          'assets/images/8180jjj00005.webp',
+                          fit: BoxFit.cover,
                         ),
-                        SizedBox(height: 20.h),
-
-                        // إحصائيات سريعة
-                        _buildQuickStats(isDark),
-                        SizedBox(height: 20.h),
-
-                        // الهدف الشهري
-                        _buildMonthlyGoalCard(isDark),
-                        SizedBox(height: 20.h),
-
-                        // Streak
-                        _buildStreakCard(isDark),
-                        SizedBox(height: 20.h),
-
-                        // الرسم البياني
-                        _buildChartCard(isDark),
-                        SizedBox(height: 20.h),
-
-                        // التوزيع حسب الفئات
-                        _buildCategoryBreakdown(isDark),
-                        SizedBox(height: 20.h),
-
-                        // أزرار سريعة
-                        _buildQuickActions(isDark),
-                        SizedBox(height: 20.h),
-                      ],
+                      ),
                     ),
-                  ),
+                    SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.all(16.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // اقتراح الصدقة اليومية
+                            _buildDailySuggestionCard(isDark),
+                            SizedBox(height: 20.h),
+
+                            // صدقات مستحقة اليوم (الصدقات الدورية)
+                            if (_dueRecurring.isNotEmpty) ...[
+                              _buildDueRecurringSection(isDark),
+                              SizedBox(height: 20.h),
+                            ],
+                            
+                            // Quick Add Recommendation for Dashboard
+                            _buildQuickAddRow(isDark),
+                            SizedBox(height: 24.h),
+
+                            // إحصائيات سريعة
+                            _buildQuickStats(isDark),
+                            SizedBox(height: 20.h),
+
+                            // الهدف الشهري
+                            _buildMonthlyGoalCard(isDark),
+                            SizedBox(height: 20.h),
+
+                            // Streak
+                            _buildStreakCard(isDark),
+                            SizedBox(height: 20.h),
+
+                            // الرسم البياني
+                            _buildChartCard(isDark),
+                            SizedBox(height: 20.h),
+
+                            // التوزيع حسب الفئات
+                            _buildCategoryBreakdown(isDark),
+                            SizedBox(height: 20.h),
+
+                            // أزرار سريعة
+                            _buildQuickActions(isDark),
+                            SizedBox(height: 40.h),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
         // floatingActionButton: FloatingActionButton.extended(
@@ -381,11 +385,15 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2D3748) : Colors.white,
+        color: AppThemeColors.cardBackgroundColor(context),
         borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: AppThemeColors.cardBorderColor(context),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -400,7 +408,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             label,
             style: GoogleFonts.cairo(
               fontSize: 12.sp,
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
+              color: AppThemeColors.cardSubtitleColor(context),
             ),
           ),
           SizedBox(height: 4.h),
@@ -413,6 +421,73 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAddRow(bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'تسجيل سريع لصدقة اليوم:',
+          style: GoogleFonts.cairo(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.bold,
+            color: AppThemeColors.cardHeaderColor(context),
+          ),
+        ),
+        SizedBox(height: 12.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [5.0, 10.0, 20.0, 50.0, 100.0].map((amount) {
+            return _buildDashboardQuickAddChip(amount, isDark);
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDashboardQuickAddChip(double amount, bool isDark) {
+    return InkWell(
+      onTap: () async {
+        final donation = CharityDonation.withCategory(
+          id: _charityService.generateId(),
+          amount: amount,
+          category: CharityCategory.sadaqah,
+          date: DateTime.now(),
+          notes: 'تسجيل سريع من اللوحة الرئيسية',
+          currency: 'EGP',
+        );
+        await _charityService.addDonation(donation);
+        _loadData();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('تم تسجيل صدقة بقيمة $amount جنيه ✨', style: GoogleFonts.cairo()),
+              backgroundColor: const Color(0xFF10B981),
+            ),
+          );
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF2D3748) : Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: const Color(0xFF10B981).withOpacity(0.5),
+            width: 1,
+          ),
+        ),
+        child: Text(
+          '+$amount',
+          style: GoogleFonts.cairo(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF10B981),
+          ),
+        ),
       ),
     );
   }
@@ -596,8 +671,18 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2D3748) : Colors.white,
+        color: AppThemeColors.cardBackgroundColor(context),
         borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: AppThemeColors.cardBorderColor(context),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -607,6 +692,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             style: GoogleFonts.cairo(
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
+              color: AppThemeColors.cardHeaderColor(context),
             ),
           ),
           SizedBox(height: 20.h),
@@ -679,8 +765,11 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2D3748) : Colors.white,
+        color: AppThemeColors.cardBackgroundColor(context),
         borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: AppThemeColors.cardBorderColor(context),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -690,6 +779,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             style: GoogleFonts.cairo(
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
+              color: AppThemeColors.cardHeaderColor(context),
             ),
           ),
           SizedBox(height: 16.h),
@@ -712,7 +802,10 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                           SizedBox(width: 8.w),
                           Text(
                             entry.key.arabicName,
-                            style: GoogleFonts.cairo(fontSize: 14.sp),
+                            style: GoogleFonts.cairo(
+                              fontSize: 14.sp,
+                              color: AppThemeColors.cardHeaderColor(context),
+                            ),
                           ),
                         ],
                       ),
@@ -821,7 +914,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                   margin: EdgeInsets.only(bottom: 12.h),
                   padding: EdgeInsets.all(16.w),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF2D3748) : Colors.white,
+                    color: AppThemeColors.cardBackgroundColor(context),
                     borderRadius: BorderRadius.circular(16.r),
                     border: Border.all(color: Colors.orange.withOpacity(0.3)),
                   ),
@@ -888,7 +981,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF2D3748) : Colors.white,
+          color: AppThemeColors.cardBackgroundColor(context),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(color: color.withOpacity(0.3)),
         ),

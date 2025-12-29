@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../data/models/ar_hadith_model.dart';
 import '../../../../core/utils/style/k_color.dart';
+import '../../controllers/books_controller.dart';
+import '../../controllers/extensions/books_getters_extension.dart';
 
 class SearchResultCard extends StatelessWidget {
   final ARHadithModel hadith;
@@ -54,7 +56,8 @@ class SearchResultCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16.r),
           onTap: () {
-            // Navigate to hadith detail (implement later)
+            // Navigate to hadith detail
+             BooksController.instance.navigateToHadith(hadith);
           },
           child: Padding(
             padding: EdgeInsets.all(14.r),

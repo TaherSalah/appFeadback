@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../charity/CharityDashboardScreen.dart';
 import '../../charity/services/charity_service.dart';
 import '../../charity/models/charity_models.dart';
+import '../../../core/utils/style/app_theme_colors.dart';
+import '../../../core/utils/style/k_color.dart';
 
 class CharityEntryWidget extends StatefulWidget {
   const CharityEntryWidget({super.key});
@@ -35,143 +37,225 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const CharityDashboardScreen()),
-        );
-      },
-      borderRadius: BorderRadius.circular(20.r),
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        padding: EdgeInsets.all(20.w),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF10B981), Color(0xFF059669)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(20.r),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF10B981).withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: AppThemeColors.cardBackgroundColor(context),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: AppThemeColors.cardBorderColor(context),
+          width: 1.2,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.r),
+        child: Stack(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text('🤲', style: TextStyle(fontSize: 32.sp)),
-                    SizedBox(width: 12.w),
-                    Text(
-                      'مُساعد الصدقة',
-                      style: GoogleFonts.cairo(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
+            // Subtle Pattern Background
+            Positioned.fill(
+              child: Opacity(
+                opacity: isDark ? 0.05 : 0.08,
+                child: Image.asset(
+                  'assets/images/8180jjj00005.webp',
+                  fit: BoxFit.cover,
                 ),
-                Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16.sp),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            if (_stats != null) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatItem(
-                      '${_stats!.totalThisMonth.toStringAsFixed(0)}',
-                      'صدقة هذا الشهر',
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: _buildStatItem(
-                      '${_stats!.currentStreak}',
-                      'سلسلة الأيام 🔥',
-                    ),
-                  ),
-                ],
               ),
-              SizedBox(height: 12.h),
-              // Removed _suggestion related UI
-              SizedBox(height: 12.h),
-              // Removed _buildGoalProgress()
-              SizedBox(height: 12.h),
-              if (_hasDueReminder)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade400,
-                    borderRadius: BorderRadius.circular(10.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+            ),
+            
+            Padding(
+              padding: EdgeInsets.all(18.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const CharityDashboardScreen()),
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(8.w),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF10B981).withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text('🤲', style: TextStyle(fontSize: 24.sp)),
+                            ),
+                            SizedBox(width: 12.w),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'مُساعد الصدقة',
+                                  style: GoogleFonts.cairo(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppThemeColors.cardHeaderColor(context),
+                                  ),
+                                ),
+                                if (_stats != null && _stats!.currentStreak > 0)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'نبتة الخير: ',
+                                        style: GoogleFonts.cairo(
+                                          fontSize: 10.sp,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      Text(
+                                        _getStreakSprout(_stats!.currentStreak),
+                                        style: TextStyle(fontSize: 12.sp),
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios, 
+                          color: const Color(0xFFD4AF37), 
+                          size: 14.sp
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  
+                  SizedBox(height: 16.h),
+                  
+                  // Main Content Area
+                  Row(
                     children: [
-                      Icon(Icons.notifications_active, color: Colors.white, size: 16.sp),
-                      SizedBox(width: 8.w),
-                      Text(
-                        'لديك صدقة مستحقة اليوم! ✨',
-                        style: GoogleFonts.cairo(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      // Total Month Stat
+                      Expanded(
+                        child: _buildStatItemLarge(
+                          isDark,
+                          '${_stats?.totalThisMonth.toStringAsFixed(0) ?? '0'}',
+                          'صدقة الشهر',
+                          const Color(0xFF10B981),
+                          'EGP',
+                        ),
+                      ),
+                      
+                      SizedBox(width: 12.w),
+                      
+                      // Streak Stat
+                      Expanded(
+                        child: _buildStatItemLarge(
+                          isDark,
+                          '${_stats?.currentStreak ?? 0}',
+                          'أيام الالتزام',
+                          const Color(0xFFF59E0B),
+                          'يوم',
                         ),
                       ),
                     ],
                   ),
-                ),
-            ],
+                  
+                  if (_hasDueReminder) ...[
+                    SizedBox(height: 16.h),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(color: Colors.orange.withOpacity(0.2)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.notifications_active, color: Colors.orange, size: 18.sp),
+                          SizedBox(width: 8.w),
+                          Text(
+                            'لديك صدقة مستحقة اليوم! ✨',
+                            style: GoogleFonts.cairo(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.orange.shade300 : Colors.orange.shade800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatItem(String value, String label) {
+  String _getStreakSprout(int streak) {
+    if (streak <= 1) return '🌱';
+    if (streak <= 7) return '🌿';
+    if (streak <= 30) return '🌳';
+    return '🌳✨';
+  }
+
+  Widget _buildStatItemLarge(bool isDark, String value, String label, Color color, String unit) {
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.symmetric(vertical: 16.h),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(12.r),
+        color: AppThemeColors.patternOpacity(context),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: color.withOpacity(0.12)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            value,
-            style: GoogleFonts.cairo(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                value,
+                style: GoogleFonts.cairo(
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+              if (unit.isNotEmpty) ...[
+                SizedBox(width: 4.w),
+                Text(
+                  unit,
+                  style: GoogleFonts.cairo(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                    color: color.withOpacity(0.7),
+                  ),
+                ),
+              ],
+            ],
           ),
-          SizedBox(height: 4.h),
+          SizedBox(height: 2.h),
           Text(
             label,
             style: GoogleFonts.cairo(
               fontSize: 11.sp,
-              color: Colors.white.withOpacity(0.9),
+              fontWeight: FontWeight.w500,
+              color: AppThemeColors.cardSubtitleColor(context),
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),

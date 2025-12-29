@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:get/get.dart';
 
-import '../../../../core/shard/constanc/app_style.dart';
-import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/utils/style/k_color.dart';
+import '../../../../features/shareCard/PremiumShareCard.dart';
 import '../../controllers/books_controller.dart';
 import '../../data/models/ar_hadith_model.dart';
-import '../../../../features/shareCard/PremiumShareCard.dart';
 
 class HadithInArabic extends StatelessWidget {
   final ARHadithModel arabicHadith;
@@ -22,6 +20,16 @@ class HadithInArabic extends StatelessWidget {
     required this.arabicHadith,
     required this.otherLangHadithText,
   });
+
+  String _cleanHtmlTags(String text) {
+    return text
+        .replaceAll(RegExp(r'<br\s*/?>'), '\n')
+        .replaceAll(RegExp(r'<p>'), '\n')
+        .replaceAll(RegExp(r'</p>'), '')
+        .replaceAll(RegExp(r'<b>'), '')
+        .replaceAll(RegExp(r'</b>'), '')
+        .replaceAll(RegExp(r'<[^>]*>'), ''); // Remove any other tags
+  }
 
   final booksCtrl = Get.find<BooksController>();
 
@@ -133,10 +141,10 @@ class HadithInArabic extends StatelessWidget {
     
     final shareFullText = """
 حديث رقم: ${arabicHadith.hadithNumber}
-${arabicHadith.hadithText}
+${_cleanHtmlTags(arabicHadith.hadithText)}
 
 الترجمة:
-$otherLangHadithText
+${_cleanHtmlTags(otherLangHadithText)}
 
 من تطبيق رفيق المسلم اليومي
 """;
@@ -166,15 +174,14 @@ $otherLangHadithText
                       ],
               ),
               border: Border.all(
-                color: baseColor.withOpacity(isDark ? 0.5 : 0.3),
+                color: isDark ? Colors.white24 : const Color(0xFFD4AF37),
                 width: 1.2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: baseColor.withOpacity(isDark ? 0.4 : 0.18),
-                  blurRadius: 16,
-                  spreadRadius: 0.5,
-                  offset: Offset(0, isDark ? 10 : 6),
+                  color: (isDark ? Colors.black : const Color(0xFFD4AF37)).withOpacity(0.12),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
                 ),
               ],
             ),
@@ -224,15 +231,14 @@ $otherLangHadithText
                   SizedBox(height: 20.h),
 
                   // Arabic Hadith Text
-                  Text(
-                    arabicHadith.hadithText,
-                    textAlign: TextAlign.right,
+                  SelectableText(
+                    _cleanHtmlTags(arabicHadith.hadithText),
+                    textAlign: TextAlign.center,
                     textDirection: TextDirection.rtl,
-                    style: TextStyle(
-                      fontFamily: 'naskh',
+                    style: GoogleFonts.amiri(
                       height: 1.8,
-                      fontSize: size.width > 600 ? 14.sp : 20.sp,
-                      color: isDark ? Colors.grey[100] : Colors.grey[900],
+                      fontSize: size.width > 600 ? 15.sp : 22.sp,
+                      color: isDark ? Colors.grey[200] : Colors.grey[900],
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -266,7 +272,7 @@ $otherLangHadithText
                       ),
                     ),
                     child: Text(
-                      otherLangHadithText,
+                      _cleanHtmlTags(otherLangHadithText),
                       textAlign: TextAlign.left,
                       textDirection: TextDirection.ltr,
                       style: GoogleFonts.roboto(
@@ -288,50 +294,61 @@ $otherLangHadithText
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _ActionButton(
-                            icon: Icons.copy_rounded,
-                            label: "نسخ",
-                            onTap: () => copyText(shareFullText),
+                          Expanded(
+                            child: _ActionButton(
+                              icon: Icons.copy_rounded,
+                              label: "نسخ",
+                              onTap: () => copyText(shareFullText),
+                            ),
                           ),
-                          _ActionButton(
-                            icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                            label: isBookmarked ? "محفوظ" : "حفظ",
-                            onTap: () async {
-                              if (!isBookmarked) {
-                                // Show category selection dialog
-                                await _showCategoryDialog(context, arabicHadith);
-                              } else {
-                                // Remove bookmark
-                                await ctrl.toggleBookmark(arabicHadith);
-                                Fluttertoast.showToast(
-                                  msg: "تم إلغاء حفظ الحديث",
-                                  gravity: ToastGravity.BOTTOM,
-                                  backgroundColor: Colors.orange.shade600,
-                                  textColor: Colors.white,
+                          SizedBox(width: 4.w),
+                          Expanded(
+                            child: _ActionButton(
+                              icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                              label: isBookmarked ? "محفوظ" : "حفظ",
+                              onTap: () async {
+                                if (!isBookmarked) {
+                                  // Show category selection dialog
+                                  await _showCategoryDialog(context, arabicHadith);
+                                } else {
+                                  // Remove bookmark
+                                  await ctrl.toggleBookmark(arabicHadith);
+                                  Fluttertoast.showToast(
+                                    msg: "تم إلغاء حفظ الحديث",
+                                    gravity: ToastGravity.BOTTOM,
+                                    backgroundColor: Colors.orange.shade600,
+                                    textColor: Colors.white,
+                                  );
+                                }
+                              },
+                              isHighlighted: isBookmarked,
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          Expanded(
+                            child: _ActionButton(
+                              icon: Icons.image_outlined,
+                              label: "صورة",
+                              onTap: () {
+                                showGeneralDialog(
+                                  context: context,
+                                  pageBuilder: (context, anim1, anim2) =>
+                                      PremiumShareCard(
+                                    azkarName: arabicHadith.bookName,
+                                    text: _cleanHtmlTags(arabicHadith.hadithText),
+                                    source: arabicHadith.grade1,
+                                  ),
                                 );
-                              }
-                            },
-                            isHighlighted: isBookmarked,
+                              },
+                            ),
                           ),
-                          _ActionButton(
-                            icon: Icons.image_outlined,
-                            label: "صورة",
-                            onTap: () {
-                              showGeneralDialog(
-                                context: context,
-                                pageBuilder: (context, anim1, anim2) =>
-                                    PremiumShareCard(
-                                  azkarName: arabicHadith.bookName,
-                                  text: arabicHadith.hadithText,
-                                  source: arabicHadith.grade1,
-                                ),
-                              );
-                            },
-                          ),
-                          _ActionButton(
-                            icon: Icons.share_rounded,
-                            label: "مشاركة",
-                            onTap: () => shareText(shareFullText, "حديث نبوي شريف"),
+                          SizedBox(width: 4.w),
+                          Expanded(
+                            child: _ActionButton(
+                              icon: Icons.share_rounded,
+                              label: "مشاركة",
+                              onTap: () => shareText(shareFullText, "حديث نبوي شريف"),
+                            ),
                           ),
                         ],
                       );
@@ -393,7 +410,7 @@ class _ActionButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(30.r),
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30.r),
           color: isHighlighted
@@ -403,6 +420,7 @@ class _ActionButton extends StatelessWidget {
                   : primary.withOpacity(0.06)),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
@@ -411,17 +429,21 @@ class _ActionButton extends StatelessWidget {
                   ? primary
                   : (isDark ? Colors.greenAccent : primary),
             ),
-            SizedBox(width: 6.w),
-            Text(
-              label,
+            SizedBox(width: 4.w),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
               style: GoogleFonts.cairo(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
                 color: isHighlighted
                     ? primary
                     : (isDark ? Colors.white70 : Colors.grey[900]),
-              ),
-            ),
+                ),
+              ),),),
+
           ],
         ),
       ),

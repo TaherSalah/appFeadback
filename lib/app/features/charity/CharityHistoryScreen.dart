@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,33 +49,67 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
       child: Scaffold(
         backgroundColor:
             isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
-        appBar: AppBar(
-          title: Text(
-            'سجل الصدقات 📜',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.sp,
+        // appBar: AppBar(
+        //   title: Text(
+        //     'سجل الصدقات 📜',
+        //     style: GoogleFonts.cairo(
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: 20.sp,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        //   actions: [
+        //     IconButton(
+        //       icon: const Icon(Icons.picture_as_pdf_outlined),
+        //       onPressed: () async {
+        //         final donations = _charityService.getAllDonations();
+        //         // Assuming calculateStats() is a method in CharityService that returns relevant statistics
+        //         // If not implemented, this line will cause a compile-time error.
+        //         // For the purpose of this edit, it's included as per instruction.
+        //         final stats = _charityService.calculateStats();
+        //         await CharityPdfService.generateDonationsReport(
+        //             donations, stats);
+        //       },
+        //       tooltip: 'تصدير PDF',
+        //     ),
+        //     SizedBox(width: 8.w),
+        //   ],
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.picture_as_pdf_outlined),
+                  onPressed: () async {
+                    final donations = _charityService.getAllDonations();
+                    // Assuming calculateStats() is a method in CharityService that returns relevant statistics
+                    // If not implemented, this line will cause a compile-time error.
+                    // For the purpose of this edit, it's included as per instruction.
+                    final stats = _charityService.calculateStats();
+                    await CharityPdfService.generateDonationsReport(
+                        donations, stats);
+                  },
+                  tooltip: 'تصدير PDF',
+                ),
+],
+            centerTitle: true,
+            title: Text(
+              'سجل الصدقات ',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
             ),
           ),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.picture_as_pdf_outlined),
-              onPressed: () async {
-                final donations = _charityService.getAllDonations();
-                // Assuming calculateStats() is a method in CharityService that returns relevant statistics
-                // If not implemented, this line will cause a compile-time error.
-                // For the purpose of this edit, it's included as per instruction.
-                final stats = _charityService.calculateStats();
-                await CharityPdfService.generateDonationsReport(
-                    donations, stats);
-              },
-              tooltip: 'تصدير PDF',
-            ),
-            SizedBox(width: 8.w),
-          ],
         ),
         body: Column(
           children: [

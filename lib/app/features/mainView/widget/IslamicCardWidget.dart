@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/utils/style/app_theme_colors.dart';
+
 class IslamicCardWidget extends StatelessWidget {
   final String title;
   final String iconPath;

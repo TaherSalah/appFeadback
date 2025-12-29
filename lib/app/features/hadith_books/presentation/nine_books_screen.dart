@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/constent/lists.dart';
-import '../../../core/utils/style/responsive_util.dart';
+import '../../../core/utils/style/k_color.dart';
 import '../controllers/books_controller.dart';
 import 'widgets/books_cover.dart';
 
@@ -20,11 +17,6 @@ class NineBooksScreen extends StatelessWidget {
     final BooksController booksCtrl = Get.put(BooksController());
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('الكت'), // Ensure translation key exists
-      //   centerTitle: true,
-      //   // backgroundColor: Theme.of(context).primaryColor,
-      // ),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(
           MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
@@ -35,7 +27,7 @@ class NineBooksScreen extends StatelessWidget {
           ),
           centerTitle: true,
           title: Text(
-            "المكتبة الاسلامية",
+            "المكتبة الإسلامية",
             style: GoogleFonts.cairo(
               color: Colors.green,
               fontWeight: FontWeight.bold,
@@ -45,37 +37,82 @@ class NineBooksScreen extends StatelessWidget {
           ),
         ),
       ),
+
       body: Directionality(
-        textDirection: TextDirection.rtl, // Force RTL for Arabic content
-        child: GetBuilder<BooksController>(
-          builder: (controller) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Display "Six Books" (Index 0 in Constants)
-                  BooksCover(
-                    // booksColor: Colors.red,
-                    title: Constants.collectionsGroupsTitles[0],
-                  ),
-                  const Gap(10),
-                  // Display "Nine Books" (Index 1 in Constants)
-                  BooksCover(
-                    // booksColor: Colors.red,
-
-                    title: Constants.collectionsGroupsTitles[1],
-                  ),
-                  const Gap(10),
-                  // Display "Other Books" (Index 2 in Constants)
-                  BooksCover(
-                    // booksColor: Colors.red,
-
-                    title: Constants.collectionsGroupsTitles[2],
-                  ),
-                  const Gap(20),
-                ],
+        textDirection: TextDirection.rtl,
+        child: CustomScrollView(
+          slivers: [
+            // SliverAppBar(
+            //   expandedHeight: 120.h,
+            //   floating: false,
+            //   pinned: true,
+            //   backgroundColor: isDark ? const Color(0xFF1a1a2e) : AppColors.primary,
+            //   elevation: 0,
+            //   leading: IconButton(
+            //     icon: Icon(CupertinoIcons.back, color: Colors.white),
+            //     onPressed: () => Navigator.pop(context),
+            //   ),
+            //   flexibleSpace: FlexibleSpaceBar(
+            //     centerTitle: true,
+            //     title: Text(
+            //       "المكتبة الإسلامية",
+            //       style: GoogleFonts.cairo(
+            //         color: Colors.white,
+            //         fontWeight: FontWeight.bold,
+            //         fontSize: 18.sp,
+            //       ),
+            //     ),
+            //     background: Stack(
+            //       fit: StackFit.expand,
+            //       children: [
+            //         if (!isDark)
+            //           Image.asset(
+            //             "assets/images/8180jjj00005.webp",
+            //             fit: BoxFit.cover,
+            //             opacity: const AlwaysStoppedAnimation(0.2),
+            //           ),
+            //         Container(
+            //           decoration: BoxDecoration(
+            //             gradient: LinearGradient(
+            //               begin: Alignment.topCenter,
+            //               end: Alignment.bottomCenter,
+            //               colors: [
+            //                 Colors.black.withOpacity(0.3),
+            //                 Colors.transparent,
+            //               ],
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            SliverToBoxAdapter(
+              child: GetBuilder<BooksController>(
+                builder: (controller) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.h),
+                    child: Column(
+                      children: [
+                        BooksCover(
+                          title: Constants.collectionsGroupsTitles[0],
+                        ),
+                        const Gap(15),
+                        BooksCover(
+                          title: Constants.collectionsGroupsTitles[1],
+                        ),
+                        const Gap(15),
+                        BooksCover(
+                          title: Constants.collectionsGroupsTitles[2],
+                        ),
+                        const Gap(30),
+                      ],
+                    ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+          ],
         ),
       ),
     );

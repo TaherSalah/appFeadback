@@ -16,6 +16,7 @@ Widget customSvgWithColor(String path, {double? height, Color? color}) {
 
 Widget customSvg(String path, {double? height}) {
   return SvgPicture.asset(
+
     path,
     height: height,
   );
@@ -80,16 +81,17 @@ class BookName extends StatelessWidget {
                     ),
                   ),
                   customSvg(SvgPath.svgBookCoverLogo,
+
                       height: ResponsiveUtil.isTablet(context) ? 280.0 : 300),
                   Transform.translate(
                     offset: ResponsiveUtil.isTablet(context)
                         ? const Offset(-10, 20)
                         : const Offset(-15, 5),
                     child: SizedBox(
-                      height: ResponsiveUtil.isTablet(context) ? 140 : 200,
-                      width: ResponsiveUtil.isTablet(context) ? 140 : 190,
+                      height: ResponsiveUtil.isTablet(context) ? 140 : 120,
+                      width: ResponsiveUtil.isTablet(context) ? 140 : 120,
                       child: bookNameLogo(
-                              '${collection.id! - 1}', const Color(0xFF3C2A21),
+                              '${collection.id! - 1}', const Color(0xFFFFFFFF),
                               height: ResponsiveUtil.isTablet(context) ? 110 : 130)
                     ),
                   )
@@ -119,10 +121,10 @@ class BookName extends StatelessWidget {
                   collection.arAndEnName,
                   style: TextStyle(
                     fontSize:
-                        ResponsiveUtil.isTablet(context) ? 22.0 : 30,
+                        ResponsiveUtil.isTablet(context) ? 22.0 : 20,
                     fontFamily: 'kufi',
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
+                    // color: Theme.of(context).primaryColor,
                   ),
                   textAlign: TextAlign.center,
                   textDirection: TextDirection.rtl,

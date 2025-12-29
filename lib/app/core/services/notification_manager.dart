@@ -165,6 +165,30 @@ class NotificationManager {
           enableVibration: true,
           enableLights: true,
         ),
+        // 💰 قناة تذكيرات الصدقة
+        NotificationChannel(
+          channelKey: 'charity_reminder_channel',
+          channelName: 'تذكير الصدقة',
+          channelDescription: 'تذكير بالصدقة اليومية والأسبوعية والدورية',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.green,
+          ledColor: Colors.green,
+          playSound: true,
+          enableVibration: true,
+          enableLights: true,
+        ),
+        // 🏆 قناة الإنجازات
+        NotificationChannel(
+          channelKey: 'achievement_unlocked_channel',
+          channelName: 'إنجازات الصدقة',
+          channelDescription: 'إشعارات عند فتح إنجاز جديد في قسم الصدقة',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.amber,
+          ledColor: Colors.amber,
+          playSound: true,
+          enableVibration: true,
+          enableLights: true,
+        ),
       ],
       debug: true,
     );

@@ -20,6 +20,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:url_launcher/url_launcher.dart'; //
+import '../../core/utils/style/app_theme_colors.dart';
 import '../../core/utils/style/responsive_util.dart';
 import '../messaView/azkar_massa.dart';
 import 'zakat_pdf_service.dart';
@@ -1951,7 +1952,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     return ElevatedButton.icon(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppThemeColors.buttonBackgroundColor(context),
+        backgroundColor: KColors.primaryColor,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
@@ -1974,7 +1975,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(AppStyle.primaryColor).withOpacity(0.1),
+            color: const Color(AppStyle.primaryColor).withOpacity(0.5),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
                 color: const Color(AppStyle.primaryColor).withOpacity(0.2)),
@@ -1991,13 +1992,13 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             ? "نصاب الزكاة (85 جرام ذهب 24)"
                             : "نصاب الزكاة (595 جرام فضة)",
                         style: GoogleFonts.cairo(
-                            fontSize: ResponsiveUtil.isTablet(context)?9.sp:12.sp,
-                            color: const Color(AppStyle.primaryColor))),
+                            fontSize: ResponsiveUtil.isTablet(context)?9.sp:16.sp,
+                            color:isDark?KColors.primaryColor:Colors.black)),
                     Text("${formatter(_nisabValue)} ${_selectedCurrency.symbol}",
                         style: GoogleFonts.cairo(
                             fontSize:ResponsiveUtil.isTablet(context)?10.sp: 18.sp,
                             fontWeight: FontWeight.bold,
-                            color: const Color(AppStyle.primaryColor))),
+                            color: isDark?KColors.primaryColor:Colors.black)),
                   ],
                 ),
               ),
@@ -2338,7 +2339,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppThemeColors.primaryColor(context),
+                      color: KColors.primaryColor,
                       borderRadius:
                           const BorderRadius.vertical(top: Radius.circular(16)),
                     ),
@@ -2940,7 +2941,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               onPressed: _showZakatChannelsSheet,
               icon: const Icon(Icons.people_outline, size: 18),
               label: Text("لمن تعطى الزكاة؟ (مصارف الزكاة)",
-                  style: GoogleFonts.cairo()),
+                  style: GoogleFonts.cairo(color: isDark?Colors.white:CupertinoColors.black)),
               style: OutlinedButton.styleFrom(
                 foregroundColor: KColors.whiteGrayColor,
                 side:  BorderSide(color:KColors.primaryColor),

@@ -106,6 +106,6 @@ ThemeData lightTheme() {
         iconColor: KColors.iconSL,
       ),
     ),
-    scaffoldBackgroundColor: const Color(0xfff4f5fa),
+    scaffoldBackgroundColor: const Color(0xFFFFFBF0),
   );
 }

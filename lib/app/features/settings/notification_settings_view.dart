@@ -9,6 +9,8 @@ import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
+import '../../core/utils/style/app_theme_colors.dart';
+
 class NotificationSettingsView extends StatefulWidget {
   const NotificationSettingsView({super.key});
 

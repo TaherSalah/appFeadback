@@ -1,169 +1,163 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/utils/style/k_color.dart';
 import '../../../../core/utils/style/responsive_util.dart';
 import '../../controllers/books_controller.dart';
-import '../../controllers/extensions/books_getters_extension.dart';
 import '../../data/models/ar_hadith_model.dart';
-import 'chapters_widget.dart'; // For moveToPage usually, but it's on controller extension?
-// booksCtrl.moveToPage is used. I need to make sure moveToPage is in extension or controller.
-// It was in books_ui_helper.dart in source.
+
 
 class ChapterExpansionWidget extends StatelessWidget {
   final String chapterTitle;
   final int index;
+  final PageController pageController;
 
   const ChapterExpansionWidget({
     super.key,
     required this.chapterTitle,
     required this.index,
+    required this.pageController,
   });
 
   @override
   Widget build(BuildContext context) {
     final booksCtrl = Get.find<BooksController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = KColors.primaryColor;
+    const Color goldColor = Color(0xFFD4AF37);
 
-    String currentBookName = booksCtrl.arabicHadiths[index - 1].bookName;
-    List<ARHadithModel> uniqueChapters = [];
+    // Get all unique chapters and sort them if necessary
+    final uniqueChaptersList = booksCtrl.arabicHadiths
+        .map((h) => (babName: h.babName, babNumber: h.babNumber))
+        .toSet()
+        .toList();
 
-    for (var hadith in booksCtrl.arabicHadiths) {
-      if (hadith.bookName == currentBookName &&
-          hadith.babName != null &&
-          !uniqueChapters.any((element) => element.babName == hadith.babName)) {
-        uniqueChapters.add(hadith);
-      }
-    }
-
-    uniqueChapters.sort((a, b) {
-      int aNum = int.tryParse(a.babNumber) ?? 0;
-      int bNum = int.tryParse(b.babNumber) ?? 0;
+    uniqueChaptersList.sort((a, b) {
+      // Try to extract numeric part from babNumber (which might be "1.0")
+      double aNum = double.tryParse(a.babNumber ?? '0') ?? 0;
+      double bNum = double.tryParse(b.babNumber ?? '0') ?? 0;
       return aNum.compareTo(bNum);
     });
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 8.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          border: Border.all(
+            color: isDark ? Colors.white24 : goldColor,
+            width: 1.2,
           ),
-        ],
-      ),
-      child: ExpansionTile(
-        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
-        collapsedBackgroundColor:
-        Theme.of(context).colorScheme.surfaceVariant.withOpacity(.4),
-        backgroundColor:
-        Theme.of(context).colorScheme.surfaceVariant.withOpacity(.6),
-        iconColor: Theme.of(context).colorScheme.primary,
-        collapsedIconColor: Theme.of(context).colorScheme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        collapsedShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Row(
-          children: [
-            Icon(
-              Icons.menu_book_rounded,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                chapterTitle,
-                style: TextStyle(
-                  fontFamily: 'naskh',
-                  fontSize: ResponsiveUtil.isTablet(context) ? 16 : 22,
-                  fontWeight: FontWeight.bold,
-                ),
-                textDirection: TextDirection.rtl,
-              ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        children: [
-          SizedBox(
-            height: 220,
-            child: Scrollbar(
-              radius: const Radius.circular(12),
-              thumbVisibility: true,
+        child: ExpansionTile(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16))),
+          collapsedShape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16))),
+          backgroundColor: Colors.transparent,
+          collapsedBackgroundColor: Colors.transparent,
+          leading: Icon(
+            Icons.format_list_bulleted_rounded,
+            color: isDark ? goldColor : baseColor,
+          ),
+          title: Text(
+            _cleanText(chapterTitle),
+            style: GoogleFonts.cairo(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
+          children: [
+            Container(
+              constraints: BoxConstraints(maxHeight: 300.h),
               child: ListView.builder(
-                itemCount: uniqueChapters.length,
-                itemBuilder: (context, index) {
-                  final chapter = uniqueChapters[index];
-                  final bool isCurrentChapter =
-                      chapter.babName == chapterTitle;
+                shrinkWrap: true,
+                itemCount: uniqueChaptersList.length,
+                itemBuilder: (context, chapterIndex) {
+                  final chapter = uniqueChaptersList[chapterIndex];
+                  final isCurrentChapter = chapter.babName == chapterTitle;
 
                   return InkWell(
-                    borderRadius: BorderRadius.circular(12),
                     onTap: () {
                       if (isCurrentChapter) return;
 
-                      int targetIndex =
-                      booksCtrl.arabicHadiths.indexWhere(
-                            (h) => h.babName == chapter.babName,
+                      int targetIndex = booksCtrl.arabicHadiths.indexWhere(
+                        (h) => h.babName == chapter.babName,
                       );
 
                       if (targetIndex != -1) {
-                        booksCtrl.bookChaptersPageViewCrl.animateToPage(
-                          targetIndex + 1,
+                         // +1 because index 0 is book title/cover page
+                         final targetPage = targetIndex + 1;
+                         
+                        pageController.animateToPage(
+                          targetPage,
                           duration: const Duration(milliseconds: 350),
                           curve: Curves.easeInOutCubic,
                         );
                       }
                     },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      margin:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 10),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12.h, horizontal: 16.w),
                       decoration: BoxDecoration(
                         color: isCurrentChapter
-                            ? Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(.12)
+                            ? baseColor.withOpacity(0.1)
                             : Colors.transparent,
-                        borderRadius: BorderRadius.circular(12),
-                        border: isCurrentChapter
-                            ? Border(
-                          right: BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary,
-                            width: 4,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: isDark ? Colors.white10 : Colors.grey[200]!,
+                            width: 1,
                           ),
-                        )
-                            : null,
+                        ),
                       ),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.chevron_left_rounded,
-                            color: isCurrentChapter
-                                ? Theme.of(context).colorScheme.primary
-                                : Colors.grey,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isCurrentChapter
+                                  ? baseColor.withOpacity(0.2)
+                                  : Colors.transparent,
+                            ),
                             child: Text(
-                              chapter.babName ?? 'باب',
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                fontFamily: 'naskh',
-                                fontSize: ResponsiveUtil.isTablet(context) ? 15 : 20,
-                                fontWeight: isCurrentChapter
-                                    ? FontWeight.bold
-                                    : FontWeight.w500,
+                              '${chapterIndex + 1}',
+                              style: GoogleFonts.cairo(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.bold,
+                                color: isCurrentChapter ? baseColor : Colors.grey,
                               ),
                             ),
                           ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              _cleanText(chapter.babName ?? 'بدون عنوان'),
+                              style: GoogleFonts.cairo(
+                                fontSize: 13.sp,
+                                fontWeight: isCurrentChapter
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: isCurrentChapter
+                                    ? baseColor
+                                    : (isDark ? Colors.grey[300] : Colors.black87),
+                              ),
+                            ),
+                          ),
+                          if (isCurrentChapter)
+                            Icon(Icons.check_circle, color: baseColor, size: 18),
                         ],
                       ),
                     ),
@@ -171,10 +165,15 @@ class ChapterExpansionWidget extends StatelessWidget {
                 },
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  String _cleanText(String text) {
+    return text
+        .replaceAll(RegExp(r'<[^>]*>|&[a-z0-9]+;|<[a-zA-Z]+[^>]*$', caseSensitive: false), '')
+        .trim();
   }
 }

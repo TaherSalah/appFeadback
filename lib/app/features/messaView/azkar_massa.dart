@@ -10,6 +10,7 @@ import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/k_helper.dart';
 import '../../core/utils/style/responsive_util.dart';
 import '../../core/widgets/AudioManager.dart';
+import '../../core/utils/style/app_theme_colors.dart';
 
 class AzkarMassa extends StatefulWidget {
   const AzkarMassa({super.key});
@@ -910,112 +911,5 @@ class _AzkarMassaState extends State<AzkarMassa> {
   }
 }
 
-class AppThemeColors {
-  // ================== الألوان العامة ==================
 
-  static Color primaryColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF4CAF50) // الأخضر في الوضع الليلي
-        : const Color(0xFF4CAF50); // الأخضر في الوضع النهاري
-  }
 
-  static Color accentColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF757575) // اللون الرمادي في الوضع الليلي
-        : const Color(0xFF008080); // اللون التركوازي في الوضع النهاري
-  }
-
-  static Color backgroundColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF121212) // الخلفية في الوضع الليلي
-        : const Color(0xFFFFFFFF); // الخلفية في الوضع النهاري
-  }
-
-  // ================== ألوان الأزرار ==================
-
-  static Color buttonBackgroundColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF333333) // زر في الوضع الليلي
-        : const Color(0xFF4CAF50); // زر في الوضع النهاري
-  }
-
-  static Color buttonTextColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? Colors.white // نص الزر في الوضع الليلي
-        : Colors.white; // نص الزر في الوضع النهاري
-  }
-
-  static Color buttonBorderColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF444444) // حد الزر في الوضع الليلي
-        : const Color(0xFF4CAF50); // حد الزر في الوضع النهاري
-  }
-
-  // ================== ألوان الأيقونات ==================
-
-  static Color iconColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFFFFFFFF) // أيقونات في الوضع الليلي
-        : const Color(0xFF4CAF50); // أيقونات في الوضع النهاري
-  }
-
-  // ================== ألوان الـ Cards ==================
-
-  static Color cardBackgroundColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF1E1E1E) // خلفية الـ Card في الوضع الليلي
-        : const Color(0xFFF1F1F1); // خلفية الـ Card في الوضع النهاري
-  }
-
-  static Color cardTextColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFFFFFFFF) // نص الـ Card في الوضع الليلي
-        : const Color(0xFF333333); // نص الـ Card في الوضع النهاري
-  }
-
-  static Color cardBorderColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF444444) // حد الـ Card في الوضع الليلي
-        : const Color(0xFF4CAF50); // حد الـ Card في الوضع النهاري
-  }
-
-  // ================== ألوان النصوص ==================
-
-  static Color textColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFFE0E0E0) // نص في الوضع الليلي
-        : const Color(0xFF212121); // نص في الوضع النهاري
-  }
-
-  static Color subtitleTextColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFFBDBDBD) // نص فرعي في الوضع الليلي
-        : const Color(0xFF757575); // نص فرعي في الوضع النهاري
-  }
-
-  static Color chipBackgroundColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF333333) // خلفية الـ Chip في الوضع الليلي
-        : const Color(0xFF4CAF50); // خلفية الـ Chip في الوضع النهاري
-  }
-
-  static Color chipTextColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFFFFFFFF) // نص الـ Chip في الوضع الليلي
-        : const Color(0xFFFFFFFF); // نص الـ Chip في الوضع النهاري
-  }
-
-  // ================== ألوان السلايدر ==================
-
-  static Color sliderActiveColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF4CAF50) // اللون النشط للسلايدر في الوضع الليلي
-        : const Color(0xFF4CAF50); // اللون النشط للسلايدر في الوضع النهاري
-  }
-
-  static Color sliderInactiveColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF757575) // اللون الغير نشط للسلايدر في الوضع الليلي
-        : const Color(0xFFBDBDBD); // اللون الغير نشط للسلايدر في الوضع النهاري
-  }
-}

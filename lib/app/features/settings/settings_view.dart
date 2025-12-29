@@ -9,6 +9,8 @@ import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 
+import '../../core/utils/style/app_theme_colors.dart';
+
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
