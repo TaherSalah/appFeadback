@@ -28,15 +28,26 @@ class CentralizedCubit extends Cubit<CentralizedState> {
 // داخل CentralizedCubit
 
   static const _kThemeKey = 'themeMode'; // موجودة عندك
-  static const _kAzkarFontKey = 'azkarFontSize'; // جديد
+  static const _kAzkarFontKey = 'azkarFontSize';
+  static const _kHadithFontKey = 'hadithFontSize'; // New key for Hadith font
 
   double azkarFontSize() {
-    return sharedPreferences.getDouble(_kAzkarFontKey) ?? 22.0; // قيمة افتراضية
+    return sharedPreferences.getDouble(_kAzkarFontKey) ?? 22.0;
   }
 
   Future<void> setAzkarFontSize(double value) async {
     await sharedPreferences.setDouble(_kAzkarFontKey, value);
-    emit(AzkarFontChangedState()); // حالة جديدة لإعادة البناء
+    emit(AzkarFontChangedState());
+  }
+
+  double hadithFontSize() {
+    return sharedPreferences.getDouble(_kHadithFontKey) ?? 22.0;
+  }
+
+  Future<void> setHadithFontSize(double value) async {
+    await sharedPreferences.setDouble(_kHadithFontKey, value);
+    emit(
+        AzkarFontChangedState()); // Reusing the state for now as it triggers rebuild
   }
 
   // ThemeMode themeMode() {
@@ -59,7 +70,11 @@ class CentralizedCubit extends Cubit<CentralizedState> {
   // }
 
   Future<void> setThemeMode(ThemeMode mode) async {
-    final v = mode == ThemeMode.light ? 1 : mode == ThemeMode.dark ? 2 : 0;
+    final v = mode == ThemeMode.light
+        ? 1
+        : mode == ThemeMode.dark
+            ? 2
+            : 0;
     await sharedPreferences.setInt(_kThemeKey, v);
     emit(ThemeState());
   }
@@ -70,6 +85,7 @@ class CentralizedCubit extends Cubit<CentralizedState> {
     if (v == 2) return ThemeMode.dark;
     return ThemeMode.system;
   }
+
   void changeThemeMode() async {
     isDarkMode = !isDarkMode;
     await sharedPreferences.setBool("isDark", isDarkMode);
@@ -166,11 +182,12 @@ class CentralizedCubit extends Cubit<CentralizedState> {
     }
   }
 
-
   // StreamSubscription<ConnectivityResult?>? _streamSubscription;
 
   void trackConnectivityChange() {
-    Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> results) {
+    Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> results) {
       // For simplicity, let's just take the first result (you can modify this logic as needed)
       final result = results.first;
 

@@ -66,12 +66,10 @@ class HadithDetailsView extends StatelessWidget {
                       return ExpandableFab(
                           key: key,
                           openButtonBuilder: RotateFloatingActionButtonBuilder(
-                            child: const Icon(Icons.menu),
+                            child:  Icon(Icons.menu),
                             fabSize: ExpandableFabSize.regular,
                             foregroundColor:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : KColors.primaryColor,
+                                    Colors.white,
                             backgroundColor:
                                 Theme.of(context).brightness == Brightness.dark
                                     ? Colors.black

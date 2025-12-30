@@ -473,12 +473,10 @@ import '../../../../../objectbox.g.dart';
 import '../data/models/bookmark_model.dart';
 import 'extensions/books_getters_extension.dart';
 
-
 class BooksController extends GetxController {
-  static BooksController get instance =>
-      Get.isRegistered<BooksController>()
-          ? Get.find<BooksController>()
-          : Get.put(BooksController());
+  static BooksController get instance => Get.isRegistered<BooksController>()
+      ? Get.find<BooksController>()
+      : Get.put(BooksController());
 
   final box = GetStorage();
   final RxList<ARHadithModel> arabicHadiths = <ARHadithModel>[].obs;
@@ -594,7 +592,8 @@ class BooksController extends GetxController {
   // ============================================
 
   /// Toggle bookmark for a hadith
-  Future<bool> toggleBookmark(ARHadithModel hadith, {String category = 'عام'}) async {
+  Future<bool> toggleBookmark(ARHadithModel hadith,
+      {String category = 'عام'}) async {
     try {
       final bookmarkBox = store.box<BookmarkModel>();
 
@@ -679,7 +678,8 @@ class BooksController extends GetxController {
   }
 
   /// Update bookmark category
-  Future<void> updateBookmarkCategory(int bookmarkId, String newCategory) async {
+  Future<void> updateBookmarkCategory(
+      int bookmarkId, String newCategory) async {
     try {
       final bookmarkBox = store.box<BookmarkModel>();
       final bookmark = bookmarkBox.get(bookmarkId);
@@ -741,27 +741,36 @@ class BooksController extends GetxController {
     return getBookmarks(category: category).length;
   }
 
-
   Future<void> loadBooksForCollection(Collection collection) async {
-    final hadithCount = store.box<ARHadithModel>().query(ARHadithModel_.collection.equals(collection.id!)).build().count();
+    final hadithCount = store
+        .box<ARHadithModel>()
+        .query(ARHadithModel_.collection.equals(collection.id!))
+        .build()
+        .count();
 
     // Check for corrupted book numbers (e.g. -1 for Introduction)
     // The previous issue caused Introduction book to be saved as "-1.0",
     // leading to failed queries (searching for -1 instead of 0).
-    bool hasCorruptedBooks = collection.booksNames.any((b) => b.bookNumber == '-1' || b.bookNumber == '-1.0');
+    bool hasCorruptedBooks = collection.booksNames
+        .any((b) => b.bookNumber == '-1' || b.bookNumber == '-1.0');
 
-    if (!hasCorruptedBooks && collection.booksNames.isNotEmpty && hadithCount > 0) {
-      log('Collection ${collection.name} already seeded with $hadithCount hadiths and ${collection.booksNames.length} books.', name: 'BooksController');
+    if (!hasCorruptedBooks &&
+        collection.booksNames.isNotEmpty &&
+        hadithCount > 0) {
+      log('Collection ${collection.name} already seeded with $hadithCount hadiths and ${collection.booksNames.length} books.',
+          name: 'BooksController');
       return; // Already loaded and valid
     }
 
     if (hasCorruptedBooks) {
-      log('Found corrupted book numbers in ${collection.name}. Forcing reload.', name: 'BooksController');
+      log('Found corrupted book numbers in ${collection.name}. Forcing reload.',
+          name: 'BooksController');
     }
 
     // Cleanup if partially loaded or corrupted
     if (collection.booksNames.isNotEmpty || hadithCount > 0) {
-      log('Partial/Corrupted data found for ${collection.name}. Cleaning up and re-loading...', name: 'BooksController');
+      log('Partial/Corrupted data found for ${collection.name}. Cleaning up and re-loading...',
+          name: 'BooksController');
       final existingBooksList = collection.booksNames.toList();
       if (existingBooksList.isNotEmpty) {
         // Clear relation FIRST to avoid 404 when saving collection with deleted items
@@ -769,22 +778,31 @@ class BooksController extends GetxController {
         store.box<Collection>().put(collection);
 
         // Then delete the actual book objects
-        store.box<BookObjModel>().removeMany(existingBooksList.map((e) => e.id!).toList());
+        store
+            .box<BookObjModel>()
+            .removeMany(existingBooksList.map((e) => e.id!).toList());
       }
       // Note: deleting ARHadithModels for this collection
-      final q = store.box<ARHadithModel>().query(ARHadithModel_.collection.equals(collection.id!)).build();
+      final q = store
+          .box<ARHadithModel>()
+          .query(ARHadithModel_.collection.equals(collection.id!))
+          .build();
       q.remove();
     }
 
-    log('Loading books and hadiths for ${collection.name}...', name: 'BooksController');
+    log('Loading books and hadiths for ${collection.name}...',
+        name: 'BooksController');
 
     final String folderName = '${collection.name}_books';
     final String assetPath = 'assets/json/books_data/$folderName/';
 
     try {
-      AssetManifest manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
-      final filePaths = manifest.listAssets()
-          .where((String key) => key.contains(assetPath) && key.endsWith('.json'))
+      AssetManifest manifest =
+          await AssetManifest.loadFromAssetBundle(rootBundle);
+      final filePaths = manifest
+          .listAssets()
+          .where(
+              (String key) => key.contains(assetPath) && key.endsWith('.json'))
           .toList();
 
       if (filePaths.isEmpty) {
@@ -805,7 +823,11 @@ class BooksController extends GetxController {
       // Process in chunks of 20 to avoid memory pressure while being faster than sequential
       const int chunkSize = 20;
       for (int i = 0; i < filePaths.length; i += chunkSize) {
-        final chunk = filePaths.sublist(i, i + chunkSize > filePaths.length ? filePaths.length : i + chunkSize);
+        final chunk = filePaths.sublist(
+            i,
+            i + chunkSize > filePaths.length
+                ? filePaths.length
+                : i + chunkSize);
 
         await Future.wait(chunk.map((filePath) async {
           final fileName = filePath.split('/').last;
@@ -833,14 +855,15 @@ class BooksController extends GetxController {
               String bookName = item['bookName'] ?? '';
 
               if (!uniqueBooks.containsKey(bookNum)) {
-                uniqueBooks[bookNum] = BookObjModel(bookName: bookName, bookNumber: bookNum);
+                uniqueBooks[bookNum] =
+                    BookObjModel(bookName: bookName, bookNumber: bookNum);
               }
 
               try {
                 final hadith = ARHadithModel.fromJson(item);
                 hadith.collection.target = collection;
                 arHadiths.add(hadith);
-              } catch (e) { /* log if needed */ }
+              } catch (e) {/* log if needed */}
             } else if (fileName.startsWith('en_')) {
               try {
                 final hadith = ENHadithModel.fromJson(item);
@@ -886,15 +909,12 @@ class BooksController extends GetxController {
       if (urHadiths.isNotEmpty) store.box<URHadithModel>().putMany(urHadiths);
       if (bnHadiths.isNotEmpty) store.box<BNHadithModel>().putMany(bnHadiths);
 
-      log('Finished loading ${collection.name}: ${arHadiths.length} AR, ${enHadiths.length} EN, ${urHadiths.length} UR, ${bnHadiths.length} BN', name: 'BooksController');
+      log('Finished loading ${collection.name}: ${arHadiths.length} AR, ${enHadiths.length} EN, ${urHadiths.length} UR, ${bnHadiths.length} BN',
+          name: 'BooksController');
 
       update(); // Trigger UI update (e.g. for BooksList)
-
     } catch (e) {
       log('Error loading books: $e', name: 'BooksController');
     }
   }
 }
-
-
-

@@ -1975,10 +1975,10 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(AppStyle.primaryColor).withOpacity(0.5),
+            color:  isDark? Color(AppStyle.primaryColor).withOpacity(0.1) : Color(AppStyle.primaryColor).withOpacity(0.5),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-                color: const Color(AppStyle.primaryColor).withOpacity(0.2)),
+                color: isDark? Color(AppStyle.primaryColor).withOpacity(0.2) :Color(AppStyle.primaryColor).withOpacity(0.2)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1993,12 +1993,12 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             : "نصاب الزكاة (595 جرام فضة)",
                         style: GoogleFonts.cairo(
                             fontSize: ResponsiveUtil.isTablet(context)?9.sp:16.sp,
-                            color:isDark?KColors.primaryColor:Colors.black)),
+                            color:isDark?KColors.whiteColor:Colors.black)),
                     Text("${formatter(_nisabValue)} ${_selectedCurrency.symbol}",
                         style: GoogleFonts.cairo(
                             fontSize:ResponsiveUtil.isTablet(context)?10.sp: 18.sp,
                             fontWeight: FontWeight.bold,
-                            color: isDark?KColors.primaryColor:Colors.black)),
+                            color: isDark?KColors.whiteColor:Colors.black)),
                   ],
                 ),
               ),

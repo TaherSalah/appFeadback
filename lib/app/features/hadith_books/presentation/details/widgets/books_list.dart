@@ -43,9 +43,9 @@ class BooksList extends StatelessWidget {
           ),
         );
       }
-      
+
       final booksNames = controller.currentCollection.booksNames.toList();
-      
+
       return ListView.separated(
         primary: false,
         shrinkWrap: true,
@@ -83,10 +83,14 @@ class BooksList extends StatelessWidget {
                     width: 42.r,
                     height: 42.r,
                     decoration: BoxDecoration(
-                      color: isDark ? goldColor.withOpacity(0.15) : baseColor.withOpacity(0.1),
+                      color: isDark
+                          ? goldColor.withOpacity(0.15)
+                          : baseColor.withOpacity(0.1),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isDark ? goldColor.withOpacity(0.3) : baseColor.withOpacity(0.2),
+                        color: isDark
+                            ? goldColor.withOpacity(0.3)
+                            : baseColor.withOpacity(0.2),
                         width: 1,
                       ),
                     ),
@@ -101,9 +105,9 @@ class BooksList extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   SizedBox(width: 16.w),
-                  
+
                   // Book Name
                   Expanded(
                     child: Text(
@@ -123,7 +127,7 @@ class BooksList extends StatelessWidget {
 
                   // Arrow icon
                   Icon(
-                    Icons.arrow_back_ios_new_rounded,
+                    Icons.arrow_forward_ios,
                     size: 14.sp,
                     color: isDark ? Colors.white24 : Colors.grey[300],
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../../core/shard/exports/all_exports.dart';
+import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/k_helper.dart';
 import 'data/Dhikr.dart';
 import 'data/Wird.dart';
@@ -254,8 +255,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
           },
           label: Text("حفظ الورد", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
           icon: const Icon(Icons.check_circle_outline_rounded),
-          backgroundColor: primaryColor,
-          foregroundColor: isDark ? Colors.black : Colors.white,
+          backgroundColor: KColors.primaryColor,
+          foregroundColor:Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),
       ),

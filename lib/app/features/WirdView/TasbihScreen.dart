@@ -274,35 +274,37 @@ class _TasbihScreenState extends State<TasbihScreen> with TickerProviderStateMix
                           behavior: HitTestBehavior.opaque,
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AnimatedOpacity(
-                                  duration: const Duration(milliseconds: 300),
-                                  opacity: isFocusMode ? 0.8 : 1.0,
-                                  child: Text(
-                                    dhikr.text,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.amiri(
-                                      fontSize: isFocusMode ? 32.sp : 26.sp,
-                                      fontWeight: FontWeight.bold,
-                                      height: 1.8,
-                                      color: isDark ? Colors.white : Colors.black87,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AnimatedOpacity(
+                                    duration: const Duration(milliseconds: 300),
+                                    opacity: isFocusMode ? 0.8 : 1.0,
+                                    child: Text(
+                                      dhikr.text,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.amiri(
+                                        fontSize: isFocusMode ? 32.sp : 26.sp,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1.8,
+                                        color: isDark ? Colors.white : Colors.black87,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 60.h),
-                                _buildCounterWidget(dhikr, isCompleted, isDark, primaryColor),
-                                SizedBox(height: 60.h),
-                                if (!isFocusMode) ...[
-                                  Text(
-                                    "انقر في أي مكان للتسبيح",
-                                    style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey.withOpacity(0.5)),
-                                  ),
-                                  SizedBox(height: 32.h),
-                                  _buildControlsRow(isDark),
+                                  SizedBox(height: 60.h),
+                                  _buildCounterWidget(dhikr, isCompleted, isDark, primaryColor),
+                                  SizedBox(height: 60.h),
+                                  if (!isFocusMode) ...[
+                                    Text(
+                                      "انقر في أي مكان للتسبيح",
+                                      style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey.withOpacity(0.5)),
+                                    ),
+                                    SizedBox(height: 32.h),
+                                    _buildControlsRow(isDark),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
                           ),
                         );

@@ -14,4 +14,3 @@ class _MainViewState extends State<MainView> {
     return const MainViewBuilder();
   }
 }
-

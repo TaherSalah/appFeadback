@@ -37,11 +37,11 @@ class SettingsView extends StatelessWidget {
         //   leading: BackButton(color: isDark ? Colors.white : Colors.black87),
         // ),
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(
-              MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          preferredSize:
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
           child: AppBar(
-            leading:  CupertinoNavigationBarBackButton(
-              color: isDark?Colors.white : Colors.black,
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
             ),
             // actions: [
             //   IconButton(
@@ -60,9 +60,8 @@ class SettingsView extends StatelessWidget {
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600
-                    ? 12.sp
-                    : 18.sp,
+                fontSize:
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -187,7 +186,6 @@ class SettingsView extends StatelessWidget {
                                     size: 18),
                                 underline: const SizedBox(),
                                 isDense: true,
-
                                 dropdownColor: isDark
                                     ? const Color(0xFF1E293B)
                                     : Colors.white,
@@ -293,10 +291,98 @@ class SettingsView extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  "بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ",
+                                  "«لا حولَ ولا قوةَ إلا بالله.ِ»",
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.amiri(
+                                  style: TextStyle(
+                                    fontFamily: "me",
                                     fontSize: currentFontSize,
+                                    color:
+                                        isDark ? Colors.white : Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        _buildDivider(isDark),
+
+                        // حجم خط الحديث
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  _buildIconContainer(
+                                      Icons.menu_book, Colors.teal[400]!),
+                                  const SizedBox(width: 16),
+                                  Text(
+                                    'حجم خط الحديث',
+                                    style: GoogleFonts.cairo(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black87,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    '${cubit.hadithFontSize().round()}',
+                                    style: GoogleFonts.cairo(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  activeTrackColor: Colors.teal,
+                                  inactiveTrackColor: isDark
+                                      ? Colors.white24
+                                      : Colors.grey.shade300,
+                                  thumbColor: Colors.teal,
+                                  overlayColor: Colors.teal.withOpacity(0.2),
+                                ),
+                                child: Slider(
+                                  value: cubit.hadithFontSize(),
+                                  min: 14.0,
+                                  max: 40.0,
+                                  divisions: 13,
+                                  onChanged: (double value) {
+                                    cubit.setHadithFontSize(value);
+                                  },
+                                ),
+                              ),
+                              // معاينة
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.black.withOpacity(0.2)
+                                      : Colors.grey.shade50,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: isDark
+                                        ? Colors.white10
+                                        : Colors.grey.shade200,
+                                  ),
+                                ),
+                                child: Text(
+                                  "«مَنْ يُرِدِ اللَّهُ بِهِ خَيْرًا يُفَقِّهْهُ فِي الدِّينِ»",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: "me",
+                                    fontSize: cubit.hadithFontSize(),
                                     color:
                                         isDark ? Colors.white : Colors.black87,
                                   ),

@@ -27,7 +27,7 @@ class NotificationManager {
       [
         // 🌅 قناة أذان الفجر
         NotificationChannel(
-          channelKey: 'fajr_adhan_channel_v2',
+          channelKey: 'fajr_adhan_channel_v4',
           channelName: 'أذان الفجر',
           channelDescription: 'تشغيل أذان الفجر',
           importance: NotificationImportance.Max,
@@ -42,7 +42,7 @@ class NotificationManager {
 
         // 🕌 قناة الأذان العادي
         NotificationChannel(
-          channelKey: 'adhan_channel_v2',
+          channelKey: 'adhan_channel_v4',
           channelName: 'أذان الصلاة',
           channelDescription: 'تشغيل صوت الأذان',
           importance: NotificationImportance.Max,
@@ -227,7 +227,7 @@ class NotificationManager {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 9999,
-        channelKey: 'fajr_adhan_channel_v2',
+        channelKey: 'fajr_adhan_channel_v4',
         title: '🔔 اختبار فوري',
         body: 'إذا وصلك هذا الصوت، فنظام المنبهات يعمل بنجاح!',
         category: NotificationCategory.Alarm,
@@ -365,7 +365,8 @@ class NotificationManager {
       print("📅 جاري جدولة سلسلة الأحاديث لـ 30 يوماً...");
 
       // 1️⃣ إلغاء الجدولة القديمة للأحاديث
-      await AwesomeNotifications().cancelSchedulesByChannelKey('hadith_channel');
+      await AwesomeNotifications()
+          .cancelSchedulesByChannelKey('hadith_channel');
 
       final now = DateTime.now();
       // ⏰ وقت الحديث: 11 صباحاً كل يوم
@@ -516,7 +517,8 @@ class NotificationManager {
 
   Future<void> _scheduleAdvancedFajrAlarm() async {
     // 1. Cancel existing advanced fajr alarms
-    await AwesomeNotifications().cancelSchedulesByChannelKey('fajr_adhan_channel_v2');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
 
     if (!_settingsService.isFajrAlarmEnabled) {
       print("🔕 Advanced Fajr Alarm is DISABLED.");
@@ -554,7 +556,7 @@ class NotificationManager {
         await AwesomeNotifications().createNotification(
           content: NotificationContent(
             id: uniqueId,
-            channelKey: 'fajr_adhan_channel_v2',
+            channelKey: 'fajr_adhan_channel_v4',
             title: '⏰ منبه الفجر المتقدم',
             body: r == 0
                 ? 'حان وقت الاستيقاظ لصلاة الفجر 👋'
@@ -590,7 +592,7 @@ class NotificationManager {
   Future<void> scheduleAzan(DateTime prayerTime, String prayerName) async {
     try {
       final channelKey =
-          prayerName == 'الفجر' ? 'fajr_adhan_channel_v2' : 'adhan_channel_v2';
+          prayerName == 'الفجر' ? 'fajr_adhan_channel_v4' : 'adhan_channel_v4';
 
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
@@ -617,19 +619,25 @@ class NotificationManager {
 
   // --- Static Listeners ---
 
-
   @pragma('vm:entry-point')
   static Future<void> onNotificationCreatedMethod(
       ReceivedNotification receivedNotification) async {
-    print('🔔 Notification Created: ${receivedNotification.id}');
-    
+    // print('🔔 Notification Created: ${receivedNotification.id}');
+    // ⚠️ DO NOT push overlay here. It triggers immediately on schedule.
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> onNotificationDisplayedMethod(
+      ReceivedNotification receivedNotification) async {
+    print('📱 Notification Displayed: ${receivedNotification.id}');
+
     // Check if this is an Adhan notification with route
     final route = receivedNotification.payload?['route'];
     if (route == 'adhan_screen') {
       // Check if overlay is enabled
       final settings = SettingsService();
       await settings.init();
-      
+
       if (settings.isAdhanOverlayEnabled) {
         final navigator = CentralizedCubit.navigatorKey.currentState;
         if (navigator != null) {
@@ -643,12 +651,6 @@ class NotificationManager {
         }
       }
     }
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> onNotificationDisplayedMethod(
-      ReceivedNotification receivedNotification) async {
-    // print('📱 Notification Displayed: ${receivedNotification.id}');
   }
 
   @pragma('vm:entry-point')

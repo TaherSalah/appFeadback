@@ -38,8 +38,8 @@ ThemeData darkTheme() {
     pageTransitionsTheme: const PageTransitionsTheme(builders: {
       TargetPlatform.android: CupertinoPageTransitionsBuilder(),
     }),
-    scaffoldBackgroundColor: const Color(0xff1a1a2e),
-    // scaffoldBackgroundColor: KColors.backgroundD,
+    // scaffoldBackgroundColor: const Color(0xff1a1a2e),
+    scaffoldBackgroundColor: Colors.black,
     iconTheme: const IconThemeData(color: KColors.iconD),
     inputDecorationTheme: InputDecorationTheme(
         // fillColor: KColors.whiteColor,

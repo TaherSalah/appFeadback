@@ -2354,7 +2354,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF1E293B) : Colors.white,
                   borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20)),
+                      const BorderRadius.vertical(top: Radius.circular(20)),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -2422,8 +2422,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                     ),
                     const SizedBox(height: 8),
                     Container(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: isDark
                             ? Colors.black.withOpacity(0.2)
@@ -2431,7 +2431,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                             color:
-                            isDark ? Colors.white10 : Colors.grey.shade300),
+                                isDark ? Colors.white10 : Colors.grey.shade300),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2659,7 +2659,7 @@ class _AzanViewState extends StateMVC<AzanView> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize:
-        Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+            Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
         child: AppBar(
           leading: CupertinoNavigationBarBackButton(
             color: isDark ? Colors.white : Colors.black,
@@ -2674,83 +2674,86 @@ class _AzanViewState extends StateMVC<AzanView> {
             ),
           ),
           actions: [
-            // // زر اختبار الأذان 🧪
-            // IconButton(
-            //   icon: const Icon(Icons.bug_report, color: Colors.orange),
-            //   tooltip: 'اختبار الأذان (20 ثانية)',
-            //   onPressed: () async {
-            //     bool isAllowed =
-            //         await AwesomeNotifications().isNotificationAllowed();
-            //     if (!isAllowed) {
-            //       await AwesomeNotifications()
-            //           .requestPermissionToSendNotifications();
-            //       isAllowed =
-            //           await AwesomeNotifications().isNotificationAllowed();
-            //       if (!isAllowed) {
-            //         KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
-            //         return;
-            //       }
-            //     }
-            //
-            //     try {
-            //       KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
-            //
-            //       final error = await AdhanWorkManagerService()
-            //           .scheduleTestAdhan(secondsFromNow: 20);
-            //       if (!mounted) return;
-            //
-            //       if (error == null) {
-            //         KHelper.showSuccess(
-            //           message:
-            //               '🧪 تم جدولة أذان تجريبي بعد 20 ثانية\nانتظر وتأكد من ظهور الشاشة!',
-            //         );
-            //       } else {
-            //         KHelper.showError(
-            //           message:
-            //               '❌ فشلت جدولة الأذان التجريبي: $error',
-            //         );
-            //       }
-            //     } catch (e) {
-            //       if (!mounted) return;
-            //       showDialog(
-            //         context: context,
-            //         builder: (ctx) => AlertDialog(
-            //           title: const Text('خطأ في الاختبار'),
-            //           content: Text(e.toString()),
-            //           actions: [
-            //             TextButton(
-            //                 onPressed: () => Navigator.pop(ctx),
-            //                 child: const Text('حسنًا'))
-            //           ],
-            //         ),
-            //       );
-            //     }
-            //   },
-            // ),
-            //
-            // // زر اختبار فوري (بدون جدولة) للتشخيص
-            // IconButton(
-            //   icon: const Icon(Icons.flash_on, color: Colors.blue),
-            //   tooltip: 'إشعار تجريبي فوري',
-            //   onPressed: () async {
-            //     await AwesomeNotifications().createNotification(
-            //       content: NotificationContent(
-            //         id: 77777,
-            //         channelKey: 'adhan_channel_v4', // Use adhan channel for sound test
-            //         title: '⚡ اختبار فوري',
-            //         body: 'إذا وصلك هذا، فالإشعارات تعمل بنجاح!',
-            //         notificationLayout: NotificationLayout.Default,
-            //         payload: {
-            //           'prayerName': 'تجربة',
-            //           'route': 'adhan_screen', // Force overlay for instant test too
-            //         },
-            //       ),
-            //     );
-            //     if (context.mounted) {
-            //       KHelper.showSuccess(message: 'تم إرسال إشعار فوري');
-            //     }
-            //   },
-            // ),
+            // زر اختبار الأذان 🧪
+            IconButton(
+              icon: const Icon(Icons.bug_report, color: Colors.orange),
+              tooltip: 'اختبار الأذان (20 ثانية)',
+              onPressed: () async {
+                bool isAllowed =
+                    await AwesomeNotifications().isNotificationAllowed();
+                if (!isAllowed) {
+                  await AwesomeNotifications()
+                      .requestPermissionToSendNotifications();
+                  isAllowed =
+                      await AwesomeNotifications().isNotificationAllowed();
+                  if (!isAllowed) {
+                    KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
+                    return;
+                  }
+                }
+
+                try {
+                  KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
+
+                  final error = await AdhanWorkManagerService()
+                      .scheduleTestAdhan(secondsFromNow: 20);
+                  if (!mounted) return;
+
+                  if (error == null) {
+                    KHelper.showSuccess(
+                      message:
+                          '🧪 تم جدولة أذان تجريبي بعد 20 ثانية\nانتظر وتأكد من ظهور الشاشة!',
+                    );
+                  } else {
+                    KHelper.showError(
+                      message: '❌ فشلت جدولة الأذان التجريبي: $error',
+                    );
+                  }
+                } catch (e) {
+                  if (!mounted) return;
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('خطأ في الاختبار'),
+                      content: Text(e.toString()),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: const Text('حسنًا'))
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+
+            // زر اختبار فوري (بدون جدولة) للتشخيص
+            IconButton(
+              icon: const Icon(Icons.flash_on, color: Colors.blue),
+              tooltip: 'إشعار تجريبي فوري',
+              onPressed: () async {
+                await AwesomeNotifications().createNotification(
+                  content: NotificationContent(
+                    id: 77777,
+                    channelKey:
+                        'adhan_channel_v4', // Use adhan channel for sound test
+                    title: '⚡ اختبار فوري',
+                    body: 'إذا وصلك هذا، فالإشعارات تعمل بنجاح!',
+                    notificationLayout: NotificationLayout.Default,
+                    payload: {
+                      'prayerName': 'تجربة',
+                      'route':
+                          'adhan_screen', // Force overlay for instant test too
+                      'prayer_time': 'الآن',
+                      'cityName': 'تجربة'
+                    },
+                  ),
+                );
+                if (context.mounted) {
+                  KHelper.showSuccess(message: 'تم إرسال إشعار فوري');
+                }
+              },
+            ),
 
             IconButton(
               icon: const Icon(Icons.settings),
@@ -2794,22 +2797,22 @@ class _AzanViewState extends StateMVC<AzanView> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDark
-                ? [
-              const Color(0xFF0F172A),
-              const Color(0xFF1E293B),
-              const Color(0xFF0F172A),
-            ]
-                : [
-              Colors.blue.shade50,
-              Colors.white,
-              Colors.blue.shade50,
-            ],
-          ),
-        ),
+            // gradient: LinearGradient(
+            //   begin: Alignment.topCenter,
+            //   end: Alignment.bottomCenter,
+            //   colors: isDark
+            //       ? [
+            //     const Color(0xFF0F172A),
+            //     const Color(0xFF1E293B),
+            //     const Color(0xFF0F172A),
+            //   ]
+            //       : [
+            //     Colors.blue.shade50,
+            //     Colors.white,
+            //     Colors.blue.shade50,
+            //   ],
+            // ),
+            ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Directionality(
@@ -2854,13 +2857,13 @@ class _AzanViewState extends StateMVC<AzanView> {
 
   // 🎯 قسم اختيار الموقع
   Widget _buildLocationSelector(
-      BuildContext context,
-      bool isDark,
-      Map countries,
-      Map cities,
-      String? selectedCountry,
-      String? selectedCity,
-      ) {
+    BuildContext context,
+    bool isDark,
+    Map countries,
+    Map cities,
+    String? selectedCountry,
+    String? selectedCity,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -2905,7 +2908,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                   onChanged: (value) async {
                     if (value == null) return;
                     final Map<String, dynamic> cityMap = (countries[value]
-                    as Map<String, dynamic>)
+                        as Map<String, dynamic>)
                       ..removeWhere((k, v) => v == null);
                     final firstCity = cityMap.keys.first;
                     await con.setLocation(country: value, city: firstCity);
@@ -3055,19 +3058,19 @@ class _AzanViewState extends StateMVC<AzanView> {
 
   // 📍 عرض الموقع الحالي
   Widget buildCurrentLocation(
-      BuildContext context,
-      bool isDark,
-      String selectedCountry,
-      String selectedCity,
-      ) {
+    BuildContext context,
+    bool isDark,
+    String selectedCountry,
+    String selectedCity,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        // gradient: LinearGradient(
-        //   colors:
-        //      [Colors.indigo.shade800, Colors.purple.shade900]
-        //       // : [Colors.blue.shade100, Colors.purple.shade100],
-        // ),
+          // gradient: LinearGradient(
+          //   colors:
+          //      [Colors.indigo.shade800, Colors.purple.shade900]
+          //       // : [Colors.blue.shade100, Colors.purple.shade100],
+          // ),
           borderRadius: BorderRadius.circular(16),
           // boxShadow: [
           //   BoxShadow(
@@ -3101,12 +3104,12 @@ class _AzanViewState extends StateMVC<AzanView> {
 
   // ⏰ بطاقة الصلاة القادمة
   Widget _buildNextPrayerCard(
-      BuildContext context,
-      bool isDark,
-      String nextPrayer,
-      String remainingTimeText,
-      dynamic prayerTimes,
-      ) {
+    BuildContext context,
+    bool isDark,
+    String nextPrayer,
+    String remainingTimeText,
+    dynamic prayerTimes,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -3194,11 +3197,11 @@ class _AzanViewState extends StateMVC<AzanView> {
 
   // 📋 قائمة المواقيت
   Widget _buildPrayerTimesList(
-      BuildContext context,
-      bool isDark,
-      dynamic prayerTimes,
-      String nextPrayer,
-      ) {
+    BuildContext context,
+    bool isDark,
+    dynamic prayerTimes,
+    String nextPrayer,
+  ) {
     final prayerData = [
       {"name": "الفجر", "time": prayerTimes.fajr, "icon": Icons.wb_twilight},
       {"name": "الشروق", "time": prayerTimes.sunrise, "icon": Icons.wb_sunny},
@@ -3236,24 +3239,24 @@ class _AzanViewState extends StateMVC<AzanView> {
               end: Alignment.bottomLeft,
               colors:
 
-              // isNext
-              // ? (isDark
-              // ? [Colors.amber.shade700, Colors.orange.shade800]
-              // : [Colors.blue.shade400, Colors.blue.shade600])
-              // :
-              (isDark
-                  ? [const Color(0xFF1E293B), const Color(0xFF334155)]
-                  : [Colors.white, Colors.grey.shade50]),
+                  // isNext
+                  // ? (isDark
+                  // ? [Colors.amber.shade700, Colors.orange.shade800]
+                  // : [Colors.blue.shade400, Colors.blue.shade600])
+                  // :
+                  (isDark
+                      ? [const Color(0xFF1E293B), const Color(0xFF334155)]
+                      : [Colors.white, Colors.grey.shade50]),
             ),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: isNext
-                // ? (isDark ? Colors.amber.withOpacity(0.3) : Colors.blue.withOpacity(0.3))
-                // : (isDark ? Colors.black26 : Colors.grey.withOpacity(0.2)),
+                    // ? (isDark ? Colors.amber.withOpacity(0.3) : Colors.blue.withOpacity(0.3))
+                    // : (isDark ? Colors.black26 : Colors.grey.withOpacity(0.2)),
                     ? (isDark
-                    ? Colors.green.withOpacity(0.3)
-                    : Colors.blue.withOpacity(0.3))
+                        ? Colors.green.withOpacity(0.3)
+                        : Colors.blue.withOpacity(0.3))
                     : (isDark ? Colors.black26 : Colors.grey.withOpacity(0.2)),
                 blurRadius: isNext ? 15 : 8,
                 offset: Offset(0, isNext ? 6 : 3),
@@ -3261,10 +3264,10 @@ class _AzanViewState extends StateMVC<AzanView> {
             ],
             border: isNext
                 ? Border.all(
-              // color: isDark ? Colors.amberAccent : Colors.white,
-              color: Colors.green,
-              width: 2,
-            )
+                    // color: isDark ? Colors.amberAccent : Colors.white,
+                    color: Colors.green,
+                    width: 2,
+                  )
                 : null,
           ),
           child: Padding(
@@ -3305,13 +3308,13 @@ class _AzanViewState extends StateMVC<AzanView> {
                 // الوقت
                 Container(
                   padding:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   decoration: BoxDecoration(
                     color: isNext
                         ? Colors.grey.withOpacity(0.2)
                         : (isDark
-                        ? Colors.grey.shade800
-                        : Colors.grey.shade100),
+                            ? Colors.grey.shade800
+                            : Colors.grey.shade100),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(

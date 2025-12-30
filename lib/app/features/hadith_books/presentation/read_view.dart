@@ -140,7 +140,7 @@ class _ReadViewState extends State<ReadView> {
               MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
             ),
           ),
-        ),
+        ),  
       ),
 
       extendBodyBehindAppBar: false,
