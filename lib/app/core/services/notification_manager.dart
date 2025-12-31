@@ -10,6 +10,7 @@ import 'package:muslimdaily/app/features/hadith/hadith_view.dart';
 import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
 import 'package:muslimdaily/app/features/charity/CharityDashboardScreen.dart';
+import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
 import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
 
 class NotificationManager {
@@ -140,6 +141,20 @@ class NotificationManager {
           enableVibration: true,
           enableLights: true,
         ),
+        // 🤲 قناة أذكار بعد الصلاة
+        NotificationChannel(
+          channelKey: 'post_prayer_dhikr_channel',
+          channelName: 'أذكار بعد الصلاة',
+          channelDescription: 'تذكير بأذكار ما بعد الصلاة',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.green,
+          ledColor: Colors.green,
+          playSound: true,
+          soundSource:
+              Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
+          enableVibration: true,
+          enableLights: true,
+        ),
 
         // 📿 قناة الحديث اليومي
         NotificationChannel(
@@ -200,10 +215,14 @@ class NotificationManager {
       onDismissActionReceivedMethod: onDismissActionReceivedMethod,
     );
 
-    bool allowed = await AwesomeNotifications().isNotificationAllowed();
-    if (!allowed) {
-      await AwesomeNotifications().requestPermissionToSendNotifications();
-    }
+    await AwesomeNotifications().isNotificationAllowed().then((allowed) {
+      if (!allowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+
+    // 🚀 تهيئة خدمة الأذان
+    await AdhanWorkManagerService().initialize();
   }
 
   Future<bool> checkAndRequestExactAlarmPermission() async {
@@ -271,6 +290,9 @@ class NotificationManager {
 
     // re-schedule if enabled
     await _setupDailyReminders();
+
+    // 🚀 إعادة جدولة الأذان
+    await AdhanWorkManagerService().initialize();
 
     print('✅ Reschedule completed.');
   }

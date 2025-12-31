@@ -8,6 +8,7 @@ import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
+import '../mainView/controllar/MainController.dart';
 
 import '../../core/utils/style/app_theme_colors.dart';
 
@@ -134,6 +135,72 @@ class SettingsView extends StatelessWidget {
                               ),
                             );
                           },
+                        ),
+                        _buildDivider(isDark),
+                        // تعديل التاريخ الهجري
+                        ListTile(
+                          leading: _buildIconContainer(
+                            Icons.calendar_month_outlined,
+                            Colors.deepOrange,
+                          ),
+                          title: Text(
+                            'تعديل التاريخ الهجري',
+                            style: GoogleFonts.cairo(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'تقديم أو تأخير التاريخ الهجري',
+                            style: GoogleFonts.cairo(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.1)
+                                  : Colors.grey.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.white12
+                                    : Colors.grey.shade300,
+                              ),
+                            ),
+                            child: DropdownButton<int>(
+                              value: MainController().hijriAdjustment,
+                              icon: const Icon(Icons.keyboard_arrow_down,
+                                  size: 18),
+                              underline: const SizedBox(),
+                              isDense: true,
+                              dropdownColor: isDark
+                                  ? const Color(0xFF1E293B)
+                                  : Colors.white,
+                              style: GoogleFonts.cairo(
+                                color: isDark ? Colors.white : Colors.black87,
+                                fontSize: 12,
+                              ),
+                              onChanged: (int? newValue) {
+                                if (newValue != null) {
+                                  MainController().setHijriAdjustment(newValue);
+                                  (context as Element).markNeedsBuild();
+                                }
+                              },
+                              items: List.generate(5, (index) {
+                                final val = index - 2;
+                                String label = val == 0
+                                    ? 'تلقائي'
+                                    : (val > 0 ? '+$val يوم' : '$val يوم');
+                                return DropdownMenuItem(
+                                  value: val,
+                                  child: Text(label),
+                                );
+                              }),
+                            ),
+                          ),
                         ),
                       ],
                     ),

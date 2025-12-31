@@ -4,8 +4,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-import 'package:muslimdaily/app/features/azanView/azanView.dart';
-import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
@@ -219,9 +217,7 @@ void showThemeSheet(
     if (selectedCity != null) {
       await prefs.setString(kCityKey, selectedCity!);
     }
-    if (saveAllow) {
-      await prefs.setBool(kAllowLocationKey, allowLocationUsage);
-    }
+    await prefs.setBool('is_using_gps', allowLocationUsage);
   }
 
   // تحديد أقرب مدينة تلقائيًا داخل الـ BottomSheet
@@ -275,13 +271,21 @@ void showThemeSheet(
     });
 
     if (bestCountry != null && bestCity != null) {
+      // إذا كانت أقرب مدينة تبعد أكثر من 100 كم، نعرض "موقعي الحالي"
+      final String displayCity = (bestDist > 100) ? 'موقعي الحالي' : bestCity!;
+      final String displayCountry = (bestDist > 100) ? 'GPS' : bestCountry!;
+
       setState(() {
-        selectedCountry = bestCountry;
-        cities = (countries[selectedCountry!] as Map<String, dynamic>)
+        selectedCountry = displayCountry;
+        cities = (countries[bestCountry!] as Map<String, dynamic>)
           ..removeWhere((k, v) => v == null);
-        selectedCity = bestCity;
+        selectedCity = displayCity;
       });
       await saveLocation(true);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setDouble('latitude', userLat);
+      await prefs.setDouble('longitude', userLng);
+
       if (onLocationChanged != null) onLocationChanged();
       KHelper.showSuccess(message: 'تم تحديد الموقع: $bestCountry - $bestCity');
 
@@ -605,228 +609,185 @@ void showThemeSheet(
                         // الموقع لمواقيت الصلاة
                         sectionTitle(
                             'الموقع لمواقيت الصلاة', Icons.place_outlined),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
 
                         if (isLocationLoading)
                           const Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(20.0),
                             child: Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                           )
-                        else
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'يُستخدم هذا الموقع في حساب مواقيت الصلاة داخل التطبيق.',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontFamily: "cairo",
-                                  color: isDark
-                                      ? Colors.grey[300]
-                                      : Colors.grey.shade700,
-                                ),
+                        else ...[
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.03)
+                                  : Colors.blue.withOpacity(0.03),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.white10
+                                    : Colors.blue.withOpacity(0.05),
                               ),
-                              const SizedBox(height: 8),
-
-                              // اختيار الدولة/المدينة
-                              // Row(
-                              //   children: [
-                              //     Expanded(
-                              //       child: Directionality(
-                              //         textDirection: TextDirection.rtl,
-                              //         child: Container(
-                              //           padding: const EdgeInsets.symmetric(
-                              //               horizontal: 8),
-                              //           decoration: BoxDecoration(
-                              //             borderRadius:
-                              //             BorderRadius.circular(10),
-                              //             border: Border.all(
-                              //               color: isDark
-                              //                   ? Colors.white24
-                              //                   : Colors.grey.shade300,
-                              //             ),
-                              //             color: isDark
-                              //                 ? Colors.black.withOpacity(0.3)
-                              //                 : Colors.white,
-                              //           ),
-                              //           child:
-                              //           DropdownButtonHideUnderline(
-                              //             child: DropdownButton<String>(
-                              //               isExpanded: true,
-                              //               value: selectedCountry,
-                              //               hint: const Text(
-                              //                 'اختر الدولة',
-                              //                 style: TextStyle(
-                              //                   fontFamily: "cairo",
-                              //                   fontSize: 12,
-                              //                 ),
-                              //               ),
-                              //               items: countries.keys
-                              //                   .map((country) {
-                              //                 return DropdownMenuItem(
-                              //                   value: country,
-                              //                   child: Text(
-                              //                     country,
-                              //                     style: TextStyle(
-                              //                       fontFamily: "cairo",
-                              //                       fontSize: 12,
-                              //                       color: isDark
-                              //                           ? Colors.white
-                              //                           : Colors.black87,
-                              //                     ),
-                              //                   ),
-                              //                 );
-                              //               }).toList(),
-                              //               onChanged: (value) async {
-                              //                 if (value == null) return;
-                              //                 final Map<String, dynamic>
-                              //                 newCities =
-                              //                 (countries[value]
-                              //                 as Map<String,
-                              //                     dynamic>)
-                              //                   ..removeWhere((k, v) =>
-                              //                   v == null);
-                              //                 setState(() {
-                              //                   selectedCountry = value;
-                              //                   cities = newCities;
-                              //                   selectedCity =
-                              //                       cities.keys.first;
-                              //                 });
-                              //                 await saveLocation(false);
-                              //                 if (onLocationChanged != null) onLocationChanged(); // 👈 هنا
-                              //
-                              //               },
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     const SizedBox(width: 8),
-                              //     Expanded(
-                              //       child: Directionality(
-                              //         textDirection: TextDirection.rtl,
-                              //
-                              //         child: Container(
-                              //           padding: const EdgeInsets.symmetric(
-                              //               horizontal: 8),
-                              //           decoration: BoxDecoration(
-                              //             borderRadius:
-                              //             BorderRadius.circular(10),
-                              //             border: Border.all(
-                              //               color: isDark
-                              //                   ? Colors.white24
-                              //                   : Colors.grey.shade300,
-                              //             ),
-                              //             color: isDark
-                              //                 ? Colors.black.withOpacity(0.3)
-                              //                 : Colors.white,
-                              //           ),
-                              //           child:
-                              //           DropdownButtonHideUnderline(
-                              //             child: DropdownButton<String>(
-                              //               isExpanded: true,
-                              //               value: selectedCity,
-                              //               hint: const Text(
-                              //                 'اختر المدينة',
-                              //                 style: TextStyle(
-                              //                   fontFamily: "cairo",
-                              //                   fontSize: 12,
-                              //                 ),
-                              //               ),
-                              //               items: cities.keys.map((c) {
-                              //                 return DropdownMenuItem(
-                              //                   value: c,
-                              //                   child: Text(
-                              //                     c,
-                              //                     style: TextStyle(
-                              //                       fontFamily: "cairo",
-                              //                       fontSize: 12,
-                              //                       color: isDark
-                              //                           ? Colors.white
-                              //                           : Colors.black87,
-                              //                     ),
-                              //                   ),
-                              //                 );
-                              //               }).toList(),
-                              //               onChanged: (value) async {
-                              //                 if (value == null) return;
-                              //                 setState(() {
-                              //                   selectedCity = value;
-                              //                 });
-                              //                 await saveLocation(false);
-                              //                 if (onLocationChanged != null) onLocationChanged(); // 👈 هنا
-                              //
-                              //               },
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                              //
-                              // const SizedBox(height: 6),
-
-                              if (selectedCountry != null &&
-                                  selectedCity != null)
-                                // Text(
-                                //   'الموقع الحالي: $selectedCountry - $selectedCity',
-                                //   style: TextStyle(
-                                //     fontSize: 11,
-                                //     fontFamily: "cairo",
-                                //     color: isDark
-                                //         ? Colors.grey[300]
-                                //         : Colors.grey.shade700,
-                                //   ),
-                                // ),
-                                buildCurrentLocation(
-                                    context,
-                                    isDark,
-                                    selectedCountry.toString(),
-                                    selectedCity.toString()),
-                              const SizedBox(height: 10),
-
-                              // سويتش السماح باستخدام الموقع مع تشغيل تحديد تلقائي عند التفعيل
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'استخدام موقعي الحالي (GPS) لتحديد أقرب مدينة تلقائيًا',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontFamily: "cairo",
-                                        color: isDark
-                                            ? Colors.grey[300]
-                                            : Colors.grey.shade700,
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: (allowLocationUsage
+                                                ? Colors.green
+                                                : Colors.orange)
+                                            .withOpacity(0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        allowLocationUsage
+                                            ? Icons.gps_fixed
+                                            : Icons.location_on,
+                                        color: allowLocationUsage
+                                            ? Colors.green
+                                            : Colors.orange,
+                                        size: 20,
                                       ),
                                     ),
-                                  ),
-                                  Switch(
-                                    value: allowLocationUsage,
-                                    activeColor: primary,
-                                    onChanged: (v) async {
-                                      if (!v) {
-                                        setState(() {
-                                          allowLocationUsage = false;
-                                        });
-                                        await saveLocation(true);
-                                      } else {
-                                        // تفعيل: طلب صلاحية + تحديد أقرب مدينة تلقائيًا
-                                        setState(() {
-                                          allowLocationUsage = true;
-                                        });
-                                        await saveLocation(true);
-                                        await selectByLocationInSheet(
-                                            setState, context);
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            allowLocationUsage
+                                                ? 'تحديد تلقائي (GPS) مفعّل'
+                                                : 'تحديد يدوي',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontFamily: "cairo",
+                                              fontWeight: FontWeight.bold,
+                                              color: allowLocationUsage
+                                                  ? Colors.green
+                                                  : Colors.orange,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${selectedCity ?? "غير محدد"}، ${selectedCountry ?? ""}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: "cairo",
+                                              fontWeight: FontWeight.w600,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          setState(() {
+                                            allowLocationUsage = true;
+                                          });
+                                          await selectByLocationInSheet(
+                                              setState, context);
+                                        },
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          decoration: BoxDecoration(
+                                            color: allowLocationUsage
+                                                ? Colors.green.withOpacity(0.1)
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: allowLocationUsage
+                                                  ? Colors.green
+                                                      .withOpacity(0.3)
+                                                  : Colors.grey
+                                                      .withOpacity(0.2),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'تفعيل الـ GPS',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontFamily: "cairo",
+                                                fontWeight: FontWeight.bold,
+                                                color: allowLocationUsage
+                                                    ? Colors.green
+                                                    : Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          setState(() {
+                                            allowLocationUsage = false;
+                                          });
+                                          await saveLocation(true);
+                                          KHelper.showSuccess(
+                                              message:
+                                                  'يمكنك تغيير المدينة يدوياً من صفحة مواقيت الصلاة.');
+                                        },
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          decoration: BoxDecoration(
+                                            color: !allowLocationUsage
+                                                ? Colors.orange.withOpacity(0.1)
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: !allowLocationUsage
+                                                  ? Colors.orange
+                                                      .withOpacity(0.3)
+                                                  : Colors.grey
+                                                      .withOpacity(0.2),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'تحديد يدوي',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontFamily: "cairo",
+                                                fontWeight: FontWeight.bold,
+                                                color: !allowLocationUsage
+                                                    ? Colors.orange
+                                                    : Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
+                        ],
 
                         const SizedBox(height: 18),
 

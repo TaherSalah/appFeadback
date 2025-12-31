@@ -104,15 +104,16 @@ class AdhanWorkManagerService {
 
       print('📋 جدولة الأذان لـ $totalDays أيام...');
 
+      // 0️⃣ تحميل اسم المدينة إذا لم يتم تمريره
+      cityName ??= await _getCityName();
+
       // 1️⃣ حفظ البيانات إذا تم تمريرها
       if (coordinates != null) {
         await saveCoordinates(coordinates.latitude, coordinates.longitude);
         print(
             '📍 تم حفظ الإحداثيات: ${coordinates.latitude}, ${coordinates.longitude}');
       }
-      if (cityName != null) {
-        await saveCityName(cityName);
-      }
+      await saveCityName(cityName);
       if (calculationParams != null) {
         await _saveCalculationParams(calculationParams);
       }
@@ -189,37 +190,69 @@ class AdhanWorkManagerService {
         content: NotificationContent(
           id: uniqueId,
           channelKey: channelKey,
-          icon: 'resource://drawable/ic_stat_logoapp', // ✅ إضافة الأيقونة صراحة
+          icon: 'resource://drawable/ic_stat_logoapp',
           title: '\u200Fحان الآن وقت صلاة $prayerName',
           body: '\u200Fفي مدينة ${cityName ?? "القاهرة"}',
-          category: NotificationCategory.Alarm, // مهم جداً للأذان
+          category: NotificationCategory.Alarm,
           wakeUpScreen: true,
           fullScreenIntent: true,
           criticalAlert: true,
-          autoDismissible: true, // ✅ السماح بالحذف بالسحب
-          locked: false, // ✅ عدم القفل للسماح للمستخدم بإزالته
+          autoDismissible: true,
+          locked: false,
           displayOnBackground: true,
           displayOnForeground: true,
-          // ✅ تخصيص المدة حسب نوع الأذان (الفجر أطول)
           timeoutAfter: isFajr
-              ? const Duration(minutes: 4, seconds: 40) // زيادة المدة للفجر
-              : Duration(
-                  minutes: 3,
-                  seconds: 23), // زيادة المدة لباقي الصلوات لتجنب انقطاع الصوت
+              ? const Duration(minutes: 4, seconds: 40)
+              : Duration(minutes: 3, seconds: 23),
           payload: {
             'prayerName': prayerName,
             'prayer_time': _formatTime(prayerTime),
             'cityName': cityName ?? "",
-            'route': 'adhan_screen', // ✅ Adding route for overlay
-            'type': 'adhan', // Keep for backward compatibility if any
+            'route': 'adhan_screen',
+            'type': 'adhan',
           },
         ),
         schedule: NotificationCalendar.fromDate(
           date: prayerTime,
-          preciseAlarm: true, // مهم جداً للدقة
-          allowWhileIdle: true, // يعمل في وضع توفير الطاقة
+          preciseAlarm: true,
+          allowWhileIdle: true,
         ),
       );
+
+      // 🕌 جدولة أذكار بعد الصلاة (اختياري)
+      final prefs = await SharedPreferences.getInstance();
+      final bool remEnabled =
+          prefs.getBool('post_prayer_reminder_enabled') ?? false;
+      final int remMinutes = prefs.getInt('post_reminder_minutes') ?? 10;
+
+      if (remEnabled && !prayerName.contains('الشروق')) {
+        final reminderTime = prayerTime.add(Duration(minutes: remMinutes));
+        final reminderId = uniqueId + 1000; // استخدام آي دي مختلف
+
+        if (reminderTime.isAfter(now)) {
+          await AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: reminderId,
+              channelKey: 'post_prayer_dhikr_channel',
+              icon: 'resource://drawable/ic_stat_logoapp',
+              title: '📿 أذكار بعد الصلاة',
+              body: 'لا تنسَ قراءة أذكار ما بعد صلاة $prayerName',
+              category: NotificationCategory.Reminder,
+              wakeUpScreen: true,
+              autoDismissible: true,
+              payload: {
+                'route': '/allazkarlistview', // Navigate back to azkar
+              },
+            ),
+            schedule: NotificationCalendar.fromDate(
+              date: reminderTime,
+              preciseAlarm: true,
+              allowWhileIdle: true,
+            ),
+          );
+          print('   📿 تم جدولة تذكير الأذكار بعد $remMinutes دقيقة');
+        }
+      }
 
       print('✅ تم الجدولة بنجاح (Native)');
       return null; // ✅ نجاح (لا يوجد خطأ)
@@ -245,18 +278,26 @@ class AdhanWorkManagerService {
 
       final prefs = await SharedPreferences.getInstance();
       final manualOffset = prefs.getInt('manual_offset') ?? 0;
-      final offset = Duration(hours: manualOffset);
+      final hourOffset = Duration(hours: manualOffset);
+
+      final fOff = prefs.getInt('fajr_offset') ?? 0;
+      // final sOff = prefs.getInt('sunrise_offset') ?? 0;
+      final dOff = prefs.getInt('dhuhr_offset') ?? 0;
+      final aOff = prefs.getInt('asr_offset') ?? 0;
+      final mOff = prefs.getInt('maghrib_offset') ?? 0;
+      final iOff = prefs.getInt('isha_offset') ?? 0;
 
       final components = DateComponents(date.year, date.month, date.day);
       final prayerTimes = PrayerTimes(coords, components, calculationParams);
 
       return {
-        // 'الفجر': DateTime.now().add(Duration(seconds: 2)),
-        'الفجر': prayerTimes.fajr.add(offset),
-        'الظهر': prayerTimes.dhuhr.add(offset),
-        'العصر': prayerTimes.asr.add(offset),
-        'المغرب': prayerTimes.maghrib.add(offset),
-        'العشاء': prayerTimes.isha.add(offset),
+        'الفجر': prayerTimes.fajr.add(hourOffset).add(Duration(minutes: fOff)),
+        // 'الشروق': prayerTimes.sunrise.add(hourOffset).add(Duration(minutes: sOff)), // لا يوجد أذان للشروق
+        'الظهر': prayerTimes.dhuhr.add(hourOffset).add(Duration(minutes: dOff)),
+        'العصر': prayerTimes.asr.add(hourOffset).add(Duration(minutes: aOff)),
+        'المغرب':
+            prayerTimes.maghrib.add(hourOffset).add(Duration(minutes: mOff)),
+        'العشاء': prayerTimes.isha.add(hourOffset).add(Duration(minutes: iOff)),
       };
     } catch (e) {
       print('❌ خطأ في حساب أوقات الصلاة: $e');
@@ -294,12 +335,12 @@ class AdhanWorkManagerService {
 
   Future<String> _getCityName() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('city_name') ?? 'القاهرة';
+    return prefs.getString('selected_city') ?? 'القاهرة';
   }
 
   Future<void> saveCityName(String cityName) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('city_name', cityName);
+    await prefs.setString('selected_city', cityName);
   }
 
   Future<void> _saveCalculationParams(CalculationParameters params) async {

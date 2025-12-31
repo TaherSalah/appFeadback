@@ -24,7 +24,9 @@ class LocationSettingsView extends StatefulWidget {
 class _LocationSettingsViewState extends State<LocationSettingsView> {
   static const String kCountryKey = 'selected_country';
   static const String kCityKey = 'selected_city';
-  static const String kAllowLocationKey = 'allow_location_usage';
+  static const String kUseGPSKey = 'is_using_gps';
+  static const String kLatKey = 'latitude';
+  static const String kLngKey = 'longitude';
 
   Map<String, dynamic> countries = {};
   Map<String, dynamic> cities = {};
@@ -48,7 +50,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
       final prefs = await SharedPreferences.getInstance();
       final savedCountry = prefs.getString(kCountryKey);
       final savedCity = prefs.getString(kCityKey);
-      final savedAllow = prefs.getBool(kAllowLocationKey);
+      final savedAllow = prefs.getBool(kUseGPSKey);
 
       final String response =
           await rootBundle.loadString('assets/images/egypt_governorates.json');
@@ -101,7 +103,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
     if (tempCity != null) {
       await prefs.setString(kCityKey, tempCity!);
     }
-    await prefs.setBool(kAllowLocationKey, tempAllowLocationUsage);
+    await prefs.setBool(kUseGPSKey, tempAllowLocationUsage);
 
     KHelper.showSuccess(message: 'تم حفظ إعدادات الموقع بنجاح');
     setState(() => _hasChanges = false);
@@ -186,6 +188,11 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
           tempAllowLocationUsage = true;
           _hasChanges = true;
         });
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setDouble(kLatKey, userLat);
+        await prefs.setDouble(kLngKey, userLng);
+
         KHelper.showSuccess(message: 'تم العثور على موقعك: $bestCity');
       }
     } catch (e) {
@@ -218,7 +225,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
         // ),
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
@@ -227,15 +234,12 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
             title: Text(
               'إعدادات الموقع',
               style: GoogleFonts.cairo(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                color: isDark ? Colors.white : Colors.black87,
+                fontWeight: FontWeight.w900,
+                fontSize: 18.sp,
               ),
             ),
-            actions: [
-
-
-            ],
+            actions: [],
           ),
         ),
 
@@ -294,7 +298,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                                     ),
                                   ),
                                   value: tempAllowLocationUsage,
-                                  activeColor: const Color(0xFFD4AF37),
+                                  activeColor: KColors.primaryColor,
                                   secondary: Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
@@ -381,14 +385,14 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.location_on_outlined,
-                                        color: Color(0xFFD4AF37)),
+                                    Icon(Icons.location_on_outlined,
+                                        color: KColors.primaryColor),
                                     const SizedBox(width: 8),
                                     Text(
                                       'الموقع المختار: $tempCountry - $tempCity',
                                       style: GoogleFonts.cairo(
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFFD4AF37),
+                                        color: KColors.primaryColor,
                                         fontSize: 14,
                                       ),
                                     ),
