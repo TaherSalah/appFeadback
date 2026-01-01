@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:adhan/adhan.dart';
 import 'package:flutter/services.dart';
 import 'package:hijri/hijri_calendar.dart';
@@ -7,13 +8,12 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart' as initl;
 import 'package:intl/intl.dart';
 import 'package:muslimdaily/app/core/utils/log.dart';
+import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:geolocator/geolocator.dart';
-import 'dart:math' as math;
-import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
+import '../../../core/services/location_service.dart';
 import '../../../core/utils/constent/router.dart';
 import '../../../core/utils/style/k_helper.dart';
 
@@ -261,101 +261,54 @@ class MainController extends ControllerMVC {
 
   Future<void> autoDetectLocation({bool silent = false}) async {
     try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        if (!silent) KHelper.showError(message: 'خدمات الموقع غير مفعلة');
-        return;
-      }
+      final locationService = LocationService();
+      final pos = await locationService.getCurrentPosition();
 
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          if (!silent) KHelper.showError(message: 'صلاحيات الموقع مرفوضة');
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
+      if (pos == null) {
         if (!silent)
-          KHelper.showError(message: 'يجب تفعيل الصلاحيات من الإعدادات');
+          KHelper.showError(
+              message:
+                  'تعذر الحصول على الموقع. تحقق من الصلاحيات وخدمة الموقع.');
         return;
       }
-
-      final pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
 
       latitude = pos.latitude;
       longitude = pos.longitude;
       isUsingGPS = true;
 
-      // البحث عن أقرب مدينة للاسم فقط
-      String? bestCountry;
-      String? bestCity;
-      double bestDist = double.infinity;
-
-      countries.forEach((country, cityMap) {
-        final Map<String, dynamic> m = cityMap ?? {};
-        m.forEach((cityName, v) {
-          final lat = (v?['lat'])?.toDouble();
-          final lng = (v?['lng'])?.toDouble();
-          if (lat == null || lng == null) return;
-          final d = _haversine(pos.latitude, pos.longitude, lat, lng);
-          if (d < bestDist) {
-            bestDist = d;
-            bestCountry = country;
-            bestCity = cityName;
-          }
-        });
-      });
-
-      if (bestCountry != null && bestCity != null) {
-        // إذا كانت المسافة كبيرة جداً، لا نعتمد اسم المدينة في الواجهة
-        if (bestDist > 100) {
-          selectedCountry = 'GPS';
-          selectedCity = 'موقعي الحالي';
-        } else {
-          selectedCountry = bestCountry;
-          selectedCity = bestCity;
-        }
-
-        cities = (countries[bestCountry!] as Map<String, dynamic>)
-          ..removeWhere((k, v) => v == null);
+      // محاولة الحصول على اسم المدينة والدولة برمجياً
+      final address =
+          await locationService.getAddressFromLatLng(latitude!, longitude!);
+      if (address != null) {
+        selectedCountry = address['country'];
+        selectedCity = address['city'];
+      } else {
+        selectedCountry = 'تحديد تلقائي';
+        selectedCity = 'الموقع الفعلي (GPS)';
       }
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setDouble(_kLatKey, latitude!);
-      await prefs.setDouble(_kLngKey, longitude!);
-      await prefs.setBool(_kUseGPSKey, true);
-      if (selectedCountry != null)
-        await prefs.setString(_kCountryKey, selectedCountry!);
-      if (selectedCity != null) await prefs.setString(_kCityKey, selectedCity!);
+      await locationService.saveLocation(
+        lat: latitude!,
+        lng: longitude!,
+        city: selectedCity,
+        country: selectedCountry,
+        isGPS: true,
+      );
 
       calculatePrayerTimes();
       await AdhanWorkManagerService().initialize();
       setState(() {});
 
-      if (!silent) KHelper.showSuccess(message: 'تم تحديد الموقع بنجاح');
+      if (!silent)
+        KHelper.showSuccess(
+            message: 'تم تحديد الموقع بنجاح: ${selectedCity ?? ""}');
     } catch (e) {
       if (!silent) KHelper.showError(message: 'حدث خطأ أثناء تحديد الموقع');
+      log('Error in autoDetectLocation: $e');
     }
   }
 
-  double _haversine(double lat1, double lon1, double lat2, double lon2) {
-    const R = 6371.0;
-    final dLat = (lat2 - lat1) * (math.pi / 180);
-    final dLon = (lon2 - lon1) * (math.pi / 180);
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(lat1 * math.pi / 180) *
-            math.cos(lat2 * math.pi / 180) *
-            math.sin(dLon / 2) *
-            math.sin(dLon / 2);
-    final c = 2 * math.asin(math.sqrt(a));
-    return R * c;
-  }
-
-  // حفظ إعدادات الحساب
+  // تحديث إعدادات الحساب
   Future<void> updateCalcSettings({
     required CalculationMethod method,
     required Madhab madhab,
@@ -402,6 +355,35 @@ class MainController extends ControllerMVC {
     calculatePrayerTimes();
     await AdhanWorkManagerService().initialize();
     setState(() {});
+  }
+
+  // دوال تعديل الدقائق يدوياً
+  Future<void> adjustPrayerOffset(String prayer, int delta) async {
+    switch (prayer) {
+      case 'الفجر':
+        fajrOffset += delta;
+        break;
+      case 'الشروق':
+        sunriseOffset += delta;
+        break;
+      case 'الظهر':
+        dhuhrOffset += delta;
+        break;
+      case 'العصر':
+        asrOffset += delta;
+        break;
+      case 'المغرب':
+        maghribOffset += delta;
+        break;
+      case 'العشاء':
+        ishaOffset += delta;
+        break;
+    }
+    await updateCalcSettings(
+      method: selectedMethod,
+      madhab: selectedMadhab,
+      offset: manualOffset,
+    );
   }
 
   String get hijriDate => hijri == null
@@ -487,6 +469,20 @@ class MainController extends ControllerMVC {
     // تحديث الإحداثيات من الـ JSON للاختيار اليدوي
     latitude = (cityMap[city]!["lat"]).toDouble();
     longitude = (cityMap[city]!["lng"]).toDouble();
+
+    await _saveSelection();
+    calculatePrayerTimes();
+    await AdhanWorkManagerService().initialize();
+    setState(() {});
+  }
+
+  /// إدخال الإحداثيات يدوياً
+  Future<void> setManualCoordinates(double lat, double lng) async {
+    latitude = lat;
+    longitude = lng;
+    isUsingGPS = true; // نعتبرها "موقع مخصص" ونستخدم الإحداثيات مباشرة
+    selectedCountry = 'مخصص';
+    selectedCity = 'إحداثيات يدوية';
 
     await _saveSelection();
     calculatePrayerTimes();

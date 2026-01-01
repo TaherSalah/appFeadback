@@ -2122,31 +2122,25 @@
 //   // =====================================
 //
 import 'dart:async';
-import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:adhan/adhan.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
-
 import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/mainView/controllar/MainController.dart';
-import 'package:mvc_pattern/mvc_pattern.dart';
-
-import 'package:workmanager/workmanager.dart';
+import 'package:mvc_pattern/mvc_pattern.dart' hide StateSetter;
 
 import '../../core/utils/style/app_theme_colors.dart';
-import '../messaView/azkar_massa.dart';
 import 'adhan_callback.dart';
 import 'adhan_workmanager_service.dart';
 
@@ -2190,46 +2184,38 @@ class _AzanViewState extends StateMVC<AzanView> {
 
   // جدولة إشعارات الصلاة
   Future<void> _scheduleAllPrayerNotifications() async {
-    final prayerTimes = con.prayerTimes;
-    final cityName = con.selectedCity ?? "مدينتك";
-    final selectedCity = con.selectedCity;
-
-    if (prayerTimes == null) {
-      print("⚠️ مواقيت الصلاة غير متاحة");
-      return;
-    }
-
     try {
-      // ✅ 1) إلغاء جميع المهام القديمة أولاً
-      await Workmanager().cancelAll();
-      print('🗑️ تم إلغاء المهام القديمة');
+      final prayerTimes = con.prayerTimes;
+      final selectedCity = con.selectedCity;
 
-      // ✅ 2) الحصول على الإحداثيات
-      final cities = con.cities;
-      if (cities.isEmpty || selectedCity == null) return;
-
-      final cityData = cities[selectedCity];
-      if (cityData == null) return;
-
-      final lat = (cityData['lat'] as num?)?.toDouble();
-      final lng = (cityData['lng'] as num?)?.toDouble();
-
-      if (lat == null || lng == null) {
-        print("⚠️ إحداثيات المدينة غير متوفرة");
+      if (prayerTimes == null) {
+        print("⚠️ مواقيت الصلاة غير متاحة");
         return;
       }
 
-      // ✅ 3) حساب مواقيت الصلاة
+      final cities = con.cities;
+      final double? lat;
+      final double? lng;
+      final String cityName = selectedCity ?? "غير معروف";
+
+      if (con.isUsingGPS && con.latitude != null && con.longitude != null) {
+        lat = con.latitude;
+        lng = con.longitude;
+      } else {
+        if (cities.isEmpty || selectedCity == null) return;
+        final cityData = cities[selectedCity];
+        if (cityData == null) return;
+        lat = (cityData['lat'] as num?)?.toDouble();
+        lng = (cityData['lng'] as num?)?.toDouble();
+      }
+
+      if (lat == null || lng == null) return;
+
       final coordinates = Coordinates(lat, lng);
       final calculationParams = con.selectedMethod.getParameters();
       calculationParams.madhab = con.selectedMadhab;
 
-      // ✅ 4) حفظ البيانات
-      await AdhanWorkManagerService().saveCoordinates(lat, lng);
-      await AdhanWorkManagerService().saveCityName(cityName);
-
-      // ✅ 5) جدولة الأذان لـ 7 أيام
-      await AdhanWorkManagerService().scheduleAllPrayersForMultipleDays(
+      await AdhanWorkManagerService().initialize(
         coordinates: coordinates,
         calculationParams: calculationParams,
         cityName: cityName,
@@ -2238,7 +2224,7 @@ class _AzanViewState extends StateMVC<AzanView> {
 
       if (mounted) {
         KHelper.showSuccess(
-          message: ' تم جدولة الأذان لـ 7 أيام بنجاح',
+          message: 'تم جدولة الأذان لـ 30 يوماً بنجاح',
         );
       }
     } catch (e) {
@@ -2249,91 +2235,15 @@ class _AzanViewState extends StateMVC<AzanView> {
     }
   }
 
-  // التأكد من صلاحيات الموقع
-  Future<bool> _ensureLocationPermission() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return false;
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      return false;
-    }
-    return true;
-  }
-
-  // دالة حساب المسافة (Haversine)
-  double _haversine(double lat1, double lon1, double lat2, double lon2) {
-    const R = 6371.0;
-    final dLat = (lat2 - lat1) * (math.pi / 180);
-    final dLon = (lon2 - lon1) * (math.pi / 180);
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(lat1 * math.pi / 180) *
-            math.cos(lat2 * math.pi / 180) *
-            math.sin(dLon / 2) *
-            math.sin(dLon / 2);
-    final c = 2 * math.asin(math.sqrt(a));
-    return R * c;
-  }
-
   // تحديد أقرب مدينة بالـ GPS
   Future<void> _selectByLocation() async {
-    final ok = await _ensureLocationPermission();
-    if (!ok) {
-      if (mounted) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     content: Text('يرجى تفعيل خدمات الموقع والسماح بالوصول'),
-        //     backgroundColor: Colors.orange,
-        //   ),
-        // );
-        KHelper.showError(message: 'يرجى تفعيل خدمات الموقع والسماح بالوصول');
-      }
-      return;
-    }
-
-    final pos = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    final userLat = pos.latitude;
-    final userLng = pos.longitude;
-
-    final countries = con.countries;
-    if (countries.isEmpty) return;
-
-    String? bestCountry;
-    String? bestCity;
-    double bestDist = double.infinity;
-
-    countries.forEach((country, cityMap) {
-      final Map<String, dynamic> m = cityMap ?? {};
-      m.forEach((cityName, v) {
-        final lat = (v?['lat'])?.toDouble();
-        final lng = (v?['lng'])?.toDouble();
-        if (lat == null || lng == null) return;
-        final d = _haversine(userLat, userLng, lat, lng);
-        if (d < bestDist) {
-          bestDist = d;
-          bestCountry = country;
-          bestCity = cityName;
-        }
-      });
-    });
-
-    if (bestCountry != null && bestCity != null) {
-      await con.setLocation(country: bestCountry!, city: bestCity!);
+    try {
+      await con.autoDetectLocation();
       setState(() {});
-
-      // جدولة الإشعارات للموقع الجديد
       await _scheduleAllPrayerNotifications();
-
+    } catch (e) {
       if (mounted) {
-        KHelper.showSuccess(
-          message: 'تم تحديد الموقع: $bestCountry - $bestCity',
-        );
+        KHelper.showError(message: 'حدث خطأ أثناء تحديد الموقع');
       }
     }
   }
@@ -2349,161 +2259,236 @@ class _AzanViewState extends StateMVC<AzanView> {
           builder: (context, setStateSheet) {
             return Directionality(
               textDirection: TextDirection.rtl,
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      '⚙️ إعدادات الحساب',
-                      style: GoogleFonts.cairo(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // طريقة الحساب
-                    Text(
-                      'طريقة الحساب',
-                      style: GoogleFonts.cairo(
-                        fontSize: 14.sp,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildMethodDropdown(isDark, setStateSheet),
-
-                    const SizedBox(height: 16),
-
-                    // المذهب
-                    Text(
-                      'المذهب (صلاة العصر)',
-                      style: GoogleFonts.cairo(
-                        fontSize: 14.sp,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildMadhabDropdown(isDark, setStateSheet),
-
-                    const SizedBox(height: 16),
-
-                    const SizedBox(height: 16),
-
-                    // تعديل الساعات (فارق التوقيت)
-                    Text(
-                      'تعديل الساعات (فارق التوقيت)',
-                      style: GoogleFonts.cairo(
-                        fontSize: 14.sp,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.black.withOpacity(0.2)
-                            : Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color:
-                                isDark ? Colors.white10 : Colors.grey.shade300),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove_circle_outline,
-                                color: Colors.red),
-                            onPressed: () {
-                              setStateSheet(() {
-                                con.manualOffset--;
-                              });
-                            },
-                          ),
-                          Text(
-                            "${con.manualOffset > 0 ? '+' : ''}${con.manualOffset} ساعة",
-                            style: GoogleFonts.cairo(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : Colors.black87,
+              child: SafeArea(
+                bottom: true,
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 40,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(2),
                             ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.add_circle_outline,
-                                color: Colors.green),
-                            onPressed: () {
-                              setStateSheet(() {
-                                con.manualOffset++;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // زر الحفظ
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
                         ),
-                        onPressed: () {
-                          // حفظ وتحديث
-                          con.updateCalcSettings(
-                            method: con.selectedMethod,
-                            madhab: con.selectedMadhab,
-                            offset: con.manualOffset,
-                          );
-                          _scheduleAllPrayerNotifications(); // إعادة الجدولة
-                          Navigator.pop(context);
-                          KHelper.showSuccess(
-                              message: "تم تحديث طريقة الحساب بنجاح");
-                        },
-                        child: Text(
-                          'حفظ التغييرات',
+                        const SizedBox(height: 20),
+                        Text(
+                          '⚙️ إعدادات الحساب',
                           style: GoogleFonts.cairo(
-                            fontSize: 16.sp,
+                            fontSize: ResponsiveUtil.isTablet(context)
+                                ? 11.sp
+                                : 15.sp,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 20),
+
+                        // 🎯 قسم اختيار الموقع
+                        _buildLocationSelector(
+                          context,
+                          isDark,
+                          con.countries,
+                          con.cities,
+                          con.selectedCountry,
+                          con.selectedCity,
+                          onLocationChanged: () => setStateSheet(() {}),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // طريقة الحساب
+                        Text(
+                          'طريقة الحساب',
+                          style: GoogleFonts.cairo(
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildMethodDropdown(isDark, setStateSheet),
+
+                        const SizedBox(height: 16),
+
+                        // المذهب
+                        Text(
+                          'المذهب (صلاة العصر)',
+                          style: GoogleFonts.cairo(
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildMadhabDropdown(isDark, setStateSheet),
+
+                        const SizedBox(height: 16),
+
+                        const SizedBox(height: 16),
+
+                        // تعديل الساعات (فارق التوقيت)
+                        // Text(
+                        //   'تعديل الساعات (فارق التوقيت)',
+                        //   style: GoogleFonts.cairo(
+                        //     fontSize: 14.sp,
+                        //     color: Colors.grey,
+                        //     fontWeight: FontWeight.bold,
+                        //   ),
+                        // ),
+                        // const SizedBox(height: 8),
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(
+                        //       horizontal: 12, vertical: 8),
+                        //   decoration: BoxDecoration(
+                        //     color: isDark
+                        //         ? Colors.black.withOpacity(0.2)
+                        //         : Colors.grey.shade100,
+                        //     borderRadius: BorderRadius.circular(12),
+                        //     border: Border.all(
+                        //         color:
+                        //             isDark ? Colors.white10 : Colors.grey.shade300),
+                        //   ),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       IconButton(
+                        //         icon: const Icon(Icons.remove_circle_outline,
+                        //             color: Colors.red),
+                        //         onPressed: () {
+                        //           setStateSheet(() {
+                        //             con.manualOffset--;
+                        //           });
+                        //         },
+                        //       ),
+                        //       Text(
+                        //         "${con.manualOffset > 0 ? '+' : ''}${con.manualOffset} ساعة",
+                        //         style: GoogleFonts.cairo(
+                        //           fontSize: 16.sp,
+                        //           fontWeight: FontWeight.bold,
+                        //           color: isDark ? Colors.white : Colors.black87,
+                        //         ),
+                        //       ),
+                        //       IconButton(
+                        //         icon: const Icon(Icons.add_circle_outline,
+                        //             color: Colors.green),
+                        //         onPressed: () {
+                        //           setStateSheet(() {
+                        //             con.manualOffset++;
+                        //           });
+                        //         },
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+
+                        const SizedBox(height: 16),
+
+                        // تعديل الدقائق يدوياً لكل صلاة
+                        Text(
+                          'تعديل الدقائق يدوياً (لكل صلاة)',
+                          style: GoogleFonts.cairo(
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildIndividualOffsetAdjuster(
+                            'الفجر', con.fajrOffset, isDark, setStateSheet),
+                        _buildIndividualOffsetAdjuster(
+                            'الظهر', con.dhuhrOffset, isDark, setStateSheet),
+                        _buildIndividualOffsetAdjuster(
+                            'العصر', con.asrOffset, isDark, setStateSheet),
+                        _buildIndividualOffsetAdjuster(
+                            'المغرب', con.maghribOffset, isDark, setStateSheet),
+                        _buildIndividualOffsetAdjuster(
+                            'العشاء', con.ishaOffset, isDark, setStateSheet),
+
+                        const SizedBox(height: 30),
+
+                        // زر الحفظ
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: KColors.primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: () {
+                              // حفظ وتحديث
+                              con.updateCalcSettings(
+                                method: con.selectedMethod,
+                                madhab: con.selectedMadhab,
+                                offset: con.manualOffset,
+                              );
+                              _scheduleAllPrayerNotifications(); // إعادة الجدولة
+                              Navigator.pop(context);
+                              KHelper.showSuccess(
+                                  message: "تم تحديث طريقة الحساب بنجاح");
+                            },
+                            child: Text(
+                              'حفظ التغييرات',
+                              style: GoogleFonts.cairo(
+                                fontSize: ResponsiveUtil.isTablet(context)
+                                    ? 10.sp
+                                    : 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: KColors.darkerColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: () {
+                              _scheduleAllPrayerNotifications(); // إعادة الجدولة
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'الغاء',
+                              style: GoogleFonts.cairo(
+                                fontSize: ResponsiveUtil.isTablet(context)
+                                    ? 10.sp
+                                    : 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                  ],
+                  ),
                 ),
               ),
             );
@@ -2541,7 +2526,7 @@ class _AzanViewState extends StateMVC<AzanView> {
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<CalculationMethod>(
           isExpanded: true,
-          hint: Text('اختر الطريقة'),
+          hint: const Text('اختر الطريقة'),
           items: methods.entries.map((item) {
             return DropdownMenuItem<CalculationMethod>(
               value: item.key,
@@ -2573,6 +2558,9 @@ class _AzanViewState extends StateMVC<AzanView> {
               color: isDark ? const Color(0xFF334155) : Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
+          ),
+          menuItemStyleData: const MenuItemStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 16),
           ),
         ),
       ),
@@ -2632,6 +2620,9 @@ class _AzanViewState extends StateMVC<AzanView> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
+          menuItemStyleData: const MenuItemStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+          ),
         ),
       ),
     );
@@ -2646,10 +2637,8 @@ class _AzanViewState extends StateMVC<AzanView> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = const Color(AppStyle.primaryColor);
+    const baseColor = Color(AppStyle.primaryColor);
 
-    final countries = con.countries;
-    final cities = con.cities;
     final selectedCountry = con.selectedCountry;
     final selectedCity = con.selectedCity;
     final prayerTimes = con.prayerTimes;
@@ -2796,7 +2785,7 @@ class _AzanViewState extends StateMVC<AzanView> {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             // gradient: LinearGradient(
             //   begin: Alignment.topCenter,
             //   end: Alignment.bottomCenter,
@@ -2819,13 +2808,7 @@ class _AzanViewState extends StateMVC<AzanView> {
             textDirection: ui.TextDirection.rtl,
             child: Column(
               children: [
-                // 🎯 قسم اختيار الموقع المحسّن
-                _buildLocationSelector(context, isDark, countries, cities,
-                    selectedCountry, selectedCity),
-
-                const SizedBox(height: 20),
-
-                // 📍 عرض الموقع الحالي بتصميم جذاب
+                // 🎯 قسم عرض الموقع الحالي فقط
                 if (selectedCountry != null && selectedCity != null)
                   buildCurrentLocation(
                       context, isDark, selectedCountry, selectedCity),
@@ -2855,15 +2838,15 @@ class _AzanViewState extends StateMVC<AzanView> {
     );
   }
 
-  // 🎯 قسم اختيار الموقع
   Widget _buildLocationSelector(
     BuildContext context,
     bool isDark,
     Map countries,
     Map cities,
     String? selectedCountry,
-    String? selectedCity,
-  ) {
+    String? selectedCity, {
+    VoidCallback? onLocationChanged,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -2886,7 +2869,7 @@ class _AzanViewState extends StateMVC<AzanView> {
               Text(
                 'اختر موقعك',
                 style: GoogleFonts.cairo(
-                  fontSize: 16.sp,
+                  fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 13.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
@@ -2902,16 +2885,24 @@ class _AzanViewState extends StateMVC<AzanView> {
                   context: context,
                   isDark: isDark,
                   hint: 'الدولة',
-                  items: countries.keys.map((e) => e.toString()).toList(),
+                  items: {
+                    ...countries.keys.map((e) => e.toString()),
+                    if (selectedCountry != null) selectedCountry,
+                    'مخصص',
+                    'تحديد تلقائي',
+                  }.toList(),
                   value: selectedCountry,
                   icon: Icons.public,
                   onChanged: (value) async {
-                    if (value == null) return;
+                    if (value == null ||
+                        value == 'مخصص' ||
+                        value == 'تحديد تلقائي') return;
                     final Map<String, dynamic> cityMap = (countries[value]
                         as Map<String, dynamic>)
                       ..removeWhere((k, v) => v == null);
                     final firstCity = cityMap.keys.first;
                     await con.setLocation(country: value, city: firstCity);
+                    if (onLocationChanged != null) onLocationChanged();
                     setState(() {});
                     await _scheduleAllPrayerNotifications();
                   },
@@ -2924,13 +2915,22 @@ class _AzanViewState extends StateMVC<AzanView> {
                   context: context,
                   isDark: isDark,
                   hint: 'المدينة',
-                  items: cities.keys.map((e) => e.toString()).toList(),
+                  items: {
+                    ...cities.keys.map((e) => e.toString()),
+                    if (selectedCity != null) selectedCity,
+                    'إحداثيات يدوية',
+                    'الموقع الفعلي (GPS)',
+                  }.toList(),
                   value: selectedCity,
                   icon: Icons.location_on,
                   onChanged: (value) async {
-                    if (value == null || selectedCountry == null) return;
+                    if (value == null ||
+                        selectedCountry == null ||
+                        value == 'إحداثيات يدوية' ||
+                        value == 'الموقع الفعلي (GPS)') return;
                     await con.setLocation(
                         country: selectedCountry, city: value);
+                    if (onLocationChanged != null) onLocationChanged();
                     setState(() {});
                     await _scheduleAllPrayerNotifications();
                   },
@@ -2939,36 +2939,174 @@ class _AzanViewState extends StateMVC<AzanView> {
             ],
           ),
           const SizedBox(height: 12),
-          // زر GPS
-          InkWell(
-            onTap: countries.isEmpty ? null : _selectByLocation,
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: isDark
-                      ? [Colors.teal.shade700, Colors.teal.shade900]
-                      : [Colors.blue.shade400, Colors.blue.shade600],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.my_location, color: Colors.white, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'تحديد موقعي الحالي',
-                    style: GoogleFonts.cairo(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.sp,
+          Row(
+            children: [
+              // زر GPS
+              Expanded(
+                child: InkWell(
+                  onTap: countries.isEmpty
+                      ? null
+                      : () async {
+                          await _selectByLocation();
+                          if (onLocationChanged != null) onLocationChanged();
+                        },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: isDark
+                            ? [Colors.teal.shade700, Colors.teal.shade900]
+                            : [Colors.blue.shade400, Colors.blue.shade600],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.my_location,
+                            color: Colors.white, size: 18),
+                        const SizedBox(width: 4),
+                        Text(
+                          'تحديد تلقائي',
+                          style: GoogleFonts.cairo(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              // زر إدخال يدوي للإحداثيات
+              Expanded(
+                child: InkWell(
+                  onTap: () => _showManualCoordDialog(
+                      context, isDark, onLocationChanged),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white10 : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark ? Colors.white24 : Colors.grey.shade300,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.edit_location_alt,
+                            color:
+                                isDark ? Colors.white70 : Colors.grey.shade700,
+                            size: 18),
+                        const SizedBox(width: 4),
+                        Text(
+                          'إحداثيات يدوية',
+                          style: GoogleFonts.cairo(
+                            color: isDark ? Colors.white : Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showManualCoordDialog(
+      BuildContext context, bool isDark, VoidCallback? onLocationChanged) {
+    final latController =
+        TextEditingController(text: con.latitude?.toString() ?? '');
+    final lngController =
+        TextEditingController(text: con.longitude?.toString() ?? '');
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'إدخال الإحداثيات يدوياً',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'أدخل خط العرض وخط الطول بدقة (مثال: 30.04)',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: latController,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              style: GoogleFonts.cairo(
+                  color: isDark ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                labelText: 'خط العرض (Latitude)',
+                labelStyle: GoogleFonts.cairo(),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: lngController,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              style: GoogleFonts.cairo(
+                  color: isDark ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                labelText: 'خط الطول (Longitude)',
+                labelStyle: GoogleFonts.cairo(),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.red)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final lat = double.tryParse(latController.text);
+              final lng = double.tryParse(lngController.text);
+              if (lat != null && lng != null) {
+                await con.setManualCoordinates(lat, lng);
+                if (onLocationChanged != null) onLocationChanged();
+                if (context.mounted) Navigator.pop(context);
+                KHelper.showSuccess(message: 'تم حفظ الإحداثيات بنجاح');
+              } else {
+                KHelper.showError(message: 'يرجى إدخال أرقام صحيحة');
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+            child: Text('حفظ', style: GoogleFonts.cairo(color: Colors.white)),
           ),
         ],
       ),
@@ -3013,7 +3151,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                 Text(
                   hint,
                   style: GoogleFonts.cairo(
-                    fontSize: 13.sp,
+                    fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 13.sp,
                     color: Colors.grey,
                   ),
                 ),
@@ -3025,7 +3163,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                 child: Text(
                   item,
                   style: GoogleFonts.cairo(
-                    fontSize: 12.sp,
+                    fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
                     color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
@@ -3038,18 +3176,66 @@ class _AzanViewState extends StateMVC<AzanView> {
               height: 50,
             ),
             dropdownStyleData: DropdownStyleData(
+              maxHeight: 300,
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF334155) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             menuItemStyleData: MenuItemStyleData(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               overlayColor: WidgetStateProperty.all(
                 isDark
                     ? Colors.white.withOpacity(0.1)
                     : Colors.grey.withOpacity(0.1),
               ),
             ),
+            dropdownSearchData: DropdownSearchData(
+              searchController: TextEditingController(),
+              searchInnerWidgetHeight: 50,
+              searchInnerWidget: Container(
+                height: 50,
+                padding: const EdgeInsets.only(
+                  top: 8,
+                  bottom: 4,
+                  right: 8,
+                  left: 8,
+                ),
+                child: TextFormField(
+                  expands: true,
+                  maxLines: null,
+                  style: GoogleFonts.cairo(
+                      fontSize: 12.sp,
+                      color: isDark ? Colors.white : Colors.black87),
+                  textDirection: TextDirection.rtl,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
+                    hintText: 'ابحث عن $hint...',
+                    hintStyle: GoogleFonts.cairo(
+                        fontSize:
+                            ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                        color: Colors.grey),
+                    hintTextDirection: TextDirection.rtl,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              searchMatchFn: (item, searchValue) {
+                return item.value.toString().contains(searchValue);
+              },
+            ),
+            // This clears the search value when the dropdown is closed
+            onMenuStateChange: (isOpen) {
+              if (!isOpen) {
+                // (searchController as TextEditingController).clear();
+              }
+            },
           ),
         ),
       ),
@@ -3084,17 +3270,40 @@ class _AzanViewState extends StateMVC<AzanView> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.place_rounded,
-            color: isDark ? Colors.amberAccent : Colors.blue.shade800,
+            con.isUsingGPS ? Icons.gps_fixed : Icons.place_rounded,
+            color: con.isUsingGPS
+                ? Colors.green
+                : (isDark ? Colors.amberAccent : Colors.blue.shade800),
             size: 24,
           ),
           const SizedBox(width: 8),
-          Text(
-            '$selectedCountry - $selectedCity',
-            style: GoogleFonts.cairo(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  con.isUsingGPS
+                      ? 'موقعك الفعلي (GPS)'
+                      : '$selectedCountry - $selectedCity',
+                  style: GoogleFonts.cairo(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (con.isUsingGPS &&
+                    con.latitude != null &&
+                    con.longitude != null)
+                  Text(
+                    'إحداثيات: ${con.latitude!.toStringAsFixed(4)}, ${con.longitude!.toStringAsFixed(4)}',
+                    style: GoogleFonts.cairo(
+                      fontSize: 10.sp,
+                      color: isDark ? Colors.white70 : Colors.grey.shade700,
+                    ),
+                  ),
+              ],
             ),
           ),
         ],
@@ -3202,6 +3411,7 @@ class _AzanViewState extends StateMVC<AzanView> {
     dynamic prayerTimes,
     String nextPrayer,
   ) {
+    // ... (logic remains same, just ensuring it's a class member)
     final prayerData = [
       {"name": "الفجر", "time": prayerTimes.fajr, "icon": Icons.wb_twilight},
       {"name": "الشروق", "time": prayerTimes.sunrise, "icon": Icons.wb_sunny},
@@ -3237,23 +3447,14 @@ class _AzanViewState extends StateMVC<AzanView> {
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors:
-
-                  // isNext
-                  // ? (isDark
-                  // ? [Colors.amber.shade700, Colors.orange.shade800]
-                  // : [Colors.blue.shade400, Colors.blue.shade600])
-                  // :
-                  (isDark
-                      ? [const Color(0xFF1E293B), const Color(0xFF334155)]
-                      : [Colors.white, Colors.grey.shade50]),
+              colors: (isDark
+                  ? [const Color(0xFF1E293B), const Color(0xFF334155)]
+                  : [Colors.white, Colors.grey.shade50]),
             ),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: isNext
-                    // ? (isDark ? Colors.amber.withOpacity(0.3) : Colors.blue.withOpacity(0.3))
-                    // : (isDark ? Colors.black26 : Colors.grey.withOpacity(0.2)),
                     ? (isDark
                         ? Colors.green.withOpacity(0.3)
                         : Colors.blue.withOpacity(0.3))
@@ -3264,7 +3465,6 @@ class _AzanViewState extends StateMVC<AzanView> {
             ],
             border: isNext
                 ? Border.all(
-                    // color: isDark ? Colors.amberAccent : Colors.white,
                     color: Colors.green,
                     width: 2,
                   )
@@ -3274,7 +3474,6 @@ class _AzanViewState extends StateMVC<AzanView> {
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             child: Row(
               children: [
-                // أيقونة الصلاة
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -3292,7 +3491,6 @@ class _AzanViewState extends StateMVC<AzanView> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                // اسم الصلاة
                 Expanded(
                   child: Text(
                     prayer["name"] as String,
@@ -3305,7 +3503,6 @@ class _AzanViewState extends StateMVC<AzanView> {
                     ),
                   ),
                 ),
-                // الوقت
                 Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -3334,6 +3531,59 @@ class _AzanViewState extends StateMVC<AzanView> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildIndividualOffsetAdjuster(String prayer, int currentOffset,
+      bool isDark, StateSetter setStateSheet) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            prayer,
+            style: GoogleFonts.cairo(
+              fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove_circle_outline,
+                    color: Colors.red, size: 20),
+                onPressed: () {
+                  setStateSheet(() {
+                    con.adjustPrayerOffset(prayer, -1);
+                  });
+                },
+              ),
+              SizedBox(
+                width: ResponsiveUtil.isTablet(context) ? 30 : 45,
+                child: Text(
+                  "${currentOffset > 0 ? '+' : ''}$currentOffset",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.cairo(
+                    fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add_circle_outline,
+                    color: Colors.green, size: 20),
+                onPressed: () {
+                  setStateSheet(() {
+                    con.adjustPrayerOffset(prayer, 1);
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -3539,6 +3789,8 @@ Future<void> _rescheduleNextDay() async {
 // ==========================================
 
 class AdhanSettingsDialog extends StatefulWidget {
+  const AdhanSettingsDialog({super.key});
+
   @override
   State<AdhanSettingsDialog> createState() => _AdhanSettingsDialogState();
 }

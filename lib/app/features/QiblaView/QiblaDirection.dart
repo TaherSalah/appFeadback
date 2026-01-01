@@ -5,9 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/services/location_service.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
@@ -56,76 +55,35 @@ class _QiblaDirectionState extends State<QiblaDirection> {
     }
 
     try {
-      // 1. تحقق من خدمة الموقع
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      print('Location service enabled: $serviceEnabled');
+      final locationService = LocationService();
+      final pos = await locationService.getCurrentPosition();
 
-      if (!serviceEnabled) {
-        if (mounted) {
-          setState(() {
-            _errorMessage = "يرجى تفعيل خدمة الموقع (GPS) من إعدادات الجهاز.";
-            _isLoading = false;
-          });
-        }
-        // Fluttertoast.showToast(msg: "يرجى تفعيل خدمة الموقع (GPS)");
-        KHelper.showSuccess(message: "يرجى تفعيل خدمة الموقع (GPS)");
-        return;
-      }
-
-      // 2. طلب الأذونات
-      LocationPermission permission = await Geolocator.checkPermission();
-      print('Current permission: $permission');
-
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        print('After request permission: $permission');
-      }
-
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
+      if (pos == null) {
         if (mounted) {
           setState(() {
             _errorMessage =
-                "تم رفض إذن الموقع. يرجى السماح بالوصول إلى الموقع من إعدادات التطبيق.";
+                "تعذر الحصول على الموقع. يرجى تفعيل خدمة الموقع والسماح بالصلاحيات.";
             _isLoading = false;
           });
         }
         return;
       }
 
-      // 3. الحصول على الموقع
-      print('Getting current position...');
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      ).timeout(const Duration(seconds: 10));
-
-      print('Position: ${position.latitude}, ${position.longitude}');
+      print('Position: ${pos.latitude}, ${pos.longitude}');
 
       // 4. حساب اتجاه القبلة
-      _qiblaDirection =
-          _calculateQiblaDirection(position.latitude, position.longitude);
+      _qiblaDirection = _calculateQiblaDirection(pos.latitude, pos.longitude);
       print('Qibla direction: $_qiblaDirection');
 
       // 5. الحصول على اسم الموقع
-      try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
-
-        if (placemarks.isNotEmpty) {
-          Placemark place = placemarks.first;
-          if (mounted) {
-            setState(() {
-              _locationName =
-                  "${place.thoroughfare ?? ''} , ${place.locality ?? ''}  , ${place.administrativeArea ?? ''} , ${place.country ?? ''}"
-                      .trim()
-                      .replaceAll(RegExp(r'\s+,'), ',');
-            });
-          }
+      final address = await locationService.getAddressFromLatLng(
+          pos.latitude, pos.longitude);
+      if (address != null) {
+        if (mounted) {
+          setState(() {
+            _locationName = "${address['city']}, ${address['country']}";
+          });
         }
-      } catch (e) {
-        print('Error getting placemarks: $e');
       }
 
       // 6. تشغيل البوصلة
@@ -207,7 +165,6 @@ class _QiblaDirectionState extends State<QiblaDirection> {
     return (vector.degrees(direction) + 360) % 360;
   }
 
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -252,8 +209,9 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                 //     msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
                 //     backgroundColor: Colors.amber,
                 //     textColor: Colors.black);
-                KHelper.showSuccess(message: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled");
-
+                KHelper.showSuccess(
+                    message:
+                        _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled");
               },
             ),
             IconButton(
@@ -542,7 +500,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                 Text(
                   _getDirectionMessage(angle),
                   style: GoogleFonts.cairo(
-                    fontSize: ResponsiveUtil.isTablet(context)? 16:14,
+                    fontSize: ResponsiveUtil.isTablet(context) ? 16 : 14,
                     fontWeight: FontWeight.bold,
                     color: (angle < 10 || angle > 350)
                         ? Colors.green

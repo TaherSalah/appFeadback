@@ -1,16 +1,15 @@
 import 'dart:convert';
-import 'dart:math' as math;
 import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/services/location_service.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/utils/style/app_theme_colors.dart';
 
@@ -25,8 +24,6 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
   static const String kCountryKey = 'selected_country';
   static const String kCityKey = 'selected_city';
   static const String kUseGPSKey = 'is_using_gps';
-  static const String kLatKey = 'latitude';
-  static const String kLngKey = 'longitude';
 
   Map<String, dynamic> countries = {};
   Map<String, dynamic> cities = {};
@@ -38,6 +35,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
 
   bool isLocationLoading = true;
   bool _hasChanges = false;
+  final locationService = LocationService();
 
   @override
   void initState() {
@@ -109,92 +107,49 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
     setState(() => _hasChanges = false);
   }
 
-  double haversine(double lat1, double lon1, double lat2, double lon2) {
-    const R = 6371.0;
-    final dLat = (lat2 - lat1) * (math.pi / 180);
-    final dLon = (lon2 - lon1) * (math.pi / 180);
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(lat1 * math.pi / 180) *
-            math.cos(lat2 * math.pi / 180) *
-            math.sin(dLon / 2) *
-            math.sin(dLon / 2);
-    final c = 2 * math.asin(math.sqrt(a));
-    return R * c;
-  }
-
-  Future<bool> ensureLocationPermission() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return false;
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      return false;
-    }
-    return true;
-  }
-
   Future<void> selectByLocation() async {
-    final ok = await ensureLocationPermission();
-    if (!ok) {
-      KHelper.showError(
-          message: 'تعذّر استخدام الموقع. تحقق من الصلاحيات وخدمة الموقع.');
-      setState(() {
-        tempAllowLocationUsage = false;
-      });
-      return;
-    }
-
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('جاري تحديد موقعك الحالي...')),
     );
 
     try {
-      final pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium,
-        timeLimit: const Duration(seconds: 10),
-      );
-      final userLat = pos.latitude;
-      final userLng = pos.longitude;
+      final pos = await locationService.getCurrentPosition();
+      if (pos == null) {
+        KHelper.showError(
+            message: 'تعذر الحصول على الموقع. تحقق من الصلاحيات وخدمة الموقع.');
+        setState(() {
+          tempAllowLocationUsage = false;
+        });
+        return;
+      }
+
+      final address = await locationService.getAddressFromLatLng(
+          pos.latitude, pos.longitude);
 
       String? bestCountry;
       String? bestCity;
-      double bestDist = double.infinity;
 
-      countries.forEach((country, cityMap) {
-        final Map<String, dynamic> m = cityMap ?? {};
-        m.forEach((cityName, v) {
-          final lat = (v?['lat'])?.toDouble();
-          final lng = (v?['lng'])?.toDouble();
-          if (lat == null || lng == null) return;
-          final d = haversine(userLat, userLng, lat, lng);
-          if (d < bestDist) {
-            bestDist = d;
-            bestCountry = country;
-            bestCity = cityName;
-          }
-        });
+      if (address != null) {
+        bestCountry = address['country'];
+        bestCity = address['city'];
+      }
+
+      setState(() {
+        tempCountry = bestCountry ?? 'تحديد تلقائي';
+        tempCity = bestCity ?? 'الموقع الفعلي (GPS)';
+        tempAllowLocationUsage = true;
+        _hasChanges = true;
       });
 
-      if (bestCountry != null && bestCity != null) {
-        setState(() {
-          tempCountry = bestCountry;
-          cities = (countries[tempCountry!] as Map<String, dynamic>)
-            ..removeWhere((k, v) => v == null);
-          tempCity = bestCity;
-          tempAllowLocationUsage = true;
-          _hasChanges = true;
-        });
+      await locationService.saveLocation(
+        lat: pos.latitude,
+        lng: pos.longitude,
+        city: tempCity,
+        country: tempCountry,
+        isGPS: true,
+      );
 
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setDouble(kLatKey, userLat);
-        await prefs.setDouble(kLngKey, userLng);
-
-        KHelper.showSuccess(message: 'تم العثور على موقعك: $bestCity');
-      }
+      KHelper.showSuccess(message: 'تم العثور على موقعك: $tempCity');
     } catch (e) {
       KHelper.showError(
           message: 'تعذر الحصول على الموقع، يرجى المحاولة لاحقاً');
@@ -239,7 +194,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                 fontSize: 18.sp,
               ),
             ),
-            actions: [],
+            actions: const [],
           ),
         ),
 
@@ -334,7 +289,11 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                                         context,
                                         label: 'الدولة',
                                         value: tempCountry,
-                                        items: countries.keys.toList(),
+                                        items: {
+                                          ...countries.keys,
+                                          if (tempCountry != null) tempCountry!,
+                                          'تحديد تلقائي'
+                                        }.toList(),
                                         onChanged: (val) {
                                           if (val == null) return;
                                           final newCities = (countries[val]
@@ -355,7 +314,11 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                                         context,
                                         label: 'المدينة',
                                         value: tempCity,
-                                        items: cities.keys.toList(),
+                                        items: {
+                                          ...cities.keys,
+                                          if (tempCity != null) tempCity!,
+                                          'الموقع الفعلي (GPS)'
+                                        }.toList(),
                                         onChanged: (val) {
                                           if (val == null) return;
                                           setState(() {

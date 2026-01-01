@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:adhan/adhan.dart';
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'adhan_callback.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 // ==========================================
 // 🧪 Callback مبسط للاختبار
@@ -67,9 +68,11 @@ class AdhanWorkManagerService {
         return;
       }
 
-      // 1️⃣ إلغاء أي مهام قديمة
+      // 1️⃣ تحديث قنوات الإشعارات بالأصوات المختارة
+      await updateNotificationChannels();
+
+      // 2️⃣ إلغاء أي مهام قديمة
       await cancelAll();
-      print('🗑️ تم إلغاء المهام القديمة');
 
       // 2️⃣ جدولة الأذان لعدة أيام
       await scheduleAllPrayersForMultipleDays(
@@ -203,7 +206,7 @@ class AdhanWorkManagerService {
           displayOnForeground: true,
           timeoutAfter: isFajr
               ? const Duration(minutes: 4, seconds: 40)
-              : Duration(minutes: 3, seconds: 23),
+              : Duration(minutes: 3, seconds: 24),
           payload: {
             'prayerName': prayerName,
             'prayer_time': _formatTime(prayerTime),
@@ -459,25 +462,28 @@ class AdhanWorkManagerService {
     }
   }
 
-  /// إلغاء جميع المهام
+  /// إلغاء جميع المهام بشكل سريع وفعال
   Future<void> cancelAll() async {
     try {
-      // إلغاء جميع إشعارات الأذان المجدولة (Native)
-      // نلغي بالـ ID range اللي حجزناه (1000 - 1100)
-      for (int i = 1000; i < 1100; i++) {
-        await AwesomeNotifications().cancel(i);
-      }
+      print('🗑️ جاري إلغاء جميع تنبيهات الأذان القائمة...');
 
-      // وتنظيف أي alarms قديمة لضمان عدم التضارب (Android Only)
-      if (Platform.isAndroid) {
-        try {
-          for (int i = 1000; i < 1100; i++) {
-            await AndroidAlarmManager.cancel(i);
-          }
-        } catch (_) {}
-      }
+      // 1️⃣ إلغاء إشعارات AwesomeNotifications حسب القنوات (أسرع بكثير من الحلقات التكرارية)
+      await AwesomeNotifications()
+          .cancelNotificationsByChannelKey('fajr_adhan_channel_v4');
+      await AwesomeNotifications()
+          .cancelNotificationsByChannelKey('adhan_channel_v4');
+      await AwesomeNotifications()
+          .cancelNotificationsByChannelKey('post_prayer_dhikr_channel');
 
-      print('🗑️ تم إلغاء جميع جدولة الأذان');
+      // 2️⃣ إلغاء أي مهام مجدولة مستقبلاً (Schedules)
+      await AwesomeNotifications()
+          .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
+      await AwesomeNotifications()
+          .cancelSchedulesByChannelKey('adhan_channel_v4');
+      await AwesomeNotifications()
+          .cancelSchedulesByChannelKey('post_prayer_dhikr_channel');
+
+      print('✅ تم تنظيف جميع المهام بنجاح');
     } catch (e) {
       print('❌ خطأ في إلغاء المهام: $e');
     }
@@ -600,5 +606,92 @@ class AdhanWorkManagerService {
     final minute = time.minute.toString().padLeft(2, '0');
     final period = time.hour >= 12 ? 'م' : 'ص';
     return '$hour:$minute $period';
+  }
+
+  // ==========================================
+  // 🎵 إدارة أصوات الأذان
+  // ==========================================
+
+  /// حفظ الأذان المختار
+  Future<void> setSelectedAdhan(String type, String adhanId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_adhan_$type', adhanId);
+    // تحديث القنوات فوراً عند التغيير
+    await updateNotificationChannels();
+  }
+
+  /// الحصول على الأذان المختار
+  Future<String?> getSelectedAdhan(String type) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('selected_adhan_$type');
+  }
+
+  /// الحصول على مسار الأذان المختار (للاستخدام مع AwesomeNotifications)
+  Future<String?> getAdhanPath(String type) async {
+    final selectedId = await getSelectedAdhan(type);
+    if (selectedId == null) return null;
+
+    final appDir = await getApplicationDocumentsDirectory();
+    final filePath = '${appDir.path}/adhans/$selectedId.mp3';
+    final file = File(filePath);
+
+    if (await file.exists()) {
+      return 'file://$filePath';
+    }
+    return null;
+  }
+
+  /// تحديث قنوات AwesomeNotifications بالأصوات الجديدة
+  Future<void> updateNotificationChannels() async {
+    try {
+      final fajrPath = await getAdhanPath('fajr');
+      final normalPath = await getAdhanPath('normal');
+
+      print('🎵 تحديث قنوات الأذان:');
+      print('   🌅 الفجر: ${fajrPath ?? "افتراضي"}');
+      print('   🕌 العادي: ${normalPath ?? "افتراضي"}');
+
+      await AwesomeNotifications().initialize(
+        'resource://drawable/ic_stat_logoapp',
+        [
+          // 🌅 قناة أذان الفجر
+          NotificationChannel(
+            channelKey: 'fajr_adhan_channel_v4',
+            channelName: 'أذان الفجر',
+            channelDescription: 'تشغيل أذان الفجر',
+            importance: NotificationImportance.Max,
+            playSound: true,
+            soundSource: fajrPath ??
+                (Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3'),
+            enableVibration: true,
+            enableLights: true,
+            ledColor: Colors.orange,
+            defaultPrivacy: NotificationPrivacy.Public,
+            criticalAlerts: true,
+          ),
+
+          // 🕌 قناة الأذان العادي
+          NotificationChannel(
+            channelKey: 'adhan_channel_v4',
+            channelName: 'أذان الصلاة',
+            channelDescription: 'تشغيل صوت الأذان',
+            importance: NotificationImportance.Max,
+            defaultColor: Colors.green,
+            ledColor: Colors.green,
+            playSound: true,
+            soundSource: normalPath ??
+                (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+            enableVibration: true,
+            enableLights: true,
+            locked: true,
+            criticalAlerts: true,
+          ),
+        ],
+        debug: true,
+      );
+      print('✅ تم تحديث قنوات الأذان بنجاح');
+    } catch (e) {
+      print('❌ فشل تحديث قنوات الأذان: $e');
+    }
   }
 }

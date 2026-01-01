@@ -4,14 +4,14 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'package:adhan/adhan.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workmanager/workmanager.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'adhan_workmanager_service.dart';
 
 // =====================================
 // 📦 موديل الأذان
@@ -225,7 +225,7 @@ class AdhanLibraryService {
     final data = prefs.getString(key);
     if (data != null) {
       try {
-        final json = Map<String, dynamic>.from(eval(data));
+        final json = Map<String, dynamic>.from(jsonDecode(data));
         adhan.isDownloaded = json['isDownloaded'] ?? false;
         adhan.localPath = json['localPath'];
       } catch (e) {
@@ -301,267 +301,11 @@ class AdhanLibraryService {
 // 📦 خدمة WorkManager المحدثة
 // =====================================
 
-class AdhanWorkManagerService {
-  static final AdhanWorkManagerService _instance =
-      AdhanWorkManagerService._internal();
-  factory AdhanWorkManagerService() => _instance;
-  AdhanWorkManagerService._internal();
+// تم حذف الفئة المكررة واستخدام AdhanWorkManagerService من الملف الرئيسي
 
-  /// حفظ الأذان المختار
-  Future<void> setSelectedAdhan(String type, String adhanId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selected_adhan_$type', adhanId);
-  }
-
-  /// الحصول على الأذان المختار
-  Future<String?> getSelectedAdhan(String type) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('selected_adhan_$type');
-  }
-
-  /// الحصول على مسار الأذان
-  Future<String?> getAdhanPath(String type) async {
-    final selectedId = await getSelectedAdhan(type);
-    if (selectedId == null) {
-      // استخدام الأذان الافتراضي
-      return type == 'fajr'
-          ? 'assets/athan/athan_fajr.mp3'
-          : 'assets/athan/athan.mp3';
-    }
-
-    // البحث عن الأذان في المكتبة
-    final adhan = AdhanLibraryService.availableAdhans.firstWhere(
-      (a) => a.id == selectedId,
-      orElse: () => AdhanLibraryService.availableAdhans.first,
-    );
-
-    await AdhanLibraryService().loadAdhanInfo(adhan);
-
-    if (adhan.isDownloaded && adhan.localPath != null) {
-      final file = File(adhan.localPath!);
-      if (await file.exists()) {
-        return adhan.localPath;
-      }
-    }
-
-    // إذا غير محمّل، استخدام الافتراضي
-    return type == 'fajr'
-        ? 'assets/athan/athan_fajr.mp3'
-        : 'assets/athan/athan.mp3';
-  }
-
-  /// جدولة أذان واحد
-  Future<bool> _schedulePrayer({
-    required String prayerName,
-    required DateTime prayerTime,
-    int dayOffset = 0,
-    String? cityName,
-  }) async {
-    final now = DateTime.now();
-    var delay = prayerTime.difference(now);
-
-    if (delay.isNegative) {
-      if (dayOffset == 0) {
-        print('⏭️ تم تخطي $prayerName - الوقت فات');
-      }
-      return false;
-    }
-
-    if (delay.inMinutes < 1) {
-      print('⚠️ تأخير قصير جداً لـ $prayerName');
-      return false;
-    }
-
-    try {
-      final savedCityName = cityName ?? await _getCityName();
-      final isFajr = prayerName == 'الفجر';
-      final adhanType = isFajr ? 'fajr' : 'normal';
-
-      // الحصول على مسار الأذان المختار
-      final adhanPath = await getAdhanPath(adhanType);
-
-      final uniqueId =
-          'adhan_${prayerName}_day${dayOffset}_${prayerTime.millisecondsSinceEpoch}';
-
-      await Workmanager().registerOneOffTask(
-        uniqueId,
-        'adhanTask',
-        initialDelay: delay,
-        inputData: {
-          'prayerName': prayerName,
-          'cityName': savedCityName,
-          'prayerTime': _formatTime(prayerTime),
-          'timestamp': prayerTime.millisecondsSinceEpoch,
-          'dayOffset': dayOffset,
-          'adhanType': adhanType,
-          'isFajr': isFajr,
-          'adhanPath': adhanPath, // ⭐ مسار الأذان المختار
-        },
-        constraints: Constraints(
-          networkType: NetworkType.notRequired,
-          requiresBatteryNotLow: false,
-          requiresCharging: false,
-        ),
-        backoffPolicy: BackoffPolicy.linear,
-        backoffPolicyDelay: const Duration(seconds: 10),
-      );
-
-      print('✅ جدولة $prayerName: ${_formatTime(prayerTime)}');
-      return true;
-    } catch (e) {
-      print('❌ خطأ في جدولة $prayerName: $e');
-      return false;
-    }
-  }
-
-  /// جدولة جميع الصلوات لعدة أيام
-  Future<void> scheduleAllPrayersForMultipleDays({
-    Coordinates? coordinates,
-    CalculationParameters? calculationParams,
-    String? cityName,
-    int days = 7,
-  }) async {
-    try {
-      print('📋 جدولة الأذان لـ $days أيام...');
-
-      if (coordinates != null) {
-        await saveCoordinates(coordinates.latitude, coordinates.longitude);
-      }
-      if (cityName != null) {
-        await saveCityName(cityName);
-      }
-      if (calculationParams != null) {
-        await _saveCalculationParams(calculationParams);
-      }
-
-      int scheduledCount = 0;
-      for (int day = 0; day < days; day++) {
-        final targetDate = DateTime.now().add(Duration(days: day));
-        final prayerTimes = await _getPrayerTimesForDate(
-          targetDate,
-          coordinates: coordinates,
-          params: calculationParams,
-        );
-
-        for (var entry in prayerTimes.entries) {
-          final scheduled = await _schedulePrayer(
-            prayerName: entry.key,
-            prayerTime: entry.value,
-            dayOffset: day,
-            cityName: cityName,
-          );
-          if (scheduled) scheduledCount++;
-        }
-      }
-
-      print('✅ تم جدولة $scheduledCount صلاة');
-    } catch (e) {
-      print('❌ خطأ في الجدولة: $e');
-    }
-  }
-
-  // باقي الدوال من الكود السابق...
-  Future<Map<String, DateTime>> _getPrayerTimesForDate(
-    DateTime date, {
-    Coordinates? coordinates,
-    CalculationParameters? params,
-  }) async {
-    try {
-      final coords = coordinates ?? await _getSavedCoordinates();
-      final calculationParams = params ?? await _getSavedCalculationParams();
-      final components = DateComponents(date.year, date.month, date.day);
-      final prayerTimes = PrayerTimes(coords, components, calculationParams);
-
-      return {
-        'الفجر': prayerTimes.fajr,
-        'الظهر': prayerTimes.dhuhr,
-        'العصر': prayerTimes.asr,
-        'المغرب': prayerTimes.maghrib,
-        'العشاء': prayerTimes.isha,
-      };
-    } catch (e) {
-      return {
-        'الفجر': DateTime(date.year, date.month, date.day, 4, 30),
-        'الظهر': DateTime(date.year, date.month, date.day, 12, 0),
-        'العصر': DateTime(date.year, date.month, date.day, 15, 15),
-        'المغرب': DateTime(date.year, date.month, date.day, 17, 45),
-        'العشاء': DateTime(date.year, date.month, date.day, 19, 15),
-      };
-    }
-  }
-
-  Future<Coordinates> _getSavedCoordinates() async {
-    final prefs = await SharedPreferences.getInstance();
-    return Coordinates(
-      prefs.getDouble('latitude') ?? 30.0444,
-      prefs.getDouble('longitude') ?? 31.2357,
-    );
-  }
-
-  Future<void> saveCoordinates(double lat, double lng) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('latitude', lat);
-    await prefs.setDouble('longitude', lng);
-  }
-
-  Future<String> _getCityName() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('city_name') ?? 'القاهرة';
-  }
-
-  Future<void> saveCityName(String cityName) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('city_name', cityName);
-  }
-
-  Future<void> _saveCalculationParams(CalculationParameters params) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('fajr_angle', params.fajrAngle);
-    await prefs.setDouble('isha_angle', params.ishaAngle ?? 0.0);
-    await prefs.setInt('madhab', params.madhab == Madhab.shafi ? 0 : 1);
-    if (params.ishaInterval > 0) {
-      await prefs.setInt('isha_interval', params.ishaInterval);
-    }
-  }
-
-  Future<CalculationParameters> _getSavedCalculationParams() async {
-    final prefs = await SharedPreferences.getInstance();
-    final fajrAngle = prefs.getDouble('fajr_angle');
-    final ishaAngle = prefs.getDouble('isha_angle');
-
-    if (fajrAngle == null || ishaAngle == null) {
-      final params = CalculationMethod.egyptian.getParameters();
-      params.madhab = Madhab.shafi;
-      return params;
-    }
-
-    final params = CalculationParameters(
-      fajrAngle: fajrAngle,
-      ishaAngle: ishaAngle,
-      ishaInterval: prefs.getInt('isha_interval') ?? 0,
-    );
-    params.madhab =
-        (prefs.getInt('madhab') ?? 0) == 0 ? Madhab.shafi : Madhab.hanafi;
-    return params;
-  }
-
-  String _formatTime(DateTime time) {
-    final hour =
-        time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
-    final minute = time.minute.toString().padLeft(2, '0');
-    final period = time.hour >= 12 ? 'م' : 'ص';
-    return '$hour:$minute $period';
-  }
-
-  Future<void> cancelAll() async {
-    await Workmanager().cancelAll();
-  }
-}
-
-// Helper function for eval (simple implementation)
+// Helper function for json (simple bridge)
 dynamic eval(String data) {
-  // This is a simplified version - use a proper JSON parser in production
-  return {};
+  return jsonDecode(data);
 }
 
 // =====================================
