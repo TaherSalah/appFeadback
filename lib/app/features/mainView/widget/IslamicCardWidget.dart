@@ -118,7 +118,7 @@ void showThemeSheet(
   ThemeMode tempTheme = currentTheme;
   final isDark = Theme.of(ctx).brightness == Brightness.dark;
 
-  final Color primary = isDark ? AppColors.primary : const Color(0xFF1B5E20);
+  final Color primary = Theme.of(ctx).primaryColor;
   const Color accentGold = Color(0xFFD4AF37);
 
   // مفاتيح SharedPreferences

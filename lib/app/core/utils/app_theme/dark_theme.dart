@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import '../../cubit/centralized_cubit.dart';
 import '../style/k_color.dart';
 
-ThemeData darkTheme() {
+ThemeData darkTheme({Color? primaryColor}) {
+  final Color effectivePrimary = primaryColor ?? KColors.primaryColor;
   return ThemeData(
+    primaryColor: effectivePrimary,
     useMaterial3: false,
     floatingActionButtonTheme:
         FloatingActionButtonThemeData(backgroundColor: KColors.primaryColor),

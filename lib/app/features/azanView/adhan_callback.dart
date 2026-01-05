@@ -5,6 +5,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'dart:io';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
 
 // ✅ دالة الـ Callback المبسطة - تشغيل الأذان عبر قنوات الإشعارات
 @pragma('vm:entry-point')
@@ -28,8 +29,8 @@ void alarmCallback(int id) async {
     print("   📍 المدينة: $cityName");
     print("   ⏰ الوقت: $prayerTime");
 
-    // 2️⃣ تهيئة AwesomeNotifications
-    await _initAwesomeNotifications();
+    // 2️⃣ تهيئة AwesomeNotifications بكافة القنوات
+    await NotificationManager.updateAllChannels();
 
     // 3️⃣ تحديد القناة المناسبة
     final bool isFajr = prayerName.contains('الفجر');
@@ -100,60 +101,6 @@ void alarmCallback(int id) async {
   }
 }
 
-// ✅ تهيئة مبسطة لـ AwesomeNotifications في الخلفية
-Future<void> _initAwesomeNotifications() async {
-  try {
-    await AwesomeNotifications().initialize(
-      'resource://drawable/ic_stat_logoapp',
-      [
-        // 🌅 أذان الفجر
-        NotificationChannel(
-          channelKey: 'fajr_adhan_channel_v4',
-          channelName: 'أذان الفجر',
-          channelDescription: 'تشغيل أذان الفجر',
-          importance: NotificationImportance.Max,
-          playSound: true,
-          soundSource: 'resource://raw/fajr',
-          enableVibration: true,
-          enableLights: true,
-          ledColor: Colors.orange,
-          criticalAlerts: true,
-          locked: true,
-          defaultPrivacy: NotificationPrivacy.Public,
-        ),
-
-        // 🕌 الأذان العادي
-        NotificationChannel(
-          channelKey: 'adhan_channel_v4',
-          channelName: 'أذان الصلاة',
-          channelDescription: 'تشغيل صوت الأذان',
-          importance: NotificationImportance.Max,
-          playSound: true,
-          soundSource: 'resource://raw/athan',
-          enableVibration: true,
-          enableLights: true,
-          ledColor: Colors.green,
-          criticalAlerts: true,
-          locked: true,
-        ),
-
-        // 📿 قناة للإشعارات العادية
-        NotificationChannel(
-          channelKey: 'athkar_channel',
-          channelName: 'الأذكار',
-          channelDescription: 'إشعارات عامة',
-          importance: NotificationImportance.High,
-          playSound: true,
-          enableVibration: true,
-        ),
-      ],
-      debug: true,
-    );
-    print('✅ تم تهيئة AwesomeNotifications في الخلفية');
-  } catch (e) {
-    print('❌ فشل تهيئة AwesomeNotifications: $e');
-  }
-}
 
 String _getPrayerDescription(String prayerName) {
   if (prayerName.contains('الفجر')) {

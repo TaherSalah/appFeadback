@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
+import 'package:muslimdaily/app/core/services/analytics_service.dart';
+import 'package:muslimdaily/app/core/services/system_control_service.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import 'app.dart';
 import 'app/core/cache/shard_pref/shardpref_obj.dart';
@@ -23,6 +25,17 @@ import 'package:quran_library/quran.dart';
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  // 🛡️ Global Error Handling (Dashboard Logging)
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    SystemControlService().logError(details.exceptionAsString(), details.stack?.toString());
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    SystemControlService().logError(error.toString(), stack.toString());
+    return true;
+  };
 
   await QuranLibrary.init();
   try {
@@ -46,11 +59,6 @@ Future<void> main() async {
 }
 
 Future<void> _initAppServices() async {
-  // ✅ 0) Initialize OneSignal (Supports GMS & HMS)
-  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  OneSignal.initialize("adfe4a17-4670-48c4-85a0-9c47cd28b686");
-  OneSignal.Notifications.requestPermission(true);
-
   // ✅ 1) Initialize Supabase
   await Supabase.initialize(
     url: 'https://kghwboxevphvxtsagrer.supabase.co',
@@ -132,4 +140,7 @@ Future<void> _initAppServices() async {
   final notificationManager = NotificationManager();
   await notificationManager.initialize();
   await notificationManager.rescheduleAll();
+
+  // 🚀 Log App Launch Analytics
+  AnalyticsService().logAppLaunch();
 }

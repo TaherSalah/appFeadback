@@ -23,6 +23,29 @@ class NotificationManager {
   Future<void> initialize() async {
     await _settingsService.init();
 
+    await updateAllChannels();
+
+    AwesomeNotifications().setListeners(
+      onActionReceivedMethod: onActionReceivedMethod,
+      onNotificationCreatedMethod: onNotificationCreatedMethod,
+      onNotificationDisplayedMethod: onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod: onDismissActionReceivedMethod,
+    );
+
+    await AwesomeNotifications().isNotificationAllowed().then((allowed) {
+      if (!allowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+
+    // 🚀 تهيئة خدمة الأذان (التي ستقوم بدورها بتحديث القنوات بالأصوات المختارة)
+    await AdhanWorkManagerService().initialize();
+  }
+
+  static Future<void> updateAllChannels() async {
+    final fajrPath = await AdhanWorkManagerService().getAdhanPath('fajr');
+    final normalPath = await AdhanWorkManagerService().getAdhanPath('normal');
+
     await AwesomeNotifications().initialize(
       Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
       [
@@ -33,7 +56,8 @@ class NotificationManager {
           channelDescription: 'تشغيل أذان الفجر',
           importance: NotificationImportance.Max,
           playSound: true,
-          soundSource: Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3',
+          soundSource: fajrPath ??
+              (Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3'),
           enableVibration: true,
           enableLights: true,
           ledColor: Colors.orange,
@@ -50,8 +74,8 @@ class NotificationManager {
           defaultColor: Colors.green,
           ledColor: Colors.green,
           playSound: true,
-          soundSource:
-              Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3',
+          soundSource: normalPath ??
+              (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
           enableVibration: true,
           enableLights: true,
           locked: true,
@@ -207,22 +231,6 @@ class NotificationManager {
       ],
       debug: true,
     );
-
-    AwesomeNotifications().setListeners(
-      onActionReceivedMethod: onActionReceivedMethod,
-      onNotificationCreatedMethod: onNotificationCreatedMethod,
-      onNotificationDisplayedMethod: onNotificationDisplayedMethod,
-      onDismissActionReceivedMethod: onDismissActionReceivedMethod,
-    );
-
-    await AwesomeNotifications().isNotificationAllowed().then((allowed) {
-      if (!allowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
-
-    // 🚀 تهيئة خدمة الأذان
-    await AdhanWorkManagerService().initialize();
   }
 
   Future<bool> checkAndRequestExactAlarmPermission() async {

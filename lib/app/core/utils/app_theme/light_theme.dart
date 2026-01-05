@@ -71,8 +71,10 @@ import 'package:flutter/services.dart';
 
 import '../style/k_color.dart';
 
-ThemeData lightTheme() {
+ThemeData lightTheme({Color? primaryColor}) {
+  final Color effectivePrimary = primaryColor ?? KColors.primaryColor;
   return ThemeData(
+    primaryColor: effectivePrimary,
     useMaterial3: false,
     cardColor: KColors.whiteColor,
     cardTheme: const CardThemeData(color: Colors.white),

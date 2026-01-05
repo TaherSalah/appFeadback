@@ -1,12 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:upgrader/upgrader.dart';
-import 'app/core/cache/storage.dart';
+import 'package:muslimdaily/app/core/cache/storage.dart';
 import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/shard/exports/all_exports.dart';
 import 'app/core/utils/app_theme/app_theme.dart';
 import 'app/core/utils/constent/router.dart';
 import 'app/core/utils/services_locator.dart';
+import 'app/core/utils/style/k_color.dart';
 import 'app/features/aboutView/RateService.dart';
 import 'app/features/categories/data/repo/categories_repo_immp.dart';
 import 'app/features/categories/view/controller/categories_bloc.dart';
@@ -76,6 +76,18 @@ class _MashkahAppState extends State<MashkahApp> {
     }
   }
 
+  Color _hexToColor(String? hexString) {
+    if (hexString == null || hexString.isEmpty) return KColors.primaryColor;
+    try {
+      final buffer = StringBuffer();
+      if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+      buffer.write(hexString.replaceFirst('#', ''));
+      return Color(int.parse(buffer.toString(), radix: 16));
+    } catch (e) {
+      return KColors.primaryColor;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -94,36 +106,34 @@ class _MashkahAppState extends State<MashkahApp> {
                       builder: (context, state) {
                     final cubit = CentralizedCubit.get(context);
 
-                    return UpgradeAlert(
-                      child: MaterialApp(
-                        // useInheritedMediaQuery: true,
-                        // locale: DevicePreview.locale(context),
-                        // builder: DevicePreview.appBuilder,
-                        navigatorKey: CentralizedCubit.navigatorKey,
-                        title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
-                        debugShowCheckedModeBanner: false,
-                        onGenerateRoute: (settings) =>
-                            RouteGenerator.getRoute(settings, context),
-                        initialRoute: Routes.splashRoute,
-                        theme: AppTheme.light,
-                        darkTheme: AppTheme.dark,
-                        themeMode: cubit.themeMode(),
+                    return MaterialApp(
+                      // useInheritedMediaQuery: true,
+                      // locale: DevicePreview.locale(context),
+                      // builder: DevicePreview.appBuilder,
+                      navigatorKey: CentralizedCubit.navigatorKey,
+                      title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
+                      debugShowCheckedModeBanner: false,
+                      onGenerateRoute: (settings) =>
+                          RouteGenerator.getRoute(settings, context),
+                      initialRoute: Routes.splashRoute,
+                      theme: AppTheme.light(primaryColor: _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
+                      darkTheme: AppTheme.dark(primaryColor: _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
+                      themeMode: cubit.themeMode(),
 
-                        // ⭐ اضيف الـ builder هنا
-                        builder: (context, child) {
-                          return MediaQuery(
-                            data: MediaQuery.of(context).copyWith(
-                              textScaler:
-                                  MediaQuery.textScalerOf(context).clamp(
-                                minScaleFactor: 0.8,
-                                maxScaleFactor:
-                                    1.2, // أو 1.0 لو عايزه ثابت تمامًا
-                              ),
+                      // ⭐ اضيف الـ builder هنا
+                      builder: (context, child) {
+                        return MediaQuery(
+                          data: MediaQuery.of(context).copyWith(
+                            textScaler:
+                                MediaQuery.textScalerOf(context).clamp(
+                              minScaleFactor: 0.8,
+                              maxScaleFactor:
+                                  1.2, // أو 1.0 لو عايزه ثابت تمامًا
                             ),
-                            child: child!,
-                          );
-                        },
-                      ),
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                   }),
                 ));

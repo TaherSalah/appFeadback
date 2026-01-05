@@ -35,10 +35,12 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
         return Colors.green;
       case 'قيد المعالجة':
         return Colors.orange;
+      case 'تم استقبال المشكلة':
+        return Colors.blue;
       case 'جديد':
         return Colors.red;
       default:
-        return Colors.blue;
+        return Colors.grey;
     }
   }
 

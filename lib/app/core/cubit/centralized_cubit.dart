@@ -201,7 +201,12 @@ class CentralizedCubit extends Cubit<CentralizedState> {
     });
   }
 
-// void dispose() {
-//   _streamSubscription?.cancel();
-// }
+  static String? dynamicPrimaryColor;
+
+  void updateDynamicColor(String? colorHex) {
+    if (colorHex != dynamicPrimaryColor) {
+      dynamicPrimaryColor = colorHex;
+      emit(ThemeState());
+    }
+  }
 }

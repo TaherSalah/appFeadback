@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'adhan_callback.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -645,58 +646,18 @@ class AdhanWorkManagerService {
   /// تحديث قنوات AwesomeNotifications بالأصوات الجديدة
   Future<void> updateNotificationChannels() async {
     try {
-      final fajrPath = await getAdhanPath('fajr');
-      final normalPath = await getAdhanPath('normal');
-
-      print('🎵 تحديث قنوات الأذان:');
-      print('   🌅 الفجر: ${fajrPath ?? "افتراضي"}');
-      print('   🕌 العادي: ${normalPath ?? "افتراضي"}');
+      print('🎵 تحديث قنوات الأذان (عبر NotificationManager):');
 
       // ⚠️ FIX: Force remove channels to ensure sound changes apply on Android
       await AwesomeNotifications().removeChannel('fajr_adhan_channel_v4');
       await AwesomeNotifications().removeChannel('adhan_channel_v4');
 
-      await AwesomeNotifications().initialize(
-        'resource://drawable/ic_stat_logoapp',
-        [
-          // 🌅 قناة أذان الفجر
-          NotificationChannel(
-            channelKey: 'fajr_adhan_channel_v4',
-            channelName: 'أذان الفجر',
-            channelDescription: 'تشغيل أذان الفجر',
-            importance: NotificationImportance.Max,
-            playSound: true,
-            soundSource: fajrPath ??
-                (Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3'),
-            enableVibration: true,
-            enableLights: true,
-            ledColor: Colors.orange,
-            defaultPrivacy: NotificationPrivacy.Public,
-            criticalAlerts: true,
-          ),
-
-          // 🕌 قناة الأذان العادي
-          NotificationChannel(
-            channelKey: 'adhan_channel_v4',
-            channelName: 'أذان الصلاة',
-            channelDescription: 'تشغيل صوت الأذان',
-            importance: NotificationImportance.Max,
-            defaultColor: Colors.green,
-            ledColor: Colors.green,
-            playSound: true,
-            soundSource: normalPath ??
-                (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-            enableVibration: true,
-            enableLights: true,
-            locked: true, //Locked prevents user from dismissing?
-            criticalAlerts: true,
-          ),
-        ],
-        debug: true,
-      );
-      print('✅ تم تحديث قنوات الأذان بنجاح');
+      // 🚀 استخدام NotificationManager لتحديث كافة القنوات (وليس الأذان فقط)
+      await NotificationManager.updateAllChannels();
+      
+      print('✅ تم تحديث جميع قنوات الإشعارات بنجاح');
     } catch (e) {
-      print('❌ فشل تحديث قنوات الأذان: $e');
+      print('❌ فشل تحديث قنوات الإشعارات: $e');
     }
   }
 }

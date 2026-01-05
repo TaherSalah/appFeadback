@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/shard/exports/all_exports.dart';
 import '../WhatsNewView/WhatsNewView.dart';
+import '../../core/services/system_control_service.dart';
+import '../mainView/view/MaintenanceScreen.dart';
 
 class VersionService {
   static const String _lastVersionKey = 'last_app_version';
@@ -318,6 +320,16 @@ class _SplashViewState extends State<SplashView> {
       await Future.delayed(const Duration(seconds: 2));
 
       // ✅ التحقق من حالة التطبيق
+      final isMaintenance = await SystemControlService().isMaintenanceModeActive();
+      if (isMaintenance) {
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MaintenanceScreen()),
+        );
+        return;
+      }
+
       final appState = await VersionService.checkAppState();
 
       if (!mounted) return;

@@ -154,7 +154,7 @@ class MainController extends ControllerMVC {
     },
     {
       "title": "كتب الحديث",
-      "icon": "assets/images/kaaba.png",
+      "icon": "assets/images/book-stack.png",
       "navigate": "/NineBooksScreen"
     },
     {
