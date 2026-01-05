@@ -9,6 +9,7 @@ import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/feedback_view.dart';
+import 'package:muslimdaily/app/features/settings/feedback_history_view.dart';
 import '../mainView/controllar/MainController.dart';
 
 import '../../core/utils/style/app_theme_colors.dart';
@@ -495,6 +496,17 @@ class SettingsView extends StatelessWidget {
                             );
                           },
                         ),
+                        _buildDivider(isDark),
+                        _buildListTile(
+                          context,
+                          icon: Icons.history,
+                          title: 'سجل الشكاوى',
+                          subtitle: 'تابع حالة شكاويك السابقة',
+                          iconColor: Colors.blue[600]!,
+                          onTap: () {
+                            _showEmailDialog(context);
+                          },
+                        ),
                       ],
                     ),
 
@@ -504,6 +516,61 @@ class SettingsView extends StatelessWidget {
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showEmailDialog(BuildContext context) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: AlertDialog(
+          title: Text('عرض السجل', style: GoogleFonts.cairo()),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'أدخل البريد الإلكتروني الذي استخدمته عند إرسال الشكوى لمتابعة حالتها',
+                style: GoogleFonts.cairo(fontSize: 12),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: 'البريد الإلكتروني',
+                  labelStyle: GoogleFonts.cairo(),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('إلغاء', style: GoogleFonts.cairo()),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final email = controller.text.trim();
+                if (email.isNotEmpty && email.contains('@')) {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          FeedbackHistoryView(userEmail: email),
+                    ),
+                  );
+                }
+              },
+              child: Text('عرض', style: GoogleFonts.cairo()),
+            ),
+          ],
         ),
       ),
     );

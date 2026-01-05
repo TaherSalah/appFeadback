@@ -16,10 +16,12 @@ class _FeedbackViewState extends State<FeedbackView> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _feedbackService = FeedbackService();
   final _imagePicker = ImagePicker();
 
+  int _rating = 5;
   String _selectedCategory = 'مشكلة';
   List<File> _selectedImages = [];
   bool _isSubmitting = false;
@@ -36,6 +38,7 @@ class _FeedbackViewState extends State<FeedbackView> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
@@ -58,6 +61,10 @@ class _FeedbackViewState extends State<FeedbackView> {
       await _feedbackService.submitFeedback(
         name: _nameController.text.trim(),
         email: _emailController.text.trim(),
+        phone: _phoneController.text.trim().isEmpty
+            ? null
+            : _phoneController.text.trim(),
+        rating: _rating,
         category: _selectedCategory,
         description: _descriptionController.text.trim(),
         images: _selectedImages.isNotEmpty ? _selectedImages : null,
@@ -212,6 +219,26 @@ class _FeedbackViewState extends State<FeedbackView> {
               ),
               const SizedBox(height: 16),
 
+              // حقل رقم الهاتف (اختياري)
+              TextFormField(
+                controller: _phoneController,
+                decoration: InputDecoration(
+                  labelText: 'رقم الهاتف (اختياري)',
+                  labelStyle: GoogleFonts.cairo(),
+                  prefixIcon: const Icon(Icons.phone_outlined),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: isDark
+                      ? Colors.white.withOpacity(0.05)
+                      : Colors.grey.withOpacity(0.05),
+                ),
+                style: GoogleFonts.cairo(),
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+
               // اختيار التصنيف
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
@@ -272,7 +299,41 @@ class _FeedbackViewState extends State<FeedbackView> {
                   setState(() => _selectedCategory = value!);
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+
+              // تقييم النجوم
+              Center(
+                child: Column(
+                  children: [
+                    Text(
+                      'ما هو تقييمك للتطبيق؟',
+                      style: GoogleFonts.cairo(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(5, (index) {
+                        return IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _rating = index + 1;
+                            });
+                          },
+                          icon: Icon(
+                            index < _rating ? Icons.star : Icons.star_border,
+                            color: Colors.amber,
+                            size: 32,
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
 
               // حقل الوصف
               TextFormField(

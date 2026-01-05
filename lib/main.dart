@@ -6,6 +6,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import 'app.dart';
 import 'app/core/cache/shard_pref/shardpref_obj.dart';
@@ -45,6 +46,11 @@ Future<void> main() async {
 }
 
 Future<void> _initAppServices() async {
+  // ✅ 0) Initialize OneSignal (Supports GMS & HMS)
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+  OneSignal.initialize("adfe4a17-4670-48c4-85a0-9c47cd28b686");
+  OneSignal.Notifications.requestPermission(true);
+
   // ✅ 1) Initialize Supabase
   await Supabase.initialize(
     url: 'https://kghwboxevphvxtsagrer.supabase.co',

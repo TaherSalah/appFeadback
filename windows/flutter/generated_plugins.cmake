@@ -7,7 +7,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   awesome_notifications
   connectivity_plus
   file_selector_windows
-  firebase_core
   flutter_timezone
   geolocator_windows
   media_kit_libs_windows_audio

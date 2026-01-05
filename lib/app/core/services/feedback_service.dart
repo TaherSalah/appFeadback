@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:path/path.dart' as p;
 
 /// خدمة إرسال الشكاوى والاقتراحات إلى Supabase
@@ -15,12 +16,16 @@ class FeedbackService {
   /// [category] التصنيف (مشكلة، تحديث، اقتراح، إلخ)
   /// [description] وصف الشكوى أو الاقتراح (مطلوب)
   /// [images] قائمة الصور الاختيارية
+  /// [phone] رقم الهاتف الاختياري
+  /// [rating] التقييم بالنجوم (1-5)
   Future<void> submitFeedback({
     required String name,
     required String email,
     required String category,
     required String description,
     List<File>? images,
+    String? phone,
+    int? rating,
   }) async {
     try {
       List<String> imageUrls = [];
@@ -46,7 +51,21 @@ class FeedbackService {
       // 2. جمع معلومات الجهاز تلقائياً
       final deviceInfo = await _getDeviceInfo();
 
-      // 3. إدراج البيانات في قاعدة البيانات
+      // 3. Get OneSignal ID for reply notifications (Supports GMS & HMS)
+      String? onesignalId = OneSignal.User.pushSubscription.id;
+
+      // المحاولة مرة أخرى إذا كان الرمز فارغاً (قد يحتاج لثانية للتهيئة في أول فتح للتطبيق)
+      if (onesignalId == null || onesignalId.isEmpty) {
+        await Future.delayed(const Duration(seconds: 2));
+        onesignalId = OneSignal.User.pushSubscription.id;
+      }
+
+      if (onesignalId == null || onesignalId.isEmpty) {
+        print(
+            '⚠️ OneSignal ID is still null. Notifications for this user will not work.');
+      }
+
+      // 4. إدراج البيانات في قاعدة البيانات
       await _supabase.from('feedback').insert({
         'name': name,
         'email': email,
@@ -54,9 +73,28 @@ class FeedbackService {
         'description': description,
         'image_urls': imageUrls,
         'device_info': deviceInfo,
+        'phone': phone,
+        'rating': rating ?? 5, // افتراضي 5 نجوم إذا لم يحدد
+        'status': 'جديد', // الحالة الافتراضية
+        'fcm_token': onesignalId, // نستخدم نفس الحقل لتوفير عناء تغيير الـ DB
       });
     } catch (e) {
       // إعادة رمي الخطأ ليتم التعامل معه في واجهة المستخدم
+      rethrow;
+    }
+  }
+
+  /// جلب سجل الشكاوى الخاص بمستخدم معين بناءً على البريد الإلكتروني
+  Future<List<Map<String, dynamic>>> getUserFeedback(String email) async {
+    try {
+      final response = await _supabase
+          .from('feedback')
+          .select('*')
+          .eq('email', email)
+          .order('created_at', ascending: false);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
       rethrow;
     }
   }

@@ -41,7 +41,7 @@ dependencies:
   # Widget
   home_widget: ^0.8.1
   adhan:
-  firebase_messaging: ^15.2.4
+  onesignal_flutter: ^5.2.4
 #  flutter_local_notifications: ^19.5.0
   intl:
   flutter_svg:
