@@ -607,6 +607,79 @@ class NotificationManager {
     print('✅ All Advanced Fajr Alarms scheduled successfully.');
   }
 
+  Future<void> scheduleWirdReminder(String wirdId, String wirdName, String timeStr, String frequency) async {
+    try {
+      final parts = timeStr.split(':');
+      final hour = int.parse(parts[0]);
+      final minute = int.parse(parts[1]);
+      
+      // Generate a unique ID from the wirdId (hashcode logic)
+      final notificationId = wirdId.hashCode.abs() % 100000;
+
+      NotificationSchedule? schedule;
+      
+      if (frequency == 'daily') {
+        schedule = NotificationCalendar(
+          hour: hour,
+          minute: minute,
+          second: 0,
+          repeats: true,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        );
+      } else if (frequency == 'weekly') {
+        final now = DateTime.now();
+        schedule = NotificationCalendar(
+          weekday: now.weekday,
+          hour: hour,
+          minute: minute,
+          second: 0,
+          repeats: true,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        );
+      } else if (frequency == 'monthly') {
+        final now = DateTime.now();
+        schedule = NotificationCalendar(
+          day: now.day,
+          hour: hour,
+          minute: minute,
+          second: 0,
+          repeats: true,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        );
+      } else {
+        // Once
+        final now = DateTime.now();
+        var scheduledDate = DateTime(now.year, now.month, now.day, hour, minute);
+        if (scheduledDate.isBefore(now)) {
+          scheduledDate = scheduledDate.add(const Duration(days: 1));
+        }
+        schedule = NotificationCalendar.fromDate(
+          date: scheduledDate,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        );
+      }
+
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: notificationId,
+          channelKey: 'sabah_athkar_channel', // نستخدم قناة الأذكار العامة
+          title: '📿 حان وقت وردك',
+          body: 'تذكير بقراءة ورد: $wirdName',
+          category: NotificationCategory.Reminder,
+          wakeUpScreen: true,
+        ),
+        schedule: schedule,
+      );
+      print('✅ تم جدولة تذكير الورد ($wirdName) الساعة $timeStr - $frequency');
+    } catch (e) {
+      print('❌ خطأ في جدولة تذكير الورد: $e');
+    }
+  }
+
   // ==========================================
   // 🕌 جدولة الأذان (منقول من main.dart)
   // ==========================================

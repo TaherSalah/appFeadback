@@ -11,6 +11,8 @@ import 'app/features/aboutView/RateService.dart';
 import 'app/features/categories/data/repo/categories_repo_immp.dart';
 import 'app/features/categories/view/controller/categories_bloc.dart';
 import 'package:rate_my_app/rate_my_app.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
 
 // import 'main.dart';
 
@@ -36,11 +38,42 @@ class _MashkahAppState extends State<MashkahApp> {
       minLaunches: 5,
       remindDays: 3,
       remindLaunches: 5,
-      googlePlayIdentifier: 'com.rafiq.muslimdaily', // عدّل
-      appStoreIdentifier: '6749927338', // عدّل
+      googlePlayIdentifier: 'com.rafiq.muslimdaily',
+      appStoreIdentifier: '6749927338',
     );
     rateService = RateService(rateMyApp);
     rateService.init().then((_) => rateService.maybeAskForRating(context));
+
+    // 🚀 Check if app was launched by Adhan notification
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkLaunchNotification();
+    });
+  }
+
+  Future<void> _checkLaunchNotification() async {
+    try {
+      final receivedAction = await AwesomeNotifications()
+          .getInitialNotificationAction(removeFromActionEvents: true);
+
+      if (receivedAction != null &&
+          (receivedAction.channelKey == 'adhan_channel_v4' ||
+              receivedAction.channelKey == 'fajr_adhan_channel_v4')) {
+        print("🚀 App launched by Adhan Notification!");
+        
+        // Navigate to AdhanOverlayScreen
+        CentralizedCubit.navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (_) => AdhanOverlayScreen(
+              prayerName: receivedAction.payload?['prayerName'],
+              cityName: receivedAction.payload?['cityName'],
+              prayerTime: receivedAction.payload?['prayer_time'],
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print("❌ Error checking launch notification: $e");
+    }
   }
 
   @override

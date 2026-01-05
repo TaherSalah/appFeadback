@@ -16,20 +16,27 @@ class AddWirdScreen extends StatefulWidget {
 
 class _AddWirdScreenState extends State<AddWirdScreen> {
   final nameController = TextEditingController();
+  final customCategoryController = TextEditingController();
   List<Dhikr> selectedAdhkar = [];
   String selectedCategory = 'صَبَاح';
+  String selectedFrequency = 'daily'; // daily, weekly, monthly, once
+  bool isCustomCategory = false;
+  TimeOfDay? selectedTime;
+  int selectedColor = 0xFF00897B; // ✅ متغير اللون المختار
+
+  final List<int> kColors = [
+    0xFF00897B, // Teal
+    0xFF1E88E5, // Blue
+    0xFF43A047, // Green
+    0xFFFB8C00, // Orange
+    0xFF8E24AA, // Purple
+    0xFFE53935, // Red
+    0xFF546E7A, // Blue Grey
+    0xFFD81B60, // Pink
+  ];
 
   final List<String> categories = [
-    'صَبَاح', 'مَسَاء', 'نَوْم', 'عَام', 'مُخَصَّص', 'بَعْدَ الصَّلَاة', 
-    'قَبْلَ الطَّعَام', 'بَعْدَ الطَّعَام', 'عِنْدَ الضِّيق', 'عِنْدَ القَلَق', 
-    'عِنْدَ النَّوْم', 'عِنْدَ الاسْتِيقاظ', 'أَيَّام الْعِيد', 'رَمَضَان', 
-    'ذِكْرٌ عَامّ', 'ذِكْرٌ مُنْفَرِد', 'بَعْدَ الوُضُوء', 'قَبْلَ الوُضُوء', 
-    'عِنْدَ السَّفَر', 'عِنْدَ الْوُجُودِ فِي المَسْجِد', 'فِي الطَّرِيق', 
-    'فِي الْمَدْرَسَة', 'فِي الْعَمَل', 'عِنْدَ الشِّدَّة', 'عِنْدَ الْفَرَح', 
-    'عِنْدَ الْحُزْن', 'عِنْدَ الْمَرَض', 'فِي الْجَمَاعَة', 'خِصّ بِاللَّيْل', 
-    'خِصّ بِالنَّهَار', 'أَيَّام الجُمُعَة', 'أَيَّام الشَّهْر الحَرَام', 
-    'أَيَّام رَمَضَان', 'أَيَّام الْحَجّ', 'فِي الْبَيْت', 'فِي السُّوق', 
-    'فِي الْحَقْل', 'عِنْدَ الْوِلَادَة', 'أَيَّام مُخْتَلِفَة'
+    'صَبَاح', 'مَسَاء', 'نَوْم', 'بَعْدَ الصَّلَاة', 'أخرى'
   ];
 
   final List<Map<String, dynamic>> suggestedAdhkar = [
@@ -45,6 +52,44 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
     {'text': 'سُبْحَانَ اللهِ الْعَظِيمِ', 'count': 50},
     {'text': 'لَا إِلَهَ إِلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ', 'count': 100},
   ];
+
+  Future<void> _pickTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime ?? TimeOfDay.now(),
+      builder: (context, child) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: isDark
+                ? ColorScheme.dark(
+                    primary: Colors.tealAccent,
+                    onPrimary: Colors.black,
+                    surface: const Color(0xFF1E1E1E),
+                    onSurface: Colors.white,
+                  )
+                : ColorScheme.light(
+                    primary: const Color(0xFF00897B),
+                    onPrimary: Colors.white,
+                    surface: Colors.white,
+                    onSurface: Colors.black,
+                  ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: isDark ? Colors.tealAccent : const Color(0xFF00897B),
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != selectedTime) {
+      setState(() {
+        selectedTime = picked;
+      });
+    }
+  }
 
   void addCustomDhikr() {
     showDialog(
@@ -158,13 +203,13 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
             ),
             centerTitle: true,
             title: Text(
-              "إضافة ورد جديد",              style: GoogleFonts.cairo(
+              "إضافة ورد جديد",
+              style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
-
           ),
         ),
 
@@ -178,31 +223,6 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
             ),
             CustomScrollView(
               slivers: [
-                // SliverAppBar(
-                //   expandedHeight: 120.h,
-                //   floating: false,
-                //   pinned: true,
-                //   backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFF00897B),
-                //   leading: const CupertinoNavigationBarBackButton(color: Colors.white),
-                //   flexibleSpace: FlexibleSpaceBar(
-                //     centerTitle: true,
-                //     title: Text(
-                //       "إضافة ورد جديد",
-                //       style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.sp),
-                //     ),
-                //     background: Container(
-                //       decoration: BoxDecoration(
-                //         gradient: LinearGradient(
-                //           begin: Alignment.topCenter,
-                //           end: Alignment.bottomCenter,
-                //           colors: isDark
-                //               ? [const Color(0xFF2C2C2C), const Color(0xFF1A1A1A)]
-                //               : [const Color(0xFF00BFA5), const Color(0xFF00897B)],
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 SliverPadding(
                   padding: EdgeInsets.all(20.w),
                   sliver: SliverList(
@@ -212,9 +232,29 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                       _buildNameInput(isDark),
                       SizedBox(height: 24.h),
 
+                      _buildSectionHeader("تكرار الورد", Icons.repeat_rounded, isDark),
+                      SizedBox(height: 12.h),
+                      _buildFrequencySelector(isDark),
+                      SizedBox(height: 24.h),
+
+                      _buildSectionHeader("وقت التنبيه (اختياري)", Icons.alarm_rounded, isDark),
+                      SizedBox(height: 12.h),
+                      _buildTimePicker(isDark),
+                      SizedBox(height: 24.h),
+
+                      // ✅ إضافة قسم اختيار اللون
+                      _buildSectionHeader("لون الورد", Icons.color_lens_rounded, isDark),
+                      SizedBox(height: 12.h),
+                      _buildColorSelector(isDark),
+                      SizedBox(height: 24.h),
+
                       _buildSectionHeader("الفئة", Icons.category_rounded, isDark),
                       SizedBox(height: 12.h),
                       _buildCategoryGrid(isDark),
+                      if (isCustomCategory) ...[
+                        SizedBox(height: 12.h),
+                        _buildCustomCategoryInput(isDark),
+                      ],
                       SizedBox(height: 24.h),
 
                       _buildSectionHeader("اختر الأذكار", Icons.format_quote_rounded, isDark),
@@ -223,9 +263,39 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                       
                       if (selectedAdhkar.isNotEmpty) ...[
                         SizedBox(height: 24.h),
-                        _buildSectionHeader("الأذكار المختارة", Icons.playlist_add_check_rounded, isDark),
+                        Row(
+                          children: [
+                            _buildSectionHeader("الأذكار المختارة", Icons.playlist_add_check_rounded, isDark),
+                            const Spacer(),
+                            Text(
+                              "اسحب للترتيب",
+                              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey),
+                            ),
+                            SizedBox(width: 4.w),
+                            Icon(Icons.drag_indicator, size: 14.sp, color: Colors.grey),
+                          ],
+                        ),
                         SizedBox(height: 12.h),
-                        ...selectedAdhkar.asMap().entries.map((entry) => _buildSelectedDhikrItem(entry.value, entry.key, isDark)),
+                        // ✅ جعل القائمة قابلة للترتيب
+                        ReorderableListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: selectedAdhkar.length,
+                          onReorder: (oldIndex, newIndex) {
+                            setState(() {
+                              if (newIndex > oldIndex) newIndex -= 1;
+                              final item = selectedAdhkar.removeAt(oldIndex);
+                              selectedAdhkar.insert(newIndex, item);
+                            });
+                          },
+                          itemBuilder: (context, index) {
+                            final dhikr = selectedAdhkar[index];
+                            return KeyedSubtree(
+                              key: ValueKey(dhikr.id + index.toString()), // مفتاح فريد
+                              child: _buildSelectedDhikrItem(dhikr, index, isDark),
+                            );
+                          },
+                        ),
                       ],
 
                       SizedBox(height: 16.h),
@@ -241,12 +311,23 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             if (nameController.text.isNotEmpty && selectedAdhkar.isNotEmpty) {
+              
+              String finalCategory = selectedCategory;
+              if (selectedCategory == 'أخرى' && customCategoryController.text.isNotEmpty) {
+                 finalCategory = customCategoryController.text;
+              }
+
               final newWird = Wird(
                 id: DateTime.now().toString(),
                 name: nameController.text,
-                category: selectedCategory,
+                category: finalCategory,
                 adhkar: selectedAdhkar,
                 createdAt: DateTime.now(),
+                frequency: selectedFrequency,
+                color: selectedColor, // ✅ حفظ اللون المختار
+                reminderTime: selectedTime != null 
+                    ? "${selectedTime!.hour}:${selectedTime!.minute}" 
+                    : null,
               );
               Navigator.pop(context, newWird);
             } else {
@@ -298,6 +379,119 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
     );
   }
 
+  Widget _buildCustomCategoryInput(bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.amber.withOpacity(0.5)),
+      ),
+      child: TextField(
+        controller: customCategoryController,
+        style: GoogleFonts.cairo(fontSize: 13.sp, color: isDark ? Colors.white : Colors.black87),
+        decoration: InputDecoration(
+          hintText: "اكتب اسم التصنيف الجديد...",
+          hintStyle: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          prefixIcon: Icon(Icons.edit, color: Colors.amber, size: 18.sp),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFrequencySelector(bool isDark) {
+    final frequencies = [
+      {'val': 'daily', 'label': 'يومي'},
+      {'val': 'weekly', 'label': 'أسبوعي'},
+      {'val': 'monthly', 'label': 'شهري'},
+      {'val': 'once', 'label': 'مرة واحدة'},
+    ];
+
+    return Row(
+      children: frequencies.map((f) {
+        final isSelected = selectedFrequency == f['val'];
+        return Expanded(
+          child: GestureDetector(
+            onTap: () => setState(() => selectedFrequency = f['val']!),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: EdgeInsets.symmetric(horizontal: 4.w),
+              padding: EdgeInsets.symmetric(vertical: 10.h),
+              decoration: BoxDecoration(
+                color: isSelected ? (isDark ? Colors.tealAccent : const Color(0xFF00897B)) : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: isSelected ? Colors.transparent : Colors.grey.withOpacity(0.2)),
+              ),
+              child: Center(
+                child: Text(
+                  f['label']!,
+                  style: GoogleFonts.cairo(
+                    fontSize: 11.sp,
+                    color: isSelected ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black87),
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildTimePicker(bool isDark) {
+    return GestureDetector(
+      onTap: _pickTime,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: selectedTime != null 
+                ? (isDark ? Colors.tealAccent : const Color(0xFF00897B)) 
+                : Colors.transparent
+          ),
+          boxShadow: isDark ? [] : [
+            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 4))
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.access_time_filled_rounded,
+              color: selectedTime != null 
+                  ? (isDark ? Colors.tealAccent : const Color(0xFF00897B)) 
+                  : Colors.grey,
+              size: 24.sp,
+            ),
+            SizedBox(width: 12.w),
+            Text(
+              selectedTime != null 
+                  ? selectedTime!.format(context) 
+                  : "اضغط لضبط ميعاد التنبيه",
+              style: GoogleFonts.cairo(
+                fontSize: 14.sp,
+                color: isDark ? Colors.white : Colors.black87,
+                fontWeight: selectedTime != null ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+            if (selectedTime != null) ...[
+              const Spacer(),
+              IconButton(
+                icon: Icon(Icons.close, color: Colors.red.shade300, size: 20.sp),
+                onPressed: () => setState(() => selectedTime = null),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ]
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildCategoryGrid(bool isDark) {
     return Container(
       height: 45.h,
@@ -308,7 +502,12 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
           final cat = categories[index];
           final isSelected = selectedCategory == cat;
           return GestureDetector(
-            onTap: () => setState(() => selectedCategory = cat),
+            onTap: () {
+              setState(() {
+                selectedCategory = cat;
+                isCustomCategory = cat == 'أخرى';
+              });
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               margin: EdgeInsets.only(left: 8.w),
@@ -428,9 +627,48 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
     );
   }
 
+  // ✅ ويدجت اختيار اللون
+  Widget _buildColorSelector(bool isDark) {
+    return SizedBox(
+      height: 50.h,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: kColors.length,
+        itemBuilder: (context, index) {
+          final colorVal = kColors[index];
+          final isSelected = selectedColor == colorVal;
+          return GestureDetector(
+            onTap: () => setState(() => selectedColor = colorVal),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 6.w),
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: Color(colorVal),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
+                  width: 2.5,
+                ),
+                boxShadow: [
+                  if (isSelected)
+                    BoxShadow(color: Color(colorVal).withOpacity(0.4), blurRadius: 8, offset: const Offset(0, 4))
+                ],
+              ),
+              child: isSelected
+                  ? Icon(Icons.check, color: Colors.white, size: 20.sp)
+                  : null,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   void dispose() {
     nameController.dispose();
+    customCategoryController.dispose();
     super.dispose();
   }
 }

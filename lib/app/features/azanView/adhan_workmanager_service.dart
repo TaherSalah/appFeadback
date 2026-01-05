@@ -467,13 +467,14 @@ class AdhanWorkManagerService {
     try {
       print('🗑️ جاري إلغاء جميع تنبيهات الأذان القائمة...');
 
-      // 1️⃣ إلغاء إشعارات AwesomeNotifications حسب القنوات (أسرع بكثير من الحلقات التكرارية)
-      await AwesomeNotifications()
-          .cancelNotificationsByChannelKey('fajr_adhan_channel_v4');
-      await AwesomeNotifications()
-          .cancelNotificationsByChannelKey('adhan_channel_v4');
-      await AwesomeNotifications()
-          .cancelNotificationsByChannelKey('post_prayer_dhikr_channel');
+      // 1️⃣ إلغاء إشعارات AwesomeNotifications حسب القنوات
+      // ⚠️ FIX: لا تقم بإلغاء الإشعارات النشطة (Active Notifications) حتى لا ينقطع صوت الأذان إذا فتح المستخدم التطبيق
+      // await AwesomeNotifications()
+      //     .cancelNotificationsByChannelKey('fajr_adhan_channel_v4');
+      // await AwesomeNotifications()
+      //     .cancelNotificationsByChannelKey('adhan_channel_v4'); 
+      // await AwesomeNotifications()
+      //     .cancelNotificationsByChannelKey('post_prayer_dhikr_channel');
 
       // 2️⃣ إلغاء أي مهام مجدولة مستقبلاً (Schedules)
       await AwesomeNotifications()
@@ -483,7 +484,7 @@ class AdhanWorkManagerService {
       await AwesomeNotifications()
           .cancelSchedulesByChannelKey('post_prayer_dhikr_channel');
 
-      print('✅ تم تنظيف جميع المهام بنجاح');
+      print('✅ تم تنظيف الجداول الزمنية بنجاح (مع الحفاظ على الإشعارات الحالية)');
     } catch (e) {
       print('❌ خطأ في إلغاء المهام: $e');
     }
@@ -651,6 +652,10 @@ class AdhanWorkManagerService {
       print('   🌅 الفجر: ${fajrPath ?? "افتراضي"}');
       print('   🕌 العادي: ${normalPath ?? "افتراضي"}');
 
+      // ⚠️ FIX: Force remove channels to ensure sound changes apply on Android
+      await AwesomeNotifications().removeChannel('fajr_adhan_channel_v4');
+      await AwesomeNotifications().removeChannel('adhan_channel_v4');
+
       await AwesomeNotifications().initialize(
         'resource://drawable/ic_stat_logoapp',
         [
@@ -683,7 +688,7 @@ class AdhanWorkManagerService {
                 (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
             enableVibration: true,
             enableLights: true,
-            locked: true,
+            locked: true, //Locked prevents user from dismissing?
             criticalAlerts: true,
           ),
         ],

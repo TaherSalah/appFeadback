@@ -4,6 +4,8 @@ import 'dart:convert';
 
 import 'package:intl/intl.dart' as intl;
 import 'package:rate_my_app/rate_my_app.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Ensure this is here just in case
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
 
 import 'UserStats.dart';
 import 'Wird.dart';
@@ -20,13 +22,79 @@ class WirdManager {
     final String? data = prefs.getString(_awradKey);
     if (data == null) return [];
     final List<dynamic> jsonList = json.decode(data);
-    return jsonList.map((j) => Wird.fromJson(j)).toList();
+    
+    var list = jsonList.map((j) => Wird.fromJson(j)).toList();
+    
+    // ✅ التحقق من إعادة تعيين الأوراد المتكررة
+    final now = DateTime.now();
+    bool needsSave = false;
+
+    for (var wird in list) {
+      if (wird.isCompleted && wird.lastCompletedDate != null) {
+        final last = wird.lastCompletedDate!;
+        bool shouldReset = false;
+
+        if (wird.frequency == 'daily') {
+          // لو اليوم مختلف عن يوم الإكمال
+          if (last.year != now.year || last.month != now.month || last.day != now.day) {
+            shouldReset = true;
+          }
+        } else if (wird.frequency == 'weekly') {
+          // لو مر أسبوع
+          if (now.difference(last).inDays >= 7) {
+            shouldReset = true;
+          }
+        } else if (wird.frequency == 'monthly') {
+          // لو مر شهر (بسيط)
+           if (now.difference(last).inDays >= 30) {
+            shouldReset = true;
+          }
+        }
+
+        if (shouldReset) {
+          wird.isCompleted = false;
+          wird.isInProgress = false;
+          wird.currentDhikrIndex = 0;
+          wird.completedCount = wird.completedCount; // keep history
+          needsSave = true;
+        }
+      }
+    }
+
+    if (needsSave) {
+      _refreshNotifications(list); // Ensure notifications are active
+      final String newData = json.encode(list.map((w) => w.toJson()).toList());
+      await prefs.setString(_awradKey, newData);
+    }
+
+    return list;
   }
 
   Future<void> saveAwrad(List<Wird> awrad) async {
     final prefs = await SharedPreferences.getInstance();
     final String data = json.encode(awrad.map((w) => w.toJson()).toList());
     await prefs.setString(_awradKey, data);
+    
+    // ✅ تحديث التنبيهات عند الحفظ
+    _refreshNotifications(awrad);
+  }
+
+  void _refreshNotifications(List<Wird> awrad) {
+    // نمر على كل الأوراد، لو فيه تنبيه نجدوله
+    for (var wird in awrad) {
+      if (wird.reminderTime != null && wird.reminderTime!.isNotEmpty) {
+        NotificationManager().scheduleWirdReminder(
+          wird.id, 
+          wird.name, 
+          wird.reminderTime!, 
+          wird.frequency
+        );
+      } else {
+        // لو مفيش وقت أو تم حذفه، نلغي التنبيه المرتبط
+        // (نحتاج لمنطق إلغاء، لكن حالياً schedules هتتكتب فوق القديمة لو نفس الـ ID)
+        // لتحسين الأداء ودقة الحذف عند المسح الحقيقي، يفضل إلغاء التنبيه إذا لم يعد موجوداً
+      }
+    }
   }
 
   Future<UserStats> loadStats() async {

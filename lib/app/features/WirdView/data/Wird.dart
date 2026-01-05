@@ -17,6 +17,10 @@ class Wird {
   int currentDhikrIndex;
   bool isInProgress;
 
+  // ✅ إضافة التكرار (daily, weekly, monthly, once)
+  final String frequency;
+  int color; // ✅ حقل اللون الجديد
+
   Wird({
     required this.id,
     required this.name,
@@ -29,9 +33,9 @@ class Wird {
     List<DateTime>? completionHistory,
     this.currentDhikrIndex = 0,
     this.isInProgress = false,
-
-    this.isCompleted = false, // ✅ افتراضيًا الورد غير منجز
-
+    this.isCompleted = false,
+    this.frequency = 'daily', 
+    this.color = 0xFF00897B, // ✅ الافتراضي (Teal)
   }) : completionHistory = completionHistory ?? [];
 
   Map<String, dynamic> toJson() => {
@@ -44,10 +48,11 @@ class Wird {
     'reminderTime': reminderTime,
     'category': category,
     'completionHistory': completionHistory.map((d) => d.toIso8601String()).toList(),
-    'currentDhikrIndex': currentDhikrIndex, // ✅ حفظ
-    'isInProgress': isInProgress, // ✅ حفظ
+    'currentDhikrIndex': currentDhikrIndex,
+    'isInProgress': isInProgress,
     'isCompleted': isCompleted,
-
+    'frequency': frequency,
+    'color': color, // ✅ حفظ اللون
   };
 
   factory Wird.fromJson(Map<String, dynamic> json) => Wird(
@@ -67,8 +72,9 @@ class Wird {
         ?.map((d) => DateTime.parse(d))
         .toList() ??
         [],
-    currentDhikrIndex: json['currentDhikrIndex'] ?? 0, // ✅ استرجاع
-    isInProgress: json['isInProgress'] ?? false, // ✅ استرجاع
-
+    currentDhikrIndex: json['currentDhikrIndex'] ?? 0,
+    isInProgress: json['isInProgress'] ?? false,
+    frequency: json['frequency'] ?? 'daily',
+    color: json['color'] ?? 0xFF00897B, // ✅ استرجاع اللون
   );
 }

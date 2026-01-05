@@ -19,7 +19,7 @@ class WirdHomeScreen extends StatefulWidget {
   _WirdHomeScreenState createState() => _WirdHomeScreenState();
 }
 
-class _WirdHomeScreenState extends State<WirdHomeScreen> {
+class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObserver {
   List<Wird> awrad = [];
   List<Wird> completedAwrad = [];
   UserStats stats = UserStats();
@@ -30,19 +30,35 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     loadData();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      loadData(); // تحديث البيانات عند العودة للتطبيق للتأكد من إعادة تعيين الأوراد اليومية
+    }
   }
 
   Future<void> loadData() async {
     final data = await manager.loadAwrad();
     final statsData = await manager.loadStats();
 
-    setState(() {
-      awrad = data.where((w) => !w.isCompleted).toList();
-      completedAwrad = data.where((w) => w.isCompleted).toList();
-      stats = statsData;
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        awrad = data.where((w) => !w.isCompleted).toList();
+        completedAwrad = data.where((w) => w.isCompleted).toList();
+        stats = statsData;
+        isLoading = false;
+      });
+    }
   }
 
   List<String> get categories {
@@ -429,7 +445,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
 
   Widget _buildWirdCard(Wird wird, {required bool isDark, bool completed = false}) {
     final totalCount = wird.adhkar.fold<int>(0, (sum, dhikr) => sum + dhikr.targetCount);
-    final primaryColor = isDark ? Colors.tealAccent : const Color(0xFF00897B);
+    // ✅ استخدام لون الورد المخصص، أو اللون الافتراضي
+    final cardColor = wird.color != 0 ? Color(wird.color) : (isDark ? Colors.tealAccent : const Color(0xFF00897B));
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -443,13 +460,47 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
             offset: const Offset(0, 4),
           )
         ],
+        // ✅ إضافة حدود ملونة خفيفة لتمييز الورد
+        border: Border.all(color: cardColor.withOpacity(0.3), width: 1.5),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: completed ? null : () async {
+          child: InkWell(
+            onTap: () async {
+              if (completed) {
+                // ✅ إعادة تفعيل الورد المكتمل
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: AlertDialog(
+                      title: const Text("إعادة تفعيل الورد"),
+                      content: const Text("هل تريد إلغاء إكمال هذا الورد وإعادته للقائمة الحالية؟"),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("إلغاء")),
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, true), 
+                          child: const Text("نعم، إعادة تفعيل")
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+                
+                if (confirm == true) {
+                  setState(() {
+                    wird.isCompleted = false;
+                    completedAwrad.remove(wird);
+                    awrad.add(wird);
+                  });
+                  await manager.saveAwrad([...awrad, ...completedAwrad]);
+                }
+                return;
+              }
+
               final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -459,6 +510,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
               if (result == 'completed') {
                 setState(() {
                   wird.isCompleted = true;
+                  wird.lastCompletedDate = DateTime.now(); // ✅ تسجيل تاريخ الإكمال
                   awrad.remove(wird);
                   completedAwrad.add(wird);
                 });
@@ -479,7 +531,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
                     width: 50.w,
                     height: 50.w,
                     decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.1),
+                      color: cardColor.withOpacity(0.1), // ✅ خلفية الأيقونة بنفس لون الورد
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Center(
@@ -544,7 +596,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> {
           ),
         ),
       ),
-    );
+    )   );
   }
 
   void showDeleteWirdDialog(Wird wird, {required bool completed}) {
