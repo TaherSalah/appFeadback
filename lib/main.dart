@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'app/core/cache/shard_pref/shardpref_obj.dart';
@@ -22,7 +23,7 @@ Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  await  QuranLibrary.init();
+  await QuranLibrary.init();
   try {
     await _initAppServices();
   } catch (e, s) {
@@ -44,14 +45,20 @@ Future<void> main() async {
 }
 
 Future<void> _initAppServices() async {
-  // ✅ 1) تخصيصات النظام
+  // ✅ 1) Initialize Supabase
+  await Supabase.initialize(
+    url: 'https://kghwboxevphvxtsagrer.supabase.co',
+    anonKey: 'sb_publishable_Kl3FXiXa7AHEokVvCiImmQ_03UL91M0',
+  );
+
+  // ✅ 2) تخصيصات النظام
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
   ));
 
-  // ✅ 2) تهيئة البيانات
+  // ✅ 3) تهيئة البيانات
   HijriCalendar.setLocal('ar_SA');
   await Di.init();
   await initializeDateFormatting();
@@ -59,7 +66,7 @@ Future<void> _initAppServices() async {
   await initializeDateFormatting('en', null);
   await SharedObj().init();
 
-  // ✅ 3) Hive
+  // ✅ 4) Hive
   await Hive.initFlutter();
 
   // Register existing adapters
@@ -120,4 +127,3 @@ Future<void> _initAppServices() async {
   await notificationManager.initialize();
   await notificationManager.rescheduleAll();
 }
-

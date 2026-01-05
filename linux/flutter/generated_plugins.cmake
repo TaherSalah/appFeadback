@@ -4,6 +4,8 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   awesome_notifications
+  file_selector_linux
+  gtk
   objectbox_flutter_libs
   printing
   sqlite3_flutter_libs

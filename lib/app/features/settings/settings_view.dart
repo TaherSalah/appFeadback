@@ -8,6 +8,7 @@ import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
+import 'package:muslimdaily/app/features/settings/feedback_view.dart';
 import '../mainView/controllar/MainController.dart';
 
 import '../../core/utils/style/app_theme_colors.dart';
@@ -476,6 +477,22 @@ class SettingsView extends StatelessWidget {
                           iconColor: Colors.teal[400]!,
                           onTap: () {
                             Navigator.pushNamed(context, '/about');
+                          },
+                        ),
+                        _buildDivider(isDark),
+                        _buildListTile(
+                          context,
+                          icon: Icons.feedback_outlined,
+                          title: 'الشكاوى والاقتراحات',
+                          subtitle: 'أرسل لنا ملاحظاتك واقتراحاتك',
+                          iconColor: Colors.orange[600]!,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const FeedbackView(),
+                              ),
+                            );
                           },
                         ),
                       ],
