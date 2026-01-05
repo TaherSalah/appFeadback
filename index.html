@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الشكاوى والاقتراحات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-card .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* Filters */
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Feedback Table */
+        .feedback-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .feedback-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .feedback-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .feedback-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .feedback-info h3 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .feedback-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .category-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .category-مشكلة { background: #fee; color: #c00; }
+        .category-تحديث { background: #e3f2fd; color: #1976d2; }
+        .category-اقتراح { background: #fff3e0; color: #f57c00; }
+        .category-استفسار { background: #f3e5f5; color: #7b1fa2; }
+        .category-أخرى { background: #f5f5f5; color: #666; }
+
+        .feedback-description {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .feedback-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: #666;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .images-grid img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .images-grid img:hover {
+            transform: scale(1.05);
+        }
+
+        .device-info {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        /* Modal for images */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .feedback-header {
+                flex-direction: column;
+            }
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 لوحة تحكم الشكاوى والاقتراحات</h1>
+            <p>رفيق المسلم - Feedback Dashboard</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">📝</div>
+                <h3>إجمالي الشكاوى</h3>
+                <div class="number" id="totalCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🐛</div>
+                <h3>المشاكل</h3>
+                <div class="number" id="problemCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">💡</div>
+                <h3>الاقتراحات</h3>
+                <div class="number" id="suggestionCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📅</div>
+                <h3>آخر 7 أيام</h3>
+                <div class="number" id="recentCount">0</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label>التصنيف</label>
+                <select id="categoryFilter">
+                    <option value="">الكل</option>
+                    <option value="مشكلة">مشكلة</option>
+                    <option value="تحديث">تحديث</option>
+                    <option value="اقتراح">اقتراح</option>
+                    <option value="استفسار">استفسار</option>
+                    <option value="أخرى">أخرى</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>البحث</label>
+                <input type="text" id="searchInput" placeholder="ابحث في الاسم أو البريد أو الوصف...">
+            </div>
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="refresh-btn" onclick="loadFeedback()">🔄 تحديث</button>
+            </div>
+        </div>
+
+        <!-- Feedback Container -->
+        <div class="feedback-container">
+            <div id="feedbackList" class="feedback-grid">
+                <div class="loading">⏳ جاري تحميل البيانات...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal" onclick="closeModal()">
+        <img id="modalImage" src="" alt="صورة">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://kghwboxevphvxtsagrer.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_Kl3FXiXa7AHEokVvCiImmQ_03UL91M0';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let allFeedback = [];
+
+        // Load feedback from Supabase
+        async function loadFeedback() {
+            const feedbackList = document.getElementById('feedbackList');
+            feedbackList.innerHTML = '<div class="loading">⏳ جاري تحميل البيانات...</div>';
+
+            try {
+                const { data, error } = await supabase
+                    .from('feedback')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allFeedback = data || [];
+                updateStats();
+                displayFeedback(allFeedback);
+            } catch (error) {
+                feedbackList.innerHTML = `<div class="error">❌ خطأ في تحميل البيانات: ${error.message}</div>`;
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = allFeedback.length;
+            const problems = allFeedback.filter(f => f.category === 'مشكلة').length;
+            const suggestions = allFeedback.filter(f => f.category === 'اقتراح').length;
+            
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            const recent = allFeedback.filter(f => new Date(f.created_at) > sevenDaysAgo).length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('problemCount').textContent = problems;
+            document.getElementById('suggestionCount').textContent = suggestions;
+            document.getElementById('recentCount').textContent = recent;
+        }
+
+        // Display feedback
+        function displayFeedback(feedback) {
+            const feedbackList = document.getElementById('feedbackList');
+
+            if (feedback.length === 0) {
+                feedbackList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>لا توجد شكاوى</h3>
+                        <p>لم يتم العثور على أي شكاوى بالمعايير المحددة</p>
+                    </div>
+                `;
+                return;
+            }
+
+            feedbackList.innerHTML = feedback.map(item => `
+                <div class="feedback-card">
+                    <div class="feedback-header">
+                        <div class="feedback-info">
+                            <h3>${item.name}</h3>
+                            <p>📧 ${item.email}</p>
+                        </div>
+                        <span class="category-badge category-${item.category}">${item.category}</span>
+                    </div>
+                    
+                    <div class="feedback-description">
+                        ${item.description}
+                    </div>
+
+                    ${item.image_urls && item.image_urls.length > 0 ? `
+                        <div class="images-grid">
+                            ${item.image_urls.map(url => `
+                                <img src="${url}" alt="صورة" onclick="openModal('${url}')">
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    <div class="feedback-meta">
+                        <div class="meta-item">
+                            📅 ${new Date(item.created_at).toLocaleDateString('ar-EG', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </div>
+                        ${item.image_urls && item.image_urls.length > 0 ? `
+                            <div class="meta-item">
+                                🖼️ ${item.image_urls.length} صورة
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    ${item.device_info ? `
+                        <div class="device-info">
+                            <strong>📱 معلومات الجهاز:</strong>
+                            ${item.device_info.os || 'غير متوفر'} ${item.device_info.os_version || ''} • 
+                            ${item.device_info.model || 'غير متوفر'} • 
+                            إصدار التطبيق: ${item.device_info.app_version || 'غير متوفر'}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Filter and search
+        function filterFeedback() {
+            const category = document.getElementById('categoryFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = allFeedback;
+
+            if (category) {
+                filtered = filtered.filter(f => f.category === category);
+            }
+
+            if (search) {
+                filtered = filtered.filter(f => 
+                    f.name.toLowerCase().includes(search) ||
+                    f.email.toLowerCase().includes(search) ||
+                    f.description.toLowerCase().includes(search)
+                );
+            }
+
+            displayFeedback(filtered);
+        }
+
+        // Image modal
+        function openModal(url) {
+            document.getElementById('modalImage').src = url;
+            document.getElementById('imageModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        // Event listeners
+        document.getElementById('categoryFilter').addEventListener('change', filterFeedback);
+        document.getElementById('searchInput').addEventListener('input', filterFeedback);
+
+        // Keyboard shortcut for modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Load data on page load
+        loadFeedback();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadFeedback, 30000);
+    </script>
+</body>
+</html>
