@@ -14,6 +14,17 @@ class IslamicStory {
     required this.moral,
     required this.starsReward,
   });
+
+  factory IslamicStory.fromMap(Map<String, dynamic> map) {
+    return IslamicStory(
+      id: map['id']?.toString() ?? '',
+      title: map['title'] ?? '',
+      emoji: map['emoji'] ?? '📖',
+      paragraphs: List<String>.from(map['paragraphs'] ?? []),
+      moral: map['moral'] ?? '',
+      starsReward: map['stars_reward'] ?? 20,
+    );
+  }
 }
 
 class StoriesData {

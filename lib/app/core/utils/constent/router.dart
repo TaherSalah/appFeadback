@@ -18,6 +18,7 @@ import 'package:muslimdaily/app/features/rokiaView/rokia.dart';
 import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/splashView/splash.dart';
 import 'package:muslimdaily/app/features/zakatView/zakat_calculator_view.dart';
+import 'package:muslimdaily/app/features/kids/view/KidsStoriesScreen.dart';
 
 import '../../../features/WirdView/WirdHomeScreen.dart';
 import '../../../features/aboutView/about.dart';
@@ -91,6 +92,7 @@ class Routes {
   static const String zakatCalculatorRoute = "/ZakatCalculator";
   static const String settingsRoute = "/settings";
   static const String fajrAlarmRoute = "/fajrAlarm";
+  static const String kidsStoriesRoute = "/kidsStories";
 }
 
 class QuranRadioPlayerArgs {
@@ -259,6 +261,10 @@ class RouteGenerator {
       // === Duas Routes ===
       case '/duasMain':
         return MaterialPageRoute(builder: (_) => const DuasMainScreen());
+
+      // === Kids Corner ===
+      case Routes.kidsStoriesRoute:
+        return MaterialPageRoute(builder: (_) => const KidsStoriesScreen());
 
       default:
         return unDefinedRoute();

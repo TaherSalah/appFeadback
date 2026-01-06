@@ -6,50 +6,53 @@ class MaintenanceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1a1a2e), Color(0xFF16213e)],
+    return  Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        body: Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF1a1a2e), Color(0xFF16213e)],
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.settings_suggest_outlined,
-              size: 100,
-              color: Color(0xFFD4AF37),
-            ),
-            const SizedBox(height: 30),
-            Text(
-              'التطبيق في وضع الصيانة',
-              style: GoogleFonts.cairo(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.settings_suggest_outlined,
+                size: 100,
+                color: Color(0xFFD4AF37),
               ),
-            ),
-            const SizedBox(height: 15),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                'نحن الآن نقوم ببعض التحسينات لخدمتكم بشكل أفضل. سنعود للعمل قريباً إن شاء الله.',
-                textAlign: TextAlign.center,
+              const SizedBox(height: 30),
+              Text(
+                'التطبيق في وضع الصيانة',
                 style: GoogleFonts.cairo(
-                  fontSize: 16,
-                  color: Colors.white70,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
-            ),
-            const SizedBox(height: 40),
-            const CircularProgressIndicator(
-              color: Color(0xFFD4AF37),
-            ),
-          ],
+              const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Text(
+                  'نحن الآن نقوم ببعض التحسينات لخدمتكم بشكل أفضل. سنعود للعمل قريباً إن شاء الله.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.cairo(
+                    fontSize: 16,
+                    color: Colors.white70,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              const CircularProgressIndicator(
+                color: Color(0xFFD4AF37),
+              ),
+            ],
+          ),
         ),
       ),
     );

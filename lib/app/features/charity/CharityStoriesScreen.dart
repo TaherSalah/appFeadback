@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../core/services/content_service.dart';
 import '../../core/utils/style/k_color.dart';
 import 'data/charity_stories_data.dart';
 
@@ -15,9 +16,45 @@ class CharityStoriesScreen extends StatefulWidget {
 
 class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
   String _selectedCategory = 'الكل';
+  List<CharityStory> _allStories = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStories();
+  }
+
+  Future<void> _loadStories() async {
+    setState(() => _isLoading = true);
+    
+    // 1. Get hardcoded stories
+    List<CharityStory> localStories = List.from(CharityStoriesData.stories);
+    
+    // 2. Try fetching from Supabase
+    try {
+      final remoteData = await ContentService().getCharityStories();
+      if (remoteData.isNotEmpty) {
+        final remoteStories = remoteData.map((m) => CharityStory.fromMap(m)).toList();
+        // Option: Merge or Replace. Usually we want remote to take priority or be added.
+        // Let's add them to the beginning.
+        _allStories = [...remoteStories, ...localStories];
+      } else {
+        _allStories = localStories;
+      }
+    } catch (e) {
+      print('Error loading remote stories: $e');
+      _allStories = localStories;
+    }
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+  }
 
   List<CharityStory> get _filteredStories {
-    return CharityStoriesData.getStoriesByCategory(_selectedCategory);
+    if (_selectedCategory == 'الكل') return _allStories;
+    return _allStories.where((s) => s.category == _selectedCategory).toList();
   }
 
   @override
@@ -129,13 +166,22 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
 
                 // القصص
                 Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(16.w),
-                    itemCount: _filteredStories.length,
-                    itemBuilder: (context, index) {
-                      return _buildStoryCard(_filteredStories[index], isDark);
-                    },
-                  ),
+                  child: _isLoading 
+                    ? const Center(child: CircularProgressIndicator(color: Colors.green))
+                    : _filteredStories.isEmpty
+                      ? Center(
+                          child: Text(
+                            'لا توجد قصص حالياً',
+                            style: GoogleFonts.cairo(color: isDark ? Colors.white70 : Colors.black54),
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: EdgeInsets.all(16.w),
+                          itemCount: _filteredStories.length,
+                          itemBuilder: (context, index) {
+                            return _buildStoryCard(_filteredStories[index], isDark);
+                          },
+                        ),
                 ),
               ],
             ),

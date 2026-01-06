@@ -24,7 +24,7 @@ class MashkahApp extends StatefulWidget {
 }
 
 class _MashkahAppState extends State<MashkahApp> {
-  late final RateService rateService;
+  // late final RateService rateService;
 
   @override
   void initState() {
@@ -32,17 +32,17 @@ class _MashkahAppState extends State<MashkahApp> {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   checkWhatsNew(context);
     // });
-    final rateMyApp = RateMyApp(
-      preferencesPrefix: 'rateMyApp',
-      minDays: 3,
-      minLaunches: 5,
-      remindDays: 3,
-      remindLaunches: 5,
-      googlePlayIdentifier: 'com.rafiq.muslimdaily',
-      appStoreIdentifier: '6749927338',
-    );
-    rateService = RateService(rateMyApp);
-    rateService.init().then((_) => rateService.maybeAskForRating(context));
+    // final rateMyApp = RateMyApp(
+    //   preferencesPrefix: 'rateMyApp',
+    //   minDays: 3,
+    //   minLaunches: 5,
+    //   remindDays: 3,
+    //   remindLaunches: 5,
+    //   googlePlayIdentifier: 'com.rafiq.muslimdaily',
+    //   appStoreIdentifier: '6749927338',
+    // );
+    // rateService = RateService(rateMyApp);
+    // rateService.init().then((_) => rateService.maybeAskForRating(context));
 
     // 🚀 Check if app was launched by Adhan notification
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -100,43 +100,42 @@ class _MashkahAppState extends State<MashkahApp> {
             KStorage.i.delTime;
             return MultiBlocProvider(
                 providers: provider,
-                child: Provider<RateService>.value(
-                  value: rateService,
-                  child: BlocBuilder<CentralizedCubit, CentralizedState>(
-                      builder: (context, state) {
-                    final cubit = CentralizedCubit.get(context);
+                // child: Provider<RateService>.value(
+                //     value: rateService,
+                child: BlocBuilder<CentralizedCubit, CentralizedState>(
+                    builder: (context, state) {
+                  final cubit = CentralizedCubit.get(context);
 
-                    return MaterialApp(
-                      // useInheritedMediaQuery: true,
-                      // locale: DevicePreview.locale(context),
-                      // builder: DevicePreview.appBuilder,
-                      navigatorKey: CentralizedCubit.navigatorKey,
-                      title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
-                      debugShowCheckedModeBanner: false,
-                      onGenerateRoute: (settings) =>
-                          RouteGenerator.getRoute(settings, context),
-                      initialRoute: Routes.splashRoute,
-                      theme: AppTheme.light(primaryColor: _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
-                      darkTheme: AppTheme.dark(primaryColor: _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
-                      themeMode: cubit.themeMode(),
+                  return MaterialApp(
+                    // useInheritedMediaQuery: true,
+                    // locale: DevicePreview.locale(context),
+                    // builder: DevicePreview.appBuilder,
+                    navigatorKey: CentralizedCubit.navigatorKey,
+                    title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
+                    debugShowCheckedModeBanner: false,
+                    onGenerateRoute: (settings) =>
+                        RouteGenerator.getRoute(settings, context),
+                    initialRoute: Routes.splashRoute,
+                    theme: AppTheme.light(primaryColor: _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
+                    darkTheme: AppTheme.dark(primaryColor: _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
+                    themeMode: cubit.themeMode(),
 
-                      // ⭐ اضيف الـ builder هنا
-                      builder: (context, child) {
-                        return MediaQuery(
-                          data: MediaQuery.of(context).copyWith(
-                            textScaler:
-                                MediaQuery.textScalerOf(context).clamp(
-                              minScaleFactor: 0.8,
-                              maxScaleFactor:
-                                  1.2, // أو 1.0 لو عايزه ثابت تمامًا
-                            ),
+                    // ⭐ اضيف الـ builder هنا
+                    builder: (context, child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(context).copyWith(
+                          textScaler:
+                              MediaQuery.textScalerOf(context).clamp(
+                            minScaleFactor: 0.8,
+                            maxScaleFactor:
+                                1.2, // أو 1.0 لو عايزه ثابت تمامًا
                           ),
-                          child: child!,
-                        );
-                      },
-                    );
-                  }),
-                ));
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+                }));
           }),
     );
   }

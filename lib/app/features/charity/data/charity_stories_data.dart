@@ -13,6 +13,16 @@ class CharityStory {
     required this.category,
     required this.emoji,
   });
+
+  factory CharityStory.fromMap(Map<String, dynamic> map) {
+    return CharityStory(
+      title: map['title'] ?? '',
+      content: map['content'] ?? '',
+      source: map['source'] ?? '',
+      category: map['category'] ?? 'معاصر',
+      emoji: map['emoji'] ?? '🤲',
+    );
+  }
 }
 
 /// قاعدة بيانات القصص الملهمة عن الصدقة
