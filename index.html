@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم الشكاوى والاقتراحات</title>
+    <title>لوحة تحكم رفيق المسلم اليومي</title>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -53,7 +54,7 @@
             background: var(--card-bg);
             padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
             text-align: center;
             position: relative;
@@ -86,7 +87,7 @@
             justify-content: center;
             align-items: center;
             font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
         }
 
@@ -106,7 +107,7 @@
             background: var(--card-bg);
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
 
@@ -137,7 +138,7 @@
             background: var(--card-bg);
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
             display: flex;
             gap: 15px;
@@ -180,7 +181,7 @@
             background: var(--card-bg);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
         .feedback-grid {
@@ -229,11 +230,30 @@
             white-space: nowrap;
         }
 
-        .category-مشكلة { background: #fee; color: #c00; }
-        .category-تحديث { background: #e3f2fd; color: #1976d2; }
-        .category-اقتراح { background: #fff3e0; color: #f57c00; }
-        .category-استفسار { background: #f3e5f5; color: #7b1fa2; }
-        .category-أخرى { background: #f5f5f5; color: #666; }
+        .category-مشكلة {
+            background: #fee;
+            color: #c00;
+        }
+
+        .category-تحديث {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .category-اقتراح {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .category-استفسار {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .category-أخرى {
+            background: #f5f5f5;
+            color: #666;
+        }
 
         .feedback-description {
             color: var(--text-primary);
@@ -261,7 +281,7 @@
             background: var(--card-bg);
             padding: 10px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .status-tab {
@@ -326,7 +346,8 @@
             border-top: 1px dashed #ddd;
         }
 
-        .admin-notes textarea, .reply-section textarea {
+        .admin-notes textarea,
+        .reply-section textarea {
             width: 100%;
             height: 100px;
             padding: 15px;
@@ -424,7 +445,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0, 0, 0, 0.9);
             justify-content: center;
             align-items: center;
         }
@@ -444,11 +465,11 @@
             .header h1 {
                 font-size: 1.8rem;
             }
-            
+
             .filters {
                 flex-direction: column;
             }
-            
+
             .feedback-header {
                 flex-direction: column;
             }
@@ -475,14 +496,16 @@
         .refresh-btn:active {
             transform: scale(0.95);
         }
+
         /* Analytics Section */
         .analytics-section {
             background: var(--card-bg);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
-            display: none; /* Hidden until data loads */
+            display: none;
+            /* Hidden until data loads */
         }
 
         .charts-grid {
@@ -536,7 +559,7 @@
             background: var(--card-bg);
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
             text-align: center;
             max-width: 400px;
             width: 90%;
@@ -585,24 +608,24 @@
 
         .tab {
             padding: 14px 28px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
             border-radius: 15px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(5px);
         }
 
         .tab.active {
             background: var(--card-bg);
             color: var(--accent-color);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
         .tab:hover:not(.active) {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
         }
 
@@ -616,8 +639,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Update Form Styling */
@@ -625,7 +655,7 @@
             background: var(--card-bg);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
@@ -653,16 +683,34 @@
             background: var(--card-bg);
         }
 
-        .badge-mandatory { background: #fee; color: #c00; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-        .badge-optional { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .badge-mandatory {
+            background: #fee;
+            color: #c00;
+            border: 1px solid #ffcdd2;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .badge-optional {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
         <div class="header">
             <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع">🌓</button>
-            <h1>لوحة تحكم رفيق المسلم</h1>
+            <h1>لوحة تحكم رفيق المسلم اليومي</h1>
             <p>إدارة البلاغات والاقتراحات وتحديثات التطبيق</p>
         </div>
 
@@ -671,130 +719,136 @@
             <div id="updatesTabBtn" class="tab" onclick="switchTab('updates')">🚀 تحديثات التطبيق</div>
             <div id="analyticsTabBtn" class="tab" onclick="switchTab('analytics')">📊 الإحصائيات</div>
             <div id="bannersTabBtn" class="tab" onclick="switchTab('banners')">🖼️ الإعلانات</div>
+            <div id="radioTabBtn" class="tab" onclick="switchTab('radio')">📻 راديو القرآن</div>
             <div id="featuresTabBtn" class="tab" onclick="switchTab('features')">🎮 التحكم بالأقسام</div>
             <div id="settingsTabBtn" class="tab" onclick="switchTab('settings')">⚙️ الإعدادات</div>
+            <div id="contentTabBtn" class="tab" onclick="switchTab('content')">✍️ إدارة المحتوى</div>
+            <div id="kidsStoriesTabBtn" class="tab" onclick="switchTab('kidsStories')">👶 قصص ركن الطفل</div>
+            <div id="charityStoriesTabBtn" class="tab" onclick="switchTab('charityStories')">🤲 قصص الصدقات</div>
             <div id="errorsTabBtn" class="tab" onclick="switchTab('errors')">⚠️ الأعطال</div>
         </div>
 
         <div id="feedbackTab" class="tab-content active">
 
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="icon">📝</div>
-                <h3>إجمالي الشكاوى</h3>
-                <div class="number" id="totalCount">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="icon">🐛</div>
-                <h3>المشاكل</h3>
-                <div class="number" id="problemCount">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="icon">💡</div>
-                <h3>الاقتراحات</h3>
-                <div class="number" id="suggestionCount">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="icon">📅</div>
-                <h3>آخر 7 أيام</h3>
-                <div class="number" id="recentCount">0</div>
-            </div>
-        </div>
-
-        <!-- Analytics -->
-        <div id="analyticsSection" class="analytics-section">
-            <h2 style="margin-bottom: 20px; color: var(--text-primary); font-size: 1.5rem;">📊 تحليلات البيانات</h2>
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <canvas id="categoryChart"></canvas>
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">📝</div>
+                    <h3>إجمالي الشكاوى</h3>
+                    <div class="number" id="totalCount">0</div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="frequencyChart"></canvas>
+                <div class="stat-card">
+                    <div class="icon">🐛</div>
+                    <h3>المشاكل</h3>
+                    <div class="number" id="problemCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💡</div>
+                    <h3>الاقتراحات</h3>
+                    <div class="number" id="suggestionCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📅</div>
+                    <h3>آخر 7 أيام</h3>
+                    <div class="number" id="recentCount">0</div>
                 </div>
             </div>
-        </div>
 
-        <!-- Filters -->
-        <div class="filters">
-            <div class="filter-group">
-                <label>التصنيف</label>
-                <select id="categoryFilter">
-                    <option value="">الكل</option>
-                    <option value="مشكلة" selected>مشكلة</option>
-                    <option value="تحديث">تحديث</option>
-                    <option value="اقتراح">اقتراح</option>
-                    <option value="استفسار">استفسار</option>
-                    <option value="أخرى">أخرى</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>الحالة</label>
-                <select id="statusFilter">
-                    <option value="">الكل</option>
-                    <option value="جديد">جديد</option>
-                    <option value="تم استقبال المشكلة">تم استقبال المشكلة</option>
-                    <option value="قيد المعالجة">قيد المعالجة</option>
-                    <option value="تم الحل">تم الحل</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>التقييم</label>
-                <select id="ratingFilter">
-                    <option value="">الكل</option>
-                    <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                    <option value="4">⭐⭐⭐⭐ (4+)</option>
-                    <option value="3">⭐⭐⭐ (3+)</option>
-                    <option value="2">⭐⭐ (2+)</option>
-                    <option value="1">⭐ (1+)</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>البحث</label>
-                <input type="text" id="searchInput" placeholder="ابحث في الاسم أو البريد أو الوصف...">
-            </div>
-            <div class="filter-group">
-                <label>من تاريخ</label>
-                <input type="date" id="startDate">
-            </div>
-            <div class="filter-group">
-                <label>إلى تاريخ</label>
-                <input type="date" id="endDate">
-            </div>
-            <div class="filter-group" style="min-width: 150px; display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" id="unrepliedFilter" onchange="filterFeedback()" style="width: 20px; height: 20px; cursor: pointer;">
-                <label for="unrepliedFilter" style="margin-bottom: 0; cursor: pointer;">📩 لم يتم الرد</label>
-            </div>
-            <div class="filter-group">
-                <label>&nbsp;</label>
-                <div style="display: flex; gap: 10px;">
-                    <button class="refresh-btn" onclick="loadFeedback()">🔄 تحديث</button>
-                    <button class="export-btn" onclick="exportToCSV()">📥 تصدير CSV</button>
+            <!-- Analytics -->
+            <div id="analyticsSection" class="analytics-section">
+                <h2 style="margin-bottom: 20px; color: var(--text-primary); font-size: 1.5rem;">📊 تحليلات البيانات</h2>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="frequencyChart"></canvas>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Feedback Container -->
-        <div class="feedback-container">
-            <div class="status-tabs" id="statusTabs">
-                <div class="status-tab active" onclick="setStatusFilter('', this)">الكل</div>
-                <div class="status-tab" onclick="setStatusFilter('جديد', this)">🆕 جديد</div>
-                <div class="status-tab" onclick="setStatusFilter('تم استقبال المشكلة', this)">📩 تم الاستقبال</div>
-                <div class="status-tab" onclick="setStatusFilter('قيد المعالجة', this)">⏳ قيد المعالجة</div>
-                <div class="status-tab" onclick="setStatusFilter('تم الحل', this)">✅ تم الحل</div>
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label>التصنيف</label>
+                    <select id="categoryFilter">
+                        <option value="">الكل</option>
+                        <option value="مشكلة" selected>مشكلة</option>
+                        <option value="تحديث">تحديث</option>
+                        <option value="اقتراح">اقتراح</option>
+                        <option value="استفسار">استفسار</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>الحالة</label>
+                    <select id="statusFilter">
+                        <option value="">الكل</option>
+                        <option value="جديد">جديد</option>
+                        <option value="تم استقبال المشكلة">تم استقبال المشكلة</option>
+                        <option value="قيد المعالجة">قيد المعالجة</option>
+                        <option value="تم الحل">تم الحل</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>التقييم</label>
+                    <select id="ratingFilter">
+                        <option value="">الكل</option>
+                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                        <option value="4">⭐⭐⭐⭐ (4+)</option>
+                        <option value="3">⭐⭐⭐ (3+)</option>
+                        <option value="2">⭐⭐ (2+)</option>
+                        <option value="1">⭐ (1+)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>البحث</label>
+                    <input type="text" id="searchInput" placeholder="ابحث في الاسم أو البريد أو الوصف...">
+                </div>
+                <div class="filter-group">
+                    <label>من تاريخ</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-group">
+                    <label>إلى تاريخ</label>
+                    <input type="date" id="endDate">
+                </div>
+                <div class="filter-group" style="min-width: 150px; display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="unrepliedFilter" onchange="filterFeedback()"
+                        style="width: 20px; height: 20px; cursor: pointer;">
+                    <label for="unrepliedFilter" style="margin-bottom: 0; cursor: pointer;">📩 لم يتم الرد</label>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="refresh-btn" onclick="loadFeedback()">🔄 تحديث</button>
+                        <button class="export-btn" onclick="exportToCSV()">📥 تصدير CSV</button>
+                    </div>
+                </div>
             </div>
-            <div id="feedbackList" class="feedback-grid">
-                <div class="loading">⏳ جاري تحميل البيانات...</div>
+
+            <!-- Feedback Container -->
+            <div class="feedback-container">
+                <div class="status-tabs" id="statusTabs">
+                    <div class="status-tab active" onclick="setStatusFilter('', this)">الكل</div>
+                    <div class="status-tab" onclick="setStatusFilter('جديد', this)">🆕 جديد</div>
+                    <div class="status-tab" onclick="setStatusFilter('تم استقبال المشكلة', this)">📩 تم الاستقبال</div>
+                    <div class="status-tab" onclick="setStatusFilter('قيد المعالجة', this)">⏳ قيد المعالجة</div>
+                    <div class="status-tab" onclick="setStatusFilter('تم الحل', this)">✅ تم الحل</div>
+                </div>
+                <div id="feedbackList" class="feedback-grid">
+                    <div class="loading">⏳ جاري تحميل البيانات...</div>
+                </div>
             </div>
-        </div>
 
         </div>
 
         <div id="updatesTab" class="tab-content">
             <div class="update-form">
                 <h3 style="color: var(--accent-color); margin-bottom: 10px;">🚀 إرسال تحديث جديد</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">أدخل تفاصيل الإصدار الجديد ليتم إخطار المستخدمين في التطبيق بشكل تلقائي.</p>
-                
+                <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">أدخل تفاصيل الإصدار
+                    الجديد ليتم إخطار المستخدمين في التطبيق بشكل تلقائي.</p>
+
                 <div class="update-grid">
                     <div class="filter-group">
                         <label>اسم الإصدار (e.g. 2.1.0)</label>
@@ -820,16 +874,20 @@
 
                 <div class="filter-group" style="margin-bottom: 25px;">
                     <label>ما الجديد في هذا الإصدار؟ (Release Notes)</label>
-                    <textarea id="releaseNotes" style="width: 100%; height: 100px; padding: 15px; border-radius: 12px; border: 2px solid #e0e0e0; font-family: inherit;" placeholder="مثال: إصلاح أخطاء وتحسين الأداء..."></textarea>
+                    <textarea id="releaseNotes"
+                        style="width: 100%; height: 100px; padding: 15px; border-radius: 12px; border: 2px solid #e0e0e0; font-family: inherit;"
+                        placeholder="مثال: إصلاح أخطاء وتحسين الأداء..."></textarea>
                 </div>
 
-                <button class="refresh-btn" onclick="pushUpdate()" style="width: 100%; height: 55px; font-size: 1.1rem;">🚀 نشر التحديث الآن للمستخدمين</button>
+                <button class="refresh-btn" onclick="pushUpdate()"
+                    style="width: 100%; height: 55px; font-size: 1.1rem;">🚀 نشر التحديث الآن للمستخدمين</button>
             </div>
 
             <div class="feedback-container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 style="color: #333;">📜 سجل التحديثات المرسلة</h3>
-                    <button class="refresh-btn" onclick="loadUpdates()" style="padding: 5px 15px; font-size: 0.8rem;">🔄 تحديث السجل</button>
+                    <button class="refresh-btn" onclick="loadUpdates()" style="padding: 5px 15px; font-size: 0.8rem;">🔄
+                        تحديث السجل</button>
                 </div>
                 <div id="updatesList">
                     <div class="loading">⏳ جاري تحميل التحديثات...</div>
@@ -859,20 +917,24 @@
             <div class="analytics-section" style="display: block;">
                 <div class="charts-grid">
                     <div class="chart-container">
-                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">🗺️ أعلى الدول استخداماً</h4>
+                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">🗺️ أعلى الدول
+                            استخداماً</h4>
                         <canvas id="countriesChart"></canvas>
                     </div>
                     <div class="chart-container">
-                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">📱 أنظمة التشغيل</h4>
+                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">📱 أنظمة
+                            التشغيل</h4>
                         <canvas id="osChart"></canvas>
                     </div>
                     <div class="chart-container" style="grid-column: span 2; height: 350px;">
-                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">🎯 الأقسام الأكثر استخداماً (Feature Analytics)</h4>
+                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">🎯 الأقسام
+                            الأكثر استخداماً (Feature Analytics)</h4>
                         <canvas id="featuresUsageChart"></canvas>
                     </div>
                 </div>
                 <div class="chart-container" style="margin-top: 30px; height: 400px; padding-bottom: 40px;">
-                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">📅 النشاط اليومي (آخر 15 يوم)</h4>
+                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">📅 النشاط اليومي
+                        (آخر 15 يوم)</h4>
                     <canvas id="dailyUsageChart"></canvas>
                 </div>
             </div>
@@ -881,9 +943,11 @@
         <div id="featuresTab" class="tab-content">
             <div class="feedback-container">
                 <h3 style="margin-bottom: 25px; color: var(--text-primary);">🎮 التحكم في أقسام التطبيق</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">يمكنك تعطيل أي قسم في حال وجود صيانة أو مشكلة تقنية دون الحاجة لتحديث التطبيق.</p>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;" id="featuresGrid">
+                <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">يمكنك تعطيل أي قسم في
+                    حال وجود صيانة أو مشكلة تقنية دون الحاجة لتحديث التطبيق.</p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"
+                    id="featuresGrid">
                     <!-- Loaded dynamically -->
                 </div>
             </div>
@@ -893,23 +957,37 @@
         <div id="settingsTab" class="tab-content">
             <div class="feedback-container">
                 <h3 style="margin-bottom: 25px; color: var(--text-primary);">🛠️ التحكم في التطبيق</h3>
-                
-                <div class="filter-group" style="margin-bottom: 30px; display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.05); padding: 20px; border-radius: 12px;">
-                    <label style="margin: 0; flex: 1; color: var(--text-primary);">وضع الصيانة (تفعيل سيمنع المستخدمين من الدخول)</label>
-                    <input type="checkbox" id="maintenanceToggle" onchange="updateMaintenanceMode(this.checked)" style="width: 25px; height: 25px; cursor: pointer;">
+
+                <div class="filter-group"
+                    style="margin-bottom: 30px; display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.05); padding: 20px; border-radius: 12px;">
+                    <label style="margin: 0; flex: 1; color: var(--text-primary);">وضع الصيانة (تفعيل سيمنع المستخدمين
+                        من الدخول)</label>
+                    <input type="checkbox" id="maintenanceToggle" onchange="updateMaintenanceMode(this.checked)"
+                        style="width: 25px; height: 25px; cursor: pointer;">
                 </div>
 
-                <div class="filter-group" style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px;">
-                    <label style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">📢 شريط الأنباء المتحرك</label>
-                    
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px;">
+                    <label
+                        style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">📢
+                        شريط الأنباء المتحرك</label>
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                        <div>
-                            <label style="font-size: 12px; color: var(--text-secondary);">العنوان الجانبي (مثلاً: تنبيه)</label>
-                            <input type="text" id="newsLabelInput" placeholder="تنبيه عاجل" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; color: var(--text-secondary);">العنوان الجانبي (مثلاً:
+                                تنبيه)</label>
+                            <input type="text" id="newsLabelInput" placeholder="تنبيه عاجل"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 20px;">
+                            <input type="checkbox" id="newsActiveToggle"
+                                style="width: 20px; height: 20px; cursor: pointer;">
+                            <label style="font-size: 13px; font-weight: bold;">تفعيل الظهور</label>
                         </div>
                         <div>
                             <label style="font-size: 12px; color: var(--text-secondary);">نوع التنبيه (اللون)</label>
-                            <select id="newsTypeInput" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                            <select id="newsTypeInput"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
                                 <option value="urgent">🔴 عاجل (أحمر)</option>
                                 <option value="info">🔵 معلومة (أزرق)</option>
                                 <option value="success">🟢 نجاح (أخضر)</option>
@@ -918,44 +996,171 @@
                         </div>
                     </div>
 
-                    <label style="font-size: 12px; color: var(--text-secondary);">نص الخبر (اتركه فارغاً للإخفاء)</label>
-                    <input type="text" id="newsInput" placeholder="أدخل نص التنبيه هنا..." style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); margin-top: 5px;">
-                    
-                    <button class="refresh-btn" onclick="updateNewsMarquee()" style="margin-top: 15px; width: 100%; background: #ef4444; font-weight: bold;">📢 تحديث شريط الأنباء</button>
+                    <label style="font-size: 12px; color: var(--text-secondary);">نص الخبر (اتركه فارغاً
+                        للإخفاء)</label>
+                    <input type="text" id="newsInput" placeholder="أدخل نص التنبيه هنا..."
+                        style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); margin-top: 5px;">
+
+                    <button class="refresh-btn" onclick="updateNewsMarquee()"
+                        style="margin-top: 15px; width: 100%; background: #ef4444; font-weight: bold;">📢 تحديث شريط
+                        الأنباء</button>
                 </div>
 
-                <div class="filter-group" style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.02);">
-                    <label style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">🎨 لون التطبيق الرئيسي (Theme Color)</label>
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.02);">
+                    <label
+                        style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">🎨
+                        لون التطبيق الرئيسي (Theme Color)</label>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <input type="color" id="themeColorInput" style="width: 60px; height: 40px; border: none; padding: 0; cursor: pointer; background: none;">
-                        <input type="text" id="themeColorHex" placeholder="#178B74" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        <button class="refresh-btn" onclick="updateThemeColor()" style="padding: 10px 20px;">حفظ اللون</button>
-                        <button class="refresh-btn" onclick="resetThemeColor()" style="padding: 10px 20px; background: #6b7280;">استعادة الأصلي</button>
+                        <input type="color" id="themeColorInput"
+                            style="width: 60px; height: 40px; border: none; padding: 0; cursor: pointer; background: none;">
+                        <input type="text" id="themeColorHex" placeholder="#178B74"
+                            style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        <button class="refresh-btn" onclick="updateThemeColor()" style="padding: 10px 20px;">حفظ
+                            اللون</button>
+                        <button class="refresh-btn" onclick="resetThemeColor()"
+                            style="padding: 10px 20px; background: #6b7280;">استعادة الأصلي</button>
                     </div>
-                    <p style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;">سيتم تغيير لون الأزرار والواجهات في التطبيق لهذا اللون فوراً.</p>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;">سيتم تغيير لون الأزرار
+                        والواجهات في التطبيق لهذا اللون فوراً.</p>
                 </div>
 
-                <div class="filter-group" style="margin-bottom: 30px; border: 1px solid #6366f1; padding: 20px; border-radius: 16px; background: rgba(99, 102, 241, 0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1px solid #6366f1; padding: 20px; border-radius: 16px; background: rgba(99, 102, 241, 0.05);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                         <div>
-                            <label style="color: #4f46e5; font-weight: bold; display: block; margin-bottom: 5px;">📢 الرسائل العامة (Broadcast)</label>
-                            <p style="font-size: 0.8rem; color: var(--text-secondary);">رسالة تظهر للجميع عند فتح التطبيق (بديلة للإشعارات).</p>
+                            <label style="color: #4f46e5; font-weight: bold; display: block; margin-bottom: 5px;">📢
+                                الرسائل العامة (Broadcast)</label>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary);">رسالة تظهر للجميع عند فتح
+                                التطبيق (بديلة للإشعارات).</p>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <label style="font-size: 12px;">تفعيل:</label>
-                            <input type="checkbox" id="broadcastToggle" style="width: 20px; height: 20px; cursor: pointer;">
+                            <input type="checkbox" id="broadcastToggle"
+                                style="width: 20px; height: 20px; cursor: pointer;">
                         </div>
                     </div>
-                    
-                    <textarea id="broadcastInput" style="width: 100%; height: 80px; padding: 12px; border-radius: 12px; border: 1.5px solid #6366f1; background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-bottom: 15px;" placeholder="اكتب الرسالة التي ستظهر للمستخدمين هنا..."></textarea>
-                    
-                    <button class="refresh-btn" onclick="updateBroadcast()" style="width: 100%; background: #6366f1; font-weight: bold; height: 45px;">🚀 نشر الرسالة الآن</button>
+
+                    <textarea id="broadcastInput"
+                        style="width: 100%; height: 80px; padding: 12px; border-radius: 12px; border: 1.5px solid #6366f1; background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-bottom: 15px;"
+                        placeholder="اكتب الرسالة التي ستظهر للمستخدمين هنا..."></textarea>
+
+                    <button class="refresh-btn" onclick="updateBroadcast()"
+                        style="width: 100%; background: #6366f1; font-weight: bold; height: 45px;">🚀 نشر الرسالة
+                        الآن</button>
                 </div>
 
-                <div class="filter-group">
-                    <label style="color: var(--text-primary);">خاطرة / حديث اليوم (يظهر في الواجهه الرئيسية)</label>
-                    <textarea id="quoteInput" style="width: 100%; height: 120px; padding: 15px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); margin-top: 10px; font-family: inherit;"></textarea>
-                    <button class="refresh-btn" onclick="updateDailyQuote()" style="margin-top: 15px; width: 100%;">💾 حفظ الخاطرة</button>
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1.5px solid var(--accent-color); padding: 20px; border-radius: 16px; background: rgba(16, 185, 129, 0.05);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <label style="color: var(--accent-color); font-weight: bold; margin: 0;">📜 خاطرة / حديث اليوم
+                            (يظهر في الواجهه الرئيسية)</label>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="font-size: 13px; color: var(--text-secondary);">تفعيل الظهور:</label>
+                            <input type="checkbox" id="quoteToggle" style="width: 20px; height: 20px; cursor: pointer;">
+                        </div>
+                    </div>
+                    <textarea id="quoteInput"
+                        style="width: 100%; height: 100px; padding: 15px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit;"
+                        placeholder="اكتب الخاطرة أو الحديث الذي سيظهر في الصفحة الرئيسية..."></textarea>
+                    <button class="refresh-btn" onclick="updateDailyQuote()"
+                        style="margin-top: 15px; width: 100%; font-weight: bold;">💾 حفظ وتحديث الخاطرة</button>
+                </div>
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1.5px solid #f59e0b; padding: 20px; border-radius: 16px; background: rgba(245, 158, 11, 0.05);">
+                    <label style="color: #d97706; font-weight: bold; display: block; margin-bottom: 15px;">🔗 روابط
+                        التواصل والدعم</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label style="font-size: 13px;">فيسبوك</label>
+                            <input type="text" id="linkFacebook" class="auth-input"
+                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px;">واتساب</label>
+                            <input type="text" id="linkWhatsapp" class="auth-input"
+                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px;">رابط App Store</label>
+                            <input type="text" id="linkAppStore" class="auth-input"
+                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px;">رابط Play Store</label>
+                            <input type="text" id="linkPlayStore" class="auth-input"
+                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
+                        </div>
+                    </div>
+                    <button class="refresh-btn" onclick="updateSupportLinks()"
+                        style="width: 100%; background: #f59e0b; font-weight: bold; margin-top: 15px;">💾 حفظ
+                        الروابط</button>
+                </div>
+
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1.5px solid #ec4899; padding: 20px; border-radius: 16px; background: rgba(236, 72, 153, 0.05);">
+                    <label style="color: #db2777; font-weight: bold; display: block; margin-bottom: 15px;">🕋 تعديل
+                        مواقيت الصلاة (دقائق +/-)</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">الفجر</label>
+                            <input type="number" id="offsetFajr" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">الشروق</label>
+                            <input type="number" id="offsetSunrise" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">الظهر</label>
+                            <input type="number" id="offsetDhuhr" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">العصر</label>
+                            <input type="number" id="offsetAsr" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">المغرب</label>
+                            <input type="number" id="offsetMaghrib" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">العشاء</label>
+                            <input type="number" id="offsetIsha" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                    </div>
+                    <button class="refresh-btn" onclick="updatePrayerOffsets()"
+                        style="width: 100%; background: #ec4899; font-weight: bold; margin-top: 15px;">💾 حفظ تعديلات
+                        المواقيت</button>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin-top: 10px; text-align: center;">هذه
+                        القيم تضاف أو تخصم من التوقيت المحسوب لكل المستخدمين.</p>
+                </div>
+
+                <!-- App Version Management -->
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1.5px solid #6366f1; padding: 20px; border-radius: 16px; background: rgba(99, 102, 241, 0.05);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                        <div>
+                            <label style="color: #4f46e5; font-weight: bold; display: block; margin-bottom: 5px;">🆙
+                                تحديث التطبيق الإجباري</label>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary);">أقل رقم إصدار مسموح به. إذا كان
+                                إصدار المستخدم أقل من هذا الرقم سيطلب منه التحديث.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="minAppVersion" placeholder="مثلاً: 2.0.0"
+                            style="flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid #6366f1; background: var(--card-bg); color: var(--text-primary);">
+                        <button class="refresh-btn" onclick="updateMinVersion()"
+                            style="background: #6366f1; font-weight: bold; height: 45px; padding: 0 25px;">💾
+                            حفظ</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -968,29 +1173,38 @@
                 </div>
 
                 <!-- Add New Banner -->
-                <div class="filter-group" style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
                     <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة بانر جديد</h4>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
                         <div>
                             <label style="font-size: 13px; color: var(--text-secondary);">عنوان البانر (اختياري)</label>
-                            <input type="text" id="bannerTitle" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                            <input type="text" id="bannerTitle"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
                         </div>
                         <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">الرابط عند الضغط (اختياري)</label>
-                            <input type="text" id="bannerLink" placeholder="https://..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                            <label style="font-size: 13px; color: var(--text-secondary);">الرابط عند الضغط
+                                (اختياري)</label>
+                            <input type="text" id="bannerLink" placeholder="https://..."
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
                         </div>
                     </div>
-                    
+
                     <div style="margin-top: 15px;">
                         <label style="font-size: 13px; color: var(--text-secondary);">اختر الصورة</label>
-                        <input type="file" id="bannerFile" accept="image/*" style="display: block; width: 100%; padding: 10px; margin-top: 5px; color: var(--text-primary);">
+                        <input type="file" id="bannerFile" accept="image/*"
+                            style="display: block; width: 100%; padding: 10px; margin-top: 5px; color: var(--text-primary);">
                     </div>
 
-                    <div id="uploadProgress" style="display: none; height: 4px; background: #eee; border-radius: 2px; margin-top: 15px; overflow: hidden;">
-                        <div id="progressBar" style="width: 0%; height: 100%; background: var(--accent-color); transition: width 0.3s;"></div>
+                    <div id="uploadProgress"
+                        style="display: none; height: 4px; background: #eee; border-radius: 2px; margin-top: 15px; overflow: hidden;">
+                        <div id="progressBar"
+                            style="width: 0%; height: 100%; background: var(--accent-color); transition: width 0.3s;">
+                        </div>
                     </div>
 
-                    <button class="refresh-btn" onclick="uploadBanner()" style="margin-top: 20px; width: 100%; font-weight: bold;">➕ رفع البانر ونشره</button>
+                    <button class="refresh-btn" onclick="uploadBanner()"
+                        style="margin-top: 20px; width: 100%; font-weight: bold;">➕ رفع البانر ونشره</button>
                 </div>
 
                 <!-- Banners List -->
@@ -1000,11 +1214,202 @@
             </div>
         </div>
 
+        <div id="contentTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">✍️ إدارة المحتوى الديناميكي (CMS)</h3>
+                </div>
+
+                <!-- Add New Content -->
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة محتوى جديد</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">العنوان</label>
+                            <input type="text" id="contentTitle" placeholder="مثال: فضل صيام الاثنين"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">النوع</label>
+                            <select id="contentType"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="article">مقال / خاطرة</option>
+                                <option value="tip">نصيحة يومية</option>
+                                <option value="announcement">إعلان هام</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">المحتوى (النص)</label>
+                        <textarea id="contentBody" placeholder="اكتب المحتوى هنا..."
+                            style="width: 100%; height: 120px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">رابط صورة (اختياري)</label>
+                        <input type="text" id="contentImage" placeholder="https://..."
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+
+                    <button class="refresh-btn" onclick="publishContent()"
+                        style="margin-top: 20px; width: 100%; font-weight: bold;">📝 نشر المحتوى</button>
+                </div>
+
+                <!-- Content List -->
+                <div id="contentList">
+                    <div class="loading">⏳ جاري تحميل المحتوى...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Radio Tab -->
+        <div id="radioTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">📻 إدارة إذاعات القرآن المخصصة</h3>
+                </div>
+
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px; background: rgba(59, 130, 246, 0.05);">
+                    <h4 style="margin-top: 0; color: #3b82f6;">✨ إضافة إذاعة جديدة</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">اسم الإذاعة</label>
+                            <input type="text" id="radioName" placeholder="مثلاً: إذاعة كبار العلماء"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">رابط البث (URL)</label>
+                            <input type="text" id="radioUrl" placeholder="https://..."
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+                    <button class="refresh-btn" onclick="addCustomRadio()"
+                        style="margin-top: 15px; width: 100%; background: #3b82f6; font-weight: bold;">💾 إضافة
+                        الإذاعة</button>
+                </div>
+
+                <div id="radioList">
+                    <!-- Radio items will load here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="kidsStoriesTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">👶 إدارة قصص ركن الطفل</h3>
+                </div>
+
+                <!-- Add New Kids Story -->
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة قصة جديدة للأطفال</h4>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">العنوان</label>
+                            <input type="text" id="kidsStoryTitle" placeholder="مثال: قصة الصدق"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">إيموجي</label>
+                            <input type="text" id="kidsStoryEmoji" placeholder="📖"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">النجوم</label>
+                            <input type="number" id="kidsStoryStars" value="20"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">محتوى القصة (فقرات - كل سطر
+                            فقرة)</label>
+                        <textarea id="kidsStoryParagraphs" placeholder="اكتب فقرات القصة هنا، كل فقرة في سطر جديد..."
+                            style="width: 100%; height: 150px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">الحكمة / الدرس المستفاد</label>
+                        <input type="text" id="kidsStoryMoral" placeholder="مثال: الصدق ينجي صاحبه"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+
+                    <button class="refresh-btn" onclick="addKidsStory()"
+                        style="margin-top: 20px; width: 100%; font-weight: bold;">📝 إضافة القصة</button>
+                </div>
+
+                <!-- Kids Stories List -->
+                <div id="kidsStoriesList">
+                    <div class="loading">⏳ جاري تحميل القصص...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="charityStoriesTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">🤲 إدارة قصص الصدقات</h3>
+                </div>
+
+                <!-- Add New Charity Story -->
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة قصة صدقة جديدة</h4>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">العنوان</label>
+                            <input type="text" id="charityStoryTitle" placeholder="مثال: فضل الصدقة"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">التصنيف</label>
+                            <select id="charityStoryCategory"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="سيرة">سيرة</option>
+                                <option value="حديث">حديث</option>
+                                <option value="معاصر">معاصر</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">إيموجي</label>
+                            <input type="text" id="charityStoryEmoji" placeholder="💰"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">نص القصة</label>
+                        <textarea id="charityStoryContent" placeholder="اكتب نص القصة هنا..."
+                            style="width: 100%; height: 150px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">المصدر</label>
+                        <input type="text" id="charityStorySource" placeholder="مثال: رواه البخاري / قصة واقعية"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+
+                    <button class="refresh-btn" onclick="addCharityStory()"
+                        style="margin-top: 20px; width: 100%; font-weight: bold;">📝 إضافة القصة</button>
+                </div>
+
+                <!-- Charity Stories List -->
+                <div id="charityStoriesList">
+                    <div class="loading">⏳ جاري تحميل القصص...</div>
+                </div>
+            </div>
+        </div>
+
         <div id="errorsTab" class="tab-content">
             <div class="feedback-container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 style="color: var(--text-primary);">⚠️ سجل أعطال التطبيق</h3>
-                    <button class="refresh-btn" onclick="loadErrors()" style="padding: 5px 15px; font-size: 0.8rem;">🔄 تحديث السجل</button>
+                    <button class="refresh-btn" onclick="loadErrors()" style="padding: 5px 15px; font-size: 0.8rem;">🔄
+                        تحديث السجل</button>
                 </div>
                 <div id="errorsList">
                     <div class="loading">⏳ جاري تحميل السجلات...</div>
@@ -1035,7 +1440,7 @@
         // Supabase Configuration
         const SUPABASE_URL = 'https://kghwboxevphvxtsagrer.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_Kl3FXiXa7AHEokVvCiImmQ_03UL91M0';
-        
+
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let allFeedback = [];
@@ -1045,14 +1450,15 @@
         let countriesChart = null;
         let osChart = null;
         let dailyUsageChart = null;
-        
+        let featuresUsageChart = null;
+
         function setStatusFilter(status, el) {
             document.getElementById('statusFilter').value = status;
-            
+
             // Update UI
             document.querySelectorAll('.status-tab').forEach(tab => tab.classList.remove('active'));
             if (el) el.classList.add('active');
-            
+
             filterFeedback();
         }
 
@@ -1071,21 +1477,35 @@
 
         // Simple Auth Check
         function checkAuth() {
-            const password = document.getElementById('authPassword').value;
+            const password = document.getElementById('authPassword').value.trim();
             const correctPassword = 'admin'; // You can change this
-            
+
             if (password === correctPassword) {
-                document.getElementById('authOverlay').style.display = 'none';
-                localStorage.setItem('dashboardAuth', 'true');
-                loadFeedback();
-                loadUpdates();
-                loadAnalytics();
-                loadSettings();
-                loadErrors();
+                try {
+                    document.getElementById('authOverlay').style.display = 'none';
+                    localStorage.setItem('dashboardAuth', 'true');
+                    loadFeedback();
+                    loadUpdates();
+                    loadAnalytics();
+                    loadSettings();
+                    loadErrors();
+                    loadKidsStories();
+                    loadCharityStories();
+                } catch (e) {
+                    console.error('Initial load failure:', e);
+                    alert('⚠️ فشل تحميل بعض البيانات بعد الدخول: ' + e.message);
+                }
             } else {
                 document.getElementById('authError').style.display = 'block';
             }
         }
+
+        // Handle Enter key on password input
+        document.getElementById('authPassword').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkAuth();
+            }
+        });
 
         // Check auth on load
         window.onload = () => {
@@ -1096,8 +1516,35 @@
                 loadAnalytics();
                 loadSettings();
                 loadErrors();
+                loadKidsStories();
+                loadCharityStories();
             }
         };
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+
+            const tabEl = document.getElementById(tabName + 'Tab');
+            const btnEl = document.getElementById(tabName + 'TabBtn');
+
+            if (tabEl) tabEl.classList.add('active');
+            if (btnEl) btnEl.classList.add('active');
+
+            if (tabName === 'analytics') {
+                loadAnalytics();
+            } else if (tabName === 'features') {
+                loadFeatures();
+            } else if (tabName === 'content') {
+                loadContent();
+            } else if (tabName === 'kidsStories') {
+                loadKidsStories();
+            } else if (tabName === 'charityStories') {
+                loadCharityStories();
+            } else if (tabName === 'radio') {
+                loadRadios();
+            }
+        }
 
         // Load feedback from Supabase
         async function loadFeedback() {
@@ -1190,7 +1637,7 @@
             }).reverse();
 
             last14Days.forEach(d => dates[d] = 0);
-            
+
             allFeedback.forEach(f => {
                 const date = new Date(f.created_at).toISOString().split('T')[0];
                 if (dates[date] !== undefined) dates[date]++;
@@ -1263,11 +1710,11 @@
                     .eq('id', id);
 
                 if (error) throw error;
-                
+
                 // Update local state
                 const index = allFeedback.findIndex(f => f.id === id);
                 if (index !== -1) allFeedback[index].status = newStatus;
-                
+
                 alert('✅ تم تحديث الحالة بنجاح');
             } catch (error) {
                 console.error(error);
@@ -1285,11 +1732,11 @@
                     .eq('id', id);
 
                 if (error) throw error;
-                
+
                 // Update local state
                 const index = allFeedback.findIndex(f => f.id === id);
                 if (index !== -1) allFeedback[index].admin_notes = notes;
-                
+
                 alert('✅ تم حفظ الملاحظات');
             } catch (error) {
                 console.error(error);
@@ -1307,11 +1754,11 @@
                     .eq('id', id);
 
                 if (error) throw error;
-                
+
                 // Update local state
                 const index = allFeedback.findIndex(f => f.id === id);
                 if (index !== -1) allFeedback[index].reply = reply;
-                
+
                 alert('✅ تم إرسال الرد للمستخدم');
             } catch (error) {
                 console.error(error);
@@ -1322,7 +1769,7 @@
         // Delete Feedback
         async function deleteFeedback(id) {
             if (!confirm('⚠️ هل أنت متأكد من حذف هذه الشكوى نهائياً؟')) return;
-            
+
             try {
                 // Request select to verify deletion
                 const { data, error } = await supabaseClient
@@ -1332,7 +1779,7 @@
                     .select();
 
                 if (error) throw error;
-                
+
                 if (!data || data.length === 0) {
                     alert('⚠️ لم يتم حذف أي سجل. قد يكون السبب قيود الصلاحيات (RLS) في Supabase.');
                     return;
@@ -1343,7 +1790,7 @@
                 filterFeedback(); // Refresh the list with current filters
                 updateStats();
                 initCharts();
-                
+
                 alert('✅ تم الحذف بنجاح');
             } catch (error) {
                 console.error(error);
@@ -1357,7 +1804,7 @@
             const total = allFeedback.length;
             const problems = allFeedback.filter(f => f.category === 'مشكلة').length;
             const suggestions = allFeedback.filter(f => f.category === 'اقتراح').length;
-            
+
             const sevenDaysAgo = new Date();
             sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
             const recent = allFeedback.filter(f => new Date(f.created_at) > sevenDaysAgo).length;
@@ -1417,12 +1864,12 @@
                     <div class="feedback-meta">
                         <div class="meta-item">
                             📅 ${new Date(item.created_at).toLocaleDateString('ar-EG', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })}
                         </div>
                         ${item.image_urls && item.image_urls.length > 0 ? `
                             <div class="meta-item">
@@ -1482,7 +1929,7 @@
             }
 
             if (search) {
-                filtered = filtered.filter(f => 
+                filtered = filtered.filter(f =>
                     f.name.toLowerCase().includes(search) ||
                     f.email.toLowerCase().includes(search) ||
                     f.description.toLowerCase().includes(search)
@@ -1507,8 +1954,13 @@
         document.getElementById('statusFilter').addEventListener('change', filterFeedback);
         document.getElementById('ratingFilter').addEventListener('change', filterFeedback);
         document.getElementById('searchInput').addEventListener('input', filterFeedback);
-        document.getElementById('startDate').addEventListener('change', filterFeedback);
-        document.getElementById('endDate').addEventListener('change', filterFeedback);
+
+        const startDateEl = document.getElementById('startDate');
+        if (startDateEl) startDateEl.addEventListener('change', filterFeedback);
+
+        const endDateEl = document.getElementById('endDate');
+        if (endDateEl) endDateEl.addEventListener('change', filterFeedback);
+
         document.getElementById('themeColorInput').addEventListener('input', (e) => {
             document.getElementById('themeColorHex').value = e.target.value;
         });
@@ -1536,11 +1988,11 @@
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
-            
+
             // Show selected tab
             const content = document.getElementById(tabId + 'Tab');
             const btn = document.getElementById(tabId + 'TabBtn');
-            
+
             if (content && btn) {
                 content.classList.add('active');
                 btn.classList.add('active');
@@ -1560,6 +2012,8 @@
                 loadBanners();
             } else if (tabId === 'features') {
                 loadFeatures();
+            } else if (tabId === 'content') {
+                loadContent();
             }
         }
 
@@ -1590,7 +2044,7 @@
 
                 alert('✅ تم نشر التحديث بنجاح!');
                 loadUpdates();
-                
+
                 // Clear form
                 document.getElementById('versionName').value = '';
                 document.getElementById('versionCode').value = '';
@@ -1661,7 +2115,7 @@
                     .select();
 
                 if (error) throw error;
-                
+
                 if (!data || data.length === 0) {
                     alert('⚠️ لم يتم الحذف من قاعدة البيانات. تأكد من صلاحيات DELETE على جدول app_updates.');
                     return;
@@ -1807,7 +2261,7 @@
             // 5. Feature Usage Chart
             const fCounts = {};
             APP_FEATURES.forEach(f => fCounts[f.name] = 0);
-            
+
             if (window.featureUsageData) {
                 window.featureUsageData.forEach(u => {
                     const feature = APP_FEATURES.find(f => f.id === u.feature_name);
@@ -1849,17 +2303,50 @@
                     const news = data.find(s => s.key === 'news_marquee');
                     const newsLabel = data.find(s => s.key === 'news_marquee_label');
                     const newsType = data.find(s => s.key === 'news_marquee_type');
+                    const newsActive = data.find(s => s.key === 'news_active');
+                    const minVersion = data.find(s => s.key === 'min_required_version');
 
                     const themeColor = data.find(s => s.key === 'primary_hex_color');
                     const broadcastMsg = data.find(s => s.key === 'broadcast_message');
                     const broadcastActive = data.find(s => s.key === 'broadcast_active');
+                    const quoteActive = data.find(s => s.key === 'quote_active');
+
+                    // Support Links
+                    const fb = data.find(s => s.key === 'link_facebook');
+                    const wa = data.find(s => s.key === 'link_whatsapp');
+                    const as = data.find(s => s.key === 'link_appstore');
+                    const ps = data.find(s => s.key === 'link_playstore');
+
+                    // Prayer Offsets
+                    const oFajr = data.find(s => s.key === 'prayer_offset_fajr');
+                    const oSun = data.find(s => s.key === 'prayer_offset_sunrise');
+                    const oDhuhr = data.find(s => s.key === 'prayer_offset_dhuhr');
+                    const oAsr = data.find(s => s.key === 'prayer_offset_asr');
+                    const oMag = data.find(s => s.key === 'prayer_offset_maghrib');
+                    const oIsh = data.find(s => s.key === 'prayer_offset_isha');
 
                     if (maintenance) document.getElementById('maintenanceToggle').checked = maintenance.value === 'true';
                     if (quote) document.getElementById('quoteInput').value = quote.value;
+                    if (quoteActive) document.getElementById('quoteToggle').checked = quoteActive.value === 'true';
+
+                    if (fb) document.getElementById('linkFacebook').value = fb.value;
+                    if (wa) document.getElementById('linkWhatsapp').value = wa.value;
+                    if (as) document.getElementById('linkAppStore').value = as.value;
+                    if (ps) document.getElementById('linkPlayStore').value = ps.value;
+
+                    if (oFajr) document.getElementById('offsetFajr').value = oFajr.value;
+                    if (oSun) document.getElementById('offsetSunrise').value = oSun.value;
+                    if (oDhuhr) document.getElementById('offsetDhuhr').value = oDhuhr.value;
+                    if (oAsr) document.getElementById('offsetAsr').value = oAsr.value;
+                    if (oMag) document.getElementById('offsetMaghrib').value = oMag.value;
+                    if (oIsh) document.getElementById('offsetIsha').value = oIsh.value;
+
                     if (news) document.getElementById('newsInput').value = news.value;
                     if (newsLabel) document.getElementById('newsLabelInput').value = newsLabel.value;
                     if (newsType) document.getElementById('newsTypeInput').value = newsType.value;
-                    
+                    if (newsActive) document.getElementById('newsActiveToggle').checked = newsActive.value === 'true';
+                    if (minVersion) document.getElementById('minAppVersion').value = minVersion.value;
+
                     if (themeColor) {
                         document.getElementById('themeColorInput').value = themeColor.value;
                         document.getElementById('themeColorHex').value = themeColor.value;
@@ -1878,7 +2365,7 @@
         async function updateThemeColor() {
             let color = document.getElementById('themeColorHex').value.trim();
             if (!color.startsWith('#')) color = '#' + color;
-            
+
             try {
                 const { error } = await supabaseClient
                     .from('app_settings')
@@ -1894,7 +2381,7 @@
 
         async function resetThemeColor() {
             if (!confirm('هل أنت متأكد من العودة للون التطبيق الأصلي؟')) return;
-            
+
             try {
                 const { error } = await supabaseClient
                     .from('app_settings')
@@ -1948,14 +2435,16 @@
             const news = document.getElementById('newsInput').value;
             const label = document.getElementById('newsLabelInput').value;
             const type = document.getElementById('newsTypeInput').value;
-            
+            const active = document.getElementById('newsActiveToggle').checked;
+
             try {
                 const { error } = await supabaseClient
                     .from('app_settings')
                     .upsert([
                         { key: 'news_marquee', value: news },
                         { key: 'news_marquee_label', value: label },
-                        { key: 'news_marquee_type', value: type }
+                        { key: 'news_marquee_type', value: type },
+                        { key: 'news_active', value: active.toString() }
                     ], { onConflict: 'key' });
 
                 if (error) throw error;
@@ -1968,16 +2457,181 @@
 
         async function updateDailyQuote() {
             const quote = document.getElementById('quoteInput').value;
+            const active = document.getElementById('quoteToggle').checked;
             try {
                 const { error } = await supabaseClient
                     .from('app_settings')
-                    .upsert({ key: 'quote_of_the_day', value: quote });
+                    .upsert([
+                        { key: 'quote_of_the_day', value: quote },
+                        { key: 'quote_active', value: active.toString() }
+                    ]);
 
                 if (error) throw error;
-                alert('✅ تم حفظ الخاطرة بنجاح');
+                alert('✅ تم حفظ الخاطرة وباقي الإعدادات بنجاح');
                 loadSettings();
             } catch (error) {
-                alert('❌ فشل حفظ الخاطرة: ' + error.message);
+                alert('❌ فشل الحفظ: ' + error.message);
+            }
+        }
+
+        async function updateSupportLinks() {
+            const fb = document.getElementById('linkFacebook').value;
+            const wa = document.getElementById('linkWhatsapp').value;
+            const as = document.getElementById('linkAppStore').value;
+            const ps = document.getElementById('linkPlayStore').value;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('app_settings')
+                    .upsert([
+                        { key: 'link_facebook', value: fb },
+                        { key: 'link_whatsapp', value: wa },
+                        { key: 'link_appstore', value: as },
+                        { key: 'link_playstore', value: ps }
+                    ]);
+
+                if (error) throw error;
+                alert('✅ تم حفظ الروابط بنجاح');
+            } catch (error) {
+                alert('❌ فشل الحفظ: ' + error.message);
+            }
+        }
+
+        async function updateMinVersion() {
+            const version = document.getElementById('minAppVersion').value;
+            if (!version) return alert('⚠️ يرجى إدخال رقم الإصدار');
+
+            try {
+                const { error } = await supabaseClient
+                    .from('app_settings')
+                    .upsert({ key: 'min_required_version', value: version });
+
+                if (error) throw error;
+                alert('✅ تم تحديث أقل إصدار مطلوب بنجاح');
+            } catch (e) {
+                alert('❌ فشل التحديث: ' + e.message);
+            }
+        }
+
+        async function updatePrayerOffsets() {
+            const oFajr = document.getElementById('offsetFajr').value;
+            const oSun = document.getElementById('offsetSunrise').value;
+            const oDhuhr = document.getElementById('offsetDhuhr').value;
+            const oAsr = document.getElementById('offsetAsr').value;
+            const oMag = document.getElementById('offsetMaghrib').value;
+            const oIsh = document.getElementById('offsetIsha').value;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('app_settings')
+                    .upsert([
+                        { key: 'prayer_offset_fajr', value: oFajr },
+                        { key: 'prayer_offset_sunrise', value: oSun },
+                        { key: 'prayer_offset_dhuhr', value: oDhuhr },
+                        { key: 'prayer_offset_asr', value: oAsr },
+                        { key: 'prayer_offset_maghrib', value: oMag },
+                        { key: 'prayer_offset_isha', value: oIsh }
+                    ]);
+
+                if (error) throw error;
+                alert('✅ تم حفظ تعديلات المواقيت بنجاح');
+            } catch (error) {
+                alert('❌ فشل الحفظ: ' + error.message);
+            }
+        }
+
+        // Radio Management
+        async function loadRadios() {
+            const list = document.getElementById('radioList');
+            list.innerHTML = '<div class="loading">⏳ جاري تحميل الإذاعات...</div>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('custom_radios')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><h3>لا توجد إذاعات مخصصة</h3><p>أضف إذاعة جديدة لتظهر في التطبيق بجانب الإذاعات الرئيسية</p></div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(r => `
+                    <div class="update-item" style="border-right: 5px solid ${r.is_active ? '#3b82f6' : '#ccc'}; background: var(--card-bg);">
+                        <div style="flex: 1;">
+                            <h4 style="margin: 0 0 5px 0; color: var(--text-primary); text-align: right;">${r.name}</h4>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); word-break: break-all; text-align: left;" dir="ltr">🔗 ${r.url}</div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-right: 20px;">
+                            <button onclick="toggleRadioActive('${r.id}', ${r.is_active})" 
+                                style="background: ${r.is_active ? '#10b981' : '#6b7280'}; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
+                                ${r.is_active ? '✅ نشط' : '⚪ معطل'}
+                            </button>
+                            <button onclick="deleteRadio('${r.id}')" 
+                                style="background: #ef4444; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
+                                🗑️ حذف
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                list.innerHTML = `<div class="error">❌ خطأ في التحميل: ${error.message}</div>`;
+            }
+        }
+
+        async function addCustomRadio() {
+            const name = document.getElementById('radioName').value;
+            const url = document.getElementById('radioUrl').value;
+
+            if (!name || !url) {
+                alert('⚠️ يرجى إدخال الاسم والرابط');
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('custom_radios')
+                    .insert([{ name, url, is_active: true }]);
+
+                if (error) throw error;
+
+                alert('✅ تم إضافة الإذاعة بنجاح');
+                document.getElementById('radioName').value = '';
+                document.getElementById('radioUrl').value = '';
+                loadRadios();
+            } catch (error) {
+                alert('❌ فشل الإضافة: ' + error.message);
+            }
+        }
+
+        async function toggleRadioActive(id, currentStatus) {
+            try {
+                const { error } = await supabaseClient
+                    .from('custom_radios')
+                    .update({ is_active: !currentStatus })
+                    .eq('id', id);
+
+                if (error) throw error;
+                loadRadios();
+            } catch (e) {
+                alert('❌ فشل تغيير الحالة: ' + e.message);
+            }
+        }
+
+        async function deleteRadio(id) {
+            if (!confirm('هل أنت متأكد من حذف هذه الإذاعة؟')) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('custom_radios')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+                loadRadios();
+            } catch (e) {
+                alert('❌ فشل الحذف: ' + e.message);
             }
         }
 
@@ -2047,7 +2701,7 @@
         async function loadBanners() {
             const list = document.getElementById('bannersList');
             list.innerHTML = '<div class="loading">⏳ جاري تحميل البانرات...</div>';
-            
+
             try {
                 const { data, error } = await supabaseClient
                     .from('banners')
@@ -2068,8 +2722,8 @@
                             <h4 style="margin: 0 0 5px 0; color: var(--text-primary);">${b.title || 'بدون عنوان'}</h4>
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px; word-break: break-all;">🔗 ${b.link_url || 'لا يوجد رابط'}</div>
                             <div style="display: flex; gap: 10px;">
-                                <button onclick="toggleBannerActive('${b.id}', ${b.is_active})" style="background: ${b.is_active ? '#10b981' : '#6b7280'}; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
-                                    ${b.is_active ? '✅ نشط' : '⚪ معطل'}
+                                <button onclick="toggleBannerActive('${b.id}', ${b.is_active})" style="background: ${b.is_active ? '#6b7280' : 'var(--accent-color)'}; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
+                                    ${b.is_active ? '👁️ إخفاء' : '👁️ إظهار'}
                                 </button>
                                 <button onclick="deleteBanner('${b.id}')" style="background: #ef4444; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
                                     🗑️ حذف
@@ -2208,7 +2862,7 @@
                 grid.innerHTML = APP_FEATURES.map(feature => {
                     const settingKey = `section_${feature.id}_status`;
                     const status = data.find(s => s.key === settingKey)?.value || 'active';
-                    
+
                     return `
                         <div class="update-item" style="flex-direction: column; align-items: flex-start; gap: 15px;">
                             <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
@@ -2248,7 +2902,315 @@
             }
         }
 
+        // --- CONTENT MANAGEMENT (CMS) ---
 
+        async function loadContent() {
+            const list = document.getElementById('contentList');
+            list.innerHTML = '<div class="loading">⏳ جاري تحميل المحتوى...</div>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('app_content')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><h3>لا يوجد محتوى</h3><p>أضف محتوى جديد ليظهر في التطبيق</p></div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(item => `
+                    <div class="feedback-card" style="border-left: 5px solid ${item.is_active ? '#10b981' : '#ccc'};">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <h3 style="margin-bottom: 5px;">${item.title}</h3>
+                                <span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${item.type}</span>
+                                ${!item.is_active ? '<span class="category-badge" style="background: #eee; color: #666;">غير نشط</span>' : ''}
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="refresh-btn" onclick="toggleContentActive('${item.id}', ${item.is_active})" 
+                                    style="padding: 5px 10px; font-size: 0.8rem; background: ${item.is_active ? '#6b7280' : 'var(--accent-color)'}; border: none;">
+                                    ${item.is_active ? '👁️ إخفاء' : '👁️ إظهار'}
+                                </button>
+                                <button class="delete-btn" onclick="deleteContent('${item.id}')">🗑️ حذف</button>
+                            </div>
+                        </div>
+                        <p style="margin-top: 10px; color: var(--text-secondary); line-height: 1.6;">${item.body}</p>
+                        ${item.image_url ? `<img src="${item.image_url}" style="margin-top: 10px; height: 100px; border-radius: 8px;">` : ''}
+                        <div style="margin-top: 15px; font-size: 0.8rem; color: #aaa;">
+                            تاريخ النشر: ${new Date(item.created_at).toLocaleDateString()}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                list.innerHTML = `<div class="error">❌ خطأ: ${error.message}</div>`;
+            }
+        }
+
+        async function publishContent() {
+            const title = document.getElementById('contentTitle').value;
+            const body = document.getElementById('contentBody').value;
+            const type = document.getElementById('contentType').value;
+            const image = document.getElementById('contentImage').value;
+
+            if (!title || !body) {
+                alert('⚠️ يرجى كتابة العنوان والمحتوى');
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('app_content')
+                    .insert([{ title, body, type, image_url: image || null, is_active: true }]);
+
+                if (error) throw error;
+
+                alert('✅ تم نشر المحتوى بنجاح!');
+                document.getElementById('contentTitle').value = '';
+                document.getElementById('contentBody').value = '';
+                document.getElementById('contentImage').value = '';
+                loadContent();
+            } catch (error) {
+                console.error(error);
+                alert('❌ فشل النشر: ' + error.message);
+            }
+        }
+
+        async function deleteContent(id) {
+            if (!confirm('⚠️ هل أنت متأكد من حذف هذا المحتوى؟')) return;
+            try {
+                const { error } = await supabaseClient.from('app_content').delete().eq('id', id);
+                if (error) throw error;
+                loadContent();
+            } catch (e) {
+                alert('❌ فشل الحذف: ' + e.message);
+            }
+        }
+
+        async function toggleContentActive(id, currentStatus) {
+            try {
+                const { error } = await supabaseClient
+                    .from('app_content')
+                    .update({ is_active: !currentStatus })
+                    .eq('id', id);
+
+                if (error) throw error;
+                loadContent();
+            } catch (e) {
+                alert('❌ فشل التغيير: ' + e.message);
+            }
+        }
+
+        // --- STORIES MANAGEMENT ---
+
+        // --- Kids Stories ---
+        async function loadKidsStories() {
+            const list = document.getElementById('kidsStoriesList');
+            list.innerHTML = '<div class="loading">⏳ جاري تحميل القصص...</div>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('kids_stories')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><h3>لا توجد قصص</h3><p>أضف قصة جديدة للأطفال</p></div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(story => `
+                    <div class="feedback-card" style="border-right: 5px solid ${story.is_visible ? 'var(--accent-color)' : '#ccc'};">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="display: flex; gap: 15px; align-items: center;">
+                                <span style="font-size: 2rem;">${story.emoji}</span>
+                                <div>
+                                    <h3 style="margin-bottom: 5px;">${story.title}</h3>
+                                    <span class="category-badge" style="background: #fef3c7; color: #d97706;">⭐ ${story.stars_reward} نجمة</span>
+                                    ${!story.is_visible ? '<span class="category-badge" style="background: #eee; color: #666;">مخفي</span>' : '<span class="category-badge" style="background: #d1fae5; color: #059669;">ظاهر</span>'}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="refresh-btn" onclick="toggleKidsStoryVisibility('${story.id}', ${story.is_visible})" style="padding: 5px 10px; font-size: 0.8rem; background: ${story.is_visible ? '#6b7280' : 'var(--accent-color)'};">
+                                    ${story.is_visible ? '👁️ إخفاء' : '👁️ إظهار'}
+                                </button>
+                                <button class="delete-btn" onclick="deleteKidsStory('${story.id}')">🗑️ حذف</button>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; background: var(--card-bg); padding: 10px; border-radius: 8px;">
+                            <p style="font-weight: bold; color: var(--accent-color); margin-bottom: 5px;">فقرات القصة:</p>
+                            <ul style="margin-right: 20px; font-size: 0.9rem; color: var(--text-secondary);">
+                                ${(story.paragraphs || []).map(p => `<li>${p}</li>`).join('')}
+                            </ul>
+                            <p style="margin-top: 10px; font-style: italic; color: var(--text-primary);">💡 الدرس: ${story.moral}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                list.innerHTML = `<div class="error">❌ خطأ في تحميل القصص: ${error.message}</div>`;
+            }
+        }
+
+        async function addKidsStory() {
+            const title = document.getElementById('kidsStoryTitle').value;
+            const emoji = document.getElementById('kidsStoryEmoji').value;
+            const stars = parseInt(document.getElementById('kidsStoryStars').value);
+            const content = document.getElementById('kidsStoryParagraphs').value;
+            const moral = document.getElementById('kidsStoryMoral').value;
+
+            if (!title || !content || !moral) {
+                alert('⚠️ يرجى تعبئة جميع الحقول الأساسية');
+                return;
+            }
+
+            const paragraphs = content.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+
+            try {
+                const { error } = await supabaseClient
+                    .from('kids_stories')
+                    .insert([{ title, emoji: emoji || '📖', stars_reward: stars, paragraphs, moral, is_visible: true }]);
+
+                if (error) throw error;
+
+                alert('✅ تم إضافة القصة بنجاح!');
+                document.getElementById('kidsStoryTitle').value = '';
+                document.getElementById('kidsStoryEmoji').value = '';
+                document.getElementById('kidsStoryParagraphs').value = '';
+                document.getElementById('kidsStoryMoral').value = '';
+                loadKidsStories();
+            } catch (error) {
+                alert('❌ فشل الإضافة: ' + error.message);
+            }
+        }
+
+        async function toggleKidsStoryVisibility(id, currentStatus) {
+            try {
+                const { error } = await supabaseClient
+                    .from('kids_stories')
+                    .update({ is_visible: !currentStatus })
+                    .eq('id', id);
+
+                if (error) throw error;
+                loadKidsStories();
+            } catch (error) {
+                alert('❌ فشل تغيير الظهور: ' + error.message);
+            }
+        }
+
+        async function deleteKidsStory(id) {
+            if (!confirm('⚠️ حذف القصة نهائياً؟')) return;
+            try {
+                const { error } = await supabaseClient.from('kids_stories').delete().eq('id', id);
+                if (error) throw error;
+                loadKidsStories();
+            } catch (error) {
+                alert('❌ فشل الحذف: ' + error.message);
+            }
+        }
+
+        // --- Charity Stories ---
+        async function loadCharityStories() {
+            const list = document.getElementById('charityStoriesList');
+            list.innerHTML = '<div class="loading">⏳ جاري تحميل القصص...</div>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('charity_stories')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><h3>لا توجد قصص</h3><p>أضف قصة صدقة جديدة</p></div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(story => `
+                    <div class="feedback-card" style="border-right: 5px solid ${story.is_visible ? 'var(--accent-color)' : '#ccc'};">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="display: flex; gap: 15px; align-items: center;">
+                                <span style="font-size: 2rem;">${story.emoji}</span>
+                                <div>
+                                    <h3 style="margin-bottom: 5px;">${story.title}</h3>
+                                    <span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${story.category}</span>
+                                    ${!story.is_visible ? '<span class="category-badge" style="background: #eee; color: #666;">مخفي</span>' : '<span class="category-badge" style="background: #d1fae5; color: #059669;">ظاهر</span>'}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="refresh-btn" onclick="toggleCharityStoryVisibility('${story.id}', ${story.is_visible})" style="padding: 5px 10px; font-size: 0.8rem; background: ${story.is_visible ? '#6b7280' : 'var(--accent-color)'};">
+                                    ${story.is_visible ? '👁️ إخفاء' : '👁️ إظهار'}
+                                </button>
+                                <button class="delete-btn" onclick="deleteCharityStory('${story.id}')">🗑️ حذف</button>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; color: var(--text-primary); line-height: 1.8;">${story.content}</p>
+                        <p style="margin-top: 10px; font-size: 0.85rem; color: var(--text-secondary);">📚 المصدر: ${story.source}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                list.innerHTML = `<div class="error">❌ خطأ في تحميل القصص: ${error.message}</div>`;
+            }
+        }
+
+        async function addCharityStory() {
+            const title = document.getElementById('charityStoryTitle').value;
+            const category = document.getElementById('charityStoryCategory').value;
+            const emoji = document.getElementById('charityStoryEmoji').value;
+            const content = document.getElementById('charityStoryContent').value;
+            const source = document.getElementById('charityStorySource').value;
+
+            if (!title || !content || !source) {
+                alert('⚠️ يرجى تعبئة جميع الحقول الأساسية');
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('charity_stories')
+                    .insert([{ title, category, emoji: emoji || '🤲', content, source, is_visible: true }]);
+
+                if (error) throw error;
+
+                alert('✅ تم إضافة القصة بنجاح!');
+                document.getElementById('charityStoryTitle').value = '';
+                document.getElementById('charityStoryContent').value = '';
+                document.getElementById('charityStorySource').value = '';
+                loadCharityStories();
+            } catch (error) {
+                alert('❌ فشل الإضافة: ' + error.message);
+            }
+        }
+
+        async function toggleCharityStoryVisibility(id, currentStatus) {
+            try {
+                const { error } = await supabaseClient
+                    .from('charity_stories')
+                    .update({ is_visible: !currentStatus })
+                    .eq('id', id);
+
+                if (error) throw error;
+                loadCharityStories();
+            } catch (error) {
+                alert('❌ فشل تغيير الظهور: ' + error.message);
+            }
+        }
+
+        async function deleteCharityStory(id) {
+            if (!confirm('⚠️ حذف القصة نهائياً؟')) return;
+            try {
+                const { error } = await supabaseClient.from('charity_stories').delete().eq('id', id);
+                if (error) throw error;
+                loadCharityStories();
+            } catch (error) {
+                alert('❌ فشل الحذف: ' + error.message);
+            }
+        }
     </script>
 </body>
+
 </html>
