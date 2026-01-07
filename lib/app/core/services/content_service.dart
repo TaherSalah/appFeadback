@@ -57,4 +57,20 @@ class ContentService {
       return [];
     }
   }
+
+  /// Fetch Radio Stations
+  Future<List<Map<String, dynamic>>> getRadioStations() async {
+    try {
+      final response = await _supabase
+          .from('radio_channels')
+          .select('*')
+          .eq('is_active', true)
+          .order('order_index', ascending: true);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Failed to fetch radio stations: $e');
+      return [];
+    }
+  }
 }

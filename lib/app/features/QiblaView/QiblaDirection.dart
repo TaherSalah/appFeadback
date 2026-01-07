@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:geolocator/geolocator.dart'; // Added for openAppSettings
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/services/location_service.dart';
@@ -75,19 +76,11 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       _qiblaDirection = _calculateQiblaDirection(pos.latitude, pos.longitude);
       print('Qibla direction: $_qiblaDirection');
 
-      // 5. الحصول على اسم الموقع
-      final address = await locationService.getAddressFromLatLng(
-          pos.latitude, pos.longitude);
-      if (address != null) {
-        if (mounted) {
-          setState(() {
-            _locationName = "${address['city']}, ${address['country']}";
-          });
-        }
-      }
-
-      // 6. تشغيل البوصلة
+      // 6. تشغيل البوصلة فوراً (هام جداً للعمل بدون نت)
       _startCompass();
+
+      // 5. الحصول على اسم الموقع (بشكل منفصل لعدم تعطيل البوصلة)
+      _fetchAddress(pos.latitude, pos.longitude);
     } catch (e) {
       print('Error in init: $e');
       if (mounted) {
@@ -96,6 +89,21 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _fetchAddress(double lat, double lng) async {
+    try {
+      final locationService = LocationService();
+      final address = await locationService.getAddressFromLatLng(lat, lng);
+
+      if (address != null && mounted) {
+        setState(() {
+          _locationName = "${address['city']}, ${address['country']}";
+        });
+      }
+    } catch (e) {
+      print("Address fetch skipped (likely offline): $e");
     }
   }
 
@@ -271,12 +279,11 @@ class _QiblaDirectionState extends State<QiblaDirection> {
             ),
             const SizedBox(height: 20),
             Text(
-              _errorMessage,
+              _getErrorMessage(_errorMessage),
               textAlign: TextAlign.center,
               style: GoogleFonts.cairo(
                 color: isDark ? Colors.white : Colors.black,
                 fontSize: 16,
-                // textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 20),
@@ -288,9 +295,16 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                   verticalPadding: 10,
                   backgroundColor: KColors.primaryColor,
                   width: MediaQuery.sizeOf(context).width / 3,
-                  title: "إعادة المحاولة",
+                  title: _getErrorButtonTitle(_errorMessage),
                   borderColor: KColors.primaryColor,
-                  onTap: _initLocationAndCompass,
+                  onTap: () async {
+                    if (_errorMessage == "SERVICE_DISABLED") {
+                      await Geolocator.openLocationSettings();
+                    } else if (_errorMessage == "PERMISSION_DENIED_FOREVER") {
+                      await Geolocator.openAppSettings();
+                    }
+                    _initLocationAndCompass();
+                  },
                 ),
               ),
             ),
@@ -665,5 +679,24 @@ class _QiblaDirectionState extends State<QiblaDirection> {
     } else {
       return "استدر بالهاتف يساراً";
     }
+  }
+
+  String _getErrorMessage(String code) {
+    switch (code) {
+      case "SERVICE_DISABLED":
+        return "خدمة الموقع (GPS) غير مفعلة.\nيرجى تفعيلها للمتابعة.";
+      case "PERMISSION_DENIED":
+        return "تم رفض صلاحية الموقع.\nيرجى السماح بالصلاحية لعمل البوصلة.\nاضغط إعادة المحاولة.";
+      case "PERMISSION_DENIED_FOREVER":
+        return "صلاحية الموقع مرفوضة نهائياً.\nيرجى فتح الإعدادات وتفعيلها يدوياً.";
+      default:
+        return code;
+    }
+  }
+
+  String _getErrorButtonTitle(String code) {
+    if (code == "SERVICE_DISABLED") return "فتح إعدادات الموقع";
+    if (code == "PERMISSION_DENIED_FOREVER") return "فتح الإعدادات";
+    return "إعادة المحاولة";
   }
 }

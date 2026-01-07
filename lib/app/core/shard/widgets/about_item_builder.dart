@@ -2,8 +2,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../features/aboutView/RateService.dart';
+import '../../services/system_control_service.dart';
 import '../exports/all_exports.dart';
 
 class AboutItemBuilder extends StatefulWidget {
@@ -14,14 +16,52 @@ class AboutItemBuilder extends StatefulWidget {
 }
 
 class _AboutItemBuilderState extends State<AboutItemBuilder> {
+  Map<String, String> supportLinks = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSupportLinks();
+  }
+
+  Future<void> _loadSupportLinks() async {
+    final links = await SystemControlService().getSupportLinks();
+    if (mounted) {
+      setState(() {
+        supportLinks = links;
+      });
+    }
+  }
+
+  Future<void> _launchURL(String? url) async {
+    if (url == null || url.isEmpty) return;
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Default links if not set by admin
+    final linkPlayStore = supportLinks['link_playstore'] ??
+        'https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily';
+    final linkAppGallery =
+        'https://appgallery.huawei.com/app/C114956477'; // Not yet in panel
+    final linkAppStore = supportLinks['link_appstore'] ??
+        'https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338';
+
+    final linkFacebook = supportLinks['link_facebook'] ??
+        'https://www.facebook.com/taher.salah.7927';
+    final linkWhatsapp =
+        supportLinks['link_whatsapp'] ?? 'https://wa.me/+201094529752';
+
     void shareGooglePlay() {
-      const msg = '''
+      final msg = '''
 📱✨ تطبيق *رَفِيقُ المُسْلِمِ اليَوْمِيّ* — القرآن والأذكار اليومية في مكان واحد! ✨📱
 
 قم بتحميل التطبيق الآن من Google Play:
-➡️ https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily
+➡️ $linkPlayStore
 
 🌟 استمتع بقراءة الأذكار والأحاديث اليومية بسهولة وراحة.
 ''';
@@ -29,11 +69,11 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
     }
 
     void shareAppGallery() {
-      const msg = '''
+      final msg = '''
 📱✨ تطبيق *رَفِيقُ المُسْلِمِ اليَوْمِيّ* — القرآن والأذكار اليومية في مكان واحد! ✨📱
 
 قم بتحميل التطبيق الآن من Huawei AppGallery:
-➡️ https://appgallery.huawei.com/app/C114956477
+➡️ $linkAppGallery
 
 🌟 استمتع بقراءة الأذكار والأحاديث اليومية بسهولة وراحة.
 ''';
@@ -41,11 +81,11 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
     }
 
     void shareAppStore() {
-      const msg = '''
+      final msg = '''
 📱✨ تطبيق *رَفِيقُ المُسْلِمِ اليَوْمِيّ* — القرآن والأذكار اليومية في مكان واحد! ✨📱
 
 قم بتحميل التطبيق الآن من App Store:
-➡️ https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
+➡️ $linkAppStore
 
 🌟 استمتع بقراءة الأذكار والأحاديث اليومية بسهولة وراحة.
 ''';
@@ -171,10 +211,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                         title: "فيسبوك",
                         icon: facebook,
                         isSvg: true,
-                        
                         color: const Color(0xFF1877F2),
-                        onTap: () => con.launchInWeb(Uri.parse(
-                            'https://www.facebook.com/taher.salah.7927')),
+                        onTap: () => _launchURL(linkFacebook),
                       ),
                     ),
                     SizedBox(width: 12.w),
@@ -185,8 +223,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                         icon: whatsApp,
                         isSvg: false,
                         color: const Color(0xFF25D366),
-                        onTap: () => con.launchInWeb(
-                            Uri.parse('https://wa.me/+201094529752')),
+                        onTap: () => _launchURL(linkWhatsapp),
                       ),
                     ),
                   ],

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/islamic_stories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/services/content_service.dart';
 
 class StoriesScreen extends StatefulWidget {
   final VoidCallback? onStoryCompleted;
@@ -16,18 +17,42 @@ class StoriesScreen extends StatefulWidget {
 
 class _StoriesScreenState extends State<StoriesScreen> {
   Set<String> _readStories = {};
+  List<IslamicStory> _allStories = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadReadStories();
+    _loadData();
   }
 
-  Future<void> _loadReadStories() async {
+  Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _readStories = (prefs.getStringList('read_stories') ?? []).toSet();
-    });
+    final readStories = (prefs.getStringList('read_stories') ?? []).toSet();
+
+    // Load local stories
+    List<IslamicStory> stories = List.from(StoriesData.allStories);
+
+    // Load remote stories
+    try {
+      final remoteData = await ContentService().getKidsStories();
+      if (remoteData.isNotEmpty) {
+        final remoteStories =
+            remoteData.map((m) => IslamicStory.fromMap(m)).toList();
+        // Add remote stories to the beginning
+        stories = [...remoteStories, ...stories];
+      }
+    } catch (e) {
+      print('Error loading remote kids stories: $e');
+    }
+
+    if (mounted) {
+      setState(() {
+        _readStories = readStories;
+        _allStories = stories;
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _markAsRead(String storyId) async {
@@ -54,95 +79,102 @@ class _StoriesScreenState extends State<StoriesScreen> {
           ),
           centerTitle: true,
         ),
-        body: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: StoriesData.allStories.length,
-          itemBuilder: (context, index) {
-            final story = StoriesData.allStories[index];
-            final isRead = _readStories.contains(story.id);
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _allStories.length,
+                itemBuilder: (context, index) {
+                  final story = _allStories[index];
+                  final isRead = _readStories.contains(story.id);
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: isRead
-                      ? [Colors.grey.shade300, Colors.grey.shade400]
-                      : [const Color(0xFF42A5F5), const Color(0xFF1976D2)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(16),
-                leading: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Center(
-                    child: Text(
-                      story.emoji,
-                      style: const TextStyle(fontSize: 35),
-                    ),
-                  ),
-                ),
-                title: Text(
-                  story.title,
-                  style: GoogleFonts.cairo(
-                    fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                subtitle: Row(
-                  children: [
-                    if (isRead)
-                      const Icon(Icons.check_circle,
-                          color: Colors.white70, size: 16),
-                    if (isRead) const SizedBox(width: 4),
-                    Text(
-                      isRead ? 'قرأتها ⭐' : '⭐ ${story.starsReward} نجمة',
-                      style: GoogleFonts.cairo(
-                        fontSize:
-                            ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp,
-                        color: Colors.white70,
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: isRead
+                            ? [Colors.grey.shade300, Colors.grey.shade400]
+                            : [
+                                const Color(0xFF42A5F5),
+                                const Color(0xFF1976D2)
+                              ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white,
-                  size: 16,
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => StoryReaderScreen(
-                        story: story,
-                        onFinish: () {
-                          _markAsRead(story.id);
-                          widget.onStoryCompleted?.call();
-                        },
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(16),
+                      leading: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Center(
+                          child: Text(
+                            story.emoji,
+                            style: const TextStyle(fontSize: 35),
+                          ),
+                        ),
                       ),
+                      title: Text(
+                        story.title,
+                        style: GoogleFonts.cairo(
+                          fontSize:
+                              ResponsiveUtil.isTablet(context) ? 12.sp : 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      subtitle: Row(
+                        children: [
+                          if (isRead)
+                            const Icon(Icons.check_circle,
+                                color: Colors.white70, size: 16),
+                          if (isRead) const SizedBox(width: 4),
+                          Text(
+                            isRead ? 'قرأتها ⭐' : '⭐ ${story.starsReward} نجمة',
+                            style: GoogleFonts.cairo(
+                              fontSize: ResponsiveUtil.isTablet(context)
+                                  ? 9.sp
+                                  : 12.sp,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StoryReaderScreen(
+                              story: story,
+                              onFinish: () {
+                                _markAsRead(story.id);
+                                widget.onStoryCompleted?.call();
+                              },
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
               ),
-            );
-          },
-        ),
       ),
     );
   }

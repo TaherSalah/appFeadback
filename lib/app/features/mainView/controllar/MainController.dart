@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/services/location_service.dart';
+import '../../../core/services/system_control_service.dart';
 import '../../../core/utils/constent/router.dart';
 import '../../../core/utils/style/k_helper.dart';
 
@@ -53,6 +54,14 @@ class MainController extends ControllerMVC {
   int asrOffset = 0;
   int maghribOffset = 0;
   int ishaOffset = 0;
+
+  // تعديلات الدقائق العامة (إدارة)
+  int globalFajrOffset = 0;
+  int globalSunriseOffset = 0;
+  int globalDhuhrOffset = 0;
+  int globalAsrOffset = 0;
+  int globalMaghribOffset = 0;
+  int globalIshaOffset = 0;
 
   // إعدادات أذكار بعد الصلاة
   bool postPrayerReminderEnabled = false;
@@ -241,6 +250,15 @@ class MainController extends ControllerMVC {
 
     hijriAdjustment = prefs.getInt(_kHijriAdjustmentKey) ?? 0;
     _updateHijriDate();
+
+    // تحميل التعديلات العامة من السيرفر
+    final globalOffsets = await SystemControlService().getGlobalPrayerOffsets();
+    globalFajrOffset = globalOffsets['fajr'] ?? 0;
+    globalSunriseOffset = globalOffsets['sunrise'] ?? 0;
+    globalDhuhrOffset = globalOffsets['dhuhr'] ?? 0;
+    globalAsrOffset = globalOffsets['asr'] ?? 0;
+    globalMaghribOffset = globalOffsets['maghrib'] ?? 0;
+    globalIshaOffset = globalOffsets['isha'] ?? 0;
 
     calculatePrayerTimes();
     setState(() {});
@@ -518,14 +536,24 @@ class MainController extends ControllerMVC {
     final hourOffset = Duration(hours: manualOffset);
 
     final prayers = {
-      "الفجر": times.fajr.add(hourOffset).add(Duration(minutes: fajrOffset)),
-      "الشروق":
-          times.sunrise.add(hourOffset).add(Duration(minutes: sunriseOffset)),
-      "الظهر": times.dhuhr.add(hourOffset).add(Duration(minutes: dhuhrOffset)),
-      "العصر": times.asr.add(hourOffset).add(Duration(minutes: asrOffset)),
-      "المغرب":
-          times.maghrib.add(hourOffset).add(Duration(minutes: maghribOffset)),
-      "العشاء": times.isha.add(hourOffset).add(Duration(minutes: ishaOffset)),
+      "الفجر": times.fajr
+          .add(hourOffset)
+          .add(Duration(minutes: fajrOffset + globalFajrOffset)),
+      "الشروق": times.sunrise
+          .add(hourOffset)
+          .add(Duration(minutes: sunriseOffset + globalSunriseOffset)),
+      "الظهر": times.dhuhr
+          .add(hourOffset)
+          .add(Duration(minutes: dhuhrOffset + globalDhuhrOffset)),
+      "العصر": times.asr
+          .add(hourOffset)
+          .add(Duration(minutes: asrOffset + globalAsrOffset)),
+      "المغرب": times.maghrib
+          .add(hourOffset)
+          .add(Duration(minutes: maghribOffset + globalMaghribOffset)),
+      "العشاء": times.isha
+          .add(hourOffset)
+          .add(Duration(minutes: ishaOffset + globalIshaOffset)),
     };
 
     DateTime? next;

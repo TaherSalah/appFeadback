@@ -108,10 +108,11 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
   }
 
   Future<void> selectByLocation() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('جاري تحديد موقعك الحالي...')),
-    );
-
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(content: Text('جاري تحديد موقعك الحالي...')),
+    // );
+    KHelper.showSuccess(
+        message: 'جاري تحديد موقعك الحالي...');
     try {
       final pos = await locationService.getCurrentPosition();
       if (pos == null) {

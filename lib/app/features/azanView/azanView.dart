@@ -2664,85 +2664,85 @@ class _AzanViewState extends StateMVC<AzanView> {
           ),
           actions: [
             // زر اختبار الأذان 🧪
-            IconButton(
-              icon: const Icon(Icons.bug_report, color: Colors.orange),
-              tooltip: 'اختبار الأذان (20 ثانية)',
-              onPressed: () async {
-                bool isAllowed =
-                    await AwesomeNotifications().isNotificationAllowed();
-                if (!isAllowed) {
-                  await AwesomeNotifications()
-                      .requestPermissionToSendNotifications();
-                  isAllowed =
-                      await AwesomeNotifications().isNotificationAllowed();
-                  if (!isAllowed) {
-                    KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
-                    return;
-                  }
-                }
-
-                try {
-                  KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
-
-                  final error = await AdhanWorkManagerService()
-                      .scheduleTestAdhan(secondsFromNow: 20);
-                  if (!mounted) return;
-
-                  if (error == null) {
-                    KHelper.showSuccess(
-                      message:
-                          '🧪 تم جدولة أذان تجريبي بعد 20 ثانية\nانتظر وتأكد من ظهور الشاشة!',
-                    );
-                  } else {
-                    KHelper.showError(
-                      message: '❌ فشلت جدولة الأذان التجريبي: $error',
-                    );
-                  }
-                } catch (e) {
-                  if (!mounted) return;
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('خطأ في الاختبار'),
-                      content: Text(e.toString()),
-                      actions: [
-                        TextButton(
-                            onPressed: () => Navigator.pop(ctx),
-                            child: const Text('حسنًا'))
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
-
-            // زر اختبار فوري (بدون جدولة) للتشخيص
-            IconButton(
-              icon: const Icon(Icons.flash_on, color: Colors.blue),
-              tooltip: 'إشعار تجريبي فوري',
-              onPressed: () async {
-                await AwesomeNotifications().createNotification(
-                  content: NotificationContent(
-                    id: 77777,
-                    channelKey:
-                        'adhan_channel_v4', // Use adhan channel for sound test
-                    title: '⚡ اختبار فوري',
-                    body: 'إذا وصلك هذا، فالإشعارات تعمل بنجاح!',
-                    notificationLayout: NotificationLayout.Default,
-                    payload: {
-                      'prayerName': 'تجربة',
-                      'route':
-                          'adhan_screen', // Force overlay for instant test too
-                      'prayer_time': 'الآن',
-                      'cityName': 'تجربة'
-                    },
-                  ),
-                );
-                if (context.mounted) {
-                  KHelper.showSuccess(message: 'تم إرسال إشعار فوري');
-                }
-              },
-            ),
+            // IconButton(
+            //   icon: const Icon(Icons.bug_report, color: Colors.orange),
+            //   tooltip: 'اختبار الأذان (20 ثانية)',
+            //   onPressed: () async {
+            //     bool isAllowed =
+            //         await AwesomeNotifications().isNotificationAllowed();
+            //     if (!isAllowed) {
+            //       await AwesomeNotifications()
+            //           .requestPermissionToSendNotifications();
+            //       isAllowed =
+            //           await AwesomeNotifications().isNotificationAllowed();
+            //       if (!isAllowed) {
+            //         KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
+            //         return;
+            //       }
+            //     }
+            //
+            //     try {
+            //       KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
+            //
+            //       final error = await AdhanWorkManagerService()
+            //           .scheduleTestAdhan(secondsFromNow: 20);
+            //       if (!mounted) return;
+            //
+            //       if (error == null) {
+            //         KHelper.showSuccess(
+            //           message:
+            //               '🧪 تم جدولة أذان تجريبي بعد 20 ثانية\nانتظر وتأكد من ظهور الشاشة!',
+            //         );
+            //       } else {
+            //         KHelper.showError(
+            //           message: '❌ فشلت جدولة الأذان التجريبي: $error',
+            //         );
+            //       }
+            //     } catch (e) {
+            //       if (!mounted) return;
+            //       showDialog(
+            //         context: context,
+            //         builder: (ctx) => AlertDialog(
+            //           title: const Text('خطأ في الاختبار'),
+            //           content: Text(e.toString()),
+            //           actions: [
+            //             TextButton(
+            //                 onPressed: () => Navigator.pop(ctx),
+            //                 child: const Text('حسنًا'))
+            //           ],
+            //         ),
+            //       );
+            //     }
+            //   },
+            // ),
+            //
+            // // زر اختبار فوري (بدون جدولة) للتشخيص
+            // IconButton(
+            //   icon: const Icon(Icons.flash_on, color: Colors.blue),
+            //   tooltip: 'إشعار تجريبي فوري',
+            //   onPressed: () async {
+            //     await AwesomeNotifications().createNotification(
+            //       content: NotificationContent(
+            //         id: 77777,
+            //         channelKey:
+            //             'adhan_channel_v4', // Use adhan channel for sound test
+            //         title: '⚡ اختبار فوري',
+            //         body: 'إذا وصلك هذا، فالإشعارات تعمل بنجاح!',
+            //         notificationLayout: NotificationLayout.Default,
+            //         payload: {
+            //           'prayerName': 'تجربة',
+            //           'route':
+            //               'adhan_screen', // Force overlay for instant test too
+            //           'prayer_time': 'الآن',
+            //           'cityName': 'تجربة'
+            //         },
+            //       ),
+            //     );
+            //     if (context.mounted) {
+            //       KHelper.showSuccess(message: 'تم إرسال إشعار فوري');
+            //     }
+            //   },
+            // ),
 
             IconButton(
               icon: const Icon(Icons.settings),

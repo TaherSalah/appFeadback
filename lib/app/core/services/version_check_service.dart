@@ -3,6 +3,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../widgets/CustomGradientDialog.dart';
 
 class VersionCheckService {
   final _supabase = Supabase.instance.client;
@@ -56,89 +57,39 @@ class VersionCheckService {
     showDialog(
       context: context,
       barrierDismissible: !isMandatory,
-      builder: (context) => WillPopScope(
-        onWillPop: () async => !isMandatory,
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Row(
-              children: [
-                const Icon(Icons.system_update, color: Colors.green),
-                const SizedBox(width: 10),
-                Text(
-                  'تحديث جديد متاح',
-                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'إصدار جديد ($versionName) متاح للتحميل الآن.',
-                  style: GoogleFonts.cairo(),
-                ),
-                if (releaseNotes != null && releaseNotes.isNotEmpty) ...[
-                  const SizedBox(height: 15),
-                  Text(
-                    'ما الجديد:',
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 13),
-                  ),
-                  Text(
-                    releaseNotes,
-                    style: GoogleFonts.cairo(fontSize: 12, color: Colors.grey[700]),
-                  ),
-                ],
-                if (isMandatory) ...[
-                  const SizedBox(height: 15),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.red[50],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 20),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'هذا التحديث إجباري لضمان عمل التطبيق بشكل صحيح.',
-                            style: GoogleFonts.cairo(fontSize: 11, color: Colors.red[900]),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            actions: [
-              if (!isMandatory)
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    'لاحقاً',
-                    style: GoogleFonts.cairo(color: Colors.grey),
-                  ),
-                ),
-              ElevatedButton(
-                onPressed: () => _launchURL(updateUrl),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-                child: Text(
-                  'تحديث الآن',
-                  style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return WillPopScope(
+          onWillPop: () async => !isMandatory,
+          child: CustomGradientDialog(
+            title: "تحديث جديد متوفر!",
+            message:
+                "نسخة جديدة ($versionName) من التطبيق متاحة الآن.\nيرجى التحديث للاستمتاع بأحدث المميزات.",
+            icon: Icons.system_update,
+            gradientColors: isDark
+                ? [
+                    const Color(0xFF1E3A8A),
+                    const Color(0xFF1E40AF)
+                  ] // Dark Blue
+                : [const Color(0xFF2563EB), const Color(0xFF60A5FA)], // Blue
+            isDark: isDark,
+            onPrimaryPressed: () => _launchURL(updateUrl),
+            primaryButtonText: "تحديث الآن",
+            primaryButtonColor: Colors.white.withOpacity(0.2),
+            onSecondaryPressed:
+                isMandatory ? null : () => Navigator.pop(context),
+            secondaryButtonText: isMandatory ? null : "لاحقاً",
+            infoText: isMandatory
+                ? "هذا التحديث إجباري لضمان عمل التطبيق بشكل صحيح."
+                : (releaseNotes != null && releaseNotes.isNotEmpty)
+                    ? releaseNotes
+                    : "تحسينات عامة وإصلاحات للأخطاء.",
+            titleColor: Colors.white,
+            messageColor: Colors.white.withOpacity(0.9),
+            iconColor: Colors.white,
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
