@@ -89,133 +89,142 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
         alignment: Alignment.center,
         children: [
           // الكارت الأساسي
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24.r),
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: isDark
-                    ? const [
-                        Color(0xFF020617),
-                        Color(0xFF0F172A),
-                      ]
-                    : [
-                        // baseColor.withOpacity(0.06), // لمسة لون خفيفة
-                        const Color(0xFFF7F1E1),
-                        Colors.white,
-                      ],
-              ),
-              border: Border.all(
-                color: baseColor.withOpacity(isDark ? 0.5 : 0.3),
-                width: 1.2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: baseColor.withOpacity(isDark ? 0.4 : 0.18),
-                  blurRadius: 16,
-                  spreadRadius: 0.5,
-                  offset: Offset(0, isDark ? 10 : 6),
+          Directionality(
+            textDirection: TextDirection.rtl,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24.r),
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: isDark
+                      ? const [
+                          Color(0xFF020617),
+                          Color(0xFF0F172A),
+                        ]
+                      : [
+                          // baseColor.withOpacity(0.06), // لمسة لون خفيفة
+                          const Color(0xFFF7F1E1),
+                          Colors.white,
+                        ],
                 ),
-              ],
-            ),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 32.h),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // العنوان مع أيقونة بسيطة
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.stars_rounded,
-                        size: 18.sp,
-                        color: baseColor.withOpacity(0.8),
-                      ),
-                      SizedBox(width: 6.w),
-                      Flexible(
-                        child: Text(
-                          widget.azkarTitle,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: AppStyle.fontFamily,
-                            fontSize: widget.fontSize ?? 18.sp,
-                            height: 1.6,
-                            fontWeight: FontWeight.w700,
-                            color: isDark ? Colors.white : Colors.black87,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 6.w),
-                      const Icon(
-                        Icons.stars_rounded,
-                        color: Colors.transparent, // للمحافظة على التماثل
-                      ),
-                    ],
-                  ),
-
-                  // الفاصل الزخرفي تحت العنوان
-                  _AzkarOrnamentDivider(
-                    color: baseColor,
-                  ),
-
-                  SizedBox(height: 6.h),
-
-                  // نص الذكر
-                  Text(
-                    widget.azkarDes,
-                    textAlign: TextAlign.center,
-                    textDirection: TextDirection.rtl,
-                    style: GoogleFonts.cairo(
-                      height: 1.9,
-                      fontSize: size.width > 600 ? 9.sp : 13.sp,
-                      color: isDark ? Colors.grey[200] : Colors.grey[900],
-                    ),
-                  ),
-
-                  SizedBox(height: 18.h),
-
-                  // شريط الأزرار
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // زر النسخ
-                      _AzkarActionButton(
-                        icon: Icons.copy_rounded,
-                        label: "نسخ",
-                        onTap: () => copyText(shareFullTextFancy),
-                      ),
-
-                      // زر مشاركة الصورة
-                      _AzkarActionButton(
-                        icon: Icons.image_outlined,
-                        label: "صورة",
-                        onTap: () {
-                          showGeneralDialog(
-                            context: context,
-                            pageBuilder: (context, anim1, anim2) =>
-                                PremiumShareCard(
-                              azkarName: widget.azkarName ?? "",
-                              text: widget.azkarTitle,
-                              source: widget.azkarDes,
-                            ),
-                          );
-                        },
-                      ),
-
-                      // زر المشاركة
-                      _AzkarActionButton(
-                        icon: Icons.share_rounded,
-                        label: "مشاركة",
-                        onTap: () {
-                          shareText(shareFullTextFancy);
-                        },
-                      ),
-                    ],
+                border: Border.all(
+                  color: baseColor.withOpacity(isDark ? 0.5 : 0.3),
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: baseColor.withOpacity(isDark ? 0.4 : 0.18),
+                    blurRadius: 16,
+                    spreadRadius: 0.5,
+                    offset: Offset(0, isDark ? 10 : 6),
                   ),
                 ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 32.h),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // العنوان مع أيقونة بسيطة
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.stars_rounded,
+                          size: 18.sp,
+                          color: baseColor.withOpacity(0.8),
+                        ),
+                        SizedBox(width: 6.w),
+                        Flexible(
+                          child: Text(
+                            widget.azkarTitle,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.amiri(
+                                fontSize: widget.fontSize ?? 18.sp,
+                                height: 2.0,
+                                
+                                fontWeight: FontWeight.w700,
+                                color: isDark ? Colors.white : Colors.black87,
+                                                ),                          // style: TextStyle(
+                            //   fontFamily: "cairo",
+                            //   fontSize: widget.fontSize ?? 18.sp,
+                            //   height: 1.6,
+                            //   fontWeight: FontWeight.w700,
+                            //   color: isDark ? Colors.white : Colors.black87,
+                            // ),
+                          ),
+                        ),
+                        SizedBox(width: 6.w),
+                        const Icon(
+                          Icons.stars_rounded,
+                          color: Colors.transparent, // للمحافظة على التماثل
+                        ),
+                      ],
+                    ),
+            
+                    // الفاصل الزخرفي تحت العنوان
+                    _AzkarOrnamentDivider(
+                      color: baseColor,
+                    ),
+            
+                    SizedBox(height: 6.h),
+            
+                    // نص الذكر
+                    Text(
+                      widget.azkarDes,
+                      textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
+                      style: GoogleFonts.cairo(
+                        height: 1.9,
+                        fontSize: size.width > 600 ? 9.sp : 13.sp,
+                        color: isDark ? Colors.grey[200] : Colors.grey[900],
+                      ),
+                    ),
+            
+                    SizedBox(height: 18.h),
+            
+                    // شريط الأزرار
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // زر النسخ
+                        _AzkarActionButton(
+                          icon: Icons.copy_rounded,
+                          label: "نسخ",
+                          onTap: () => copyText(shareFullTextFancy),
+                        ),
+            
+                        // زر مشاركة الصورة
+                        _AzkarActionButton(
+                          icon: Icons.image_outlined,
+                          label: "صورة",
+                          onTap: () {
+                            showGeneralDialog(
+                              context: context,
+                              pageBuilder: (context, anim1, anim2) =>
+                                  PremiumShareCard(
+                                azkarName: widget.azkarName ?? "",
+                                text: widget.azkarTitle,
+                                source: widget.azkarDes,
+                              ),
+                            );
+                          },
+                        ),
+            
+                        // زر المشاركة
+                        _AzkarActionButton(
+                          icon: Icons.share_rounded,
+                          label: "مشاركة",
+                          onTap: () {
+                            shareText(shareFullTextFancy);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
