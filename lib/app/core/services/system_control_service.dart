@@ -107,7 +107,8 @@ class SystemControlService {
           'quote_enabled',
           'quote_visible',
           'show_quote',
-          'is_quote_enabled'
+          'is_quote_enabled',
+          'quote_active'
         ];
 
         for (var item in response) {
@@ -147,19 +148,23 @@ class SystemControlService {
           .from('app_settings')
           .select('key, value')
           .filter('key', 'in',
-              '("news_marquee", "news_marquee_label", "news_marquee_type")');
+              '("news_marquee", "news_marquee_label", "news_marquee_type", "news_active")');
 
       if (response != null && response is List) {
         final data = response as List;
+        final active = _findValue(data, 'news_active') == 'true';
         final news = _findValue(data, 'news_marquee');
         final label = _findValue(data, 'news_marquee_label') ?? 'تنبيه عاجل';
         final type = _findValue(data, 'news_marquee_type') ?? 'urgent';
 
-        if (news != null) {
+        if (active && news != null) {
           await prefs.setString(newsKey, news);
           await prefs.setString(labelKey, label);
           await prefs.setString(typeKey, type);
           return {'text': news, 'label': label, 'type': type};
+        } else if (!active) {
+          await prefs.remove(newsKey);
+          return null;
         }
       }
     } catch (e) {
@@ -334,12 +339,12 @@ class SystemControlService {
           .from('app_settings')
           .select('key, value')
           .filter('key', 'in',
-              '("offset_fajr", "offset_sunrise", "offset_dhuhr", "offset_asr", "offset_maghrib", "offset_isha")');
+              '("prayer_offset_fajr", "prayer_offset_sunrise", "prayer_offset_dhuhr", "prayer_offset_asr", "prayer_offset_maghrib", "prayer_offset_isha")');
 
       if (response != null && response is List) {
         final Map<String, int> offsets = {};
         for (var item in response) {
-          final key = item['key'].toString().replaceFirst('offset_', '');
+          final key = item['key'].toString().replaceFirst('prayer_offset_', '');
           final value = int.tryParse(item['value'].toString()) ?? 0;
           offsets[key] = value;
         }
