@@ -40,6 +40,7 @@ class MainController extends ControllerMVC {
   double? latitude;
   double? longitude;
   bool isUsingGPS = false;
+  bool isLoadingLocation = false; // حالة تحميل الموقع التلقائي
   int hijriAdjustment = 0; // تعديل التاريخ الهجري يدوياً
 
   // إعدادات الحساب
@@ -277,9 +278,19 @@ class MainController extends ControllerMVC {
     setState(() {});
   }
 
+  /// تحديد الموقع تلقائياً باستخدام GPS
+  ///
+  /// ملاحظة: GPS لا يحتاج إنترنت، لكن تحويل الإحداثيات لاسم مدينة يحتاج إنترنت
+  /// إذا لم يتوفر إنترنت، سيظهر "تحديد تلقائي - الموقع الفعلي (GPS)"
   Future<void> autoDetectLocation({bool silent = false}) async {
+    // بدء حالة التحميل
+    isLoadingLocation = true;
+    setState(() {});
+
     try {
       final locationService = LocationService();
+
+      // الخطوة 1: الحصول على الموقع من GPS (لا يحتاج إنترنت)
       final pos = await locationService.getCurrentPosition();
 
       if (pos == null) {
@@ -294,15 +305,27 @@ class MainController extends ControllerMVC {
       longitude = pos.longitude;
       isUsingGPS = true;
 
-      // محاولة الحصول على اسم المدينة والدولة برمجياً
+      // الخطوة 2: محاولة الحصول على اسم المدينة (يحتاج إنترنت)
       final address =
           await locationService.getAddressFromLatLng(latitude!, longitude!);
+
       if (address != null) {
+        // نجح Geocoding - لدينا اسم المدينة
         selectedCountry = address['country'];
         selectedCity = address['city'];
+
+        if (!silent)
+          KHelper.showSuccess(
+              message: 'تم تحديد الموقع بنجاح: ${selectedCity ?? ""}');
       } else {
+        // فشل Geocoding - ربما لا يوجد إنترنت
         selectedCountry = 'تحديد تلقائي';
         selectedCity = 'الموقع الفعلي (GPS)';
+
+        if (!silent)
+          KHelper.showSuccess(
+              message:
+                  'تم تحديد موقعك بنجاح\n💡 الإنترنت مطلوب فقط لعرض اسم المدينة');
       }
 
       await locationService.saveLocation(
@@ -316,13 +339,13 @@ class MainController extends ControllerMVC {
       calculatePrayerTimes();
       await AdhanWorkManagerService().initialize();
       setState(() {});
-
-      if (!silent)
-        KHelper.showSuccess(
-            message: 'تم تحديد الموقع بنجاح: ${selectedCity ?? ""}');
     } catch (e) {
       if (!silent) KHelper.showError(message: 'حدث خطأ أثناء تحديد الموقع');
       log('Error in autoDetectLocation: $e');
+    } finally {
+      // إنهاء حالة التحميل
+      isLoadingLocation = false;
+      setState(() {});
     }
   }
 
@@ -434,17 +457,31 @@ class MainController extends ControllerMVC {
       final defaultCountry =
           countries.keys.contains('مصر') ? 'مصر' : countries.keys.first;
 
-      selectedCountry =
-          savedCountry != null && countries.keys.contains(savedCountry)
-              ? savedCountry
-              : defaultCountry;
+      if (isUsingGPS && savedCountry != null && savedCity != null) {
+        // إذا كان GPS، نستخدم القيم المحفوظة مباشرة لتجنب حذف أسماء المدن خارج القائمة الثابتة
+        selectedCountry = savedCountry;
+        selectedCity = savedCity;
 
-      cities = (countries[selectedCountry!] as Map<String, dynamic>)
-        ..removeWhere((k, v) => v == null);
+        if (countries.containsKey(selectedCountry)) {
+          cities = (countries[selectedCountry!] as Map<String, dynamic>)
+            ..removeWhere((k, v) => v == null);
+        } else {
+          cities = {}; // قائمة فارغة لأنها خارج القائمة اليدوية
+        }
+      } else {
+        // اختيار يدوي أو تأكد من الوجود في القائمة
+        selectedCountry =
+            savedCountry != null && countries.keys.contains(savedCountry)
+                ? savedCountry
+                : defaultCountry;
 
-      selectedCity = savedCity != null && cities.keys.contains(savedCity)
-          ? savedCity
-          : cities.keys.first;
+        cities = (countries[selectedCountry!] as Map<String, dynamic>)
+          ..removeWhere((k, v) => v == null);
+
+        selectedCity = savedCity != null && cities.keys.contains(savedCity)
+            ? savedCity
+            : cities.keys.first;
+      }
 
       setState(() {});
       calculatePrayerTimes();

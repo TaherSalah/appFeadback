@@ -316,11 +316,14 @@ class _SplashViewState extends State<SplashView> {
 // التحقق من حالة التطبيق والانتقال للشاشة المناسبة
   Future<void> _checkAppStateAndNavigate() async {
     try {
-      // ✅ انتظار 2 ثانية (شاشة السبلاش)
-      await Future.delayed(const Duration(seconds: 2));
+      // ✅ انتظار 1 ثانية (شاشة السبلاش)
+      // تم تقليل المدة من 2 ثانية إلى 1 ثانية لتحسين سرعة فتح التطبيق
+      // يمكن تعديل المدة حسب الحاجة (مثلاً: Duration(milliseconds: 500) لنصف ثانية)
+      await Future.delayed(const Duration(seconds: 1));
 
       // ✅ التحقق من حالة التطبيق
-      final isMaintenance = await SystemControlService().isMaintenanceModeActive();
+      final isMaintenance =
+          await SystemControlService().isMaintenanceModeActive();
       if (isMaintenance) {
         if (!mounted) return;
         Navigator.pushReplacement(

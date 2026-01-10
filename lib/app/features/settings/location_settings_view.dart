@@ -34,6 +34,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
   bool tempAllowLocationUsage = true;
 
   bool isLocationLoading = true;
+  bool isAutoDetecting = false; // حالة تحميل التحديد التلقائي
   bool _hasChanges = false;
   final locationService = LocationService();
 
@@ -107,23 +108,31 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
     setState(() => _hasChanges = false);
   }
 
+  /// تحديد الموقع تلقائياً باستخدام GPS
+  ///
+  /// ملاحظة: GPS لا يحتاج إنترنت، لكن تحويل الإحداثيات لاسم مدينة يحتاج إنترنت
   Future<void> selectByLocation() async {
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text('جاري تحديد موقعك الحالي...')),
-    // );
-    KHelper.showSuccess(
-        message: 'جاري تحديد موقعك الحالي...');
+    // بدء حالة التحميل
+    setState(() {
+      isAutoDetecting = true;
+    });
+
+    KHelper.showSuccess(message: 'جاري تحديد موقعك الحالي...');
+
     try {
+      // الخطوة 1: الحصول على الموقع من GPS (لا يحتاج إنترنت)
       final pos = await locationService.getCurrentPosition();
       if (pos == null) {
         KHelper.showError(
             message: 'تعذر الحصول على الموقع. تحقق من الصلاحيات وخدمة الموقع.');
         setState(() {
           tempAllowLocationUsage = false;
+          isAutoDetecting = false;
         });
         return;
       }
 
+      // الخطوة 2: محاولة الحصول على اسم المدينة (يحتاج إنترنت)
       final address = await locationService.getAddressFromLatLng(
           pos.latitude, pos.longitude);
 
@@ -131,15 +140,25 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
       String? bestCity;
 
       if (address != null) {
+        // نجح Geocoding - لدينا اسم المدينة
         bestCountry = address['country'];
         bestCity = address['city'];
+        KHelper.showSuccess(message: 'تم العثور على موقعك: $bestCity');
+      } else {
+        // فشل Geocoding - ربما لا يوجد إنترنت
+        bestCountry = 'تحديد تلقائي';
+        bestCity = 'الموقع الفعلي (GPS)';
+        KHelper.showSuccess(
+            message:
+                'تم تحديد موقعك بنجاح\n💡 الإنترنت مطلوب فقط لعرض اسم المدينة');
       }
 
       setState(() {
-        tempCountry = bestCountry ?? 'تحديد تلقائي';
-        tempCity = bestCity ?? 'الموقع الفعلي (GPS)';
+        tempCountry = bestCountry;
+        tempCity = bestCity;
         tempAllowLocationUsage = true;
         _hasChanges = true;
+        isAutoDetecting = false;
       });
 
       await locationService.saveLocation(
@@ -149,11 +168,12 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
         country: tempCountry,
         isGPS: true,
       );
-
-      KHelper.showSuccess(message: 'تم العثور على موقعك: $tempCity');
     } catch (e) {
       KHelper.showError(
           message: 'تعذر الحصول على الموقع، يرجى المحاولة لاحقاً');
+      setState(() {
+        isAutoDetecting = false;
+      });
     }
   }
 
@@ -255,25 +275,49 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                                   ),
                                   value: tempAllowLocationUsage,
                                   activeColor: KColors.primaryColor,
-                                  secondary: Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.withOpacity(0.15),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: const Icon(Icons.my_location,
-                                        color: Colors.blue, size: 22),
-                                  ),
-                                  onChanged: (val) async {
-                                    if (val) {
-                                      await selectByLocation();
-                                    } else {
-                                      setState(() {
-                                        tempAllowLocationUsage = false;
-                                        _hasChanges = true;
-                                      });
-                                    }
-                                  },
+                                  secondary: isAutoDetecting
+                                      ? Container(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.blue.withOpacity(0.15),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: const SizedBox(
+                                            width: 22,
+                                            height: 22,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Colors.blue),
+                                            ),
+                                          ),
+                                        )
+                                      : Container(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.blue.withOpacity(0.15),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: const Icon(Icons.my_location,
+                                              color: Colors.blue, size: 22),
+                                        ),
+                                  onChanged: isAutoDetecting
+                                      ? null
+                                      : (val) async {
+                                          if (val) {
+                                            await selectByLocation();
+                                          } else {
+                                            setState(() {
+                                              tempAllowLocationUsage = false;
+                                              _hasChanges = true;
+                                            });
+                                          }
+                                        },
                                 ),
                               ],
                             ),

@@ -2809,7 +2809,12 @@ class _AzanViewState extends StateMVC<AzanView> {
             child: Column(
               children: [
                 // 🎯 قسم عرض الموقع الحالي فقط
-                if (selectedCountry != null && selectedCity != null)
+                if (con.isLoadingLocation)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: KLoading.progressIOSIndicator(context: context),
+                  )
+                else if (selectedCountry != null && selectedCity != null)
                   buildCurrentLocation(
                       context, isDark, selectedCountry, selectedCity),
 
@@ -2944,7 +2949,7 @@ class _AzanViewState extends StateMVC<AzanView> {
               // زر GPS
               Expanded(
                 child: InkWell(
-                  onTap: countries.isEmpty
+                  onTap: (countries.isEmpty || con.isLoadingLocation)
                       ? null
                       : () async {
                           await _selectByLocation();
@@ -2956,20 +2961,36 @@ class _AzanViewState extends StateMVC<AzanView> {
                         const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: isDark
-                            ? [Colors.teal.shade700, Colors.teal.shade900]
-                            : [Colors.blue.shade400, Colors.blue.shade600],
+                        colors: (countries.isEmpty || con.isLoadingLocation)
+                            ? [Colors.grey, Colors.grey]
+                            : isDark
+                                ? [Colors.teal.shade700, Colors.teal.shade900]
+                                : [Colors.blue.shade400, Colors.blue.shade600],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.my_location,
-                            color: Colors.white, size: 18),
-                        const SizedBox(width: 4),
+                        if (con.isLoadingLocation)
+                          const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        else ...[
+                          const Icon(Icons.my_location,
+                              color: Colors.white, size: 18),
+                          const SizedBox(width: 4),
+                        ],
+                        const SizedBox(width: 8),
                         Text(
-                          'تحديد تلقائي',
+                          con.isLoadingLocation
+                              ? 'جاري التحديد...'
+                              : 'تحديد تلقائي',
                           style: GoogleFonts.cairo(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -3249,6 +3270,14 @@ class _AzanViewState extends StateMVC<AzanView> {
     String selectedCountry,
     String selectedCity,
   ) {
+    if (con.isLoadingLocation) {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Center(
+          child: KLoading.progressIOSIndicator(context: context),
+        ),
+      );
+    }
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
@@ -3283,7 +3312,7 @@ class _AzanViewState extends StateMVC<AzanView> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  con.isUsingGPS
+                  (con.isUsingGPS && selectedCity == 'الموقع الفعلي (GPS)')
                       ? 'موقعك الفعلي (GPS)'
                       : '$selectedCountry - $selectedCity',
                   style: GoogleFonts.cairo(
