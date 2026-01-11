@@ -89,15 +89,15 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                       children: [
                         Row(
                           children: [
-                            Container(
-                              padding: EdgeInsets.all(8.w),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF10B981).withOpacity(0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Text('🤲', style: TextStyle(fontSize: 24.sp)),
-                            ),
-                            SizedBox(width: 12.w),
+                            // Container(
+                            //   padding: EdgeInsets.all(8.w),
+                            //   decoration: BoxDecoration(
+                            //     color: const Color(0xFF10B981).withOpacity(0.1),
+                            //     shape: BoxShape.circle,
+                            //   ),
+                            //   child: Text('🤲', style: TextStyle(fontSize: 24.sp)),
+                            // ),
+                            // SizedBox(width: 12.w),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

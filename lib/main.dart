@@ -139,7 +139,6 @@ Future<void> _initAppServices() async {
   // NotificationManager replaces all local notification logic
   final notificationManager = NotificationManager();
   await notificationManager.initialize();
-  await notificationManager.rescheduleAll();
 
   // 🚀 Log App Launch Analytics
   AnalyticsService().logAppLaunch();

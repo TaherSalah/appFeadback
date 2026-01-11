@@ -82,7 +82,6 @@ dependencies:
   another_flushbar: ^1.12.32
 
   shimmer: ^3.0.0
-  flare_flutter: ^3.0.2
   gradient_icon: ^2.0.9
   reorderables: ^0.6.0
   collection: ^1.18.0
@@ -98,7 +97,6 @@ dependencies:
   geolocator: ^10.0.0
   flutter_compass: ^0.8.1
   vector_math:
-  simple_animations: ^5.1.0
   redacted: ^1.0.12
   toggle_switch: ^2.3.0
   slide_to_act: ^2.0.2

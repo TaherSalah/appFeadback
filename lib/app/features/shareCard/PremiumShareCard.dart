@@ -43,36 +43,98 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
   // Personalization States
   String _selectedFont = "Amiri";
   double _bgDimming = 0.4;
+  double _fontSizeMultiplier = 1.0; // New: Font size control
   Color _titleColor = const Color(0xFFFFD700); // Default Gold
   Color _textColor = const Color(0xFFFFFFFF); // Default White for main text
   Color _sourceColor = const Color(0xFFD4AF37); // Default Gold for source
+  Color _dividerColor = const Color(0xFFFFD700);
+
+  // Preset Themes
+  String _selectedTheme = "ذهبي كلاسيكي";
+  final Map<String, Map<String, Color>> _themes = {
+    "ذهبي كلاسيكي": {
+      "title": const Color(0xFFFFD700),
+      "text": const Color(0xFFFFFFFF),
+      "source": const Color(0xFFD4AF37),
+      "divider": const Color(0xFFFFD700),
+    },
+    "أخضر إسلامي": {
+      "title": const Color(0xFF4CAF50),
+      "text": const Color(0xFFE8F5E9),
+      "source": const Color(0xFF81C784),
+      "divider": const Color(0xFF4CAF50),
+    },
+    // كرر لباقي الثيمات...
+  };
+
+  // final Map<String, Map<String, Color>> _themes = {
+  //   "ذهبي كلاسيكي": {
+  //     "title": const Color(0xFFFFD700),
+  //     "text": const Color(0xFFFFFFFF),
+  //     "source": const Color(0xFFD4AF37),
+  //   },
+  //   "أخضر إسلامي": {
+  //     "title": const Color(0xFF4CAF50),
+  //     "text": const Color(0xFFE8F5E9),
+  //     "source": const Color(0xFF81C784),
+  //   },
+  //   "أزرق سماوي": {
+  //     "title": const Color(0xFF2196F3),
+  //     "text": const Color(0xFFE3F2FD),
+  //     "source": const Color(0xFF64B5F6),
+  //   },
+  //   "بنفسجي راقي": {
+  //     "title": const Color(0xFF9C27B0),
+  //     "text": const Color(0xFFF3E5F5),
+  //     "source": const Color(0xFFBA68C8),
+  //   },
+  //   "برتقالي دافئ": {
+  //     "title": const Color(0xFFFF9800),
+  //     "text": const Color(0xFFFFF3E0),
+  //     "source": const Color(0xFFFFB74D),
+  //   },
+  // };
 
   final List<String> _fonts = ["Amiri", "Cairo", "Changa", "Lateef", "Tajawal"];
+
+  // Enhanced Color Palettes with Islamic theme
   final List<Color> _titlePalette = [
     const Color(0xFFFFD700), // Gold
     const Color(0xFFFFFFFF), // White
-    const Color(0xFFA7FFEB), // Teal Light
-    const Color(0xFFF48FB1), // Pink Light
-    const Color(0xFF90CAF9), // Blue Light
-    const Color(0xFFA5D6A7), // Green Light
+    const Color(0xFF4CAF50), // Green (Islamic)
+    const Color(0xFF00BCD4), // Cyan
+    const Color(0xFFFF9800), // Orange
+    const Color(0xFF9C27B0), // Purple
+    const Color(0xFFE91E63), // Pink
+    const Color(0xFF2196F3), // Blue
+    const Color(0xFFFF5722), // Deep Orange
+    const Color(0xFF009688), // Teal
   ];
 
   final List<Color> _textPalette = [
     const Color(0xFFFFFFFF), // White
     const Color(0xFFFFF8DC), // Cornsilk
     const Color(0xFFE8F5E9), // Light Green
+    const Color(0xFFE0F7FA), // Light Cyan
+    const Color(0xFFFFF3E0), // Light Orange
+    const Color(0xFFF3E5F5), // Light Purple
     const Color(0xFFFCE4EC), // Light Pink
     const Color(0xFFE3F2FD), // Light Blue
-    const Color(0xFFFFF3E0), // Light Orange
+    const Color(0xFFFFE0B2), // Light Amber
+    const Color(0xFFB2DFDB), // Light Teal
   ];
 
   final List<Color> _sourcePalette = [
     const Color(0xFFD4AF37), // Gold
     const Color(0xFFFFFFFF), // White
-    const Color(0xFF90CAF9), // Blue Light
-    const Color(0xFFA5D6A7), // Green Light
-    const Color(0xFFF48FB1), // Pink Light
-    const Color(0xFFFFCC80), // Orange Light
+    const Color(0xFF81C784), // Light Green
+    const Color(0xFF4DD0E1), // Light Cyan
+    const Color(0xFFFFB74D), // Light Orange
+    const Color(0xFFBA68C8), // Light Purple
+    const Color(0xFFF48FB1), // Light Pink
+    const Color(0xFF64B5F6), // Light Blue
+    const Color(0xFFFFCC80), // Light Amber
+    const Color(0xFF80CBC4), // Light Teal
   ];
 
   @override
@@ -96,7 +158,7 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
           .findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+      await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData != null) {
         final Uint8List pngBytes = byteData.buffer.asUint8List();
         final directory = await getTemporaryDirectory();
@@ -104,7 +166,7 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
         await file.writeAsBytes(pngBytes);
         await Share.shareXFiles([XFile(file.path)],
             text:
-                '💫 من تطبيق *رفيق المسلم اليومي* 💫  حمل التطبيق الآن واستفد من كل الذكر اليومي:');
+            '💫 من تطبيق *رفيق المسلم اليومي* 💫  حمل التطبيق الآن واستفد من كل الذكر اليومي:');
       }
     } catch (e) {
       debugPrint('Error sharing image: $e');
@@ -113,13 +175,11 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
     }
   }
 
-  bool _isImageLoading = false;
-
   @override
   Widget build(BuildContext context) {
     bool isRemote = _backgrounds[_selectedBgIndex].isRemote;
 
-    // Dynamic Font Scaling Logic
+    // Dynamic Font Scaling Logic - Enhanced for different ratios
     double dynamicFontSize = 24.sp;
     if (widget.text.length > 500) {
       dynamicFontSize = 14.sp;
@@ -191,9 +251,9 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                           Positioned.fill(
                             child: ClipRRect(
                               borderRadius:
-                                  _selectedRatio == ShareRatio.flexible
-                                      ? BorderRadius.circular(28.r)
-                                      : BorderRadius.zero,
+                              _selectedRatio == ShareRatio.flexible
+                                  ? BorderRadius.circular(28.r)
+                                  : BorderRadius.zero,
                               child: Image.asset(
                                 ImageShareService.localBackgrounds[0],
                                 fit: BoxFit.cover,
@@ -205,60 +265,60 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                           Positioned.fill(
                             child: ClipRRect(
                               borderRadius:
-                                  _selectedRatio == ShareRatio.flexible
-                                      ? BorderRadius.circular(28.r)
-                                      : BorderRadius.zero,
+                              _selectedRatio == ShareRatio.flexible
+                                  ? BorderRadius.circular(28.r)
+                                  : BorderRadius.zero,
                               child: isRemote
                                   ? CachedNetworkImage(
-                                      imageUrl:
-                                          _backgrounds[_selectedBgIndex].path,
-                                      cacheManager:
-                                          ImageShareService.customCacheManager,
-                                      fit: BoxFit.cover,
-                                      imageBuilder: (context, imageProvider) {
-                                        WidgetsBinding.instance
-                                            .addPostFrameCallback((_) {
-                                          if (mounted &&
-                                              !_loadedIndices
-                                                  .contains(_selectedBgIndex)) {
-                                            setState(() => _loadedIndices
-                                                .add(_selectedBgIndex));
-                                          }
-                                        });
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover),
-                                          ),
-                                        );
-                                      },
-                                      placeholder: (context, url) =>
-                                          Container(color: Colors.black26),
-                                      errorWidget: (context, url, error) {
-                                        WidgetsBinding.instance
-                                            .addPostFrameCallback((_) {
-                                          if (mounted &&
-                                              !_failedIndices
-                                                  .contains(_selectedBgIndex)) {
-                                            setState(() => _failedIndices
-                                                .add(_selectedBgIndex));
-                                          }
-                                        });
-                                        return Container(
-                                          color: Colors.black45,
-                                          child: const Center(
-                                            child: Icon(Icons.cloud_off,
-                                                color: Colors.white54,
-                                                size: 40),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : Image.asset(
-                                      _backgrounds[_selectedBgIndex].path,
-                                      fit: BoxFit.cover,
+                                imageUrl:
+                                _backgrounds[_selectedBgIndex].path,
+                                cacheManager:
+                                ImageShareService.customCacheManager,
+                                fit: BoxFit.cover,
+                                imageBuilder: (context, imageProvider) {
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    if (mounted &&
+                                        !_loadedIndices
+                                            .contains(_selectedBgIndex)) {
+                                      setState(() => _loadedIndices
+                                          .add(_selectedBgIndex));
+                                    }
+                                  });
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover),
                                     ),
+                                  );
+                                },
+                                placeholder: (context, url) =>
+                                    Container(color: Colors.black26),
+                                errorWidget: (context, url, error) {
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    if (mounted &&
+                                        !_failedIndices
+                                            .contains(_selectedBgIndex)) {
+                                      setState(() => _failedIndices
+                                          .add(_selectedBgIndex));
+                                    }
+                                  });
+                                  return Container(
+                                    color: Colors.black45,
+                                    child: const Center(
+                                      child: Icon(Icons.cloud_off,
+                                          color: Colors.white54,
+                                          size: 40),
+                                    ),
+                                  );
+                                },
+                              )
+                                  : Image.asset(
+                                _backgrounds[_selectedBgIndex].path,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
 
@@ -267,9 +327,9 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius:
-                                    _selectedRatio == ShareRatio.flexible
-                                        ? BorderRadius.circular(28.r)
-                                        : BorderRadius.zero,
+                                _selectedRatio == ShareRatio.flexible
+                                    ? BorderRadius.circular(28.r)
+                                    : BorderRadius.zero,
                                 gradient: LinearGradient(
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
@@ -289,82 +349,66 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                           // Content
                           _buildContentWrapper(
                             child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    _selectedRatio == ShareRatio.flexible
-                                        ? 22.w
-                                        : 18.w,
-                                vertical: _selectedRatio == ShareRatio.flexible
-                                    ? 30.h
-                                    : 20.h,
-                              ),
+                              padding: _getContentPadding(),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  // Category Name
+                                  // Top Section: Category Name
                                   if (widget.azkarName.isNotEmpty) ...[
-                                    ShaderMask(
-                                      shaderCallback: (bounds) =>
-                                          LinearGradient(
-                                        colors: [
-                                          _titleColor,
-                                          _titleColor.withOpacity(0.8)
-                                        ],
-                                      ).createShader(bounds),
-                                      child: Text(
-                                        widget.azkarName,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.getFont(
-                                          _selectedFont,
-                                          fontSize: _selectedRatio ==
-                                                  ShareRatio.flexible
-                                              ? 20.sp
-                                              : 16.sp,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w900,
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ShaderMask(
+                                          shaderCallback: (bounds) =>
+                                              LinearGradient(
+                                                colors: [
+                                                  _titleColor,
+                                                  _titleColor.withOpacity(0.8)
+                                                ],
+                                              ).createShader(bounds),
+                                          child: Text(
+                                            widget.azkarName,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.getFont(
+                                              _selectedFont,
+                                              fontSize: _getTitleFontSize(),
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        SizedBox(height: _getDividerSpacing()),
+                                        _buildElegantDivider(),
+                                      ],
                                     ),
-                                    SizedBox(
-                                        height: _selectedRatio ==
-                                                ShareRatio.flexible
-                                            ? 10.h
-                                            : 6.h),
-                                    _buildElegantDivider(),
-                                    SizedBox(
-                                        height: _selectedRatio ==
-                                                ShareRatio.flexible
-                                            ? 25.h
-                                            : 15.h),
                                   ],
 
-                                  // Main Text Box
+                                  // Middle Section: Main Text Box (Expanded)
                                   _buildTextExpander(
                                     child: Container(
                                       width: double.infinity,
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 15.w,
-                                        vertical: _selectedRatio ==
-                                                ShareRatio.flexible
-                                            ? 15.h
-                                            : 8.h,
+                                        vertical: _getTextBoxPadding(),
                                       ),
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.08),
                                         borderRadius:
-                                            BorderRadius.circular(20.r),
+                                        BorderRadius.circular(20.r),
                                         border: Border.all(
                                             color:
-                                                Colors.white.withOpacity(0.12)),
+                                            Colors.white.withOpacity(0.12)),
                                       ),
                                       child: SingleChildScrollView(
                                         physics: _selectedRatio ==
-                                                ShareRatio.flexible
+                                            ShareRatio.flexible
                                             ? const ScrollPhysics()
                                             : const NeverScrollableScrollPhysics(),
                                         child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Text(
                                               widget.text,
@@ -372,7 +416,7 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                               style: GoogleFonts.getFont(
                                                 _selectedFont,
                                                 fontSize: _adjustedFontSize(
-                                                    dynamicFontSize),
+                                                    dynamicFontSize) * _fontSizeMultiplier,
                                                 color: _textColor,
                                                 fontWeight: FontWeight.bold,
                                                 height: 1.6,
@@ -386,19 +430,12 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                             ),
                                             if (widget.source != null &&
                                                 widget.source!.isNotEmpty) ...[
-                                              SizedBox(
-                                                  height: _selectedRatio ==
-                                                          ShareRatio.flexible
-                                                      ? 15.h
-                                                      : 8.h),
+                                              SizedBox(height: _getSourceSpacing()),
                                               Text(
                                                 widget.source!,
                                                 textAlign: TextAlign.center,
                                                 style: GoogleFonts.cairo(
-                                                  fontSize: _selectedRatio ==
-                                                          ShareRatio.flexible
-                                                      ? 11.sp
-                                                      : 9.sp,
+                                                  fontSize: _getSourceFontSize(),
                                                   color: _sourceColor,
                                                   fontWeight: FontWeight.w600,
                                                 ),
@@ -410,44 +447,32 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                     ),
                                   ),
 
-                                  // Branding (Safe at bottom)
-                                  SizedBox(
-                                      height:
-                                          _selectedRatio == ShareRatio.flexible
-                                              ? 15.h
-                                              : 8.h),
+                                  // Bottom Section: Branding (Always visible)
                                   Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
+                                      SizedBox(height: _getBrandingTopSpacing()),
                                       Image.asset(
                                         "assets/images/logoApp.png",
-                                        height: _selectedRatio ==
-                                                ShareRatio.flexible
-                                            ? 45.h
-                                            : 35.h,
-                                        width: _selectedRatio ==
-                                                ShareRatio.flexible
-                                            ? 45.h
-                                            : 35.h,
+                                        height: _getLogoSize(),
+                                        width: _getLogoSize(),
                                         color: Colors.white,
                                       ),
+                                      SizedBox(height: 4.h),
                                       Text(
                                         "رفيق المسلم اليومي",
                                         style: GoogleFonts.cairo(
                                           color: Colors.white,
-                                          fontSize: _selectedRatio ==
-                                                  ShareRatio.flexible
-                                              ? 12.sp
-                                              : 10.sp,
+                                          fontSize: _getBrandingFontSize(),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       if (_selectedRatio ==
                                           ShareRatio.flexible) ...[
-                                        SizedBox(height: 10.h),
+                                        SizedBox(height: 8.h),
                                         Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                           children: [
                                             _buildStoreIcon(
                                                 "assets/images/playstore.png"),
@@ -480,9 +505,133 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                 alignment: Alignment.bottomCenter,
                 children: [
                   SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 130.h),
+                    padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 250.h),
                     child: Column(
                       children: [
+                        // Preset Themes Section
+                        // Container(
+                        //   padding: EdgeInsets.all(14.w),
+                        //   decoration: BoxDecoration(
+                        //     gradient: LinearGradient(
+                        //       colors: [
+                        //         const Color(0xFFD4AF37).withOpacity(0.15),
+                        //         const Color(0xFFFFD700).withOpacity(0.05),
+                        //       ],
+                        //       begin: Alignment.topRight,
+                        //       end: Alignment.bottomLeft,
+                        //     ),
+                        //     borderRadius: BorderRadius.circular(20.r),
+                        //     border: Border.all(
+                        //         color: const Color(0xFFD4AF37).withOpacity(0.3)),
+                        //   ),
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Row(
+                        //         children: [
+                        //           Icon(Icons.color_lens,
+                        //               color: const Color(0xFFFFD700), size: 16.sp),
+                        //           SizedBox(width: 8.w),
+                        //           Text("الثيمات الجاهزة",
+                        //               style: GoogleFonts.cairo(
+                        //                   color: Colors.white,
+                        //                   fontSize: 12.sp,
+                        //                   fontWeight: FontWeight.bold)),
+                        //         ],
+                        //       ),
+                        //       SizedBox(height: 10.h),
+                        //       SingleChildScrollView(
+                        //         scrollDirection: Axis.horizontal,
+                        //         child: Row(
+                        //           children: _themes.keys.map((themeName) {
+                        //             bool isSelected = _selectedTheme == themeName;
+                        //             return GestureDetector(
+                        //               onTap: () {
+                        //                 setState(() {
+                        //                   _selectedTheme = themeName;
+                        //                   _titleColor = _themes[themeName]!["title"]!;
+                        //                   _textColor = _themes[themeName]!["text"]!;
+                        //                   _sourceColor = _themes[themeName]!["source"]!;
+                        //                   _dividerColor = _themes[themeName]!["divider"] ?? _titleColor;
+                        //                 });
+                        //               },
+                        //               child: Container(
+                        //                 margin: EdgeInsets.symmetric(horizontal: 4.w),
+                        //                 padding: EdgeInsets.symmetric(
+                        //                     horizontal: 12.w, vertical: 8.h),
+                        //                 decoration: BoxDecoration(
+                        //                   gradient: isSelected
+                        //                       ? LinearGradient(
+                        //                     colors: [
+                        //                       _themes[themeName]!["title"]!,
+                        //                       _themes[themeName]!["source"]!,
+                        //                     ],
+                        //                   )
+                        //                       : null,
+                        //                   color: isSelected
+                        //                       ? null
+                        //                       : Colors.white.withOpacity(0.1),
+                        //                   borderRadius: BorderRadius.circular(12.r),
+                        //                   border: Border.all(
+                        //                     color: isSelected
+                        //                         ? Colors.white.withOpacity(0.5)
+                        //                         : Colors.white24,
+                        //                     width: isSelected ? 2 : 1,
+                        //                   ),
+                        //                 ),
+                        //                 child: Row(
+                        //                   children: [
+                        //                     // Color indicator dots
+                        //                     Column(
+                        //                       children: [
+                        //                         Container(
+                        //                           width: 8.w,
+                        //                           height: 8.w,
+                        //                           decoration: BoxDecoration(
+                        //                             color: _themes[themeName]!["title"],
+                        //                             shape: BoxShape.circle,
+                        //                             border: Border.all(
+                        //                                 color: Colors.white, width: 1),
+                        //                           ),
+                        //                         ),
+                        //                         SizedBox(height: 2.h),
+                        //                         Container(
+                        //                           width: 8.w,
+                        //                           height: 8.w,
+                        //                           decoration: BoxDecoration(
+                        //                             color: _themes[themeName]!["text"],
+                        //                             shape: BoxShape.circle,
+                        //                             border: Border.all(
+                        //                                 color: Colors.white, width: 1),
+                        //                           ),
+                        //                         ),
+                        //                       ],
+                        //                     ),
+                        //                     SizedBox(width: 8.w),
+                        //                     Text(
+                        //                       themeName,
+                        //                       style: GoogleFonts.cairo(
+                        //                         color: isSelected
+                        //                             ? Colors.white
+                        //                             : Colors.white70,
+                        //                         fontSize: 10.sp,
+                        //                         fontWeight: isSelected
+                        //                             ? FontWeight.bold
+                        //                             : FontWeight.w600,
+                        //                       ),
+                        //                     ),
+                        //                   ],
+                        //                 ),
+                        //               ),
+                        //             );
+                        //           }).toList(),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        // SizedBox(height: 12.h),
+
                         // Background Selector
                         SizedBox(
                           height: 60.h,
@@ -511,9 +660,9 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                     borderRadius: BorderRadius.circular(14.r),
                                     border: _selectedBgIndex == index
                                         ? Border.all(
-                                            color: Colors.amber, width: 2.5)
+                                        color: Colors.amber, width: 2.5)
                                         : Border.all(
-                                            color: Colors.white24, width: 1),
+                                        color: Colors.white24, width: 1),
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(12.r),
@@ -522,26 +671,26 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                         Positioned.fill(
                                           child: isCurrentRemote
                                               ? CachedNetworkImage(
-                                                  imageUrl:
-                                                      _backgrounds[index].path,
-                                                  cacheManager:
-                                                      ImageShareService
-                                                          .customCacheManager,
-                                                  fit: BoxFit.cover,
-                                                  placeholder: (context, url) =>
-                                                      Container(
-                                                          color:
-                                                              Colors.grey[900]),
-                                                  errorWidget: (context, url,
-                                                          e) =>
-                                                      const Icon(
-                                                          Icons.cloud_off,
-                                                          color:
-                                                              Colors.white24),
-                                                )
+                                            imageUrl:
+                                            _backgrounds[index].path,
+                                            cacheManager:
+                                            ImageShareService
+                                                .customCacheManager,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                Container(
+                                                    color:
+                                                    Colors.grey[900]),
+                                            errorWidget: (context, url,
+                                                e) =>
+                                            const Icon(
+                                                Icons.cloud_off,
+                                                color:
+                                                Colors.white24),
+                                          )
                                               : Image.asset(
-                                                  _backgrounds[index].path,
-                                                  fit: BoxFit.cover),
+                                              _backgrounds[index].path,
+                                              fit: BoxFit.cover),
                                         ),
                                         if (_loadedIndices.contains(index))
                                           Positioned(
@@ -560,70 +709,207 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                         ),
                         SizedBox(height: 12.h),
 
-                        // Personalization Tools Box
+                        // Enhanced Personalization Tools Box
                         Container(
                           padding: EdgeInsets.all(16.w),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withOpacity(0.6),
                             borderRadius: BorderRadius.circular(20.r),
                             border: Border.all(
-                                color: Colors.white.withOpacity(0.1)),
+                                color: const Color(0xFFD4AF37).withOpacity(0.3)),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("الخط",
-                                  style: GoogleFonts.cairo(
-                                      color: Colors.white,
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.bold)),
-                              SizedBox(height: 8.h),
+                              // Font Section
+                              Row(
+                                children: [
+                                  Icon(Icons.font_download,
+                                      color: const Color(0xFFD4AF37), size: 16.sp),
+                                  SizedBox(width: 8.w),
+                                  Text("نوع الخط",
+                                      style: GoogleFonts.cairo(
+                                          color: Colors.white,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                              SizedBox(height: 10.h),
                               SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
                                   children: _fonts
                                       .map((f) => Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 4.w),
-                                            child: ChoiceChip(
-                                              label: Text(f,
-                                                  style: GoogleFonts.getFont(f,
-                                                      color: Colors.white,
-                                                      fontSize: 11.sp)),
-                                              selected: _selectedFont == f,
-                                              onSelected: (_) => setState(
-                                                  () => _selectedFont = f),
-                                              backgroundColor: Colors.white10,
-                                              selectedColor:
-                                                  Colors.amber.shade800,
-                                            ),
-                                          ))
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 4.w),
+                                    child: ChoiceChip(
+                                      label: Text(f,
+                                          style: GoogleFonts.getFont(f,
+                                              color: Colors.white,
+                                              fontSize: 11.sp,
+                                              fontWeight: FontWeight.bold)),
+                                      selected: _selectedFont == f,
+                                      onSelected: (_) => setState(
+                                              () => _selectedFont = f),
+                                      backgroundColor: const Color(0xFF2C2C2C),
+                                      selectedColor:
+                                      const Color(0xFFD4AF37),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12.r),
+                                        side: BorderSide(
+                                          color: _selectedFont == f
+                                              ? const Color(0xFFFFD700)
+                                              : Colors.white24,
+                                          width: _selectedFont == f ? 2 : 1,
+                                        ),
+                                      ),
+                                      labelPadding: EdgeInsets.symmetric(
+                                          horizontal: 8.w, vertical: 4.h),
+                                    ),
+                                  ))
                                       .toList(),
                                 ),
                               ),
+
+                              SizedBox(height: 20.h),
+                              Divider(color: Colors.white.withOpacity(0.1), thickness: 1),
                               SizedBox(height: 16.h),
-                              Text("الألوان",
-                                  style: GoogleFonts.cairo(
-                                      color: Colors.white,
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.bold)),
+
+                              // Font Size Control
+                              Row(
+                                children: [
+                                  Icon(Icons.format_size,
+                                      color: const Color(0xFFD4AF37), size: 16.sp),
+                                  SizedBox(width: 8.w),
+                                  Text("حجم الخط",
+                                      style: GoogleFonts.cairo(
+                                          color: Colors.white,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
                               SizedBox(height: 10.h),
-                              // Re-implementing the color picks simply
-                              _buildSimpleColorSection(
+                              Row(
+                                children: [
+                                  Icon(Icons.text_fields,
+                                      color: Colors.white54, size: 14.sp),
+                                  Expanded(
+                                    child: Slider(
+                                      value: _fontSizeMultiplier,
+                                      onChanged: (v) => setState(() => _fontSizeMultiplier = v),
+                                      min: 0.7,
+                                      max: 1.3,
+                                      divisions: 12,
+                                      activeColor: const Color(0xFFFFD700),
+                                      inactiveColor: Colors.white24,
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w, vertical: 4.h),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFD4AF37).withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      border: Border.all(
+                                          color: const Color(0xFFD4AF37).withOpacity(0.3)),
+                                    ),
+                                    child: Text(
+                                      "${(_fontSizeMultiplier * 100).toInt()}%",
+                                      style: GoogleFonts.cairo(
+                                        color: const Color(0xFFFFD700),
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: 20.h),
+                              Divider(color: Colors.white.withOpacity(0.1), thickness: 1),
+                              SizedBox(height: 16.h),
+
+                              // Enhanced Color Sections
+                              Row(
+                                children: [
+                                  Icon(Icons.palette,
+                                      color: const Color(0xFFD4AF37), size: 16.sp),
+                                  SizedBox(width: 8.w),
+                                  Text("تخصيص الألوان",
+                                      style: GoogleFonts.cairo(
+                                          color: Colors.white,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                              SizedBox(height: 14.h),
+
+                              _buildEnhancedColorSection(
                                   "لون العنوان",
                                   _titlePalette,
                                   _titleColor,
-                                  (c) => setState(() => _titleColor = c)),
-                              _buildSimpleColorSection(
-                                  "لون النص",
+                                  Icons.title,
+                                      (c) => setState(() => _titleColor = c)),
+
+                              _buildEnhancedColorSection(
+                                  "لون النص الأساسي",
                                   _textPalette,
                                   _textColor,
-                                  (c) => setState(() => _textColor = c)),
-                              _buildSimpleColorSection(
+                                  Icons.text_fields,
+                                      (c) => setState(() => _textColor = c)),
+
+                              _buildEnhancedColorSection(
                                   "لون المصدر",
                                   _sourcePalette,
                                   _sourceColor,
-                                  (c) => setState(() => _sourceColor = c)),
+                                  Icons.source,
+                                      (c) => setState(() => _sourceColor = c)),
+                              _buildEnhancedColorSection(
+                                "لون الخط الفاصل",
+                                _titlePalette,
+                                _dividerColor,
+                                Icons.horizontal_rule,
+                                    (c) => setState(() => _dividerColor = c),
+                              ),
+
+                              // Reset Button
+                              SizedBox(height: 10.h),
+
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      _selectedFont = "Amiri";
+                                      _bgDimming = 0.4;
+                                      _fontSizeMultiplier = 1.0;
+                                      _titleColor = const Color(0xFFFFD700);
+                                      _textColor = const Color(0xFFFFFFFF);
+                                      _sourceColor = const Color(0xFFD4AF37);
+                                      _selectedTheme = "ذهبي كلاسيكي";
+                                      _dividerColor = const Color(0xFFFFD700);
+
+                                    });
+                                  },
+                                  icon: const Icon(Icons.restart_alt, size: 18),
+                                  label: Text(
+                                    "إعادة تعيين الإعدادات",
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.white70,
+                                    side: BorderSide(
+                                        color: Colors.white.withOpacity(0.3)),
+                                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -634,19 +920,20 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                   // Fixed Bottom Overlay (Ratio & Share)
                   ClipRRect(
                     borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(30.r)),
+                    BorderRadius.vertical(top: Radius.circular(30.r)),
                     child: BackdropFilter(
                       filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: Container(
                         padding: EdgeInsets.all(16.w),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.7),
+                          color: Colors.black.withOpacity(0.75),
                           border:
-                              Border.all(color: Colors.white.withOpacity(0.1)),
+                          Border.all(color: Colors.white.withOpacity(0.1)),
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            // Ratio Tabs
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
@@ -662,11 +949,15 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                 ],
                               ),
                             ),
-                            SizedBox(height: 10.h),
+
+                            SizedBox(height: 12.h),
+
+                            // Dimming Slider
                             Row(
                               children: [
                                 Icon(Icons.opacity,
-                                    color: Colors.white70, size: 16.sp),
+                                    color: const Color(0xFFD4AF37), size: 18.sp),
+                                SizedBox(width: 8.w),
                                 Expanded(
                                   child: Slider(
                                     value: _bgDimming,
@@ -674,20 +965,29 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                         setState(() => _bgDimming = v),
                                     min: 0.0,
                                     max: 0.8,
-                                    activeColor: Colors.amber,
+                                    activeColor: const Color(0xFFFFD700),
                                     inactiveColor: Colors.white24,
+                                  ),
+                                ),
+                                Text(
+                                  "${(_bgDimming * 100).toInt()}%",
+                                  style: GoogleFonts.cairo(
+                                    color: Colors.white70,
+                                    fontSize: 10.sp,
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(
-                                height: 10.h), // Added a SizedBox for spacing
+
+                            SizedBox(height: 12.h),
+
+                            // Share Button
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton.icon(
                                 onPressed: (_isExporting ||
-                                        !_loadedIndices
-                                            .contains(_selectedBgIndex))
+                                    !_loadedIndices
+                                        .contains(_selectedBgIndex))
                                     ? null
                                     : _shareImage,
                                 style: ElevatedButton.styleFrom(
@@ -697,33 +997,33 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                   padding: EdgeInsets.symmetric(vertical: 16.h),
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                          BorderRadius.circular(20.r)),
+                                      BorderRadius.circular(20.r)),
                                   elevation: 8,
-                                  shadowColor: Colors.amber.withOpacity(0.5),
+                                  shadowColor: const Color(0xFFFFD700).withOpacity(0.5),
                                 ),
                                 icon: _isExporting
                                     ? const SizedBox(
-                                        width: 22,
-                                        height: 22,
-                                        child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white))
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white))
                                     : (!_loadedIndices
-                                            .contains(_selectedBgIndex)
-                                        ? const SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: Colors.white54))
-                                        : const Icon(Icons.share)),
+                                    .contains(_selectedBgIndex)
+                                    ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white54))
+                                    : const Icon(Icons.share)),
                                 label: Text(
                                   _isExporting
                                       ? "جاري الحفظ..."
                                       : (!_loadedIndices
-                                              .contains(_selectedBgIndex)
-                                          ? "جاري التحميل..."
-                                          : "مشاركة كصورة"),
+                                      .contains(_selectedBgIndex)
+                                      ? "جاري التحميل..."
+                                      : "مشاركة كصورة"),
                                   style: GoogleFonts.cairo(
                                       fontWeight: FontWeight.w900,
                                       fontSize: 16.sp),
@@ -742,6 +1042,124 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
         ),
       ),
     );
+  }
+
+  // Helper Methods for Responsive Sizing
+  EdgeInsets _getContentPadding() {
+    switch (_selectedRatio) {
+      case ShareRatio.flexible:
+        return EdgeInsets.symmetric(horizontal: 22.w, vertical: 30.h);
+      case ShareRatio.square:
+        return EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h);
+      case ShareRatio.story:
+        return EdgeInsets.symmetric(horizontal: 16.w, vertical: 25.h);
+      case ShareRatio.portrait:
+        return EdgeInsets.symmetric(horizontal: 18.w, vertical: 22.h);
+    }
+  }
+
+  double _getTitleFontSize() {
+    switch (_selectedRatio) {
+      case ShareRatio.flexible:
+        return 20.sp;
+      case ShareRatio.square:
+        return 16.sp;
+      case ShareRatio.story:
+        return 18.sp;
+      case ShareRatio.portrait:
+        return 17.sp;
+    }
+  }
+
+  double _getDividerSpacing() {
+    switch (_selectedRatio) {
+      case ShareRatio.flexible:
+        return 10.h;
+      case ShareRatio.square:
+        return 6.h;
+      case ShareRatio.story:
+        return 8.h;
+      case ShareRatio.portrait:
+        return 7.h;
+    }
+  }
+
+  double _getTextBoxPadding() {
+    switch (_selectedRatio) {
+      case ShareRatio.flexible:
+        return 15.h;
+      case ShareRatio.square:
+        return 10.h;
+      case ShareRatio.story:
+        return 12.h;
+      case ShareRatio.portrait:
+        return 12.h;
+    }
+  }
+
+  double _getSourceSpacing() {
+    switch (_selectedRatio) {
+      case ShareRatio.flexible:
+        return 15.h;
+      case ShareRatio.square:
+        return 8.h;
+      case ShareRatio.story:
+        return 10.h;
+      case ShareRatio.portrait:
+        return 10.h;
+    }
+  }
+
+  double _getSourceFontSize() {
+    switch (_selectedRatio) {
+      case ShareRatio.flexible:
+        return 11.sp;
+      case ShareRatio.square:
+        return 9.sp;
+      case ShareRatio.story:
+        return 10.sp;
+      case ShareRatio.portrait:
+        return 10.sp;
+    }
+  }
+
+  double _getBrandingTopSpacing() {
+    switch (_selectedRatio) {
+      case ShareRatio.flexible:
+        return 15.h;
+      case ShareRatio.square:
+        return 8.h;
+      case ShareRatio.story:
+        return 10.h;
+      case ShareRatio.portrait:
+        return 10.h;
+    }
+  }
+
+  double _getLogoSize() {
+    switch (_selectedRatio) {
+      case ShareRatio.flexible:
+        return 45.h;
+      case ShareRatio.square:
+        return 32.h;
+      case ShareRatio.story:
+        return 38.h;
+      case ShareRatio.portrait:
+        return 35.h;
+    }
+  }
+
+  double _getBrandingFontSize() {
+    switch (_selectedRatio) {
+      case ShareRatio.flexible:
+        return 12.sp;
+      case ShareRatio.square:
+        return 9.sp;
+      case ShareRatio.story:
+        return 10.sp;
+      case ShareRatio.portrait:
+        return 10.sp;
+    }
   }
 
   // Helper Widgets & Methods
@@ -765,21 +1183,41 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
       onTap: () => setState(() => _selectedRatio = ratio),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 4.w),
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.amber.shade800 : Colors.white10,
-          borderRadius: BorderRadius.circular(10.r),
-          border: isSelected ? null : Border.all(color: Colors.white24),
+          gradient: isSelected
+              ? const LinearGradient(
+            colors: [Color(0xFFFFD700), Color(0xFFD4AF37)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          )
+              : null,
+          color: isSelected ? null : Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12.r),
+          border: isSelected
+              ? Border.all(color: const Color(0xFFFFD700), width: 1.5)
+              : Border.all(color: Colors.white24),
+          boxShadow: isSelected
+              ? [
+            BoxShadow(
+              color: const Color(0xFFFFD700).withOpacity(0.3),
+              blurRadius: 8,
+              spreadRadius: 1,
+            )
+          ]
+              : null,
         ),
         child: Row(
           children: [
-            Icon(icon, size: 14.sp, color: Colors.white),
-            SizedBox(width: 8.w),
+            Icon(icon,
+                size: 16.sp,
+                color: isSelected ? Colors.white : Colors.white70),
+            SizedBox(width: 6.w),
             Text(title,
                 style: GoogleFonts.cairo(
-                    color: Colors.white,
+                    color: isSelected ? Colors.white : Colors.white70,
                     fontSize: 11.sp,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w600)),
           ],
         ),
       ),
@@ -788,10 +1226,9 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
 
   double _adjustedFontSize(double base) {
     if (_selectedRatio == ShareRatio.flexible) return base;
-    // For fixed ratios, we slightly reduce font size to ensure it fits better
-    if (_selectedRatio == ShareRatio.square) return base * 0.85;
-    if (_selectedRatio == ShareRatio.story) return base * 0.95;
-    return base;
+    if (_selectedRatio == ShareRatio.square) return base * 0.80;
+    if (_selectedRatio == ShareRatio.story) return base * 0.90;
+    return base * 0.85;
   }
 
   Widget _buildElegantDivider() {
@@ -801,7 +1238,9 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
         _buildSmallDivider(isLeft: true),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: Icon(Icons.auto_awesome, color: Colors.amber, size: 10.sp),
+          child: Icon(Icons.auto_awesome,
+              color: _dividerColor,
+              size: _selectedRatio == ShareRatio.flexible ? 12.sp : 10.sp),
         ),
         _buildSmallDivider(isLeft: false),
       ],
@@ -825,12 +1264,13 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isLeft
-              ? [Colors.transparent, Colors.amber.withOpacity(0.8)]
-              : [Colors.amber.withOpacity(0.8), Colors.transparent],
+              ? [Colors.transparent, _dividerColor.withOpacity(0.8)]
+              : [_dividerColor.withOpacity(0.8), Colors.transparent],
         ),
       ),
     );
   }
+
 
   Widget _buildStoreIcon(String path) {
     return Image.asset(
@@ -840,43 +1280,126 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
     );
   }
 
-  Widget _buildSimpleColorSection(String label, List<Color> palette,
-      Color current, Function(Color) onSelect) {
+  Widget _buildEnhancedColorSection(
+      String label,
+      List<Color> palette,
+      Color current,
+      IconData icon,
+      Function(Color) onSelect,
+      ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
-      child: Row(
+      padding: EdgeInsets.only(bottom: 16.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-              width: 75.w,
-              child: Text(label,
-                  style: GoogleFonts.cairo(
-                      color: Colors.white70, fontSize: 10.sp))),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: palette
-                    .map((c) => GestureDetector(
-                          onTap: () => onSelect(c),
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 4.w),
-                            width: 26.w,
-                            height: 26.w,
-                            decoration: BoxDecoration(
-                              color: c,
-                              shape: BoxShape.circle,
-                              border: current == c
-                                  ? Border.all(color: Colors.white, width: 2)
-                                  : null,
-                            ),
-                          ),
-                        ))
-                    .toList(),
+          // Label with Icon
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(6.w),
+                decoration: BoxDecoration(
+                  color: current.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: current.withOpacity(0.4)),
+                ),
+                child: Icon(icon, color: current, size: 14.sp),
               ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Text(
+                  label,
+                  style: GoogleFonts.cairo(
+                    color: Colors.white,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              // Current Color Preview
+              Container(
+                width: 32.w,
+                height: 32.w,
+                decoration: BoxDecoration(
+                  color: current,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: current.withOpacity(0.4),
+                      blurRadius: 8,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.check,
+                    color: _getContrastColor(current),
+                    size: 16.sp,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10.h),
+
+          // Color Palette
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: palette.map((c) {
+                bool isSelected = current == c;
+                return GestureDetector(
+                  onTap: () => onSelect(c),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: EdgeInsets.symmetric(horizontal: 4.w),
+                    width: isSelected ? 40.w : 34.w,
+                    height: isSelected ? 40.w : 34.w,
+                    decoration: BoxDecoration(
+                      color: c,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected
+                            ? Colors.white
+                            : Colors.white.withOpacity(0.3),
+                        width: isSelected ? 2.5 : 1.5,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                        BoxShadow(
+                          color: c.withOpacity(0.6),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
+                      ]
+                          : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: isSelected
+                        ? Icon(
+                      Icons.check_circle,
+                      color: _getContrastColor(c),
+                      size: 18.sp,
+                    )
+                        : null,
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Color _getContrastColor(Color color) {
+    // Calculate luminance to determine if we need dark or light text
+    final luminance = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
+    return luminance > 0.5 ? Colors.black : Colors.white;
   }
 }

@@ -142,12 +142,6 @@ class _MashkahAppState extends State<MashkahApp> {
 }
 
 List<SingleChildWidget> provider = [
-  BlocProvider<CentralizedCubit>(
-      create: (BuildContext context) =>
-          CentralizedCubit(sharedPreferences: Di.sharedPreferences)
-            ..localization()),
-  BlocProvider<CategoriesBloc>(
-      create: (BuildContext context) => CategoriesBloc(CategoriesRepoImmp())),
   BlocProvider<CategoriesBloc>(
     create: (BuildContext context) =>
         CategoriesBloc(CategoriesRepoImmp())..getAllCategories(),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import '../models/MosqueModel.dart';
+import 'package:muslimdaily/app/core/utils/log.dart'; 
 
 class MosqueService {
   static const String overpassUrl = 'https://overpass-api.de/api/interpreter';
@@ -13,7 +14,8 @@ class MosqueService {
     required double latitude,
     required double longitude,
     int radiusMeters = 5000,
-  }) async {
+  }) async { 
+
     try {
       // Overpass QL query to find mosques
       final query = '''
@@ -48,7 +50,7 @@ out center;
             final mosque = Mosque.fromOverpassNode(element, latitude, longitude);
             mosques.add(mosque);
           } catch (e) {
-            print('Error parsing mosque: $e');
+            log('MosqueService', msg: 'Error parsing mosque', error: e);
           }
         }
 
@@ -60,7 +62,7 @@ out center;
         throw Exception('Failed to fetch mosques: ${response.statusCode}');
       }
     } catch (e) {
-      print('MosqueService Error: $e');
+      log('MosqueService', msg: 'Error fetching mosques', error: e);
       return [];
     }
   }

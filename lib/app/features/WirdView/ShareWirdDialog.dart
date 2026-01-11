@@ -39,6 +39,26 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
 
   final List<String> _fonts = ["Amiri", "Cairo", "Changa", "Lateef", "Tajawal"];
 
+  Color _textColor = Colors.white;
+  Color _brandColor = Colors.white;
+
+  final List<Color> _textPalette = [
+    Colors.white,
+    const Color(0xFF000000), // Black
+    const Color(0xFFFFD700), // Gold
+    const Color(0xFFFFF8DC), // Cornsilk
+    const Color(0xFFE8F5E9), // Light Green
+    const Color(0xFFE3F2FD), // Light Blue
+  ];
+
+  final List<Color> _brandPalette = [
+    Colors.white,
+    const Color(0xFF000000), // Black
+    const Color(0xFFD4AF37), // Dark Gold
+    const Color(0xFF4CAF50), // Green
+    const Color(0xFF2196F3), // Blue
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -131,15 +151,15 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
                             Text(
                               widget.dhikrText,
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.getFont(_selectedFont, fontSize: 22.sp, color: Colors.white, fontWeight: FontWeight.bold, height: 1.5),
+                              style: GoogleFonts.getFont(_selectedFont, fontSize: 22.sp, color: _textColor, fontWeight: FontWeight.bold, height: 1.5),
                             ),
                             const Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image.asset("assets/images/logoApp.png", height: 32.h, width: 32.h),
+                                Image.asset("assets/images/logoApp.png", height: 32.h, width: 32.h, color: _brandColor),
                                 SizedBox(width: 8.w),
-                                Text("رفيق المسلم", style: GoogleFonts.cairo(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.bold)),
+                                Text("رفيق المسلم", style: GoogleFonts.cairo(color: _brandColor, fontSize: 12.sp, fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ],
@@ -204,6 +224,15 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
           ),
         ),
         SizedBox(height: 16.h),
+        
+        // Color Pickers
+        Text("ألوان النصوص", style: GoogleFonts.cairo(fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.grey)),
+        SizedBox(height: 8.h),
+        _buildSimpleColorSection("لون الذكر", _textPalette, _textColor, (c) => setState(() => _textColor = c)),
+        SizedBox(height: 8.h),
+        _buildSimpleColorSection("لون الشعار", _brandPalette, _brandColor, (c) => setState(() => _brandColor = c)),
+
+        SizedBox(height: 16.h),
         Row(
           children: [
             Icon(CupertinoIcons.circle_lefthalf_fill, size: 16.sp, color: Colors.grey),
@@ -247,6 +276,56 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
                 ),
               );
             },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSimpleColorSection(
+      String title, List<Color> palette, Color selectedColor, Function(Color) onSelect) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 60.w,
+          child: Text(title,
+              style: GoogleFonts.cairo(
+                  color: Colors.grey, fontSize: 10.sp, fontWeight: FontWeight.bold)),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: palette.map((color) {
+                bool isSelected = selectedColor.value == color.value;
+                return GestureDetector(
+                  onTap: () => onSelect(color),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 4.w),
+                    width: 24.w,
+                    height: 24.w,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: isSelected ? Colors.amber : Colors.grey.withOpacity(0.3),
+                          width: isSelected ? 2 : 1),
+                      boxShadow: [
+                        if (isSelected)
+                          BoxShadow(
+                              color: color.withOpacity(0.4), blurRadius: 4, spreadRadius: 1)
+                      ],
+                    ),
+                    child: isSelected
+                        ? Icon(Icons.check,
+                            size: 14.sp,
+                            color:
+                                color.computeLuminance() > 0.5 ? Colors.black : Colors.white)
+                        : null,
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         ),
       ],

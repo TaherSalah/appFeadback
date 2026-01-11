@@ -274,7 +274,7 @@ class NotificationManager {
   /// based on current settings.
   /// Note: Adhan is handled by AdhanWorkManagerService, but we can control its 'enable' state via SettingsService
   /// which AdhanWorkManagerService should check before notifying.
-  Future<void> rescheduleAll() async {
+  Future<void> rescheduleAll({bool force = false}) async {
     print('🔄 Rescheduling all notifications based on settings...');
 
     // إلغاء كل التذكيرات المجدولة (ما عدا الأذان الذي يديره WorkManager مبدئياً)
@@ -300,7 +300,9 @@ class NotificationManager {
     await _setupDailyReminders();
 
     // 🚀 إعادة جدولة الأذان
-    await AdhanWorkManagerService().initialize();
+    // When calling rescheduleAll manually, we usually WANT to force an update (e.g. settings changed)
+    // If called from main.dart on startup, force might be false (default)
+    await AdhanWorkManagerService().initialize(forceReschedule: force);
 
     print('✅ Reschedule completed.');
   }

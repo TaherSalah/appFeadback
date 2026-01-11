@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/app_theme_colors.dart';
 import '../../core/widgets/kButtons.dart';
@@ -191,7 +192,45 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // اقتراح الصدقة اليومية
-                            _buildDailySuggestionCard(isDark),
+                            // _buildDailySuggestionCard(isDark),
+                            Row(
+                              spacing: 15,
+                              children: [
+                                Expanded(
+                                  child: _buildActionButton(
+                                    Icons.repeat,
+                                    'اضافة صدقات دورية',
+                                    const Color(0xFF10B981),
+                                        () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const RecurringCharityScreen(),
+                                        ),
+                                      ).then((_) => _loadData());
+                                    },
+                                    isDark,
+                                  ),
+                                ),
+
+                                Expanded(
+                                  child: _buildActionButton(
+                                    Icons.add,
+
+                                    'اضافة صدقة حديدة',
+                                    const Color(0xFF10B981),
+                                        () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (_) => const AddCharityScreen()),
+                                          ).then((_) => _loadData());
+                                    },
+                                    isDark,
+                                  ),
+                                ),
+                              ],
+                            ),
+
                             SizedBox(height: 20.h),
 
                             // صدقات مستحقة اليوم (الصدقات الدورية)
@@ -225,8 +264,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                             SizedBox(height: 20.h),
 
                             // أزرار سريعة
-                            _buildQuickActions(isDark),
-                            SizedBox(height: 40.h),
+                            // _buildQuickActions(isDark),
+                            // SizedBox(height: 40.h),
                           ],
                         ),
                       ),
@@ -400,10 +439,10 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(emoji, style: TextStyle(fontSize: 28.sp)),
-          SizedBox(height: 8.h),
+          // Text(emoji, style: TextStyle(fontSize: 28.sp)),
+          // SizedBox(height: 8.h),
           Text(
             label,
             style: GoogleFonts.cairo(
@@ -462,12 +501,13 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         await _charityService.addDonation(donation);
         _loadData();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('تم تسجيل صدقة بقيمة $amount جنيه ✨', style: GoogleFonts.cairo()),
-              backgroundColor: const Color(0xFF10B981),
-            ),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text('تم تسجيل صدقة بقيمة $amount جنيه ✨', style: GoogleFonts.cairo()),
+          //     backgroundColor: const Color(0xFF10B981),
+          //   ),
+          // );
+          KHelper.showSuccess(message: 'تم تسجيل صدقة بقيمة $amount جنيه ');
         }
       },
       child: Container(
@@ -851,26 +891,26 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         SizedBox(height: 12.h),
         Row(
           children: [
+            // Expanded(
+            //   child: _buildActionButton(
+            //     '📖',
+            //     'قصص ملهمة',
+            //     const Color(0xFF8B5CF6),
+            //     () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (_) => const CharityStoriesScreen(),
+            //         ),
+            //       );
+            //     },
+            //     isDark,
+            //   ),
+            // ),
+            // SizedBox(width: 12.w),
             Expanded(
               child: _buildActionButton(
-                '📖',
-                'قصص ملهمة',
-                const Color(0xFF8B5CF6),
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const CharityStoriesScreen(),
-                    ),
-                  );
-                },
-                isDark,
-              ),
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: _buildActionButton(
-                '🔄',
+                Icons.add_ic_call,
                 'صدقات دورية',
                 const Color(0xFF10B981),
                 () {
@@ -973,7 +1013,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
     );
   }
 
-  Widget _buildActionButton(String emoji, String label, Color color,
+  Widget _buildActionButton(IconData? icon, String label, Color color,
       VoidCallback onTap, bool isDark) {
     return InkWell(
       onTap: onTap,
@@ -987,7 +1027,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         ),
         child: Column(
           children: [
-            Text(emoji, style: TextStyle(fontSize: 32.sp)),
+            Icon(icon),
             SizedBox(height: 8.h),
             Text(
               label,

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/features/radio/view/widget/QuranRadioItemBuilder.dart';
 
 import '../../core/cubit/centralized_cubit.dart';
-import '../../core/widgets/NoConnectionScreen.dart';
+import '../../core/widgets/no_internet_dialog.dart';
 
 class QuranRadioView extends StatefulWidget {
   const QuranRadioView({super.key});
@@ -35,34 +35,32 @@ class _QuranRadioViewState extends State<QuranRadioView> {
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
 
-    return BlocBuilder<CentralizedCubit, CentralizedState>(
-      builder: (context, state) {
-        return state is ConnectivityState &&
-                state.status == ConnectivityStatus.disconnected
-            ? const NoConnectionScreen()
-            : PopScope(
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: Scaffold(
-                    // backgroundColor: AppStyle.bgColors,
-
-                    key: scaffoldState,
-                    // appBar: AppBar(
-                    //     centerTitle: true,
-                    //     title: Padding(
-                    //       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    //       child: Image.asset(
-                    //         AssetsManager.logo,
-                    //         height: 70.h,
-                    //         width: 70.w,
-                    //       ),
-                    //     ),
-                    //     leading: const SizedBox()),
-                    body: const SafeArea(child: QuranRadioItemBuilder()),
-                  ),
-                ),
-              );
+    return BlocListener<CentralizedCubit, CentralizedState>(
+      listener: (context, state) {
+        if (state is ConnectivityState &&
+            state.status == ConnectivityStatus.disconnected) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => NoInternetDialog(
+              onRetrySuccess: () {
+                Navigator.pop(ctx);
+                // Trigger a re-check or let the listener handle the reconnection state
+                context.read<CentralizedCubit>().checkConnectivity();
+              },
+            ),
+          );
+        }
       },
+      child: PopScope(
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(
+            key: scaffoldState,
+            body: const SafeArea(child: QuranRadioItemBuilder()),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -55,8 +55,16 @@ class AdhanWorkManagerService {
     CalculationParameters? calculationParams,
     String? cityName,
     int days = 7,
+    bool forceReschedule = false,
   }) async {
     try {
+      // check if we really need to reschedule
+      if (!forceReschedule &&
+          !await _shouldReschedule(coordinates, calculationParams, cityName)) {
+        print('✅ [AdhanWorkManager] Skipping reschedule: Schedules are up-to-date.');
+        return;
+      }
+
       print('🚀 بدء تهيئة خدمة الأذان Exact Alarm...');
 
       // تهيئة SettingsService
@@ -83,11 +91,72 @@ class AdhanWorkManagerService {
         days: days,
       );
 
+      // حفظ حالة الجدولة الحالية
+      await _saveCurrentScheduleState(
+          coordinates, calculationParams, cityName ?? "Unknown");
+
       print('✅ تم تهيئة خدمة الأذان بنجاح');
     } catch (e, stackTrace) {
       print('❌ خطأ في تهيئة AdhanService: $e');
       print('Stack Trace: $stackTrace');
     }
+  }
+
+  // ==========================================
+  // 🧠 Smart Scheduling Logic
+  // ==========================================
+
+  Future<bool> _shouldReschedule(Coordinates? coords,
+      CalculationParameters? params, String? cityName) async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastRun = prefs.getInt('adhan_last_schedule_time') ?? 0;
+    final lastSettingsHash = prefs.getString('adhan_settings_hash') ?? '';
+
+    // Check time: Reschedule if > 3 days have passed since last schedule
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final daysSinceLastRun = (now - lastRun) / (1000 * 60 * 60 * 24);
+    if (daysSinceLastRun > 3) {
+      print("🔄 Rescheduling: >3 days passed since last schedule.");
+      return true;
+    }
+
+    // Check settings: Reschedule if settings changed
+    final currentHash = await _generateSettingsHash(coords, params, cityName);
+    if (currentHash != lastSettingsHash) {
+      print("🔄 Rescheduling: Settings changed.");
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<void> _saveCurrentScheduleState(Coordinates? coords,
+      CalculationParameters? params, String cityName) async {
+    final prefs = await SharedPreferences.getInstance();
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final hash = await _generateSettingsHash(coords, params, cityName);
+
+    await prefs.setInt('adhan_last_schedule_time', now);
+    await prefs.setString('adhan_settings_hash', hash);
+  }
+
+  Future<String> _generateSettingsHash(Coordinates? coords,
+      CalculationParameters? params, String? cityName) async {
+    // Collect all factors that affect prayer times
+    final c = coords ?? await _getSavedCoordinates();
+    final p = params ?? await _getSavedCalculationParams();
+    final city = cityName ?? await _getCityName();
+    
+    final prefs = await SharedPreferences.getInstance();
+    final manualOffset = prefs.getInt('manual_offset') ?? 0;
+    final fOff = prefs.getInt('fajr_offset') ?? 0;
+    final dOff = prefs.getInt('dhuhr_offset') ?? 0;
+    final aOff = prefs.getInt('asr_offset') ?? 0;
+    final mOff = prefs.getInt('maghrib_offset') ?? 0;
+    final iOff = prefs.getInt('isha_offset') ?? 0;
+    
+    // Create a simple signature string
+    return "${c.latitude}_${c.longitude}_${p.method.index}_${p.madhab.index}_${city}_${manualOffset}_${fOff}_${dOff}_${aOff}_${mOff}_${iOff}";
   }
 
   // ==========================================
@@ -134,7 +203,7 @@ class AdhanWorkManagerService {
 
         int prayerIndex = 0;
         for (var entry in prayerTimes.entries) {
-          print('📋 محاولة جدولة: ${entry.key} - ${_formatTime(entry.value)}');
+          // print('📋 محاولة جدولة: ${entry.key} - ${_formatTime(entry.value)}');
           final error = await _schedulePrayer(
             prayerName: entry.key,
             prayerTime: entry.value,
@@ -144,9 +213,9 @@ class AdhanWorkManagerService {
           );
           if (error == null) {
             scheduledCount++;
-            print('   ✅ تم الجدولة');
+            // print('   ✅ تم الجدولة');
           } else {
-            print('   ❌ فشل الجدولة: $error');
+            // print('   ❌ فشل الجدولة: $error');
             // print('   ⏭️ تم تخطيها (الوقت مرّ)');
           }
           prayerIndex++;
