@@ -1,3216 +1,572 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم رفيق المسلم اليومي</title>
-    <style>
-        :root {
-            --bg-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --card-bg: white;
-            --text-primary: #333;
-            --text-secondary: #666;
-            --border-color: #e0e0e0;
-            --accent-color: #059669;
-            --accent-hover: #047857;
-            --body-bg: #f3f4f6;
-            --feedback-card-bg: #f8f9fa;
-        }
+    <title>لوحة تحكم رفيق المسلم</title>
 
-        [data-theme="dark"] {
-            --bg-gradient: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
-            --card-bg: #1f2937;
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --border-color: #374151;
-            --accent-color: #10b981;
-            --accent-hover: #34d399;
-            --body-bg: #111827;
-            --feedback-card-bg: #111827;
-        }
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
-            min-height: 100vh;
-            padding: 20px;
-            direction: rtl;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            text-align: center;
-            position: relative;
-        }
-
-        .header h1 {
-            color: var(--accent-color);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: var(--bg-gradient);
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card h3 {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .stat-card .number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-
-        .stat-card .icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        /* Filters */
-        .filters {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .filter-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        .filter-group select,
-        .filter-group input:not([type="checkbox"]) {
-            width: 100%;
-            padding: 10px 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 1rem;
-            background: var(--card-bg);
-            color: var(--text-primary);
-            transition: border-color 0.3s;
-        }
-
-        .filter-group select:focus,
-        .filter-group input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        /* Feedback Table */
-        .feedback-container {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .feedback-grid {
-            display: grid;
-            gap: 20px;
-        }
-
-        .feedback-card {
-            background: var(--feedback-card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .feedback-card:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
-        }
-
-        .feedback-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .feedback-info h3 {
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-
-        .feedback-info p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .category-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .category-مشكلة {
-            background: #fee;
-            color: #c00;
-        }
-
-        .category-تحديث {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .category-اقتراح {
-            background: #fff3e0;
-            color: #f57c00;
-        }
-
-        .category-استفسار {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-
-        .category-أخرى {
-            background: #f5f5f5;
-            color: #666;
-        }
-
-        .feedback-description {
-            color: var(--text-primary);
-            line-height: 1.6;
-            margin-bottom: 15px;
-            padding: 15px;
-            background: var(--card-bg);
-            border-radius: 8px;
-        }
-
-        .feedback-meta {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            padding-top: 15px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .status-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .status-tab {
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .status-tab.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        .status-tab:hover:not(.active) {
-            background: var(--feedback-card-bg);
-            color: var(--accent-color);
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .images-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .images-grid img {
-            width: 100%;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .images-grid img:hover {
-            transform: scale(1.05);
-        }
-
-        .device_info {
-            background: var(--body-bg);
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 0.85rem;
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .admin-notes {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed #ddd;
-        }
-
-        .admin-notes textarea,
-        .reply-section textarea {
-            width: 100%;
-            height: 100px;
-            padding: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin: 10px 0;
-            font-family: inherit;
-            background: var(--card-bg);
-            color: var(--text-primary);
-            resize: vertical;
-        }
-
-        .save-notes-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .save-notes-btn:hover {
-            background: var(--accent-hover);
-        }
-
-        .delete-btn {
-            background: #fee;
-            color: #c00;
-            border: 1px solid #c00;
-            padding: 5px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s;
-        }
-
-        .delete-btn:hover {
-            background: #c00;
-            color: white;
-        }
-
-        .reply-section {
-            margin-top: 15px;
-            padding: 20px;
-            border-top: 1px dashed var(--border-color);
-            background: var(--body-bg);
-            border-radius: 15px;
-        }
-
-        .reply-section textarea {
-            width: 100%;
-            height: 80px;
-            padding: 10px;
-            border: 1px solid #059669;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            resize: vertical;
-            margin-bottom: 5px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 50px;
-            color: var(--accent-color);
-            font-size: 1.2rem;
-        }
-
-        .error {
-            background: #fee;
-            color: #c00;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px;
-            color: #999;
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-
-        /* Modal for images */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 10px;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .filters {
-                flex-direction: column;
-            }
-
-            .feedback-header {
-                flex-direction: column;
-            }
-        }
-
-        /* Refresh Button */
-        .refresh-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .refresh-btn:hover {
-            background: var(--accent-hover);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .refresh-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Analytics Section */
-        .analytics-section {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            display: none;
-            /* Hidden until data loads */
-        }
-
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-
-        /* Export Button */
-        .export-btn {
-            background: var(--card-bg);
-            color: var(--accent-color);
-            border: 2px solid var(--accent-color);
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .export-btn:hover {
-            background: var(--accent-color);
-            color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-        }
-
-        /* Auth Overlay */
-        .auth-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-gradient);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .auth-card {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .auth-card h2 {
-            color: var(--accent-color);
-            margin-bottom: 20px;
-        }
-
-        .auth-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-primary);
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            text-align: center;
-        }
-
-        .auth-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            transition: all 0.3s;
-        }
-
-        .auth-btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        /* Tabs Styling */
-        .tabs {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .tab {
-            padding: 14px 28px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-radius: 15px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(5px);
-        }
-
-        .tab.active {
-            background: var(--card-bg);
-            color: var(--accent-color);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .tab:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Update Form Styling */
-        .update-form {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .update-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .update-item {
-            background: var(--feedback-card-bg);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
-        }
-
-        .update-item:hover {
-            border-color: var(--accent-color);
-            background: var(--card-bg);
-        }
-
-        .badge-mandatory {
-            background: #fee;
-            color: #c00;
-            border: 1px solid #ffcdd2;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        .badge-optional {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #c8e6c9;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-    </style>
+    <!-- Chart.js & Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع">🌓</button>
-            <h1>لوحة تحكم رفيق المسلم اليومي</h1>
-            <p>إدارة البلاغات والاقتراحات وتحديثات التطبيق</p>
-        </div>
 
-        <div class="tabs">
-            <div id="feedbackTabBtn" class="tab active" onclick="switchTab('feedback')">📋 الشكاوى والاقتراحات</div>
-            <div id="updatesTabBtn" class="tab" onclick="switchTab('updates')">🚀 تحديثات التطبيق</div>
-            <div id="analyticsTabBtn" class="tab" onclick="switchTab('analytics')">📊 الإحصائيات</div>
-            <div id="bannersTabBtn" class="tab" onclick="switchTab('banners')">🖼️ الإعلانات</div>
-            <div id="radioTabBtn" class="tab" onclick="switchTab('radio')">📻 راديو القرآن</div>
-            <div id="featuresTabBtn" class="tab" onclick="switchTab('features')">🎮 التحكم بالأقسام</div>
-            <div id="settingsTabBtn" class="tab" onclick="switchTab('settings')">⚙️ الإعدادات</div>
-            <div id="contentTabBtn" class="tab" onclick="switchTab('content')">✍️ إدارة المحتوى</div>
-            <div id="kidsStoriesTabBtn" class="tab" onclick="switchTab('kidsStories')">👶 قصص ركن الطفل</div>
-            <div id="charityStoriesTabBtn" class="tab" onclick="switchTab('charityStories')">🤲 قصص الصدقات</div>
-            <div id="errorsTabBtn" class="tab" onclick="switchTab('errors')">⚠️ الأعطال</div>
-        </div>
-
-        <div id="feedbackTab" class="tab-content active">
-
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="icon">📝</div>
-                    <h3>إجمالي الشكاوى</h3>
-                    <div class="number" id="totalCount">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">🐛</div>
-                    <h3>المشاكل</h3>
-                    <div class="number" id="problemCount">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">💡</div>
-                    <h3>الاقتراحات</h3>
-                    <div class="number" id="suggestionCount">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">📅</div>
-                    <h3>آخر 7 أيام</h3>
-                    <div class="number" id="recentCount">0</div>
-                </div>
-            </div>
-
-            <!-- Analytics -->
-            <div id="analyticsSection" class="analytics-section">
-                <h2 style="margin-bottom: 20px; color: var(--text-primary); font-size: 1.5rem;">📊 تحليلات البيانات</h2>
-                <div class="charts-grid">
-                    <div class="chart-container">
-                        <canvas id="categoryChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="frequencyChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="filters">
-                <div class="filter-group">
-                    <label>التصنيف</label>
-                    <select id="categoryFilter">
-                        <option value="">الكل</option>
-                        <option value="مشكلة" selected>مشكلة</option>
-                        <option value="تحديث">تحديث</option>
-                        <option value="اقتراح">اقتراح</option>
-                        <option value="استفسار">استفسار</option>
-                        <option value="أخرى">أخرى</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>الحالة</label>
-                    <select id="statusFilter">
-                        <option value="">الكل</option>
-                        <option value="جديد">جديد</option>
-                        <option value="تم استقبال المشكلة">تم استقبال المشكلة</option>
-                        <option value="قيد المعالجة">قيد المعالجة</option>
-                        <option value="تم الحل">تم الحل</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>التقييم</label>
-                    <select id="ratingFilter">
-                        <option value="">الكل</option>
-                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                        <option value="4">⭐⭐⭐⭐ (4+)</option>
-                        <option value="3">⭐⭐⭐ (3+)</option>
-                        <option value="2">⭐⭐ (2+)</option>
-                        <option value="1">⭐ (1+)</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>البحث</label>
-                    <input type="text" id="searchInput" placeholder="ابحث في الاسم أو البريد أو الوصف...">
-                </div>
-                <div class="filter-group">
-                    <label>من تاريخ</label>
-                    <input type="date" id="startDate">
-                </div>
-                <div class="filter-group">
-                    <label>إلى تاريخ</label>
-                    <input type="date" id="endDate">
-                </div>
-                <div class="filter-group" style="min-width: 150px; display: flex; align-items: center; gap: 8px;">
-                    <input type="checkbox" id="unrepliedFilter" onchange="filterFeedback()"
-                        style="width: 20px; height: 20px; cursor: pointer;">
-                    <label for="unrepliedFilter" style="margin-bottom: 0; cursor: pointer;">📩 لم يتم الرد</label>
-                </div>
-                <div class="filter-group">
-                    <label>&nbsp;</label>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="refresh-btn" onclick="loadFeedback()">🔄 تحديث</button>
-                        <button class="export-btn" onclick="exportToCSV()">📥 تصدير CSV</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Feedback Container -->
-            <div class="feedback-container">
-                <div class="status-tabs" id="statusTabs">
-                    <div class="status-tab active" onclick="setStatusFilter('', this)">الكل</div>
-                    <div class="status-tab" onclick="setStatusFilter('جديد', this)">🆕 جديد</div>
-                    <div class="status-tab" onclick="setStatusFilter('تم استقبال المشكلة', this)">📩 تم الاستقبال</div>
-                    <div class="status-tab" onclick="setStatusFilter('قيد المعالجة', this)">⏳ قيد المعالجة</div>
-                    <div class="status-tab" onclick="setStatusFilter('تم الحل', this)">✅ تم الحل</div>
-                </div>
-                <div id="feedbackList" class="feedback-grid">
-                    <div class="loading">⏳ جاري تحميل البيانات...</div>
-                </div>
-            </div>
-
-        </div>
-
-        <div id="updatesTab" class="tab-content">
-            <div class="update-form">
-                <h3 style="color: var(--accent-color); margin-bottom: 10px;">🚀 إرسال تحديث جديد</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">أدخل تفاصيل الإصدار
-                    الجديد ليتم إخطار المستخدمين في التطبيق بشكل تلقائي.</p>
-
-                <div class="update-grid">
-                    <div class="filter-group">
-                        <label>اسم الإصدار (e.g. 2.1.0)</label>
-                        <input type="text" id="versionName" placeholder="مثال: 1.0.5">
-                    </div>
-                    <div class="filter-group">
-                        <label>رقم البناء (Build Code)</label>
-                        <input type="number" id="versionCode" placeholder="مثال: 5">
-                    </div>
-                    <div class="filter-group">
-                        <label>نوع التحديث</label>
-                        <select id="isMandatory">
-                            <option value="false">اختياري (يمكن تخطيه)</option>
-                            <option value="true">إجباري (لا يمكن تخطيه)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="filter-group" style="margin-bottom: 20px;">
-                    <label>رابط التحديث (Direct Link / Store Link)</label>
-                    <input type="text" id="updateUrl" placeholder="https://...">
-                </div>
-
-                <div class="filter-group" style="margin-bottom: 25px;">
-                    <label>ما الجديد في هذا الإصدار؟ (Release Notes)</label>
-                    <textarea id="releaseNotes"
-                        style="width: 100%; height: 100px; padding: 15px; border-radius: 12px; border: 2px solid #e0e0e0; font-family: inherit;"
-                        placeholder="مثال: إصلاح أخطاء وتحسين الأداء..."></textarea>
-                </div>
-
-                <button class="refresh-btn" onclick="pushUpdate()"
-                    style="width: 100%; height: 55px; font-size: 1.1rem;">🚀 نشر التحديث الآن للمستخدمين</button>
-            </div>
-
-            <div class="feedback-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="color: #333;">📜 سجل التحديثات المرسلة</h3>
-                    <button class="refresh-btn" onclick="loadUpdates()" style="padding: 5px 15px; font-size: 0.8rem;">🔄
-                        تحديث السجل</button>
-                </div>
-                <div id="updatesList">
-                    <div class="loading">⏳ جاري تحميل التحديثات...</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="analyticsTab" class="tab-content">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="icon">🚀</div>
-                    <h3>إجمالي فتح التطبيق</h3>
-                    <div class="number" id="totalLaunches">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">👥</div>
-                    <h3>المستخدمون الفريدون</h3>
-                    <div class="number" id="uniqueUsers">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="icon">🌍</div>
-                    <h3>عدد الدول</h3>
-                    <div class="number" id="countriesCount">0</div>
-                </div>
-            </div>
-
-            <div class="analytics-section" style="display: block;">
-                <div class="charts-grid">
-                    <div class="chart-container">
-                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">🗺️ أعلى الدول
-                            استخداماً</h4>
-                        <canvas id="countriesChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">📱 أنظمة
-                            التشغيل</h4>
-                        <canvas id="osChart"></canvas>
-                    </div>
-                    <div class="chart-container" style="grid-column: span 2; height: 350px;">
-                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">🎯 الأقسام
-                            الأكثر استخداماً (Feature Analytics)</h4>
-                        <canvas id="featuresUsageChart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-container" style="margin-top: 30px; height: 400px; padding-bottom: 40px;">
-                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">📅 النشاط اليومي
-                        (آخر 15 يوم)</h4>
-                    <canvas id="dailyUsageChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <!-- Feature Control Tab -->
-        <div id="featuresTab" class="tab-content">
-            <div class="feedback-container">
-                <h3 style="margin-bottom: 25px; color: var(--text-primary);">🎮 التحكم في أقسام التطبيق</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">يمكنك تعطيل أي قسم في
-                    حال وجود صيانة أو مشكلة تقنية دون الحاجة لتحديث التطبيق.</p>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"
-                    id="featuresGrid">
-                    <!-- Loaded dynamically -->
-                </div>
-            </div>
-        </div>
-
-
-        <div id="settingsTab" class="tab-content">
-            <div class="feedback-container">
-                <h3 style="margin-bottom: 25px; color: var(--text-primary);">🛠️ التحكم في التطبيق</h3>
-
-                <div class="filter-group"
-                    style="margin-bottom: 30px; display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.05); padding: 20px; border-radius: 12px;">
-                    <label style="margin: 0; flex: 1; color: var(--text-primary);">وضع الصيانة (تفعيل سيمنع المستخدمين
-                        من الدخول)</label>
-                    <input type="checkbox" id="maintenanceToggle" onchange="updateMaintenanceMode(this.checked)"
-                        style="width: 25px; height: 25px; cursor: pointer;">
-                </div>
-
-                <div class="filter-group"
-                    style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px;">
-                    <label
-                        style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">📢
-                        شريط الأنباء المتحرك</label>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                        <div style="flex: 1;">
-                            <label style="font-size: 12px; color: var(--text-secondary);">العنوان الجانبي (مثلاً:
-                                تنبيه)</label>
-                            <input type="text" id="newsLabelInput" placeholder="تنبيه عاجل"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 20px;">
-                            <input type="checkbox" id="newsActiveToggle"
-                                style="width: 20px; height: 20px; cursor: pointer;">
-                            <label style="font-size: 13px; font-weight: bold;">تفعيل الظهور</label>
-                        </div>
-                        <div>
-                            <label style="font-size: 12px; color: var(--text-secondary);">نوع التنبيه (اللون)</label>
-                            <select id="newsTypeInput"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                                <option value="urgent">🔴 عاجل (أحمر)</option>
-                                <option value="info">🔵 معلومة (أزرق)</option>
-                                <option value="success">🟢 نجاح (أخضر)</option>
-                                <option value="warning">🟠 تحذير (برتقالي)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <label style="font-size: 12px; color: var(--text-secondary);">نص الخبر (اتركه فارغاً
-                        للإخفاء)</label>
-                    <input type="text" id="newsInput" placeholder="أدخل نص التنبيه هنا..."
-                        style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); margin-top: 5px;">
-
-                    <button class="refresh-btn" onclick="updateNewsMarquee()"
-                        style="margin-top: 15px; width: 100%; background: #ef4444; font-weight: bold;">📢 تحديث شريط
-                        الأنباء</button>
-                </div>
-
-                <div class="filter-group"
-                    style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.02);">
-                    <label
-                        style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">🎨
-                        لون التطبيق الرئيسي (Theme Color)</label>
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <input type="color" id="themeColorInput"
-                            style="width: 60px; height: 40px; border: none; padding: 0; cursor: pointer; background: none;">
-                        <input type="text" id="themeColorHex" placeholder="#178B74"
-                            style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        <button class="refresh-btn" onclick="updateThemeColor()" style="padding: 10px 20px;">حفظ
-                            اللون</button>
-                        <button class="refresh-btn" onclick="resetThemeColor()"
-                            style="padding: 10px 20px; background: #6b7280;">استعادة الأصلي</button>
-                    </div>
-                    <p style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;">سيتم تغيير لون الأزرار
-                        والواجهات في التطبيق لهذا اللون فوراً.</p>
-                </div>
-
-                <div class="filter-group"
-                    style="margin-bottom: 30px; border: 1px solid #6366f1; padding: 20px; border-radius: 16px; background: rgba(99, 102, 241, 0.05);">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                        <div>
-                            <label style="color: #4f46e5; font-weight: bold; display: block; margin-bottom: 5px;">📢
-                                الرسائل العامة (Broadcast)</label>
-                            <p style="font-size: 0.8rem; color: var(--text-secondary);">رسالة تظهر للجميع عند فتح
-                                التطبيق (بديلة للإشعارات).</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <label style="font-size: 12px;">تفعيل:</label>
-                            <input type="checkbox" id="broadcastToggle"
-                                style="width: 20px; height: 20px; cursor: pointer;">
-                        </div>
-                    </div>
-
-                    <textarea id="broadcastInput"
-                        style="width: 100%; height: 80px; padding: 12px; border-radius: 12px; border: 1.5px solid #6366f1; background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-bottom: 15px;"
-                        placeholder="اكتب الرسالة التي ستظهر للمستخدمين هنا..."></textarea>
-
-                    <button class="refresh-btn" onclick="updateBroadcast()"
-                        style="width: 100%; background: #6366f1; font-weight: bold; height: 45px;">🚀 نشر الرسالة
-                        الآن</button>
-                </div>
-
-                <div class="filter-group"
-                    style="margin-bottom: 30px; border: 1.5px solid var(--accent-color); padding: 20px; border-radius: 16px; background: rgba(16, 185, 129, 0.05);">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <label style="color: var(--accent-color); font-weight: bold; margin: 0;">📜 خاطرة / حديث اليوم
-                            (يظهر في الواجهه الرئيسية)</label>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <label style="font-size: 13px; color: var(--text-secondary);">تفعيل الظهور:</label>
-                            <input type="checkbox" id="quoteToggle" style="width: 20px; height: 20px; cursor: pointer;">
-                        </div>
-                    </div>
-                    <textarea id="quoteInput"
-                        style="width: 100%; height: 100px; padding: 15px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit;"
-                        placeholder="اكتب الخاطرة أو الحديث الذي سيظهر في الصفحة الرئيسية..."></textarea>
-                    <button class="refresh-btn" onclick="updateDailyQuote()"
-                        style="margin-top: 15px; width: 100%; font-weight: bold;">💾 حفظ وتحديث الخاطرة</button>
-                </div>
-                <div class="filter-group"
-                    style="margin-bottom: 30px; border: 1.5px solid #f59e0b; padding: 20px; border-radius: 16px; background: rgba(245, 158, 11, 0.05);">
-                    <label style="color: #d97706; font-weight: bold; display: block; margin-bottom: 15px;">🔗 روابط
-                        التواصل والدعم</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <label style="font-size: 13px;">فيسبوك</label>
-                            <input type="text" id="linkFacebook" class="auth-input"
-                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px;">واتساب</label>
-                            <input type="text" id="linkWhatsapp" class="auth-input"
-                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px;">رابط App Store</label>
-                            <input type="text" id="linkAppStore" class="auth-input"
-                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px;">رابط Play Store</label>
-                            <input type="text" id="linkPlayStore" class="auth-input"
-                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
-                        </div>
-                    </div>
-                    <button class="refresh-btn" onclick="updateSupportLinks()"
-                        style="width: 100%; background: #f59e0b; font-weight: bold; margin-top: 15px;">💾 حفظ
-                        الروابط</button>
-                </div>
-
-                <div class="filter-group"
-                    style="margin-bottom: 30px; border: 1.5px solid #ec4899; padding: 20px; border-radius: 16px; background: rgba(236, 72, 153, 0.05);">
-                    <label style="color: #db2777; font-weight: bold; display: block; margin-bottom: 15px;">🕋 تعديل
-                        مواقيت الصلاة (دقائق +/-)</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                        <div style="text-align: center;">
-                            <label style="font-size: 12px; display: block;">الفجر</label>
-                            <input type="number" id="offsetFajr" value="0"
-                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-                        </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 12px; display: block;">الشروق</label>
-                            <input type="number" id="offsetSunrise" value="0"
-                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-                        </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 12px; display: block;">الظهر</label>
-                            <input type="number" id="offsetDhuhr" value="0"
-                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-                        </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 12px; display: block;">العصر</label>
-                            <input type="number" id="offsetAsr" value="0"
-                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-                        </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 12px; display: block;">المغرب</label>
-                            <input type="number" id="offsetMaghrib" value="0"
-                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-                        </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 12px; display: block;">العشاء</label>
-                            <input type="number" id="offsetIsha" value="0"
-                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-                        </div>
-                    </div>
-                    <button class="refresh-btn" onclick="updatePrayerOffsets()"
-                        style="width: 100%; background: #ec4899; font-weight: bold; margin-top: 15px;">💾 حفظ تعديلات
-                        المواقيت</button>
-                    <p style="font-size: 11px; color: var(--text-secondary); margin-top: 10px; text-align: center;">هذه
-                        القيم تضاف أو تخصم من التوقيت المحسوب لكل المستخدمين.</p>
-                </div>
-
-                <!-- App Version Management -->
-                <div class="filter-group"
-                    style="margin-bottom: 30px; border: 1.5px solid #6366f1; padding: 20px; border-radius: 16px; background: rgba(99, 102, 241, 0.05);">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                        <div>
-                            <label style="color: #4f46e5; font-weight: bold; display: block; margin-bottom: 5px;">🆙
-                                تحديث التطبيق الإجباري</label>
-                            <p style="font-size: 0.8rem; color: var(--text-secondary);">أقل رقم إصدار مسموح به. إذا كان
-                                إصدار المستخدم أقل من هذا الرقم سيطلب منه التحديث.</p>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <input type="text" id="minAppVersion" placeholder="مثلاً: 2.0.0"
-                            style="flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid #6366f1; background: var(--card-bg); color: var(--text-primary);">
-                        <button class="refresh-btn" onclick="updateMinVersion()"
-                            style="background: #6366f1; font-weight: bold; height: 45px; padding: 0 25px;">💾
-                            حفظ</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Banners Tab -->
-        <div id="bannersTab" class="tab-content">
-            <div class="feedback-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h3 style="color: var(--text-primary);">🖼️ إدارة البانرات الإعلانية</h3>
-                </div>
-
-                <!-- Add New Banner -->
-                <div class="filter-group"
-                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
-                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة بانر جديد</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">عنوان البانر (اختياري)</label>
-                            <input type="text" id="bannerTitle"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">الرابط عند الضغط
-                                (اختياري)</label>
-                            <input type="text" id="bannerLink" placeholder="https://..."
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 15px;">
-                        <label style="font-size: 13px; color: var(--text-secondary);">اختر الصورة</label>
-                        <input type="file" id="bannerFile" accept="image/*"
-                            style="display: block; width: 100%; padding: 10px; margin-top: 5px; color: var(--text-primary);">
-                    </div>
-
-                    <div id="uploadProgress"
-                        style="display: none; height: 4px; background: #eee; border-radius: 2px; margin-top: 15px; overflow: hidden;">
-                        <div id="progressBar"
-                            style="width: 0%; height: 100%; background: var(--accent-color); transition: width 0.3s;">
-                        </div>
-                    </div>
-
-                    <button class="refresh-btn" onclick="uploadBanner()"
-                        style="margin-top: 20px; width: 100%; font-weight: bold;">➕ رفع البانر ونشره</button>
-                </div>
-
-                <!-- Banners List -->
-                <div id="bannersList">
-                    <!-- Loaded dynamically -->
-                </div>
-            </div>
-        </div>
-
-        <div id="contentTab" class="tab-content">
-            <div class="feedback-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h3 style="color: var(--text-primary);">✍️ إدارة المحتوى الديناميكي (CMS)</h3>
-                </div>
-
-                <!-- Add New Content -->
-                <div class="filter-group"
-                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
-                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة محتوى جديد</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">العنوان</label>
-                            <input type="text" id="contentTitle" placeholder="مثال: فضل صيام الاثنين"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">النوع</label>
-                            <select id="contentType"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                                <option value="article">مقال / خاطرة</option>
-                                <option value="tip">نصيحة يومية</option>
-                                <option value="announcement">إعلان هام</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 15px;">
-                        <label style="font-size: 13px; color: var(--text-secondary);">المحتوى (النص)</label>
-                        <textarea id="contentBody" placeholder="اكتب المحتوى هنا..."
-                            style="width: 100%; height: 120px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
-                    </div>
-
-                    <div style="margin-top: 15px;">
-                        <label style="font-size: 13px; color: var(--text-secondary);">رابط صورة (اختياري)</label>
-                        <input type="text" id="contentImage" placeholder="https://..."
-                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                    </div>
-
-                    <button class="refresh-btn" onclick="publishContent()"
-                        style="margin-top: 20px; width: 100%; font-weight: bold;">📝 نشر المحتوى</button>
-                </div>
-
-                <!-- Content List -->
-                <div id="contentList">
-                    <div class="loading">⏳ جاري تحميل المحتوى...</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Radio Tab -->
-        <div id="radioTab" class="tab-content">
-            <div class="feedback-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h3 style="color: var(--text-primary);">📻 إدارة إذاعات القرآن المخصصة</h3>
-                </div>
-
-                <div class="filter-group"
-                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px; background: rgba(59, 130, 246, 0.05);">
-                    <h4 style="margin-top: 0; color: #3b82f6;">✨ إضافة إذاعة جديدة</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">اسم الإذاعة</label>
-                            <input type="text" id="radioName" placeholder="مثلاً: إذاعة كبار العلماء"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">رابط البث (URL)</label>
-                            <input type="text" id="radioUrl" placeholder="https://..."
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                    </div>
-                    <button class="refresh-btn" onclick="addCustomRadio()"
-                        style="margin-top: 15px; width: 100%; background: #3b82f6; font-weight: bold;">💾 إضافة
-                        الإذاعة</button>
-                </div>
-
-                <div id="radioList">
-                    <!-- Radio items will load here -->
-                </div>
-            </div>
-        </div>
-
-        <div id="kidsStoriesTab" class="tab-content">
-            <div class="feedback-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h3 style="color: var(--text-primary);">👶 إدارة قصص ركن الطفل</h3>
-                </div>
-
-                <!-- Add New Kids Story -->
-                <div class="filter-group"
-                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
-                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة قصة جديدة للأطفال</h4>
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-top: 15px;">
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">العنوان</label>
-                            <input type="text" id="kidsStoryTitle" placeholder="مثال: قصة الصدق"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">إيموجي</label>
-                            <input type="text" id="kidsStoryEmoji" placeholder="📖"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">النجوم</label>
-                            <input type="number" id="kidsStoryStars" value="20"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 15px;">
-                        <label style="font-size: 13px; color: var(--text-secondary);">محتوى القصة (فقرات - كل سطر
-                            فقرة)</label>
-                        <textarea id="kidsStoryParagraphs" placeholder="اكتب فقرات القصة هنا، كل فقرة في سطر جديد..."
-                            style="width: 100%; height: 150px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
-                    </div>
-
-                    <div style="margin-top: 15px;">
-                        <label style="font-size: 13px; color: var(--text-secondary);">الحكمة / الدرس المستفاد</label>
-                        <input type="text" id="kidsStoryMoral" placeholder="مثال: الصدق ينجي صاحبه"
-                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                    </div>
-
-                    <button class="refresh-btn" onclick="addKidsStory()"
-                        style="margin-top: 20px; width: 100%; font-weight: bold;">📝 إضافة القصة</button>
-                </div>
-
-                <!-- Kids Stories List -->
-                <div id="kidsStoriesList">
-                    <div class="loading">⏳ جاري تحميل القصص...</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="charityStoriesTab" class="tab-content">
-            <div class="feedback-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h3 style="color: var(--text-primary);">🤲 إدارة قصص الصدقات</h3>
-                </div>
-
-                <!-- Add New Charity Story -->
-                <div class="filter-group"
-                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
-                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة قصة صدقة جديدة</h4>
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-top: 15px;">
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">العنوان</label>
-                            <input type="text" id="charityStoryTitle" placeholder="مثال: فضل الصدقة"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">التصنيف</label>
-                            <select id="charityStoryCategory"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                                <option value="سيرة">سيرة</option>
-                                <option value="حديث">حديث</option>
-                                <option value="معاصر">معاصر</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="font-size: 13px; color: var(--text-secondary);">إيموجي</label>
-                            <input type="text" id="charityStoryEmoji" placeholder="💰"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 15px;">
-                        <label style="font-size: 13px; color: var(--text-secondary);">نص القصة</label>
-                        <textarea id="charityStoryContent" placeholder="اكتب نص القصة هنا..."
-                            style="width: 100%; height: 150px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
-                    </div>
-
-                    <div style="margin-top: 15px;">
-                        <label style="font-size: 13px; color: var(--text-secondary);">المصدر</label>
-                        <input type="text" id="charityStorySource" placeholder="مثال: رواه البخاري / قصة واقعية"
-                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                    </div>
-
-                    <button class="refresh-btn" onclick="addCharityStory()"
-                        style="margin-top: 20px; width: 100%; font-weight: bold;">📝 إضافة القصة</button>
-                </div>
-
-                <!-- Charity Stories List -->
-                <div id="charityStoriesList">
-                    <div class="loading">⏳ جاري تحميل القصص...</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="errorsTab" class="tab-content">
-            <div class="feedback-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="color: var(--text-primary);">⚠️ سجل أعطال التطبيق</h3>
-                    <button class="refresh-btn" onclick="loadErrors()" style="padding: 5px 15px; font-size: 0.8rem;">🔄
-                        تحديث السجل</button>
-                </div>
-                <div id="errorsList">
-                    <div class="loading">⏳ جاري تحميل السجلات...</div>
-                </div>
-            </div>
+    <!-- Auth Overlay -->
+    <div id="authOverlay" class="auth-wrapper">
+        <div class="auth-box">
+            <h2 style="color: var(--primary-color); margin-bottom: 20px;">🔐 تسجيل الدخول</h2>
+            <input type="password" id="authPassword" class="form-control" placeholder="كلمة المرور"
+                style="text-align: center; margin-bottom: 20px;">
+            <button class="btn btn-primary" style="width: 100%;" onclick="checkAuth()">دخول اللوحة</button>
+            <p id="authError" style="color: var(--danger-color); margin-top: 15px; display: none;">❌ كلمة المرور غير
+                صحيحة</p>
         </div>
     </div>
 
-    <!-- Auth Overlay -->
-    <div id="authOverlay" class="auth-overlay">
-        <div class="auth-card">
-            <h2>🔐 تسجيل الدخول</h2>
-            <p style="color: #666; margin-bottom: 20px;">يرجى إدخال كلمة المرور للوصول إلى لوحة التحكم</p>
-            <input type="password" id="authPassword" class="auth-input" placeholder="كلمة المرور">
-            <button class="auth-btn" onclick="checkAuth()">دخول</button>
-            <p id="authError" style="color: #c00; margin-top: 15px; display: none;">❌ كلمة المرور غير صحيحة</p>
-        </div>
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span style="font-size: 2rem;">🕌</span>
+                <h2>رفيق المسلم</h2>
+                <button class="menu-toggle" onclick="toggleSidebar()"
+                    style="margin-right: auto; color: var(--text-muted);">✕</button>
+            </div>
+
+            <ul class="nav-links">
+                <li class="nav-item active" id="feedbackNav" onclick="switchTab('feedback')">
+                    <span class="nav-icon">📋</span> الشكاوى
+                </li>
+                <li class="nav-item" id="analyticsNav" onclick="switchTab('analytics')">
+                    <span class="nav-icon">📊</span> الإحصائيات
+                </li>
+                <li class="nav-item" id="updatesNav" onclick="switchTab('updates')">
+                    <span class="nav-icon">🚀</span> التحديثات
+                </li>
+                <li class="nav-item" id="contentNav" onclick="switchTab('content')">
+                    <span class="nav-icon">✍️</span> المحتوى
+                </li>
+                <li class="nav-item" id="bannersNav" onclick="switchTab('banners')">
+                    <span class="nav-icon">🖼️</span> البانرات
+                </li>
+                <li class="nav-item" id="radioNav" onclick="switchTab('radio')">
+                    <span class="nav-icon">📻</span> الراديو
+                </li>
+                <li class="nav-item" id="kidsStoriesNav" onclick="switchTab('kidsStories')">
+                    <span class="nav-icon">👶</span> قصص الأطفال
+                </li>
+                <li class="nav-item" id="charityStoriesNav" onclick="switchTab('charityStories')">
+                    <span class="nav-icon">🤝</span> قصص الصدقة
+                </li>
+                <li class="nav-item" id="featuresNav" onclick="switchTab('features')">
+                    <span class="nav-icon">🎮</span> الأقسام
+                </li>
+                <li class="nav-item" id="errorsNav" onclick="switchTab('errors')">
+                    <span class="nav-icon">⚠️</span> الأعطال
+                </li>
+                <li class="nav-item" id="settingsNav" onclick="switchTab('settings')">
+                    <span class="nav-icon">⚙️</span> الإعدادات
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Admin Panel v2.0</span>
+                <button class="theme-toggle-btn"
+                    onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')">🌓</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>لوحة المعلومات</h1>
+                    <p>أهلاً بك في لوحة تحكم الأدمن</p>
+                </div>
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            </header>
+
+            <!-- 1. Feedback Tab (Home) -->
+            <div id="feedbackTab" class="tab-pane active">
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="card stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-info">
+                            <h3>الكل</h3>
+                            <div class="number" id="totalCount">0</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon">🐛</div>
+                        <div class="stat-info">
+                            <h3>مشاكل</h3>
+                            <div class="number" id="problemCount">0</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon">💡</div>
+                        <div class="stat-info">
+                            <h3>اقتراحات</h3>
+                            <div class="number" id="suggestionCount">0</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-info">
+                            <h3>آخر أسبوع</h3>
+                            <div class="number" id="recentCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-container">
+                    <div class="form-group">
+                        <label>بحث</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="بحث بالاسم أو المحتوى..."
+                            oninput="filterFeedback()">
+                    </div>
+                    <div class="form-group">
+                        <label>التصنيف</label>
+                        <select id="categoryFilter" class="form-control" onchange="filterFeedback()">
+                            <option value="">الكل</option>
+                            <option value="مشكلة" selected>مشكلة</option>
+                            <option value="اقتراح">اقتراح</option>
+                            <option value="تحديث">تحديث</option>
+                            <option value="استفسار">استفسار</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الحالة</label>
+                        <select id="statusFilter" class="form-control" onchange="filterFeedback()">
+                            <option value="">الكل</option>
+                            <option value="جديد">جديد</option>
+                            <option value="قيد المعالجة">قيد المعالجة</option>
+                            <option value="تم الحل">تم الحل</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>التقييم</label>
+                        <select id="ratingFilter" class="form-control" onchange="filterFeedback()">
+                            <option value="">الكل</option>
+                            <option value="5">5 نجوم</option>
+                            <option value="1">1 نجمة</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px; padding-top: 25px;">
+                        <input type="checkbox" id="unrepliedFilter" onchange="filterFeedback()">
+                        <label for="unrepliedFilter" style="margin: 0; cursor: pointer;">لم يتم الرد</label>
+                    </div>
+                    <div class="form-group" style="flex: 0; min-width: auto; display: flex; gap: 5px;">
+                        <button class="btn btn-primary" onclick="loadFeedback()">🔄</button>
+                        <button class="btn btn-danger" onclick="deleteAll('feedback')">🗑️ الكل</button>
+                    </div>
+                </div>
+
+                <!-- Feedback Grid -->
+                <div id="feedbackList" class="feedback-grid">
+                    <!-- Loaded via JS -->
+                </div>
+            </div>
+
+            <!-- 2. Analytics Tab -->
+            <div id="analyticsTab" class="tab-pane">
+                <div class="stats-grid">
+                    <div class="card stat-card">
+                        <div class="stat-icon">🚀</div>
+                        <div class="stat-info">
+                            <h3>الفتحات</h3>
+                            <div class="number" id="totalLaunches">0</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>أجهزة فريدة</h3>
+                            <div class="number" id="uniqueUsers">0</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon">🌍</div>
+                        <div class="stat-info">
+                            <h3>دول</h3>
+                            <div class="number" id="countriesCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-wrapper">
+                    <div class="card chart-box">
+                        <h3>📊 التصنيفات</h3>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="card chart-box">
+                        <h3>📈 النشاط (آخر 14 يوم)</h3>
+                        <canvas id="frequencyChart"></canvas>
+                    </div>
+                    <div class="card chart-box">
+                        <h3>🌍 أعلى الدول</h3>
+                        <canvas id="countriesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Updates Tab -->
+            <div id="updatesTab" class="tab-pane">
+                <div class="card">
+                    <h3 style="margin-bottom: 20px; color: var(--primary-color);">🚀 نشر تحديث جديد</h3>
+                    <div class="filters-container"
+                        style="background: none; padding: 0; border: none; box-shadow: none;">
+                        <div class="form-group">
+                            <label>اسم الإصدار (e.g. 2.0.1)</label>
+                            <input type="text" id="versionName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>كود الإصدار (Build Number)</label>
+                            <input type="number" id="versionCode" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>نوع التحديث</label>
+                            <select id="isMandatory" class="form-control">
+                                <option value="false">اختياري</option>
+                                <option value="true">إجباري</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>رابط التحديث</label>
+                        <input type="text" id="updateUrl" class="form-control" placeholder="Link...">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>ملاحظات الإصدار</label>
+                        <textarea id="releaseNotes" class="form-control" rows="3"></textarea>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="pushUpdate()">نشر التحديث</button>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin: 20px 0;">سجل التحديثات</h3>
+                    <button class="btn btn-danger" onclick="deleteAll('updates')">🗑️ حذف الكل</button>
+                </div>
+                <div id="updatesList" class="feedback-grid"></div>
+            </div>
+
+            <!-- 4. Content Tab -->
+            <div id="contentTab" class="tab-pane">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>✍️ إضافة محتوى يومي</h3>
+                        <button class="btn btn-danger" onclick="deleteAll('content')">🗑️ حذف المحتوى</button>
+                    </div>
+                    <div class="filters-container" style="background: none; padding: 0; border: none; margin: 15px 0;">
+                        <div class="form-group"><label>العنوان</label><input type="text" id="contentTitle"
+                                class="form-control"></div>
+                        <div class="form-group">
+                            <label>النوع</label>
+                            <select id="contentType" class="form-control">
+                                <option value="article">مقال</option>
+                                <option value="tip">نصيحة</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>النص</label>
+                        <textarea id="contentBody" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>صورة (رابط)</label>
+                        <input type="text" id="contentImage" class="form-control">
+                    </div>
+                    <button class="btn btn-primary" onclick="publishContent()">نشر</button>
+                </div>
+                <div id="contentList" class="feedback-grid"></div>
+            </div>
+
+            <!-- 5. Banners Tab -->
+            <div id="bannersTab" class="tab-pane">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>🖼️ رفع بانر جديد</h3>
+                        <button class="btn btn-danger" onclick="deleteAll('banners')">🗑️ حذف البنرات</button>
+                    </div>
+                    <div class="filters-container" style="background: none; padding: 0; border: none;">
+                        <div class="form-group"><label>العنوان</label><input type="text" id="bannerTitle"
+                                class="form-control"></div>
+                        <div class="form-group"><label>الرابط</label><input type="text" id="bannerLink"
+                                class="form-control"></div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>الملف</label>
+                        <input type="file" id="bannerFile" class="form-control">
+                    </div>
+                    <div id="uploadProgress" style="display:none; height: 5px; background: #eee; margin-bottom: 10px;">
+                        <div id="progressBar" style="width:0%; height:100%; background: var(--primary-color);"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="uploadBanner()">رفع</button>
+                </div>
+                <div id="bannersList" class="feedback-grid"></div>
+            </div>
+
+            <!-- 6. Features Tab (Toggle Sections) -->
+            <div id="featuresTab" class="tab-pane">
+                <h3>🎮 التحكم بالأقسام</h3>
+                <div id="featuresGrid" class="charts-wrapper" style="margin-top: 20px;"></div>
+            </div>
+
+            <!-- 7. Radio Tab -->
+            <div id="radioTab" class="tab-pane">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>📻 إضافة إذاعة</h3>
+                        <button class="btn btn-danger" onclick="deleteAll('radio')">🗑️ حذف الإذاعات</button>
+                    </div>
+                    <div class="filters-container" style="padding:0; box-shadow:none; border:none;">
+                        <div class="form-group"><input type="text" id="radioName" class="form-control"
+                                placeholder="اسم الإذاعة"></div>
+                        <div class="form-group"><input type="text" id="radioUrl" class="form-control"
+                                placeholder="رابط البث URL"></div>
+                        <button class="btn btn-primary" onclick="addCustomRadio()">إضافة</button>
+                    </div>
+                </div>
+                <div id="radioList" class="feedback-grid"></div>
+            </div>
+
+            <!-- 8. Kids Stories -->
+            <div id="kidsStoriesTab" class="tab-pane">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>👶 قصة أطفال جديدة</h3>
+                        <button class="btn btn-danger" onclick="deleteAll('kidsStories')">🗑️ حذف القصص</button>
+                    </div>
+                    <div class="filters-container" style="padding:0; box-shadow:none; border:none; margin:10px 0;">
+                        <div class="form-group"><input type="text" id="kidsStoryTitle" class="form-control"
+                                placeholder="العنوان"></div>
+                        <div class="form-group"><input type="text" id="kidsStoryEmoji" class="form-control"
+                                placeholder="إيموجي 🐻"></div>
+                        <div class="form-group"><input type="number" id="kidsStoryStars" class="form-control"
+                                placeholder="النجوم (20)"></div>
+                    </div>
+                    <textarea id="kidsStoryParagraphs" class="form-control" placeholder="القصة..." rows="4"
+                        style="margin-bottom:10px;"></textarea>
+                    <input type="text" id="kidsStoryMoral" class="form-control" placeholder="الدرس المستفاد"
+                        style="margin-bottom:10px;">
+                    <button class="btn btn-primary" onclick="addKidsStory()">حفظ القصة</button>
+                </div>
+                <div id="kidsStoriesList" class="feedback-grid"></div>
+            </div>
+
+            <!-- 9. Charity Stories -->
+            <div id="charityStoriesTab" class="tab-pane">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>🤝 قصة صدقة</h3>
+                        <button class="btn btn-danger" onclick="deleteAll('charityStories')">🗑️ حذف القصص</button>
+                    </div>
+                    <div class="filters-container" style="padding:0; box-shadow:none; border:none; margin:10px 0;">
+                        <div class="form-group"><input type="text" id="charityStoryTitle" class="form-control"
+                                placeholder="العنوان"></div>
+                        <div class="form-group">
+                            <select id="charityStoryCategory" class="form-control">
+                                <option value="سيرة">سيرة</option>
+                                <option value="حديث">حديث</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><input type="text" id="charityStoryEmoji" class="form-control"
+                                placeholder="إيموجي 💰"></div>
+                    </div>
+                    <textarea id="charityStoryContent" class="form-control" placeholder="القصة..." rows="4"
+                        style="margin-bottom:10px;"></textarea>
+                    <input type="text" id="charityStorySource" class="form-control" placeholder="المصدر"
+                        style="margin-bottom:10px;">
+                    <button class="btn btn-primary" onclick="addCharityStory()">حفظ</button>
+                </div>
+                <div id="charityStoriesList" class="feedback-grid"></div>
+            </div>
+
+            <!-- 10. Errors Tab -->
+            <div id="errorsTab" class="tab-pane">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h3>⚠️ سجل الأخطاء</h3>
+                    <button class="btn btn-danger" onclick="deleteAll('errors')">🗑️ حذف السجل</button>
+                </div>
+                <div id="errorsList" class="feedback-grid"></div>
+            </div>
+
+            <!-- 11. Settings Tab -->
+            <!-- 11. Settings Tab -->
+            <div id="settingsTab" class="tab-pane">
+                <div class="charts-wrapper" style="margin-bottom: 2rem;">
+                    <!-- Maintenance -->
+                    <div class="card">
+                        <h3>🛠️ وضع الصيانة</h3>
+                        <p style="color:var(--text-muted); margin-bottom:10px;">إيقاف التطبيق مؤقتاً</p>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <input type="checkbox" id="maintenanceToggle" onchange="updateMaintenanceMode(this.checked)"
+                                style="width:20px; height:20px;">
+                            <label>تفعيل</label>
+                        </div>
+                    </div>
+
+                    <!-- Theme Color -->
+                    <div class="card">
+                        <h3>🎨 لون التطبيق</h3>
+                        <p style="color:var(--text-muted); margin-bottom:10px;">اللون الرئيسي للواجهات</p>
+                        <div style="display:flex; gap:10px; align-items: center;">
+                            <input type="color" id="themeColorInput"
+                                oninput="document.getElementById('themeColorHex').value = this.value">
+                            <input type="text" id="themeColorHex" class="form-control" placeholder="#HEX">
+                            <button class="btn btn-primary" onclick="updateThemeColor()">حفظ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News & Broadcast -->
+                <div class="card">
+                    <h3>📢 شريط الأخبار والتنبيهات</h3>
+                    <div class="filters-container"
+                        style="background: none; padding: 0; border: none; box-shadow: none;">
+                        <div class="form-group">
+                            <label>نص الخبر</label>
+                            <input type="text" id="newsInput" class="form-control" placeholder="أدخل النص المتحرك...">
+                        </div>
+                        <div class="form-group">
+                            <label>العنوان الجانبي</label>
+                            <input type="text" id="newsLabelInput" class="form-control" placeholder="مثال: عاجل">
+                        </div>
+                        <div class="form-group">
+                            <label>النوع</label>
+                            <select id="newsTypeInput" class="form-control">
+                                <option value="urgent">🔴 عاجل</option>
+                                <option value="info">🔵 معلومة</option>
+                                <option value="success">🟢 نجاح</option>
+                                <option value="warning">🟠 تحذير</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; padding-top: 28px;">
+                            <input type="checkbox" id="newsActiveToggle" style="width: 20px; height: 20px;">
+                            <label style="margin:0">تفعيل</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 10px;" onclick="updateNewsMarquee()">تحديث
+                        الشريط</button>
+
+                    <hr style="margin: 20px 0; border-top: 1px dashed var(--border-color);">
+
+                    <h3>📡 رسالة عامة (Broadcast)</h3>
+                    <textarea id="broadcastInput" class="form-control" rows="2"
+                        placeholder="رسالة تظهر كمنبثقة لكل المستخدمين..."></textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="broadcastToggle" style="width: 20px; height: 20px;">
+                            <label style="margin:0">تفعيل</label>
+                        </div>
+                        <button class="btn btn-primary" onclick="updateBroadcast()">نشر الرسالة</button>
+                    </div>
+                </div>
+
+                <div class="charts-wrapper" style="margin-top: 2rem;">
+                    <!-- Daily Quote -->
+                    <div class="card">
+                        <h3>📜 خاطرة اليوم</h3>
+                        <textarea id="quoteInput" class="form-control" rows="4"
+                            placeholder="اكتب حديث أو حكمة..."></textarea>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="quoteToggle" style="width: 20px; height: 20px;">
+                                <label style="margin:0">تفعيل</label>
+                            </div>
+                            <button class="btn btn-primary" onclick="updateDailyQuote()">حفظ</button>
+                        </div>
+                    </div>
+
+                    <!-- App Config -->
+                    <div class="card">
+                        <h3>⚙️ ضبط التطبيق</h3>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label>أقل إصدار مدعوم (Min Version)</label>
+                            <input type="text" id="minAppVersion" class="form-control" placeholder="2.0.0">
+                        </div>
+                        <button class="btn btn-primary" onclick="updateMinVersion()">تحديث</button>
+                    </div>
+                </div>
+
+                <!-- Support Links -->
+                <div class="card">
+                    <h3>🔗 روابط التواصل</h3>
+                    <div class="filters-container"
+                        style="background: none; padding: 0; border: none; box-shadow: none; grid-template-columns: 1fr 1fr;">
+                        <div class="form-group"><label>Facebook</label><input id="linkFacebook" class="form-control"
+                                dir="ltr"></div>
+                        <div class="form-group"><label>WhatsApp</label><input id="linkWhatsapp" class="form-control"
+                                dir="ltr"></div>
+                        <div class="form-group"><label>App Store</label><input id="linkAppStore" class="form-control"
+                                dir="ltr"></div>
+                        <div class="form-group"><label>Play Store</label><input id="linkPlayStore" class="form-control"
+                                dir="ltr"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="updateSupportLinks()">حفظ الروابط</button>
+                </div>
+
+                <!-- Prayer Offsets -->
+                <div class="card">
+                    <h3>🕋 تعديل المواقيت (دقائق +/-)</h3>
+                    <div class="filters-container"
+                        style="grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; padding: 10px 0; border:none; box-shadow:none;">
+                        <div class="form-group"><label style="text-align:center">فجر</label><input type="number"
+                                id="offsetFajr" class="form-control" style="text-align:center"></div>
+                        <div class="form-group"><label style="text-align:center">شروق</label><input type="number"
+                                id="offsetSunrise" class="form-control" style="text-align:center"></div>
+                        <div class="form-group"><label style="text-align:center">ظهر</label><input type="number"
+                                id="offsetDhuhr" class="form-control" style="text-align:center"></div>
+                        <div class="form-group"><label style="text-align:center">عصر</label><input type="number"
+                                id="offsetAsr" class="form-control" style="text-align:center"></div>
+                        <div class="form-group"><label style="text-align:center">مغرب</label><input type="number"
+                                id="offsetMaghrib" class="form-control" style="text-align:center"></div>
+                        <div class="form-group"><label style="text-align:center">عشاء</label><input type="number"
+                                id="offsetIsha" class="form-control" style="text-align:center"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="updatePrayerOffsets()">حفظ المواقيت</button>
+                </div>
+            </div>
+
+        </main>
     </div>
 
     <!-- Image Modal -->
-    <div class="modal" id="imageModal" onclick="closeModal()">
-        <img id="modalImage" src="" alt="صورة">
+    <div id="imageModal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Full view">
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://kghwboxevphvxtsagrer.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_Kl3FXiXa7AHEokVvCiImmQ_03UL91M0';
-
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let allFeedback = [];
-        let allUsageData = [];
-        let categoryChart = null;
-        let frequencyChart = null;
-        let countriesChart = null;
-        let osChart = null;
-        let dailyUsageChart = null;
-        let featuresUsageChart = null;
-
-        function setStatusFilter(status, el) {
-            document.getElementById('statusFilter').value = status;
-
-            // Update UI
-            document.querySelectorAll('.status-tab').forEach(tab => tab.classList.remove('active'));
-            if (el) el.classList.add('active');
-
-            filterFeedback();
-        }
-
-        // Toggle Theme
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('dashboardTheme', newTheme);
-        }
-
-        // Initialize Theme
-        if (localStorage.getItem('dashboardTheme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
-
-        // Simple Auth Check
-        function checkAuth() {
-            const password = document.getElementById('authPassword').value.trim();
-            const correctPassword = 'admin'; // You can change this
-
-            if (password === correctPassword) {
-                try {
-                    document.getElementById('authOverlay').style.display = 'none';
-                    localStorage.setItem('dashboardAuth', 'true');
-                    loadFeedback();
-                    loadUpdates();
-                    loadAnalytics();
-                    loadSettings();
-                    loadErrors();
-                    loadKidsStories();
-                    loadCharityStories();
-                } catch (e) {
-                    console.error('Initial load failure:', e);
-                    alert('⚠️ فشل تحميل بعض البيانات بعد الدخول: ' + e.message);
-                }
-            } else {
-                document.getElementById('authError').style.display = 'block';
-            }
-        }
-
-        // Handle Enter key on password input
-        document.getElementById('authPassword').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                checkAuth();
-            }
-        });
-
-        // Check auth on load
-        window.onload = () => {
-            if (localStorage.getItem('dashboardAuth') === 'true') {
-                document.getElementById('authOverlay').style.display = 'none';
-                loadFeedback();
-                loadUpdates();
-                loadAnalytics();
-                loadSettings();
-                loadErrors();
-                loadKidsStories();
-                loadCharityStories();
-            }
-        };
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-
-            const tabEl = document.getElementById(tabName + 'Tab');
-            const btnEl = document.getElementById(tabName + 'TabBtn');
-
-            if (tabEl) tabEl.classList.add('active');
-            if (btnEl) btnEl.classList.add('active');
-
-            if (tabName === 'analytics') {
-                loadAnalytics();
-            } else if (tabName === 'features') {
-                loadFeatures();
-            } else if (tabName === 'content') {
-                loadContent();
-            } else if (tabName === 'kidsStories') {
-                loadKidsStories();
-            } else if (tabName === 'charityStories') {
-                loadCharityStories();
-            } else if (tabName === 'radio') {
-                loadRadios();
-            }
-        }
-
-        // Load feedback from Supabase
-        async function loadFeedback() {
-            const feedbackList = document.getElementById('feedbackList');
-            feedbackList.innerHTML = '<div class="loading">⏳ جاري تحميل البيانات...</div>';
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('feedback')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                allFeedback = data || [];
-                updateStats();
-                filterFeedback(); // Apply default filters (like category: مشكلة)
-                initCharts();
-
-                // Setup Real-time listener after first load
-                setupRealtime();
-            } catch (error) {
-                feedbackList.innerHTML = `<div class="error">❌ خطأ في تحميل البيانات: ${error.message}</div>`;
-            }
-        }
-
-        function setupRealtime() {
-            supabaseClient
-                .channel('feedback_updates')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'feedback' }, payload => {
-                    console.log('New feedback received!', payload);
-                    allFeedback.unshift(payload.new);
-                    updateStats();
-                    filterFeedback(); // Rerender with current filters
-                    showBrowserNotification('شكوى جديدة', `وصلتك شكوى جديدة من ${payload.new.name}`);
-                })
-                .subscribe();
-        }
-
-        function showBrowserNotification(title, body) {
-            if (Notification.permission === 'granted') {
-                new Notification(title, { body, icon: 'https://cdn-icons-png.flaticon.com/512/3242/3242257.png' });
-            } else if (Notification.permission !== 'denied') {
-                Notification.requestPermission();
-            }
-        }
-
-        // Initialize Charts
-        function initCharts() {
-            const analyticsSection = document.getElementById('analyticsSection');
-            if (allFeedback.length === 0) {
-                analyticsSection.style.display = 'none';
-                return;
-            }
-            analyticsSection.style.display = 'block';
-
-            // Category Chart
-            const categories = {};
-            allFeedback.forEach(f => {
-                categories[f.category] = (categories[f.category] || 0) + 1;
-            });
-
-            if (categoryChart) categoryChart.destroy();
-            const catCtx = document.getElementById('categoryChart').getContext('2d');
-            categoryChart = new Chart(catCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(categories),
-                    datasets: [{
-                        data: Object.values(categories),
-                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#6b7280']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        title: { display: true, text: 'توزيع التصنيفات' }
-                    }
-                }
-            });
-
-            // Frequency Chart (Last 14 days)
-            const dates = {};
-            const last14Days = [...Array(14)].map((_, i) => {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                return d.toISOString().split('T')[0];
-            }).reverse();
-
-            last14Days.forEach(d => dates[d] = 0);
-
-            allFeedback.forEach(f => {
-                const date = new Date(f.created_at).toISOString().split('T')[0];
-                if (dates[date] !== undefined) dates[date]++;
-            });
-
-            if (frequencyChart) frequencyChart.destroy();
-            const freqCtx = document.getElementById('frequencyChart').getContext('2d');
-            frequencyChart = new Chart(freqCtx, {
-                type: 'line',
-                data: {
-                    labels: last14Days.map(d => d.split('-').slice(1).join('/')),
-                    datasets: [{
-                        label: 'عدد الشكاوى',
-                        data: Object.values(dates),
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        title: { display: true, text: 'الشكاوى في آخر 14 يوم' }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                    }
-                }
-            });
-        }
-
-        // Export to CSV
-        function exportToCSV() {
-            if (allFeedback.length === 0) return;
-
-            const headers = ['الاسم', 'البريد', 'التصنيف', 'الوصف', 'التاريخ', 'الجهاز'];
-            const rows = allFeedback.map(f => [
-                f.name,
-                f.email,
-                f.category,
-                f.description.replace(/\n/g, ' '),
-                new Date(f.created_at).toLocaleString(),
-                f.device_info ? `${f.device_info.model} (${f.device_info.os})` : ''
-            ]);
-
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // BOM for Excel UTF-8
-            csvContent += headers.join(",") + "\n";
-            rows.forEach(row => {
-                csvContent += row.map(cell => `"${cell}"`).join(",") + "\n";
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `feedback_report_${new Date().toLocaleDateString()}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Update feedback status
-        async function updateStatus(id, newStatus) {
-            try {
-                const { error } = await supabaseClient
-                    .from('feedback')
-                    .update({ status: newStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                // Update local state
-                const index = allFeedback.findIndex(f => f.id === id);
-                if (index !== -1) allFeedback[index].status = newStatus;
-
-                alert('✅ تم تحديث الحالة بنجاح');
-            } catch (error) {
-                console.error(error);
-                alert('❌ فشل تحديث الحالة. تأكد من وجود عمود status في قاعدة البيانات.');
-            }
-        }
-
-        // Save Admin Notes
-        async function saveNotes(id) {
-            const notes = document.getElementById(`notes-${id}`).value;
-            try {
-                const { error } = await supabaseClient
-                    .from('feedback')
-                    .update({ admin_notes: notes })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                // Update local state
-                const index = allFeedback.findIndex(f => f.id === id);
-                if (index !== -1) allFeedback[index].admin_notes = notes;
-
-                alert('✅ تم حفظ الملاحظات');
-            } catch (error) {
-                console.error(error);
-                alert('❌ فشل حفظ الملاحظات. تأكد من وجود عمود admin_notes في قاعدة البيانات.');
-            }
-        }
-
-        // Save User Reply
-        async function saveReply(id) {
-            const reply = document.getElementById(`reply-${id}`).value;
-            try {
-                const { error } = await supabaseClient
-                    .from('feedback')
-                    .update({ reply: reply })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                // Update local state
-                const index = allFeedback.findIndex(f => f.id === id);
-                if (index !== -1) allFeedback[index].reply = reply;
-
-                alert('✅ تم إرسال الرد للمستخدم');
-            } catch (error) {
-                console.error(error);
-                alert('❌ فشل إرسال الرد. تأكد من وجود عمود reply في قاعدة البيانات.');
-            }
-        }
-
-        // Delete Feedback
-        async function deleteFeedback(id) {
-            if (!confirm('⚠️ هل أنت متأكد من حذف هذه الشكوى نهائياً؟')) return;
-
-            try {
-                // Request select to verify deletion
-                const { data, error } = await supabaseClient
-                    .from('feedback')
-                    .delete()
-                    .eq('id', id)
-                    .select();
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    alert('⚠️ لم يتم حذف أي سجل. قد يكون السبب قيود الصلاحيات (RLS) في Supabase.');
-                    return;
-                }
-
-                // Update local state and UI
-                allFeedback = allFeedback.filter(f => f.id !== id);
-                filterFeedback(); // Refresh the list with current filters
-                updateStats();
-                initCharts();
-
-                alert('✅ تم الحذف بنجاح');
-            } catch (error) {
-                console.error(error);
-                const msg = error.message || 'تأكد من صلاحيات قاعدة البيانات (RLS)';
-                alert('❌ فشل الحذف: ' + msg);
-            }
-        }
-
-        // Update statistics
-        function updateStats() {
-            const total = allFeedback.length;
-            const problems = allFeedback.filter(f => f.category === 'مشكلة').length;
-            const suggestions = allFeedback.filter(f => f.category === 'اقتراح').length;
-
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-            const recent = allFeedback.filter(f => new Date(f.created_at) > sevenDaysAgo).length;
-
-            document.getElementById('totalCount').textContent = total;
-            document.getElementById('problemCount').textContent = problems;
-            document.getElementById('suggestionCount').textContent = suggestions;
-            document.getElementById('recentCount').textContent = recent;
-        }
-
-        // Display feedback
-        function displayFeedback(feedback) {
-            const feedbackList = document.getElementById('feedbackList');
-
-            if (feedback.length === 0) {
-                feedbackList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
-                        <h3>لا توجد شكاوى</h3>
-                        <p>لم يتم العثور على أي شكاوى بالمعايير المحددة</p>
-                    </div>
-                `;
-                return;
-            }
-
-            feedbackList.innerHTML = feedback.map(item => `
-                <div class="feedback-card">
-                    <div class="feedback-header">
-                        <div class="feedback-info">
-                            <h3>${item.name}</h3>
-                            <p>📧 ${item.email}</p>
-                        </div>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <select onchange="updateStatus('${item.id}', this.value)" style="padding: 5px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.8rem;">
-                                <option value="جديد" ${item.status === 'جديد' ? 'selected' : ''}>🆕 جديد</option>
-                                <option value="تم استقبال المشكلة" ${item.status === 'تم استقبال المشكلة' ? 'selected' : ''}>📩 تم الاستقبال</option>
-                                <option value="قيد المعالجة" ${item.status === 'قيد المعالجة' ? 'selected' : ''}>⏳ قيد المعالجة</option>
-                                <option value="تم الحل" ${item.status === 'تم الحل' ? 'selected' : ''}>✅ تم الحل</option>
-                            </select>
-                            <span class="category-badge category-${item.category}">${item.category}</span>
-                            <button class="delete-btn" onclick="deleteFeedback('${item.id}')">🗑️ حذف</button>
-                        </div>
-                    </div>
-                    
-                    <div class="feedback-description">
-                        ${item.description}
-                    </div>
-
-                    ${item.image_urls && item.image_urls.length > 0 ? `
-                        <div class="images-grid">
-                            ${item.image_urls.map(url => `
-                                <img src="${url}" alt="صورة" onclick="openModal('${url}')">
-                            `).join('')}
-                        </div>
-                    ` : ''}
-
-                    <div class="feedback-meta">
-                        <div class="meta-item">
-                            📅 ${new Date(item.created_at).toLocaleDateString('ar-EG', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })}
-                        </div>
-                        ${item.image_urls && item.image_urls.length > 0 ? `
-                            <div class="meta-item">
-                                🖼️ ${item.image_urls.length} صورة
-                            </div>
-                        ` : ''}
-                    </div>
-
-                    ${item.device_info ? `
-                        <div class="device-info">
-                            <strong>📱 معلومات الجهاز:</strong>
-                            ${item.device_info.os || 'غير متوفر'} ${item.device_info.os_version || ''} • 
-                            ${item.device_info.model || 'غير متوفر'} • 
-                            إصدار التطبيق: ${item.device_info.app_version || 'غير متوفر'}
-                        </div>
-                    ` : ''}
-
-                    <div class="admin-notes">
-                        <strong>📝 ملاحظات الإدارة (داخلية):</strong>
-                        <textarea id="notes-${item.id}" placeholder="أضف ملاحظاتك هنا...">${item.admin_notes || ''}</textarea>
-                        <button class="save-notes-btn" onclick="saveNotes('${item.id}')">حفظ الملاحظات</button>
-                    </div>
-
-                    <div class="reply-section">
-                        <strong>💬 الرد على المستخدم (سيظهر في التطبيق):</strong>
-                        <textarea id="reply-${item.id}" placeholder="اكتب ردك هنا...">${item.reply || ''}</textarea>
-                        <button class="save-notes-btn" onclick="saveReply('${item.id}')">إرسال الرد</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Filter and search
-        function filterFeedback() {
-            const category = document.getElementById('categoryFilter').value;
-            const status = document.getElementById('statusFilter').value;
-            const rating = document.getElementById('ratingFilter').value;
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const unrepliedOnly = document.getElementById('unrepliedFilter').checked;
-
-            let filtered = allFeedback;
-
-            if (unrepliedOnly) {
-                filtered = filtered.filter(f => !f.reply || f.reply.trim() === '');
-            }
-
-            if (category) {
-                filtered = filtered.filter(f => f.category === category);
-            }
-
-            if (status) {
-                filtered = filtered.filter(f => f.status === status);
-            }
-
-            if (rating) {
-                filtered = filtered.filter(f => f.rating >= parseInt(rating));
-            }
-
-            if (search) {
-                filtered = filtered.filter(f =>
-                    f.name.toLowerCase().includes(search) ||
-                    f.email.toLowerCase().includes(search) ||
-                    f.description.toLowerCase().includes(search)
-                );
-            }
-
-            displayFeedback(filtered);
-        }
-
-        // Image modal
-        function openModal(url) {
-            document.getElementById('modalImage').src = url;
-            document.getElementById('imageModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('imageModal').classList.remove('active');
-        }
-
-        // Event listeners
-        document.getElementById('categoryFilter').addEventListener('change', filterFeedback);
-        document.getElementById('statusFilter').addEventListener('change', filterFeedback);
-        document.getElementById('ratingFilter').addEventListener('change', filterFeedback);
-        document.getElementById('searchInput').addEventListener('input', filterFeedback);
-
-        const startDateEl = document.getElementById('startDate');
-        if (startDateEl) startDateEl.addEventListener('change', filterFeedback);
-
-        const endDateEl = document.getElementById('endDate');
-        if (endDateEl) endDateEl.addEventListener('change', filterFeedback);
-
-        document.getElementById('themeColorInput').addEventListener('input', (e) => {
-            document.getElementById('themeColorHex').value = e.target.value;
-        });
-
-        // Keyboard shortcut for modal
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
-
-        // Load data on page load
-        // loadFeedback() is now called after auth check
-
-        // Auto-refresh every 60 seconds (increased to avoid chart flickering)
-        setInterval(() => {
-            if (localStorage.getItem('dashboardAuth') === 'true') {
-                loadFeedback();
-                loadUpdates();
-            }
-        }, 60000);
-
-        // --- NEW: APP UPDATES MANAGEMENT ---
-
-        function switchTab(tabId) {
-            console.log('Switching to tab:', tabId);
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
-
-            // Show selected tab
-            const content = document.getElementById(tabId + 'Tab');
-            const btn = document.getElementById(tabId + 'TabBtn');
-
-            if (content && btn) {
-                content.classList.add('active');
-                btn.classList.add('active');
-            } else {
-                console.error('Tab elements not found for:', tabId);
-            }
-
-            if (tabId === 'updates') {
-                loadUpdates();
-            } else if (tabId === 'analytics') {
-                loadAnalytics();
-            } else if (tabId === 'settings') {
-                loadSettings();
-            } else if (tabId === 'errors') {
-                loadErrors();
-            } else if (tabId === 'banners') {
-                loadBanners();
-            } else if (tabId === 'features') {
-                loadFeatures();
-            } else if (tabId === 'content') {
-                loadContent();
-            }
-        }
-
-        async function pushUpdate() {
-            const versionName = document.getElementById('versionName').value;
-            const versionCode = document.getElementById('versionCode').value;
-            const isMandatory = document.getElementById('isMandatory').value === 'true';
-            const updateUrl = document.getElementById('updateUrl').value;
-            const releaseNotes = document.getElementById('releaseNotes').value;
-
-            if (!versionName || !versionCode || !updateUrl) {
-                alert('⚠️ يرجى إكمال الحقول الأساسية (الاسم، الكود، الرابط)');
-                return;
-            }
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('app_updates')
-                    .insert([{
-                        version_name: versionName,
-                        version_code: parseInt(versionCode),
-                        is_mandatory: isMandatory,
-                        update_url: updateUrl,
-                        release_notes: releaseNotes
-                    }]);
-
-                if (error) throw error;
-
-                alert('✅ تم نشر التحديث بنجاح!');
-                loadUpdates();
-
-                // Clear form
-                document.getElementById('versionName').value = '';
-                document.getElementById('versionCode').value = '';
-                document.getElementById('updateUrl').value = '';
-                document.getElementById('releaseNotes').value = '';
-            } catch (error) {
-                console.error(error);
-                alert('❌ فشل نشر التحديث: ' + error.message);
-            }
-        }
-
-        async function loadUpdates() {
-            try {
-                console.log('Loading updates from Supabase...');
-                const { data, error } = await supabaseClient
-                    .from('app_updates')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-                console.log('Updates loaded:', data);
-                displayUpdates(data);
-            } catch (error) {
-                console.error('Error loading updates:', error);
-                document.getElementById('updatesList').innerHTML = `<div class="error">❌ خطأ في تحميل التحديثات: ${error.message}</div>`;
-            }
-        }
-
-        function displayUpdates(updates) {
-            const list = document.getElementById('updatesList');
-            if (updates.length === 0) {
-                list.innerHTML = '<div class="empty-state">لا يوجد سجل تحديثات حتى الآن.</div>';
-                return;
-            }
-
-            list.innerHTML = updates.map(update => `
-                <div class="update-item">
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
-                            <strong style="font-size: 1.1rem; color: #059669;">V ${update.version_name}</strong>
-                            <span class="badge-${update.is_mandatory ? 'mandatory' : 'optional'}">
-                                ${update.is_mandatory ? 'إجباري' : 'اختياري'}
-                            </span>
-                            <span style="font-size: 0.8rem; color: #999;">(Build: ${update.version_code})</span>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #666;">
-                            📅 ${new Date(update.created_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}
-                        </div>
-                        <div style="margin-top: 10px; font-size: 0.9rem; color: #444;">
-                            ${update.release_notes || 'لا توجد ملاحظات.'}
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="export-btn" onclick="window.open('${update.update_url}', '_blank')" style="padding: 5px 15px;">🔗 الرابط</button>
-                        <button class="delete-btn" onclick="deleteUpdate('${update.id}')">🗑️ حذف</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function deleteUpdate(id) {
-            if (!confirm('⚠️ هل أنت متأكد من حذف سجل هذا التحديث؟ لن يتأثر التطبيق ولكن سيختفي السجل من هنا.')) return;
-            try {
-                const { data, error } = await supabaseClient
-                    .from('app_updates')
-                    .delete()
-                    .eq('id', id)
-                    .select();
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    alert('⚠️ لم يتم الحذف من قاعدة البيانات. تأكد من صلاحيات DELETE على جدول app_updates.');
-                    return;
-                }
-
-                loadUpdates();
-                alert('✅ تم الحذف');
-            } catch (error) {
-                console.error(error);
-                alert('❌ فشل الحذف: ' + error.message);
-            }
-        }
-        // --- NEW: APP ANALYTICS LOGIC ---
-
-        async function loadAnalytics() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('app_usage')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                const { data: featureData, error: featureError } = await supabaseClient
-                    .from('feature_usage')
-                    .select('*');
-
-                if (error) {
-                    if (error.code === 'PGRST116' || error.message.includes('not found')) {
-                        console.log('Analytics table not found yet.');
-                        return;
-                    }
-                    throw error;
-                }
-
-                allUsageData = data || [];
-                window.featureUsageData = featureData || [];
-                displayAnalytics();
-            } catch (error) {
-                console.error('Error loading analytics:', error);
-            }
-        }
-
-        function displayAnalytics() {
-            // 1. Basic Stats
-            const total = allUsageData.length;
-            const uniqueUsers = new Set(allUsageData.map(u => u.device_id)).size;
-            const countries = new Set(allUsageData.map(u => u.country)).size;
-
-            document.getElementById('totalLaunches').textContent = total;
-            document.getElementById('uniqueUsers').textContent = uniqueUsers;
-            document.getElementById('countriesCount').textContent = countries;
-
-            // 2. Countries Chart
-            const countryCounts = {};
-            allUsageData.forEach(u => {
-                const c = u.country || 'أخرى';
-                countryCounts[c] = (countryCounts[c] || 0) + 1;
-            });
-
-            const sortedCountries = Object.entries(countryCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-
-            if (countriesChart) countriesChart.destroy();
-            countriesChart = new Chart(document.getElementById('countriesChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: sortedCountries.map(c => c[0]),
-                    datasets: [{
-                        label: 'عدد الفتحات',
-                        data: sortedCountries.map(c => c[1]),
-                        backgroundColor: '#10b981'
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            // 3. OS Chart
-            const osCounts = {};
-            allUsageData.forEach(u => {
-                const os = u.os || 'Other';
-                osCounts[os] = (osCounts[os] || 0) + 1;
-            });
-
-            if (osChart) osChart.destroy();
-            osChart = new Chart(document.getElementById('osChart').getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(osCounts),
-                    datasets: [{
-                        data: Object.values(osCounts),
-                        backgroundColor: ['#3b82f6', '#f59e0b', '#6b7280']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            // 4. Daily Activity Chart (Last 15 days)
-            const dailyCounts = {};
-            const last15Days = [...Array(15)].map((_, i) => {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                return d.toISOString().split('T')[0];
-            }).reverse();
-
-            last15Days.forEach(date => dailyCounts[date] = 0);
-            allUsageData.forEach(u => {
-                const date = new Date(u.created_at).toISOString().split('T')[0];
-                if (dailyCounts[date] !== undefined) {
-                    dailyCounts[date]++;
-                }
-            });
-
-            if (dailyUsageChart) dailyUsageChart.destroy();
-            dailyUsageChart = new Chart(document.getElementById('dailyUsageChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: last15Days.map(d => d.split('-').slice(1).join('/')),
-                    datasets: [{
-                        label: 'مرات فتح التطبيق',
-                        data: last15Days.map(date => dailyCounts[date]),
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                    }
-                }
-            });
-
-            // 5. Feature Usage Chart
-            const fCounts = {};
-            APP_FEATURES.forEach(f => fCounts[f.name] = 0);
-
-            if (window.featureUsageData) {
-                window.featureUsageData.forEach(u => {
-                    const feature = APP_FEATURES.find(f => f.id === u.feature_name);
-                    const name = feature ? feature.name : u.feature_name;
-                    fCounts[name] = (fCounts[name] || 0) + 1;
-                });
-            }
-
-            if (featuresUsageChart) featuresUsageChart.destroy();
-            featuresUsageChart = new Chart(document.getElementById('featuresUsageChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(fCounts),
-                    datasets: [{
-                        label: 'عدد النقرات',
-                        data: Object.values(fCounts),
-                        backgroundColor: '#6366f1'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-        // --- NEW: APP SETTINGS & CMS LOGIC ---
-
-        async function loadSettings() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('app_settings')
-                    .select('*');
-
-                if (error) throw error;
-
-                if (data) {
-                    const maintenance = data.find(s => s.key === 'maintenance_mode');
-                    const quote = data.find(s => s.key === 'quote_of_the_day');
-                    const news = data.find(s => s.key === 'news_marquee');
-                    const newsLabel = data.find(s => s.key === 'news_marquee_label');
-                    const newsType = data.find(s => s.key === 'news_marquee_type');
-                    const newsActive = data.find(s => s.key === 'news_active');
-                    const minVersion = data.find(s => s.key === 'min_required_version');
-
-                    const themeColor = data.find(s => s.key === 'primary_hex_color');
-                    const broadcastMsg = data.find(s => s.key === 'broadcast_message');
-                    const broadcastActive = data.find(s => s.key === 'broadcast_active');
-                    const quoteActive = data.find(s => s.key === 'quote_active');
-
-                    // Support Links
-                    const fb = data.find(s => s.key === 'link_facebook');
-                    const wa = data.find(s => s.key === 'link_whatsapp');
-                    const as = data.find(s => s.key === 'link_appstore');
-                    const ps = data.find(s => s.key === 'link_playstore');
-
-                    // Prayer Offsets
-                    const oFajr = data.find(s => s.key === 'prayer_offset_fajr');
-                    const oSun = data.find(s => s.key === 'prayer_offset_sunrise');
-                    const oDhuhr = data.find(s => s.key === 'prayer_offset_dhuhr');
-                    const oAsr = data.find(s => s.key === 'prayer_offset_asr');
-                    const oMag = data.find(s => s.key === 'prayer_offset_maghrib');
-                    const oIsh = data.find(s => s.key === 'prayer_offset_isha');
-
-                    if (maintenance) document.getElementById('maintenanceToggle').checked = maintenance.value === 'true';
-                    if (quote) document.getElementById('quoteInput').value = quote.value;
-                    if (quoteActive) document.getElementById('quoteToggle').checked = quoteActive.value === 'true';
-
-                    if (fb) document.getElementById('linkFacebook').value = fb.value;
-                    if (wa) document.getElementById('linkWhatsapp').value = wa.value;
-                    if (as) document.getElementById('linkAppStore').value = as.value;
-                    if (ps) document.getElementById('linkPlayStore').value = ps.value;
-
-                    if (oFajr) document.getElementById('offsetFajr').value = oFajr.value;
-                    if (oSun) document.getElementById('offsetSunrise').value = oSun.value;
-                    if (oDhuhr) document.getElementById('offsetDhuhr').value = oDhuhr.value;
-                    if (oAsr) document.getElementById('offsetAsr').value = oAsr.value;
-                    if (oMag) document.getElementById('offsetMaghrib').value = oMag.value;
-                    if (oIsh) document.getElementById('offsetIsha').value = oIsh.value;
-
-                    if (news) document.getElementById('newsInput').value = news.value;
-                    if (newsLabel) document.getElementById('newsLabelInput').value = newsLabel.value;
-                    if (newsType) document.getElementById('newsTypeInput').value = newsType.value;
-                    if (newsActive) document.getElementById('newsActiveToggle').checked = newsActive.value === 'true';
-                    if (minVersion) document.getElementById('minAppVersion').value = minVersion.value;
-
-                    if (themeColor) {
-                        document.getElementById('themeColorInput').value = themeColor.value;
-                        document.getElementById('themeColorHex').value = themeColor.value;
-                    } else {
-                        document.getElementById('themeColorInput').value = '#178B74';
-                        document.getElementById('themeColorHex').value = '';
-                    }
-                    if (broadcastMsg) document.getElementById('broadcastInput').value = broadcastMsg.value;
-                    if (broadcastActive) document.getElementById('broadcastToggle').checked = broadcastActive.value === 'true';
-                }
-            } catch (error) {
-                console.error('Error loading settings:', error);
-            }
-        }
-
-        async function updateThemeColor() {
-            let color = document.getElementById('themeColorHex').value.trim();
-            if (!color.startsWith('#')) color = '#' + color;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .upsert({ key: 'primary_hex_color', value: color });
-
-                if (error) throw error;
-                alert('✅ تم تحديث لون التطبيق بنجاح');
-                document.getElementById('themeColorInput').value = color;
-            } catch (error) {
-                alert('❌ فشل تحديث اللون: ' + error.message);
-            }
-        }
-
-        async function resetThemeColor() {
-            if (!confirm('هل أنت متأكد من العودة للون التطبيق الأصلي؟')) return;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .delete()
-                    .eq('key', 'primary_hex_color');
-
-                if (error) throw error;
-                alert('✅ تم العودة للون الأصلي بالتطبيق (الأخضر الافتراضي)');
-                document.getElementById('themeColorInput').value = '#178B74';
-                document.getElementById('themeColorHex').value = '';
-            } catch (error) {
-                alert('❌ فشل العودة للأصلي: ' + error.message);
-            }
-        }
-
-        async function updateBroadcast() {
-            const msg = document.getElementById('broadcastInput').value;
-            const active = document.getElementById('broadcastToggle').checked;
-            const id = Date.now().toString(); // New ID to force pop-up for all users
-
-            try {
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .upsert([
-                        { key: 'broadcast_message', value: msg },
-                        { key: 'broadcast_active', value: active.toString() },
-                        { key: 'broadcast_id', value: id }
-                    ]);
-
-                if (error) throw error;
-                alert('✅ تم نشر الرسالة وتفعيلها لكل المستخدمين');
-            } catch (error) {
-                alert('❌ فشل نشر الرسالة: ' + error.message);
-            }
-        }
-
-        async function updateMaintenanceMode(isActive) {
-            try {
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .upsert({ key: 'maintenance_mode', value: isActive.toString() });
-
-                if (error) throw error;
-                alert(`✅ تم ${isActive ? 'تفعيل' : 'إيقاف'} وضع الصيانة بنجاح`);
-            } catch (error) {
-                alert('❌ فشل تحديث وضع الصيانة: ' + error.message);
-            }
-        }
-
-        async function updateNewsMarquee() {
-            const news = document.getElementById('newsInput').value;
-            const label = document.getElementById('newsLabelInput').value;
-            const type = document.getElementById('newsTypeInput').value;
-            const active = document.getElementById('newsActiveToggle').checked;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .upsert([
-                        { key: 'news_marquee', value: news },
-                        { key: 'news_marquee_label', value: label },
-                        { key: 'news_marquee_type', value: type },
-                        { key: 'news_active', value: active.toString() }
-                    ], { onConflict: 'key' });
-
-                if (error) throw error;
-                alert('✅ تم تحديث شريط الأنباء بنجاح');
-                loadSettings();
-            } catch (error) {
-                alert('❌ فشل تحديث شريط الأنباء: ' + error.message);
-            }
-        }
-
-        async function updateDailyQuote() {
-            const quote = document.getElementById('quoteInput').value;
-            const active = document.getElementById('quoteToggle').checked;
-            try {
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .upsert([
-                        { key: 'quote_of_the_day', value: quote },
-                        { key: 'quote_active', value: active.toString() }
-                    ]);
-
-                if (error) throw error;
-                alert('✅ تم حفظ الخاطرة وباقي الإعدادات بنجاح');
-                loadSettings();
-            } catch (error) {
-                alert('❌ فشل الحفظ: ' + error.message);
-            }
-        }
-
-        async function updateSupportLinks() {
-            const fb = document.getElementById('linkFacebook').value;
-            const wa = document.getElementById('linkWhatsapp').value;
-            const as = document.getElementById('linkAppStore').value;
-            const ps = document.getElementById('linkPlayStore').value;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .upsert([
-                        { key: 'link_facebook', value: fb },
-                        { key: 'link_whatsapp', value: wa },
-                        { key: 'link_appstore', value: as },
-                        { key: 'link_playstore', value: ps }
-                    ]);
-
-                if (error) throw error;
-                alert('✅ تم حفظ الروابط بنجاح');
-            } catch (error) {
-                alert('❌ فشل الحفظ: ' + error.message);
-            }
-        }
-
-        async function updateMinVersion() {
-            const version = document.getElementById('minAppVersion').value;
-            if (!version) return alert('⚠️ يرجى إدخال رقم الإصدار');
-
-            try {
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .upsert({ key: 'min_required_version', value: version });
-
-                if (error) throw error;
-                alert('✅ تم تحديث أقل إصدار مطلوب بنجاح');
-            } catch (e) {
-                alert('❌ فشل التحديث: ' + e.message);
-            }
-        }
-
-        async function updatePrayerOffsets() {
-            const oFajr = document.getElementById('offsetFajr').value;
-            const oSun = document.getElementById('offsetSunrise').value;
-            const oDhuhr = document.getElementById('offsetDhuhr').value;
-            const oAsr = document.getElementById('offsetAsr').value;
-            const oMag = document.getElementById('offsetMaghrib').value;
-            const oIsh = document.getElementById('offsetIsha').value;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .upsert([
-                        { key: 'prayer_offset_fajr', value: oFajr },
-                        { key: 'prayer_offset_sunrise', value: oSun },
-                        { key: 'prayer_offset_dhuhr', value: oDhuhr },
-                        { key: 'prayer_offset_asr', value: oAsr },
-                        { key: 'prayer_offset_maghrib', value: oMag },
-                        { key: 'prayer_offset_isha', value: oIsh }
-                    ]);
-
-                if (error) throw error;
-                alert('✅ تم حفظ تعديلات المواقيت بنجاح');
-            } catch (error) {
-                alert('❌ فشل الحفظ: ' + error.message);
-            }
-        }
-
-        // Radio Management
-        async function loadRadios() {
-            const list = document.getElementById('radioList');
-            list.innerHTML = '<div class="loading">⏳ جاري تحميل الإذاعات...</div>';
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('custom_radios')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    list.innerHTML = '<div class="empty-state"><h3>لا توجد إذاعات مخصصة</h3><p>أضف إذاعة جديدة لتظهر في التطبيق بجانب الإذاعات الرئيسية</p></div>';
-                    return;
-                }
-
-                list.innerHTML = data.map(r => `
-                    <div class="update-item" style="border-right: 5px solid ${r.is_active ? '#3b82f6' : '#ccc'}; background: var(--card-bg);">
-                        <div style="flex: 1;">
-                            <h4 style="margin: 0 0 5px 0; color: var(--text-primary); text-align: right;">${r.name}</h4>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); word-break: break-all; text-align: left;" dir="ltr">🔗 ${r.url}</div>
-                        </div>
-                        <div style="display: flex; gap: 10px; margin-right: 20px;">
-                            <button onclick="toggleRadioActive('${r.id}', ${r.is_active})" 
-                                style="background: ${r.is_active ? '#10b981' : '#6b7280'}; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
-                                ${r.is_active ? '✅ نشط' : '⚪ معطل'}
-                            </button>
-                            <button onclick="deleteRadio('${r.id}')" 
-                                style="background: #ef4444; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
-                                🗑️ حذف
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                list.innerHTML = `<div class="error">❌ خطأ في التحميل: ${error.message}</div>`;
-            }
-        }
-
-        async function addCustomRadio() {
-            const name = document.getElementById('radioName').value;
-            const url = document.getElementById('radioUrl').value;
-
-            if (!name || !url) {
-                alert('⚠️ يرجى إدخال الاسم والرابط');
-                return;
-            }
-
-            try {
-                const { error } = await supabaseClient
-                    .from('custom_radios')
-                    .insert([{ name, url, is_active: true }]);
-
-                if (error) throw error;
-
-                alert('✅ تم إضافة الإذاعة بنجاح');
-                document.getElementById('radioName').value = '';
-                document.getElementById('radioUrl').value = '';
-                loadRadios();
-            } catch (error) {
-                alert('❌ فشل الإضافة: ' + error.message);
-            }
-        }
-
-        async function toggleRadioActive(id, currentStatus) {
-            try {
-                const { error } = await supabaseClient
-                    .from('custom_radios')
-                    .update({ is_active: !currentStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadRadios();
-            } catch (e) {
-                alert('❌ فشل تغيير الحالة: ' + e.message);
-            }
-        }
-
-        async function deleteRadio(id) {
-            if (!confirm('هل أنت متأكد من حذف هذه الإذاعة؟')) return;
-            try {
-                const { error } = await supabaseClient
-                    .from('custom_radios')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadRadios();
-            } catch (e) {
-                alert('❌ فشل الحذف: ' + e.message);
-            }
-        }
-
-        // --- NEW: ERROR LOGS LOGIC ---
-
-        async function loadErrors() {
-            const errorsList = document.getElementById('errorsList');
-            errorsList.innerHTML = '<div class="loading">⏳ جاري تحميل السجلات...</div>';
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('error_logs')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    errorsList.innerHTML = '<div class="loading">✅ لا توجد أخطاء مسجلة حالياً</div>';
-                    return;
-                }
-
-                errorsList.innerHTML = data.map(err => `
-                    <div class="update-item" style="border-left: 5px solid #ff4444; position: relative;">
-                        <button class="delete-btn" onclick="deleteError('${err.id}')" style="position: absolute; left: 15px; top: 15px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #ff4444;">🗑️</button>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-left: 30px;">
-                            <div>
-                                <h4 style="color: var(--text-primary); margin-bottom: 5px;">${err.message.substring(0, 100)}${err.message.length > 100 ? '...' : ''}</h4>
-                                <small style="color: #888;">📅 ${new Date(err.created_at).toLocaleString('ar-EG')}</small>
-                            </div>
-                        </div>
-                        <div style="background: rgba(0,0,0,0.05); padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-top: 10px; color: var(--text-primary);">
-                            <strong>📱 الجهاز:</strong> ${err.device_info ? `${err.device_info.brand || ''} ${err.device_info.model || ''} (${err.device_info.os || ''} ${err.device_info.version || ''})` : 'غير معروف'}
-                            <br>
-                            <strong>🚀 الإصدار:</strong> ${err.device_info ? err.device_info.app_version || '1.0.0' : '1.0.0'}
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <details style="cursor: pointer; color: #3b82f6;">
-                                <summary>عرض تفاصيل الخطأ (Stack Trace)</summary>
-                                <pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; font-size: 0.75rem; overflow-x: auto; margin-top: 10px; text-align: left; direction: ltr;">${err.stack_trace}</pre>
-                            </details>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                errorsList.innerHTML = `<div class="error">❌ خطأ: ${error.message}</div>`;
-            }
-        }
-
-        async function deleteError(id) {
-            if (!confirm('⚠️ هل تريد حذف هذا السجل؟')) return;
-            try {
-                const { error } = await supabaseClient
-                    .from('error_logs')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadErrors();
-            } catch (error) {
-                alert('❌ فشل الحذف: ' + error.message);
-            }
-        }
-
-        // --- NEW: BANNERS CMS LOGIC ---
-
-        async function loadBanners() {
-            const list = document.getElementById('bannersList');
-            list.innerHTML = '<div class="loading">⏳ جاري تحميل البانرات...</div>';
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('banners')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    list.innerHTML = '<div class="no-data">ℹ️ لا توجد بانرات مرفوعة حالياً</div>';
-                    return;
-                }
-
-                list.innerHTML = data.map(b => `
-                    <div class="update-item" style="display: flex; gap: 20px; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 15px;">
-                        <img src="${b.image_url}" style="width: 150px; height: 80px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border-color);">
-                        <div style="flex: 1;">
-                            <h4 style="margin: 0 0 5px 0; color: var(--text-primary);">${b.title || 'بدون عنوان'}</h4>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px; word-break: break-all;">🔗 ${b.link_url || 'لا يوجد رابط'}</div>
-                            <div style="display: flex; gap: 10px;">
-                                <button onclick="toggleBannerActive('${b.id}', ${b.is_active})" style="background: ${b.is_active ? '#6b7280' : 'var(--accent-color)'}; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
-                                    ${b.is_active ? '👁️ إخفاء' : '👁️ إظهار'}
-                                </button>
-                                <button onclick="deleteBanner('${b.id}')" style="background: #ef4444; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
-                                    🗑️ حذف
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (e) {
-                console.error(e);
-                list.innerHTML = '<div class="no-data">❌ خطأ في التحميل</div>';
-            }
-        }
-
-        async function uploadBanner() {
-            const fileInput = document.getElementById('bannerFile');
-            const title = document.getElementById('bannerTitle').value;
-            const link = document.getElementById('bannerLink').value;
-            const progressBar = document.getElementById('progressBar');
-            const progressContainer = document.getElementById('uploadProgress');
-
-            if (fileInput.files.length === 0) {
-                alert('⚠️ يرجى اختيار صورة أولاً');
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
-            const filePath = `ads/${fileName}`;
-
-            progressContainer.style.display = 'block';
-            progressBar.style.width = '10%';
-
-            try {
-                // 1. Upload to Storage
-                const { data: uploadData, error: uploadError } = await supabaseClient
-                    .storage
-                    .from('banners_storage')
-                    .upload(filePath, file);
-
-                if (uploadError) throw uploadError;
-                progressBar.style.width = '60%';
-
-                // 2. Get Public URL
-                const { data: { publicUrl } } = supabaseClient
-                    .storage
-                    .from('banners_storage')
-                    .getPublicUrl(filePath);
-
-                // 3. Insert into Database
-                const { error: dbError } = await supabaseClient
-                    .from('banners')
-                    .insert([{
-                        title: title,
-                        image_url: publicUrl,
-                        link_url: link,
-                        is_active: true
-                    }]);
-
-                if (dbError) throw dbError;
-
-                progressBar.style.width = '100%';
-                setTimeout(() => {
-                    progressContainer.style.display = 'none';
-                    progressBar.style.width = '0%';
-                }, 1000);
-
-                alert('✅ تم رفع ونشر البانر بنجاح');
-                // Reset fields
-                fileInput.value = '';
-                document.getElementById('bannerTitle').value = '';
-                document.getElementById('bannerLink').value = '';
-                loadBanners();
-
-            } catch (e) {
-                console.error(e);
-                alert('❌ فشل الرفع: ' + e.message);
-                progressContainer.style.display = 'none';
-            }
-        }
-
-        async function deleteBanner(id) {
-            if (!confirm('هل أنت متأكد من حذف هذا البانر نهائياً؟')) return;
-
-            try {
-                const { error: dbError } = await supabaseClient.from('banners').delete().eq('id', id);
-                if (dbError) throw dbError;
-                alert('✅ تم الحذف بنجاح');
-                loadBanners();
-            } catch (e) {
-                alert('❌ فشل الحذف: ' + e.message);
-            }
-        }
-
-        async function toggleBannerActive(id, currentStatus) {
-            try {
-                const { error } = await supabaseClient
-                    .from('banners')
-                    .update({ is_active: !currentStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadBanners();
-            } catch (e) {
-                alert('❌ فشل التغيير: ' + e.message);
-            }
-        }
-
-        // --- NEW: FEATURE CONTROL LOGIC ---
-
-        const APP_FEATURES = [
-            { id: 'quran', name: 'القرآن الكريم', icon: '📖' },
-            { id: 'azkar', name: 'الأذكار', icon: '📿' },
-            { id: 'khatmah', name: 'الختمات الجماعية', icon: '🕋' },
-            { id: 'zakat', name: 'حساب الزكاة', icon: '💰' },
-            { id: 'charity', name: 'الصدقة الجارية', icon: '🤝' },
-            { id: 'radio', name: 'إذاعات القرآن', icon: '📻' },
-            { id: 'kids', name: 'ركن الأطفال', icon: '👶' },
-            { id: 'hadith', name: 'كتب الحديث', icon: '📚' },
-            { id: 'mosques', name: 'المساجد القريبة', icon: '🕌' }
-        ];
-
-        async function loadFeatures() {
-            const grid = document.getElementById('featuresGrid');
-            grid.innerHTML = '<div class="loading">⏳ جاري تحميل حالة الأقسام...</div>';
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('app_settings')
-                    .select('key, value')
-                    .filter('key', 'like', 'section_%');
-
-                if (error) throw error;
-
-                grid.innerHTML = APP_FEATURES.map(feature => {
-                    const settingKey = `section_${feature.id}_status`;
-                    const status = data.find(s => s.key === settingKey)?.value || 'active';
-
-                    return `
-                        <div class="update-item" style="flex-direction: column; align-items: flex-start; gap: 15px;">
-                            <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-                                <span style="font-size: 1.5rem;">${feature.icon}</span>
-                                <span style="font-weight: bold; flex: 1; color: var(--text-primary);">${feature.name}</span>
-                                <span class="badge" style="background: ${status === 'active' ? '#d1fae5' : status === 'maintenance' ? '#fef3c7' : '#f3f4f6'}; color: ${status === 'active' ? '#065f46' : status === 'maintenance' ? '#92400e' : '#374151'};">
-                                    ${status === 'active' ? 'نشط' : status === 'maintenance' ? 'صيانة' : 'مخفي'}
-                                </span>
-                            </div>
-                            
-                            <select onchange="updateFeatureStatus('${feature.id}', this.value)" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">
-                                <option value="active" ${status === 'active' ? 'selected' : ''}>🟢 نشط (يعمل بشكل طبيعي)</option>
-                                <option value="maintenance" ${status === 'maintenance' ? 'selected' : ''}>🟠 صيانة (رسالة تنبيه للمستخدم)</option>
-                                <option value="hidden" ${status === 'hidden' ? 'selected' : ''}>⚪ مخفي (إخفاء من القائمة تماماً)</option>
-                            </select>
-                        </div>
-                    `;
-                }).join('');
-            } catch (e) {
-                console.error(e);
-                grid.innerHTML = '<div class="no-data">❌ فشل تحميل البيانات</div>';
-            }
-        }
-
-        async function updateFeatureStatus(featureId, newStatus) {
-            try {
-                const key = `section_${featureId}_status`;
-                const { error } = await supabaseClient
-                    .from('app_settings')
-                    .upsert({ key: key, value: newStatus });
-
-                if (error) throw error;
-                // Optional: show small toast instead of alert
-                loadFeatures();
-            } catch (e) {
-                alert('❌ فشل التحديث: ' + e.message);
-            }
-        }
-
-        // --- CONTENT MANAGEMENT (CMS) ---
-
-        async function loadContent() {
-            const list = document.getElementById('contentList');
-            list.innerHTML = '<div class="loading">⏳ جاري تحميل المحتوى...</div>';
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('app_content')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    list.innerHTML = '<div class="empty-state"><h3>لا يوجد محتوى</h3><p>أضف محتوى جديد ليظهر في التطبيق</p></div>';
-                    return;
-                }
-
-                list.innerHTML = data.map(item => `
-                    <div class="feedback-card" style="border-left: 5px solid ${item.is_active ? '#10b981' : '#ccc'};">
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <div>
-                                <h3 style="margin-bottom: 5px;">${item.title}</h3>
-                                <span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${item.type}</span>
-                                ${!item.is_active ? '<span class="category-badge" style="background: #eee; color: #666;">غير نشط</span>' : ''}
-                            </div>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="refresh-btn" onclick="toggleContentActive('${item.id}', ${item.is_active})" 
-                                    style="padding: 5px 10px; font-size: 0.8rem; background: ${item.is_active ? '#6b7280' : 'var(--accent-color)'}; border: none;">
-                                    ${item.is_active ? '👁️ إخفاء' : '👁️ إظهار'}
-                                </button>
-                                <button class="delete-btn" onclick="deleteContent('${item.id}')">🗑️ حذف</button>
-                            </div>
-                        </div>
-                        <p style="margin-top: 10px; color: var(--text-secondary); line-height: 1.6;">${item.body}</p>
-                        ${item.image_url ? `<img src="${item.image_url}" style="margin-top: 10px; height: 100px; border-radius: 8px;">` : ''}
-                        <div style="margin-top: 15px; font-size: 0.8rem; color: #aaa;">
-                            تاريخ النشر: ${new Date(item.created_at).toLocaleDateString()}
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                list.innerHTML = `<div class="error">❌ خطأ: ${error.message}</div>`;
-            }
-        }
-
-        async function publishContent() {
-            const title = document.getElementById('contentTitle').value;
-            const body = document.getElementById('contentBody').value;
-            const type = document.getElementById('contentType').value;
-            const image = document.getElementById('contentImage').value;
-
-            if (!title || !body) {
-                alert('⚠️ يرجى كتابة العنوان والمحتوى');
-                return;
-            }
-
-            try {
-                const { error } = await supabaseClient
-                    .from('app_content')
-                    .insert([{ title, body, type, image_url: image || null, is_active: true }]);
-
-                if (error) throw error;
-
-                alert('✅ تم نشر المحتوى بنجاح!');
-                document.getElementById('contentTitle').value = '';
-                document.getElementById('contentBody').value = '';
-                document.getElementById('contentImage').value = '';
-                loadContent();
-            } catch (error) {
-                console.error(error);
-                alert('❌ فشل النشر: ' + error.message);
-            }
-        }
-
-        async function deleteContent(id) {
-            if (!confirm('⚠️ هل أنت متأكد من حذف هذا المحتوى؟')) return;
-            try {
-                const { error } = await supabaseClient.from('app_content').delete().eq('id', id);
-                if (error) throw error;
-                loadContent();
-            } catch (e) {
-                alert('❌ فشل الحذف: ' + e.message);
-            }
-        }
-
-        async function toggleContentActive(id, currentStatus) {
-            try {
-                const { error } = await supabaseClient
-                    .from('app_content')
-                    .update({ is_active: !currentStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadContent();
-            } catch (e) {
-                alert('❌ فشل التغيير: ' + e.message);
-            }
-        }
-
-        // --- STORIES MANAGEMENT ---
-
-        // --- Kids Stories ---
-        async function loadKidsStories() {
-            const list = document.getElementById('kidsStoriesList');
-            list.innerHTML = '<div class="loading">⏳ جاري تحميل القصص...</div>';
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('kids_stories')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    list.innerHTML = '<div class="empty-state"><h3>لا توجد قصص</h3><p>أضف قصة جديدة للأطفال</p></div>';
-                    return;
-                }
-
-                list.innerHTML = data.map(story => `
-                    <div class="feedback-card" style="border-right: 5px solid ${story.is_visible ? 'var(--accent-color)' : '#ccc'};">
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <div style="display: flex; gap: 15px; align-items: center;">
-                                <span style="font-size: 2rem;">${story.emoji}</span>
-                                <div>
-                                    <h3 style="margin-bottom: 5px;">${story.title}</h3>
-                                    <span class="category-badge" style="background: #fef3c7; color: #d97706;">⭐ ${story.stars_reward} نجمة</span>
-                                    ${!story.is_visible ? '<span class="category-badge" style="background: #eee; color: #666;">مخفي</span>' : '<span class="category-badge" style="background: #d1fae5; color: #059669;">ظاهر</span>'}
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="refresh-btn" onclick="toggleKidsStoryVisibility('${story.id}', ${story.is_visible})" style="padding: 5px 10px; font-size: 0.8rem; background: ${story.is_visible ? '#6b7280' : 'var(--accent-color)'};">
-                                    ${story.is_visible ? '👁️ إخفاء' : '👁️ إظهار'}
-                                </button>
-                                <button class="delete-btn" onclick="deleteKidsStory('${story.id}')">🗑️ حذف</button>
-                            </div>
-                        </div>
-                        <div style="margin-top: 15px; background: var(--card-bg); padding: 10px; border-radius: 8px;">
-                            <p style="font-weight: bold; color: var(--accent-color); margin-bottom: 5px;">فقرات القصة:</p>
-                            <ul style="margin-right: 20px; font-size: 0.9rem; color: var(--text-secondary);">
-                                ${(story.paragraphs || []).map(p => `<li>${p}</li>`).join('')}
-                            </ul>
-                            <p style="margin-top: 10px; font-style: italic; color: var(--text-primary);">💡 الدرس: ${story.moral}</p>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                list.innerHTML = `<div class="error">❌ خطأ في تحميل القصص: ${error.message}</div>`;
-            }
-        }
-
-        async function addKidsStory() {
-            const title = document.getElementById('kidsStoryTitle').value;
-            const emoji = document.getElementById('kidsStoryEmoji').value;
-            const stars = parseInt(document.getElementById('kidsStoryStars').value);
-            const content = document.getElementById('kidsStoryParagraphs').value;
-            const moral = document.getElementById('kidsStoryMoral').value;
-
-            if (!title || !content || !moral) {
-                alert('⚠️ يرجى تعبئة جميع الحقول الأساسية');
-                return;
-            }
-
-            const paragraphs = content.split('\n').map(p => p.trim()).filter(p => p.length > 0);
-
-            try {
-                const { error } = await supabaseClient
-                    .from('kids_stories')
-                    .insert([{ title, emoji: emoji || '📖', stars_reward: stars, paragraphs, moral, is_visible: true }]);
-
-                if (error) throw error;
-
-                alert('✅ تم إضافة القصة بنجاح!');
-                document.getElementById('kidsStoryTitle').value = '';
-                document.getElementById('kidsStoryEmoji').value = '';
-                document.getElementById('kidsStoryParagraphs').value = '';
-                document.getElementById('kidsStoryMoral').value = '';
-                loadKidsStories();
-            } catch (error) {
-                alert('❌ فشل الإضافة: ' + error.message);
-            }
-        }
-
-        async function toggleKidsStoryVisibility(id, currentStatus) {
-            try {
-                const { error } = await supabaseClient
-                    .from('kids_stories')
-                    .update({ is_visible: !currentStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadKidsStories();
-            } catch (error) {
-                alert('❌ فشل تغيير الظهور: ' + error.message);
-            }
-        }
-
-        async function deleteKidsStory(id) {
-            if (!confirm('⚠️ حذف القصة نهائياً؟')) return;
-            try {
-                const { error } = await supabaseClient.from('kids_stories').delete().eq('id', id);
-                if (error) throw error;
-                loadKidsStories();
-            } catch (error) {
-                alert('❌ فشل الحذف: ' + error.message);
-            }
-        }
-
-        // --- Charity Stories ---
-        async function loadCharityStories() {
-            const list = document.getElementById('charityStoriesList');
-            list.innerHTML = '<div class="loading">⏳ جاري تحميل القصص...</div>';
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('charity_stories')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    list.innerHTML = '<div class="empty-state"><h3>لا توجد قصص</h3><p>أضف قصة صدقة جديدة</p></div>';
-                    return;
-                }
-
-                list.innerHTML = data.map(story => `
-                    <div class="feedback-card" style="border-right: 5px solid ${story.is_visible ? 'var(--accent-color)' : '#ccc'};">
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <div style="display: flex; gap: 15px; align-items: center;">
-                                <span style="font-size: 2rem;">${story.emoji}</span>
-                                <div>
-                                    <h3 style="margin-bottom: 5px;">${story.title}</h3>
-                                    <span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${story.category}</span>
-                                    ${!story.is_visible ? '<span class="category-badge" style="background: #eee; color: #666;">مخفي</span>' : '<span class="category-badge" style="background: #d1fae5; color: #059669;">ظاهر</span>'}
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="refresh-btn" onclick="toggleCharityStoryVisibility('${story.id}', ${story.is_visible})" style="padding: 5px 10px; font-size: 0.8rem; background: ${story.is_visible ? '#6b7280' : 'var(--accent-color)'};">
-                                    ${story.is_visible ? '👁️ إخفاء' : '👁️ إظهار'}
-                                </button>
-                                <button class="delete-btn" onclick="deleteCharityStory('${story.id}')">🗑️ حذف</button>
-                            </div>
-                        </div>
-                        <p style="margin-top: 15px; color: var(--text-primary); line-height: 1.8;">${story.content}</p>
-                        <p style="margin-top: 10px; font-size: 0.85rem; color: var(--text-secondary);">📚 المصدر: ${story.source}</p>
-                    </div>
-                `).join('');
-            } catch (error) {
-                list.innerHTML = `<div class="error">❌ خطأ في تحميل القصص: ${error.message}</div>`;
-            }
-        }
-
-        async function addCharityStory() {
-            const title = document.getElementById('charityStoryTitle').value;
-            const category = document.getElementById('charityStoryCategory').value;
-            const emoji = document.getElementById('charityStoryEmoji').value;
-            const content = document.getElementById('charityStoryContent').value;
-            const source = document.getElementById('charityStorySource').value;
-
-            if (!title || !content || !source) {
-                alert('⚠️ يرجى تعبئة جميع الحقول الأساسية');
-                return;
-            }
-
-            try {
-                const { error } = await supabaseClient
-                    .from('charity_stories')
-                    .insert([{ title, category, emoji: emoji || '🤲', content, source, is_visible: true }]);
-
-                if (error) throw error;
-
-                alert('✅ تم إضافة القصة بنجاح!');
-                document.getElementById('charityStoryTitle').value = '';
-                document.getElementById('charityStoryContent').value = '';
-                document.getElementById('charityStorySource').value = '';
-                loadCharityStories();
-            } catch (error) {
-                alert('❌ فشل الإضافة: ' + error.message);
-            }
-        }
-
-        async function toggleCharityStoryVisibility(id, currentStatus) {
-            try {
-                const { error } = await supabaseClient
-                    .from('charity_stories')
-                    .update({ is_visible: !currentStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadCharityStories();
-            } catch (error) {
-                alert('❌ فشل تغيير الظهور: ' + error.message);
-            }
-        }
-
-        async function deleteCharityStory(id) {
-            if (!confirm('⚠️ حذف القصة نهائياً؟')) return;
-            try {
-                const { error } = await supabaseClient.from('charity_stories').delete().eq('id', id);
-                if (error) throw error;
-                loadCharityStories();
-            } catch (error) {
-                alert('❌ فشل الحذف: ' + error.message);
-            }
-        }
-    </script>
+    <!-- Custom Confirm Modal -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="card" style="min-width: 300px; max-width: 90%; text-align: center; animation: fadeIn 0.3s ease;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🤔</div>
+            <h3 id="confirmTitle" style="margin-bottom: 10px;">هل أنت متأكد؟</h3>
+            <p id="confirmMessage" style="color: var(--text-muted); margin-bottom: 20px;">لا يمكن التراجع عن هذا الإجراء
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button id="confirmYesBtn" class="btn btn-danger">نعم، احذف</button>
+                <button class="btn btn-outline" onclick="closeConfirmModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Logic -->
+    <script src="script.js"></script>
 </body>
 
 </html>
