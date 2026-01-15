@@ -368,6 +368,51 @@ class SystemControlService {
     return {};
   }
 
+  /// 📢 Get Social Media Banner Config
+  Future<Map<String, dynamic>?> getSocialBannerConfig() async {
+    final prefs = await SharedPreferences.getInstance();
+    const String cacheKey = 'cached_social_banner_config';
+
+    try {
+      final response = await _supabase
+          .from('app_settings')
+          .select('key, value')
+          .filter('key', 'in',
+              '("social_banner_title", "social_banner_url", "social_banner_platform", "social_banner_active")');
+
+      if (response != null && response is List && response.isNotEmpty) {
+        final data = response as List;
+        final title = _findValue(data, 'social_banner_title');
+        final url = _findValue(data, 'social_banner_url');
+        final platform = _findValue(data, 'social_banner_platform');
+        final activeStr = _findValue(data, 'social_banner_active');
+
+        final config = {
+          'title': title,
+          'url': url,
+          'platform': platform,
+          'isActive': activeStr == 'true',
+        };
+
+        await prefs.setString(cacheKey, jsonEncode(config));
+        return config;
+      }
+    } catch (e) {
+      print('Error fetching social banner config: $e');
+    }
+
+    // Fallback to cache
+    final cached = prefs.getString(cacheKey);
+    if (cached != null) {
+      try {
+        return jsonDecode(cached) as Map<String, dynamic>;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
   /// 🎯 Log Feature Usage (Analytics)
   Future<void> logFeatureUsage(String featureId) async {
     try {

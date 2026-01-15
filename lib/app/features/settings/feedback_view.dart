@@ -145,7 +145,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.info_outline,
                       color: Colors.green,
                       size: 24,
@@ -241,8 +241,10 @@ class _FeedbackViewState extends State<FeedbackView> {
 
               // اختيار التصنيف
               DropdownButtonFormField<String>(
+                alignment: AlignmentGeometry.centerRight,
                 value: _selectedCategory,
                 decoration: InputDecoration(
+
                   labelText: 'التصنيف *',
                   labelStyle: GoogleFonts.cairo(),
                   prefixIcon: const Icon(Icons.category_outlined),
@@ -256,6 +258,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                 ),
                 style: GoogleFonts.cairo(
                   color: isDark ? Colors.white : Colors.black87,
+
                 ),
                 dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
                 items: _categories.map((category) {
@@ -285,12 +288,15 @@ class _FeedbackViewState extends State<FeedbackView> {
                   }
 
                   return DropdownMenuItem(
+                    alignment: AlignmentGeometry.centerRight,
                     value: category,
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Icon(icon, color: color, size: 20),
-                        const SizedBox(width: 8),
-                        Text(category, style: GoogleFonts.cairo()),
+                        const SizedBox(width: 12),
+                        Text(category, style: GoogleFonts.cairo(),textAlign: TextAlign.right,),
                       ],
                     ),
                   );
@@ -301,39 +307,39 @@ class _FeedbackViewState extends State<FeedbackView> {
               ),
               const SizedBox(height: 24),
 
-              // تقييم النجوم
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'ما هو تقييمك للتطبيق؟',
-                      style: GoogleFonts.cairo(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(5, (index) {
-                        return IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _rating = index + 1;
-                            });
-                          },
-                          icon: Icon(
-                            index < _rating ? Icons.star : Icons.star_border,
-                            color: Colors.amber,
-                            size: 32,
-                          ),
-                        );
-                      }),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
+              // // تقييم النجوم
+              // Center(
+              //   child: Column(
+              //     children: [
+              //       Text(
+              //         'ما هو تقييمك للتطبيق؟',
+              //         style: GoogleFonts.cairo(
+              //           fontWeight: FontWeight.bold,
+              //           fontSize: 16,
+              //         ),
+              //       ),
+              //       const SizedBox(height: 8),
+              //       Row(
+              //         mainAxisSize: MainAxisSize.min,
+              //         children: List.generate(5, (index) {
+              //           return IconButton(
+              //             onPressed: () {
+              //               setState(() {
+              //                 _rating = index + 1;
+              //               });
+              //             },
+              //             icon: Icon(
+              //               index < _rating ? Icons.star : Icons.star_border,
+              //               color: Colors.amber,
+              //               size: 32,
+              //             ),
+              //           );
+              //         }),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(height: 24),
 
               // حقل الوصف
               TextFormField(
@@ -433,7 +439,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: Colors.red,
                                     shape: BoxShape.circle,
                                   ),

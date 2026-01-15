@@ -37,6 +37,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/widgets/CustomGradientDialog.dart';
+import '../../../core/widgets/SocialBannerWidget.dart';
 
 class MainViewBuilder extends StatefulWidget {
   const MainViewBuilder({super.key});
@@ -370,6 +371,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                     SliverToBoxAdapter(
                       child: Column(
                         children: [
+                          // 📢 Social Media Banner
+                          const SocialBannerWidget(),
+
                           if (_featureStatuses['news'] != 'hidden' &&
                               _newsData != null &&
                               _newsData!['text'] != null &&

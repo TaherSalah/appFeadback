@@ -54,16 +54,18 @@ class _ScrollingTextState extends State<ScrollingText> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: _scrollController,
-      scrollDirection: Axis.horizontal,
-      physics: const NeverScrollableScrollPhysics(),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Text(
-          widget.text,
-          style: widget.style,
-          textDirection: TextDirection.rtl,
+    return IgnorePointer(
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            widget.text,
+            style: widget.style,
+            textDirection: TextDirection.rtl,
+          ),
         ),
       ),
     );
