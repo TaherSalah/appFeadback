@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم رفيق المسلم</title>
+    <title>لوحة تحكم رفيق المسلم اليومي </title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
@@ -34,7 +34,7 @@
         <aside class="sidebar">
             <div class="brand">
                 <span style="font-size: 2rem;">🕌</span>
-                <h2>رفيق المسلم</h2>
+                <h2> رفيق المسلم اليومي</h2>
                 <button class="menu-toggle" onclick="toggleSidebar()"
                     style="margin-right: auto; color: var(--text-muted);">✕</button>
             </div>
@@ -471,6 +471,13 @@
                         </div>
                         <button class="btn btn-primary" onclick="updateBroadcast()">نشر الرسالة</button>
                     </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h4>📜 سجل الرسائل المرسلة</h4>
+                        <div id="broadcastHistoryList" class="feedback-grid" style="margin-top: 10px;">
+                            <!-- Broadcasts loaded here -->
+                        </div>
+                    </div>
                 </div>
 
                 <div class="charts-wrapper" style="margin-top: 2rem;">
@@ -500,7 +507,7 @@
                     </div>
                 </div>
 
-                <!-- Support Links -->
+            <!-- Support Links -->
                 <div class="card">
                     <h3>🔗 روابط التواصل</h3>
                     <div class="filters-container"
@@ -515,6 +522,34 @@
                                 dir="ltr"></div>
                     </div>
                     <button class="btn btn-primary" onclick="updateSupportLinks()">حفظ الروابط</button>
+                </div>
+
+                <!-- Social Media Banner -->
+                <div class="card">
+                    <h3>📢 بنر الإعلان (تليجرام/واتس)</h3>
+                    <div class="filters-container"
+                        style="background: none; padding: 0; border: none; box-shadow: none;">
+                        <div class="form-group">
+                            <label>عنوان البنر</label>
+                            <input type="text" id="socialBannerTitle" class="form-control" placeholder="انضم لقناتنا...">
+                        </div>
+                        <div class="form-group">
+                            <label>الرابط</label>
+                            <input type="text" id="socialBannerLink" class="form-control" dir="ltr" placeholder="https://t.me/...">
+                        </div>
+                        <div class="form-group">
+                            <label>المنصة</label>
+                            <select id="socialBannerPlatform" class="form-control">
+                                <option value="telegram">Telegram ✈️</option>
+                                <option value="whatsapp">WhatsApp 💬</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; padding-top: 28px;">
+                            <input type="checkbox" id="socialBannerToggle" style="width: 20px; height: 20px;">
+                            <label style="margin:0">تفعيل</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 10px;" onclick="updateSocialBanner()">حفظ البنر</button>
                 </div>
 
                 <!-- Prayer Offsets -->

@@ -29,6 +29,9 @@ function checkAuth() {
         document.getElementById('authOverlay').style.display = 'none';
         if (errorMsg) errorMsg.style.display = 'none';
         loadFeedback(); // Load initial data
+        loadSettings(); // Load Settings
+        loadBroadcasts(); // Load Broadcast History
+        loadUpdates(); // Load Updates History
     } else {
         if (errorMsg) errorMsg.style.display = 'block';
     }
@@ -96,8 +99,14 @@ async function loadFeedback() {
 
     if (cat) query = query.eq('category', cat);
     if (status) query = query.eq('status', status);
+    if (status) query = query.eq('status', status);
     if (rating) query = query.eq('rating', parseInt(rating));
-    // searching logic can be added if needed, e.g. .ilike('message', `%${search}%`) if enabled in Supabase
+    
+    // Unreplied Filter Logic
+    if (unreplied) {
+        // 'is' null fits most cases for empty text in Supabase if default is NULL
+        query = query.is('reply', null); 
+    }
 
     const { data, error } = await query;
 
@@ -170,6 +179,11 @@ function renderFeedbackList(items) {
             <div class="device-info">
                 📱 ${deviceInfoStr} | v${appVer}
             </div>
+            ${item.reply ? `<div style="background:#f0fff4; padding:8px; margin-top:8px; border-radius:4px; font-size:0.9rem;"><strong>ردAdmin:</strong> ${item.reply}</div>` : ''}
+            <div style="display:flex; gap:5px; margin-top:10px;">
+                <button class="btn btn-primary" style="flex:1" onclick="replyToFeedback('${item.id}')">↩️ رد</button>
+                <button class="btn btn-danger" style="flex:1" onclick="deleteFeedback('${item.id}')">🗑️ حذف</button>
+            </div>
         `;
         listEl.appendChild(div);
     });
@@ -203,8 +217,101 @@ function filterFeedback() {
 // Stubbed functions for other tabs (Content, Banner, etc) can be implemented similarly
 // For now, we focus on Feedback and the generic DeleteAll
 
-function pushUpdate() {
-    alert('Update functionality not yet connected to backend.');
+async function pushUpdate() {
+    const versionName = document.getElementById('versionName').value.trim();
+    const versionCode = document.getElementById('versionCode').value.trim();
+    const isMandatory = document.getElementById('isMandatory').value === 'true';
+    const updateUrl = document.getElementById('updateUrl').value.trim();
+    const releaseNotes = document.getElementById('releaseNotes').value.trim();
+
+    if (!versionName || !versionCode || !updateUrl) {
+        alert('يرجى ملء الحقول الأساسية (الاسم، الكود، الرابط)');
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('app_updates')
+        .insert([{
+            version_name: versionName,
+            version_code: parseInt(versionCode),
+            is_mandatory: isMandatory,
+            update_url: updateUrl,
+            release_notes: releaseNotes
+        }]);
+
+    if (error) {
+        console.error('Error pushing update:', error);
+        alert(`خطأ في نشر التحديث: ${error.message}`);
+    } else {
+        alert('تم نشر التحديث بنجاح 🚀');
+        // Clear inputs
+        document.getElementById('versionName').value = '';
+        document.getElementById('versionCode').value = '';
+        document.getElementById('updateUrl').value = '';
+        document.getElementById('releaseNotes').value = '';
+        
+        loadUpdates(); // Refresh list
+    }
+}
+
+async function loadUpdates() {
+    console.log('Loading updates...');
+    const listEl = document.getElementById('updatesList');
+    if (!listEl) return;
+    
+    listEl.innerHTML = '<p>جاري التحميل...</p>';
+    
+    const { data, error } = await supabaseClient
+        .from('app_updates')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error loading updates:', error);
+        listEl.innerHTML = `<p style="color:red">خطأ: ${error.message}</p>`;
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        listEl.innerHTML = '<p>لا توجد تحديثات سابقة.</p>';
+        return;
+    }
+
+    listEl.innerHTML = '';
+    data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'card feedback-card';
+        div.innerHTML = `
+            <div class="feedback-header">
+                <span class="badge ${item.is_mandatory ? 'badge-danger' : 'badge-primary'}">
+                    ${item.is_mandatory ? 'إجباري' : 'اختياري'}
+                </span>
+                <span style="font-size:0.8rem">${new Date(item.created_at).toLocaleString('ar-EG')}</span>
+            </div>
+            <h4>v${item.version_name} (Code: ${item.version_code})</h4>
+            <p style="white-space: pre-wrap;">${item.release_notes || 'لا توجد ملاحظات'}</p>
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px; word-break:break-all;">
+                🔗 ${item.update_url}
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="deleteUpdate('${item.id}')">🗑️ حذف</button>
+        `;
+        listEl.appendChild(div);
+    });
+}
+
+async function deleteUpdate(id) {
+    if(!confirm('هل أنت متأكد من حذف هذا التحديث؟')) return;
+
+    const { error } = await supabaseClient
+        .from('app_updates')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert(`خطأ: ${error.message}`);
+    } else {
+        loadUpdates();
+    }
 }
 
 function publishContent() {
@@ -239,10 +346,127 @@ function updateThemeColor() {
 
 function updateNewsMarquee() {
     // Add logic to update news table
+    alert('News Marquee not connected yet.');
 }
 
-function updateBroadcast() {
-    // Add logic to insert into broadcast table
+async function loadBroadcasts() {
+    console.log('Loading broadcasts...');
+    const listEl = document.getElementById('broadcastHistoryList');
+    if (!listEl) return;
+    
+    listEl.innerHTML = '<p>جاري التحميل...</p>';
+    
+    const { data, error } = await supabaseClient
+        .from('broadcasts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error loading broadcasts:', error);
+        listEl.innerHTML = `<p style="color:red">خطأ: ${error.message}</p>`;
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        listEl.innerHTML = '<p>لا توجد رسائل سابقة.</p>';
+        return;
+    }
+
+    listEl.innerHTML = '';
+    data.forEach(msg => {
+        const div = document.createElement('div');
+        div.className = 'card feedback-card';
+        // Check if active
+        // Assuming we might have an 'active' flag or just showing history
+        div.innerHTML = `
+            <div class="feedback-header">
+                <span class="badge ${msg.is_active ? 'badge-success' : 'badge-danger'}">${msg.is_active ? 'نشط' : 'غير نشط'}</span>
+                <span style="font-size:0.8rem">${new Date(msg.created_at).toLocaleString('ar-EG')}</span>
+            </div>
+            <p>${msg.message}</p>
+            <button class="btn btn-sm btn-outline" onclick="deleteBroadcast('${msg.id}')">🗑️ حذف</button>
+        `;
+        listEl.appendChild(div);
+    });
+}
+
+async function updateBroadcast() {
+    const message = document.getElementById('broadcastInput').value.trim();
+    const isActive = document.getElementById('broadcastToggle').checked;
+
+    if (!message) {
+        alert('الرجاء كتابة رسالة');
+        return;
+    }
+
+    // Insert new broadcast
+    const { error } = await supabaseClient
+        .from('broadcasts')
+        .insert([{ message: message, is_active: isActive }]);
+
+    if (error) {
+        console.error('Error sending broadcast:', error);
+        alert(`خطأ: ${error.message}`);
+    } else {
+        alert('تم نشر الرسالة بنجاح ✅');
+        document.getElementById('broadcastInput').value = '';
+        loadBroadcasts(); // Refresh list
+    }
+}
+
+async function deleteBroadcast(id) {
+    if(!confirm('هل أنت متأكد من حذف هذه الرسالة؟')) return;
+
+    const { error } = await supabaseClient
+        .from('broadcasts')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert(`خطأ: ${error.message}`);
+    } else {
+        loadBroadcasts();
+    }
+}
+
+async function deleteFeedback(id) {
+    if(!confirm('هل أنت متأكد من حذف هذه الشكوى؟')) return;
+
+    const { error } = await supabaseClient
+        .from('feedback')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert(`خطأ في الحذف: ${error.message}`);
+    } else {
+        alert('تم الحذف بنجاح');
+        loadFeedback(); // Refresh
+    }
+}
+
+async function replyToFeedback(id) {
+    const replyText = prompt('أدخل الرد على المستخدم:');
+    if (replyText === null) return; // Cancelled
+    if (replyText.trim() === '') {
+        alert('الرد فارغ!');
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('feedback')
+        .update({ 
+            reply: replyText,
+            status: 'تم الرد' // Optional update status
+        })
+        .eq('id', id);
+
+    if (error) {
+        alert(`خطأ في الرد: ${error.message}`);
+    } else {
+        alert('تم إرسال الرد بنجاح ✅');
+        loadFeedback(); // Refresh UI
+    }
 }
 
 function updateDailyQuote() {
@@ -259,6 +483,56 @@ function updateSupportLinks() {
 
 function updatePrayerOffsets() {
     // Add logic to update config table
+}
+
+// --- Social Banner Logic ---
+async function updateSocialBanner() {
+    const title = document.getElementById('socialBannerTitle').value;
+    const link = document.getElementById('socialBannerLink').value;
+    const platform = document.getElementById('socialBannerPlatform').value;
+    const isActive = document.getElementById('socialBannerToggle').checked;
+
+    const updates = [
+        { key: 'social_banner_title', value: title },
+        { key: 'social_banner_url', value: link },
+        { key: 'social_banner_platform', value: platform },
+        { key: 'social_banner_active', value: isActive.toString() }
+    ];
+
+    // Save to app_settings table using individual keys
+    const { error } = await supabaseClient
+        .from('app_settings')
+        .upsert(updates);
+
+    if (error) {
+        console.error('Error saving banner:', error);
+        alert('حدث خطأ أثناء حفظ البنر: ' + error.message);
+    } else {
+        alert('تم حفظ إعدادات البنر بنجاح ✅');
+    }
+}
+
+async function loadSettings() {
+    // Load Social Banner Config
+    const { data: settings, error } = await supabaseClient
+        .from('app_settings')
+        .select('key, value')
+        .in('key', ['social_banner_title', 'social_banner_url', 'social_banner_platform', 'social_banner_active']);
+
+    if (settings && settings.length > 0) {
+        // Helper to find value
+        const getVal = (k) => settings.find(s => s.key === k)?.value;
+
+        const title = getVal('social_banner_title');
+        const url = getVal('social_banner_url');
+        const platform = getVal('social_banner_platform');
+        const active = getVal('social_banner_active');
+
+        if(document.getElementById('socialBannerTitle')) document.getElementById('socialBannerTitle').value = title || '';
+        if(document.getElementById('socialBannerLink')) document.getElementById('socialBannerLink').value = url || '';
+        if(document.getElementById('socialBannerPlatform')) document.getElementById('socialBannerPlatform').value = platform || 'telegram';
+        if(document.getElementById('socialBannerToggle')) document.getElementById('socialBannerToggle').checked = (active === 'true');
+    }
 }
 
 // --- Modals ---
