@@ -51,6 +51,7 @@ import '../../../features/achievements/AchievementsScreen.dart';
 import '../../../features/achievements/ChallengesManagementScreen.dart';
 import '../../../features/achievements/LeaderboardScreen.dart';
 import '../../../features/duas/DuasMainScreen.dart';
+import '../../../features/calendar/presentation/screens/calendar_screen.dart'; // [NEW]
 import '../../shard/exports/all_exports.dart';
 
 class Routes {
@@ -222,7 +223,8 @@ class RouteGenerator {
       case '/NineBooksScreen':
         return MaterialPageRoute(builder: (_) => const NineBooksScreen());
       case '/CollectionDetailsScreen':
-        return MaterialPageRoute(builder: (_) => const CollectionDetailsScreen());
+        return MaterialPageRoute(
+            builder: (_) => const CollectionDetailsScreen());
       case '/ReadView':
         return MaterialPageRoute(builder: (_) => ReadView());
 
@@ -265,6 +267,10 @@ class RouteGenerator {
       // === Kids Corner ===
       case Routes.kidsStoriesRoute:
         return MaterialPageRoute(builder: (_) => const KidsStoriesScreen());
+
+      // === Calendar ===
+      case '/calendar':
+        return MaterialPageRoute(builder: (_) => const CalendarScreen());
 
       default:
         return unDefinedRoute();

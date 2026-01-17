@@ -16,11 +16,13 @@ import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/utils/services_locator.dart';
 import 'app/features/Khatmah/data/khatmah_model.dart';
 import 'app/features/charity/models/charity_models.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'app/features/achievements/models/achievement_models.dart';
 import 'app/features/duas/models/dua_models.dart';
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:quran_library/quran.dart';
+import 'app/features/calendar/data/models/calendar_event_model.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +31,8 @@ Future<void> main() async {
   // 🛡️ Global Error Handling (Dashboard Logging)
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
-    SystemControlService().logError(details.exceptionAsString(), details.stack?.toString());
+    SystemControlService()
+        .logError(details.exceptionAsString(), details.stack?.toString());
   };
 
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -82,6 +85,7 @@ Future<void> _initAppServices() async {
 
   // ✅ 4) Hive
   await Hive.initFlutter();
+  tz.initializeTimeZones();
 
   // Register existing adapters
   if (!Hive.isAdapterRegistered(0)) {
@@ -139,6 +143,11 @@ Future<void> _initAppServices() async {
   // NotificationManager replaces all local notification logic
   final notificationManager = NotificationManager();
   await notificationManager.initialize();
+
+  // Register Calendar Adapter
+  if (!Hive.isAdapterRegistered(25)) {
+    Hive.registerAdapter(CalendarEventAdapter());
+  }
 
   // 🚀 Log App Launch Analytics
   AnalyticsService().logAppLaunch();

@@ -113,9 +113,17 @@ class MainController extends ControllerMVC {
       "navigate": "/timingScreen"
     },
     {
-      "title": "الْقِبْلَةِ",
-      "icon": "assets/images/qibla (1).png",
-      "navigate": "/qiblaDirection"
+      "icon":
+          "assets/images/deadline.png", // Using clock as placeholder for calendar
+      "title": "التقويم",
+      "navigate": "/calendar",
+      "visible": "true"
+    },
+    {
+      "icon": "assets/images/icons/qibla (1).png",
+      "title": "القبلة",
+      "navigate": "/qiblaDirection",
+      "visible": "true"
     },
     {
       "title": "مَوْسُوعَةُ الْأَحَادِيثِ",

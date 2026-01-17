@@ -241,6 +241,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     if (path == '/timingScreen') return 'timing';
     if (path == '/qiblaDirection') return 'qibla';
     if (path == '/fajrAlarm') return 'fajr_alarm';
+    if (path == '/calendar') return 'calendar';
     if (path == '/settingsRoute') return 'settings';
     return 'none';
   }
@@ -788,8 +789,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                               BoxShadow(
                                 color: isDark
                                     ? Colors.black.withOpacity(0.5)
-                                    : const Color(0xFFD4AF37)
-                                        .withOpacity(0.15),
+                                    : const Color(0xFFD4AF37).withOpacity(0.15),
                                 blurRadius: 15,
                                 offset: const Offset(0, 5),
                               ),
@@ -861,9 +861,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                   // ),
                                   const SizedBox(width: 10),
                                   TextDefaultWidget(
-                                    title: _locationText
-                                            ?.split(' - ')
-                                            .last ??
+                                    title: _locationText?.split(' - ').last ??
                                         'موقع',
                                     fontSize: isTab ? 8.sp : 11.sp,
                                     fontFamily: "cairo",
@@ -941,8 +939,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                           : Colors.white.withOpacity(0.9),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black
-                                              .withOpacity(0.15),
+                                          color: Colors.black.withOpacity(0.15),
                                           blurRadius: 6,
                                           offset: const Offset(0, 3),
                                         ),

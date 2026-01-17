@@ -228,6 +228,18 @@ class NotificationManager {
           enableVibration: true,
           enableLights: true,
         ),
+        // 🗓️ قناة تذكير التقويم
+        NotificationChannel(
+          channelKey: 'calendar_reminders_channel',
+          channelName: 'تذكير التقويم',
+          channelDescription: 'تنبيهات للمناسبات والأحداث الخاصة في التقويم',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.purple,
+          ledColor: Colors.purple,
+          playSound: true,
+          enableVibration: true,
+          enableLights: true,
+        ),
       ],
       debug: true,
     );
@@ -617,17 +629,18 @@ class NotificationManager {
     print('✅ All Advanced Fajr Alarms scheduled successfully.');
   }
 
-  Future<void> scheduleWirdReminder(String wirdId, String wirdName, String timeStr, String frequency) async {
+  Future<void> scheduleWirdReminder(
+      String wirdId, String wirdName, String timeStr, String frequency) async {
     try {
       final parts = timeStr.split(':');
       final hour = int.parse(parts[0]);
       final minute = int.parse(parts[1]);
-      
+
       // Generate a unique ID from the wirdId (hashcode logic)
       final notificationId = wirdId.hashCode.abs() % 100000;
 
       NotificationSchedule? schedule;
-      
+
       if (frequency == 'daily') {
         schedule = NotificationCalendar(
           hour: hour,
@@ -662,7 +675,8 @@ class NotificationManager {
       } else {
         // Once
         final now = DateTime.now();
-        var scheduledDate = DateTime(now.year, now.month, now.day, hour, minute);
+        var scheduledDate =
+            DateTime(now.year, now.month, now.day, hour, minute);
         if (scheduledDate.isBefore(now)) {
           scheduledDate = scheduledDate.add(const Duration(days: 1));
         }
@@ -688,6 +702,45 @@ class NotificationManager {
     } catch (e) {
       print('❌ خطأ في جدولة تذكير الورد: $e');
     }
+  }
+
+  // ==========================================
+  // 🗓️ تذكيرات التقويم
+  // ==========================================
+
+  Future<void> scheduleCalendarReminder({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime scheduledDate,
+  }) async {
+    try {
+      if (scheduledDate.isBefore(DateTime.now())) return;
+
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: id,
+          channelKey: 'calendar_reminders_channel',
+          title: title,
+          body: body,
+          category: NotificationCategory.Reminder,
+          wakeUpScreen: true,
+          payload: {'route': 'calendar_screen'},
+        ),
+        schedule: NotificationCalendar.fromDate(
+          date: scheduledDate,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      );
+      print('✅ تم جدولة تذكير التقويم: $title في $scheduledDate');
+    } catch (e) {
+      print('❌ خطأ في جدولة تذكير التقويم: $e');
+    }
+  }
+
+  Future<void> cancelCalendarReminder(int id) async {
+    await AwesomeNotifications().cancel(id);
   }
 
   // ==========================================
