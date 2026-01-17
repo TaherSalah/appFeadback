@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import '../../core/utils/style/k_color.dart';
+import '../../core/utils/style/responsive_util.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 
@@ -72,16 +75,21 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
 
     if (mounted) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.donation != null
-                ? 'تم تحديث الصدقة بنجاح ✅'
-                : 'تم إضافة الصدقة بنجاح ✅',
-            style: GoogleFonts.cairo(),
-          ),
-          backgroundColor: const Color(0xFF10B981),
-        ),
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text(
+      //       widget.donation != null
+      //           ? 'تم تحديث الصدقة بنجاح'
+      //           : 'تم إضافة الصدقة بنجاح ',
+      //       style: GoogleFonts.cairo(),
+      //     ),
+      //     backgroundColor: const Color(0xFF10B981),
+      //   ),
+      // );
+      KHelper.showSuccess(message:
+      widget.donation != null
+                  ? 'تم تحديث الصدقة بنجاح'
+                  : 'تم إضافة الصدقة بنجاح ',
       );
     }
   }
@@ -89,6 +97,7 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+bool isTab = ResponsiveUtil.isTablet(context);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -148,7 +157,8 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // المبلغ
-                  _buildSectionTitle('💰 المبلغ'),
+                  // _buildSectionTitle('💰 المبلغ'),
+                  _buildSectionTitle('المبلغ'),
                   SizedBox(height: 12.h),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -163,10 +173,11 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                             controller: _amountController,
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
-                            style: GoogleFonts.cairo(fontSize: 18.sp),
+                            style: GoogleFonts.cairo(fontSize: isTab?9.sp:16.sp),
                             decoration: InputDecoration(
                               hintText: 'أدخل المبلغ',
                               hintStyle: GoogleFonts.cairo(
+                                fontSize: isTab?9.sp:16.sp,
                                 color: Colors.grey,
                               ),
                               border: InputBorder.none,
@@ -213,7 +224,8 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                   SizedBox(height: 24.h),
 
                   // الفئة
-                  _buildSectionTitle('📂 فئة الصدقة'),
+                  // _buildSectionTitle('📂 فئة الصدقة'),
+                  _buildSectionTitle('فئة الصدقة'),
                   SizedBox(height: 12.h),
                   Wrap(
                     spacing: 8.w,
@@ -232,29 +244,29 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFF10B981)
+                                ? KColors.primaryColor
                                 : (isDark
                                     ? const Color(0xFF2D3748)
                                     : Colors.white),
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
                               color: isSelected
-                                  ? const Color(0xFF10B981)
+                                  ?  KColors.primaryColor
                                   : Colors.grey.shade300,
                             ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                category.emoji,
-                                style: TextStyle(fontSize: 18.sp),
-                              ),
-                              SizedBox(width: 6.w),
+                              // Text(
+                              //   category.emoji,
+                              //   style: TextStyle(fontSize: isTab?9.sp:16.sp),
+                              // ),
+                              // SizedBox(width: 6.w),
                               Text(
                                 category.arabicName,
                                 style: GoogleFonts.cairo(
-                                  fontSize: 14.sp,
+                                  fontSize:isTab?9.sp:16.sp,
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
                                       ? Colors.white
@@ -271,7 +283,8 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                   SizedBox(height: 24.h),
 
                   // طريقة الدفع
-                  _buildSectionTitle('💳 طريقة الدفع (اختياري)'),
+                  // _buildSectionTitle('💳 طريقة الدفع (اختياري)'),
+                  _buildSectionTitle('طريقة الدفع (اختياري)'),
                   SizedBox(height: 12.h),
                   Wrap(
                     spacing: 8.w,
@@ -310,15 +323,15 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                method.icon,
-                                style: TextStyle(fontSize: 18.sp),
-                              ),
-                              SizedBox(width: 6.w),
+                              // Text(
+                              //   method.icon,
+                              //   style: TextStyle(fontSize: isTab?9.sp:16.sp),
+                              // ),
+                              // SizedBox(width: 6.w),
                               Text(
                                 method.arabicName,
                                 style: GoogleFonts.cairo(
-                                  fontSize: 14.sp,
+                                  fontSize:isTab?9.sp:16.sp,
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
                                       ? Colors.white
@@ -335,7 +348,8 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                   SizedBox(height: 24.h),
 
                   // التاريخ
-                  _buildSectionTitle('📅 التاريخ'),
+                  // _buildSectionTitle('📅 التاريخ'),
+                  _buildSectionTitle('التاريخ'),
                   SizedBox(height: 12.h),
                   InkWell(
                     onTap: () async {
@@ -343,7 +357,7 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                         context: context,
                         initialDate: _selectedDate,
                         firstDate: DateTime(2020),
-                        lastDate: DateTime.now(),
+                        lastDate: DateTime(2050),
                         builder: (context, child) {
                           return Theme(
                             data: Theme.of(context).copyWith(
@@ -374,7 +388,7 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                           Text(
                             '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
                             style: GoogleFonts.cairo(
-                              fontSize: 16.sp,
+                              fontSize:isTab?10.sp: 16.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -386,7 +400,8 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                   SizedBox(height: 24.h),
 
                   // ملاحظات
-                  _buildSectionTitle('📝 ملاحظات (اختياري)'),
+                  // _buildSectionTitle('📝 ملاحظات (اختياري)'),
+                  _buildSectionTitle('ملاحظات (اختياري)'),
                   SizedBox(height: 12.h),
                   Container(
                     padding:
@@ -397,11 +412,11 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                     ),
                     child: TextFormField(
                       controller: _notesController,
-                      maxLines: 4,
-                      style: GoogleFonts.cairo(fontSize: 14.sp),
+                      maxLines: 1,
+                      style: GoogleFonts.cairo(fontSize: isTab?10.sp:16.sp),
                       decoration: InputDecoration(
                         hintText: 'اكتب ملاحظات إضافية...',
-                        hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                        hintStyle: GoogleFonts.cairo(color: Colors.grey,fontSize: isTab?10.sp:16.sp),
                         border: InputBorder.none,
                       ),
                     ),
@@ -416,7 +431,8 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                     child: ElevatedButton(
                       onPressed: _saving ? null : _saveDonation,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF10B981),
+                        // backgroundColor: const Color(0xFF10B981),
+                        backgroundColor: KColors.primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16.r),
                         ),
@@ -429,7 +445,7 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
                                   ? 'تحديث الصدقة'
                                   : 'حفظ الصدقة',
                               style: GoogleFonts.cairo(
-                                fontSize: 18.sp,
+                                fontSize:isTab? 10.sp:18.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -446,10 +462,12 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
   }
 
   Widget _buildSectionTitle(String title) {
+    bool isTab = ResponsiveUtil.isTablet(context);
+
     return Text(
       title,
       style: GoogleFonts.cairo(
-        fontSize: 16.sp,
+        fontSize: isTab? 10.sp:16.sp,
         fontWeight: FontWeight.bold,
       ),
     );

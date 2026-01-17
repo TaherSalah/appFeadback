@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
 import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/app_theme_colors.dart';
+import '../../core/utils/style/responsive_util.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 
@@ -41,6 +43,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
     int selectedDay = existing?.dayOfMonth ?? 1;
     CharityCategory selectedCategory = existing?.category ?? CharityCategory.sadaqah;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isTab = ResponsiveUtil.isTablet(context);
 
     await showModalBottomSheet(
       context: context,
@@ -84,10 +87,10 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                       ),
                       SizedBox(width: 12.w),
                       Text(
-                        existing == null ? 'إضافة التزام صدقة جديد ✨' : 'تعديل التزام الصدقة',
+                        existing == null ? 'إضافة التزام صدقة جديد' : 'تعديل التزام الصدقة',
                         style: GoogleFonts.cairo(
                           fontWeight: FontWeight.bold, 
-                          fontSize: 18.sp,
+                          fontSize: isTab?10.sp: 18.sp,
                           color: AppThemeColors.cardHeaderColor(context),
                         ),
                       ),
@@ -100,7 +103,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                   _buildTextField(isDark, amountController, 'المقدار الشهري (جنيه)', Icons.payments_rounded, isNumber: true),
 
                   SizedBox(height: 24.h),
-                  _buildSectionHeader(isDark, 'الفئة 📁', ''),
+                  _buildSectionHeader(isDark, 'الفئة', ''),
                   SizedBox(height: 12.h),
                   SizedBox(
                     height: 50.h,
@@ -122,7 +125,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                   ),
 
                   SizedBox(height: 24.h),
-                  _buildSectionHeader(isDark, 'يوم التذكير 📅', '(يُكرر كل شهر)'),
+                  _buildSectionHeader(isDark, 'يوم التذكير', '(يُكرر كل شهر)'),
                   SizedBox(height: 16.h),
                   Container(
                     padding: EdgeInsets.all(12.w),
@@ -181,13 +184,15 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (titleController.text.isEmpty || amountController.text.isEmpty) {
-                          _showErrorSnackBar(context, 'برجاء أكمل البيانات المطلوبة');
+                          // _showErrorSnackBar(context, 'برجاء أكمل البيانات المطلوبة');
+                          KHelper.showError(message: 'برجاء أكمل البيانات المطلوبة');
                           return;
                         }
 
                         double? amount = double.tryParse(amountController.text);
                         if (amount == null || amount <= 0) {
-                          _showErrorSnackBar(context, 'برجاء إدخال مبلغ صحيح');
+                          // _showErrorSnackBar(context, 'برجاء إدخال مبلغ صحيح');
+                          KHelper.showError(message: 'برجاء إدخال مبلغ صحيح');
                           return;
                         }
 
@@ -217,8 +222,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                         shadowColor: AppColors.primary.withOpacity(0.4),
                       ),
                       child: Text(
-                        existing == null ? 'تفعيل الالتزام ✅' : 'حفظ التعديلات', 
-                        style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp)
+                        existing == null ? 'تفعيل الالتزام' : 'حفظ التعديلات',
+                        style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize:isTab?10.sp: 16.sp)
                       ),
                     ),
                   ),
@@ -232,12 +237,14 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
   }
 
   Widget _buildSectionHeader(bool isDark, String title, String subtitle) {
+    bool isTab = ResponsiveUtil.isTablet(context);
+
     return Row(
       children: [
         Text(
           title, 
           style: GoogleFonts.cairo(
-            fontSize: 15.sp, 
+            fontSize: isTab ? 10.sp : 15.sp,
             fontWeight: FontWeight.bold,
             color: AppThemeColors.cardHeaderColor(context),
           )
@@ -293,23 +300,23 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
             ),
-              actions: [
-                IconButton(
-                  tooltip: 'تجربة الإشعارات',
-                  icon: const Icon(Icons.notification_add_outlined),
-                  onPressed: () async {
-                    await _charityService.testNotification();
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('تم إرسال إشعار تجريبي ✨', style: GoogleFonts.cairo()),
-                          backgroundColor: AppColors.primary,
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
+              // actions: [
+              //   IconButton(
+              //     tooltip: 'تجربة الإشعارات',
+              //     icon: const Icon(Icons.notification_add_outlined),
+              //     onPressed: () async {
+              //       await _charityService.testNotification();
+              //       if (mounted) {
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           SnackBar(
+              //             content: Text('تم إرسال إشعار تجريبي ✨', style: GoogleFonts.cairo()),
+              //             backgroundColor: AppColors.primary,
+              //           ),
+              //         );
+              //       }
+              //     },
+              //   ),
+              // ],
 
             centerTitle: true,
             title: Text(
@@ -360,20 +367,22 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
   }
 
   Widget _buildEmptyState() {
+    bool isTab = ResponsiveUtil.isTablet(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.calendar_month, size: 80.sp, color: Colors.grey.withOpacity(0.5)),
+          Icon(Icons.calendar_month, size:isTab? 65.sp:80.sp, color: Colors.grey.withOpacity(0.5)),
           SizedBox(height: 16.h),
           Text(
             'لا توجد صدقات دورية مضافة بعد',
-            style: GoogleFonts.cairo(fontSize: 16.sp, color: Colors.grey),
+            style: GoogleFonts.cairo(fontSize:isTab? 10.sp:16.sp, color: Colors.grey),
           ),
           SizedBox(height: 8.h),
           Text(
             'أضف صدقاتك الشهرية لتذكيرك بها',
-            style: GoogleFonts.cairo(fontSize: 14.sp, color: Colors.grey.withOpacity(0.8)),
+            style: GoogleFonts.cairo(fontSize:isTab? 8.sp: 14.sp, color: Colors.grey.withOpacity(0.8)),
           ),
         ],
       ),
@@ -543,6 +552,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
   }
 
   Widget _buildTextField(bool isDark, TextEditingController controller, String label, IconData icon, {bool isNumber = false}) {
+    bool isTab = ResponsiveUtil.isTablet(context);
+
     return Container(
       decoration: BoxDecoration(
         color: AppThemeColors.patternOpacity(context),
@@ -553,14 +564,14 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
         controller: controller,
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,
         style: GoogleFonts.cairo(
-          fontSize: 14.sp,
+          fontSize:isTab? 9.sp:14.sp,
           color: AppThemeColors.cardHeaderColor(context),
         ),
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppColors.primary, size: 20.sp),
+          prefixIcon: Icon(icon, color: AppColors.primary, size: isTab?15.sp: 20.sp),
           labelStyle: GoogleFonts.cairo(
-            fontSize: 13.sp, 
+            fontSize: isTab? 10.sp:13.sp,
             color: isDark ? Colors.white38 : Colors.black38,
           ),
           border: InputBorder.none,
@@ -595,8 +606,9 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(icon, style: TextStyle(fontSize: 18.sp)),
-            SizedBox(width: 8.w),
+            // Text(icon, style: TextStyle(fontSize: 18.sp)),
+            // SizedBox(width: 8.w),  // Text(icon, style: TextStyle(fontSize: 18.sp)),
+            // SizedBox(width: 8.w),
             Text(
               label, 
               style: GoogleFonts.cairo(

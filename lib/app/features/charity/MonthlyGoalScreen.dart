@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import '../../core/utils/style/responsive_util.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 
@@ -58,6 +60,7 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isTab = ResponsiveUtil.isTablet(context);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -116,7 +119,7 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                       Text(
                         'حدد هدفك المالي للصدقة هذا الشهر',
                         style: GoogleFonts.cairo(
-                          fontSize: 16.sp,
+                          fontSize:isTab?10.sp :16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -124,7 +127,7 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                       Text(
                         'تحديد هدف يساعدك على المداومة والتحفيز على العطاء المستمر.',
                         style: GoogleFonts.cairo(
-                          fontSize: 13.sp,
+                          fontSize:isTab?9.sp :12.sp,
                           color: Colors.grey,
                         ),
                       ),
@@ -145,15 +148,16 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                           controller: _goalController,
                           keyboardType: TextInputType.number,
                           style: GoogleFonts.cairo(
-                            fontSize: 24.sp,
+                            fontSize: isTab?10.sp:24.sp,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF10B981),
                           ),
                           decoration: InputDecoration(
                             hintText: 'مثلاً: 1000',
                             suffixText: 'جنيه',
+                            hintStyle: TextStyle(fontSize: isTab?9.sp:16.sp,),
                             suffixStyle: GoogleFonts.cairo(
-                              fontSize: 16.sp,
+                              fontSize: isTab?10.sp:16.sp,
                               color: Colors.grey,
                             ),
                             border: InputBorder.none,
@@ -167,7 +171,7 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                         child: ElevatedButton(
                           onPressed: _saveGoal,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF10B981),
+                            backgroundColor: KColors.primaryColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16.r),
                             ),
@@ -176,7 +180,7 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                           child: Text(
                             'حفظ الهدف الشهري',
                             style: GoogleFonts.cairo(
-                              fontSize: 18.sp,
+                              fontSize:isTab?12.sp:18.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),

@@ -120,7 +120,7 @@ class MainController extends ControllerMVC {
       "visible": "true"
     },
     {
-      "icon": "assets/images/icons/qibla (1).png",
+      "icon": "assets/images/qibla (1).png",
       "title": "القبلة",
       "navigate": "/qiblaDirection",
       "visible": "true"

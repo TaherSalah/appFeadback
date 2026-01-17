@@ -1,11 +1,15 @@
+import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/utils/style/responsive_util.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 import 'services/charity_pdf_service.dart';
 import 'AddCharityScreen.dart';
+import 'package:animate_do/animate_do.dart';
 
 class CharityHistoryScreen extends StatefulWidget {
   const CharityHistoryScreen({super.key});
@@ -78,27 +82,27 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
         //   ],
         // ),
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(
-              MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          preferredSize:
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
             ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.picture_as_pdf_outlined),
-                  onPressed: () async {
-                    final donations = _charityService.getAllDonations();
-                    // Assuming calculateStats() is a method in CharityService that returns relevant statistics
-                    // If not implemented, this line will cause a compile-time error.
-                    // For the purpose of this edit, it's included as per instruction.
-                    final stats = _charityService.calculateStats();
-                    await CharityPdfService.generateDonationsReport(
-                        donations, stats);
-                  },
-                  tooltip: 'تصدير PDF',
-                ),
-],
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.picture_as_pdf_outlined),
+                onPressed: () async {
+                  final donations = _charityService.getAllDonations();
+                  // Assuming calculateStats() is a method in CharityService that returns relevant statistics
+                  // If not implemented, this line will cause a compile-time error.
+                  // For the purpose of this edit, it's included as per instruction.
+                  final stats = _charityService.calculateStats();
+                  await CharityPdfService.generateDonationsReport(
+                      donations, stats);
+                },
+                tooltip: 'تصدير PDF',
+              ),
+            ],
             centerTitle: true,
             title: Text(
               'سجل الصدقات ',
@@ -106,7 +110,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -145,6 +149,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                               return _buildDonationCard(
                                 _filteredDonations[index],
                                 isDark,
+                                index,
                               );
                             },
                           ),
@@ -158,6 +163,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
 
   Widget _buildFilterChip(
       String label, CharityCategory? category, bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     final isSelected = _filterCategory == category;
     return Padding(
       padding: EdgeInsets.only(left: 8.w),
@@ -165,7 +171,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
         label: Text(
           label,
           style: GoogleFonts.cairo(
-            fontSize: 14.sp,
+            fontSize: isTab ? 9.5.sp : 14.sp,
             fontWeight: FontWeight.w600,
             color: isSelected ? Colors.white : null,
           ),
@@ -182,174 +188,216 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
     );
   }
 
-  Widget _buildDonationCard(CharityDonation donation, bool isDark) {
-    return Dismissible(
-      key: Key(donation.id),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        margin: EdgeInsets.only(bottom: 12.h),
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        alignment: Alignment.centerLeft,
-        child: const Icon(Icons.delete, color: Colors.white),
-      ),
-      confirmDismiss: (direction) async {
-        return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(
-              'تأكيد الحذف',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-            content: Text(
-              'هل أنت متأكد من حذف هذه الصدقة؟',
-              style: GoogleFonts.cairo(),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text('إلغاء', style: GoogleFonts.cairo()),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: Text('حذف', style: GoogleFonts.cairo()),
-              ),
-            ],
+  Widget _buildDonationCard(CharityDonation donation, bool isDark, int index) {
+    bool isTab = ResponsiveUtil.isTablet(context);
+    return FadeInUp(
+      duration: const Duration(milliseconds: 600),
+      delay: Duration(milliseconds: 100 * (index % 10)), // Staggered entry
+      child: Dismissible(
+        key: Key(donation.id),
+        direction: DismissDirection.endToStart,
+        background: Container(
+          margin: EdgeInsets.only(bottom: 16.h),
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          decoration: BoxDecoration(
+            color: Colors.red.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(24.r),
           ),
-        );
-      },
-      onDismissed: (direction) async {
-        await _charityService.deleteDonation(donation.id);
-        _loadDonations();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+          alignment: Alignment.centerLeft,
+          child: const Icon(Icons.delete, color: Colors.white),
+        ),
+        confirmDismiss: (direction) async {
+          return await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.r)),
+              title: Text(
+                'تأكيد الحذف',
+                style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+              ),
               content: Text(
-                'تم حذف الصدقة',
+                'هل أنت متأكد من حذف هذه الصدقة؟',
                 style: GoogleFonts.cairo(),
               ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text('إلغاء', style: GoogleFonts.cairo()),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  child: Text('حذف', style: GoogleFonts.cairo()),
+                ),
+              ],
             ),
           );
-        }
-      },
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => AddCharityScreen(donation: donation),
-            ),
-          ).then((_) => _loadDonations());
         },
-        borderRadius: BorderRadius.circular(16.r),
-        child: Container(
-          margin: EdgeInsets.only(bottom: 12.h),
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2D3748) : Colors.white,
-            borderRadius: BorderRadius.circular(16.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Emoji
-              Container(
-                padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12.r),
+        onDismissed: (direction) async {
+          await _charityService.deleteDonation(donation.id);
+          _loadDonations();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'تم حذف الصدقة',
+                  style: GoogleFonts.cairo(),
                 ),
-                child: Text(
-                  donation.category.emoji,
-                  style: TextStyle(fontSize: 24.sp),
-                ),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.r)),
               ),
-
-              SizedBox(width: 16.w),
-
-              // التفاصيل
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      donation.category.arabicName,
-                      style: GoogleFonts.cairo(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
+            );
+          }
+        },
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AddCharityScreen(donation: donation),
+              ),
+            ).then((_) => _loadDonations());
+          },
+          borderRadius: BorderRadius.circular(24.r),
+          child: Container(
+            margin: EdgeInsets.only(bottom: 16.h),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withOpacity(0.05)
+                  : Colors.white.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(24.r),
+              border: Border.all(
+                color: isDark
+                    ? const Color(0xFFD4AF37).withOpacity(0.15)
+                    : Colors.black.withOpacity(0.05),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24.r),
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Padding(
+                  padding: EdgeInsets.all(16.w),
+                  child: Row(
+                    children: [
+                      // Emoji Container
+                      Container(
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          donation.category.emoji,
+                          style: TextStyle(fontSize: isTab ? 20.sp : 24.sp),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      '${donation.date.day}/${donation.date.month}/${donation.date.year}',
-                      style: GoogleFonts.cairo(
-                        fontSize: 12.sp,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    if ((donation.notes != null &&
-                            donation.notes!.isNotEmpty) ||
-                        donation.paymentMethod != null)
-                      Padding(
-                        padding: EdgeInsets.only(top: 4.h),
-                        child: Row(
+
+                      SizedBox(width: 16.w),
+
+                      // التفاصيل
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (donation.paymentMethod != null) ...[
-                              Text(
-                                '${donation.paymentMethod!.icon} ${donation.paymentMethod!.arabicName}',
-                                style: GoogleFonts.cairo(
-                                  fontSize: 11.sp,
-                                  color: const Color(0xFF3B82F6),
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            Text(
+                              donation.category.arabicName,
+                              style: GoogleFonts.cairo(
+                                fontSize: isTab ? 10.sp : 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.black87,
                               ),
-                              if (donation.notes != null &&
-                                  donation.notes!.isNotEmpty)
-                                Text(' • ',
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 12.sp)),
-                            ],
-                            if (donation.notes != null &&
-                                donation.notes!.isNotEmpty)
-                              Expanded(
-                                child: Text(
-                                  donation.notes!,
-                                  style: GoogleFonts.cairo(
-                                    fontSize: 12.sp,
-                                    color: Colors.grey[600],
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              '${donation.date.day}/${donation.date.month}/${donation.date.year}',
+                              style: GoogleFonts.cairo(
+                                fontSize: isTab ? 8.sp : 12.sp,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                            if ((donation.notes != null &&
+                                    donation.notes!.isNotEmpty) ||
+                                donation.paymentMethod != null)
+                              Padding(
+                                padding: EdgeInsets.only(top: 4.h),
+                                child: Row(
+                                  children: [
+                                    if (donation.paymentMethod != null) ...[
+                                      Text(
+                                        '${donation.paymentMethod!.icon} ${donation.paymentMethod!.arabicName}',
+                                        style: GoogleFonts.cairo(
+                                          fontSize: isTab ? 8.sp : 11.sp,
+                                          color: const Color(0xFF3B82F6),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      if (donation.notes != null &&
+                                          donation.notes!.isNotEmpty)
+                                        Text(' • ',
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize:
+                                                    isTab ? 9.sp : 12.sp)),
+                                    ],
+                                    if (donation.notes != null &&
+                                        donation.notes!.isNotEmpty)
+                                      Expanded(
+                                        child: Text(
+                                          donation.notes!,
+                                          style: GoogleFonts.cairo(
+                                            fontSize: isTab ? 9.sp : 12.sp,
+                                            color: Colors.grey[600],
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                           ],
                         ),
                       ),
-                  ],
-                ),
-              ),
 
-              // المبلغ
-              Text(
-                '${donation.amount.toStringAsFixed(0)} ${donation.currency}',
-                style: GoogleFonts.cairo(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF10B981),
+                      // المبلغ
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '${donation.amount.toStringAsFixed(0)}',
+                            style: GoogleFonts.cairo(
+                              fontSize: isTab ? 12.sp : 20.sp,
+                              fontWeight: FontWeight.w900,
+                              color: const Color(0xFF10B981),
+                            ),
+                          ),
+                          Text(
+                            donation.currency,
+                            style: GoogleFonts.cairo(
+                              fontSize: isTab ? 8.sp : 10.sp,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF10B981).withOpacity(0.7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -361,8 +409,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('📭', style: TextStyle(fontSize: 80.sp)),
-          SizedBox(height: 16.h),
+          // Text('📭', style: TextStyle(fontSize: 80.sp)),
+          // SizedBox(height: 16.h),
           Text(
             'لا توجد صدقات بعد',
             style: GoogleFonts.cairo(

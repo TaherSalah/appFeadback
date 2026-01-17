@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/app_theme_colors.dart';
+import '../../core/utils/style/responsive_util.dart';
 import '../../core/widgets/kButtons.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
@@ -308,6 +309,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildDailySuggestionCard(bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
+
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
@@ -345,7 +348,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
               Text(
                 'اقتراح الصدقة اليومية',
                 style: GoogleFonts.cairo(
-                  fontSize: 18.sp,
+                  fontSize: isTab?10.sp:18.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -421,6 +424,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
 
   Widget _buildStatCard(
       String emoji, String label, String value, Color color, bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -446,7 +450,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           Text(
             label,
             style: GoogleFonts.cairo(
-              fontSize: 12.sp,
+              fontSize:isTab? 9.sp:12.sp,
               color: AppThemeColors.cardSubtitleColor(context),
             ),
           ),
@@ -454,7 +458,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           Text(
             value,
             style: GoogleFonts.cairo(
-              fontSize: 18.sp,
+              fontSize:isTab? 9.sp:12.sp,
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -465,13 +469,16 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildQuickAddRow(bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'تسجيل سريع لصدقة اليوم:',
           style: GoogleFonts.cairo(
-            fontSize: 14.sp,
+            fontSize: isTab?10.sp:14.sp,
+
             fontWeight: FontWeight.bold,
             color: AppThemeColors.cardHeaderColor(context),
           ),
@@ -488,6 +495,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildDashboardQuickAddChip(double amount, bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     return InkWell(
       onTap: () async {
         final donation = CharityDonation.withCategory(
@@ -497,6 +505,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           date: DateTime.now(),
           notes: 'تسجيل سريع من اللوحة الرئيسية',
           currency: 'EGP',
+
         );
         await _charityService.addDonation(donation);
         _loadData();
@@ -523,7 +532,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         child: Text(
           '+$amount',
           style: GoogleFonts.cairo(
-            fontSize: 14.sp,
+            fontSize:isTab? 10.sp:16.sp,
             fontWeight: FontWeight.bold,
             color: const Color(0xFF10B981),
           ),
@@ -533,6 +542,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildMonthlyGoalCard(bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     final goal = _charityService.getMonthlyGoal();
     final progress =
         _charityService.getGoalProgress(_stats?.totalThisMonth ?? 0);
@@ -567,7 +577,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                     Text(
                       'الهدف الشهري',
                       style: GoogleFonts.cairo(
-                        fontSize: 16.sp,
+                        fontSize:isTab? 10.sp:16.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -652,6 +662,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildStreakCard(bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
@@ -664,7 +675,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
       ),
       child: Row(
         children: [
-          Text('🔥', style: TextStyle(fontSize: 40.sp)),
+          Text('🔥', style: TextStyle(fontSize: isTab?30.sp:40.sp)),
           SizedBox(width: 16.w),
           Expanded(
             child: Column(
@@ -673,7 +684,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                 Text(
                   'سلسلة الصدقة المتواصلة',
                   style: GoogleFonts.cairo(
-                    fontSize: 16.sp,
+                    fontSize:isTab? 10.sp:14.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -682,7 +693,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                 Text(
                   '${_stats?.currentStreak ?? 0} يوم متتالي',
                   style: GoogleFonts.cairo(
-                    fontSize: 24.sp,
+                    fontSize:isTab? 9.sp:14.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -691,7 +702,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                 Text(
                   'أطول سلسلة: ${_stats?.longestStreak ?? 0} يوم',
                   style: GoogleFonts.cairo(
-                    fontSize: 12.sp,
+                    fontSize:isTab? 9.sp:14.sp,
                     color: Colors.white.withOpacity(0.9),
                   ),
                 ),
@@ -704,6 +715,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildChartCard(bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     if (_stats?.monthlyData == null || _stats!.monthlyData.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -730,12 +742,12 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           Text(
             'الصدقات الشهرية',
             style: GoogleFonts.cairo(
-              fontSize: 18.sp,
+              fontSize:isTab? 10.sp:18.sp,
               fontWeight: FontWeight.bold,
               color: AppThemeColors.cardHeaderColor(context),
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 10.h),
           SizedBox(
             height: 200.h,
             child: BarChart(
@@ -756,7 +768,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                             value.toInt() < _stats!.monthlyData.length) {
                           return Text(
                             _stats!.monthlyData[value.toInt()].label,
-                            style: GoogleFonts.cairo(fontSize: 10.sp),
+                            style: GoogleFonts.cairo(fontSize:isTab? 6.5.sp:10.sp),
                           );
                         }
                         return const Text('');
@@ -797,6 +809,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildCategoryBreakdown(bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
     if (_stats?.categoryBreakdown == null ||
         _stats!.categoryBreakdown.isEmpty) {
       return const SizedBox.shrink();
@@ -817,7 +830,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           Text(
             'التوزيع حسب الفئات',
             style: GoogleFonts.cairo(
-              fontSize: 18.sp,
+              fontSize:isTab? 10.sp:18.sp,
               fontWeight: FontWeight.bold,
               color: AppThemeColors.cardHeaderColor(context),
             ),
@@ -837,13 +850,13 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                     children: [
                       Row(
                         children: [
-                          Text(entry.key.emoji,
-                              style: TextStyle(fontSize: 20.sp)),
-                          SizedBox(width: 8.w),
+                          // Text(entry.key.emoji,
+                          //     style: TextStyle(fontSize: 20.sp)),
+                          // SizedBox(width: 8.w),
                           Text(
                             entry.key.arabicName,
                             style: GoogleFonts.cairo(
-                              fontSize: 14.sp,
+                              fontSize:isTab? 9.sp:14.sp,
                               color: AppThemeColors.cardHeaderColor(context),
                             ),
                           ),
@@ -852,7 +865,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                       Text(
                         '${entry.value.toStringAsFixed(0)} جنيه',
                         style: GoogleFonts.cairo(
-                          fontSize: 14.sp,
+                          fontSize:isTab? 9.sp:14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -940,7 +953,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                 color: Colors.orange, size: 24.sp),
             SizedBox(width: 8.w),
             Text(
-              'صدقات مستحقة اليوم 🔔',
+              'صدقات مستحقة اليوم',
               style: GoogleFonts.cairo(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -985,14 +998,15 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                           await _charityService.confirmRecurringDonation(item);
                           _loadData();
                           if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'تقبل الله منك! تم تسجيل الصدقة ✅',
-                                    style: GoogleFonts.cairo()),
-                                backgroundColor: const Color(0xFF10B981),
-                              ),
-                            );
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   SnackBar(
+                            //     content: Text(
+                            //         'تقبل الله منك! تم تسجيل الصدقة ✅',
+                            //         style: GoogleFonts.cairo()),
+                            //     backgroundColor: const Color(0xFF10B981),
+                            //   ),
+                            // );
+                            KHelper.showSuccess(message: 'تقبل الله منك! تم تسجيل الصدقة',);
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -1001,7 +1015,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r)),
                         ),
-                        child: Text('تبرعت ✅',
+                        child: Text('تبرعت ',
                             style: GoogleFonts.cairo(
                                 color: Colors.white, fontSize: 12.sp)),
                       ),
@@ -1015,6 +1029,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
 
   Widget _buildActionButton(IconData? icon, String label, Color color,
       VoidCallback onTap, bool isDark) {
+    bool isTab = ResponsiveUtil.isTablet(context);
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16.r),
@@ -1027,12 +1043,12 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         ),
         child: Column(
           children: [
-            Icon(icon),
+            Icon(icon,size: isTab?45:35,),
             SizedBox(height: 8.h),
             Text(
               label,
               style: GoogleFonts.cairo(
-                fontSize: 14.sp,
+                fontSize: isTab?10.sp :14.sp,
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
