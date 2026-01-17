@@ -868,8 +868,15 @@
                 </div>
 
                 <div class="filter-group" style="margin-bottom: 20px;">
-                    <label>رابط التحديث (Direct Link / Store Link)</label>
-                    <input type="text" id="updateUrl" placeholder="https://...">
+                    <label>روابط التحديث (Direct Links / Store Links)</label>
+                    <div style="display: grid; gap: 10px;">
+                        <input type="text" id="urlAndroid" placeholder="Google Play / Direct APK (Android)" 
+                               style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        <input type="text" id="urlIos" placeholder="App Store Link (iOS)" 
+                               style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        <input type="text" id="urlHuawei" placeholder="AppGallery Link (Huawei)" 
+                               style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
                 </div>
 
                 <div class="filter-group" style="margin-bottom: 25px;">

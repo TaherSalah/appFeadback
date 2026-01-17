@@ -356,13 +356,24 @@ async function pushUpdate() {
     const versionName = document.getElementById('versionName').value;
     const versionCode = document.getElementById('versionCode').value;
     const isMandatory = document.getElementById('isMandatory').value === 'true';
-    const updateUrl = document.getElementById('updateUrl').value;
     const releaseNotes = document.getElementById('releaseNotes').value;
 
-    if (!versionName || !versionCode || !updateUrl) {
-        alert('⚠️ يرجى إكمال الحقول الأساسية (الاسم، الكود، الرابط)');
+    const urlAndroid = document.getElementById('urlAndroid').value.trim();
+    const urlIos = document.getElementById('urlIos').value.trim();
+    const urlHuawei = document.getElementById('urlHuawei').value.trim();
+
+    if (!versionName || !versionCode || (!urlAndroid && !urlIos && !urlHuawei)) {
+        alert('⚠️ يرجى إكمال الحقول الأساسية ورابط واحد على الأقل');
         return;
     }
+
+    // Bundle URLs into a JSON object
+    const updateUrlObj = {
+        android: urlAndroid,
+        ios: urlIos,
+        huawei: urlHuawei
+    };
+    const updateUrl = JSON.stringify(updateUrlObj);
 
     try {
         const { error } = await supabaseClient
@@ -383,7 +394,9 @@ async function pushUpdate() {
         // Clear form
         document.getElementById('versionName').value = '';
         document.getElementById('versionCode').value = '';
-        document.getElementById('updateUrl').value = '';
+        document.getElementById('urlAndroid').value = '';
+        document.getElementById('urlIos').value = '';
+        document.getElementById('urlHuawei').value = '';
         document.getElementById('releaseNotes').value = '';
     } catch (error) {
         alert('❌ فشل نشر التحديث: ' + error.message);
@@ -407,7 +420,20 @@ async function loadUpdates() {
             return;
         }
 
-        updatesList.innerHTML = data.map(update => `
+        updatesList.innerHTML = data.map(update => {
+            let displayLink = update.update_url;
+            let isJson = false;
+            try {
+                const parsed = JSON.parse(update.update_url);
+                if (typeof parsed === 'object') {
+                    isJson = true;
+                    displayLink = 'متعدد المنصات (JSON)';
+                }
+            } catch (e) {}
+
+            const versions = isJson ? JSON.parse(update.update_url) : { link: update.update_url };
+            
+            return `
             <div class="update-item" style="background:var(--card-bg); padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
                 <div>
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
@@ -421,12 +447,17 @@ async function loadUpdates() {
                         📅 ${new Date(update.created_at).toLocaleDateString('ar-EG')}
                     </div>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="refresh-btn" onclick="window.open('${update.update_url}', '_blank')" style="padding: 5px 15px; font-size:0.8rem;">🔗 الرابط</button>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+                    ${isJson ? `
+                        ${versions.android ? `<button class="refresh-btn" onclick="window.open('${versions.android}', '_blank')" style="padding: 5px 10px; font-size:0.7rem;">🤖 Android</button>` : ''}
+                        ${versions.ios ? `<button class="refresh-btn" onclick="window.open('${versions.ios}', '_blank')" style="padding: 5px 10px; font-size:0.7rem; background:#000;">🍎 iOS</button>` : ''}
+                        ${versions.huawei ? `<button class="refresh-btn" onclick="window.open('${versions.huawei}', '_blank')" style="padding: 5px 10px; font-size:0.7rem; background:#cf0a2c;">🎒 Huawei</button>` : ''}
+                    ` : `<button class="refresh-btn" onclick="window.open('${update.update_url}', '_blank')" style="padding: 5px 15px; font-size:0.8rem;">🔗 الرابط</button>`}
+                    
                     <button class="delete-btn" onclick="deleteUpdate('${update.id}')">🗑️ حذف</button>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
     } catch (error) {
         updatesList.innerHTML = `<div class="error">❌ خطأ: ${error.message}</div>`;
     }
@@ -995,7 +1026,7 @@ async function addKidsStory() {
     if (!title || !content || !moral) return alert('⚠️ يرجى تعبئة الحقول');
     const paragraphs = content.split('\n').map(p => p.trim()).filter(p => p.length > 0);
     try {
-        await supabaseClient.from('kids_stories').insert([{ title, emoji: emoji || '📖', stars_reward: stars, paragraphs, moral, is_visible: true }]);
+        await supabaseClient.from('kids_stories').insert([{ title, emoji: emoji || '📖', stars_reward: stars, paragraphs, content, moral, is_visible: true }]);
         alert('✅ تم إضافة القصة');
         ['kidsStoryTitle','kidsStoryEmoji','kidsStoryParagraphs','kidsStoryMoral'].forEach(id => document.getElementById(id).value = '');
         loadKidsStories();
