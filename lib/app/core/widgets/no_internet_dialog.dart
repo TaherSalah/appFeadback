@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import '../localization/localization_manager.dart';
-import '../utils/style/responsive_util.dart';
 
 class NoInternetDialog extends StatefulWidget {
   final VoidCallback onRetrySuccess;

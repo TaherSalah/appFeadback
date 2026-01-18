@@ -5,6 +5,7 @@ import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:device_calendar/device_calendar.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 
 class CalendarService {
   static const String _boxName = 'calendar_events';
@@ -173,8 +174,10 @@ class CalendarService {
 
   Future<void> syncToDeviceCalendar(CalendarEvent event) async {
     try {
+      print('🚀 Starting sync for event: ${event.title}');
       if (!await _requestCalendarPermissions()) {
         print('❌ Calendar permission denied');
+        KHelper.showError(message: 'يجب السماح بالوصول للتقويم للمزامنة');
         return;
       }
 
@@ -182,41 +185,72 @@ class CalendarService {
       if (!calendarsResult.isSuccess ||
           calendarsResult.data == null ||
           calendarsResult.data!.isEmpty) {
-        print('❌ No calendars found');
+        print('❌ No calendars found or error: ${calendarsResult.errors}');
+        KHelper.showError(message: 'لم يتم العثور على تقويم صالح في الهاتف');
         return;
       }
 
+      print('📅 Found ${calendarsResult.data!.length} calendars');
+
+      // Try to find a primary calendar or the first writable one
       final calendar = calendarsResult.data!.firstWhere(
-          (c) => c.isReadOnly == false,
-          orElse: () => calendarsResult.data!.first);
+          (c) => c.isReadOnly == false && (c.isDefault ?? false),
+          orElse: () => calendarsResult.data!.firstWhere(
+              (c) => c.isReadOnly == false,
+              orElse: () => calendarsResult.data!.first));
+
+      if (calendar.isReadOnly == true) {
+        print('❌ No writable calendar found among: ${calendarsResult.data!.map((c) => c.name)}');
+        KHelper.showError(message: 'التقويم الموجود للقراءة فقط');
+        return;
+      }
+
+      print('🎯 Using calendar: ${calendar.name} (ID: ${calendar.id})');
 
       final deviceEvent = Event(calendar.id);
       deviceEvent.title = event.title;
       deviceEvent.description = event.description;
-      deviceEvent.start = TZDateTime.from(event.date, local);
+      
+      // Use local timezone location
+      final location = local;
+      deviceEvent.start = TZDateTime.from(event.date, location);
       deviceEvent.end =
-          TZDateTime.from(event.date.add(const Duration(hours: 1)), local);
+          TZDateTime.from(event.date.add(const Duration(hours: 1)), location);
 
+      // Handle reminders for device calendar if set
+      if (event.reminderDateTime != null) {
+        deviceEvent.reminders = [
+          Reminder(minutes: event.date.difference(event.reminderDateTime!).inMinutes)
+        ];
+      }
+
+      print('📝 Creating/Updating event on device...');
       final result =
           await _deviceCalendarPlugin.createOrUpdateEvent(deviceEvent);
+      
       if (result?.isSuccess == true && result?.data != null) {
         final updatedEvent = event.copyWith(externalEventId: result!.data);
         await updateEvent(updatedEvent);
-        print('✅ Synced event to device calendar: ${result.data}');
+        print('✅ Synced event to device calendar ID: ${result.data}');
+        KHelper.showSuccess(message: 'تمت المزامنة مع تقويم الهاتف بنجاح');
       } else {
         print('❌ Failed to sync event: ${result?.errors}');
+        KHelper.showError(message: 'فشلت المزامنة: ${result?.errors.map((e) => e.errorMessage).join(', ')}');
       }
     } catch (e) {
       print('❌ Error syncing to device calendar: $e');
+      KHelper.showError(message: 'حدث خطأ أثناء المزامنة: $e');
     }
   }
 
   Future<bool> _requestCalendarPermissions() async {
-    var status = await Permission.calendar.status;
-    if (status.isDenied) {
-      status = await Permission.calendar.request();
+    final permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
+    if (permissionsGranted.isSuccess && permissionsGranted.data == true) {
+      return true;
     }
-    return status.isGranted;
+
+    final requestResult = await _deviceCalendarPlugin.requestPermissions();
+    return requestResult.isSuccess && requestResult.data == true;
   }
 
   // --- Hijri & Religious Occasions ---

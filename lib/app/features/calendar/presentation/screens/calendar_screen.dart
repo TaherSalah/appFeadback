@@ -338,6 +338,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: PreferredSize(
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
@@ -356,11 +357,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.color_lens_outlined),
-                tooltip: 'تخصيص المظهر',
-                onPressed: _openStyleEditor,
-              ),
+              // IconButton(
+              //   icon: const Icon(Icons.color_lens_outlined),
+              //   tooltip: 'تخصيص المظهر',
+              //   onPressed: _openStyleEditor,
+              // ),
               IconButton(
                 icon: Icon(_isHijriMode ? Icons.date_range : Icons.history_edu),
                 tooltip: _isHijriMode ? 'التقويم الميلادي' : 'التقويم الهجري',
@@ -729,6 +730,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           event.title,
                           style: GoogleFonts.cairo(
                             fontSize: 14.sp,
+
                             fontWeight: FontWeight.bold,
                             // Dim color if done
                             color: event.isDone ? Colors.grey : null,
@@ -747,7 +749,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             padding: EdgeInsets.only(top: 2.h),
                             child: Text(
                               event.description!,
-                              maxLines: 1,
+                              maxLines: 10,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.cairo(
                                 fontSize: 11.sp,

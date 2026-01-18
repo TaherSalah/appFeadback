@@ -145,6 +145,12 @@ class MainController extends ControllerMVC {
       "icon": "assets/images/tauhid.png",
       "navigate": "/WirdHomeScreen"
     },
+    {
+      "title": "الختمة الجماعية",
+      "icon": "assets/images/koran.png",
+      "navigate": "/globalKhatmah",
+      "subtitle": "شارك المجتمع في الختم"
+    },
     // {
     //   "title": "قناة القران الكريم",
     //   "icon": "assets/icons/radio.png",

@@ -419,7 +419,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               margin: EdgeInsets.symmetric(horizontal: 4.w),
               padding: EdgeInsets.symmetric(vertical: 10.h),
               decoration: BoxDecoration(
-                color: isSelected ? (isDark ? Colors.tealAccent : const Color(0xFF00897B)) : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
+                color: isSelected ? (isDark ? KColors.primaryColor : const Color(0xFF00897B)) : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: isSelected ? Colors.transparent : Colors.grey.withOpacity(0.2)),
               ),
@@ -450,7 +450,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
             color: selectedTime != null 
-                ? (isDark ? Colors.tealAccent : const Color(0xFF00897B)) 
+                ? (isDark ? KColors.primaryColor: const Color(0xFF00897B))
                 : Colors.transparent
           ),
           boxShadow: isDark ? [] : [
@@ -462,7 +462,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
             Icon(
               Icons.access_time_filled_rounded,
               color: selectedTime != null 
-                  ? (isDark ? Colors.tealAccent : const Color(0xFF00897B)) 
+                  ? (isDark ? KColors.primaryColor: const Color(0xFF00897B))
                   : Colors.grey,
               size: 24.sp,
             ),
@@ -513,7 +513,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               margin: EdgeInsets.only(left: 8.w),
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               decoration: BoxDecoration(
-                color: isSelected ? (isDark ? Colors.tealAccent : const Color(0xFF00897B)) : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
+                color: isSelected ? (isDark ? KColors.primaryColor : const Color(0xFF00897B)) : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: isSelected ? Colors.transparent : Colors.grey.withOpacity(0.2)),
               ),
@@ -536,12 +536,12 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
 
   Widget _buildDhikrOption(Map<String, dynamic> dhikr, bool isDark) {
     final isSelected = selectedAdhkar.any((d) => d.text == dhikr['text']);
-    final primaryColor = isDark ? Colors.tealAccent : const Color(0xFF00897B);
+    final primaryColor = isDark ? KColors.primaryColor : const Color(0xFF00897B);
 
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
       decoration: BoxDecoration(
-        color: isSelected ? (isDark ? Colors.tealAccent.withOpacity(0.1) : const Color(0xFF00897B).withOpacity(0.05)) : (isDark ? Colors.white.withOpacity(0.03) : Colors.white),
+        color: isSelected ? (isDark ? KColors.primaryColor.withOpacity(0.1) : const Color(0xFF00897B).withOpacity(0.05)) : (isDark ? Colors.white.withOpacity(0.03) : Colors.white),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: isSelected ? primaryColor : Colors.grey.withOpacity(0.2), width: 1.5),
       ),

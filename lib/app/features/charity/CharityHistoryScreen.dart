@@ -207,33 +207,9 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
           child: const Icon(Icons.delete, color: Colors.white),
         ),
         confirmDismiss: (direction) async {
-          return await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.r)),
-              title: Text(
-                'تأكيد الحذف',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-              ),
-              content: Text(
-                'هل أنت متأكد من حذف هذه الصدقة؟',
-                style: GoogleFonts.cairo(),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text('إلغاء', style: GoogleFonts.cairo()),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  style: TextButton.styleFrom(foregroundColor: Colors.red),
-                  child: Text('حذف', style: GoogleFonts.cairo()),
-                ),
-              ],
-            ),
-          );
+          return await _showDeleteDonationDialog(context);
         },
+
         onDismissed: (direction) async {
           await _charityService.deleteDonation(donation.id);
           _loadDonations();
@@ -402,6 +378,190 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
         ),
       ),
     );
+  }
+  Future<bool> _showDeleteDonationDialog(BuildContext context) async {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Dialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Body
+              Container(
+                padding: EdgeInsets.fromLTRB(20.w, 40.h, 20.w, 20.h),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24.r),
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: isDark
+                        ? [const Color(0xFF2B0B0B), const Color(0xFF200505)]
+                        : [const Color(0xFFFFF2F2), const Color(0xFFFFE1E1)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'تأكيد الحذف',
+                      style: GoogleFonts.cairo(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'هل أنت متأكد من حذف هذه الصدقة؟\nلا يمكن التراجع عن هذه العملية.',
+                      style: GoogleFonts.cairo(
+                        fontSize: 13.sp,
+                        height: 1.4,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 16.h),
+
+                    // Info card
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 10.h,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.r),
+                        color: Colors.red.withOpacity(0.06),
+                        border: Border.all(
+                          color: Colors.red.withOpacity(0.5),
+                          width: 1.2,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.info_outline,
+                              size: 18, color: Colors.red),
+                          SizedBox(width: 8.w),
+                          Expanded(
+                            child: Text(
+                              'سيتم حذف الصدقة نهائيًا من القائمة.',
+                              style: GoogleFonts.cairo(
+                                fontSize: 12.5.sp,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 20.h),
+
+                    // Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(false),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                color: isDark
+                                    ? Colors.grey.shade400
+                                    : Colors.grey.shade600,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14.r),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 11.h),
+                            ),
+                            child: Text(
+                              'إلغاء',
+                              style: GoogleFonts.cairo(
+                                fontSize: 14.sp,
+                                color: isDark
+                                    ? Colors.white
+                                    : Colors.grey.shade800,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () => Navigator.of(dialogContext).pop(true),
+                            icon: const Icon(Icons.delete_outline),
+                            label: Text('حذف', style: GoogleFonts.cairo()),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14.r),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 11.h),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Top icon
+              Positioned(
+                top: -30.h,
+                left: 0,
+                right: 0,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 60.w,
+                    height: 60.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Colors.red, Colors.deepOrange],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.red.withOpacity(0.6),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.delete_forever_rounded,
+                        size: 34,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    return result ?? false;
   }
 
   Widget _buildEmptyState(bool isDark) {

@@ -266,7 +266,7 @@ bool isTab = ResponsiveUtil.isTablet(context);
                               Text(
                                 category.arabicName,
                                 style: GoogleFonts.cairo(
-                                  fontSize:isTab?9.sp:16.sp,
+                                  fontSize:isTab?9.sp:11.5.sp,
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
                                       ? Colors.white
@@ -331,7 +331,7 @@ bool isTab = ResponsiveUtil.isTablet(context);
                               Text(
                                 method.arabicName,
                                 style: GoogleFonts.cairo(
-                                  fontSize:isTab?9.sp:16.sp,
+                                  fontSize:isTab?9.sp:11.5.sp,
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
                                       ? Colors.white

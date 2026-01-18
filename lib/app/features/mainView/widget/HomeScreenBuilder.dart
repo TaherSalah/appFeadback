@@ -445,113 +445,6 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                               }),
                             ),
 
-                          // 🖼️ البانرات الإعلانية (Carousel)
-                          if (_featureStatuses['banners'] != 'hidden' &&
-                              _banners.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 15),
-                              child: CarouselSlider(
-                                options: CarouselOptions(
-                                  height: 120,
-                                  viewportFraction: 0.9,
-                                  autoPlay: true,
-                                  enlargeCenterPage: true,
-                                  autoPlayInterval: const Duration(seconds: 5),
-                                ),
-                                items: _banners.map((banner) {
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      if (banner['link_url'] != null &&
-                                          banner['link_url']
-                                              .toString()
-                                              .startsWith('http')) {
-                                        await launchUrl(
-                                            Uri.parse(banner['link_url']),
-                                            mode:
-                                                LaunchMode.externalApplication);
-                                      }
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.1),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(15),
-                                        child: Stack(
-                                          children: [
-                                            CachedNetworkImage(
-                                              imageUrl: banner['image_url'],
-                                              fit: BoxFit.cover,
-                                              width: double.infinity,
-                                              height: double.infinity,
-                                              placeholder: (context, url) =>
-                                                  Container(
-                                                color: Colors.grey[200],
-                                                child: const Center(
-                                                    child:
-                                                        CircularProgressIndicator()),
-                                              ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      const Icon(Icons.error),
-                                            ),
-                                            if (banner['title'] != null &&
-                                                banner['title']
-                                                    .toString()
-                                                    .trim()
-                                                    .isNotEmpty)
-                                              Positioned(
-                                                bottom: 0,
-                                                left: 0,
-                                                right: 0,
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      begin: Alignment
-                                                          .bottomCenter,
-                                                      end: Alignment.topCenter,
-                                                      colors: [
-                                                        Colors.black
-                                                            .withOpacity(0.7),
-                                                        Colors.transparent,
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 8),
-                                                  child: Text(
-                                                    banner['title'],
-                                                    style: GoogleFonts.cairo(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    textAlign: TextAlign.right,
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
                           const SizedBox(height: 10),
                           // 📜 خـاطـرة اليوم (CMS)
                           if (_isQuoteVisible)
@@ -734,8 +627,119 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                         ],
                       ),
                     ),
+                    SliverPadding(
+                      padding: EdgeInsets.only(
+                          bottom: (_featureStatuses['banners'] != 'hidden' &&
+                                  _banners.isNotEmpty)
+                              ? 120
+                              : 20),
+                    ),
                   ],
                 ),
+
+                // 🖼️ البانرات الإعلانية (Carousel) - Fixed at Bottom
+                if (_featureStatuses['banners'] != 'hidden' &&
+                    _banners.isNotEmpty)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: FadeInUp(
+                      duration: const Duration(milliseconds: 800),
+                      child: CarouselSlider(
+                        options: CarouselOptions(
+                          height: 100,
+                          viewportFraction: 0.9,
+                          autoPlay: true,
+                          enlargeCenterPage: true,
+                          autoPlayInterval: const Duration(seconds: 5),
+                        ),
+                        items: _banners.map((banner) {
+                          return GestureDetector(
+                            onTap: () async {
+                              if (banner['link_url'] != null &&
+                                  banner['link_url']
+                                      .toString()
+                                      .startsWith('http')) {
+                                await launchUrl(Uri.parse(banner['link_url']),
+                                    mode: LaunchMode.externalApplication);
+                              }
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Stack(
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: banner['image_url'],
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      placeholder: (context, url) =>
+                                          Container(
+                                        color: Colors.grey[200],
+                                        child: const Center(
+                                            child:
+                                                CircularProgressIndicator()),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                    if (banner['title'] != null &&
+                                        banner['title']
+                                            .toString()
+                                            .trim()
+                                            .isNotEmpty)
+                                      Positioned(
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.bottomCenter,
+                                              end: Alignment.topCenter,
+                                              colors: [
+                                                Colors.black.withOpacity(0.7),
+                                                Colors.transparent,
+                                              ],
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 8),
+                                          child: Text(
+                                            banner['title'],
+                                            style: GoogleFonts.cairo(
+                                              color: Colors.white,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.right,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
 
                 // الهيدر الثابت المصغر (يظهر عند السكرول)
                 ValueListenableBuilder<bool>(

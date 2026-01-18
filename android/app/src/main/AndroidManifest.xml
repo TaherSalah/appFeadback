@@ -87,6 +87,7 @@
 <!--</manifest>-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- الأذونات الموجودة -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -106,8 +107,11 @@
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     
     <!-- ⭐ أذونات الصوت (أضفهم) -->
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
 
     <application
         android:name="${applicationName}"

@@ -75,7 +75,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     bool isTab = ResponsiveUtil.isTablet(context);
-    final primaryColor = isDark ? Colors.tealAccent : const Color(0xFF00897B);
+    final primaryColor = isDark ? KColors.primaryColor : const Color(0xFF00897B);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -388,7 +388,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
           ),
         ),
         Text(
-          "ابدأ بإضافة أول ورد لك اليوم ✨",
+          "ابدأ بإضافة أول ورد لك اليوم",
           style: GoogleFonts.cairo(
             fontSize: 11.sp,
             color: Colors.grey.shade500,
@@ -417,7 +417,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? (isDark ? Colors.tealAccent : const Color(0xFF00897B))
+                    ? (isDark ? KColors.primaryColor : const Color(0xFF00897B))
                     : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
@@ -446,7 +446,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
   Widget _buildWirdCard(Wird wird, {required bool isDark, bool completed = false}) {
     final totalCount = wird.adhkar.fold<int>(0, (sum, dhikr) => sum + dhikr.targetCount);
     // ✅ استخدام لون الورد المخصص، أو اللون الافتراضي
-    final cardColor = wird.color != 0 ? Color(wird.color) : (isDark ? Colors.tealAccent : const Color(0xFF00897B));
+    final cardColor = wird.color != 0 ? Color(wird.color) : (isDark ? KColors.primaryColor : const Color(0xFF00897B));
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -515,7 +515,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                   completedAwrad.add(wird);
                 });
                 await manager.saveAwrad([...awrad, ...completedAwrad]);
-                KHelper.showSuccess(message: "تم إكمال الورد بنجاح ✨");
+                KHelper.showSuccess(message: "تم إكمال الورد بنجاح");
               } else if (result == true) {
                 await manager.saveAwrad([...awrad, ...completedAwrad]);
                 await loadData();

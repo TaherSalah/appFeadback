@@ -144,20 +144,24 @@ class SystemControlService {
     const String typeKey = 'cached_news_type';
 
     try {
+      // Fetch all to avoid filter issues and be more robust
       final response = await _supabase
           .from('app_settings')
-          .select('key, value')
-          .filter('key', 'in',
-              '("news_marquee", "news_marquee_label", "news_marquee_type", "news_active")');
+          .select('key, value');
 
       if (response != null && response is List) {
         final data = response as List;
-        final active = _findValue(data, 'news_active') == 'true';
+        
+        final newsActiveVal = _findValue(data, 'news_active')?.toLowerCase();
+        final active = newsActiveVal == 'true' || newsActiveVal == '1' || newsActiveVal == 'active';
+        
         final news = _findValue(data, 'news_marquee');
         final label = _findValue(data, 'news_marquee_label') ?? 'تنبيه عاجل';
         final type = _findValue(data, 'news_marquee_type') ?? 'urgent';
 
-        if (active && news != null) {
+        print('📢 News Ticker - Active: $active, Text: $news');
+
+        if (active && news != null && news.trim().isNotEmpty) {
           await prefs.setString(newsKey, news);
           await prefs.setString(labelKey, label);
           await prefs.setString(typeKey, type);

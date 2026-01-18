@@ -1,5 +1,6 @@
 import 'package:muslimdaily/app/features/Khatmah/view/ComplateKhatmaView.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/KhatmahDashboard.dart';
+import 'package:muslimdaily/app/features/Khatmah/view/GlobalKhatmahScreen.dart';
 import 'package:muslimdaily/app/features/channal/view/QuranChannalPlayerView.dart';
 import 'package:muslimdaily/app/features/mainView/MainView.dart';
 import 'package:muslimdaily/app/features/mainView/view/FajrAlarmScreen.dart';
@@ -271,6 +272,10 @@ class RouteGenerator {
       // === Calendar ===
       case '/calendar':
         return MaterialPageRoute(builder: (_) => const CalendarScreen());
+
+      // === Global Khatmah ===
+      case '/globalKhatmah':
+        return MaterialPageRoute(builder: (_) => const GlobalKhatmahScreen());
 
       default:
         return unDefinedRoute();

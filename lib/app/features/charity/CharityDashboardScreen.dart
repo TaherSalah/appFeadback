@@ -484,11 +484,21 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           ),
         ),
         SizedBox(height: 12.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [5.0, 10.0, 20.0, 50.0, 100.0].map((amount) {
-            return _buildDashboardQuickAddChip(amount, isDark);
-          }).toList(),
+        SizedBox(
+          width: double.infinity,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [5.0, 10.0, 20.0, 50.0, 100.0].map((amount) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: _buildDashboardQuickAddChip(amount, isDark),
+                );
+              }).toList(),
+            ),
+          ),
         ),
       ],
     );

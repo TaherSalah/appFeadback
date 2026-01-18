@@ -23,7 +23,7 @@ class CharityPdfService {
 
     // Load Images
     final logoImage =
-        await imageFromAssetBundle('assets/images/ic_stat_notify.png');
+        await imageFromAssetBundle('assets/images/logoApp.png');
     final appStoreImage =
         await imageFromAssetBundle('assets/images/app-store.png');
     final playStoreImage =

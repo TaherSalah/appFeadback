@@ -65,8 +65,7 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
+
         // appBar: AppBar(
         //   title: Text(
         //     'هدف الصدقة الشهري 🎯',

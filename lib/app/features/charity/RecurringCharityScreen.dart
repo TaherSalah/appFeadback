@@ -54,7 +54,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
           textDirection: TextDirection.rtl,
           child: Container(
             decoration: BoxDecoration(
-              color: AppThemeColors.cardBackgroundColor(context),
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
               border: Border.all(color: AppThemeColors.cardBorderColor(context), width: 1.5),
             ),

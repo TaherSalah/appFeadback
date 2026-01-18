@@ -248,7 +248,7 @@ class BatteryOptimizationHelper {
                           const SizedBox(width: 10),
                           const Expanded(
                             child: Text(
-                              '📌 في الإعدادات، ابحث عن اسم التطبيق واختر "عدم التحسين" أو "Don\'t optimize"',
+                              'في الإعدادات، ابحث عن اسم التطبيق واختر "عدم التحسين" أو "Don\'t optimize"',
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.teal,
