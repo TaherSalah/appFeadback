@@ -96,7 +96,7 @@ function initializeDashboard() {
 function checkAuth() {
     const passwordInput = document.getElementById('authPassword');
     if (!passwordInput) return;
-    
+
     const password = passwordInput.value.trim();
     const correctPassword = 'admin';
 
@@ -118,7 +118,7 @@ function checkAuth() {
 // --- NAVIGATION ---
 function switchTab(tabId) {
     console.log('Switching to tab:', tabId);
-    
+
     // Hide all tabs
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
@@ -135,7 +135,7 @@ function switchTab(tabId) {
     }
 
     // Load specific data per tab if needed
-    switch(tabId) {
+    switch (tabId) {
         case 'analytics': loadAnalytics(); break;
         case 'features': loadFeatures(); break;
         case 'content': loadContent(); break;
@@ -143,6 +143,7 @@ function switchTab(tabId) {
         case 'charityStories': loadCharityStories(); break;
         case 'radio': loadRadios(); break;
         case 'banners': loadBanners(); break;
+        case 'khatmah': loadKhatmahCampaigns(); break;
         case 'updates': loadUpdates(); break;
         case 'errors': loadErrors(); break;
         case 'settings': loadSettings(); break;
@@ -171,7 +172,7 @@ async function loadFeedback() {
 
         allFeedback = data || [];
         updateStats();
-        filterFeedback(); 
+        filterFeedback();
         initFeedbackCharts();
     } catch (error) {
         if (feedbackList) feedbackList.innerHTML = `<div class="error">❌ خطأ في تحميل البيانات: ${error.message}</div>`;
@@ -429,16 +430,16 @@ async function loadUpdates() {
                     isJson = true;
                     displayLink = 'متعدد المنصات (JSON)';
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             const versions = isJson ? JSON.parse(update.update_url) : { link: update.update_url };
-            
+
             return `
             <div class="update-item" style="background:var(--card-bg); padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
                 <div>
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
                         <strong style="font-size: 1.1rem; color: var(--accent-color);">V ${update.version_name}</strong>
-                        <span class="category-badge" style="background:${update.is_mandatory ? '#fee2e2':'#d1fae5'}; color:${update.is_mandatory ? '#b91c1c':'#065f46'};">
+                        <span class="category-badge" style="background:${update.is_mandatory ? '#fee2e2' : '#d1fae5'}; color:${update.is_mandatory ? '#b91c1c' : '#065f46'};">
                             ${update.is_mandatory ? 'إجباري' : 'اختياري'}
                         </span>
                         <span style="font-size: 0.8rem; color: #999;">(Build: ${update.version_code})</span>
@@ -503,7 +504,7 @@ function initAnalyticsCharts() {
     // Countries Chart
     const countryCounts = {};
     allUsageData.forEach(u => { const c = u.country || 'أخرى'; countryCounts[c] = (countryCounts[c] || 0) + 1; });
-    const sortedCountries = Object.entries(countryCounts).sort((a,b) => b[1]-a[1]).slice(0, 5);
+    const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
     if (countriesChart) countriesChart.destroy();
     const cCtx = document.getElementById('countriesChart')?.getContext('2d');
@@ -584,7 +585,7 @@ function initAnalyticsCharts() {
 
 function initFeedbackCharts() {
     if (typeof Chart === 'undefined') return;
-    
+
     // Category Distribution
     const categories = {};
     allFeedback.forEach(f => { categories[f.category || 'عام'] = (categories[f.category || 'عام'] || 0) + 1; });
@@ -639,7 +640,7 @@ async function loadSettings() {
             if (!el) return;
             if (el.type === 'checkbox') el.checked = (s.value === 'true');
             else el.value = s.value;
-            
+
             // Sync Color Text
             if (s.key === 'primary_hex_color') {
                 const hexText = document.getElementById('themeColorHex');
@@ -1028,7 +1029,7 @@ async function addKidsStory() {
     try {
         await supabaseClient.from('kids_stories').insert([{ title, emoji: emoji || '📖', stars_reward: stars, paragraphs, content, moral, is_visible: true }]);
         alert('✅ تم إضافة القصة');
-        ['kidsStoryTitle','kidsStoryEmoji','kidsStoryParagraphs','kidsStoryMoral'].forEach(id => document.getElementById(id).value = '');
+        ['kidsStoryTitle', 'kidsStoryEmoji', 'kidsStoryParagraphs', 'kidsStoryMoral'].forEach(id => document.getElementById(id).value = '');
         loadKidsStories();
     } catch (e) { alert('❌ فشل: ' + e.message); }
 }
@@ -1086,7 +1087,7 @@ async function addCharityStory() {
     try {
         await supabaseClient.from('charity_stories').insert([{ title, category, emoji: emoji || '🤲', content, source, is_visible: true }]);
         alert('✅ تم إضافة القصة');
-        ['charityStoryTitle','charityStoryContent','charityStorySource'].forEach(id => document.getElementById(id).value = '');
+        ['charityStoryTitle', 'charityStoryContent', 'charityStorySource'].forEach(id => document.getElementById(id).value = '');
         loadCharityStories();
     } catch (e) { alert('❌ فشل: ' + e.message); }
 }
@@ -1177,4 +1178,217 @@ function setStatusFilter(status, el) {
     document.querySelectorAll('.status-tab').forEach(tab => tab.classList.remove('active'));
     if (el) el.classList.add('active');
     filterFeedback();
+}
+// --- KHATMAH MANAGEMENT ---
+async function loadKhatmahCampaigns() {
+    const list = document.getElementById('khatmahCampaignsList');
+    if (list) list.innerHTML = '<div class="loading">⏳ جاري تحميل الحملات...</div>';
+    try {
+        const { data, error } = await supabaseClient
+            .from('community_campaigns')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        if (data.length === 0) { list.innerHTML = '<div class="empty-state">ℹ️ لا توجد حملات حالياً</div>'; return; }
+
+        let html = '';
+        for (const c of data) {
+            // Fetch counts
+            const { count: completedItems } = await supabaseClient
+                .from('community_progress')
+                .select('*', { count: 'exact', head: true })
+                .eq('campaign_id', c.id)
+                .eq('status', 'completed');
+
+            html += `
+                <div class="update-item" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <h4 style="font-size: 1.2rem; margin-bottom: 5px; color: var(--text-primary);">${c.title}</h4>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <span class="category-badge" style="background:#f3f4f6; color:#374151;">🎯 النوع: ${c.target_type === 'juz' ? 'أجزاء' : c.target_type === 'surah' ? 'سور' : 'صفحات'}</span>
+                                <span class="category-badge" style="background:#f3f4f6; color:#374151;">📊 الإجمالي: ${c.target_total}</span>
+                                <span class="category-badge" style="background:#dcfce7; color:#15803d; font-weight:bold;">✅ المكتمل: ${completedItems || 0} / ${c.target_total}</span>
+                                <span class="category-badge" style="background:${c.is_active ? '#dcfce7' : '#fef2f2'}; color:${c.is_active ? '#166534' : '#991b1b'};">
+                                    ${c.is_active ? '🟢 نشطة كحملة وحيدة' : '🔴 متوقفة'}
+                                </span>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 0.9rem; color: var(--text-secondary);">
+                                🏆 الختمات الكلية المنتهية: <strong>${c.completed_count || 0}</strong>
+                                <br><small style="color: grey;">(الشريط العلوي يعتمد على الأجزاء المكتملة بالأخضر)</small>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="refresh-btn" onclick="toggleKhatmahActive('${c.id}', ${c.is_active})" style="background: ${c.is_active ? '#6b7280' : 'var(--accent-color)'}; font-size:0.85rem; padding:8px 15px;">
+                                ${c.is_active ? 'إيقاف' : 'تنشيط الآن'}
+                            </button>
+                            <button class="delete-btn" onclick="deleteKhatmahCampaign('${c.id}')" style="font-size:0.85rem; padding:8px 15px;">حذف</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        list.innerHTML = html;
+        loadKhatmahStats(); // Load global stats after campaigns
+    } catch (e) {
+        console.error(e);
+        list.innerHTML = '<div class="error">❌ خطأ في تحميل الحملات</div>';
+    }
+}
+
+async function createKhatmahCampaign() {
+    const title = document.getElementById('khatmahTitle').value.trim();
+    const type = document.getElementById('khatmahTargetType').value;
+    const isActive = document.getElementById('khatmahIsActive').value === 'true';
+
+    if (!title) { alert('⚠️ يرجى إدخال عنوان للحملة'); return; }
+
+    const totals = { 'juz': 30, 'surah': 114, 'page': 604 };
+    const targetTotal = totals[type];
+
+    try {
+        // If this one is active, deactivate others (only one active at a time)
+        if (isActive) {
+            await supabaseClient.from('community_campaigns').update({ is_active: false }).eq('is_active', true);
+        }
+
+        const { error } = await supabaseClient
+            .from('community_campaigns')
+            .insert([{ title, target_type: type, target_total: targetTotal, is_active: isActive }]);
+
+        if (error) throw error;
+
+        alert('✅ تم إنشاء الحملة بنجاح');
+        document.getElementById('khatmahTitle').value = '';
+        loadKhatmahCampaigns();
+    } catch (e) { alert('❌ فشل إنشاء الحملة: ' + e.message); }
+}
+
+async function toggleKhatmahActive(id, currentStatus) {
+    try {
+        // If deactivating, just do it. If activating, deactivate others first.
+        if (!currentStatus) {
+            await supabaseClient.from('community_campaigns').update({ is_active: false }).eq('is_active', true);
+        }
+
+        const { error } = await supabaseClient
+            .from('community_campaigns')
+            .update({ is_active: !currentStatus })
+            .eq('id', id);
+
+        if (error) throw error;
+        loadKhatmahCampaigns();
+    } catch (e) { alert('❌ فشل تغيير الحالة: ' + e.message); }
+}
+
+async function deleteKhatmahCampaign(id) {
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذه الحملة وكل تقدمها؟ لا يمكن التراجع.')) return;
+    try {
+        const { error } = await supabaseClient.from('community_campaigns').delete().eq('id', id);
+        if (error) throw error;
+        loadKhatmahCampaigns();
+    } catch (e) { alert('❌ فشل الحذف: ' + e.message); }
+}
+
+async function loadKhatmahStats() {
+    try {
+        const { data: allProgress, error } = await supabaseClient
+            .from('community_progress')
+            .select('user_name, status, updated_at');
+
+        if (error) throw error;
+
+        // 1. Total unique users
+        const users = new Set(allProgress.map(p => p.user_name).filter(n => n));
+        document.getElementById('khatmahTotalUsers').textContent = users.size;
+
+        // 2. Currently reading
+        const reading = allProgress.filter(p => p.status === 'reading').length;
+        document.getElementById('khatmahCurrentReading').textContent = reading;
+
+        // 3. Completed today
+        const today = new Date().toISOString().split('T')[0];
+        const todayDone = allProgress.filter(p => p.status === 'completed' && p.updated_at.startsWith(today)).length;
+        document.getElementById('khatmahTodayDone').textContent = todayDone;
+
+        // 4. Leaderboard
+        const scores = {};
+        allProgress.forEach(p => {
+            if (p.status === 'completed' && p.user_name) {
+                scores[p.user_name] = (scores[p.user_name] || 0) + 1;
+            }
+        });
+
+        const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+        const lbContainer = document.getElementById('khatmahLeaderboard');
+        const allParticipantsContainer = document.getElementById('khatmahAllParticipants');
+
+        if (sorted.length === 0) {
+            lbContainer.innerHTML = '<div class="empty-state">ℹ️ لا توجد بيانات للمتصدرين حالياً</div>';
+            if (allParticipantsContainer) allParticipantsContainer.innerHTML = '<div class="empty-state">ℹ️ لا توجد بيانات حالياً</div>';
+        } else {
+            // Leaderboard (Top 5)
+            lbContainer.innerHTML = sorted.slice(0, 5).map(([name, score], index) => `
+                <div style="background: var(--body-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.2rem; font-weight: bold; color: var(--accent-color); min-width: 25px;">${index + 1}</span>
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; color: var(--text-primary); font-size: 0.95rem;">${name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">أتمَّ ${score} ورد</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // All Participants
+            if (allParticipantsContainer) {
+                allParticipantsContainer.innerHTML = sorted.map(([name, score]) => `
+                    <div style="background: rgba(0,0,0,0.02); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 0.9rem; color: var(--text-primary);">${name}</div>
+                        <div style="font-size: 0.8rem; background: var(--accent-color); color: white; padding: 2px 8px; border-radius: 10px;">${score} ورد</div>
+                    </div>
+                `).join('');
+            }
+        }
+    } catch (e) {
+        console.error('Error loading stats:', e);
+    }
+}
+
+async function exportKhatmahParticipants() {
+    try {
+        const { data: allProgress, error } = await supabaseClient
+            .from('community_progress')
+            .select('user_name, status, updated_at');
+
+        if (error) throw error;
+
+        // Group by user
+        const scores = {};
+        allProgress.forEach(p => {
+            if (p.status === 'completed' && p.user_name) {
+                scores[p.user_name] = (scores[p.user_name] || 0) + 1;
+            }
+        });
+
+        // Convert to CSV
+        let csvContent = "\ufeff" + "المشارك,عدد الأوراد المكتملة\n";
+        Object.entries(scores).sort((a, b) => b[1] - a[1]).forEach(([name, count]) => {
+            csvContent += `"${name}",${count}\n`;
+        });
+
+        // Create download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `khatmah_participants_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        alert('✅ تم تصدير القائمة بنجاح');
+    } catch (e) {
+        alert('❌ فشل تصدير البيانات: ' + e.message);
+    }
 }
