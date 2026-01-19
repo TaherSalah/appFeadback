@@ -8,6 +8,7 @@ import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:muslimdaily/app/core/services/home_widget_service.dart';
 
 // ==========================================
 // 🧪 Callback مبسط للاختبار
@@ -61,7 +62,8 @@ class AdhanWorkManagerService {
       // check if we really need to reschedule
       if (!forceReschedule &&
           !await _shouldReschedule(coordinates, calculationParams, cityName)) {
-        print('✅ [AdhanWorkManager] Skipping reschedule: Schedules are up-to-date.');
+        print(
+            '✅ [AdhanWorkManager] Skipping reschedule: Schedules are up-to-date.');
         return;
       }
 
@@ -94,6 +96,9 @@ class AdhanWorkManagerService {
       // حفظ حالة الجدولة الحالية
       await _saveCurrentScheduleState(
           coordinates, calculationParams, cityName ?? "Unknown");
+
+      // تحديث الويدجت الشاشة الرئيسية
+      await updateWidget();
 
       print('✅ تم تهيئة خدمة الأذان بنجاح');
     } catch (e, stackTrace) {
@@ -146,7 +151,7 @@ class AdhanWorkManagerService {
     final c = coords ?? await _getSavedCoordinates();
     final p = params ?? await _getSavedCalculationParams();
     final city = cityName ?? await _getCityName();
-    
+
     final prefs = await SharedPreferences.getInstance();
     final manualOffset = prefs.getInt('manual_offset') ?? 0;
     final fOff = prefs.getInt('fajr_offset') ?? 0;
@@ -154,7 +159,7 @@ class AdhanWorkManagerService {
     final aOff = prefs.getInt('asr_offset') ?? 0;
     final mOff = prefs.getInt('maghrib_offset') ?? 0;
     final iOff = prefs.getInt('isha_offset') ?? 0;
-    
+
     // Create a simple signature string
     return "${c.latitude}_${c.longitude}_${p.method.index}_${p.madhab.index}_${city}_${manualOffset}_${fOff}_${dOff}_${aOff}_${mOff}_${iOff}";
   }
@@ -471,6 +476,7 @@ class AdhanWorkManagerService {
         days: days,
       );
       print('✅ تمت إعادة الجدولة بنجاح');
+      await updateWidget();
     } catch (e) {
       print('❌ خطأ في إعادة الجدولة: $e');
     }
@@ -542,7 +548,7 @@ class AdhanWorkManagerService {
       // await AwesomeNotifications()
       //     .cancelNotificationsByChannelKey('fajr_adhan_channel_v4');
       // await AwesomeNotifications()
-      //     .cancelNotificationsByChannelKey('adhan_channel_v4'); 
+      //     .cancelNotificationsByChannelKey('adhan_channel_v4');
       // await AwesomeNotifications()
       //     .cancelNotificationsByChannelKey('post_prayer_dhikr_channel');
 
@@ -554,7 +560,8 @@ class AdhanWorkManagerService {
       await AwesomeNotifications()
           .cancelSchedulesByChannelKey('post_prayer_dhikr_channel');
 
-      print('✅ تم تنظيف الجداول الزمنية بنجاح (مع الحفاظ على الإشعارات الحالية)');
+      print(
+          '✅ تم تنظيف الجداول الزمنية بنجاح (مع الحفاظ على الإشعارات الحالية)');
     } catch (e) {
       print('❌ خطأ في إلغاء المهام: $e');
     }
@@ -723,10 +730,25 @@ class AdhanWorkManagerService {
 
       // 🚀 استخدام NotificationManager لتحديث كافة القنوات (وليس الأذان فقط)
       await NotificationManager.updateAllChannels();
-      
+
       print('✅ تم تحديث جميع قنوات الإشعارات بنجاح');
     } catch (e) {
       print('❌ فشل تحديث قنوات الإشعارات: $e');
+    }
+  }
+
+  Future<void> updateWidget() async {
+    try {
+      final next = await getNextPrayer();
+      if (next != null) {
+        await HomeWidgetService.updateWidget(
+          prayerName: next['name'],
+          prayerTime: next['formattedTime'],
+          city: await _getCityName(),
+        );
+      }
+    } catch (e) {
+      print('❌ فشل تحديث الويدجت: $e');
     }
   }
 }
