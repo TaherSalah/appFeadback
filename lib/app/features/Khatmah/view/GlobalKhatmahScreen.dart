@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/global_khatmah_service.dart';
@@ -11,6 +13,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
+import 'package:muslimdaily/app/features/Khatmah/view/khatmah_certificate_screen.dart';
 
 class GlobalKhatmahScreen extends StatefulWidget {
   const GlobalKhatmahScreen({super.key});
@@ -53,6 +57,16 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     _confettiController = ConfettiController(duration: const Duration(seconds: 5));
     _currentQuote = _quotes[math.Random().nextInt(_quotes.length)];
     _loadData();
+    
+    // Show help dialog on first visit
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final prefs = await SharedPreferences.getInstance();
+      final hasSeenHelp = prefs.getBool('global_khatmah_help_seen') ?? false;
+      if (!hasSeenHelp && mounted) {
+        _showHelpDialog();
+        await prefs.setBool('global_khatmah_help_seen', true);
+      }
+    });
   }
 
   Future<void> _loadData() async {
@@ -221,43 +235,79 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      // backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      // appBar: AppBar(
+      //   title: Text(
+      //     _isDetailView ? 'تفاصيل الختمة' : 'الختمة الجماعية',
+      //     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      //   ),
+      //   leading: _isDetailView ? IconButton(
+      //     icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+      //     onPressed: _backToDashboard,
+      //   ) : null,
+      //   centerTitle: true,
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      //   actions: [
+      //       IconButton(
+      //         icon: const Icon(Icons.share_rounded, color: Colors.white),
+      //         onPressed: _shareProgress,
+      //         tooltip: 'نشر التقدم',
+      //       ),
+      //       IconButton(
+      //         icon: const Icon(Icons.help_outline_rounded, color: Colors.white),
+      //         onPressed: _showHelpDialog,
+      //         tooltip: 'دليل المشاركة',
+      //       ),
+      //     ],
+      //
+      //   flexibleSpace: Container(
+      //     decoration: BoxDecoration(
+      //       gradient: LinearGradient(
+      //         begin: Alignment.topLeft,
+      //         end: Alignment.bottomRight,
+      //         colors: [KColors.primaryColor, KColors.primaryColor.withOpacity(0.7)],
+      //       ),
+      //     ),
+      //   ),
+      // ),
       appBar: AppBar(
+          leading: _isDetailView ? IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+            onPressed: _backToDashboard,
+          ) : null,
         title: Text(
           _isDetailView ? 'تفاصيل الختمة' : 'الختمة الجماعية',
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-        ),
-        leading: _isDetailView ? IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-          onPressed: _backToDashboard,
-        ) : null,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          if (_isDetailView) ...[
-            IconButton(
-              icon: const Icon(Icons.analytics_outlined, color: Colors.white),
-              onPressed: () => _showPersonalAnalytics(),
-              tooltip: 'إحصائياتي',
-            ),
-            IconButton(
-              icon: const Icon(Icons.share_rounded, color: Colors.white),
-              onPressed: _shareProgress,
-              tooltip: 'نشر التقدم',
-            ),
-          ]
-        ],
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [KColors.primaryColor, KColors.primaryColor.withOpacity(0.7)],
-            ),
+          style: GoogleFonts.cairo(
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
           ),
         ),
+        centerTitle: true,
+          actions: [
+              IconButton(
+                icon: const Icon(Icons.share_rounded, color: Colors.white),
+                onPressed: _shareProgress,
+                tooltip: 'نشر التقدم',
+              ),
+              IconButton(
+                icon: const Icon(Icons.help_outline_rounded, color: Colors.white),
+                onPressed: _showHelpDialog,
+                tooltip: 'دليل المشاركة',
+              ),
+            ],
+
+          // flexibleSpace: Container(
+          //   decoration: BoxDecoration(
+          //     gradient: LinearGradient(
+          //       begin: Alignment.topLeft,
+          //       end: Alignment.bottomRight,
+          //       colors: [KColors.primaryColor, KColors.primaryColor.withOpacity(0.7)],
+          //     ),
+          //   ),
+          // ),
       ),
+
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: KColors.primaryColor))
           : _campaigns.isEmpty
@@ -1533,6 +1583,22 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       }
 
       KHelper.showSuccess(message: 'تم تحديث الحالة بنجاح.. جزاك الله خيراً');
+
+      // 🔔 Handle Notifications
+      if (status == 'reading') {
+        final campaign = _campaigns[_selectedCampaignIndex];
+        String label = 'الورد رقم $index';
+        
+        final type = campaign['target_type'] ?? 'juz';
+        if (type == 'juz') label = 'الجزء $index';
+        else if (type == 'surah') label = _surahs.isNotEmpty && index <= _surahs.length ? 'سورة ${_surahs[index-1].name}' : 'السورة رقم $index';
+        
+        await NotificationManager().scheduleCommunityKhatmahReminder(index: index, label: label);
+      } else {
+        // Cancel notification if completed or cancelled
+        await NotificationManager().cancelCommunityKhatmahReminder(index);
+      }
+
     } else {
       KHelper.showError(message: 'فشل التحديث، يرجى التحقق من اتصال الإنترنت');
     }
@@ -1555,6 +1621,70 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         service: _service,
         campaignId: campaignId,
         campaigns: _campaigns,
+      ),
+    );
+  }
+
+  void _showHelpDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showDialog(
+      context: context,
+      builder: (context) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: AlertDialog(
+          backgroundColor: AppThemeColors.cardBackgroundColor(context),
+          shape: BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15.r)),
+          title: Row(
+            children: [
+              Icon(Icons.help_outline_rounded, color: KColors.primaryColor),
+              const SizedBox(width: 10),
+              Text('كيف أشارك؟', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHelpItem('1. اختر الورد', 'تصفح الأجزاء أو السور المتاحة (باللون الرمادي).'),
+                _buildHelpItem('2. احجز القراءة', 'اضغط على الورد واختر "أنا سأقرأه". سيتحول للون الأصفر.'),
+                _buildHelpItem('3. اقرأ بتدبر', 'اقرأ الورد من المصحف أو من التطبيق.'),
+                _buildHelpItem('4. أكد الإتمام', 'بعد الانتهاء، عد للتطبيق واضغط على نفس الورد واختر "تمت القراءة". سيتحول للأخضر.'),
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '💡 ملاحظة: إذا حجزت ورداً ولم تكمله خلال 24 ساعة، سيعود متاحاً للآخرين تلقائياً.',
+                    style: GoogleFonts.cairo(fontSize: 12, color:isDark?Colors.white: Colors.black87),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('فهمت، شكراً', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHelpItem(String title, String desc) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(desc, style: GoogleFonts.cairo(fontSize: 12, color: Colors.grey)),
+        ],
       ),
     );
   }
@@ -1678,6 +1808,38 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                     else
                       ...history.take(15).map((item) => _buildHistoryItem(item, isDark, primaryColor)),
                     const SizedBox(height: 50),
+                    const SizedBox(height: 50),
+                    if (totalCount > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: Center(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => KhatmahCertificateScreen(
+                                    userName: userName,
+                                    contributionCount: totalCount,
+                                    campaignTitle: campaignId != null ? _getCampaignTitleForId(campaignId) : 'ختمة جماعية',
+                                    date: DateTime.now(),
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.workspace_premium_rounded, color: Colors.white),
+                            label: Text(
+                              'استلام شهادة تقدير', 
+                              style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Colors.white)
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.amber[700],
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 );
               },

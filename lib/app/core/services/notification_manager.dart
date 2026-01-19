@@ -775,6 +775,49 @@ class NotificationManager {
     }
   }
 
+  // ==========================================
+  // 🕋 تذكيرات الختمة الجماعية
+  // ==========================================
+
+  Future<void> scheduleCommunityKhatmahReminder({
+    required int index,
+    required String label,
+  }) async {
+    try {
+      // Reminder after 2 hours
+      final scheduledDate = DateTime.now().add(const Duration(hours: 2));
+      
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 10000 + index, // Unique ID range for Khatmah items
+          channelKey: 'quran_channel',
+          title: '📖 تذكير بالختمة الجماعية',
+          body: 'هل قرأت $label؟ لا تنسَ إتمام الورد المحجوز لتفسح المجال لغيرك.',
+          category: NotificationCategory.Reminder,
+          wakeUpScreen: true,
+          payload: {'route': 'global_khatmah'},
+        ),
+        schedule: NotificationCalendar.fromDate(
+          date: scheduledDate,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      );
+      print('✅ تم جدولة تذكير الختمة للورد $index بعد ساعتين');
+    } catch (e) {
+      print('❌ خطأ في جدولة تذكير الختمة: $e');
+    }
+  }
+
+  Future<void> cancelCommunityKhatmahReminder(int index) async {
+    try {
+      await AwesomeNotifications().cancel(10000 + index);
+      print('✅ تم إلغاء تذكير الختمة للورد $index');
+    } catch (e) {
+      print('❌ خطأ في إلغاء تذكير الختمة: $e');
+    }
+  }
+
   // --- Static Listeners ---
 
   @pragma('vm:entry-point')
