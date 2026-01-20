@@ -147,7 +147,7 @@ class MainController extends ControllerMVC {
     },
     {
       "title": "الختمة الجماعية",
-      "icon": "assets/images/koran.png",
+      "icon": "assets/images/viral-marketing.png",
       "navigate": "/globalKhatmah",
       "subtitle": "شارك المجتمع في الختم"
     },

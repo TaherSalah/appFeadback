@@ -215,4 +215,39 @@ class GlobalKhatmahService {
       return [];
     }
   }
+
+  /// Fetch broad community statistics
+  Future<Map<String, dynamic>> getCommunityGlobalStats() async {
+    try {
+      final today = DateTime.now().subtract(const Duration(hours: 24)).toIso8601String();
+      
+      // 1. Total completions all time
+      final totalCompletedResp = await _supabase
+          .from('community_progress')
+          .select('id')
+          .eq('status', 'completed');
+          
+      // 2. Active readers right now
+      final activeReadersResp = await _supabase
+          .from('community_progress')
+          .select('id')
+          .eq('status', 'reading');
+          
+      // 3. Today's completions
+      final todayCompletionsResp = await _supabase
+          .from('community_progress')
+          .select('id')
+          .eq('status', 'completed')
+          .gt('updated_at', today);
+
+      return {
+        'total_completed': (totalCompletedResp as List).length,
+        'active_readers': (activeReadersResp as List).length,
+        'today_completions': (todayCompletionsResp as List).length,
+      };
+    } catch (e) {
+      print('Error fetching global stats: $e');
+      return {'total_completed': 0, 'active_readers': 0, 'today_completions': 0};
+    }
+  }
 }

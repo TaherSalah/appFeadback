@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/services/content_service.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/k_color.dart';
+import 'StoryReaderScreen.dart';
 
 class KidsStoriesScreen extends StatefulWidget {
   const KidsStoriesScreen({super.key});
@@ -17,6 +18,8 @@ class KidsStoriesScreen extends StatefulWidget {
 class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
   bool _isLoading = true;
   List<Map<String, dynamic>> _stories = [];
+  List<Map<String, dynamic>> _filteredStories = [];
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -30,12 +33,23 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
       final data = await ContentService().getKidsStories();
       setState(() {
         _stories = data;
+        _filteredStories = data;
         _isLoading = false;
       });
     } catch (e) {
       debugPrint('Error loading kids stories: $e');
       setState(() => _isLoading = false);
     }
+  }
+
+  void _filterStories(String query) {
+    setState(() {
+      _filteredStories = _stories.where((s) {
+        final title = (s['title'] ?? '').toString().toLowerCase();
+        final content = (s['content'] ?? '').toString().toLowerCase();
+        return title.contains(query.toLowerCase()) || content.contains(query.toLowerCase());
+      }).toList();
+    });
   }
 
   @override
@@ -45,35 +59,115 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: isDark ? const Color(0xFF1A1F36) : const Color(0xFFF0F9FF),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: isDark ? Colors.white : Colors.black),
-            onPressed: () => Navigator.pop(context),
-          ),
-          centerTitle: true,
-          title: Text(
-            'ركن الطفل 👶✨',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: 22.sp,
-              color: const Color(0xFF0EA5E9),
-            ),
-          ),
-        ),
-        body: _isLoading
-            ? const Center(child: CircularProgressIndicator(color: Color(0xFF0EA5E9)))
-            : _stories.isEmpty
-                ? _buildEmptyState(isDark)
-                : ListView.builder(
-                    padding: EdgeInsets.all(16.w),
-                    itemCount: _stories.length,
-                    itemBuilder: (context, index) {
-                      return _buildStoryCard(_stories[index], isDark);
-                    },
+        backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        body: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            // Playful Header
+            SliverAppBar(
+              expandedHeight: 180.h,
+              pinned: true,
+              backgroundColor: const Color(0xFF0EA5E9),
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                    ),
                   ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Positioned(
+                        left: -20,
+                        bottom: -10,
+                        child: Opacity(
+                          opacity: 0.1,
+                          child: Icon(Icons.child_care_rounded, size: 150.sp, color: Colors.white),
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'ركن الطفل المسلم 🧸',
+                            style: GoogleFonts.cairo(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24.sp,
+                              color: Colors.white,
+                              shadows: [Shadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 2))],
+                            ),
+                          ),
+                          Text(
+                            'قصص وعبر ومغامرات جميلة ✨',
+                            style: GoogleFonts.cairo(
+                              fontSize: 14.sp,
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Search Bar
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: _filterStories,
+                    style: GoogleFonts.cairo(fontSize: 14.sp),
+                    decoration: InputDecoration(
+                      hintText: 'ابحث عن قصة جميلة... 🔍',
+                      hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                      prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF0EA5E9)),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Stories List/Grid
+            _isLoading
+                ? const SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: Color(0xFF0EA5E9))))
+                : _filteredStories.isEmpty
+                    ? SliverFillRemaining(child: _buildEmptyState(isDark))
+                    : SliverPadding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => _buildStoryCard(_filteredStories[index], isDark),
+                            childCount: _filteredStories.length,
+                          ),
+                        ),
+                      ),
+          ],
+        ),
       ),
     );
   }
@@ -84,11 +178,12 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text('🌈', style: TextStyle(fontSize: 80.sp)),
-          SizedBox(height: 20.h),
+          SizedBox(height: 10.h),
           Text(
-            'لا توجد قصص حالياً، انتظرنا قريباً!',
+            'لا توجد قصص بهذا الاسم حالياً!',
             style: GoogleFonts.cairo(
-              fontSize: 18.sp,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
               color: isDark ? Colors.white70 : Colors.black54,
             ),
           ),
@@ -98,155 +193,84 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
   }
 
   Widget _buildStoryCard(Map<String, dynamic> story, bool isDark) {
+    const listGradients = [
+      [Color(0xFFE0F2FE), Color(0xFFBAE6FD)], // Blue
+      [Color(0xFFFEF9C3), Color(0xFFFEF08A)], // Yellow
+      [Color(0xFFF0FDF4), Color(0xFFDCFCE7)], // Green
+      [Color(0xFFFDF2F8), Color(0xFFFCE7F3)], // Pink
+    ];
+    final random = (story['id']?.toString().hashCode ?? 0) % listGradients.length;
+    final gradient = listGradients[random];
+
     return Container(
-      margin: EdgeInsets.only(bottom: 20.h),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2D3748) : Colors.white,
-        borderRadius: BorderRadius.circular(25.r),
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(
+          color: isDark ? Colors.white10 : gradient[1],
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.1),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(
-          color: const Color(0xFF0EA5E9).withOpacity(0.3),
-          width: 2,
-        ),
       ),
       child: InkWell(
-        onTap: () => _showStoryDetails(story, isDark),
-        borderRadius: BorderRadius.circular(25.r),
+        onTap: () {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (context) => StoryReaderScreen(story: story)),
+          );
+        },
+        borderRadius: BorderRadius.circular(24.r),
         child: Padding(
-          padding: EdgeInsets.all(20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: EdgeInsets.all(16.w),
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(12.w),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
-                      shape: BoxShape.circle,
+              Container(
+                width: 70.w,
+                height: 70.w,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: gradient),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Center(child: Text(story['emoji'] ?? '📖', style: TextStyle(fontSize: 35.sp))),
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      story['title'] ?? '',
+                      style: GoogleFonts.cairo(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : const Color(0xFF1E293B),
+                      ),
                     ),
-                    child: Text(story['emoji'] ?? '📖', style: TextStyle(fontSize: 30.sp)),
-                  ),
-                  SizedBox(width: 15.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
+                        Icon(Icons.star_rounded, size: 16.sp, color: Colors.amber),
+                        SizedBox(width: 4.w),
                         Text(
-                          story['title'] ?? '',
-                          style: GoogleFonts.cairo(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : const Color(0xFF1E293B),
-                          ),
-                        ),
-                        Row(
-                          children: List.generate(
-                            5,
-                            (i) => Icon(
-                              Icons.star,
-                              size: 16.sp,
-                              color: i < (int.tryParse(story['stars']?.toString() ?? '5') ?? 5)
-                                  ? Colors.amber
-                                  : Colors.grey.shade300,
-                            ),
-                          ),
+                          '${story['stars_reward'] ?? 5} نجوم مكافأة',
+                          style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.amber.shade700),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 15.h),
-              Text(
-                story['content'] ?? '',
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.cairo(
-                  fontSize: 14.sp,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.6,
+                  ],
                 ),
               ),
-              SizedBox(height: 15.h),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'إقرأ القصة ⬅️',
-                  style: GoogleFonts.cairo(
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF0EA5E9),
-                  ),
-                ),
-              ),
+              const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Color(0xFF0EA5E9)),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  void _showStoryDetails(Map<String, dynamic> story, bool isDark) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      pageBuilder: (context, a1, a2) => const SizedBox.shrink(),
-      transitionBuilder: (context, a1, a2, child) {
-        return Transform.scale(
-          scale: a1.value,
-          child: Opacity(
-            opacity: a1.value,
-            child: Directionality(
-              textDirection: TextDirection.rtl,
-              child: AlertDialog(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
-                title: Row(
-                  children: [
-                    Text(story['emoji'] ?? '✨', style: TextStyle(fontSize: 30.sp)),
-                    SizedBox(width: 10.w),
-                    Expanded(
-                      child: Text(
-                        story['title'] ?? '',
-                        style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-                content: SingleChildScrollView(
-                  child: Text(
-                    story['content'] ?? '',
-                    style: GoogleFonts.cairo(fontSize: 16.sp, height: 1.8),
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text('إغلاق', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Share.share('${story['title']}\n\n${story['content']}');
-                    },
-                    icon: const Icon(Icons.share, size: 18),
-                    label: Text('مشاركة', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0EA5E9),
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

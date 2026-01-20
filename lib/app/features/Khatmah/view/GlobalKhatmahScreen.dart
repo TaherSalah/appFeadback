@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/global_khatmah_service.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,6 +24,8 @@ class GlobalKhatmahScreen extends StatefulWidget {
   State<GlobalKhatmahScreen> createState() => _GlobalKhatmahScreenState();
 }
 
+enum _KhatmahMenuAction { analytics, share, help }
+
 class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   final GlobalKhatmahService _service = GlobalKhatmahService();
   List<Map<String, dynamic>> _campaigns = [];
@@ -38,6 +41,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   Set<int> _myClaims = {}; // Track user's own claims locally
   String? _userNickname;
   late ConfettiController _confettiController;
+  Map<String, dynamic> _communityGlobalStats = {'total_completed': 0, 'active_readers': 0, 'today_completions': 0};
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
   final List<String> _quotes = [
     "«خَيْرُكُمْ مَنْ تَعَلَّمَ القُرْآنَ وَعَلَّمَهُ»",
@@ -85,6 +91,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     
     _globalLeaderboard = await _service.getGlobalLeaderboard();
     _recentGlobalActivity = await _service.getRecentGlobalActivity();
+    _communityGlobalStats = await _service.getCommunityGlobalStats();
 
     if (mounted) {
       setState(() => _isLoading = false);
@@ -142,50 +149,256 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     _subscription?.unsubscribe();
     setState(() {
       _isDetailView = false;
+      _searchQuery = '';
+      _searchController.clear();
     });
   }
+  final RegExp nicknameRegex =
+  RegExp(r'^[a-zA-Z\u0600-\u06FF ]+$');
+  String? validateNickname(String value) {
+    final trimmed = value.trim();
+
+    if (trimmed.isEmpty) {
+      return 'الاسم لا يمكن أن يكون فارغًا';
+    }
+
+    if (trimmed.length < 3) {
+      return 'الاسم قصير جدًا';
+    }
+
+    if (trimmed.length > 12) {
+      return 'الاسم طويل جدًا';
+    }
+
+    if (!nicknameRegex.hasMatch(trimmed)) {
+      return 'يُسمح بالحروف فقط بدون أرقام أو رموز';
+    }
+
+    return null; // الاسم صحيح ✅
+  }
+
 
   Future<void> _ensureNickname() async {
+
     if (_userNickname != null && _userNickname!.isNotEmpty) return;
 
     final controller = TextEditingController();
-    await showDialog(
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    const int maxLength = 12;
+    final errorText = validateNickname(controller.text);
+    final isValid = errorText == null;
+    await showGeneralDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text('أدخل اسمك للمنافسة', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('سيظهر اسمك للمشاركين الآخرين عند ختم الأوراد', style: GoogleFonts.cairo(fontSize: 12)),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: 'مثلاً: فاعل خير، أبو محمد...',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      barrierLabel: '',
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (_, __, ___) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: Center(
+            child: Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: StatefulBuilder(
+                builder: (context, setLocalState) {
+                  final errorMessage = validateNickname(controller.text);
+                  final isValid = errorMessage == null;
+
+                  return Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        padding:
+                        const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: isDark
+                                ? [
+                              const Color(0xFF0F2A24),
+                              const Color(0xFF081C18),
+                            ]
+                                : [
+                              const Color(0xFFEFFFFA),
+                              const Color(0xFFDFF5EE),
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.25),
+                              blurRadius: 18,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'أدخل اسمك للمنافسة',
+                              style: GoogleFonts.cairo(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? Colors.white
+                                    : Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'سيظهر هذا الاسم للمشاركين الآخرين',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.cairo(
+                                fontSize: 13.5,
+                                color: isDark
+                                    ? Colors.white70
+                                    : Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Input
+                            TextField(
+                              controller: controller,
+                              maxLength: maxLength,
+                              textAlign: TextAlign.center,
+                              onChanged: (_) =>
+                                  setLocalState(() {}),
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.w600,
+                              ),
+                              decoration: InputDecoration(
+                                counterText: '',
+                                hintText: 'مثلاً: فاعل خير',
+                                filled: true,
+                                fillColor: isDark
+                                    ? Colors.black26
+                                    : Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(14),
+                                  borderSide: BorderSide.none,
+                                ),
+                                errorStyle: GoogleFonts.cairo(fontSize: 11),
+                              ),
+                            ),
+
+                            if (errorMessage != null && controller.text.isNotEmpty)
+                              Padding(
+                                padding:
+                                const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  errorMessage,
+                                  style: GoogleFonts.cairo(
+                                    fontSize: 12,
+                                    color: Colors.redAccent,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+
+                            const SizedBox(height: 18),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      shape:
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(14),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'إلغاء',
+                                      style:
+                                      GoogleFonts.cairo(),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: isValid
+                                        ? () async {
+                                      final prefs = await SharedPreferences.getInstance();
+                                      await prefs.setString(
+                                        'user_khatmah_nickname',
+                                        controller.text.trim(),
+                                      );
+                                      setState(() {
+                                        _userNickname = controller.text.trim();
+                                      });
+                                      Navigator.pop(context);
+                                    }
+                                        : null,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                      Colors.teal,
+                                      shape:
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(14),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'حفظ',
+                                      style:
+                                      GoogleFonts.cairo(),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Icon
+                      Positioned(
+                        top: -30,
+                        left: 0,
+                        right: 0,
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.teal,
+                          child: const Icon(
+                            Icons.person_outline,
+                            size: 34,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
-              textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(),
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              if (controller.text.trim().isNotEmpty) {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setString('user_khatmah_nickname', controller.text.trim());
-                setState(() => _userNickname = controller.text.trim());
-                Navigator.pop(context);
-              }
-            },
-            child: Text('حفظ واستمرار', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: KColors.primaryColor)),
           ),
-        ],
-      ),
+        );
+      },
+      transitionBuilder: (_, anim, __, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(
+            parent: anim,
+            curve: Curves.easeOutBack,
+          ),
+          child: FadeTransition(
+            opacity: anim,
+            child: child,
+          ),
+        );
+      },
     );
   }
+
 
   void _handleRealtimeUpdate(PostgresChangePayload payload) {
     if (!mounted) return;
@@ -273,7 +486,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       // ),
       appBar: AppBar(
           leading: _isDetailView ? IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.green),
             onPressed: _backToDashboard,
           ) : null,
         title: Text(
@@ -285,17 +498,52 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         ),
         centerTitle: true,
           actions: [
-              IconButton(
-                icon: const Icon(Icons.share_rounded, color: Colors.white),
-                onPressed: _shareProgress,
-                tooltip: 'نشر التقدم',
-              ),
-              IconButton(
-                icon: const Icon(Icons.help_outline_rounded, color: Colors.white),
-                onPressed: _showHelpDialog,
-                tooltip: 'دليل المشاركة',
-              ),
-            ],
+            PopupMenuButton<_KhatmahMenuAction>(
+              
+              icon: const Icon(Icons.more_vert_rounded, color: Colors.green),
+              offset: const Offset(0, 50),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              onSelected: (value) {
+                switch (value) {
+                  case _KhatmahMenuAction.analytics:
+                    _showPersonalAnalytics();
+                    break;
+                  case _KhatmahMenuAction.share:
+                    _shareProgress();
+                    break;
+                  case _KhatmahMenuAction.help:
+                    _showHelpDialog();
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                _buildKhatmahMenuItem(
+                  value: _KhatmahMenuAction.analytics,
+                  title: 'إحصائياتي',
+                  subtitle: 'تحليل أدائك ومساهمتك',
+                  icon: Icons.analytics_outlined,
+                  iconColor: Colors.blue,
+                  isDark: isDark,
+                ),
+                _buildKhatmahMenuItem(
+                  value: _KhatmahMenuAction.share,
+                  title: 'نشر التقدم',
+                  subtitle: 'شارك إنجازك مع الآخرين',
+                  icon: Icons.share_rounded,
+                  iconColor: Colors.green,
+                  isDark: isDark,
+                ),
+                _buildKhatmahMenuItem(
+                  value: _KhatmahMenuAction.help,
+                  title: 'دليل المشاركة',
+                  subtitle: 'كيفية استخدام الخدمة',
+                  icon: Icons.help_outline_rounded,
+                  iconColor: Colors.amber,
+                  isDark: isDark,
+                ),
+              ],
+            ),
+          ],
 
           // flexibleSpace: Container(
           //   decoration: BoxDecoration(
@@ -329,11 +577,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       ],
                     )
                   : _buildDashboard(isDark),
-      floatingActionButton: (_isDetailView && _campaigns.isNotEmpty) ? FloatingActionButton(
-        onPressed: _isListening ? _stopListening : _startListening,
-        backgroundColor: _isListening ? Colors.red : KColors.primaryColor,
-        child: Icon(_isListening ? Icons.mic : Icons.mic_none, color: Colors.white),
-      ) : null,
+      floatingActionButton: null,
     );
   }
 
@@ -346,9 +590,17 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
           children: [
+            // 0. Community Global Health
+            _buildGlobalCommunityStats(isDark),
+            const SizedBox(height: 20),
+
             // 1. Personal Impact Header
             _buildPersonalImpactHeader(isDark),
-            const SizedBox(height: 30),
+            const SizedBox(height: 10),
+            
+            // 2. Quick Action
+            _buildQuickJoinButton(isDark),
+            const SizedBox(height: 20),
             
             // 2. Active Khatmahs Title
             _buildSectionTitle(isDark, 'الختمات الجارية', Icons.auto_stories_rounded),
@@ -402,86 +654,105 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     final completed = _userStats['total_completed'] ?? 0;
     final percent = _userStats['community_percent'] ?? '0';
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark 
-            ? [KColors.primaryColor.withOpacity(0.2), Colors.black26]
-            : [KColors.primaryColor.withOpacity(0.05), Colors.white],
+    return InkWell(
+      onTap: () => _showPersonalAnalytics(),
+      borderRadius: BorderRadius.circular(30),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark 
+              ? [KColors.primaryColor.withOpacity(0.2), Colors.black26]
+              : [KColors.primaryColor.withOpacity(0.05), Colors.white],
+          ),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: KColors.primaryColor.withOpacity(0.1)),
+          boxShadow: isDark ? null : [
+            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 8)),
+          ],
         ),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: KColors.primaryColor.withOpacity(0.1)),
-        boxShadow: isDark ? null : [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 8)),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: KColors.primaryColor.withOpacity(0.1),
-                  shape: BoxShape.circle,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: KColors.primaryColor.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.analytics_rounded, color: KColors.primaryColor, size: 28),
                 ),
-                child: Icon(Icons.analytics_rounded, color: KColors.primaryColor, size: 28),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'تأثيرك في المجتمع',
-                      style: GoogleFonts.cairo(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        color: isDark ? Colors.white : Colors.black87,
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'تأثيرك في المجتمع',
+                            style: GoogleFonts.cairo(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: KColors.primaryColor.withOpacity(0.5)),
+                        ],
                       ),
-                    ),
-                    Text(
-                      _userNickname ?? 'مشارك مجهول',
-                      style: GoogleFonts.cairo(
-                        fontSize: 13,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
+                      Text(
+                        _userNickname ?? 'مشارك مجهول',
+                        style: GoogleFonts.cairo(
+                          fontSize: 13,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 25),
-          Row(
-            children: [
-              Expanded(
-                child: _buildDashboardStatCard(
-                  'ختماتي', 
-                  completed.toString(), 
-                  Icons.check_circle_rounded, 
-                  Colors.green, 
-                  isDark,
+              ],
+            ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildDashboardStatCard(
+                    'ختماتي', 
+                    completed.toString(), 
+                    Icons.check_circle_rounded, 
+                    Colors.green, 
+                    isDark,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: _buildDashboardStatCard(
-                  'نسبة التأثير', 
-                  '$percent%', 
-                  Icons.speed_rounded, 
-                  Colors.cyan, 
-                  isDark,
+                const SizedBox(width: 15),
+                Expanded(
+                  child: _buildDashboardStatCard(
+                    'نسبة التأثير', 
+                    '$percent%', 
+                    Icons.speed_rounded, 
+                    Colors.cyan, 
+                    isDark,
+                  ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'اضغط لعرض التحليل التفصيلي للختمات',
+              style: GoogleFonts.cairo(
+                fontSize: 10,
+                color: KColors.primaryColor.withOpacity(0.6),
+                fontWeight: FontWeight.bold,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -820,15 +1091,21 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     setState(() {
       _lastWords = result.recognizedWords;
     });
-    
-    if (result.finalResult) {
+
+    if (result.finalResult && _lastWords.isNotEmpty) {
       _stopListening();
       _processVoiceCommand(_lastWords);
     }
   }
 
   void _processVoiceCommand(String text) {
-    print('Voice command: $text');
+    if (text.isEmpty) return;
+
+    setState(() {
+      _searchQuery = text;
+      _searchController.text = text;
+    });
+
     final index = _parseSpeechToIndex(text);
     if (index != -1) {
       final statusData = _progress.firstWhere(
@@ -836,9 +1113,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         orElse: () => {'status': 'available'},
       );
       final status = statusData['status'] ?? 'available';
-      
+
       final type = _campaigns[_selectedCampaignIndex]['target_type'] ?? 'juz';
-      final targetTotal = _campaigns[_selectedCampaignIndex]['target_total'] ?? 0;
       String label = '';
       if (type == 'juz') label = 'جزء $index';
       else if (type == 'surah') label = _surahs.isNotEmpty && index <= _surahs.length ? _surahs[index-1].name : 'سورة $index';
@@ -846,12 +1122,18 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
       _showActionSheet(index, status, label);
     } else {
-      final targetTotal = _campaigns[_selectedCampaignIndex]['target_total'] ?? 0;
-      KHelper.showError(message: 'عذراً، لم أستطع تحديد الجزء. حاول قول "رقم واحد" أو "الجزء العاشر"');
+      final type = _campaigns[_selectedCampaignIndex]['target_type'] ?? 'juz';
+      String typeLabel = type == 'juz' ? 'رقم الجزء' : (type == 'surah' ? 'اسم السورة' : 'رقم الصفحة');
+      KHelper.showNeutralFlushBar(context, 'تم تحديث البحث: "$text". حاول قول $typeLabel لتحديد الورد مباشرة.');
     }
   }
 
   int _parseSpeechToIndex(String text) {
+    // 0. Convert Arabic digits (١٢٣) to Latin (123)
+    String processedText = text.replaceAllMapped(RegExp(r'[٠-٩]'), (match) {
+      return (match.group(0)!.codeUnitAt(0) - 0x0660).toString();
+    });
+
     final Map<String, int> numberMap = {
       'واحد': 1, '1': 1, 'أول': 1, 'اول': 1,
       'اثنين': 2, '2': 2, 'ثاني': 2, 'تاني': 2,
@@ -881,23 +1163,22 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     };
 
     // Clean text and check exact matches first
-    final cleanText = text.trim();
+    final cleanText = processedText.trim();
     if (numberMap.containsKey(cleanText)) return numberMap[cleanText]!;
 
     // Extract numbers from text
     final words = cleanText.split(' ');
-    final targetTotal = _campaigns[_selectedCampaignIndex]['target_total'] ?? 0;
+    final campaign = _campaigns[_selectedCampaignIndex];
+    final targetTotal = campaign['target_total'] ?? 0;
     
-    // Check for combined patterns like "الجزء العاشر"
+    // Check for combined patterns 
     for (var i = 0; i < words.length; i++) {
-      final word = words[i];
-      if (numberMap.containsKey(word)) return numberMap[word]!;
-      
-      // Also check if current and next word form a number (e.g., "أحد عشر")
-      if (i < words.length - 1) {
-        final combined = "$word ${words[i+1]}";
-        if (numberMap.containsKey(combined)) return numberMap[combined]!;
-      }
+        final word = words[i];
+        if (numberMap.containsKey(word)) return numberMap[word]!;
+        if (i < words.length - 1) {
+            final combined = "$word ${words[i+1]}";
+            if (numberMap.containsKey(combined)) return numberMap[combined]!;
+        }
     }
 
     // Fallback to digit parsing
@@ -906,10 +1187,12 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       if (intVal != null && intVal > 0 && intVal <= targetTotal) return intVal;
     }
 
-    // Extended mapping for juz/surah names if needed
-    if (_campaigns[_selectedCampaignIndex]['target_type'] == 'surah') {
+    // Extended mapping for surah names with normalization
+    if (campaign['target_type'] == 'surah') {
+      final normalizedVoiceInput = _normalizeArabic(cleanText);
       for (int i = 0; i < _surahs.length; i++) {
-        if (cleanText.contains(_surahs[i].name)) return i + 1;
+        final normalizedSurahName = _normalizeArabic(_surahs[i].name);
+        if (normalizedVoiceInput.contains(normalizedSurahName)) return i + 1;
       }
     }
 
@@ -945,6 +1228,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           ),
           SliverToBoxAdapter(
             child: _buildMotivationalQuote(isDark),
+          ),
+          SliverToBoxAdapter(
+            child: _buildSearchBar(isDark, campaign),
           ),
           SliverPadding(
             padding: const EdgeInsets.all(16),
@@ -1295,10 +1581,11 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              '🎉 تم إنجاز ${(percent * campaign['target_total']).toInt()} من ${campaign['target_total']} حتى الآن!',
+              ' تم إنجاز ${(percent * campaign['target_total']).toInt()} من ${campaign['target_total']} حتى الآن!',
               style: GoogleFonts.cairo(fontSize: 10, color: Colors.green, fontWeight: FontWeight.bold),
             ),
           )
+          // 🎉
         else if (_progress.any((p) => (p['status'] ?? '') == 'reading'))
           Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -1363,6 +1650,39 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   Widget _buildGridSliver(Map<String, dynamic> campaign) {
     final int total = (campaign['target_total'] ?? 0) as int;
     if (total == 0) return const SliverToBoxAdapter(child: SizedBox());
+
+    final filteredIndices = List.generate(total, (i) => i + 1).where((itemIndex) {
+      if (_searchQuery.isEmpty) return true;
+      
+      final type = campaign['target_type'] ?? 'juz';
+      String label = '';
+      if (type == 'juz') label = 'جزء $itemIndex';
+      else if (type == 'surah') label = _surahs.isNotEmpty && itemIndex <= _surahs.length ? _surahs[itemIndex-1].name : 'سورة $itemIndex';
+      else label = 'صفحة $itemIndex';
+      
+      final normalizedQuery = _normalizeArabic(_searchQuery);
+      final normalizedLabel = _normalizeArabic(label);
+      
+      return normalizedLabel.contains(normalizedQuery) || 
+             itemIndex.toString().contains(_searchQuery);
+    }).toList();
+    
+    if (filteredIndices.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40),
+            child: Column(
+              children: [
+                Icon(Icons.search_off_rounded, size: 48, color: Colors.grey.withOpacity(0.5)),
+                const SizedBox(height: 10),
+                Text('لا توجد نتائج للبحث', style: GoogleFonts.cairo(color: Colors.grey)),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1373,14 +1693,14 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final itemIndex = index + 1;
+          final itemIndex = filteredIndices[index];
           final statusData = _progress.firstWhere(
             (p) => p['item_index'] == itemIndex,
             orElse: () => {'status': 'available'},
           );
           return _buildItemCard(campaign, itemIndex, statusData);
         },
-        childCount: total,
+        childCount: filteredIndices.length,
       ),
     );
   }
@@ -1621,6 +1941,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         service: _service,
         campaignId: campaignId,
         campaigns: _campaigns,
+        selectedCampaignIndex: _selectedCampaignIndex,
+        onSwitchCampaign: _switchCampaign,
       ),
     );
   }
@@ -1688,6 +2010,243 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       ),
     );
   }
+
+  PopupMenuItem<_KhatmahMenuAction> _buildKhatmahMenuItem({
+    required _KhatmahMenuAction value,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconColor,
+    required bool isDark,
+  }) {
+    return PopupMenuItem<_KhatmahMenuAction>(
+      
+      value: value,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: iconColor, size: 20),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.cairo(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.cairo(
+                        fontSize: 10,
+                        color: isDark ? Colors.white60 : Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  Widget _buildGlobalCommunityStats(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: KColors.primaryColor.withOpacity(isDark ? 0.1 : 0.05),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: KColors.primaryColor.withOpacity(0.1)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(Icons.public_rounded, color: KColors.primaryColor, size: 24),
+              const SizedBox(width: 10),
+              Text(
+                'إحصائيات المجتمع العالمي',
+                style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              _buildSimpleStat('إجمالي الختمات', _communityGlobalStats['total_completed'].toString(), Icons.auto_awesome, Colors.amber),
+              _buildSimpleStat('يقرؤون الآن', _communityGlobalStats['active_readers'].toString(), Icons.people_rounded, Colors.blue),
+              _buildSimpleStat('إنجازات اليوم', _communityGlobalStats['today_completions'].toString(), Icons.today_rounded, Colors.green),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSimpleStat(String label, String value, IconData icon, Color color) {
+    return Expanded(
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 5),
+          Text(
+            value,
+            style: GoogleFonts.cairo(
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              height: 1,
+            ),
+          ),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.cairo(
+              fontSize: 10,
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar(bool isDark, Map<String, dynamic> campaign) {
+    final type = campaign['target_type'] ?? 'juz';
+    String hint = 'البحث عن رقم الجزء...';
+    if (type == 'surah') hint = 'البحث عن اسم السورة...';
+    else if (type == 'page') hint = 'البحث عن رقم الصفحة...';
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppThemeColors.cardBackgroundColor(context),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppThemeColors.cardBorderColor(context),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (val) => setState(() => _searchQuery = val),
+        style: GoogleFonts.cairo(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: isDark ? Colors.white : Colors.black87,
+        ),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: GoogleFonts.cairo(
+            fontSize: 13,
+            color: isDark ? Colors.white54 : Colors.grey[500],
+          ),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            size: 22,
+            color: isDark ? Colors.white70 : KColors.primaryColor.withOpacity(0.7),
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_searchQuery.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.cancel_rounded, size: 20),
+                  color: isDark ? Colors.white38 : Colors.grey[400],
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() => _searchQuery = '');
+                  },
+                ),
+              Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: IconButton(
+                  icon: Icon(
+                    _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
+                    size: 22,
+                    color: _isListening ? Colors.redAccent : KColors.primaryColor,
+                  ),
+                  onPressed: _isListening ? _stopListening : _startListening,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickJoinButton(bool isDark) {
+    return Container(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: _joinRandomWard,
+        icon: const Icon(Icons.bolt_rounded, size: 20, color: Colors.amber),
+        label: Text('انضم إلى ورد عشوائي الآن', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          foregroundColor: isDark ? Colors.amber[300] : Colors.amber[800],
+          side: BorderSide(color: Colors.amber.withOpacity(0.4), width: 1.5),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        ),
+      ),
+    );
+  }
+
+  void _joinRandomWard() {
+    if (_campaigns.isEmpty) return;
+    
+    // Pick first active campaign for simplicity
+    setState(() {
+      _selectedCampaignIndex = 0;
+      _isDetailView = true;
+    });
+    _switchCampaign(0);
+    
+    KHelper.showSuccess(message: 'تم اختيار حملة الختمة الجارية، ابحث عن ورد متاح!');
+  }
+
+  String _normalizeArabic(String text) {
+    if (text.isEmpty) return text;
+    // Normalize Alef variants
+    String normalized = text.replaceAll(RegExp(r'[أإآ]'), 'ا');
+    // Normalize Te Marbuta
+    normalized = normalized.replaceAll('ة', 'ه');
+    // Normalize Ya variants
+    normalized = normalized.replaceAll('ى', 'ي');
+    // Remove Arabic diacritics (Tashkeel)
+    normalized = normalized.replaceAll(RegExp(r'[\u064B-\u0652]'), '');
+    return normalized.trim();
+  }
 }
 
 class _AnalyticsBottomSheet extends StatelessWidget {
@@ -1695,11 +2254,15 @@ class _AnalyticsBottomSheet extends StatelessWidget {
   final GlobalKhatmahService service;
   final String? campaignId;
   final List<Map<String, dynamic>> campaigns;
+  final int selectedCampaignIndex;
+  final Function(int) onSwitchCampaign;
 
   const _AnalyticsBottomSheet({
     required this.userName, 
     required this.service, 
     required this.campaigns,
+    required this.selectedCampaignIndex,
+    required this.onSwitchCampaign,
     this.campaignId,
   });
 
@@ -1771,7 +2334,7 @@ class _AnalyticsBottomSheet extends StatelessWidget {
               future: service.getUserKhatmahStats(userName, campaignId: campaignId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator(color: primaryColor));
+                  return Center(child: KLoading.progressIOSIndicator(context: context,progressColor: primaryColor));
                 }
                 
                 final stats = snapshot.data ?? {'total_completed': 0, 'community_percent': '0', 'history': []};

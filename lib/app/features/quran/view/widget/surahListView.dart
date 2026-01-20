@@ -63,7 +63,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
         .replaceAll('ة', 'ه')
         .replaceAll('ى', 'ي')
         .replaceAll(RegExp(r'[\u064B-\u0652]'), ''); // Remove harakat
-  }
+  } 
 
   void _filterSurahs(String query) {
     if (query.isEmpty) {
