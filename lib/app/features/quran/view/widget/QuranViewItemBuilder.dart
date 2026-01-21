@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:ui';
+import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
@@ -9,12 +13,23 @@ import 'package:quran_library/quran.dart';
 import 'package:quran_library/quran_library.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../core/utils/style/responsive_util.dart';
+// Unused import removed
 
-enum _QuranMenuAction { audio, orientation, background }
+enum _QuranMenuAction { audio, orientation, background, wakelock, brightness }
 
 class QuranViewItemBuilder extends StatefulWidget {
-  const QuranViewItemBuilder({super.key});
+  final int? initialPage;
+  final VoidCallback? onConfirm;
+  final String? campaignId;
+  final int? targetPage;
+
+  const QuranViewItemBuilder({
+    super.key,
+    this.initialPage,
+    this.onConfirm,
+    this.campaignId,
+    this.targetPage,
+  });
 
   @override
   _QuranViewItemBuilderState createState() => _QuranViewItemBuilderState();
@@ -196,6 +211,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   @override
   void initState() {
     super.initState();
+    _initBrightness();
     _loadPages();
     // فتح التدوير داخل صفحة القرآن
     SystemChrome.setPreferredOrientations([
@@ -204,11 +220,130 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-
   }
+
+  bool _isAutoScrolling = false;
+  double _scrollSpeed = 1.0; // Seconds per pixel approx or just step
+  Timer? _scrollTimer;
+  bool _showAutoScrollControls = true;
+  Timer? _hideControlsTimer;
+
+  bool _keepScreenOn = false;
+  double _currentBrightness = 0.5;
+
+  Future<void> _initBrightness() async {
+    try {
+      _currentBrightness = await ScreenBrightness().current;
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint("Error initializing brightness: $e");
+    }
+  }
+
+  void _toggleWakelock() {
+    setState(() {
+      _keepScreenOn = !_keepScreenOn;
+      WakelockPlus.toggle(enable: _keepScreenOn);
+    });
+    KHelper.showSuccess(
+      message: _keepScreenOn
+          ? 'تم تفعيل وضع منع انطفاء الشاشة'
+          : 'تم إيقاف وضع منع انطفاء الشاشة',
+    );
+  }
+
+  void _startHideTimer() {
+    _hideControlsTimer?.cancel();
+    _hideControlsTimer = Timer(const Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() {
+          _showAutoScrollControls = false;
+        });
+        _showHintOnce();
+      }
+    });
+  }
+
+  Future<void> _showHintOnce() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasShown = prefs.getBool('has_shown_scroll_hint') ?? false;
+    if (!hasShown && mounted) {
+      KHelper.showSuccess(
+        message: 'تم إخفاء الأدوات.. انقر مرتين في أي مكان لإظهارها ثانية ',
+      );
+      await prefs.setBool('has_shown_scroll_hint', true);
+    }
+  }
+
+  void _resetHideTimer() {
+    if (!_showAutoScrollControls) {
+      setState(() {
+        _showAutoScrollControls = true;
+      });
+    }
+    _startHideTimer();
+  }
+
+  void _toggleAutoScroll() {
+    setState(() {
+      _isAutoScrolling = !_isAutoScrolling;
+      if (_isAutoScrolling) {
+        _showAutoScrollControls = true;
+        _startHideTimer();
+        if (!_verticalMode) {
+          _toggleMode(); // Force vertical mode for auto-scroll
+        }
+        // Wait for the controller to be attached after setState
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _startAutoScroll();
+        });
+      } else {
+        _stopAutoScroll();
+        _hideControlsTimer?.cancel();
+      }
+    });
+  }
+
+  void _startAutoScroll() {
+    _scrollTimer?.cancel();
+    // 16ms for ~60fps smoothness
+    _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+      if (_verticalController != null &&
+          _verticalController!.hasClients &&
+          _isAutoScrolling) {
+        final maxScroll = _verticalController!.position.maxScrollExtent;
+        final currentPos = _verticalController!.offset;
+
+        if (currentPos >= maxScroll) {
+          _toggleAutoScroll(); // Stop at the end
+          return;
+        }
+
+        // Adjust step for 16ms interval (prev was 100ms)
+        // Previous speed 5*speed at 100ms = 50*speed pixels per second
+        // New step at 16ms for same speed = (50*speed) / 60 frames approx = 0.8
+        double moveStep = 0.8 * _scrollSpeed;
+        _verticalController!.jumpTo(currentPos + moveStep);
+      } else if (!_isAutoScrolling) {
+        timer.cancel();
+      }
+    });
+  }
+
+  void _stopAutoScroll() {
+    _scrollTimer?.cancel();
+    _scrollTimer = null;
+  }
+
   Future<void> _loadPages() async {
     final prefs = await SharedPreferences.getInstance();
-    final lastPage = prefs.getInt('last_page') ?? 0; // افتراضي الصفحة الأولى
+
+    // Determine the storage key (campaign-specific or global)
+    final key = widget.campaignId != null
+        ? 'last_page_${widget.campaignId}'
+        : 'last_page';
+
+    int lastPage = widget.initialPage ?? (prefs.getInt(key) ?? 0);
     _bookmarkedPage = prefs.getInt('bookmark_page');
 
     setState(() {
@@ -221,10 +356,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     });
   }
 
-  void _saveCurrentPage(int page) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('last_page', page);
-  }
+  // Method replaced by inline logic in _handlePageChanged
 
   // void _saveBookmark(int page) async {
   //   final prefs = await SharedPreferences.getInstance();
@@ -299,7 +431,10 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    _scrollTimer?.cancel();
+    _hideControlsTimer?.cancel();
     _verticalController?.dispose();
+    WakelockPlus.disable(); // Ensure wakelock is off when leaving
     super.dispose();
   }
 
@@ -308,12 +443,11 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       _currentPage = page;
     });
 
-    // KHelper.showSuccess(
-    //   message: "الصفحة رقم ${page + 1}",
-    //   backgroundColor: Colors.black,
-    // );
-
-    _saveCurrentPage(page);
+    final prefs = await SharedPreferences.getInstance();
+    final key = widget.campaignId != null
+        ? 'last_page_${widget.campaignId}'
+        : 'last_page';
+    await prefs.setInt(key, page);
   }
 
   void _toggleMode() {
@@ -326,8 +460,11 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         _verticalController?.dispose();
         _verticalController = PageController(initialPage: _currentPage ?? 0);
       } else {
-        // في الوضع الأفقي، الباكدج نفسها هتبدأ من _currentPage (عن طريق pageIndex)
-        // لا نحتاج لأي PageController هنا
+        // في الوضع الأفقي، نوقف التمرير التلقائي إذا كان يعمل
+        if (_isAutoScrolling) {
+          _isAutoScrolling = false;
+          _stopAutoScroll();
+        }
       }
     });
   }
@@ -459,6 +596,12 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       case _QuranMenuAction.background:
                         _showBackgroundColorPicker();
                         break;
+                      case _QuranMenuAction.wakelock:
+                        _toggleWakelock();
+                        break;
+                      case _QuranMenuAction.brightness:
+                        _showBrightnessPicker();
+                        break;
                     }
                   },
                   itemBuilder: (ctx) => [
@@ -474,6 +617,46 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                         colors: [
                           Colors.green.withOpacity(0.1),
                           Colors.green.withOpacity(0.05),
+                        ],
+                      ),
+                      isDark: isDark,
+                    ),
+
+                    // السطوع
+                    _buildMenuItem(
+                      context: ctx,
+                      value: _QuranMenuAction.brightness,
+                      title: 'سطوع الشاشة',
+                      subtitle: 'التحكم في درجة سطوع المصحف',
+                      iconData: Icons.brightness_6,
+                      iconColor: Colors.orange,
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.orange.withOpacity(0.1),
+                          Colors.orange.withOpacity(0.05),
+                        ],
+                      ),
+                      isDark: isDark,
+                    ),
+
+                    // منع انطفاء الشاشة
+                    _buildMenuItem(
+                      context: ctx,
+                      value: _QuranMenuAction.wakelock,
+                      title: _keepScreenOn
+                          ? 'السماح بقفل الشاشة'
+                          : 'عدم انطفاء الشاشة',
+                      subtitle: _keepScreenOn
+                          ? 'تفعيل القفل التلقائي'
+                          : 'إبقاء الشاشة مفعلة دائماً',
+                      iconData: _keepScreenOn
+                          ? Icons.screen_lock_portrait
+                          : Icons.screen_lock_rotation,
+                      iconColor: Colors.purple,
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.purple.withOpacity(0.1),
+                          Colors.purple.withOpacity(0.05),
                         ],
                       ),
                       isDark: isDark,
@@ -524,6 +707,41 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   ],
                 ),
               ),
+              if (widget.onConfirm != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: IconButton(
+                    onPressed: widget.onConfirm,
+                    tooltip: 'تأكيد إتمام القراءة',
+                    icon: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.teal.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.teal.withOpacity(0.5)),
+                      ),
+                      child: const Icon(
+                        Icons.check_rounded,
+                        color: Colors.teal,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              // Auto-Scroll Toggle
+              IconButton(
+                onPressed: _toggleAutoScroll,
+                tooltip: _isAutoScrolling
+                    ? 'إيقاف التمرير التلقائي'
+                    : 'تشغيل التمرير التلقائي',
+                icon: Icon(
+                  _isAutoScrolling
+                      ? Icons.pause_circle_filled_rounded
+                      : Icons.play_circle_fill_rounded,
+                  color: _isAutoScrolling ? Colors.orange : Colors.teal,
+                  size: 24,
+                ),
+              ),
             ],
 
             centerTitle: true,
@@ -537,84 +755,170 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             ),
           ),
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: _showBackgroundColorPicker,
-        //   child: const Icon(Icons.color_lens),
-        // ),
+        // floatingActionButton: widget.onConfirm != null
+        //     ? Container(
+        //         margin:
+        //             const EdgeInsets.only(bottom: 50), // ابعده عن مكان التقليب
+        //         child: FloatingActionButton.extended(
+        //           onPressed: widget.onConfirm,
+        //           backgroundColor: Colors.teal,
+        //           icon: const Icon(Icons.check_circle_outline,
+        //               color: Colors.white),
+        //           label: Text('تمت القراءة ✅',
+        //               style: GoogleFonts.cairo(
+        //                   color: Colors.white, fontWeight: FontWeight.bold)),
+        //         ),
+        //       )
+        //     : null,
+        body: GestureDetector(
+          onDoubleTap: () {
+            if (_isAutoScrolling) {
+              _resetHideTimer();
+            }
+          },
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  if (widget.targetPage != null && widget.initialPage != null)
+                    _buildProgressIndicator(),
+                  Expanded(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.zero,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.black, Colors.black87],
+                        ),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: EdgeInsets.zero,
+                          child: _currentPage == null
+                              ? Center(
+                                  child: KLoading.progressIOSIndicator(
+                                      context: context),
+                                )
+                              : _verticalMode
+                                  ? PageView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      controller: _verticalController,
+                                      itemCount: 604,
+                                      onPageChanged: _handlePageChanged,
+                                      itemBuilder: (context, index) {
+                                        return QuranLibraryScreen(
+                                          backgroundColor: _backgroundColor,
+                                          withPageView: false,
+                                          isDark: isDark,
+                                          pageIndex: index,
+                                          ayahIconColor: ayahIconColor,
+                                          topBottomQuranStyle: topBottomStyle,
+                                          ayahMenuStyle: ayahMenuStyle,
+                                          indexTabStyle: indexTabStyle,
+                                          useDefaultAppBar: false,
+                                          parentContext: context,
+                                        );
+                                      },
+                                    )
+                                  : QuranLibraryScreen(
+                                      backgroundColor: _backgroundColor,
 
-        body: Stack(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.zero,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black, Colors.black87],
-                ),
+                                      // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
+                                      withPageView: true,
+                                      isDark: isDark,
+                                      pageIndex: _currentPage!,
+                                      ayahIconColor: ayahIconColor,
+                                      topBottomQuranStyle: topBottomStyle,
+                                      ayahMenuStyle: ayahMenuStyle,
+                                      indexTabStyle: indexTabStyle,
+                                      useDefaultAppBar: false,
+                                      parentContext: context,
+                                      onPageChanged: (page) {
+                                        _handlePageChanged(page);
+                                      },
+                                    ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: EdgeInsets.zero,
-                  child: _currentPage == null
-                      ? Center(
-                          child:
-                              KLoading.progressIOSIndicator(context: context),
-                        )
-                      : _verticalMode
-                          ? PageView.builder(
-                              scrollDirection: Axis.vertical,
-                              controller: _verticalController,
-                              itemCount: 604,
-                              onPageChanged: _handlePageChanged,
-                              itemBuilder: (context, index) {
-                                return QuranLibraryScreen(
-                                  backgroundColor: _backgroundColor,
-                                  withPageView: false,
-                                  isDark: isDark,
-                                  pageIndex: index,
-                                  ayahIconColor: ayahIconColor,
-                                  topBottomQuranStyle: topBottomStyle,
-                                  ayahMenuStyle: ayahMenuStyle,
-                                  indexTabStyle: indexTabStyle,
-                                  useDefaultAppBar: false,
-                                  parentContext: context,
-                                );
-                              },
-                            )
-                          : QuranLibraryScreen(
-                              backgroundColor: _backgroundColor,
+              if (_isCurrentPageBookmarked)
+                const Positioned(
+                  top: 80,
+                  left: 20,
+                  child: Icon(
+                    Icons.bookmark,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                ),
+              if (_isAutoScrolling) _buildAutoScrollControls(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-                              // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
-                              withPageView: true,
-                              isDark: isDark,
-                              pageIndex: _currentPage!,
-                              ayahIconColor: ayahIconColor,
-                              topBottomQuranStyle: topBottomStyle,
-                              ayahMenuStyle: ayahMenuStyle,
-                              indexTabStyle: indexTabStyle,
-                              useDefaultAppBar: false,
-                              parentContext: context,
-                              onPageChanged: (page) {
-                                _handlePageChanged(page);
-                              },
-                            ),
-                ),
-              ),
+  Widget _buildAutoScrollControls() {
+    if (!_showAutoScrollControls) return const SizedBox.shrink();
+
+    return Positioned(
+      bottom: 60,
+      left: 30,
+      right: 30,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.3), // مور ترانسبيرنت
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.teal.withOpacity(0.3)),
             ),
-            if (_isCurrentPageBookmarked)
-              const Positioned(
-                top: 0,
-                right: 160, // أو left في حال أردت
-                child: Icon(
-                  Icons.bookmark,
-                  color: Colors.orange,
-                  size: 30,
+            child: Row(
+              children: [
+                const Icon(Icons.speed, color: Colors.white70, size: 16),
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 2,
+                      thumbShape:
+                          const RoundSliderThumbShape(enabledThumbRadius: 6),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 14),
+                    ),
+                    child: Slider(
+                      value: _scrollSpeed,
+                      min: 0.1,
+                      max: 5.0,
+                      activeColor: Colors.teal.withOpacity(0.8),
+                      inactiveColor: Colors.white12,
+                      onChangeStart: (_) => _hideControlsTimer?.cancel(),
+                      onChangeEnd: (_) => _startHideTimer(),
+                      onChanged: (value) {
+                        setState(() {
+                          _scrollSpeed = value;
+                        });
+                      },
+                    ),
+                  ),
                 ),
-              ),
-          ],
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  onPressed: _toggleAutoScroll,
+                  icon: const Icon(Icons.stop_circle,
+                      color: Colors.redAccent, size: 20),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -692,8 +996,48 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     );
   }
 
-// أو تصميم بديل بلمسة إسلامية أكثر
-  PopupMenuItem<_QuranMenuAction> _buildIslamicMenuItem({
+  void _showBrightnessPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(builder: (context, setModalState) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xff1E1E1E) : const Color(0xFFF7EFE0),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'سطوع الشاشة',
+                style: GoogleFonts.cairo(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.teal[800],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Slider(
+                value: _currentBrightness,
+                activeColor: Colors.teal,
+                onChanged: (value) async {
+                  setModalState(() => _currentBrightness = value);
+                  setState(() => _currentBrightness = value);
+                  try {
+                    await ScreenBrightness().setScreenBrightness(value);
+                  } catch (_) {}
+                },
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildIslamicMenuItem({
     required BuildContext context,
     required _QuranMenuAction value,
     required String title,
@@ -770,6 +1114,43 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               color: isDark ? Colors.teal[300] : Colors.brown[600],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgressIndicator() {
+    if (_currentPage == null ||
+        widget.initialPage == null ||
+        widget.targetPage == null) {
+      return const SizedBox.shrink();
+    }
+
+    // Normalize progress between initial and target
+    int totalPages = (widget.targetPage! - widget.initialPage!).abs() + 1;
+    int currentRelative = (_currentPage! - widget.initialPage!).abs() + 1;
+    double progress =
+        totalPages > 0 ? (currentRelative / totalPages).clamp(0.0, 1.0) : 1.0;
+
+    return Container(
+      height: 4,
+      width: double.infinity,
+      color: Colors.white10,
+      child: FractionallySizedBox(
+        alignment: Alignment.centerRight,
+        widthFactor: progress,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.teal,
+            borderRadius: BorderRadius.circular(2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.teal.withOpacity(0.5),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
         ),
       ),
     );

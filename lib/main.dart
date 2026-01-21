@@ -47,8 +47,6 @@ Future<void> main() async {
     await _initAppServices();
   } catch (e, s) {
     print('❌ خطأ في تهيئة التطبيق: $e\n$s');
-    // We can't do much here if the root app fails to start,
-    // but the error will be handled by the MashkahApp if needed or just crash.
   }
 
   runApp(

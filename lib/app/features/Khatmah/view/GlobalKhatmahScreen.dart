@@ -16,6 +16,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/khatmah_certificate_screen.dart';
+import 'package:muslimdaily/app/features/quran/quranView.dart';
+import 'package:quran/quran.dart' as quran;
 
 class GlobalKhatmahScreen extends StatefulWidget {
   const GlobalKhatmahScreen({super.key});
@@ -34,14 +36,22 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   List<Map<String, dynamic>> _progress = [];
   List<Map<String, dynamic>> _globalLeaderboard = [];
   List<Map<String, dynamic>> _recentGlobalActivity = [];
-  Map<String, dynamic> _userStats = {'total_completed': 0, 'community_percent': '0', 'history': []};
+  Map<String, dynamic> _userStats = {
+    'total_completed': 0,
+    'community_percent': '0',
+    'history': []
+  };
   List<SurahModel> _surahs = [];
   bool _isLoading = true;
   RealtimeChannel? _subscription;
   Set<int> _myClaims = {}; // Track user's own claims locally
   String? _userNickname;
   late ConfettiController _confettiController;
-  Map<String, dynamic> _communityGlobalStats = {'total_completed': 0, 'active_readers': 0, 'today_completions': 0};
+  Map<String, dynamic> _communityGlobalStats = {
+    'total_completed': 0,
+    'active_readers': 0,
+    'today_completions': 0
+  };
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
@@ -60,10 +70,11 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 5));
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 5));
     _currentQuote = _quotes[math.Random().nextInt(_quotes.length)];
     _loadData();
-    
+
     // Show help dialog on first visit
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final prefs = await SharedPreferences.getInstance();
@@ -77,18 +88,18 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
-    
+
     // 1. Load Campaigns
     _campaigns = await _service.getActiveCampaigns();
-    
+
     // 2. Load Global Stats & Activity
     final prefs = await SharedPreferences.getInstance();
     _userNickname = prefs.getString('user_khatmah_nickname');
-    
+
     if (_userNickname != null) {
       _userStats = await _service.getUserKhatmahStats(_userNickname!);
     }
-    
+
     _globalLeaderboard = await _service.getGlobalLeaderboard();
     _recentGlobalActivity = await _service.getRecentGlobalActivity();
     _communityGlobalStats = await _service.getCommunityGlobalStats();
@@ -98,15 +109,31 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     }
   }
 
+  /// Refresh user statistics after completing parts
+  Future<void> _refreshUserStats() async {
+    if (_userNickname == null || _userNickname!.isEmpty) return;
+
+    try {
+      final updatedStats = await _service.getUserKhatmahStats(_userNickname!);
+      if (mounted) {
+        setState(() {
+          _userStats = updatedStats;
+        });
+      }
+    } catch (e) {
+      print('Error refreshing user stats: $e');
+    }
+  }
+
   Future<void> _switchCampaign(int index) async {
     if (index >= _campaigns.length) return;
-    
+
     // Unsubscribe from previous
     _subscription?.unsubscribe();
-    
+
     final campaign = _campaigns[index];
     final campaignId = campaign['id'];
-    
+
     // Clear old state
     setState(() {
       _selectedCampaignIndex = index;
@@ -115,20 +142,17 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
     // Load new progress
     _progress = await _service.getCampaignProgress(campaignId);
-    
-    // Load Surahs if needed
-    if (campaign['target_type'] == 'surah') {
-      _surahs = await loadQuranFromAssets();
-    } else {
-      _surahs = [];
-    }
+
+    // Load Surahs for all campaigns to enable Quran navigation
+    _surahs = await loadQuranFromAssets();
 
     // Run Smart Auto-Release cleanup
     await _service.autoReleaseExpiredClaims(campaignId);
 
     // Load my claims from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    final savedClaims = prefs.getStringList('my_global_claims_$campaignId') ?? [];
+    final savedClaims =
+        prefs.getStringList('my_global_claims_$campaignId') ?? [];
     _myClaims = savedClaims.map((e) => int.parse(e)).toSet();
 
     // Subscribe to new real-time updates
@@ -153,8 +177,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       _searchController.clear();
     });
   }
-  final RegExp nicknameRegex =
-  RegExp(r'^[a-zA-Z\u0600-\u06FF ]+$');
+
+  final RegExp nicknameRegex = RegExp(r'^[a-zA-Z\u0600-\u06FF ]+$');
   String? validateNickname(String value) {
     final trimmed = value.trim();
 
@@ -177,9 +201,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     return null; // الاسم صحيح ✅
   }
 
-
   Future<void> _ensureNickname() async {
-
     if (_userNickname != null && _userNickname!.isNotEmpty) return;
 
     final controller = TextEditingController();
@@ -199,7 +221,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             child: Dialog(
               backgroundColor: Colors.transparent,
               insetPadding:
-              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: StatefulBuilder(
                 builder: (context, setLocalState) {
                   final errorMessage = validateNickname(controller.text);
@@ -209,8 +231,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     clipBehavior: Clip.none,
                     children: [
                       Container(
-                        padding:
-                        const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                        padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24),
                           gradient: LinearGradient(
@@ -218,13 +239,13 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                             end: Alignment.bottomLeft,
                             colors: isDark
                                 ? [
-                              const Color(0xFF0F2A24),
-                              const Color(0xFF081C18),
-                            ]
+                                    const Color(0xFF0F2A24),
+                                    const Color(0xFF081C18),
+                                  ]
                                 : [
-                              const Color(0xFFEFFFFA),
-                              const Color(0xFFDFF5EE),
-                            ],
+                                    const Color(0xFFEFFFFA),
+                                    const Color(0xFFDFF5EE),
+                                  ],
                           ),
                           boxShadow: [
                             BoxShadow(
@@ -242,9 +263,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                               style: GoogleFonts.cairo(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: isDark
-                                    ? Colors.white
-                                    : Colors.black87,
+                                color: isDark ? Colors.white : Colors.black87,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -253,9 +272,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                               textAlign: TextAlign.center,
                               style: GoogleFonts.cairo(
                                 fontSize: 13.5,
-                                color: isDark
-                                    ? Colors.white70
-                                    : Colors.black87,
+                                color: isDark ? Colors.white70 : Colors.black87,
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -265,8 +282,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                               controller: controller,
                               maxLength: maxLength,
                               textAlign: TextAlign.center,
-                              onChanged: (_) =>
-                                  setLocalState(() {}),
+                              onChanged: (_) => setLocalState(() {}),
                               style: GoogleFonts.cairo(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -274,22 +290,20 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                 counterText: '',
                                 hintText: 'مثلاً: فاعل خير',
                                 filled: true,
-                                fillColor: isDark
-                                    ? Colors.black26
-                                    : Colors.white,
+                                fillColor:
+                                    isDark ? Colors.black26 : Colors.white,
                                 border: OutlineInputBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(14),
+                                  borderRadius: BorderRadius.circular(14),
                                   borderSide: BorderSide.none,
                                 ),
                                 errorStyle: GoogleFonts.cairo(fontSize: 11),
                               ),
                             ),
 
-                            if (errorMessage != null && controller.text.isNotEmpty)
+                            if (errorMessage != null &&
+                                controller.text.isNotEmpty)
                               Padding(
-                                padding:
-                                const EdgeInsets.only(top: 8),
+                                padding: const EdgeInsets.only(top: 8),
                                 child: Text(
                                   errorMessage,
                                   style: GoogleFonts.cairo(
@@ -310,16 +324,13 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                       Navigator.pop(context);
                                     },
                                     style: OutlinedButton.styleFrom(
-                                      shape:
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(14),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
                                       ),
                                     ),
                                     child: Text(
                                       'إلغاء',
-                                      style:
-                                      GoogleFonts.cairo(),
+                                      style: GoogleFonts.cairo(),
                                     ),
                                   ),
                                 ),
@@ -328,30 +339,29 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                   child: ElevatedButton(
                                     onPressed: isValid
                                         ? () async {
-                                      final prefs = await SharedPreferences.getInstance();
-                                      await prefs.setString(
-                                        'user_khatmah_nickname',
-                                        controller.text.trim(),
-                                      );
-                                      setState(() {
-                                        _userNickname = controller.text.trim();
-                                      });
-                                      Navigator.pop(context);
-                                    }
+                                            final prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            await prefs.setString(
+                                              'user_khatmah_nickname',
+                                              controller.text.trim(),
+                                            );
+                                            setState(() {
+                                              _userNickname =
+                                                  controller.text.trim();
+                                            });
+                                            Navigator.pop(context);
+                                          }
                                         : null,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                      Colors.teal,
-                                      shape:
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(14),
+                                      backgroundColor: Colors.teal,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
                                       ),
                                     ),
                                     child: Text(
                                       'حفظ',
-                                      style:
-                                      GoogleFonts.cairo(),
+                                      style: GoogleFonts.cairo(),
                                     ),
                                   ),
                                 ),
@@ -399,26 +409,26 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     );
   }
 
-
   void _handleRealtimeUpdate(PostgresChangePayload payload) {
     if (!mounted) return;
-    
+
     final newRecord = payload.newRecord;
     if (newRecord.isEmpty) return;
-    
+
     final index = newRecord['item_index'] as int?;
     if (index == null) return;
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         setState(() {
-          final existingIndex = _progress.indexWhere((p) => p['item_index'] == index);
+          final existingIndex =
+              _progress.indexWhere((p) => p['item_index'] == index);
           if (existingIndex != -1) {
             _progress[existingIndex] = Map<String, dynamic>.from(newRecord);
           } else {
             _progress.add(Map<String, dynamic>.from(newRecord));
           }
-          
+
           if (_completionPercent >= 1.0) {
             _confettiController.play();
           }
@@ -432,7 +442,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     final campaign = _campaigns[_selectedCampaignIndex];
     final total = campaign['target_total'] ?? 0;
     if (total == 0) return 0;
-    final completed = _progress.where((p) => (p['status'] ?? '') == 'completed').length;
+    final completed =
+        _progress.where((p) => (p['status'] ?? '') == 'completed').length;
     return (completed / total).clamp(0.0, 1.0);
   }
 
@@ -485,10 +496,13 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       //   ),
       // ),
       appBar: AppBar(
-          leading: _isDetailView ? IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.green),
-            onPressed: _backToDashboard,
-          ) : null,
+        leading: _isDetailView
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: Colors.green),
+                onPressed: _backToDashboard,
+              )
+            : null,
         title: Text(
           _isDetailView ? 'تفاصيل الختمة' : 'الختمة الجماعية',
           style: GoogleFonts.cairo(
@@ -497,70 +511,71 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           ),
         ),
         centerTitle: true,
-          actions: [
-            PopupMenuButton<_KhatmahMenuAction>(
-              
-              icon: const Icon(Icons.more_vert_rounded, color: Colors.green),
-              offset: const Offset(0, 50),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              onSelected: (value) {
-                switch (value) {
-                  case _KhatmahMenuAction.analytics:
-                    _showPersonalAnalytics();
-                    break;
-                  case _KhatmahMenuAction.share:
-                    _shareProgress();
-                    break;
-                  case _KhatmahMenuAction.help:
-                    _showHelpDialog();
-                    break;
-                }
-              },
-              itemBuilder: (context) => [
-                _buildKhatmahMenuItem(
-                  value: _KhatmahMenuAction.analytics,
-                  title: 'إحصائياتي',
-                  subtitle: 'تحليل أدائك ومساهمتك',
-                  icon: Icons.analytics_outlined,
-                  iconColor: Colors.blue,
-                  isDark: isDark,
-                ),
-                _buildKhatmahMenuItem(
-                  value: _KhatmahMenuAction.share,
-                  title: 'نشر التقدم',
-                  subtitle: 'شارك إنجازك مع الآخرين',
-                  icon: Icons.share_rounded,
-                  iconColor: Colors.green,
-                  isDark: isDark,
-                ),
-                _buildKhatmahMenuItem(
-                  value: _KhatmahMenuAction.help,
-                  title: 'دليل المشاركة',
-                  subtitle: 'كيفية استخدام الخدمة',
-                  icon: Icons.help_outline_rounded,
-                  iconColor: Colors.amber,
-                  isDark: isDark,
-                ),
-              ],
-            ),
-          ],
+        actions: [
+          PopupMenuButton<_KhatmahMenuAction>(
+            icon: const Icon(Icons.more_vert_rounded, color: Colors.green),
+            offset: const Offset(0, 50),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            onSelected: (value) {
+              switch (value) {
+                case _KhatmahMenuAction.analytics:
+                  _showPersonalAnalytics();
+                  break;
+                case _KhatmahMenuAction.share:
+                  _shareProgress();
+                  break;
+                case _KhatmahMenuAction.help:
+                  _showHelpDialog();
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              _buildKhatmahMenuItem(
+                value: _KhatmahMenuAction.analytics,
+                title: 'إحصائياتي',
+                subtitle: 'تحليل أدائك ومساهمتك',
+                icon: Icons.analytics_outlined,
+                iconColor: Colors.blue,
+                isDark: isDark,
+              ),
+              _buildKhatmahMenuItem(
+                value: _KhatmahMenuAction.share,
+                title: 'نشر التقدم',
+                subtitle: 'شارك إنجازك مع الآخرين',
+                icon: Icons.share_rounded,
+                iconColor: Colors.green,
+                isDark: isDark,
+              ),
+              _buildKhatmahMenuItem(
+                value: _KhatmahMenuAction.help,
+                title: 'دليل المشاركة',
+                subtitle: 'كيفية استخدام الخدمة',
+                icon: Icons.help_outline_rounded,
+                iconColor: Colors.amber,
+                isDark: isDark,
+              ),
+            ],
+          ),
+        ],
 
-          // flexibleSpace: Container(
-          //   decoration: BoxDecoration(
-          //     gradient: LinearGradient(
-          //       begin: Alignment.topLeft,
-          //       end: Alignment.bottomRight,
-          //       colors: [KColors.primaryColor, KColors.primaryColor.withOpacity(0.7)],
-          //     ),
-          //   ),
-          // ),
+        // flexibleSpace: Container(
+        //   decoration: BoxDecoration(
+        //     gradient: LinearGradient(
+        //       begin: Alignment.topLeft,
+        //       end: Alignment.bottomRight,
+        //       colors: [KColors.primaryColor, KColors.primaryColor.withOpacity(0.7)],
+        //     ),
+        //   ),
+        // ),
       ),
 
       body: _isLoading
-          ? Center(child: CircularProgressIndicator(color: KColors.primaryColor))
+          ? Center(
+              child: CircularProgressIndicator(color: KColors.primaryColor))
           : _campaigns.isEmpty
               ? _buildNoCampaign()
-              : _isDetailView 
+              : _isDetailView
                   ? Stack(
                       children: [
                         _buildMainContent(isDark),
@@ -570,7 +585,13 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                             confettiController: _confettiController,
                             blastDirectionality: BlastDirectionality.explosive,
                             shouldLoop: false,
-                            colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange, Colors.purple],
+                            colors: const [
+                              Colors.green,
+                              Colors.blue,
+                              Colors.pink,
+                              Colors.orange,
+                              Colors.purple
+                            ],
                             createParticlePath: _drawStar,
                           ),
                         ),
@@ -597,33 +618,36 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             // 1. Personal Impact Header
             _buildPersonalImpactHeader(isDark),
             const SizedBox(height: 10),
-            
+
             // 2. Quick Action
             _buildQuickJoinButton(isDark),
             const SizedBox(height: 20),
-            
+
             // 2. Active Khatmahs Title
-            _buildSectionTitle(isDark, 'الختمات الجارية', Icons.auto_stories_rounded),
+            _buildSectionTitle(
+                isDark, 'الختمات الجارية', Icons.auto_stories_rounded),
             const SizedBox(height: 15),
-            
+
             // 3. Campaigns List
             ...List.generate(_campaigns.length, (index) {
               return _buildCampaignCard(isDark, _campaigns[index], index);
             }),
-            
+
             const SizedBox(height: 30),
-            
+
             // 4. Global Leaderboard
             if (_globalLeaderboard.isNotEmpty) ...[
-              _buildSectionTitle(isDark, 'قائمة الصدارة (أبرز المشاركين)', Icons.emoji_events_rounded),
+              _buildSectionTitle(isDark, 'قائمة الصدارة (أبرز المشاركين)',
+                  Icons.emoji_events_rounded),
               const SizedBox(height: 15),
               _buildGlobalLeaderboard(isDark),
               const SizedBox(height: 30),
             ],
-            
+
             // 5. Recent Activity Feed
             if (_recentGlobalActivity.isNotEmpty) ...[
-              _buildSectionTitle(isDark, 'آخر مساهمات المجتمع', Icons.record_voice_over_rounded),
+              _buildSectionTitle(isDark, 'آخر مساهمات المجتمع',
+                  Icons.record_voice_over_rounded),
               const SizedBox(height: 15),
               _buildRecentGlobalActivity(isDark),
             ],
@@ -664,15 +688,20 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: isDark 
-              ? [KColors.primaryColor.withOpacity(0.2), Colors.black26]
-              : [KColors.primaryColor.withOpacity(0.05), Colors.white],
+            colors: isDark
+                ? [KColors.primaryColor.withOpacity(0.2), Colors.black26]
+                : [KColors.primaryColor.withOpacity(0.05), Colors.white],
           ),
           borderRadius: BorderRadius.circular(30),
           border: Border.all(color: KColors.primaryColor.withOpacity(0.1)),
-          boxShadow: isDark ? null : [
-            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 8)),
-          ],
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8)),
+                ],
         ),
         child: Column(
           children: [
@@ -684,7 +713,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     color: KColors.primaryColor.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.analytics_rounded, color: KColors.primaryColor, size: 28),
+                  child: Icon(Icons.analytics_rounded,
+                      color: KColors.primaryColor, size: 28),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
@@ -702,7 +732,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                               color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
-                          Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: KColors.primaryColor.withOpacity(0.5)),
+                          Icon(Icons.arrow_back_ios_new_rounded,
+                              size: 14,
+                              color: KColors.primaryColor.withOpacity(0.5)),
                         ],
                       ),
                       Text(
@@ -723,20 +755,20 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               children: [
                 Expanded(
                   child: _buildDashboardStatCard(
-                    'ختماتي', 
-                    completed.toString(), 
-                    Icons.check_circle_rounded, 
-                    Colors.green, 
+                    'ختماتي',
+                    completed.toString(),
+                    Icons.check_circle_rounded,
+                    Colors.green,
                     isDark,
                   ),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
                   child: _buildDashboardStatCard(
-                    'نسبة التأثير', 
-                    '$percent%', 
-                    Icons.speed_rounded, 
-                    Colors.cyan, 
+                    'نسبة التأثير',
+                    '$percent%',
+                    Icons.speed_rounded,
+                    Colors.cyan,
                     isDark,
                   ),
                 ),
@@ -757,7 +789,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     );
   }
 
-  Widget _buildDashboardStatCard(String label, String value, IconData icon, Color color, bool isDark) {
+  Widget _buildDashboardStatCard(
+      String label, String value, IconData icon, Color color, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -805,19 +838,22 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           final name = entry['user_name'];
           final count = entry['completed_count'];
           final isTop = index < 3;
-          
+
           return Container(
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isTop ? Colors.amber.withOpacity(isDark ? 0.05 : 0.03) : Colors.transparent,
+              color: isTop
+                  ? Colors.amber.withOpacity(isDark ? 0.05 : 0.03)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(15),
             ),
             child: Row(
               children: [
                 CircleAvatar(
                   radius: 15,
-                  backgroundColor: isTop ? Colors.amber : Colors.grey.withOpacity(0.2),
+                  backgroundColor:
+                      isTop ? Colors.amber : Colors.grey.withOpacity(0.2),
                   child: Text(
                     '${index + 1}',
                     style: GoogleFonts.cairo(
@@ -857,15 +893,19 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       children: _recentGlobalActivity.map((activity) {
         final name = activity['user_name'] ?? 'مشارك';
         final index = activity['item_index'];
-        final campaignTitle = activity['community_campaigns']?['title'] ?? 'حمـلة';
+        final campaignTitle =
+            activity['community_campaigns']?['title'] ?? 'حمـلة';
         final type = activity['community_campaigns']?['target_type'] ?? 'juz';
-        final typeLabel = type == 'juz' ? 'جزء' : (type == 'surah' ? 'سورة' : 'صفحة');
-        
+        final typeLabel =
+            type == 'juz' ? 'جزء' : (type == 'surah' ? 'سورة' : 'صفحة');
+
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withOpacity(0.03) : Colors.blueGrey.withOpacity(0.02),
+            color: isDark
+                ? Colors.white.withOpacity(0.03)
+                : Colors.blueGrey.withOpacity(0.02),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.grey.withOpacity(0.1)),
           ),
@@ -877,7 +917,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   color: Colors.green.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.flash_on_rounded, color: Colors.green, size: 20),
+                child: const Icon(Icons.flash_on_rounded,
+                    color: Colors.green, size: 20),
               ),
               const SizedBox(width: 15),
               Expanded(
@@ -888,14 +929,20 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       fontSize: 13,
                     ),
                     children: [
-                      TextSpan(text: name, style: const TextStyle(fontWeight: FontWeight.w900)),
+                      TextSpan(
+                          text: name,
+                          style: const TextStyle(fontWeight: FontWeight.w900)),
                       const TextSpan(text: ' أتم قراءة '),
                       TextSpan(
-                        text: '$typeLabel $index', 
-                        style: TextStyle(color: KColors.primaryColor, fontWeight: FontWeight.bold),
+                        text: '$typeLabel $index',
+                        style: TextStyle(
+                            color: KColors.primaryColor,
+                            fontWeight: FontWeight.bold),
                       ),
                       const TextSpan(text: ' في '),
-                      TextSpan(text: campaignTitle, style: const TextStyle(fontStyle: FontStyle.italic)),
+                      TextSpan(
+                          text: campaignTitle,
+                          style: const TextStyle(fontStyle: FontStyle.italic)),
                     ],
                   ),
                 ),
@@ -916,7 +963,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     try {
       final dt = DateTime.parse(timestamp.toString());
       final diff = DateTime.now().difference(dt);
-      
+
       if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} د';
       if (diff.inHours < 24) return 'منذ ${diff.inHours} س';
       return '${dt.day}/${dt.month}';
@@ -925,21 +972,29 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     }
   }
 
-  Widget _buildCampaignCard(bool isDark, Map<String, dynamic> campaign, int index) {
+  Widget _buildCampaignCard(
+      bool isDark, Map<String, dynamic> campaign, int index) {
     final title = campaign['title'] ?? 'حمـلة';
     final targetType = campaign['target_type'] ?? 'juz';
-    final typeLabel = targetType == 'juz' ? 'أجزاء' : (targetType == 'surah' ? 'سور' : 'صفحات');
+    final typeLabel = targetType == 'juz'
+        ? 'أجزاء'
+        : (targetType == 'surah' ? 'سور' : 'صفحات');
     final completedCount = campaign['completed_count'] ?? 0;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: KColors.primaryColor.withOpacity(0.2)),
-        boxShadow: isDark ? null : [
-          BoxShadow(color: KColors.primaryColor.withOpacity(0.05), blurRadius: 15, offset: const Offset(0, 8)),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                    color: KColors.primaryColor.withOpacity(0.05),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8)),
+              ],
       ),
       child: InkWell(
         onTap: () => _switchCampaign(index),
@@ -981,16 +1036,19 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       color: KColors.primaryColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Icon(Icons.keyboard_arrow_left_rounded, color: KColors.primaryColor, size: 24),
+                    child: Icon(Icons.keyboard_arrow_left_rounded,
+                        color: KColors.primaryColor, size: 24),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
               Row(
                 children: [
-                  _buildMiniStat(Icons.auto_awesome, '$completedCount ختمة مكتملة', Colors.amber),
+                  _buildMiniStat(Icons.auto_awesome,
+                      '$completedCount ختمة مكتملة', Colors.amber),
                   const SizedBox(width: 15),
-                  _buildMiniStat(Icons.people_rounded, 'نشط الآن', Colors.green),
+                  _buildMiniStat(
+                      Icons.people_rounded, 'نشط الآن', Colors.green),
                 ],
               ),
               const SizedBox(height: 15),
@@ -999,11 +1057,17 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [KColors.primaryColor, KColors.primaryColor.withOpacity(0.7)],
+                    colors: [
+                      KColors.primaryColor,
+                      KColors.primaryColor.withOpacity(0.7)
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
-                    BoxShadow(color: KColors.primaryColor.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4)),
+                    BoxShadow(
+                        color: KColors.primaryColor.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4)),
                   ],
                 ),
                 child: Center(
@@ -1031,7 +1095,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         const SizedBox(width: 5),
         Text(
           label,
-          style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
+          style: GoogleFonts.cairo(
+              fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
         ),
       ],
     );
@@ -1049,8 +1114,11 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     final fullAngle = degToRad(360);
     path.moveTo(size.width, halfWidth);
     for (double step = 0; step < fullAngle; step += degreesPerStep) {
-      path.lineTo(halfWidth + externalRadius * math.cos(step), halfWidth + externalRadius * math.sin(step));
-      path.lineTo(halfWidth + internalRadius * math.cos(step + halfDegreesPerStep), halfWidth + internalRadius * math.sin(step + halfDegreesPerStep));
+      path.lineTo(halfWidth + externalRadius * math.cos(step),
+          halfWidth + externalRadius * math.sin(step));
+      path.lineTo(
+          halfWidth + internalRadius * math.cos(step + halfDegreesPerStep),
+          halfWidth + internalRadius * math.sin(step + halfDegreesPerStep));
     }
     path.close();
     return path;
@@ -1065,7 +1133,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         '📊 وصلنا الآن إلى انجاز $percent% من الختمة المباركة.\n'
         '✨ ساهم معنا بقراءة جزء أو سورة واجعل لك أثراً في ختم كتاب الله.\n'
         '📲 حمل تطبيق رفيق المسلم اليومي وشارك الآن!';
-     Share.share(text);
+    Share.share(text);
   }
 
   void _startListening() async {
@@ -1116,15 +1184,23 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
       final type = _campaigns[_selectedCampaignIndex]['target_type'] ?? 'juz';
       String label = '';
-      if (type == 'juz') label = 'جزء $index';
-      else if (type == 'surah') label = _surahs.isNotEmpty && index <= _surahs.length ? _surahs[index-1].name : 'سورة $index';
-      else label = 'صفحة $index';
+      if (type == 'juz')
+        label = 'جزء $index';
+      else if (type == 'surah')
+        label = _surahs.isNotEmpty && index <= _surahs.length
+            ? _surahs[index - 1].name
+            : 'سورة $index';
+      else
+        label = 'صفحة $index';
 
       _showActionSheet(index, status, label);
     } else {
       final type = _campaigns[_selectedCampaignIndex]['target_type'] ?? 'juz';
-      String typeLabel = type == 'juz' ? 'رقم الجزء' : (type == 'surah' ? 'اسم السورة' : 'رقم الصفحة');
-      KHelper.showNeutralFlushBar(context, 'تم تحديث البحث: "$text". حاول قول $typeLabel لتحديد الورد مباشرة.');
+      String typeLabel = type == 'juz'
+          ? 'رقم الجزء'
+          : (type == 'surah' ? 'اسم السورة' : 'رقم الصفحة');
+      KHelper.showNeutralFlushBar(context,
+          'تم تحديث البحث: "$text". حاول قول $typeLabel لتحديد الورد مباشرة.');
     }
   }
 
@@ -1135,31 +1211,96 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     });
 
     final Map<String, int> numberMap = {
-      'واحد': 1, '1': 1, 'أول': 1, 'اول': 1,
-      'اثنين': 2, '2': 2, 'ثاني': 2, 'تاني': 2,
-      'ثلاثة': 3, 'ثلاثه': 3, '3': 3, 'ثالث': 3,
-      'اربعة': 4, 'أربعة': 4, '4': 4, 'رابع': 4,
-      'خمسة': 5, 'خمسه': 5, '5': 5, 'خامس': 5,
-      'ستة': 6, 'سته': 6, '6': 6, 'سادس': 6,
-      'سبعة': 7, 'سبعه': 7, '7': 7, 'سابع': 7,
-      'ثمانية': 8, 'ثمانيه': 8, '8': 8, 'ثامن': 8,
-      'تسعة': 9, 'تسعه': 9, '9': 9, 'تاسع': 9,
-      'عشرة': 10, 'عشره': 10, 'العاشر': 10, '10': 10,
-      'أحد عشر': 11, '11': 11, 'اثنا عشر': 12, '12': 12,
-      'ثلاثة عشر': 13, '13': 13, 'أربعة عشر': 14, '14': 14,
-      'خمسة عشر': 15, '15': 15, 'ستة عشر': 16, '16': 16,
-      'سبعة عشر': 17, '17': 17, 'ثمانية عشر': 18, '18': 18,
-      'تسعة عشر': 19, '19': 19, 'عشرون': 20, '20': 20,
-      'واحد وعشرون': 21, 'واحد وعشرين': 21, '21': 21,
-      'اثنان وعشرون': 22, 'اثنين وعشرين': 22, '22': 22,
-      'ثلاثة وعشرون': 23, 'ثلاثه وعشرين': 23, '23': 23,
-      'أربعة وعشرون': 24, 'اربعه وعشرين': 24, '24': 24,
-      'خمسة وعشرون': 25, 'خمسه وعشرين': 25, '25': 25,
-      'ستة وعشرون': 26, 'سته وعشرين': 26, '26': 26,
-      'سبعة وعشرون': 27, 'سبعه وعشرين': 27, '27': 27,
-      'ثمانية وعشرون': 28, 'ثمانيه وعشرين': 28, '28': 28,
-      'تسعة وعشرون': 29, 'تسعه وعشرين': 29, '29': 29,
-      'ثلاثون': 30, 'ثلاثين': 30, '30': 30,
+      'واحد': 1,
+      '1': 1,
+      'أول': 1,
+      'اول': 1,
+      'اثنين': 2,
+      '2': 2,
+      'ثاني': 2,
+      'تاني': 2,
+      'ثلاثة': 3,
+      'ثلاثه': 3,
+      '3': 3,
+      'ثالث': 3,
+      'اربعة': 4,
+      'أربعة': 4,
+      '4': 4,
+      'رابع': 4,
+      'خمسة': 5,
+      'خمسه': 5,
+      '5': 5,
+      'خامس': 5,
+      'ستة': 6,
+      'سته': 6,
+      '6': 6,
+      'سادس': 6,
+      'سبعة': 7,
+      'سبعه': 7,
+      '7': 7,
+      'سابع': 7,
+      'ثمانية': 8,
+      'ثمانيه': 8,
+      '8': 8,
+      'ثامن': 8,
+      'تسعة': 9,
+      'تسعه': 9,
+      '9': 9,
+      'تاسع': 9,
+      'عشرة': 10,
+      'عشره': 10,
+      'العاشر': 10,
+      '10': 10,
+      'أحد عشر': 11,
+      '11': 11,
+      'اثنا عشر': 12,
+      '12': 12,
+      'ثلاثة عشر': 13,
+      '13': 13,
+      'أربعة عشر': 14,
+      '14': 14,
+      'خمسة عشر': 15,
+      '15': 15,
+      'ستة عشر': 16,
+      '16': 16,
+      'سبعة عشر': 17,
+      '17': 17,
+      'ثمانية عشر': 18,
+      '18': 18,
+      'تسعة عشر': 19,
+      '19': 19,
+      'عشرون': 20,
+      '20': 20,
+      'واحد وعشرون': 21,
+      'واحد وعشرين': 21,
+      '21': 21,
+      'اثنان وعشرون': 22,
+      'اثنين وعشرين': 22,
+      '22': 22,
+      'ثلاثة وعشرون': 23,
+      'ثلاثه وعشرين': 23,
+      '23': 23,
+      'أربعة وعشرون': 24,
+      'اربعه وعشرين': 24,
+      '24': 24,
+      'خمسة وعشرون': 25,
+      'خمسه وعشرين': 25,
+      '25': 25,
+      'ستة وعشرون': 26,
+      'سته وعشرين': 26,
+      '26': 26,
+      'سبعة وعشرون': 27,
+      'سبعه وعشرين': 27,
+      '27': 27,
+      'ثمانية وعشرون': 28,
+      'ثمانيه وعشرين': 28,
+      '28': 28,
+      'تسعة وعشرون': 29,
+      'تسعه وعشرين': 29,
+      '29': 29,
+      'ثلاثون': 30,
+      'ثلاثين': 30,
+      '30': 30,
     };
 
     // Clean text and check exact matches first
@@ -1170,15 +1311,15 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     final words = cleanText.split(' ');
     final campaign = _campaigns[_selectedCampaignIndex];
     final targetTotal = campaign['target_total'] ?? 0;
-    
-    // Check for combined patterns 
+
+    // Check for combined patterns
     for (var i = 0; i < words.length; i++) {
-        final word = words[i];
-        if (numberMap.containsKey(word)) return numberMap[word]!;
-        if (i < words.length - 1) {
-            final combined = "$word ${words[i+1]}";
-            if (numberMap.containsKey(combined)) return numberMap[combined]!;
-        }
+      final word = words[i];
+      if (numberMap.containsKey(word)) return numberMap[word]!;
+      if (i < words.length - 1) {
+        final combined = "$word ${words[i + 1]}";
+        if (numberMap.containsKey(combined)) return numberMap[combined]!;
+      }
     }
 
     // Fallback to digit parsing
@@ -1260,7 +1401,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
     if (scores.isEmpty) return const SizedBox();
 
-    final sortedEntries = scores.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    final sortedEntries = scores.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -1269,15 +1411,15 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         children: [
           Row(
             children: [
-              const Icon(Icons.emoji_events_rounded, color: Colors.amber, size: 24),
+              const Icon(Icons.emoji_events_rounded,
+                  color: Colors.amber, size: 24),
               const SizedBox(width: 10),
               Text(
                 'لوحة الصدارة المحلية',
                 style: GoogleFonts.cairo(
-                  fontSize: 18, 
-                  fontWeight: FontWeight.w900, 
-                  color: isDark ? Colors.white : Colors.black87
-                ),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white : Colors.black87),
               ),
             ],
           ),
@@ -1288,9 +1430,14 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: Colors.amber.withOpacity(0.15)),
-              boxShadow: isDark ? null : [
-                BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
-              ],
+              boxShadow: isDark
+                  ? null
+                  : [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.02),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4)),
+                    ],
             ),
             child: Column(
               children: sortedEntries.take(5).map((entry) {
@@ -1300,17 +1447,23 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isTop ? Colors.amber.withOpacity(isDark ? 0.05 : 0.03) : Colors.transparent,
+                    color: isTop
+                        ? Colors.amber.withOpacity(isDark ? 0.05 : 0.03)
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Row(
                     children: [
                       CircleAvatar(
                         radius: 14,
-                        backgroundColor: isTop ? Colors.amber : Colors.grey.withOpacity(0.2),
+                        backgroundColor:
+                            isTop ? Colors.amber : Colors.grey.withOpacity(0.2),
                         child: Text(
                           '${index + 1}',
-                          style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.bold, color: isTop ? Colors.black87 : Colors.grey),
+                          style: GoogleFonts.cairo(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: isTop ? Colors.black87 : Colors.grey),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -1326,7 +1479,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       ),
                       Text(
                         '${entry.value} ورد',
-                        style: GoogleFonts.cairo(fontWeight: FontWeight.w900, color: KColors.primaryColor),
+                        style: GoogleFonts.cairo(
+                            fontWeight: FontWeight.w900,
+                            color: KColors.primaryColor),
                       ),
                     ],
                   ),
@@ -1339,14 +1494,12 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     );
   }
 
-
-
   Widget _buildRecentActivity(bool isDark) {
     // Show activity even if user_name is null (for older records)
-    final activity = _progress
-        .toList()
-      ..sort((a, b) => (b['updated_at']?.toString() ?? '').compareTo(a['updated_at']?.toString() ?? ''));
-    
+    final activity = _progress.toList()
+      ..sort((a, b) => (b['updated_at']?.toString() ?? '')
+          .compareTo(a['updated_at']?.toString() ?? ''));
+
     if (activity.isEmpty) return const SizedBox();
 
     return Padding(
@@ -1356,15 +1509,15 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.history_rounded, color: KColors.primaryColor.withOpacity(0.7), size: 22),
+              Icon(Icons.history_rounded,
+                  color: KColors.primaryColor.withOpacity(0.7), size: 22),
               const SizedBox(width: 10),
               Text(
                 'آخر المشاركات بالتفصيل',
                 style: GoogleFonts.cairo(
-                  fontSize: 18, 
-                  fontWeight: FontWeight.w900, 
-                  color: isDark ? Colors.white : Colors.black87
-                ),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white : Colors.black87),
               ),
             ],
           ),
@@ -1375,7 +1528,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.03) : Colors.blueGrey.withOpacity(0.01),
+                color: isDark
+                    ? Colors.white.withOpacity(0.03)
+                    : Colors.blueGrey.withOpacity(0.01),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.grey.withOpacity(0.1)),
               ),
@@ -1384,12 +1539,15 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: (isDone ? Colors.green : Colors.amber).withOpacity(0.1),
+                      color: (isDone ? Colors.green : Colors.amber)
+                          .withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      isDone ? Icons.check_circle_rounded : Icons.menu_book_rounded, 
-                      size: 18, 
+                      isDone
+                          ? Icons.check_circle_rounded
+                          : Icons.menu_book_rounded,
+                      size: 18,
                       color: isDone ? Colors.green : Colors.amber,
                     ),
                   ),
@@ -1400,11 +1558,15 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       children: [
                         Text(
                           '${item['user_name'] ?? 'أحد المتسابقين'}',
-                          style: GoogleFonts.cairo(fontSize: 14, fontWeight: FontWeight.bold, height: 1.2),
+                          style: GoogleFonts.cairo(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              height: 1.2),
                         ),
                         Text(
                           '${isDone ? 'أتم قراءة' : 'بدأ قراءة'} ورد رقم ${item['item_index']}',
-                          style: GoogleFonts.cairo(fontSize: 12, color: Colors.grey, height: 1.2),
+                          style: GoogleFonts.cairo(
+                              fontSize: 12, color: Colors.grey, height: 1.2),
                         ),
                       ],
                     ),
@@ -1457,8 +1619,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             children: [
               Expanded(
                 child: _buildStatCard(
-                  'إجمالي الختمات', 
-                  (campaign['completed_count'] ?? 0).toString(), 
+                  'إجمالي الختمات',
+                  (campaign['completed_count'] ?? 0).toString(),
                   Icons.auto_awesome,
                   isDark: isDark,
                   cardColor: Colors.amber,
@@ -1467,8 +1629,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               const SizedBox(width: 15),
               Expanded(
                 child: _buildStatCard(
-                  'مساهمتي', 
-                  _myCompletedCount.toString(), 
+                  'مساهمتي',
+                  _myCompletedCount.toString(),
                   Icons.stars,
                   isDark: isDark,
                   cardColor: Colors.cyan,
@@ -1490,11 +1652,19 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: KColors.primaryColor.withOpacity(0.1)),
-        boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4))
+              ],
       ),
       child: Column(
         children: [
-          Icon(Icons.format_quote_rounded, color: KColors.primaryColor.withOpacity(0.5), size: 24),
+          Icon(Icons.format_quote_rounded,
+              color: KColors.primaryColor.withOpacity(0.5), size: 24),
           const SizedBox(height: 8),
           Text(
             _currentQuote,
@@ -1512,15 +1682,14 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     );
   }
 
-
-
   int get _myCompletedCount {
     if (_userNickname == null) return 0;
     // Count items in _progress that are 'completed' and match my nickname
-    return _progress.where((p) => 
-      (p['status'] ?? '') == 'completed' && 
-      (p['user_name']?.toString() == _userNickname)
-    ).length;
+    return _progress
+        .where((p) =>
+            (p['status'] ?? '') == 'completed' &&
+            (p['user_name']?.toString() == _userNickname))
+        .length;
   }
 
   String _getCampaignTitleForId(dynamic id) {
@@ -1545,7 +1714,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             ),
             Text(
               '${(percent * 100).toInt()}%',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: KColors.primaryColor),
+              style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold, color: KColors.primaryColor),
             ),
           ],
         ),
@@ -1568,7 +1738,10 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       width: 50,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.white.withOpacity(0.3), Colors.transparent],
+                          colors: [
+                            Colors.white.withOpacity(0.3),
+                            Colors.transparent
+                          ],
                         ),
                       ),
                     ),
@@ -1582,23 +1755,30 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               ' تم إنجاز ${(percent * campaign['target_total']).toInt()} من ${campaign['target_total']} حتى الآن!',
-              style: GoogleFonts.cairo(fontSize: 10, color: Colors.green, fontWeight: FontWeight.bold),
+              style: GoogleFonts.cairo(
+                  fontSize: 10,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold),
             ),
           )
-          // 🎉
+        // 🎉
         else if (_progress.any((p) => (p['status'] ?? '') == 'reading'))
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               '👈 اضغط على الجزء الأصفر مرة أخرى بعد القراءة لإتمامه (سيتحول للأخضر)',
-              style: GoogleFonts.cairo(fontSize: 10, color: Colors.amber, fontWeight: FontWeight.bold),
+              style: GoogleFonts.cairo(
+                  fontSize: 10,
+                  color: Colors.amber,
+                  fontWeight: FontWeight.bold),
             ),
           ),
       ],
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, {bool isDark = false, Color cardColor = Colors.amber}) {
+  Widget _buildStatCard(String label, String value, IconData icon,
+      {bool isDark = false, Color cardColor = Colors.amber}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -1606,9 +1786,14 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          if (!isDark) BoxShadow(color: cardColor.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10)),
+          if (!isDark)
+            BoxShadow(
+                color: cardColor.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10)),
         ],
-        border: Border.all(color: cardColor.withOpacity(isDark ? 0.3 : 0.1), width: 1.5),
+        border: Border.all(
+            color: cardColor.withOpacity(isDark ? 0.3 : 0.1), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1625,8 +1810,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           Text(
             value,
             style: GoogleFonts.cairo(
-              fontSize: 24, 
-              fontWeight: FontWeight.w900, 
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
               height: 1.1,
               color: isDark ? Colors.white : Colors.black87,
             ),
@@ -1634,8 +1819,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           Text(
             label,
             style: GoogleFonts.cairo(
-              fontSize: 11, 
-              color: isDark ? Colors.grey[400] : Colors.grey[600], 
+              fontSize: 11,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
               height: 1.1,
               fontWeight: FontWeight.w600,
             ),
@@ -1651,22 +1836,28 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     final int total = (campaign['target_total'] ?? 0) as int;
     if (total == 0) return const SliverToBoxAdapter(child: SizedBox());
 
-    final filteredIndices = List.generate(total, (i) => i + 1).where((itemIndex) {
+    final filteredIndices =
+        List.generate(total, (i) => i + 1).where((itemIndex) {
       if (_searchQuery.isEmpty) return true;
-      
+
       final type = campaign['target_type'] ?? 'juz';
       String label = '';
-      if (type == 'juz') label = 'جزء $itemIndex';
-      else if (type == 'surah') label = _surahs.isNotEmpty && itemIndex <= _surahs.length ? _surahs[itemIndex-1].name : 'سورة $itemIndex';
-      else label = 'صفحة $itemIndex';
-      
+      if (type == 'juz')
+        label = 'جزء $itemIndex';
+      else if (type == 'surah')
+        label = _surahs.isNotEmpty && itemIndex <= _surahs.length
+            ? _surahs[itemIndex - 1].name
+            : 'سورة $itemIndex';
+      else
+        label = 'صفحة $itemIndex';
+
       final normalizedQuery = _normalizeArabic(_searchQuery);
       final normalizedLabel = _normalizeArabic(label);
-      
-      return normalizedLabel.contains(normalizedQuery) || 
-             itemIndex.toString().contains(_searchQuery);
+
+      return normalizedLabel.contains(normalizedQuery) ||
+          itemIndex.toString().contains(_searchQuery);
     }).toList();
-    
+
     if (filteredIndices.isEmpty) {
       return SliverToBoxAdapter(
         child: Center(
@@ -1674,16 +1865,18 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             padding: const EdgeInsets.symmetric(vertical: 40),
             child: Column(
               children: [
-                Icon(Icons.search_off_rounded, size: 48, color: Colors.grey.withOpacity(0.5)),
+                Icon(Icons.search_off_rounded,
+                    size: 48, color: Colors.grey.withOpacity(0.5)),
                 const SizedBox(height: 10),
-                Text('لا توجد نتائج للبحث', style: GoogleFonts.cairo(color: Colors.grey)),
+                Text('لا توجد نتائج للبحث',
+                    style: GoogleFonts.cairo(color: Colors.grey)),
               ],
             ),
           ),
         ),
       );
     }
-    
+
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
@@ -1705,7 +1898,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     );
   }
 
-  Widget _buildItemCard(Map<String, dynamic> campaign, int index, Map<String, dynamic> statusData) {
+  Widget _buildItemCard(Map<String, dynamic> campaign, int index,
+      Map<String, dynamic> statusData) {
     Color color;
     IconData icon;
     String label = '';
@@ -1713,9 +1907,14 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     final readerName = statusData['user_name'];
 
     final type = campaign['target_type'] ?? 'juz';
-    if (type == 'juz') label = 'جزء $index';
-    else if (type == 'surah') label = _surahs.isNotEmpty && index <= _surahs.length ? _surahs[index-1].name : 'سورة $index';
-    else label = 'صفحة $index';
+    if (type == 'juz')
+      label = 'جزء $index';
+    else if (type == 'surah')
+      label = _surahs.isNotEmpty && index <= _surahs.length
+          ? _surahs[index - 1].name
+          : 'سورة $index';
+    else
+      label = 'صفحة $index';
 
     switch (status) {
       case 'completed':
@@ -1741,9 +1940,15 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         decoration: BoxDecoration(
           color: isDark ? color.withOpacity(0.08) : color.withOpacity(0.05),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: color.withOpacity(status == 'available' ? 0.1 : 0.4), width: 2),
+          border: Border.all(
+              color: color.withOpacity(status == 'available' ? 0.1 : 0.4),
+              width: 2),
           boxShadow: [
-            if (status != 'available') BoxShadow(color: color.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
+            if (status != 'available')
+              BoxShadow(
+                  color: color.withOpacity(0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4)),
           ],
         ),
         child: Stack(
@@ -1761,32 +1966,35 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   if (status == 'reading')
                     Container(
                       margin: const EdgeInsets.only(bottom: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         color: color.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        isMine ? 'من نصيبك' : (readerName ?? 'يُقرأ'), 
+                        isMine ? 'من نصيبك' : (readerName ?? 'يُقرأ'),
                         style: TextStyle(
-                          fontSize: 9, 
-                          fontWeight: FontWeight.w900, 
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
                           color: color,
                           overflow: TextOverflow.ellipsis,
                         ),
                         maxLines: 1,
                       ),
                     ),
-                  Icon(icon, color: color.withOpacity(status == 'available' ? 0.5 : 1), size: 32),
+                  Icon(icon,
+                      color: color.withOpacity(status == 'available' ? 0.5 : 1),
+                      size: 32),
                   const SizedBox(height: 6),
                   Text(
                     label,
                     style: GoogleFonts.cairo(
-                      fontSize: 13, 
-                      fontWeight: FontWeight.w900, 
-                      color: color.withOpacity(status == 'available' ? 0.8 : 1),
-                      height: 1.1
-                    ),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                        color:
+                            color.withOpacity(status == 'available' ? 0.8 : 1),
+                        height: 1.1),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -1802,7 +2010,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
   void _showActionSheet(int index, String status, String label) {
     if (status == 'completed') {
-      KHelper.showSuccess(message: 'تم ختم هذا الورد بالفعل، يمكنك اختيار ورد آخر');
+      KHelper.showSuccess(
+          message: 'تم ختم هذا الورد بالفعل، يمكنك اختيار ورد آخر');
       return;
     }
 
@@ -1810,7 +2019,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.all(24),
@@ -1819,7 +2029,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             children: [
               Text(
                 'مشاركة في الختمة الجماعية',
-                style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold),
+                style: GoogleFonts.cairo(
+                    fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
@@ -1833,9 +2044,12 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: KColors.primaryColor,
                     minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: Text('أنا سأقرأه', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text('أنا سأقرأه',
+                      style: GoogleFonts.cairo(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               if (status == 'reading' && isMine)
                 ElevatedButton(
@@ -1843,16 +2057,41 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: Text('تمت القراءة بحمد الله', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text('تمت القراءة بحمد الله',
+                      style: GoogleFonts.cairo(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
+              if (status != 'completed') ...[
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _navigateToQuran(index);
+                  },
+                  icon: const Icon(Icons.menu_book_rounded, color: Colors.teal),
+                  label: Text('قراءة من المصحف',
+                      style: GoogleFonts.cairo(
+                          color: Colors.teal, fontWeight: FontWeight.bold)),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    side: const BorderSide(color: Colors.teal),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
               if (status == 'reading' && !isMine)
-                const Text('شخص آخر يقوم بقراءة هذا الورد حالياً', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+                const Text('شخص آخر يقوم بقراءة هذا الورد حالياً',
+                    style: TextStyle(
+                        color: Colors.amber, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+                child:
+                    Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
               ),
             ],
           ),
@@ -1861,18 +2100,102 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     );
   }
 
+  void _navigateToQuran(int index) {
+    final campaign = _campaigns[_selectedCampaignIndex];
+    final type = campaign['target_type'] ?? 'juz';
+
+    int pageIndex = 0;
+    int targetPage = 0;
+    final campaignId = campaign['id']?.toString();
+
+    try {
+      if (type == 'surah') {
+        // Surah index from Khatmah is 1-based (Surah 1, Surah 2...)
+        pageIndex = quran.getPageNumber(index, 1) - 1;
+        targetPage = quran.getPageNumber(index, quran.getVerseCount(index)) - 1;
+      } else if (type == 'juz') {
+        // Juz index is 1-based (Juz 1, Juz 2...)
+        // Standard Medina Mushaf Juz start pages
+        final juzPages = [
+          1,
+          22,
+          42,
+          62,
+          82,
+          102,
+          122,
+          142,
+          162,
+          182,
+          202,
+          222,
+          242,
+          262,
+          282,
+          302,
+          322,
+          342,
+          362,
+          382,
+          402,
+          422,
+          442,
+          462,
+          482,
+          502,
+          522,
+          542,
+          562,
+          582
+        ];
+        if (index > 0 && index <= 30) {
+          pageIndex = juzPages[index - 1] - 1;
+          targetPage = (index < 30) ? juzPages[index] - 2 : 603;
+        }
+      }
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QuranView(
+            initialPage: pageIndex,
+            campaignId: campaignId,
+            targetPage: targetPage,
+            onConfirm: () async {
+              // Update status and pop back
+              await _updateStatus(index, 'completed');
+              if (mounted) {
+                Navigator.pop(context);
+                KHelper.showSuccess(message: 'تم تسجيل القراءة بنجاح ✅');
+              }
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      print('Error calculating Quran page: $e');
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const QuranView(),
+        ),
+      );
+    }
+  }
+
   Future<void> _updateStatus(int index, String status) async {
     await _ensureNickname();
     if (_userNickname == null || _userNickname!.isEmpty) return;
 
     Navigator.pop(context); // Close sheet
-    
+
     if (_campaigns.isEmpty) return;
     final campaignId = _campaigns[_selectedCampaignIndex]['id'];
     if (campaignId == null) return;
 
-    final success = await _service.updateItemStatus(campaignId, index, status, userName: _userNickname);
-    
+    final success = await _service.updateItemStatus(campaignId, index, status,
+        userName: _userNickname);
+
     if (success) {
       final prefs = await SharedPreferences.getInstance();
       if (status == 'reading') {
@@ -1880,14 +2203,16 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       } else if (status == 'completed') {
         _myClaims.remove(index);
       }
-      await prefs.setStringList('my_global_claims_$campaignId', _myClaims.map((e) => e.toString()).toList());
-      
+      await prefs.setStringList('my_global_claims_$campaignId',
+          _myClaims.map((e) => e.toString()).toList());
+
       if (mounted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             setState(() {
               // Local update for immediate feedback (Realtime will also update but this is faster)
-              final existingIndex = _progress.indexWhere((p) => p['item_index'] == index);
+              final existingIndex =
+                  _progress.indexWhere((p) => p['item_index'] == index);
               if (existingIndex != -1) {
                 _progress[existingIndex]['status'] = status;
               } else {
@@ -1904,21 +2229,30 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
       KHelper.showSuccess(message: 'تم تحديث الحالة بنجاح.. جزاك الله خيراً');
 
+      // 🔄 Refresh user stats to update dashboard immediately
+      if (status == 'completed') {
+        await _refreshUserStats();
+      }
+
       // 🔔 Handle Notifications
       if (status == 'reading') {
         final campaign = _campaigns[_selectedCampaignIndex];
         String label = 'الورد رقم $index';
-        
+
         final type = campaign['target_type'] ?? 'juz';
-        if (type == 'juz') label = 'الجزء $index';
-        else if (type == 'surah') label = _surahs.isNotEmpty && index <= _surahs.length ? 'سورة ${_surahs[index-1].name}' : 'السورة رقم $index';
-        
-        await NotificationManager().scheduleCommunityKhatmahReminder(index: index, label: label);
+        if (type == 'juz')
+          label = 'الجزء $index';
+        else if (type == 'surah')
+          label = _surahs.isNotEmpty && index <= _surahs.length
+              ? 'سورة ${_surahs[index - 1].name}'
+              : 'السورة رقم $index';
+
+        await NotificationManager()
+            .scheduleCommunityKhatmahReminder(index: index, label: label);
       } else {
         // Cancel notification if completed or cancelled
         await NotificationManager().cancelCommunityKhatmahReminder(index);
       }
-
     } else {
       KHelper.showError(message: 'فشل التحديث، يرجى التحقق من اتصال الإنترنت');
     }
@@ -1926,11 +2260,13 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
   Future<void> _showPersonalAnalytics() async {
     if (_userNickname == null) {
-      KHelper.showNeutralFlushBar(context, 'يرجى تسجيل اسمك أولاً عبر المشاركة في أي ورد');
+      KHelper.showNeutralFlushBar(
+          context, 'يرجى تسجيل اسمك أولاً عبر المشاركة في أي ورد');
       return;
     }
 
-    final campaignId = _isDetailView ? _campaigns[_selectedCampaignIndex]['id'] : null;
+    final campaignId =
+        _isDetailView ? _campaigns[_selectedCampaignIndex]['id'] : null;
 
     showModalBottomSheet(
       context: context,
@@ -1955,12 +2291,14 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         textDirection: TextDirection.rtl,
         child: AlertDialog(
           backgroundColor: AppThemeColors.cardBackgroundColor(context),
-          shape: BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15.r)),
+          shape: BeveledRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(15.r)),
           title: Row(
             children: [
               Icon(Icons.help_outline_rounded, color: KColors.primaryColor),
               const SizedBox(width: 10),
-              Text('كيف أشارك؟', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+              Text('كيف أشارك؟',
+                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
             ],
           ),
           content: SingleChildScrollView(
@@ -1968,10 +2306,14 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHelpItem('1. اختر الورد', 'تصفح الأجزاء أو السور المتاحة (باللون الرمادي).'),
-                _buildHelpItem('2. احجز القراءة', 'اضغط على الورد واختر "أنا سأقرأه". سيتحول للون الأصفر.'),
-                _buildHelpItem('3. اقرأ بتدبر', 'اقرأ الورد من المصحف أو من التطبيق.'),
-                _buildHelpItem('4. أكد الإتمام', 'بعد الانتهاء، عد للتطبيق واضغط على نفس الورد واختر "تمت القراءة". سيتحول للأخضر.'),
+                _buildHelpItem('1. اختر الورد',
+                    'تصفح الأجزاء أو السور المتاحة (باللون الرمادي).'),
+                _buildHelpItem('2. احجز القراءة',
+                    'اضغط على الورد واختر "أنا سأقرأه". سيتحول للون الأصفر.'),
+                _buildHelpItem(
+                    '3. اقرأ بتدبر', 'اقرأ الورد من المصحف أو من التطبيق.'),
+                _buildHelpItem('4. أكد الإتمام',
+                    'بعد الانتهاء، عد للتطبيق واضغط على نفس الورد واختر "تمت القراءة". سيتحول للأخضر.'),
                 const SizedBox(height: 10),
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -1981,7 +2323,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   ),
                   child: Text(
                     '💡 ملاحظة: إذا حجزت ورداً ولم تكمله خلال 24 ساعة، سيعود متاحاً للآخرين تلقائياً.',
-                    style: GoogleFonts.cairo(fontSize: 12, color:isDark?Colors.white: Colors.black87),
+                    style: GoogleFonts.cairo(
+                        fontSize: 12,
+                        color: isDark ? Colors.white : Colors.black87),
                   ),
                 ),
               ],
@@ -1990,7 +2334,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('فهمت، شكراً', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+              child: Text('فهمت، شكراً',
+                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -2004,8 +2349,11 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 14)),
-          Text(desc, style: GoogleFonts.cairo(fontSize: 12, color: Colors.grey)),
+          Text(title,
+              style:
+                  GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(desc,
+              style: GoogleFonts.cairo(fontSize: 12, color: Colors.grey)),
         ],
       ),
     );
@@ -2020,7 +2368,6 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     required bool isDark,
   }) {
     return PopupMenuItem<_KhatmahMenuAction>(
-      
       value: value,
       child: Directionality(
         textDirection: TextDirection.rtl,
@@ -2066,6 +2413,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       ),
     );
   }
+
   Widget _buildGlobalCommunityStats(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -2093,9 +2441,21 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           const SizedBox(height: 20),
           Row(
             children: [
-              _buildSimpleStat('إجمالي الختمات', _communityGlobalStats['total_completed'].toString(), Icons.auto_awesome, Colors.amber),
-              _buildSimpleStat('يقرؤون الآن', _communityGlobalStats['active_readers'].toString(), Icons.people_rounded, Colors.blue),
-              _buildSimpleStat('إنجازات اليوم', _communityGlobalStats['today_completions'].toString(), Icons.today_rounded, Colors.green),
+              _buildSimpleStat(
+                  'إجمالي الختمات',
+                  _communityGlobalStats['total_completed'].toString(),
+                  Icons.auto_awesome,
+                  Colors.amber),
+              _buildSimpleStat(
+                  'يقرؤون الآن',
+                  _communityGlobalStats['active_readers'].toString(),
+                  Icons.people_rounded,
+                  Colors.blue),
+              _buildSimpleStat(
+                  'إنجازات اليوم',
+                  _communityGlobalStats['today_completions'].toString(),
+                  Icons.today_rounded,
+                  Colors.green),
             ],
           ),
         ],
@@ -2103,7 +2463,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     );
   }
 
-  Widget _buildSimpleStat(String label, String value, IconData icon, Color color) {
+  Widget _buildSimpleStat(
+      String label, String value, IconData icon, Color color) {
     return Expanded(
       child: Column(
         children: [
@@ -2134,7 +2495,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   Widget _buildSearchBar(bool isDark, Map<String, dynamic> campaign) {
     final type = campaign['target_type'] ?? 'juz';
     String hint = 'البحث عن رقم الجزء...';
-    if (type == 'surah') hint = 'البحث عن اسم السورة...';
+    if (type == 'surah')
+      hint = 'البحث عن اسم السورة...';
     else if (type == 'page') hint = 'البحث عن رقم الصفحة...';
 
     return Container(
@@ -2171,10 +2533,12 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           prefixIcon: Icon(
             Icons.search_rounded,
             size: 22,
-            color: isDark ? Colors.white70 : KColors.primaryColor.withOpacity(0.7),
+            color:
+                isDark ? Colors.white70 : KColors.primaryColor.withOpacity(0.7),
           ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           suffixIcon: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -2193,7 +2557,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   icon: Icon(
                     _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
                     size: 22,
-                    color: _isListening ? Colors.redAccent : KColors.primaryColor,
+                    color:
+                        _isListening ? Colors.redAccent : KColors.primaryColor,
                   ),
                   onPressed: _isListening ? _stopListening : _startListening,
                 ),
@@ -2211,12 +2576,14 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       child: OutlinedButton.icon(
         onPressed: _joinRandomWard,
         icon: const Icon(Icons.bolt_rounded, size: 20, color: Colors.amber),
-        label: Text('انضم إلى ورد عشوائي الآن', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        label: Text('انضم إلى ورد عشوائي الآن',
+            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 14),
           foregroundColor: isDark ? Colors.amber[300] : Colors.amber[800],
           side: BorderSide(color: Colors.amber.withOpacity(0.4), width: 1.5),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         ),
       ),
     );
@@ -2224,15 +2591,16 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
   void _joinRandomWard() {
     if (_campaigns.isEmpty) return;
-    
+
     // Pick first active campaign for simplicity
     setState(() {
       _selectedCampaignIndex = 0;
       _isDetailView = true;
     });
     _switchCampaign(0);
-    
-    KHelper.showSuccess(message: 'تم اختيار حملة الختمة الجارية، ابحث عن ورد متاح!');
+
+    KHelper.showSuccess(
+        message: 'تم اختيار حملة الختمة الجارية، ابحث عن ورد متاح!');
   }
 
   String _normalizeArabic(String text) {
@@ -2258,8 +2626,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
   final Function(int) onSwitchCampaign;
 
   const _AnalyticsBottomSheet({
-    required this.userName, 
-    required this.service, 
+    required this.userName,
+    required this.service,
     required this.campaigns,
     required this.selectedCampaignIndex,
     required this.onSwitchCampaign,
@@ -2286,25 +2654,27 @@ class _AnalyticsBottomSheet extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: isDark 
-            ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
-            : [const Color(0xFFF8FAFC), Colors.white],
+          colors: isDark
+              ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+              : [const Color(0xFFF8FAFC), Colors.white],
         ),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, spreadRadius: 5),
+          BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 20,
+              spreadRadius: 5),
         ],
       ),
       child: Column(
         children: [
           const SizedBox(height: 12),
           Container(
-            width: 40, 
-            height: 4, 
+            width: 40,
+            height: 4,
             decoration: BoxDecoration(
-              color: isDark ? Colors.white24 : Colors.black12, 
-              borderRadius: BorderRadius.circular(2)
-            ),
+                color: isDark ? Colors.white24 : Colors.black12,
+                borderRadius: BorderRadius.circular(2)),
           ),
           const SizedBox(height: 25),
           ShaderMask(
@@ -2314,32 +2684,42 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             child: Text(
               'تحليل القراءة الشخصي',
               style: GoogleFonts.cairo(
-                fontSize: 24, 
-                fontWeight: FontWeight.w900, 
-                color: Colors.white
-              ),
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white),
             ),
           ),
           Text(
-            campaignId == null ? 'أداؤك ومساهمتك في جميع الختمات' : 'أداؤك ومساهمتك في هذه الختمة',
+            campaignId == null
+                ? 'أداؤك ومساهمتك في جميع الختمات'
+                : 'أداؤك ومساهمتك في هذه الختمة',
             style: GoogleFonts.cairo(
-              fontSize: 13, 
-              color: isDark ? Colors.blueGrey[300] : Colors.grey[600],
-              letterSpacing: 0.5
-            ),
+                fontSize: 13,
+                color: isDark ? Colors.blueGrey[300] : Colors.grey[600],
+                letterSpacing: 0.5),
           ),
           const SizedBox(height: 30),
           Expanded(
             child: FutureBuilder<Map<String, dynamic>>(
-              future: service.getUserKhatmahStats(userName, campaignId: campaignId),
+              future:
+                  service.getUserKhatmahStats(userName, campaignId: campaignId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: KLoading.progressIOSIndicator(context: context,progressColor: primaryColor));
+                  return Center(
+                      child: KLoading.progressIOSIndicator(
+                          context: context, progressColor: primaryColor));
                 }
-                
-                final stats = snapshot.data ?? {'total_completed': 0, 'community_percent': '0', 'history': []};
+
+                final stats = snapshot.data ??
+                    {
+                      'total_completed': 0,
+                      'community_percent': '0',
+                      'history': []
+                    };
                 final totalCount = stats['total_completed'] as int;
-                final commPercent = double.tryParse(stats['community_percent'].toString()) ?? 0.0;
+                final commPercent =
+                    double.tryParse(stats['community_percent'].toString()) ??
+                        0.0;
                 final history = (stats['history'] as List).reversed.toList();
 
                 return ListView(
@@ -2347,21 +2727,32 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Expanded(child: _buildImpactCard('إنجازاتي', totalCount.toString(), Icons.auto_awesome, Colors.amber, isDark)),
+                        Expanded(
+                            child: _buildImpactCard(
+                                'إنجازاتي',
+                                totalCount.toString(),
+                                Icons.auto_awesome,
+                                Colors.amber,
+                                isDark)),
                         const SizedBox(width: 15),
-                        Expanded(child: _buildImpactCard('التأثير', '$commPercent%', Icons.speed_rounded, Colors.cyan, isDark)),
+                        Expanded(
+                            child: _buildImpactCard('التأثير', '$commPercent%',
+                                Icons.speed_rounded, Colors.cyan, isDark)),
                       ],
                     ),
                     const SizedBox(height: 40),
-                    _buildChartSection(commPercent, totalCount, isDark, primaryColor),
+                    _buildChartSection(
+                        commPercent, totalCount, isDark, primaryColor),
                     const SizedBox(height: 40),
                     Row(
                       children: [
-                        Icon(Icons.history_rounded, color: primaryColor, size: 24),
+                        Icon(Icons.history_rounded,
+                            color: primaryColor, size: 24),
                         const SizedBox(width: 10),
                         Text(
                           'سجل الإنجازات الأخيرة',
-                          style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.cairo(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -2369,7 +2760,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                     if (history.isEmpty)
                       _buildEmptyState(isDark)
                     else
-                      ...history.take(15).map((item) => _buildHistoryItem(item, isDark, primaryColor)),
+                      ...history.take(15).map((item) =>
+                          _buildHistoryItem(item, isDark, primaryColor)),
                     const SizedBox(height: 50),
                     const SizedBox(height: 50),
                     if (totalCount > 0)
@@ -2381,24 +2773,30 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => KhatmahCertificateScreen(
+                                  builder: (context) =>
+                                      KhatmahCertificateScreen(
                                     userName: userName,
                                     contributionCount: totalCount,
-                                    campaignTitle: campaignId != null ? _getCampaignTitleForId(campaignId) : 'ختمة جماعية',
+                                    campaignTitle: campaignId != null
+                                        ? _getCampaignTitleForId(campaignId)
+                                        : 'ختمة جماعية',
                                     date: DateTime.now(),
                                   ),
                                 ),
                               );
                             },
-                            icon: const Icon(Icons.workspace_premium_rounded, color: Colors.white),
-                            label: Text(
-                              'استلام شهادة تقدير', 
-                              style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Colors.white)
-                            ),
+                            icon: const Icon(Icons.workspace_premium_rounded,
+                                color: Colors.white),
+                            label: Text('استلام شهادة تقدير',
+                                style: GoogleFonts.cairo(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.amber[700],
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
                             ),
                           ),
                         ),
@@ -2413,7 +2811,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildImpactCard(String label, String value, IconData icon, Color color, bool isDark) {
+  Widget _buildImpactCard(
+      String label, String value, IconData icon, Color color, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -2424,11 +2823,12 @@ class _AnalyticsBottomSheet extends StatelessWidget {
           width: 1.5,
         ),
         boxShadow: [
-          if (!isDark) BoxShadow(
-            color: color.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 10),
-          ),
+          if (!isDark)
+            BoxShadow(
+              color: color.withOpacity(0.05),
+              blurRadius: 15,
+              offset: const Offset(0, 10),
+            ),
         ],
       ),
       child: Column(
@@ -2443,32 +2843,30 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(height: 15),
-          Text(
-            value, 
-            style: GoogleFonts.cairo(
-              fontSize: 26, 
-              fontWeight: FontWeight.w900,
-              height: 1,
-            )
-          ),
-          Text(
-            label, 
-            style: GoogleFonts.cairo(
-              fontSize: 12, 
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
-              fontWeight: FontWeight.w600
-            )
-          ),
+          Text(value,
+              style: GoogleFonts.cairo(
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+                height: 1,
+              )),
+          Text(label,
+              style: GoogleFonts.cairo(
+                  fontSize: 12,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  fontWeight: FontWeight.w600)),
         ],
       ),
     );
   }
 
-  Widget _buildChartSection(double percent, int count, bool isDark, Color primaryColor) {
+  Widget _buildChartSection(
+      double percent, int count, bool isDark, Color primaryColor) {
     return Container(
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.02) : Colors.blueGrey.withOpacity(0.03),
+        color: isDark
+            ? Colors.white.withOpacity(0.02)
+            : Colors.blueGrey.withOpacity(0.03),
         borderRadius: BorderRadius.circular(30),
       ),
       child: Column(
@@ -2476,10 +2874,9 @@ class _AnalyticsBottomSheet extends StatelessWidget {
           Text(
             'مساهمتي مقابل الختمات الكلية',
             style: GoogleFonts.cairo(
-              fontSize: 15, 
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white70 : Colors.black87
-            ),
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white70 : Colors.black87),
           ),
           const SizedBox(height: 25),
           Stack(
@@ -2504,7 +2901,9 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                       PieChartSectionData(
                         value: (100 - percent).clamp(0, 100),
                         title: '',
-                        color: isDark ? Colors.white12 : Colors.grey.withOpacity(0.1),
+                        color: isDark
+                            ? Colors.white12
+                            : Colors.grey.withOpacity(0.1),
                         radius: 12,
                       ),
                     ],
@@ -2517,18 +2916,16 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                   Text(
                     count.toString(),
                     style: GoogleFonts.cairo(
-                      fontSize: 32, 
-                      fontWeight: FontWeight.w900,
-                      color: primaryColor
-                    ),
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                        color: primaryColor),
                   ),
                   Text(
                     'ورد مكتمل',
                     style: GoogleFonts.cairo(
-                      fontSize: 12, 
-                      color: isDark ? Colors.grey[500] : Colors.grey[600],
-                      height: 0.5
-                    ),
+                        fontSize: 12,
+                        color: isDark ? Colors.grey[500] : Colors.grey[600],
+                        height: 0.5),
                   ),
                 ],
               ),
@@ -2549,7 +2946,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+            color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -2561,7 +2959,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.withOpacity(0.1)),
+        border: Border.all(
+            color: isDark ? Colors.white10 : Colors.grey.withOpacity(0.1)),
       ),
       child: Row(
         children: [
@@ -2571,7 +2970,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
               color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: Icon(Icons.check_circle_rounded, color: primaryColor, size: 20),
+            child:
+                Icon(Icons.check_circle_rounded, color: primaryColor, size: 20),
           ),
           const SizedBox(width: 15),
           Expanded(
@@ -2581,17 +2981,16 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                 Text(
                   'أتممت ورد رقم ${item['item_index'] ?? '؟؟'}',
                   style: GoogleFonts.cairo(
-                    fontSize: 15, 
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87
-                  ),
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87),
                 ),
                 Text(
-                  campaignId != null 
-                    ? _formatDate(item['updated_at'])
-                    : '${_formatDate(item['updated_at'])} • في ${_getCampaignTitleForId(item['campaign_id'])}',
+                  campaignId != null
+                      ? _formatDate(item['updated_at'])
+                      : '${_formatDate(item['updated_at'])} • في ${_getCampaignTitleForId(item['campaign_id'])}',
                   style: GoogleFonts.cairo(
-                    fontSize: 11, 
+                    fontSize: 11,
                     color: Colors.grey,
                   ),
                 ),
@@ -2607,10 +3006,9 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             child: Text(
               'مكتمل',
               style: GoogleFonts.cairo(
-                fontSize: 10, 
-                color: Colors.green, 
-                fontWeight: FontWeight.bold
-              ),
+                  fontSize: 10,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -2624,11 +3022,15 @@ class _AnalyticsBottomSheet extends StatelessWidget {
         padding: const EdgeInsets.all(40),
         child: Column(
           children: [
-            Icon(Icons.auto_stories_outlined, size: 60, color: Colors.grey.withOpacity(0.5)),
+            Icon(Icons.auto_stories_outlined,
+                size: 60, color: Colors.grey.withOpacity(0.5)),
             const SizedBox(height: 15),
             Text(
               'ابدأ رحلتك اليوم!',
-              style: GoogleFonts.cairo(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold),
+              style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold),
             ),
             Text(
               'شارك في قراءة ورد لتبدأ في جمع النقاط والأوسمة',

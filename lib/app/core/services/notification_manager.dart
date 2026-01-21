@@ -12,6 +12,10 @@ import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
 import 'package:muslimdaily/app/features/charity/CharityDashboardScreen.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
 import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
+import 'package:muslimdaily/app/features/Khatmah/view/GlobalKhatmahScreen.dart';
+import 'package:muslimdaily/app/features/charity/AchievementsScreen.dart';
+import 'package:muslimdaily/app/features/calendar/presentation/screens/calendar_screen.dart';
+import 'package:muslimdaily/app/features/mainView/widget/AllAzkarListView.dart';
 
 class NotificationManager {
   static final NotificationManager _instance = NotificationManager._internal();
@@ -85,7 +89,7 @@ class NotificationManager {
         // 📿 قناة الأذكار والتذكيرات
         NotificationChannel(
           channelKey: 'sabah_athkar_channel',
-          channelName: '🌅 أذكار الصباح',
+          channelName: 'أذكار الصباح',
           channelDescription: 'حان وقت أذكار الصباح',
           importance: NotificationImportance.High,
           defaultColor: Colors.blue,
@@ -99,7 +103,7 @@ class NotificationManager {
 
         NotificationChannel(
           channelKey: 'mesaa_athkar_channel',
-          channelName: '🌙 أذكار المساء',
+          channelName: 'أذكار المساء',
           channelDescription: 'تذكير أذكار المساء',
           importance: NotificationImportance.High,
           defaultColor: Colors.blue,
@@ -113,7 +117,7 @@ class NotificationManager {
 
         NotificationChannel(
           channelKey: 'sleep_athkar_channel',
-          channelName: '😴 أذكار النوم',
+          channelName: 'أذكار النوم',
           channelDescription: 'تذكير أذكار النوم',
           importance: NotificationImportance.High,
           defaultColor: Colors.blue,
@@ -127,7 +131,7 @@ class NotificationManager {
 
         NotificationChannel(
           channelKey: 'qiam_channel',
-          channelName: '🌙 قيام الليل',
+          channelName: 'قيام الليل',
           channelDescription: 'وقت قيام الليل',
           importance: NotificationImportance.High,
           defaultColor: Colors.blue,
@@ -326,7 +330,7 @@ class NotificationManager {
         await _scheduleDailyNotification(
           id: 1,
           channelKey: 'sabah_athkar_channel',
-          title: '🌅 أذكار الصباح',
+          title: 'أذكار الصباح',
           body: 'حان وقت أذكار الصباح، بارك الله في صباحك',
           hour: 9,
           minute: 0,
@@ -339,7 +343,7 @@ class NotificationManager {
         await _scheduleDailyNotification(
           id: 2,
           channelKey: 'mesaa_athkar_channel',
-          title: '🌙 أذكار المساء',
+          title: 'أذكار المساء',
           body: 'حان وقت أذكار المساء، جعل الله مساءك مباركاً',
           hour: 18,
           minute: 0,
@@ -351,7 +355,7 @@ class NotificationManager {
       await _scheduleDailyNotification(
         id: 3,
         channelKey: 'quran_channel',
-        title: '📖 ورد القرآن اليومي',
+        title: 'ورد القرآن اليومي',
         body: 'لا تنسَ وردك اليومي من القرآن الكريم',
         hour: 20,
         minute: 0,
@@ -367,7 +371,7 @@ class NotificationManager {
         await _scheduleDailyNotification(
           id: 6,
           channelKey: 'sleep_athkar_channel',
-          title: '😴 أذكار النوم',
+          title: 'أذكار النوم',
           body: 'حان وقت أذكار النوم، تصبح على خير',
           hour: 22,
           minute: 0,
@@ -380,7 +384,7 @@ class NotificationManager {
         await _scheduleDailyNotification(
           id: 7,
           channelKey: 'qiam_channel',
-          title: '🌙 قيام الليل',
+          title: 'قيام الليل',
           body: 'وقت قيام الليل، تقبل الله طاعاتكم',
           hour: 23,
           minute: 0,
@@ -430,7 +434,7 @@ class NotificationManager {
           content: NotificationContent(
             id: 500 + i,
             channelKey: 'hadith_channel', // تأكد من وجود هذه القناة
-            title: '\u200F📖 حديث اليوم',
+            title: '\u200F حديث اليوم',
             body: '\u200F$hadithText',
             notificationLayout: NotificationLayout.BigText,
             category: NotificationCategory.Reminder,
@@ -603,8 +607,8 @@ class NotificationManager {
             channelKey: 'fajr_adhan_channel_v4',
             title: '⏰ منبه الفجر المتقدم',
             body: r == 0
-                ? 'حان وقت الاستيقاظ لصلاة الفجر 👋'
-                : 'تذكير إضافي: صلاة الفجر خير من النوم 🕌', // Different body for snoozes
+                ? 'حان وقت الاستيقاظ لصلاة الفجر'
+                : 'تذكير إضافي: صلاة الفجر خير من النوم ', // Different body for snoozes
             category: NotificationCategory.Alarm,
             wakeUpScreen: true,
             fullScreenIntent: true,
@@ -786,13 +790,14 @@ class NotificationManager {
     try {
       // Reminder after 2 hours
       final scheduledDate = DateTime.now().add(const Duration(hours: 2));
-      
+
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: 10000 + index, // Unique ID range for Khatmah items
           channelKey: 'quran_channel',
-          title: '📖 تذكير بالختمة الجماعية',
-          body: 'هل قرأت $label؟ لا تنسَ إتمام الورد المحجوز لتفسح المجال لغيرك.',
+          title: 'تذكير بالختمة الجماعية',
+          body:
+              'هل قرأت $label؟ لا تنسَ إتمام الورد المحجوز لتفسح المجال لغيرك.',
           category: NotificationCategory.Reminder,
           wakeUpScreen: true,
           payload: {'route': 'global_khatmah'},
@@ -909,6 +914,23 @@ class NotificationManager {
             ),
           ));
         }
+        break;
+      case 'global_khatmah':
+        navigator.push(
+            MaterialPageRoute(builder: (_) => const GlobalKhatmahScreen()));
+        break;
+      case 'achievements':
+        navigator.push(
+            MaterialPageRoute(builder: (_) => const AchievementsScreen()));
+        break;
+      case 'calendar_screen':
+        navigator
+            .push(MaterialPageRoute(builder: (_) => const CalendarScreen()));
+        break;
+      case '/allazkarlistview':
+      case 'allazkarlistview':
+        navigator
+            .push(MaterialPageRoute(builder: (_) => const Allazkarlistview()));
         break;
     }
   }
