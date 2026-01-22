@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -10,11 +9,8 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/DrawerWidget.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
-import 'package:quran_library/quran.dart';
 import 'package:quran_library/quran_library.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// Unused import removed
 
 enum _QuranMenuAction { audio, orientation, background, wakelock, brightness }
 
@@ -1067,7 +1063,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     required bool isDark,
   }) {
     return PopupMenuItem<_QuranMenuAction>(
-
       value: value,
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
