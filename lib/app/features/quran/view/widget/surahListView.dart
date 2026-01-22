@@ -28,15 +28,17 @@ class _SurahListScreenState extends State<SurahListScreen> {
 
   bool isLoading = true;
 
+  // Smart Index - Hizb Data
+  final List<String> _allHizbItems = QuranLibrary.allHizb;
+  List<String> _filteredHizbItems = [];
+
   // Voice Search
   stt.SpeechToText _speech = stt.SpeechToText();
   bool _isListening = false;
 
   // New views data
   final List<String> jozzs = QuranLibrary.allJoz;
-  final List<String> hizbs = QuranLibrary.allHizb;
   List<String> _filteredJozzs = [];
-  List<String> _filteredHizbs = [];
 
   Future<void> _initSpeech() async {
     try {
@@ -48,25 +50,57 @@ class _SurahListScreenState extends State<SurahListScreen> {
 
   void _listen() async {
     if (!_isListening) {
-      bool available = await _speech.initialize(
-        onStatus: (val) {
-          if (val == 'done' || val == 'notListening') {
-            setState(() => _isListening = false);
-          }
-        },
-        onError: (val) => setState(() => _isListening = false),
-      );
-      if (available) {
-        setState(() => _isListening = true);
-        _speech.listen(
-          onResult: (val) {
-            setState(() {
-              _searchController.text = val.recognizedWords;
-              _filterAll(val.recognizedWords);
-            });
+      try {
+        bool available = await _speech.initialize(
+          onStatus: (val) {
+            if (val == 'done' || val == 'notListening') {
+              setState(() => _isListening = false);
+            }
           },
-          localeId: 'ar_SA',
+          onError: (val) {
+            debugPrint("Speech error: ${val.errorMsg}");
+            setState(() => _isListening = false);
+          },
         );
+        if (available) {
+          setState(() => _isListening = true);
+          _speech.listen(
+            onResult: (val) {
+              setState(() {
+                _searchController.text = val.recognizedWords;
+                _filterAll(val.recognizedWords);
+              });
+            },
+            localeId: 'ar_SA',
+          );
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز (قد تحتاج لتثبيت خدمات جوجل الصوتية)",
+                  textAlign: TextAlign.right,
+                  style: TextStyle(fontFamily: "cairo"),
+                ),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        debugPrint("Speech recognition exception: $e");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                "حدث خطأ أثناء تشغيل البحث الصوتي",
+                textAlign: TextAlign.right,
+                style: TextStyle(fontFamily: "cairo"),
+              ),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
       }
     } else {
       setState(() => _isListening = false);
@@ -97,15 +131,15 @@ class _SurahListScreenState extends State<SurahListScreen> {
 
   void _filterHizbs(String query) {
     if (query.isEmpty) {
-      setState(() => _filteredHizbs = List.from(hizbs));
+      setState(() => _filteredHizbItems = List.from(_allHizbItems));
       return;
     }
+    final normalizedQuery = _normalizeArabic(query.toLowerCase());
     setState(() {
-      _filteredHizbs = hizbs
+      _filteredHizbItems = _allHizbItems
           .where((h) =>
-              _normalizeArabic(h.toLowerCase())
-                  .contains(_normalizeArabic(query.toLowerCase())) ||
-              (hizbs.indexOf(h) + 1).toString().contains(query))
+              _normalizeArabic(h.toLowerCase()).contains(normalizedQuery) ||
+              (_allHizbItems.indexOf(h) + 1).toString().contains(query))
           .toList();
     });
   }
@@ -134,7 +168,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
     }
     _filteredSurahItems = List.from(_allSurahItems);
     _filteredJozzs = List.from(jozzs);
-    _filteredHizbs = List.from(hizbs);
+    _filteredHizbItems = List.from(_allHizbItems);
 
     isLoading = false;
     setState(() {});
@@ -197,26 +231,38 @@ class _SurahListScreenState extends State<SurahListScreen> {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
+            elevation: 0,
+            backgroundColor:
+                isDark ? const Color(0xff05060a) : const Color(0xfff4f6f8),
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
             ),
             centerTitle: true,
             title: Text(
-              "فهرس القران الكريم",
+              "فِهْرِسُ القُرْآنِ الكَرِيم",
               style: GoogleFonts.cairo(
                   color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp),
+                  fontWeight: FontWeight.w900,
+                  fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp),
             ),
             bottom: TabBar(
               indicatorColor: Colors.green,
+              indicatorWeight: 3,
+              indicatorSize: TabBarIndicatorSize.label,
               labelColor: Colors.green,
-              unselectedLabelColor: isDark ? Colors.white70 : Colors.black54,
-              labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+              unselectedLabelColor: isDark ? Colors.white38 : Colors.black38,
+              labelStyle: GoogleFonts.cairo(
+                fontWeight: FontWeight.w900,
+                fontSize: 16.sp,
+              ),
+              unselectedLabelStyle: GoogleFonts.cairo(
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+              ),
               tabs: const [
                 Tab(text: "سورة"),
                 Tab(text: "جزء"),
-                Tab(text: "حزب"),
+                Tab(text: "أحزاب"),
               ],
             ),
           ),
@@ -225,56 +271,101 @@ class _SurahListScreenState extends State<SurahListScreen> {
                   child: KLoading.progressIOSIndicator(
                       radius: 15.r, context: context),
                 )
-              : Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: CupertinoSearchTextField(
-                              controller: _searchController,
-                              onChanged: _filterAll,
-                              placeholder: "بحث باسم السورة او الرقم...",
-                              style: TextStyle(
-                                  color: isDark ? Colors.white : Colors.black),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: _listen,
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _isListening
-                                    ? Colors.red.withOpacity(0.1)
-                                    : Colors.green.withOpacity(0.1),
-                                border: Border.all(
-                                    color: _isListening
-                                        ? Colors.red
-                                        : Colors.green),
-                              ),
-                              child: Icon(
-                                _isListening ? Icons.mic : Icons.mic_none,
-                                color: _isListening ? Colors.red : Colors.green,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+              : Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: isDark
+                          ? const [
+                              Color(0xff05060a),
+                              Color(0xff0d1514),
+                            ]
+                          : const [
+                              Color(0xfff4f6f8),
+                              Color(0xfffdfcf9),
+                            ],
                     ),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          _buildSurahTab(),
-                          _buildJozTab(),
-                          _buildHizbTab(),
-                        ],
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: CupertinoSearchTextField(
+                                  controller: _searchController,
+                                  onChanged: _filterAll,
+                                  placeholder: "بحث باسم السورة او الرقم...",
+                                  backgroundColor: isDark
+                                      ? Colors.white.withOpacity(0.05)
+                                      : Colors.white,
+                                  style: TextStyle(
+                                      color:
+                                          isDark ? Colors.white : Colors.black),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            GestureDetector(
+                              onTap: _listen,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _isListening
+                                      ? Colors.red.withOpacity(0.1)
+                                      : Colors.green.withOpacity(0.1),
+                                  border: Border.all(
+                                      color: _isListening
+                                          ? Colors.red
+                                          : Colors.green,
+                                      width: 1.5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: (_isListening
+                                              ? Colors.red
+                                              : Colors.green)
+                                          .withOpacity(0.15),
+                                      blurRadius: 8,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  _isListening ? Icons.mic : Icons.mic_none,
+                                  color:
+                                      _isListening ? Colors.red : Colors.green,
+                                  size: 22,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            _buildSurahTab(),
+                            _buildJozTab(),
+                            _buildHizbTab(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
         ),
       ),
@@ -287,81 +378,142 @@ class _SurahListScreenState extends State<SurahListScreen> {
           child:
               Text("لا توجد نتائج", style: GoogleFonts.cairo(fontSize: 16.sp)));
     }
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Divider(),
+    return ListView.builder(
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
       physics: const BouncingScrollPhysics(),
       itemCount: _filteredSurahItems.length,
       itemBuilder: (ctx, index) {
         final item = _filteredSurahItems[index];
         final surah = item.model;
         final realIndex = item.index;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
         final types = surah.type == "medinan"
             ? "assets/images/madina.png"
             : "assets/images/macca.png";
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
-          child: InkWell(
-            onTap: () {
-              QuranLibrary().jumpToSurah(realIndex + 1);
-              Navigator.pop(context);
-            },
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Stack(
-                  alignment: Alignment.center,
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.r),
+            color: isDark ? const Color(0xff11151d) : Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.3 : 0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(
+              color: isDark ? Colors.white10 : Colors.black.withOpacity(0.03),
+              width: 1,
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20.r),
+              onTap: () {
+                QuranLibrary().jumpToSurah(realIndex + 1);
+                Navigator.pop(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
                   children: [
-                    SvgPicture.asset("assets/icons/suraNum.svg"),
-                    TextWidget(
-                      title: "${realIndex + 1}",
-                      fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          "assets/icons/suraNum.svg",
+                          colorFilter: ColorFilter.mode(
+                            Colors.green.withOpacity(0.7),
+                            BlendMode.srcIn,
+                          ),
+                          height: 45,
+                        ),
+                        TextWidget(
+                          title: "${realIndex + 1}",
+                          fontSize:
+                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextWidget(
+                            title: item.arabicName,
+                            fontFamily: "me",
+                            fontSize: ResponsiveUtil.isTablet(context)
+                                ? 12.sp
+                                : 20.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              TextWidget(
+                                title: "${surah.totalVerses} آية",
+                                fontSize: ResponsiveUtil.isTablet(context)
+                                    ? 8.sp
+                                    : 12.sp,
+                                color: isDark ? Colors.white60 : Colors.black54,
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                width: 4,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.green.withOpacity(0.5),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              TextWidget(
+                                title:
+                                    surah.type == "medinan" ? "مدنية" : "مكية",
+                                fontSize: ResponsiveUtil.isTablet(context)
+                                    ? 8.sp
+                                    : 12.sp,
+                                color: isDark ? Colors.white60 : Colors.black54,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          onPressed: () {
+                            QuranLibrary().getSurahInfoBottomSheet(
+                                surahNumber: realIndex + 1,
+                                context: context,
+                                isDark: isDark);
+                          },
+                          icon: Icon(
+                            Icons.info_outline_rounded,
+                            color: Colors.green.withOpacity(0.6),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Image.asset(
+                          types,
+                          height: 35,
+                          fit: BoxFit.contain,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextWidget(
-                          fontFamily: "me",
-                          fontSize:
-                              ResponsiveUtil.isTablet(context) ? 9.sp : 17.5.sp,
-                          fontWeight: FontWeight.bold,
-                          title: item.arabicName),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: TextWidget(
-                            fontFamily: "me",
-                            fontSize: ResponsiveUtil.isTablet(context)
-                                ? 10.sp
-                                : 16.sp,
-                            fontWeight: FontWeight.w500,
-                            title: " اياتها ${surah.totalVerses.toString()}"),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    QuranLibrary().getSurahInfoBottomSheet(
-                        surahNumber: realIndex + 1,
-                        context: context,
-                        isDark:
-                            Theme.of(context).brightness == Brightness.dark);
-                  },
-                  child: const Icon(Icons.info_outline),
-                ),
-                const SizedBox(width: 8),
-                Image.asset(
-                  types,
-                  height: 40,
-                  fit: BoxFit.cover,
-                ),
-              ],
+              ),
             ),
           ),
         );
@@ -375,41 +527,81 @@ class _SurahListScreenState extends State<SurahListScreen> {
           child:
               Text("لا توجد نتائج", style: GoogleFonts.cairo(fontSize: 16.sp)));
     }
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Divider(),
+    return ListView.builder(
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
       physics: const BouncingScrollPhysics(),
       itemCount: _filteredJozzs.length,
       itemBuilder: (ctx, index) {
         final jozName = _filteredJozzs[index];
         final actualIndex = jozzs.indexOf(jozName);
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
-          child: InkWell(
-            onTap: () {
-              QuranLibrary().jumpToJoz(actualIndex + 1);
-              Navigator.of(context).pop();
-            },
-            child: Row(
-              children: [
-                Stack(
-                  alignment: Alignment.center,
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.r),
+            color: isDark ? const Color(0xff11151d) : Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.3 : 0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(
+              color: isDark ? Colors.white10 : Colors.black.withOpacity(0.03),
+              width: 1,
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20.r),
+              onTap: () {
+                QuranLibrary().jumpToJoz(actualIndex + 1);
+                Navigator.of(context).pop();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
                   children: [
-                    SvgPicture.asset("assets/icons/suraNum.svg"),
-                    TextWidget(
-                      title: "${actualIndex + 1}",
-                      fontSize: 14.sp,
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          "assets/icons/suraNum.svg",
+                          colorFilter: const ColorFilter.mode(
+                            Colors.green,
+                            BlendMode.srcIn,
+                          ),
+                          height: 45,
+                        ),
+                        TextWidget(
+                          title: "${actualIndex + 1}",
+                          fontSize:
+                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: TextWidget(
+                        title: jozName,
+                        fontFamily: "me",
+                        fontSize:
+                            ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                      color: Colors.green.withOpacity(0.5),
                     ),
                   ],
                 ),
-                const SizedBox(width: 20),
-                TextWidget(
-                  title: jozName,
-                  fontFamily: "me",
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ],
+              ),
             ),
           ),
         );
@@ -418,46 +610,85 @@ class _SurahListScreenState extends State<SurahListScreen> {
   }
 
   Widget _buildHizbTab() {
-    if (_filteredHizbs.isEmpty) {
+    if (_filteredHizbItems.isEmpty) {
       return Center(
           child:
               Text("لا توجد نتائج", style: GoogleFonts.cairo(fontSize: 16.sp)));
     }
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Divider(),
+    return ListView.builder(
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
       physics: const BouncingScrollPhysics(),
-      itemCount: _filteredHizbs.length,
+      itemCount: _filteredHizbItems.length,
       itemBuilder: (ctx, index) {
-        final hizbName = _filteredHizbs[index];
-        final actualIndex = hizbs.indexOf(hizbName);
+        final hizbName = _filteredHizbItems[index];
+        final actualIndex = _allHizbItems.indexOf(hizbName);
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
-          child: InkWell(
-            onTap: () {
-              QuranLibrary().jumpToHizb(actualIndex + 1);
-              Navigator.of(context).pop();
-            },
-            child: Row(
-              children: [
-                Stack(
-                  alignment: Alignment.center,
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.r),
+            color: isDark ? const Color(0xff11151d) : Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.3 : 0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(
+              color: isDark ? Colors.white10 : Colors.black.withOpacity(0.03),
+              width: 1,
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: GestureDetector(
+              onTap: () {
+                QuranLibrary().jumpToHizb(actualIndex + 1);
+                Navigator.of(context).pop();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
                   children: [
-                    SvgPicture.asset("assets/icons/suraNum.svg"),
-                    TextWidget(
-                      title: "${actualIndex + 1}",
-                      fontSize: 14.sp,
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          "assets/icons/suraNum.svg",
+                          colorFilter: const ColorFilter.mode(
+                            Colors.green,
+                            BlendMode.srcIn,
+                          ),
+                          height: 45,
+                        ),
+                        TextWidget(
+                          title: "${actualIndex + 1}",
+                          fontSize:
+                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: TextWidget(
+                        title: hizbName,
+                        fontFamily: "me",
+                        fontSize:
+                            ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                      color: Colors.green.withOpacity(0.5),
                     ),
                   ],
                 ),
-                const SizedBox(width: 20),
-                TextWidget(
-                  title: hizbName,
-                  fontFamily: "me",
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ],
+              ),
             ),
           ),
         );
