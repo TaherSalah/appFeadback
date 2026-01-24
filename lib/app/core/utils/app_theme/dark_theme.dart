@@ -23,7 +23,8 @@ ThemeData darkTheme({Color? primaryColor}) {
     appBarTheme: const AppBarTheme(
         systemOverlayStyle: SystemUiOverlayStyle(
           // Status bar color
-          statusBarColor: Color(0xff000000),
+          // statusBarColor: Color(0xff000000),
+          statusBarColor: Color(0xff1F1F1F),
 
           // Status bar brightness (optional)
           statusBarIconBrightness: Brightness.light, // For Android (dark icons)

@@ -46,8 +46,24 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
   String? selectedFontSize = "20";
   int? bookmarkId;
 
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    currentIndex = widget.allSurahs.indexWhere((s) => s.id == widget.surah.id);
+    // Show bottom navigation if navigated from next/previous buttons
+    showBottom = widget.showBottomOnStart;
+    showFab = false;
+    isDark = widget.isDark;
+    loadBookmark();
+    bookmarkId = widget.verseId; //
+    // If showing bottom navigation, start the hide timer
+    if (showBottom) {
+      _startHideTimer();
+    }
+  }
+
   List<TextSpan> _buildVerseWithColoredNumbers(String text, bool isDark) {
-    final numberRegExp = RegExp(r'\(\d+\)');
     // final markRegExp = RegExp(r'۞');
     final markRegExp = RegExp(r'﴿\d+﴾');
 
@@ -586,7 +602,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                                 context: context,
                                 pageBuilder: (context, anim1, anim2) =>
                                     PremiumShareCard(
-                                      azkarName: "",
+                                  azkarName: "",
                                   text: verse.text,
                                   source:
                                       "سورة ${widget.surah.name} - آية ${index + 1}",

@@ -10,6 +10,8 @@ import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:quran_library/quran.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class AyaSearchScreen extends StatefulWidget {
   const AyaSearchScreen({super.key});
@@ -23,10 +25,127 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
   List<AyahModel> ayah = [];
   Timer? _debounce;
 
+  // Voice Search
+  stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
+
+  // Search History
+  List<String> searchHistory = [];
+  bool isHistoryLoading = true;
+
   @override
   void initState() {
     super.initState();
     searchKey = TextEditingController();
+    _initSpeech();
+    loadSearchHistory();
+  }
+
+  Future<void> loadSearchHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      searchHistory = prefs.getStringList('quran_search_history') ?? [];
+      isHistoryLoading = false;
+    });
+  }
+
+  Future<void> addToHistory(String term) async {
+    final text = term.trim();
+    if (text.isEmpty) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      searchHistory.remove(text);
+      searchHistory.insert(0, text);
+      if (searchHistory.length > 10) {
+        searchHistory = searchHistory.sublist(0, 10);
+      }
+    });
+    await prefs.setStringList('quran_search_history', searchHistory);
+  }
+
+  Future<void> removeFromHistory(String term) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      searchHistory.remove(term);
+    });
+    await prefs.setStringList('quran_search_history', searchHistory);
+  }
+
+  Future<void> clearHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      searchHistory.clear();
+    });
+    await prefs.remove('quran_search_history');
+  }
+
+  Future<void> _initSpeech() async {
+    try {
+      await _speech.initialize();
+    } catch (e) {
+      debugPrint("Speech init error: $e");
+    }
+  }
+
+  void _listen() async {
+    if (!_isListening) {
+      try {
+        bool available = await _speech.initialize(
+          onStatus: (val) {
+            if (val == 'done' || val == 'notListening') {
+              setState(() => _isListening = false);
+            }
+          },
+          onError: (val) {
+            debugPrint("Speech error: ${val.errorMsg}");
+            setState(() => _isListening = false);
+          },
+        );
+        if (available) {
+          setState(() => _isListening = true);
+          _speech.listen(
+            onResult: (val) {
+              setState(() {
+                searchKey.text = val.recognizedWords;
+                loadeData(searchText: val.recognizedWords);
+              });
+            },
+            localeId: 'ar_SA',
+          );
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز",
+                  textAlign: TextAlign.right,
+                  style: TextStyle(fontFamily: "cairo"),
+                ),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        debugPrint("Speech recognition exception: $e");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                "حدث خطأ أثناء تشغيل البحث الصوتي",
+                textAlign: TextAlign.right,
+                style: TextStyle(fontFamily: "cairo"),
+              ),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
   }
 
   @override
@@ -44,6 +163,10 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
       });
       return;
     }
+
+    // Add to history only if we have results (optional) or just add it
+    // Adding it here implies any submitted search is saved
+    addToHistory(query);
 
     setState(() {
       ayah = QuranLibrary().search(query);
@@ -179,52 +302,106 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      CupertinoSearchTextField(
-                        controller: searchKey,
-                        itemColor: isDark ? Colors.white : Colors.black54,
-                        style: TextStyle(
-                          color: isDark ? Colors.white : Colors.black,
-                          fontFamily: GoogleFonts.cairo().fontFamily,
-                          fontSize: isTablet ? 9.sp : 14,
-                        ),
-                        onSuffixTap: () {
-                          searchKey.clear();
-                          setState(() {
-                            ayah.clear();
-                          });
-                        },
-                        decoration: BoxDecoration(
-                          color:
-                              isDark ? const Color(0xff151515) : Colors.white,
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(
-                            color: isDark
-                                ? KColors.primary.withOpacity(0.6)
-                                : KColors.scoColor.withOpacity(0.7),
-                            width: 1.1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                              color: Colors.black.withOpacity(0.04),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CupertinoSearchTextField(
+                              controller: searchKey,
+                              itemColor: isDark ? Colors.white : Colors.black54,
+                              style: TextStyle(
+                                color: isDark ? Colors.white : Colors.black,
+                                fontFamily: GoogleFonts.cairo().fontFamily,
+                                fontSize: isTablet ? 9.sp : 14,
+                              ),
+                              onSuffixTap: () {
+                                searchKey.clear();
+                                setState(() {
+                                  ayah.clear();
+                                });
+                              },
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? const Color(0xff151515)
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(
+                                  color: isDark
+                                      ? KColors.primary.withOpacity(0.6)
+                                      : KColors.scoColor.withOpacity(0.7),
+                                  width: 1.1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                    color: Colors.black.withOpacity(0.04),
+                                  ),
+                                ],
+                              ),
+                              placeholder: "اكتب نص الآية أو كلمة منها",
+                              placeholderStyle: TextStyle(
+                                color: isDark
+                                    ? Colors.grey[500]
+                                    : Colors.grey[600],
+                                fontFamily: GoogleFonts.cairo().fontFamily,
+                                fontSize: isTablet ? 8.sp : 13,
+                              ),
+                              onChanged: (value) {
+                                _debounce?.cancel();
+                                _debounce = Timer(
+                                    const Duration(milliseconds: 450), () {
+                                  loadeData(searchText: value);
+                                });
+                              },
+                              onSubmitted: (value) =>
+                                  loadeData(searchText: value),
                             ),
-                          ],
-                        ),
-                        placeholder: "اكتب نص الآية أو كلمة منها",
-                        placeholderStyle: TextStyle(
-                          color: isDark ? Colors.grey[500] : Colors.grey[600],
-                          fontFamily: GoogleFonts.cairo().fontFamily,
-                          fontSize: isTablet ? 8.sp : 13,
-                        ),
-                        onChanged: (value) {
-                          _debounce?.cancel();
-                          _debounce =
-                              Timer(const Duration(milliseconds: 450), () {
-                            loadeData(searchText: value);
-                          });
-                        },
-                        onSubmitted: (value) => loadeData(searchText: value),
+                          ),
+                          const SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: _listen,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _isListening
+                                    ? Colors.red.withOpacity(0.1)
+                                    : (isDark
+                                            ? KColors.primaryColor
+                                            : KColors.primary2Color)
+                                        .withOpacity(0.12),
+                                border: Border.all(
+                                    color: _isListening
+                                        ? Colors.red
+                                        : (isDark
+                                                ? KColors.primaryColor
+                                                : KColors.primary2Color)
+                                            .withOpacity(0.3),
+                                    width: 1.5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: (_isListening
+                                            ? Colors.red
+                                            : Colors.green)
+                                        .withOpacity(0.15),
+                                    blurRadius: 8,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                _isListening ? Icons.mic : Icons.mic_none,
+                                color: _isListening
+                                    ? Colors.red
+                                    : (isDark
+                                        ? KColors.primaryColor
+                                        : KColors.primary2Color),
+                                size: 22,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -261,11 +438,23 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                               );
                             },
                           )
-                        : _EmptyState(
-                            key: const ValueKey("empty"),
-                            query: query,
-                            isDark: isDark,
-                          ),
+                        : (query.isEmpty && searchHistory.isNotEmpty)
+                            ? _SearchHistoryList(
+                                key: const ValueKey("history"),
+                                history: searchHistory,
+                                isDark: isDark,
+                                onSelect: (val) {
+                                  searchKey.text = val;
+                                  loadeData(searchText: val);
+                                },
+                                onDelete: removeFromHistory,
+                                onClearAll: clearHistory,
+                              )
+                            : _EmptyState(
+                                key: const ValueKey("empty"),
+                                query: query,
+                                isDark: isDark,
+                              ),
                   ),
                 ),
               ],
@@ -579,6 +768,104 @@ class _EmptyState extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SearchHistoryList extends StatelessWidget {
+  final List<String> history;
+  final bool isDark;
+  final ValueChanged<String> onSelect;
+  final ValueChanged<String> onDelete;
+  final VoidCallback onClearAll;
+
+  const _SearchHistoryList({
+    super.key,
+    required this.history,
+    required this.isDark,
+    required this.onSelect,
+    required this.onDelete,
+    required this.onClearAll,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isTablet = ResponsiveUtil.isTablet(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 18.w : 20,
+            vertical: 8,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextWidget(
+                title: "آخر عمليات البحث",
+                fontWeight: FontWeight.bold,
+                fontSize: isTablet ? 9.sp : 14,
+                color: isDark ? Colors.grey[300] : Colors.grey[700],
+              ),
+              TextButton(
+                onPressed: onClearAll,
+                child: TextWidget(
+                  title: "مسح الكل",
+                  fontSize: isTablet ? 8.sp : 12,
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 18.w : 16),
+            itemCount: history.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              final term = history[index];
+              return Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xff151515) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white10
+                        : Colors.black.withOpacity(0.04),
+                  ),
+                ),
+                child: ListTile(
+                  onTap: () => onSelect(term),
+                  leading: Icon(
+                    Icons.history,
+                    color: isDark ? Colors.grey[500] : Colors.grey[400],
+                    size: 20,
+                  ),
+                  title: TextWidget(
+                    title: term,
+                    fontSize: isTablet ? 9.sp : 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      size: 18,
+                      color: isDark ? Colors.grey[600] : Colors.grey[400],
+                    ),
+                    onPressed: () => onDelete(term),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

@@ -83,29 +83,19 @@ class MainController extends ControllerMVC {
   String upcomingPrayerName = "";
   final List<Map<String, String>> iconsApp = [
     {
-      "title": "أَذْكَارُ الصَّبَاحِ",
-      "icon": "assets/images/contrast.png",
-      "navigate": "/azkarSabah"
-    },
-    {
-      "title": "أَذْكَارُ الْمَسَاءِ",
-      "icon": "assets/images/islam.png",
-      "navigate": "/azkarMassa"
-    },
-    {
-      "title": "السبحة",
-      "icon": "assets/images/beads2.png",
-      "navigate": "/azkarCounter"
-    },
-    {
-      "title": "المصحف",
+      "title": "الْمُصْحَفُ الشَّرِيفُ",
       "icon": "assets/images/koran.png",
       "navigate": "/surahListScreen"
     },
     {
-      "title": "أَذْكَارٌ مُتَنَوِّعَةٌ",
+      "title": "أَذْكَارُ الْمُسْلِمِ",
       "icon": "assets/images/open-hands.png",
       "navigate": "/allazkarlistview"
+    },
+    {
+      "title": "السُّبْحَةُ",
+      "icon": "assets/images/beads2.png",
+      "navigate": "/azkarCounter"
     },
     {
       "title": "مَوَاقِيتُ الصَّلَاةِ",
@@ -113,15 +103,14 @@ class MainController extends ControllerMVC {
       "navigate": "/timingScreen"
     },
     {
-      "icon":
-          "assets/images/deadline.png", // Using clock as placeholder for calendar
-      "title": "التقويم",
+      "title": "التَّقْوِيمُ",
+      "icon": "assets/images/deadline.png",
       "navigate": "/calendar",
       "visible": "true"
     },
     {
+      "title": "الْقِبْلَةُ",
       "icon": "assets/images/qibla (1).png",
-      "title": "القبلة",
       "navigate": "/qiblaDirection",
       "visible": "true"
     },
@@ -131,58 +120,43 @@ class MainController extends ControllerMVC {
       "navigate": Routes.categoriesRoute,
     },
     {
-      "title": "راديو القران الكريم",
+      "title": "رَادِيُو الْقُرْآنِ الْكَرِيمِ",
       "icon": "assets/icons/radio.png",
       "navigate": "/QuranRadioView"
     },
     {
-      "title": "الختمات المنجزه",
-      "icon": "assets/images/achivement.png",
-      "navigate": "/compplateKhatna"
-    },
-    {
-      "title": " اورادك من الذكر",
+      "title": "أَوْرَادُكَ مِنَ الذِّكْرِ",
       "icon": "assets/images/tauhid.png",
       "navigate": "/WirdHomeScreen"
     },
     {
-      "title": "الختمة الجماعية",
+      "title": "الْخَتْمَةُ الْجَمَاعِيَّةُ",
       "icon": "assets/images/viral-marketing.png",
       "navigate": "/globalKhatmah",
-      "subtitle": "شارك المجتمع في الختم"
+      "subtitle": "شَارِكِ الْمُجْتَمَعَ فِي الْخَتْمِ"
     },
-    // {
-    //   "title": "قناة القران الكريم",
-    //   "icon": "assets/icons/radio.png",
-    //   "navigate": "/QuranChannalPlayerView"
-    // },
-    // {
-    //   "title": "قناة السنة النبوية",
-    //   "icon": "assets/icons/radio.png",
-    //   "navigate": "/QuranChannalPlayerView"
-    // },
     {
-      "title": "حاسبة الزكاة",
+      "title": "حَاسِبَةُ الزَّكَاةِ",
       "icon": "assets/images/charity.png",
       "navigate": Routes.zakatCalculatorRoute
     },
     {
-      "title": "المساجد القريبة",
+      "title": "الْمَسَاجِدُ الْقَرِيبَةُ",
       "icon": "assets/images/mosque.png",
       "navigate": "/mosquesMap"
     },
     {
-      "title": "منبه الفجر",
+      "title": "مُنَبِّهُ الْفَجْرِ",
       "icon": "assets/images/clock.png",
       "navigate": "/fajrAlarm"
     },
     {
-      "title": "كتب الحديث",
+      "title": "كُتُبُ الْحَدِيثِ",
       "icon": "assets/images/book-stack.png",
       "navigate": "/NineBooksScreen"
     },
     {
-      "title": "الاعدادات",
+      "title": "الإِعْدَادَاتُ",
       "icon": "assets/images/app.png",
       "navigate": "/settingsRoute"
     },

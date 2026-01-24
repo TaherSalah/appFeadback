@@ -686,12 +686,10 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                       fit: BoxFit.cover,
                                       width: double.infinity,
                                       height: double.infinity,
-                                      placeholder: (context, url) =>
-                                          Container(
+                                      placeholder: (context, url) => Container(
                                         color: Colors.grey[200],
                                         child: const Center(
-                                            child:
-                                                CircularProgressIndicator()),
+                                            child: CircularProgressIndicator()),
                                       ),
                                       errorWidget: (context, url, error) =>
                                           const Icon(Icons.error),

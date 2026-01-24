@@ -11,6 +11,16 @@ class Allazkarlistview extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, String>> iconsApp = [
       {
+        "title": "أَذْكَارُ الصَّبَاحِ",
+        "icon": "assets/images/contrast.png",
+        "navigate": "/azkarSabah"
+      },
+      {
+        "title": "أَذْكَارُ الْمَسَاءِ",
+        "icon": "assets/images/islam.png",
+        "navigate": "/azkarMassa"
+      },
+      {
         "title": AppString.KSleep,
         "icon": "assets/images/sleep.png",
         "navigate": "/sleepAzkar",

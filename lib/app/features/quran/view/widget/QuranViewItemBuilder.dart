@@ -1,4 +1,8 @@
 import 'dart:ui';
+import 'dart:io';
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:screen_brightness/screen_brightness.dart' as sb;
@@ -11,8 +15,21 @@ import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:quran_library/quran_library.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:muslimdaily/app/features/quran/data/reading_analytics_service.dart';
+import 'package:muslimdaily/app/features/quran/data/reflections_service.dart';
+import 'package:muslimdaily/app/features/quran/view/ReadingAnalyticsScreen.dart';
 
-enum _QuranMenuAction { audio, orientation, background, wakelock, brightness }
+enum _QuranMenuAction {
+  audio,
+  orientation,
+  background,
+  wakelock,
+  brightness,
+  share,
+  note,
+  autoscroll,
+  confirm
+}
 
 class QuranViewItemBuilder extends StatefulWidget {
   final int? initialPage;
@@ -33,7 +50,10 @@ class QuranViewItemBuilder extends StatefulWidget {
 }
 
 class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+  final GlobalKey _shareKey = GlobalKey();
+  bool _isSharing = false;
+
   bool get isDark => Theme.of(context).brightness == Brightness.dark;
 
   Color _darkBackgroundColor = const Color(0xFF101623);
@@ -116,6 +136,11 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
           icon: Icons.gpp_good_outlined,
           title: "التَّفْسِيرُ",
           route: Routes.tafsirQuranRoute,
+        ),
+        DrawerModle(
+          icon: Icons.analytics_outlined,
+          title: "إِحْصَائِيَّاتُ القِرَاءَةِ",
+          onTap: _openAnalytics,
         ),
       ],
     ),
@@ -219,6 +244,87 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     ]);
     // Enable wakelock by default
     WakelockPlus.enable();
+    WidgetsBinding.instance.addObserver(this);
+    _startTrackingTime();
+  }
+
+  // Analytics
+  Timer? _analyticsTimer;
+  int _sessionSeconds = 0;
+  final ReadingAnalyticsService _analyticsService = ReadingAnalyticsService();
+  final ReflectionsService _reflectionsService = ReflectionsService();
+  bool _hasPageNote = false;
+
+  Future<void> _checkPageNote(int pageIndex) async {
+    final note = await _reflectionsService.getPageNote(pageIndex);
+    if (mounted) {
+      setState(() {
+        _hasPageNote = note != null && note.isNotEmpty;
+      });
+    }
+  }
+
+  Future<void> _showPageNoteDialog() async {
+    if (_currentPage == null) return;
+
+    final note = await _reflectionsService.getPageNote(_currentPage!);
+
+    if (!mounted) return;
+
+    await showDialog(
+      context: context,
+      builder: (context) => _NoteDialog(
+        initialText: note,
+        onSave: (text) async {
+          await _reflectionsService.savePageNote(_currentPage!, text);
+          _checkPageNote(_currentPage!);
+        },
+        onDelete: () async {
+          await _reflectionsService.deletePageNote(_currentPage!);
+          _checkPageNote(_currentPage!);
+        },
+      ),
+    );
+  }
+
+  Future<void> _openAnalytics() async {
+    await _flushReadingTime();
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ReadingAnalyticsScreen()),
+    );
+  }
+
+  void _startTrackingTime() {
+    _analyticsTimer?.cancel();
+    _analyticsTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _sessionSeconds++;
+      if (_sessionSeconds % 60 == 0) {
+        _flushReadingTime();
+      }
+    });
+  }
+
+  void _stopTrackingTime() {
+    _analyticsTimer?.cancel();
+    _flushReadingTime();
+  }
+
+  Future<void> _flushReadingTime() async {
+    if (_sessionSeconds > 0) {
+      await _analyticsService.addReadingTime(_sessionSeconds);
+      _sessionSeconds = 0;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _stopTrackingTime();
+    } else if (state == AppLifecycleState.resumed) {
+      _startTrackingTime();
+    }
   }
 
   bool _isAutoScrolling = false;
@@ -379,6 +485,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     setState(() {
       _currentPage = lastPage;
     });
+    _checkPageNote(lastPage);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_currentPage != null) {
         QuranLibrary().jumpToPage(_currentPage! + 1);
@@ -465,6 +572,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     _hideControlsTimer?.cancel();
     _verticalController?.dispose();
     WakelockPlus.disable(); // Ensure wakelock is off when leaving
+    WidgetsBinding.instance.removeObserver(this);
+    _stopTrackingTime();
     super.dispose();
   }
 
@@ -472,12 +581,268 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     setState(() {
       _currentPage = page;
     });
+    _checkPageNote(page);
 
     final prefs = await SharedPreferences.getInstance();
     final key = widget.campaignId != null
         ? 'last_page_${widget.campaignId}'
         : 'last_page';
     await prefs.setInt(key, page);
+
+    // Track pages read
+    if (_currentPage != null) _analyticsService.incrementPagesRead();
+  }
+
+  Future<void> _showSadaqahDialog() async {
+    String selectedName = "";
+    final names = ["والديّ", "جميع المسلمين", "والدي ووالدتي", "نفسي"];
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setModalState) => Directionality(
+          textDirection: TextDirection.rtl,
+          child: Dialog(
+            insetPadding:
+                const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            backgroundColor: Colors.transparent,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // جسم الديالوج
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 45, 20, 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: isDark
+                          ? [const Color(0xFF0B1A14), const Color(0xFF070B14)]
+                          : [const Color(0xFFE0F2F1), const Color(0xFFB2DFDB)],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // العنوان
+                      Text(
+                        'مشاركة كصدقة جارية',
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.teal.shade900,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // النص التوضيحي
+                      Text(
+                        'اكتب اسم الشخص الذي تود إهداء ثواب القراءة له، أو اختر من الخيارات السريعة.',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          height: 1.4,
+                          color: isDark ? Colors.white70 : Colors.teal.shade800,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // حقل إدخال الاسم
+                      TextField(
+                        onChanged: (v) => selectedName = v,
+                        style: TextStyle(
+                            color: isDark ? Colors.white : Colors.black),
+                        decoration: InputDecoration(
+                          hintText: "اكتب الاسم هنا...",
+                          hintStyle: TextStyle(
+                              color: isDark ? Colors.grey : Colors.grey[600]),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          filled: true,
+                          fillColor: isDark
+                              ? Colors.white12
+                              : Colors.white.withOpacity(0.5),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // الخيارات السريعة
+                      Wrap(
+                        spacing: 8,
+                        children: names
+                            .map((n) => ChoiceChip(
+                                  label: Text(
+                                    n,
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: selectedName == n
+                                          ? Colors.white
+                                          : (isDark
+                                              ? Colors.white70
+                                              : Colors.teal.shade900),
+                                    ),
+                                  ),
+                                  selected: selectedName == n,
+                                  onSelected: (s) {
+                                    setModalState(() => selectedName = n);
+                                  },
+                                  selectedColor: Colors.teal,
+                                  backgroundColor: isDark
+                                      ? Colors.white10
+                                      : Colors.teal.shade50,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                ))
+                            .toList(),
+                      ),
+
+                      SizedBox(height: 24.h),
+
+                      // الأزرار
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop();
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  color: isDark
+                                      ? Colors.grey.shade400
+                                      : Colors.teal.shade300,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 11),
+                              ),
+                              child: Text(
+                                'تراجع',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: isDark
+                                      ? Colors.white
+                                      : Colors.teal.shade900,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop();
+                                _sharePageImage(sadaqahName: selectedName);
+                              },
+                              icon: const Icon(Icons.share_rounded, size: 18),
+                              label: const Text('مشاركة'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 11),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // الأيقونة الدائرية أعلى الديالوج
+                Positioned(
+                  top: -35,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [Colors.teal, Colors.tealAccent],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.teal.withOpacity(0.6),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.volunteer_activism_rounded,
+                          size: 38,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _sharePageImage({String? sadaqahName}) async {
+    if (_isSharing) return;
+    setState(() => _isSharing = true);
+
+    try {
+      final boundary = _shareKey.currentContext?.findRenderObject()
+          as RenderRepaintBoundary?;
+      if (boundary == null) return;
+
+      final image = await boundary.toImage(pixelRatio: 3.0);
+      final byteData = await image.toByteData(format: ImageByteFormat.png);
+      final buffer = byteData!.buffer.asUint8List();
+
+      final directory = await getTemporaryDirectory();
+      final imagePath = '${directory.path}/quran_page_${_currentPage! + 1}.png';
+      final imageFile = File(imagePath);
+      await imageFile.writeAsBytes(buffer);
+
+      final pageNumber = _currentPage! + 1;
+      String text = "💫 صفحة من القرآن الكريم (صفحة $pageNumber) 💫\n";
+
+      if (sadaqahName != null && sadaqahName.trim().isNotEmpty) {
+        text += "🌿 صدقة جارية عن: $sadaqahName 🌿\n";
+      }
+
+      text += "عبر تطبيق *رفيق المسلم اليومي*\n"
+          "حمل التطبيق الآن: https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily";
+
+      await Share.shareXFiles([XFile(imagePath)], text: text);
+    } catch (e) {
+      debugPrint("Error sharing page: $e");
+      KHelper.showError(message: "حدث خطأ أثناء مشاركة الصفحة");
+    } finally {
+      if (mounted) setState(() => _isSharing = false);
+    }
   }
 
   void _toggleMode() {
@@ -568,6 +933,18 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             iconTheme:
                 IconThemeData(color: isDark ? Colors.white : Colors.blue),
             actions: [
+              if (_isSharing)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.teal),
+                    ),
+                  ),
+                ),
               // FontsDownloadDialog(
               //   topBarStyle: QuranTopBarStyle(
               //     iconColor: isDark ? Colors.white : Colors.blue,
@@ -632,6 +1009,18 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                         break;
                       case _QuranMenuAction.brightness:
                         _showBrightnessPicker();
+                        break;
+                      case _QuranMenuAction.share:
+                        _showSadaqahDialog();
+                        break;
+                      case _QuranMenuAction.note:
+                        _showPageNoteDialog();
+                        break;
+                      case _QuranMenuAction.autoscroll:
+                        _toggleAutoScroll();
+                        break;
+                      case _QuranMenuAction.confirm:
+                        if (widget.onConfirm != null) widget.onConfirm!();
                         break;
                     }
                   },
@@ -734,47 +1123,84 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       ),
                       isDark: isDark,
                     ),
+                    _buildMenuItem(
+                      context: ctx,
+                      value: _QuranMenuAction.share,
+                      title: 'مشاركة الصفحة',
+                      subtitle:
+                          'شارك صورة من الصفحة الحالية (اختياري: كصدقة جارية)',
+                      iconData: Icons.share_rounded,
+                      iconColor: Colors.teal,
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.teal.withOpacity(0.1),
+                          Colors.teal.withOpacity(0.05),
+                        ],
+                      ),
+                      isDark: isDark,
+                    ),
+                    _buildMenuItem(
+                      context: ctx,
+                      value: _QuranMenuAction.note,
+                      title: 'تدوين خواطر',
+                      subtitle: 'سجل ملاحظاتك وتدبرك للصفحة',
+                      iconData: _hasPageNote
+                          ? Icons.description
+                          : Icons.description_outlined,
+                      iconColor: _hasPageNote ? Colors.amber : Colors.orange,
+                      gradient: LinearGradient(
+                        colors: [
+                          (_hasPageNote ? Colors.amber : Colors.orange)
+                              .withOpacity(0.1),
+                          (_hasPageNote ? Colors.amber : Colors.orange)
+                              .withOpacity(0.05),
+                        ],
+                      ),
+                      isDark: isDark,
+                    ),
+                    _buildMenuItem(
+                      context: ctx,
+                      value: _QuranMenuAction.autoscroll,
+                      title:
+                          _isAutoScrolling ? 'إيقاف التمرير' : 'تشغيل التمرير',
+                      subtitle: _isAutoScrolling
+                          ? 'إيقاف التمرير التلقائي'
+                          : 'بدء التمرير التلقائي للصفحة',
+                      iconData: _isAutoScrolling
+                          ? Icons.pause_circle_filled_rounded
+                          : Icons.play_circle_fill_rounded,
+                      iconColor: _isAutoScrolling ? Colors.red : Colors.green,
+                      gradient: LinearGradient(
+                        colors: [
+                          (_isAutoScrolling ? Colors.red : Colors.green)
+                              .withOpacity(0.1),
+                          (_isAutoScrolling ? Colors.red : Colors.green)
+                              .withOpacity(0.05),
+                        ],
+                      ),
+                      isDark: isDark,
+                    ),
+                    if (widget.onConfirm != null)
+                      _buildMenuItem(
+                        context: ctx,
+                        value: _QuranMenuAction.confirm,
+                        title: 'إتمام القراءة',
+                        subtitle: 'تأكيد إكمال قراءة هذه الورد',
+                        iconData: Icons.check_circle_outline_rounded,
+                        iconColor: Colors.blueAccent,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.blueAccent.withOpacity(0.1),
+                            Colors.blueAccent.withOpacity(0.05),
+                          ],
+                        ),
+                        isDark: isDark,
+                      ),
                     // يمكنك إضافة المزيد من العناصر هنا
                   ],
                 ),
               ),
-              if (widget.onConfirm != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: IconButton(
-                    onPressed: widget.onConfirm,
-                    tooltip: 'تأكيد إتمام القراءة',
-                    icon: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.teal.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.teal.withOpacity(0.5)),
-                      ),
-                      child: const Icon(
-                        Icons.check_rounded,
-                        color: Colors.teal,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
-              // Auto-Scroll Toggle
-              IconButton(
-                onPressed: _toggleAutoScroll,
-                tooltip: _isAutoScrolling
-                    ? 'إيقاف التمرير التلقائي'
-                    : 'تشغيل التمرير التلقائي',
-                icon: Icon(
-                  _isAutoScrolling
-                      ? Icons.pause_circle_filled_rounded
-                      : Icons.play_circle_fill_rounded,
-                  color: _isAutoScrolling ? Colors.orange : Colors.teal,
-                  size: 24,
-                ),
-              ),
             ],
-
             centerTitle: true,
             title: Text(
               "القران الكريم",
@@ -833,51 +1259,57 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       ),
                       child: Align(
                         alignment: Alignment.center,
-                        child: Padding(
-                          padding: EdgeInsets.zero,
-                          child: _currentPage == null
-                              ? Center(
-                                  child: KLoading.progressIOSIndicator(
-                                      context: context),
-                                )
-                              : _verticalMode
-                                  ? PageView.builder(
-                                      scrollDirection: Axis.vertical,
-                                      controller: _verticalController,
-                                      itemCount: 604,
-                                      onPageChanged: _handlePageChanged,
-                                      itemBuilder: (context, index) {
-                                        return QuranLibraryScreen(
-                                          backgroundColor: _backgroundColor,
-                                          withPageView: false,
-                                          isDark: isDark,
-                                          pageIndex: index,
-                                          ayahIconColor: ayahIconColor,
-                                          topBottomQuranStyle: topBottomStyle,
-                                          ayahMenuStyle: ayahMenuStyle,
-                                          indexTabStyle: indexTabStyle,
-                                          useDefaultAppBar: false,
-                                          parentContext: context,
-                                        );
-                                      },
-                                    )
-                                  : QuranLibraryScreen(
-                                      backgroundColor: _backgroundColor,
-
-                                      // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
-                                      withPageView: true,
-                                      isDark: isDark,
-                                      pageIndex: _currentPage!,
-                                      ayahIconColor: ayahIconColor,
-                                      topBottomQuranStyle: topBottomStyle,
-                                      ayahMenuStyle: ayahMenuStyle,
-                                      indexTabStyle: indexTabStyle,
-                                      useDefaultAppBar: false,
-                                      parentContext: context,
-                                      onPageChanged: (page) {
-                                        _handlePageChanged(page);
-                                      },
-                                    ),
+                        child: RepaintBoundary(
+                          key: _shareKey,
+                          child: Padding(
+                            padding: EdgeInsets.zero,
+                            child: _currentPage == null
+                                ? Center(
+                                    child: KLoading.progressIOSIndicator(
+                                        context: context),
+                                  )
+                                : _verticalMode
+                                    ? PageView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        controller: _verticalController,
+                                        itemCount: 604,
+                                        onPageChanged: _handlePageChanged,
+                                        itemBuilder: (context, index) {
+                                          return QuranLibraryScreen(
+                                            backgroundColor: _backgroundColor,
+                                            withPageView: false,
+                                            isDark: isDark,
+                                            appLanguageCode: "ar",
+                                            isFontsLocal: false,
+                                            pageIndex: index,
+                                            ayahIconColor: ayahIconColor,
+                                            topBottomQuranStyle: topBottomStyle,
+                                            ayahMenuStyle: ayahMenuStyle,
+                                            indexTabStyle: indexTabStyle,
+                                            useDefaultAppBar: false,
+                                            parentContext: context,
+                                          );
+                                        },
+                                      )
+                                    : QuranLibraryScreen(
+                                        backgroundColor: _backgroundColor,
+                                        // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
+                                        withPageView: true,
+                                        isDark: isDark,
+                                        pageIndex: _currentPage!,
+                                        appLanguageCode: "ar",
+                                        isFontsLocal: false,
+                                        ayahIconColor: ayahIconColor,
+                                        topBottomQuranStyle: topBottomStyle,
+                                        ayahMenuStyle: ayahMenuStyle,
+                                        indexTabStyle: indexTabStyle,
+                                        useDefaultAppBar: false,
+                                        parentContext: context,
+                                        onPageChanged: (page) {
+                                          _handlePageChanged(page);
+                                        },
+                                      ),
+                          ),
                         ),
                       ),
                     ),
@@ -1278,6 +1710,225 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NoteDialog extends StatefulWidget {
+  final String? initialText;
+  final ValueChanged<String> onSave;
+  final VoidCallback onDelete;
+
+  const _NoteDialog({
+    this.initialText,
+    required this.onSave,
+    required this.onDelete,
+  });
+
+  @override
+  State<_NoteDialog> createState() => _NoteDialogState();
+}
+
+class _NoteDialogState extends State<_NoteDialog> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialText);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // جسم الديالوج
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 45, 20, 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: isDark
+                      ? [const Color(0xFF0D1B2A), const Color(0xFF1B263B)]
+                      : [const Color(0xFFE8EAF6), const Color(0xFFC5CAE9)],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // العنوان
+                  Text(
+                    'خواطري حول الصفحة',
+                    style: TextStyle(
+                      fontSize: 19.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : const Color(0xFF1A237E),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // النص التوضيحي
+                  Text(
+                    'سجل ما تعلمته أو تدبرته من هذه الصفحة ليسهل عليك العودة إليه لاحقاً.',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      height: 1.4,
+                      color: isDark ? Colors.white70 : Colors.indigo.shade800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 16.h),
+
+                  // حقل إدخال الخواطر
+                  TextField(
+                    controller: _controller,
+                    maxLines: 5,
+                    style:
+                        TextStyle(color: isDark ? Colors.white : Colors.black),
+                    decoration: InputDecoration(
+                      hintText: "اكتب ما في ذهنك هنا...",
+                      hintStyle: TextStyle(
+                          color: isDark ? Colors.grey : Colors.grey[600]),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      filled: true,
+                      fillColor: isDark
+                          ? Colors.white12
+                          : Colors.white.withOpacity(0.6),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+
+                  // الأزرار
+                  Row(
+                    children: [
+                      if (widget.initialText != null) ...[
+                        IconButton(
+                          onPressed: () {
+                            widget.onDelete();
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.delete_outline_rounded,
+                              color: Colors.redAccent),
+                          tooltip: 'حذف الخاطرة',
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: isDark
+                                  ? Colors.grey.shade400
+                                  : Colors.indigo.shade300,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 11),
+                          ),
+                          child: Text(
+                            'إلغاء',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF1A237E),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            if (_controller.text.trim().isNotEmpty) {
+                              widget.onSave(_controller.text);
+                            }
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.save_rounded, size: 18),
+                          label: const Text('حفظ'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF3F51B5),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 11),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // الأيقونة الدائرية أعلى الديالوج
+            Positioned(
+              top: -35,
+              left: 0,
+              right: 0,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF3F51B5), Color(0xFF7986CB)],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF3F51B5).withOpacity(0.5),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.edit_note_rounded,
+                      size: 42,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

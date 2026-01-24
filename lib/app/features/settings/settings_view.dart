@@ -523,54 +523,196 @@ class SettingsView extends StatelessWidget {
 
   void _showEmailDialog(BuildContext context) {
     final controller = TextEditingController();
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
-      builder: (context) => Directionality(
+      barrierDismissible: true,
+      builder: (dialogContext) => Directionality(
         textDirection: TextDirection.rtl,
-        child: AlertDialog(
-          title: Text('عرض السجل', style: GoogleFonts.cairo()),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+        child: Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              Text(
-                'أدخل البريد الإلكتروني الذي استخدمته عند إرسال الشكوى لمتابعة حالتها',
-                style: GoogleFonts.cairo(fontSize: 12),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  labelText: 'البريد الإلكتروني',
-                  labelStyle: GoogleFonts.cairo(),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)),
+              // جسم الديالوج
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 45, 20, 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: isDark
+                        ? [const Color(0xFF0F172A), const Color(0xFF1E293B)]
+                        : [const Color(0xFFE3F2FD), const Color(0xFFBBDEFB)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                keyboardType: TextInputType.emailAddress,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // العنوان
+                    Text(
+                      'عرض سجل الشكاوى',
+                      style: GoogleFonts.cairo(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : const Color(0xFF0D47A1),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // النص التوضيحي
+                    Text(
+                      'أدخل البريد الإلكتروني الذي استخدمته عند إرسال الشكوى لمتابعة حالتها.',
+                      style: GoogleFonts.cairo(
+                        fontSize: 12.sp,
+                        height: 1.4,
+                        color: isDark ? Colors.white70 : Colors.blue.shade900,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20.h),
+
+                    // حقل البريد الإلكتروني
+                    TextField(
+                      controller: controller,
+                      style: GoogleFonts.cairo(
+                          color: isDark ? Colors.white : Colors.black),
+                      decoration: InputDecoration(
+                        labelText: 'البريد الإلكتروني',
+                        labelStyle: GoogleFonts.cairo(),
+                        hintText: "example@mail.com",
+                        hintStyle: TextStyle(
+                            color: isDark ? Colors.grey : Colors.grey[600]),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        filled: true,
+                        fillColor: isDark
+                            ? Colors.white12
+                            : Colors.white.withOpacity(0.6),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    SizedBox(height: 24.h),
+
+                    // الأزرار
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                color: isDark
+                                    ? Colors.grey.shade400
+                                    : Colors.blue.shade300,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                            child: Text(
+                              'إلغاء',
+                              style: GoogleFonts.cairo(
+                                fontSize: 13.sp,
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF0D47A1),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              final email = controller.text.trim();
+                              if (email.isNotEmpty && email.contains('@')) {
+                                Navigator.pop(dialogContext);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FeedbackHistoryView(userEmail: email),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.manage_search_rounded,
+                                size: 18),
+                            label: Text(
+                              'عرض',
+                              style: GoogleFonts.cairo(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1976D2),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // الأيقونة الدائرية أعلى الديالوج
+              Positioned(
+                top: -35,
+                left: 0,
+                right: 0,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF1976D2), Color(0xFF64B5F6)],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF1976D2).withOpacity(0.5),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.manage_history_rounded,
+                        size: 38,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('إلغاء', style: GoogleFonts.cairo()),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final email = controller.text.trim();
-                if (email.isNotEmpty && email.contains('@')) {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          FeedbackHistoryView(userEmail: email),
-                    ),
-                  );
-                }
-              },
-              child: Text('عرض', style: GoogleFonts.cairo()),
-            ),
-          ],
         ),
       ),
     );
