@@ -35,7 +35,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
     _init();
   }
 
-  late List<BookmarkModel> books;
+  List<BookmarkModel> books = [];
   Future<void> _init() async {
     await QuranLibrary.init();
     await loadBookmarksData();

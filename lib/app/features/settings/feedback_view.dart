@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import '../../core/services/feedback_service.dart';
 
 /// شاشة إرسال الشكاوى والاقتراحات
@@ -71,36 +72,39 @@ class _FeedbackViewState extends State<FeedbackView> {
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'تم إرسال الملاحظات بنجاح ✅',
-              style: GoogleFonts.cairo(),
-            ),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        // ScaffoldMessenger.of(context).showSnackBar(
+          // SnackBar(
+          //   content: Text(
+          //     'تم إرسال الملاحظات بنجاح ✅',
+          //     style: GoogleFonts.cairo(),
+          //   ),
+          //   backgroundColor: Colors.green,
+          //   behavior: SnackBarBehavior.floating,
+          //   shape: RoundedRectangleBorder(
+          //     borderRadius: BorderRadius.circular(10),
+          //   ),
+          // ),
+        // );
+        KHelper.showSuccess(message:              'تم إرسال الملاحظات بنجاح ',
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'فشل إرسال الملاحظات: $e',
-              style: GoogleFonts.cairo(),
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
+        KHelper.showError(message:               'فشل إرسال الملاحظات: $e',);
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text(
+        //       'فشل إرسال الملاحظات: $e',
+        //       style: GoogleFonts.cairo(),
+        //     ),
+        //     backgroundColor: Colors.red,
+        //     behavior: SnackBarBehavior.floating,
+        //     shape: RoundedRectangleBorder(
+        //       borderRadius: BorderRadius.circular(10),
+        //     ),
+        //   ),
+        // );
       }
     } finally {
       if (mounted) {

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/utils/style/responsive_util.dart';
+import '../../core/widgets/KLoading.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 import 'services/charity_pdf_service.dart';
@@ -51,8 +52,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
+        // backgroundColor:
+        //     isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
         // appBar: AppBar(
         //   title: Text(
         //     'سجل الصدقات 📜',
@@ -137,7 +138,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
             // قائمة الصدقات
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator())
+                  ?  Center(child:  KLoading.progressIOSIndicator(context: context))
                   : _filteredDonations.isEmpty
                       ? _buildEmptyState(isDark)
                       : RefreshIndicator(

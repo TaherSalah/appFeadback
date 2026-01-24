@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/widgets/KLoading.dart';
 import 'models/achievement_models.dart';
 import 'services/achievement_service.dart';
 import 'ChallengesManagementScreen.dart';
@@ -57,7 +58,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
           ],
         ),
         body: _loading
-            ? const Center(child: CircularProgressIndicator())
+            ?  Center(child:  KLoading.progressIOSIndicator(context: context))
             : SingleChildScrollView(
                 padding: EdgeInsets.all(16.w),
                 child: Column(

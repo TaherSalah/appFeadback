@@ -265,7 +265,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           SizedBox(height: 8.h),
           Text(
             "$total",
-            style: GoogleFonts.barlow(fontSize: 48.sp, fontWeight: FontWeight.bold, color: primaryColor),
+            style: GoogleFonts.barlow(fontSize: 45.sp, fontWeight: FontWeight.bold, color: primaryColor),
           ),
           Container(
             height: 4.h,
@@ -286,9 +286,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         border: Border.all(color: isDark ? Colors.white12 : Colors.grey.withOpacity(0.1)),
       ),
       child: Column(
+        spacing: 5,
         children: [
-          Icon(icon, color: iconColor, size: 28.sp),
-          SizedBox(height: 8.h),
+          // Icon(icon, color: iconColor, size: 28.sp),
+          // SizedBox(height: 8.h),
           Text(value, style: GoogleFonts.barlow(fontSize: 24.sp, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
           Text("$title ($unit)", style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey), textAlign: TextAlign.center),
         ],

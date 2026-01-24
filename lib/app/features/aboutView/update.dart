@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/shard/exports/all_exports.dart';
+import '../../core/widgets/KLoading.dart';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 1️⃣ MODEL - نموذج بيانات التحديث
@@ -371,11 +372,11 @@ class _UpdateCheckScreenState extends State<UpdateCheckScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isChecking) {
-      return const MaterialApp(
+      return  MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: Center(
-            child: CircularProgressIndicator(),
+            child:  KLoading.progressIOSIndicator(context: context),
           ),
         ),
       );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:confetti/confetti.dart';
+import '../../core/widgets/KLoading.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 import 'package:intl/intl.dart' as intl;
@@ -136,7 +137,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               ),
             ),
             _loading
-                ? const Center(child: CircularProgressIndicator())
+                ?  Center(child:  KLoading.progressIOSIndicator(context: context))
                 : _buildBody(isDark),
             Align(
               alignment: Alignment.topCenter,

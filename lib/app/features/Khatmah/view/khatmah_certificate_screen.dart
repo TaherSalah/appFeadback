@@ -15,6 +15,8 @@ import 'package:printing/printing.dart'; // Optional for easy printing/sharing o
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 
+import '../../../core/widgets/KLoading.dart';
+
 class KhatmahCertificateScreen extends StatefulWidget {
   final String userName;
   final int contributionCount;
@@ -60,7 +62,7 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
               ),
               const SizedBox(height: 30),
               if (_isGenerating)
-                const CircularProgressIndicator()
+                KLoading.progressIOSIndicator(context: context)
               else
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

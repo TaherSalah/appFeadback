@@ -65,6 +65,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
 
   List<TextSpan> _buildVerseWithColoredNumbers(String text, bool isDark) {
     // final markRegExp = RegExp(r'۞');
+    final numberRegExp = RegExp(r'\d+');
     final markRegExp = RegExp(r'﴿\d+﴾');
 
     final markRegExp2 = RegExp(r'۞');
@@ -94,6 +95,9 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
       final int start = match['start'] as int;
       final int end = match['end'] as int;
       final String type = match['type'] as String;
+
+      if (start < currentIndex) continue;
+
       if (start > currentIndex) {
         spans.add(TextSpan(text: text.substring(currentIndex, start)));
       }
@@ -124,22 +128,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
     return spans;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    currentIndex = widget.allSurahs.indexWhere((s) => s.id == widget.surah.id);
-    // Show bottom navigation if navigated from next/previous buttons
-    showBottom = widget.showBottomOnStart;
-    showFab = false;
-    isDark = widget.isDark;
-    loadBookmark();
-    bookmarkId = widget.verseId; //
-    // If showing bottom navigation, start the hide timer
-    if (showBottom) {
-      _startHideTimer();
-    }
-  }
+
 
   @override
   void dispose() {

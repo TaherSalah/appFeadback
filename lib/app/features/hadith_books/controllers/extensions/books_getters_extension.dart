@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/utils/constent/lists.dart';
+import '../../../../core/widgets/KLoading.dart';
 import '../../data/models/ar_hadith_model.dart';
 import '../../data/models/bn_hadith_model.dart';
 import '../../data/models/book_obj_model.dart';
@@ -281,7 +282,7 @@ extension BooksGettersExtension on BooksController {
         showDialog(
           context: CentralizedCubit.navigatorKey.currentContext!,
           barrierDismissible: false,
-          builder: (context) => const Center(child: CircularProgressIndicator()),
+          builder: (context) =>  Center(child:  KLoading.progressIOSIndicator(context: context)),
         );
         
         await loadBooksForCollection(collection);

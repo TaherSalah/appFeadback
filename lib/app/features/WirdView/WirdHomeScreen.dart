@@ -131,70 +131,6 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                   ),
                   CustomScrollView(
                     slivers: [
-                      // Modern Sliver AppBar
-                      // SliverAppBar(
-                      //   expandedHeight: 180.h,
-                      //   floating: false,
-                      //   pinned: true,
-                      //   stretch: true,
-                      //   backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFF00897B),
-                      //   leading: CupertinoNavigationBarBackButton(
-                      //     color: Colors.white,
-                      //   ),
-                      //   actions: [
-                      //     IconButton(
-                      //       onPressed: () async {
-                      //         await Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //             builder: (context) => StatisticsScreen(stats: stats),
-                      //           ),
-                      //         );
-                      //         final updatedStats = await manager.loadStats();
-                      //         setState(() => stats = updatedStats);
-                      //       },
-                      //       icon: const Icon(Icons.insights_rounded, color: Colors.white),
-                      //     )
-                      //   ],
-                      //   flexibleSpace: FlexibleSpaceBar(
-                      //     centerTitle: true,
-                      //     title: Text(
-                      //       "أورادك اليومية",
-                      //       style: GoogleFonts.cairo(
-                      //         color: Colors.white,
-                      //         fontWeight: FontWeight.bold,
-                      //         fontSize: 16.sp,
-                      //       ),
-                      //     ),
-                      //     background: Stack(
-                      //       fit: StackFit.expand,
-                      //       children: [
-                      //         Container(
-                      //           decoration: BoxDecoration(
-                      //             gradient: LinearGradient(
-                      //               begin: Alignment.topCenter,
-                      //               end: Alignment.bottomCenter,
-                      //               colors: isDark
-                      //                   ? [const Color(0xFF2C2C2C), const Color(0xFF1A1A1A)]
-                      //                   : [const Color(0xFF00BFA5), const Color(0xFF00897B)],
-                      //             ),
-                      //           ),
-                      //         ),
-                      //         Positioned(
-                      //           bottom: -20,
-                      //           right: -20,
-                      //           child: Icon(
-                      //             Icons.auto_awesome,
-                      //             size: 150,
-                      //             color: Colors.white.withOpacity(0.1),
-                      //           ),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-
-                      // Quick Stats Sliver
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
@@ -347,9 +283,10 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
 
   Widget _buildHeroStat(String emoji, String value, String label, bool isDark) {
     return Column(
+      spacing: 8,
       children: [
-        Text(emoji, style: TextStyle(fontSize: 18.sp)),
-        SizedBox(height: 4.h),
+        // Text(emoji, style: TextStyle(fontSize: 18.sp)),
+        // SizedBox(height: 4.h),
         Text(
           value,
           style: GoogleFonts.barlow(

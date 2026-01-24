@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/widgets/KLoading.dart';
+
 
 
 class ARQiblaCameraWidget extends StatefulWidget {
@@ -104,7 +106,7 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
     }
 
     if (!_isCameraInitialized || _controller == null) {
-      return const Center(child: CircularProgressIndicator());
+      return  Center(child:  KLoading.progressIOSIndicator(context: context));
     }
 
     // Calculations

@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/utils/style/k_color.dart';
+import '../../../core/widgets/KLoading.dart';
 import '../controllers/hadith_of_day_controller.dart';
 import '../controllers/books_controller.dart';
 
@@ -53,7 +54,7 @@ class HadithOfDayView extends StatelessWidget {
 
         if (hadithCtrl.isLoading.value) {
           return Center(
-            child: CircularProgressIndicator(color: baseColor),
+            child: KLoading.progressIOSIndicator(context: context,progressColor: baseColor) ,
           );
         }
 

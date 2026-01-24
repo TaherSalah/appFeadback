@@ -1537,13 +1537,13 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                 fontFamily: 'me', // يمكنك استخدام خط عثماني
               ),
             ),
-            subtitle: Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 11,
-                color: isDark ? Colors.white70 : Colors.black54,
-              ),
-            ),
+            // subtitle: Text(
+            //   subtitle,
+            //   style: TextStyle(
+            //     fontSize: 11,
+            //     color: isDark ? Colors.white70 : Colors.black54,
+            //   ),
+            // ),
             trailing: Icon(
               Icons.arrow_forward_ios_rounded,
               size: 14,

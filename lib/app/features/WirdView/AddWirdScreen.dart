@@ -94,97 +94,349 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
   void addCustomDhikr() {
     showDialog(
       context: context,
-      builder: (context) {
+      barrierDismissible: false,
+      builder: (dialogContext) {
         final textController = TextEditingController();
-        final countController = TextEditingController(text: '33');
-        final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+        final countController =
+        TextEditingController(text: '33');
+
+        int repeatCount = 33;
+
+        final bool isDark =
+            Theme.of(context).brightness == Brightness.dark;
 
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Dialog(
             backgroundColor: Colors.transparent,
-            child: Container(
-              padding: EdgeInsets.all(24.w),
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'إضافة ذكر مخصص',
-                    style: GoogleFonts.cairo(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
+            insetPadding:
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                /// جسم الديالوج
+                Container(
+                  padding:
+                  const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: isDark
+                          ? [
+                        const Color(0xFF0B2B23),
+                        const Color(0xFF05201B),
+                      ]
+                          : [
+                        const Color(0xFFE0F7F5),
+                        const Color(0xFFB2DFDB),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 20.h),
-                  TextField(
-                    controller: textController,
-                    style: GoogleFonts.cairo(color: isDark ? Colors.white : Colors.black),
-                    decoration: InputDecoration(
-                      labelText: 'نص الذكر',
-                      labelStyle: GoogleFonts.cairo(color: Colors.grey),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                  TextField(
-                    controller: countController,
-                    style: GoogleFonts.cairo(color: isDark ? Colors.white : Colors.black),
-                    decoration: InputDecoration(
-                      labelText: 'عدد التكرارات',
-                      labelStyle: GoogleFonts.cairo(color: Colors.grey),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  SizedBox(height: 24.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (textController.text.isNotEmpty) {
-                              setState(() {
-                                selectedAdhkar.add(Dhikr(
-                                  id: DateTime.now().toString(),
-                                  text: textController.text,
-                                  targetCount: int.tryParse(countController.text) ?? 33,
-                                ));
-                              });
-                            }
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00897B),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          child: Text('إضافة', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
-                        ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
-                ],
-              ),
+                  child: StatefulBuilder(
+                    builder: (context, setLocalState) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          /// العنوان
+                          Text(
+                            'إضافة ذكر مخصص',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: isDark
+                                  ? Colors.white
+                                  : Colors.black87,
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          /// نص الذكر
+                          TextField(
+                            controller: textController,
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'نص الذكر',
+                              filled: true,
+                              fillColor: isDark
+                                  ? Colors.black26
+                                  : Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                BorderRadius.circular(14),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          /// عنوان العداد
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              'عدد التكرار',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isDark
+                                    ? Colors.white70
+                                    : Colors.black54,
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 6),
+
+                          /// العداد (➕➖ + كتابة)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.black26
+                                  : Colors.white,
+                              borderRadius:
+                              BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.grey.shade600
+                                    : Colors.grey.shade400,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                /// زر النقصان
+                                IconButton(
+                                  onPressed: () {
+                                    if (repeatCount > 1) {
+                                      setLocalState(() {
+                                        repeatCount--;
+                                        countController.text =
+                                            repeatCount
+                                                .toString();
+                                      });
+                                    }
+                                  },
+                                  icon: const Icon(
+                                      Icons.remove_circle_outline),
+                                  color: Colors.redAccent,
+                                ),
+
+                                /// إدخال يدوي
+                                Expanded(
+                                  child: TextField(
+                                    controller: countController,
+                                    textAlign: TextAlign.center,
+                                    keyboardType:
+                                    TextInputType.number,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight:
+                                      FontWeight.bold,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                    decoration:
+                                    const InputDecoration(
+                                      border: InputBorder.none,
+                                      isDense: true,
+                                      contentPadding:
+                                      EdgeInsets.zero,
+                                    ),
+                                    onChanged: (value) {
+                                      final parsed =
+                                      int.tryParse(value);
+
+                                      if (parsed != null &&
+                                          parsed > 0) {
+                                        setLocalState(() {
+                                          repeatCount =
+                                              parsed;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+
+                                /// زر الزيادة
+                                IconButton(
+                                  onPressed: () {
+                                    setLocalState(() {
+                                      repeatCount++;
+                                      countController.text =
+                                          repeatCount
+                                              .toString();
+                                    });
+                                  },
+                                  icon: const Icon(
+                                      Icons.add_circle_outline),
+                                  color: Colors.teal,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 22),
+
+                          /// الأزرار
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(
+                                        dialogContext)
+                                        .pop();
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    side: BorderSide(
+                                      color: isDark
+                                          ? Colors
+                                          .grey.shade400
+                                          : Colors
+                                          .grey.shade600,
+                                    ),
+                                    shape:
+                                    RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius
+                                          .circular(14),
+                                    ),
+                                    padding:
+                                    const EdgeInsets
+                                        .symmetric(
+                                        vertical: 11),
+                                  ),
+                                  child: Text(
+                                    'إلغاء',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.grey
+                                          .shade800,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(width: 12),
+
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    if (textController
+                                        .text.isNotEmpty) {
+                                      setState(() {
+                                        selectedAdhkar.add(
+                                          Dhikr(
+                                            id: DateTime
+                                                .now()
+                                                .toString(),
+                                            text:
+                                            textController
+                                                .text,
+                                            targetCount:
+                                            repeatCount,
+                                          ),
+                                        );
+                                      });
+
+                                      Navigator.of(
+                                          dialogContext)
+                                          .pop();
+                                    }
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  label:
+                                  const Text('إضافة'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                    Colors.teal,
+                                    foregroundColor:
+                                    Colors.white,
+                                    shape:
+                                    RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius
+                                          .circular(14),
+                                    ),
+                                    padding:
+                                    const EdgeInsets
+                                        .symmetric(
+                                        vertical: 11),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+
+                /// الأيقونة فوق
+                Positioned(
+                  top: -30,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [
+                            Colors.teal,
+                            Colors.green
+                          ],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.teal
+                                .withOpacity(0.6),
+                            blurRadius: 12,
+                            offset:
+                            const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.menu_book_rounded,
+                          size: 34,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         );
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:muslimdaily/app/features/hadith_books/presentation/widgets/search_result_card.dart';
 
 import '../../../core/utils/style/k_color.dart';
+import '../../../core/widgets/KLoading.dart';
 import '../controllers/books_controller.dart';
 import '../controllers/search_controller.dart' as hadith_search;
 
@@ -161,7 +162,7 @@ class _SearchViewState extends State<SearchView> {
             child: Obx(() {
               if (searchCtrl.isSearching.value) {
                 return Center(
-                  child: CircularProgressIndicator(color: baseColor),
+                  child:  KLoading.progressIOSIndicator(context: context,progressColor: baseColor),
                 );
               }
 

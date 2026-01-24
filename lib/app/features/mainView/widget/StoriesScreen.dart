@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/style/responsive_util.dart';
+import '../../../core/widgets/KLoading.dart';
 import 'kids_data/islamic_stories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/services/content_service.dart';
@@ -80,7 +81,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
           centerTitle: true,
         ),
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ?  Center(child:  KLoading.progressIOSIndicator(context: context))
             : ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: _allStories.length,

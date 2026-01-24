@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/global_khatmah_service.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart';
@@ -459,50 +460,15 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      // backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-      // appBar: AppBar(
-      //   title: Text(
-      //     _isDetailView ? 'تفاصيل الختمة' : 'الختمة الجماعية',
-      //     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-      //   ),
-      //   leading: _isDetailView ? IconButton(
-      //     icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-      //     onPressed: _backToDashboard,
-      //   ) : null,
-      //   centerTitle: true,
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   actions: [
-      //       IconButton(
-      //         icon: const Icon(Icons.share_rounded, color: Colors.white),
-      //         onPressed: _shareProgress,
-      //         tooltip: 'نشر التقدم',
-      //       ),
-      //       IconButton(
-      //         icon: const Icon(Icons.help_outline_rounded, color: Colors.white),
-      //         onPressed: _showHelpDialog,
-      //         tooltip: 'دليل المشاركة',
-      //       ),
-      //     ],
-      //
-      //   flexibleSpace: Container(
-      //     decoration: BoxDecoration(
-      //       gradient: LinearGradient(
-      //         begin: Alignment.topLeft,
-      //         end: Alignment.bottomRight,
-      //         colors: [KColors.primaryColor, KColors.primaryColor.withOpacity(0.7)],
-      //       ),
-      //     ),
-      //   ),
-      // ),
+
       appBar: AppBar(
-        leading: _isDetailView
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.green),
-                onPressed: _backToDashboard,
-              )
-            : null,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Colors.green),
+          onPressed: _isDetailView
+              ? _backToDashboard
+              : () => Navigator.pop(context),
+        ),
         title: Text(
           _isDetailView ? 'تفاصيل الختمة' : 'الختمة الجماعية',
           style: GoogleFonts.cairo(
@@ -572,7 +538,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(color: KColors.primaryColor))
+              child:  KLoading.progressIOSIndicator(context: context))
           : _campaigns.isEmpty
               ? _buildNoCampaign()
               : _isDetailView
@@ -665,7 +631,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         Text(
           title,
           style: GoogleFonts.cairo(
-            fontSize: 18,
+            fontSize:ResponsiveUtil.isTablet(context)? 18:14.sp,
+
             fontWeight: FontWeight.w900,
             color: isDark ? Colors.white : Colors.black87,
           ),
@@ -714,12 +681,13 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.analytics_rounded,
-                      color: KColors.primaryColor, size: 28),
+                      color: KColors.primaryColor, size:ResponsiveUtil.isTablet(context)? 28:25),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 5,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -727,12 +695,12 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                           Text(
                             'تأثيرك في المجتمع',
                             style: GoogleFonts.cairo(
-                              fontSize: 18,
+                              fontSize:ResponsiveUtil.isTablet(context)? 18:14.sp,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
-                          Icon(Icons.arrow_back_ios_new_rounded,
+                          Icon(Icons.arrow_forward_ios_rounded,
                               size: 14,
                               color: KColors.primaryColor.withOpacity(0.5)),
                         ],
@@ -740,7 +708,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       Text(
                         _userNickname ?? 'مشارك مجهول',
                         style: GoogleFonts.cairo(
-                          fontSize: 13,
+                          fontSize:ResponsiveUtil.isTablet(context)? 13:13.sp,
                           color: Colors.grey,
                           fontWeight: FontWeight.bold,
                         ),
@@ -799,10 +767,11 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         border: Border.all(color: color.withOpacity(0.15)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 6,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 8),
+          // Icon(icon, color: color, size: 20),
+          // const SizedBox(height: 8),
           Text(
             value,
             style: GoogleFonts.cairo(
@@ -1009,12 +978,15 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                 children: [
                   Expanded(
                     child: Column(
+                      spacing: 7,
+
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           title,
                           style: GoogleFonts.cairo(
-                            fontSize: 20,
+                            fontSize:ResponsiveUtil.isTablet(context)? 20:13.sp,
+
                             fontWeight: FontWeight.w900,
                             color: isDark ? Colors.white : Colors.black87,
                           ),
@@ -1022,7 +994,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                         Text(
                           'نشاط مجتمعي قائم بنظام ال $typeLabel',
                           style: GoogleFonts.cairo(
-                            fontSize: 12,
+                            fontSize:ResponsiveUtil.isTablet(context)? 12:10.sp,
+
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
                           ),
@@ -1076,7 +1049,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     style: GoogleFonts.cairo(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
-                      fontSize: 15,
+                      fontSize:ResponsiveUtil.isTablet(context)? 15:12.sp,
+
                     ),
                   ),
                 ),
@@ -1096,7 +1070,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         Text(
           label,
           style: GoogleFonts.cairo(
-              fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
+              fontSize:                              ResponsiveUtil.isTablet(context)? 11:10.sp
+    , fontWeight: FontWeight.bold, color: Colors.grey),
         ),
       ],
     );
@@ -1715,7 +1690,10 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             Text(
               '${(percent * 100).toInt()}%',
               style: GoogleFonts.cairo(
-                  fontWeight: FontWeight.bold, color: KColors.primaryColor),
+                  fontWeight: FontWeight.bold, color: KColors.primaryColor,
+                fontSize:ResponsiveUtil.isTablet(context)? 12:10.sp,
+
+              ),
             ),
           ],
         ),
@@ -1796,7 +1774,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             color: cardColor.withOpacity(isDark ? 0.3 : 0.1), width: 1.5),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 2,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(8),
@@ -1816,6 +1795,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               color: isDark ? Colors.white : Colors.black87,
             ),
           ),
+          const SizedBox(height: 12),
+
           Text(
             label,
             style: GoogleFonts.cairo(
@@ -2260,8 +2241,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
   Future<void> _showPersonalAnalytics() async {
     if (_userNickname == null) {
-      KHelper.showNeutralFlushBar(
-          context, 'يرجى تسجيل اسمك أولاً عبر المشاركة في أي ورد');
+      KHelper.showError(message: "يرجى تسجيل اسمك أولاً عبر المشاركة في أي ورد");
+      // KHelper.showNeutralFlushBar(
+      //     context, 'يرجى تسجيل اسمك أولاً عبر المشاركة في أي ورد');
       return;
     }
 
@@ -2429,9 +2411,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               Icon(Icons.public_rounded, color: KColors.primaryColor, size: 24),
               const SizedBox(width: 10),
               Text(
-                'إحصائيات المجتمع العالمي',
+                'إحصائيات مجتمع رفيق المسلم اليومي',
                 style: GoogleFonts.cairo(
-                  fontSize: 16,
+                  fontSize:ResponsiveUtil.isTablet(context)? 16:14.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
@@ -2467,9 +2449,11 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       String label, String value, IconData icon, Color color) {
     return Expanded(
       child: Column(
+        spacing: 15,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 5),
+          // Icon(icon, color: color, size: 20),
+          // const SizedBox(height: 5),
           Text(
             value,
             style: GoogleFonts.cairo(

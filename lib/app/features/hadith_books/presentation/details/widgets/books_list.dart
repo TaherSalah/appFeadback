@@ -7,6 +7,7 @@ import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
 import '../../../../../core/shard/exports/all_exports.dart';
 import '../../../../../core/utils/style/responsive_util.dart';
+import '../../../../../core/widgets/KLoading.dart';
 import '../../../controllers/books_controller.dart';
 
 class BooksList extends StatelessWidget {
@@ -27,9 +28,10 @@ class BooksList extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(
-                  color: baseColor,
-                ),
+                // CircularProgressIndicator(
+                //   color: baseColor,
+                // ),
+                KLoading.progressIOSIndicator(context: context,progressColor: baseColor),
                 const SizedBox(height: 16),
                 Text(
                   'جاري تحميل الكتب...',

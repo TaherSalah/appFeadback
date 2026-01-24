@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import '../../core/utils/style/responsive_util.dart';
+import '../../core/widgets/KLoading.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 
@@ -39,20 +41,22 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
   Future<void> _saveGoal() async {
     final amount = double.tryParse(_goalController.text);
     if (amount == null || amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('الرجاء إدخال مبلغ صحيح')),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text('الرجاء إدخال مبلغ صحيح')),
+      // );
+      KHelper.showError(message:'الرجاء إدخال مبلغ صحيح' );
       return;
     }
 
     await _charityService.setMonthlyGoal(amount);
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم حفظ الهدف الشهري بنجاح 🎯'),
-          backgroundColor: Color(0xFF10B981),
-        ),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text('تم حفظ الهدف الشهري بنجاح 🎯'),
+      //     backgroundColor: Color(0xFF10B981),
+      //   ),
+      // );
+      KHelper.showSuccess(message: "تم حفظ الهدف الشهري بنجاح");
       Navigator.pop(context);
     }
   }
@@ -107,7 +111,7 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
         ),
 
         body: _loading
-            ? const Center(child: CircularProgressIndicator())
+            ?  Center(child:  KLoading.progressIOSIndicator(context: context))
             : Padding(
                 padding: EdgeInsets.all(20.w),
                 child: SafeArea(
@@ -118,7 +122,7 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                       Text(
                         'حدد هدفك المالي للصدقة هذا الشهر',
                         style: GoogleFonts.cairo(
-                          fontSize:isTab?10.sp :16.sp,
+                          fontSize:isTab?10.sp :14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

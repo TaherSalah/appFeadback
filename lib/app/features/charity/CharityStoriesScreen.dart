@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/services/content_service.dart';
 import '../../core/utils/style/k_color.dart';
+import '../../core/widgets/KLoading.dart';
 import 'data/charity_stories_data.dart';
 
 class CharityStoriesScreen extends StatefulWidget {
@@ -167,7 +168,7 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                 // القصص
                 Expanded(
                   child: _isLoading 
-                    ? const Center(child: CircularProgressIndicator(color: Colors.green))
+                    ?  Center(child:  KLoading.progressIOSIndicator(context: context))
                     : _filteredStories.isEmpty
                       ? Center(
                           child: Text(

@@ -7,6 +7,7 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/app_theme_colors.dart';
 import '../../core/utils/style/responsive_util.dart';
+import '../../core/widgets/KLoading.dart';
 import '../../core/widgets/kButtons.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
@@ -170,7 +171,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         ),
 
         body: _loading
-            ? const Center(child: CircularProgressIndicator())
+            ?  Center(child:  KLoading.progressIOSIndicator(context: context))
             : RefreshIndicator(
                 onRefresh: _loadData,
                 child: Stack(
@@ -450,7 +451,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           Text(
             label,
             style: GoogleFonts.cairo(
-              fontSize:isTab? 9.sp:12.sp,
+              fontSize:isTab? 9.sp:13.sp,
               color: AppThemeColors.cardSubtitleColor(context),
             ),
           ),
@@ -458,7 +459,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           Text(
             value,
             style: GoogleFonts.cairo(
-              fontSize:isTab? 9.sp:12.sp,
+              fontSize:isTab? 9.sp:14.sp,
               fontWeight: FontWeight.bold,
               color: color,
             ),

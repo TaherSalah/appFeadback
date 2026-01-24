@@ -221,10 +221,10 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
 
               // Loader صغير تحت لما نزود الدُفعات
               if (_isLoadingMore && itemCount > 0 && itemCount < total)
-                const SliverToBoxAdapter(
+                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child: CircularProgressIndicator()),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child:  KLoading.progressIOSIndicator(context: context)),
                   ),
                 ),
             ],

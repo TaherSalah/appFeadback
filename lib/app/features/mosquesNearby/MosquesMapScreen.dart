@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/widgets/KLoading.dart';
 import 'models/MosqueModel.dart';
 import 'services/MosqueService.dart';
 
@@ -162,7 +163,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
         ),
 
         body: _userPosition == null
-            ? const Center(child: CircularProgressIndicator())
+            ?  Center(child:  KLoading.progressIOSIndicator(context: context))
             : Stack(
                 children: [
                   // Map
@@ -308,11 +309,10 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                     ),
                                   ),
                                   if (_isLoading)
-                                    const SizedBox(
+                                     SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2),
+                                      child:  KLoading.progressIOSIndicator(context: context),
                                     ),
                                 ],
                               ),

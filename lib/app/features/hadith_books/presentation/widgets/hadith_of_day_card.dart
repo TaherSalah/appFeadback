@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../controllers/hadith_of_day_controller.dart';
@@ -22,7 +23,7 @@ class HadithOfDayCard extends StatelessWidget {
 
     return Obx(() {
       if (hadithCtrl.isLoading.value) {
-        return _buildLoadingCard(isDark, baseColor);
+        return _buildLoadingCard(isDark, baseColor,context);
       }
 
       final hadith = hadithCtrl.todayHadith.value;
@@ -252,7 +253,7 @@ class HadithOfDayCard extends StatelessWidget {
     });
   }
 
-  Widget _buildLoadingCard(bool isDark, Color baseColor) {
+  Widget _buildLoadingCard(bool isDark, Color baseColor,BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       height: 250.h,
@@ -261,7 +262,7 @@ class HadithOfDayCard extends StatelessWidget {
         color: isDark ? Colors.grey[900] : Colors.grey[100],
       ),
       child: Center(
-        child: CircularProgressIndicator(color: baseColor),
+        child: KLoading.progressIOSIndicator(context: context,progressColor: baseColor),
       ),
     );
   }

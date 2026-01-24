@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -835,13 +836,15 @@ SliverToBoxAdapter(child: Center(
                     shadowColor: goldColor.withOpacity(0.4),
                   ),
                   child: _isCheckingPermissions
-                      ? const SizedBox(
+                      ?  SizedBox(
                           width: 24,
                           height: 24,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2.5,
-                          ),
+                          child:
+                          // CircularProgressIndicator(
+                          //   color: Colors.white,
+                          //   strokeWidth: 2.5,
+                          // ),
+                    KLoading.progressIOSIndicator(context: context,progressColor: Colors.white)
                         )
                       : Text(
                           "حفظ التغييرات",

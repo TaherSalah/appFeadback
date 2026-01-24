@@ -12,6 +12,7 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/utils/style/app_theme_colors.dart';
+import '../../core/widgets/KLoading.dart';
 
 class LocationSettingsView extends StatefulWidget {
   const LocationSettingsView({super.key});
@@ -238,7 +239,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
           //   ),
           // ),
           child: isLocationLoading
-              ? const Center(child: CircularProgressIndicator())
+              ?  Center(child:  KLoading.progressIOSIndicator(context: context))
               : Column(
                   children: [
                     Expanded(

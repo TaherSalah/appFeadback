@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
@@ -75,31 +76,33 @@ class _SurahListScreenState extends State<SurahListScreen> {
           );
         } else {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز (قد تحتاج لتثبيت خدمات جوجل الصوتية)",
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontFamily: "cairo"),
-                ),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
+            KHelper.showError(message: "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز (قد تحتاج لتثبيت خدمات جوجل الصوتية)",);
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     content: Text(
+            //       "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز (قد تحتاج لتثبيت خدمات جوجل الصوتية)",
+            //       textAlign: TextAlign.right,
+            //       style: TextStyle(fontFamily: "cairo"),
+            //     ),
+            //     backgroundColor: Colors.redAccent,
+            //   ),
+            // );
           }
         }
       } catch (e) {
         debugPrint("Speech recognition exception: $e");
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "حدث خطأ أثناء تشغيل البحث الصوتي",
-                textAlign: TextAlign.right,
-                style: TextStyle(fontFamily: "cairo"),
-              ),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
+          KHelper.showError(message:  "حدث خطأ أثناء تشغيل البحث الصوتي",);
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(
+          //     content: Text(
+          //       "حدث خطأ أثناء تشغيل البحث الصوتي",
+          //       textAlign: TextAlign.right,
+          //       style: TextStyle(fontFamily: "cairo"),
+          //     ),
+          //     backgroundColor: Colors.redAccent,
+          //   ),
+          // );
         }
       }
     } else {

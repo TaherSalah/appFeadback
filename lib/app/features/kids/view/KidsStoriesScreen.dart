@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/services/content_service.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
@@ -154,7 +155,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
 
             // Stories List/Grid
             _isLoading
-                ? const SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: Color(0xFF0EA5E9))))
+                ?  SliverFillRemaining(child: Center(child:KLoading.progressIOSIndicator(context: context)))
                 : _filteredStories.isEmpty
                     ? SliverFillRemaining(child: _buildEmptyState(isDark))
                     : SliverPadding(

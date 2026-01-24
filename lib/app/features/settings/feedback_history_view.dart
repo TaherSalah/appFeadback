@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import '../../core/services/feedback_service.dart';
 
 /// شاشة عرض سجل الشكاوى الخاص بالمستخدم
@@ -69,7 +70,7 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
           future: _historyFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return  Center(child: KLoading.progressIOSIndicator(context: context));
             }
 
             if (snapshot.hasError) {

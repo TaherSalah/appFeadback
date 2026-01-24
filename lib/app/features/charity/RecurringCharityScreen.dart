@@ -8,6 +8,7 @@ import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/app_theme_colors.dart';
 import '../../core/utils/style/responsive_util.dart';
+import '../../core/widgets/KLoading.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 
@@ -90,7 +91,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                         existing == null ? 'إضافة التزام صدقة جديد' : 'تعديل التزام الصدقة',
                         style: GoogleFonts.cairo(
                           fontWeight: FontWeight.bold, 
-                          fontSize: isTab?10.sp: 18.sp,
+                          fontSize: isTab?10.sp: 16.sp,
                           color: AppThemeColors.cardHeaderColor(context),
                         ),
                       ),
@@ -349,7 +350,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
               ),
             ),
             _isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ?  Center(child:  KLoading.progressIOSIndicator(context: context))
                 : _recurringCharities.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
