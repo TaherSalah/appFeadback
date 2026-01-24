@@ -13,7 +13,9 @@ import 'package:muslimdaily/app/features/Khatmah/data/khatmah_model.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/CreateKhatmahView.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:quran_library/quran.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 // TODO: استبدل بهذا import الصحيح عندك
 // import 'package:your_app/create_khatmah_screen.dart';
@@ -752,145 +754,206 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
 
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Stack(
-        alignment: Alignment.topLeft,
-        children: [
-          Card(
-            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            elevation: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)], // Premium Dark Teal Gradient
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Background Decoration
+            Positioned(
+              top: -20,
+              left: -20,
+              child: Opacity(
+                opacity: 0.1,
+                child: Icon(
+                  Icons.menu_book_rounded,
+                  size: 150,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  CircularPercentIndicator(
-                    radius: 60,
-                    lineWidth: 10,
-                    percent: progressPercent > 1 ? 1 : progressPercent,
-                    center:
-                        Text("${(progressPercent * 100).toStringAsFixed(1)}%"),
-                    progressColor: Colors.green,
-                  ),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      CircularPercentIndicator(
+                        radius: 55,
+                        lineWidth: 8,
+                        percent: progressPercent > 1 ? 1 : progressPercent,
+                        center: Text(
+                          "${(progressPercent * 100).toStringAsFixed(1)}%",
+                          style: GoogleFonts.cairo(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                        progressColor: const Color(0xFFFFD700), // Gold
+                        backgroundColor: Colors.white.withOpacity(0.1),
+                        circularStrokeCap: CircularStrokeCap.round,
+                        animation: true,
+                        animationDuration: 1000,
+                      ),
+                      const SizedBox(width: 20),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            TextWidget(
-                              title: k.title,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
-                            ),
-                            const SizedBox(height: 6),
-                            TextWidget(
-                              title: "ورد اليوم: $todayWirdText",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13.5.sp,
-                            ),
-                            const SizedBox(height: 6),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _statItem("$pagesLeft", "صفحات"),
-                                const SizedBox(width: 10),
-                                _statItem("$daysLeft", "أيام"),
-                                const SizedBox(width: 10),
-                                _statItem(k.isCompleted ? "✅" : "❌", "مكتملة"),
+                                Expanded(
+                                  child: Text(
+                                    k.title,
+                                    style: GoogleFonts.cairo(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.sp,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () => _openKhatmahOptions(k, index),
+                                  icon: const Icon(
+                                    Icons.more_horiz,
+                                    color: Colors.white70,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
                               ],
-                            )
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                "ورد اليوم: $todayWirdText",
+                                style: GoogleFonts.cairo(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
+                  // Stats Row
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _statItem(pagesLeft.toString(), "صفحات باقية", Icons.auto_stories),
+                        Container(width: 1, height: 30, color: Colors.white24),
+                        _statItem(daysLeft.toString(), "أيام متبقية", Icons.calendar_today),
+                        Container(width: 1, height: 30, color: Colors.white24),
+                        _statItem(
+                          k.isCompleted ? "Completed" : "Active", 
+                          k.isCompleted ? "مكتملة" : "جارية", 
+                          k.isCompleted ? Icons.check_circle : Icons.timelapse,
+                           color: k.isCompleted ? Colors.greenAccent : Colors.amberAccent
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Buttons Functionality
                   Row(
                     children: [
                       Expanded(
-                        child: SizedBox(
-                          width: MediaQuery.sizeOf(context).width / 2,
-                          child: KButtons.buttonIcon(
-                            Theme.of(context),
-                            text: k.isCompleted ? "مكتملة" : "اتممت القرأة",
-                            bgColor: KColors.primaryColor,
-                            fontSize: 13.sp,
-                            fontColor: Colors.white,
-                            icon: Icons.checklist_rtl,
-                            onTap: k.isCompleted
-                                ? null
-                                : () => _markTodayRead(index),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      if (isAjzaa)
-                        KButtons.buttonIcon(
-                          Theme.of(context),
-                          text: "اذهب لورد اليوم",
-                          icon: CupertinoIcons.play_arrow,
-                          onTap:
-                              k.isCompleted ? null : () => _goToTodayAjzaa(k),
-                          bgColor: KColors.primaryColor,
-                          fontSize: 14.sp,
-                          fontColor: Colors.white,
-                        ),
-                      if (!isAjzaa)
-                        Expanded(
-                          child: SizedBox(
-                            width: MediaQuery.sizeOf(context).width / 2,
-                            child: KButtons.buttonIcon(
-                              Theme.of(context),
-                              text: "اذهب لورد اليوم",
-                              icon: CupertinoIcons.play_arrow,
-                              bgColor: KColors.primaryColor,
-                              fontSize: 13.sp,
-                              fontColor: Colors.white,
-                              onTap: k.isCompleted
-                                  ? null
-                                  : () => _goToTodayPages(k),
+                        child: ElevatedButton.icon(
+                          onPressed: k.isCompleted
+                              ? null
+                              : () => _markTodayRead(index),
+                          icon: const Icon(Icons.check_circle_outline),
+                          label: const Text("أتممت ورد اليوم"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4CAF50),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                         ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          onPressed: k.isCompleted
+                              ? null
+                              : () => isAjzaa ? _goToTodayAjzaa(k) : _goToTodayPages(k),
+                          icon: const Icon(Icons.play_arrow_rounded, color: Colors.white),
+                          tooltip: "اذهب لورد اليوم",
+                        ),
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: IconButton(
-              onPressed: () => _openKhatmahOptions(k, index),
-              icon: const Icon(
-                Icons.more_vert,
-                size: 30,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _statItem(String value, String label) {
+  Widget _statItem(String value, String label, IconData icon, {Color? color}) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        TextWidget(
-            title: value,
-            fontSize: 16,
+        Icon(icon, color: color ?? Colors.white70, size: 18),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: GoogleFonts.cairo(
+            color: color ?? Colors.white,
             fontWeight: FontWeight.bold,
-            color: Colors.green),
-        TextWidget(
-          title: label,
-          fontSize: 12.sp,
+            fontSize: 14.sp,
+          ),
+        ),
+        Text(
+          label,
+          style: GoogleFonts.cairo(
+            color: Colors.white54,
+            fontSize: 10.sp,
+          ),
         ),
       ],
     );
@@ -1028,14 +1091,25 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                   ],
                 ),
               )
-            : ListView.builder(
-                padding: const EdgeInsets.only(top: 12, bottom: 80),
-                itemCount: currentList.length,
-                itemBuilder: (_, i) {
-                  final k = currentList[i];
-                  final index = box.values.toList().indexOf(k);
-                  return _buildKhatmahCard(k, index);
-                },
+            : AnimationLimiter(
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(top: 12, bottom: 80, left: 16, right: 16),
+                  itemCount: currentList.length,
+                  itemBuilder: (_, i) {
+                    final k = currentList[i];
+                    final index = box.values.toList().indexOf(k);
+                    return AnimationConfiguration.staggeredList(
+                      position: i,
+                      duration: const Duration(milliseconds: 500),
+                      child: SlideAnimation(
+                        verticalOffset: 50.0,
+                        child: FadeInAnimation(
+                          child: _buildKhatmahCard(k, index),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
       ),
     );

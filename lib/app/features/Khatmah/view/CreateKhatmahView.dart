@@ -1,4 +1,6 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
@@ -217,137 +219,273 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
             padding: const EdgeInsets.all(16),
             child: Form(
               key: _formKey,
-              child: SingleChildScrollView(
-                child: SizedBox(
-                  height: MediaQuery.sizeOf(context).height,
+              child: AnimationLimiter(
+                child: SingleChildScrollView(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const HadithCarouselCard(),
-
-                      // اسم الختمة
-                      TextFormField(
-                        controller: _titleController,
-                        decoration: InputDecoration(
-                          fillColor: Theme.of(context).cardColor,
-                          labelText: "اسم الختمة",
-                          focusedBorder: const OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: AppStyle.scondColors)),
-                          border: const OutlineInputBorder(),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: AnimationConfiguration.toStaggeredList(
+                      duration: const Duration(milliseconds: 500),
+                      childAnimationBuilder: (widget) => SlideAnimation(
+                        verticalOffset: 50.0,
+                        child: FadeInAnimation(
+                          child: widget,
                         ),
-                        validator: (v) =>
-                            v == null || v.isEmpty ? "أدخل اسم الختمة" : null,
                       ),
+                      children: [
+                        const HadithCarouselCard(),
+                        const SizedBox(height: 30),
 
-                      // مدة الختمة بالأيام
-                      FormField<int>(
-                        validator: (value) => value == null
-                            ? "من فضلك اختر مدة الختمة بالأيام"
-                            : null,
-                        builder: (state) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              DropdownMenu<int>(
-                                menuStyle: MenuStyle(
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        Theme.of(context).cardColor)),
-                                hintText: "اختر عدد الايام",
-                                width: MediaQuery.sizeOf(context).width,
-                                label: const Text("مدة الختمة بالأيام"),
-                                menuHeight: 260,
-                                dropdownMenuEntries: const [
-                                  DropdownMenuEntry(value: 7, label: "7 أيام"),
-                                  DropdownMenuEntry(
-                                      value: 10, label: "10 أيام"),
-                                  DropdownMenuEntry(
-                                      value: 15, label: "15 أيام"),
-                                  DropdownMenuEntry(
-                                      value: 20, label: "20 أيام"),
-                                  DropdownMenuEntry(value: 30, label: "30 يوم"),
-                                  DropdownMenuEntry(value: 60, label: "60 يوم"),
-                                  DropdownMenuEntry(value: 90, label: "90 يوم"),
-                                ],
-                                onSelected: (v) {
-                                  setState(() => _days = v!);
-                                  state.didChange(v);
-                                },
+                        // اسم الختمة
+                        _buildSectionLabel("اسم الختمة"),
+                        const SizedBox(height: 10),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
                               ),
-                              if (state.hasError)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: Text(state.errorText!,
-                                      style: const TextStyle(
-                                          color: Colors.red, fontSize: 12)),
-                                )
                             ],
-                          );
-                        },
-                      ),
+                          ),
+                          child: TextFormField(
+                            controller: _titleController,
+                            style: GoogleFonts.cairo(fontSize: 14.sp),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 15),
+                              border: InputBorder.none,
+                              hintText: "مثال: ختمة رمضان",
+                              hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                              prefixIcon:
+                                  const Icon(Icons.edit, color: Colors.green),
+                            ),
+                            validator: (v) => v == null || v.isEmpty
+                                ? "أدخل اسم الختمة"
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(height: 25),
 
-                      // طريقة التوزيع
-                      FormField<String>(
-                        validator: (value) => value == null || value.isEmpty
-                            ? "من فضلك اختر طريقة التوزيع"
-                            : null,
-                        builder: (state) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              DropdownMenu<String>(
-                                hintText: "اختر طريقة التوزيع",
-                                width: MediaQuery.sizeOf(context).width,
-                                initialSelection: null,
-                                menuStyle: MenuStyle(
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        Theme.of(context).cardColor)),
-                                label: const Text("طريقة التوزيع"),
-                                menuHeight: 260,
-                                dropdownMenuEntries: const [
-                                  DropdownMenuEntry(
-                                      value: "صفحات", label: "صفحات"),
-                                  DropdownMenuEntry(
-                                      value: "أجزاء", label: "أجزاء"),
-                                ],
-                                onSelected: (v) {
-                                  setState(() => _distribution = v!);
-                                  state.didChange(v);
-                                },
-                              ),
-                              if (state.hasError)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: Text(state.errorText!,
-                                      style: const TextStyle(
-                                          color: Colors.red, fontSize: 12)),
-                                )
-                            ],
-                          );
-                        },
-                      ),
-
-                      // زرار الحفظ
-                      Center(
-                        child: CustomButton(
-                          borderColor: Theme.of(context).cardColor,
-                          backgroundColor: KColors.primaryColor,
-                          width: MediaQuery.sizeOf(context).width / 3,
-                          title: "ابدأ الختمة",
-                          onTap: () {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              _saveKhatmah();
-                            }
+                        // مدة الختمة بالأيام
+                        _buildSectionLabel("مدة الختمة (بالأيام)"),
+                        const SizedBox(height: 10),
+                        FormField<int>(
+                          validator: (value) => value == null
+                              ? "من فضلك اختر مدة الختمة بالأيام"
+                              : null,
+                          builder: (state) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).cardColor,
+                                    borderRadius: BorderRadius.circular(15),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<int>(
+                                      isExpanded: true,
+                                      hint: Text(
+                                        "اختر عدد الايام",
+                                        style: GoogleFonts.cairo(
+                                            fontSize: 14.sp,
+                                            color: Colors.grey),
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem(
+                                            value: 7, child: Text("7 أيام")),
+                                        DropdownMenuItem(
+                                            value: 10, child: Text("10 أيام")),
+                                        DropdownMenuItem(
+                                            value: 15, child: Text("15 يوم")),
+                                        DropdownMenuItem(
+                                            value: 20, child: Text("20 يوم")),
+                                        DropdownMenuItem(
+                                            value: 30, child: Text("30 يوم")),
+                                        DropdownMenuItem(
+                                            value: 60, child: Text("60 يوم")),
+                                        DropdownMenuItem(
+                                            value: 90, child: Text("90 يوم")),
+                                      ],
+                                      value: _days,
+                                      onChanged: (v) {
+                                        setState(() => _days = v!);
+                                        state.didChange(v);
+                                      },
+                                      buttonStyleData: const ButtonStyleData(
+                                        padding: EdgeInsets.symmetric(horizontal: 16),
+                                        height: 55,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                          color: Theme.of(context).cardColor,
+                                        ),
+                                      ),
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        height: 50,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (state.hasError)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5, right: 10),
+                                    child: Text(state.errorText!,
+                                        style: GoogleFonts.cairo(
+                                            color: Colors.red, fontSize: 12.sp)),
+                                  )
+                              ],
+                            );
                           },
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 25),
+
+                        // طريقة التوزيع
+                        _buildSectionLabel("طريقة التوزيع"),
+                        const SizedBox(height: 10),
+                        FormField<String>(
+                          validator: (value) => value == null || value.isEmpty
+                              ? "من فضلك اختر طريقة التوزيع"
+                              : null,
+                          builder: (state) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).cardColor,
+                                    borderRadius: BorderRadius.circular(15),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: Text(
+                                        "اختر طريقة التوزيع",
+                                        style: GoogleFonts.cairo(
+                                            fontSize: 14.sp,
+                                            color: Colors.grey),
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem(
+                                            value: "صفحات",
+                                            child: Text("صفحات")),
+                                        DropdownMenuItem(
+                                            value: "أجزاء",
+                                            child: Text("أجزاء")),
+                                      ],
+                                      value: _distribution,
+                                      onChanged: (v) {
+                                        setState(() => _distribution = v!);
+                                        state.didChange(v);
+                                      },
+                                      buttonStyleData: const ButtonStyleData(
+                                        padding: EdgeInsets.symmetric(horizontal: 16),
+                                        height: 55,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                          color: Theme.of(context).cardColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (state.hasError)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5, right: 10),
+                                    child: Text(state.errorText!,
+                                        style: GoogleFonts.cairo(
+                                            color: Colors.red, fontSize: 12.sp)),
+                                  )
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 40),
+
+                        // زرار الحفظ
+                        Center(
+                          child: InkWell(
+                            onTap: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                _saveKhatmah();
+                              }
+                            },
+                            borderRadius: BorderRadius.circular(30),
+                            child: Container(
+                              width: MediaQuery.sizeOf(context).width * 0.7,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [KColors.primaryColor, Color(0xFF4CAF50)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(30),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: KColors.primaryColor.withOpacity(0.4),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "ابدأ الختمة",
+                                  style: GoogleFonts.cairo(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 50),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           )),
+    );
+  }
+
+  Widget _buildSectionLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: Text(
+        text,
+        style: GoogleFonts.cairo(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white70
+              : Colors.black87,
+        ),
+      ),
     );
   }
 }
