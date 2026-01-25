@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:workmanager/workmanager.dart';
 
 import 'package:adhan/adhan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +41,29 @@ void testSimpleCallback(int id) async {
   alarmCallback(id);
 }
 
+// ==========================================
+// 🔧 Callback Dispatcher (Top-Level)
+// ==========================================
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    print('🔄 [Background Task] Running task: $task');
+
+    try {
+      if (task == 'periodic_adhan_refresh') {
+        // إعادة جدولة الأذان تلقائياً في الخلفية
+        print('🔄 [Background Task] Rescheduling Azan...');
+        await AdhanWorkManagerService().reschedule(days: 30);
+      }
+    } catch (e) {
+      print('❌ [Background Task] Error: $e');
+      return Future.value(false);
+    }
+
+    return Future.value(true);
+  });
+}
+
 class AdhanWorkManagerService {
   static final AdhanWorkManagerService _instance =
       AdhanWorkManagerService._internal();
@@ -59,6 +83,27 @@ class AdhanWorkManagerService {
     bool forceReschedule = false,
   }) async {
     try {
+      print('🚀 بدء تهيئة خدمة الأذان...');
+
+      // 1️⃣ تهيئة WorkManager للمهام الدورية
+      await Workmanager().initialize(
+        callbackDispatcher,
+        isInDebugMode: false, // Set to true to see notifications
+      );
+
+      // 2️⃣ تسجيل مهمة دورية تعمل كل 24 ساعة لتحديث الجداول
+      await Workmanager().registerPeriodicTask(
+        "periodic_adhan_refresh_id",
+        "periodic_adhan_refresh",
+        frequency: const Duration(hours: 24),
+        constraints: Constraints(
+          networkType: NetworkType.notRequired,
+          requiresBatteryNotLow: true,
+        ),
+        existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
+        backoffPolicy: BackoffPolicy.linear,
+      );
+
       // check if we really need to reschedule
       if (!forceReschedule &&
           !await _shouldReschedule(coordinates, calculationParams, cityName)) {

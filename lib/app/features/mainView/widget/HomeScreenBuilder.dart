@@ -328,6 +328,12 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     bool isTab = ResponsiveUtil.isTablet(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // Filter icons once for efficiency
+    final activeIcons = con.iconsApp.where((item) {
+      final featureId = _getFeatureId(item['navigate'] ?? '');
+      return _featureStatuses[featureId] != 'hidden';
+    }).toList();
+
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -509,54 +515,63 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                           // 🔥 جدول الطاعات
                           // const WorshipTrackerWidget(),
 
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: isTab ? 10.w : 5.0),
-                            child: GridView.count(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              crossAxisCount: 3,
-                              crossAxisSpacing: isTab ? 30 : 7,
-                              mainAxisSpacing: isTab ? 20 : 15,
-                              childAspectRatio: isTab ? 1.9 : 01.20,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: con.iconsApp.where((item) {
-                                final featureId =
-                                    _getFeatureId(item['navigate'] ?? '');
-                                return _featureStatuses[featureId] != 'hidden';
-                              }).map((item) {
-                                return BlocBuilder<CentralizedCubit,
-                                    CentralizedState>(
-                                  builder: (context, state) {
-                                    return InkWell(
-                                      onTap: () async {
-                                        bool needsInternet = item["navigate"] ==
+                        ],
+                      ),
+                    ),
+
+                    // ⚡ Performance Optimized SliverGrid ⚡
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: isTab ? 10.w : 5.0, vertical: 8),
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: isTab ? 30 : 7,
+                          mainAxisSpacing: isTab ? 20 : 15,
+                          childAspectRatio: isTab ? 1.9 : 1.20,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final item = activeIcons[index];
+                            return BlocBuilder<CentralizedCubit,
+                                CentralizedState>(
+                              builder: (context, state) {
+                                return InkWell(
+                                  onTap: () async {
+                                    bool needsInternet =
+                                        item["navigate"] ==
                                                 Routes.categoriesRoute ||
                                             item["navigate"] ==
                                                 "/QuranRadioView";
 
-                                        if (((state is ConnectivityState &&
-                                                    state.status ==
-                                                        ConnectivityStatus
-                                                            .disconnected) ==
-                                                true) &&
-                                            needsInternet) {
-                                          KHelper.showError(
-                                              message:
-                                                  "يرجي التحقق من اتصالك بالانترنت");
-                                        } else {
-                                          _checkAndNavigate(item['navigate']);
-                                        }
-                                      },
-                                      child: IslamicCardWidget(
-                                          title: item["title"]!,
-                                          iconPath: item["icon"]!),
-                                    );
+                                    if (((state is ConnectivityState &&
+                                                state.status ==
+                                                    ConnectivityStatus
+                                                        .disconnected) ==
+                                            true) &&
+                                        needsInternet) {
+                                      KHelper.showError(
+                                          message:
+                                              "يرجي التحقق من اتصالك بالانترنت");
+                                    } else {
+                                      _checkAndNavigate(item['navigate']);
+                                    }
                                   },
+                                  child: IslamicCardWidget(
+                                      title: item["title"]!,
+                                      iconPath: item["icon"]!),
                                 );
-                              }).toList(),
-                            ),
-                          ),
+                              },
+                            );
+                          },
+                          childCount: activeIcons.length,
+                        ),
+                      ),
+                    ),
+
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
                           SizedBox(
                               height: MediaQuery.sizeOf(context).width > 600
                                   ? 25

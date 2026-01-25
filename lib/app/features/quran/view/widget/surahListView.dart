@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
@@ -249,10 +250,10 @@ class _SurahListScreenState extends State<SurahListScreen> {
                   fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp),
             ),
             bottom: TabBar(
-              indicatorColor: Colors.green,
+              indicatorColor: KColors.primaryColor,
               indicatorWeight: 3,
               indicatorSize: TabBarIndicatorSize.label,
-              labelColor: Colors.green,
+              labelColor: KColors.primaryColor,
               unselectedLabelColor: isDark ? Colors.white38 : Colors.black38,
               labelStyle: GoogleFonts.cairo(
                 fontWeight: FontWeight.w900,
@@ -293,7 +294,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                         child: Row(
                           children: [
                             Expanded(
@@ -382,7 +383,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
               Text("لا توجد نتائج", style: GoogleFonts.cairo(fontSize: 16.sp)));
     }
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       physics: const BouncingScrollPhysics(),
       itemCount: _filteredSurahItems.length,
       itemBuilder: (ctx, index) {
@@ -531,7 +532,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
               Text("لا توجد نتائج", style: GoogleFonts.cairo(fontSize: 16.sp)));
     }
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       physics: const BouncingScrollPhysics(),
       itemCount: _filteredJozzs.length,
       itemBuilder: (ctx, index) {
@@ -619,7 +620,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
               Text("لا توجد نتائج", style: GoogleFonts.cairo(fontSize: 16.sp)));
     }
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       physics: const BouncingScrollPhysics(),
       itemCount: _filteredHizbItems.length,
       itemBuilder: (ctx, index) {
@@ -708,23 +709,3 @@ class SurahItem {
   SurahItem(
       {required this.index, required this.arabicName, required this.model});
 }
-// return ListTile(
-// leading: Stack(
-// alignment: Alignment.center,
-// children: [
-// SvgPicture.asset("assets/icons/suraNum.svg"),
-// TextWidget(title: "${index+1}",fontSize: 14.sp,),
-// ],
-// ),
-// title: TextWidget(
-// fontFamily: "me", fontSize: 17.5.sp, title: surahs[index]),
-// subtitle: TextWidget(
-// fontFamily: "me",
-// fontSize: 15.sp,
-// title: " اياتها ${surah.totalVerses.toString()}"),
-// trailing: Image.asset(types),
-// onTap: () {
-// QuranLibrary().jumpToSurah(index + 1);
-// Navigator.pop(context);
-// },
-// );

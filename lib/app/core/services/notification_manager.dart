@@ -751,33 +751,6 @@ class NotificationManager {
   // 🕌 جدولة الأذان (منقول من main.dart)
   // ==========================================
 
-  Future<void> scheduleAzan(DateTime prayerTime, String prayerName) async {
-    try {
-      final channelKey =
-          prayerName == 'الفجر' ? 'fajr_adhan_channel_v4' : 'adhan_channel_v4';
-
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: prayerTime.millisecondsSinceEpoch % 100000,
-          channelKey: channelKey,
-          title: 'حان الآن وقت $prayerName',
-          body: 'الله أكبر الله أكبر',
-          notificationLayout: NotificationLayout.Default,
-          criticalAlert: true,
-          wakeUpScreen: true,
-          fullScreenIntent: true,
-          payload: {'prayer': prayerName},
-        ),
-        schedule: NotificationCalendar.fromDate(
-          date: prayerTime,
-          preciseAlarm: true,
-        ),
-      );
-      print('✅ تم جدولة أذان $prayerName: ${prayerTime.toString()}');
-    } catch (e) {
-      print('❌ خطأ في جدولة أذان $prayerName: $e');
-    }
-  }
 
   // ==========================================
   // 🕋 تذكيرات الختمة الجماعية

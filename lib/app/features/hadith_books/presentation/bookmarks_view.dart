@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,19 +18,50 @@ class BookmarksView extends StatelessWidget {
     final booksCtrl = Get.find<BooksController>();
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'الأحاديث المحفوظة',
-          style: GoogleFonts.cairo(
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black87,
-            fontSize: 18.sp,
+      // appBar: AppBar(
+      //   centerTitle: true,
+      //   title: Text(
+      //     'الأحاديث المحفوظة',
+      //     style: GoogleFonts.cairo(
+      //       fontWeight: FontWeight.bold,
+      //       color: isDark ? Colors.white : Colors.black87,
+      //       fontSize: 18.sp,
+      //     ),
+      //   ),
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      // ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+        child: AppBar(
+          leading: CupertinoNavigationBarBackButton(
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          // actions: [
+          //   IconButton(
+          //     onPressed: () => Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => CreateKhatmahScreen(),
+          //       ),
+          //     ),
+          //     icon: const Icon(Icons.add),
+          //   )
+          // ],
+          centerTitle: true,
+          title: Text(
+              'الأحاديث المحفوظة',
+            style: GoogleFonts.cairo(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize:
+              MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+            ),
           ),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
+
       body: GetBuilder<BooksController>(
         builder: (ctrl) {
           final categories = ctrl.getBookmarkCategories();
