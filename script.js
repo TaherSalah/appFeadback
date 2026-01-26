@@ -147,6 +147,7 @@ function switchTab(tabId) {
         case 'updates': loadUpdates(); break;
         case 'errors': loadErrors(); break;
         case 'settings': loadSettings(); break;
+        case 'mosques': loadMosques(); break;
     }
 }
 

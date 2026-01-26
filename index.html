@@ -727,6 +727,7 @@
             <div id="kidsStoriesTabBtn" class="tab" onclick="switchTab('kidsStories')">👶 قصص ركن الطفل</div>
             <div id="charityStoriesTabBtn" class="tab" onclick="switchTab('charityStories')">🤲 قصص الصدقات</div>
             <div id="errorsTabBtn" class="tab" onclick="switchTab('errors')">⚠️ الأعطال</div>
+            <div id="mosquesTabBtn" class="tab" onclick="switchTab('mosques')">🕌 المساجد</div>
         </div>
 
         <div id="feedbackTab" class="tab-content active">
@@ -3305,6 +3306,218 @@
             } catch (error) {
                 alert('❌ فشل الحذف: ' + error.message);
             }
+        }
+    </script>
+
+    <!-- Mosques Tab Content -->
+    <div id="mosquesTab" class="tab-content">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">🕌</div>
+                <h3>إجمالي المساجد</h3>
+                <div class="number" id="totalMosquesCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📱</div>
+                <h3>عدد الأجهزة</h3>
+                <div class="number" id="mosquesDevicesCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📅</div>
+                <h3>مضافة اليوم</h3>
+                <div class="number" id="mosquesTodayCount">0</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>🔍 بحث</label>
+                <input type="text" id="mosquesSearch" placeholder="ابحث عن مسجد..."
+                    style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%;">
+            </div>
+            <button class="refresh-btn" onclick="loadMosques()">🔄 تحديث</button>
+        </div>
+
+        <div class="feedback-container">
+            <div id="mosquesList" class="feedback-grid">
+                <div class="loading">⏳ جاري تحميل المساجد...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Mosque Modal -->
+    <div id="editMosqueModal" class="modal">
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+            <h2 style="color: var(--accent-color); margin-bottom: 20px;">تعديل بيانات المسجد</h2>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">اسم المسجد</label>
+                <input type="text" id="editMosqueName"
+                    style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary);">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">العنوان</label>
+                <input type="text" id="editMosqueAddress"
+                    style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary);">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="refresh-btn" onclick="saveMosqueEdit()" style="flex: 1;">💾 حفظ</button>
+                <button class="delete-btn" onclick="closeMosqueModal()" style="flex: 1;">❌ إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mosques Management
+        let allMosques = [];
+        let currentEditMosqueId = null;
+
+        async function loadMosques() {
+            const mosquesList = document.getElementById('mosquesList');
+            if (mosquesList) mosquesList.innerHTML = '<div class="loading">⏳ جاري تحميل المساجد...</div>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('user_mosques')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allMosques = data || [];
+                updateMosquesStats();
+                displayMosques(allMosques);
+            } catch (error) {
+                if (mosquesList) mosquesList.innerHTML = `<div class="error">❌ خطأ في تحميل البيانات: ${error.message}</div>`;
+            }
+        }
+
+        function updateMosquesStats() {
+            const total = allMosques.length;
+            const devices = new Set(allMosques.map(m => m.device_id)).size;
+            const today = allMosques.filter(m => {
+                const created = new Date(m.created_at);
+                const now = new Date();
+                return created.toDateString() === now.toDateString();
+            }).length;
+
+            if (document.getElementById('totalMosquesCount')) document.getElementById('totalMosquesCount').textContent = total;
+            if (document.getElementById('mosquesDevicesCount')) document.getElementById('mosquesDevicesCount').textContent = devices;
+            if (document.getElementById('mosquesTodayCount')) document.getElementById('mosquesTodayCount').textContent = today;
+        }
+
+        function displayMosques(mosques) {
+            const mosquesList = document.getElementById('mosquesList');
+            if (!mosquesList) return;
+
+            if (mosques.length === 0) {
+                mosquesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🕌</div>
+                        <h3>لا توجد مساجد مضافة</h3>
+                        <p>سيظهر هنا المساجد المضافة من قبل المستخدمين</p>
+                    </div>
+                `;
+                return;
+            }
+
+            mosquesList.innerHTML = mosques.map(mosque => {
+                const deviceId = mosque.device_id || 'unknown';
+                const shortDeviceId = deviceId.substring(0, 8);
+                const date = new Date(mosque.created_at).toLocaleDateString('ar-EG');
+
+                return `
+                    <div class="feedback-card">
+                        <div class="feedback-header">
+                            <div class="feedback-info">
+                                <h3>🕌 ${mosque.name}</h3>
+                                <p>📍 ${mosque.address || 'لا يوجد عنوان'}</p>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="refresh-btn" onclick="editMosque('${mosque.id}')" style="padding: 5px 15px; font-size: 0.8rem;">✏️ تعديل</button>
+                                <button class="delete-btn" onclick="deleteMosque('${mosque.id}', '${mosque.name}')" style="padding: 5px 15px; font-size: 0.8rem;">🗑️ حذف</button>
+                            </div>
+                        </div>
+                        <div class="feedback-meta">
+                            <div class="meta-item">📅 ${date}</div>
+                            <div class="meta-item">📱 الجهاز: <code style="background: var(--feedback-card-bg); padding: 2px 6px; border-radius: 4px;">${shortDeviceId}</code></div>
+                            <div class="meta-item">🌍 ${mosque.latitude.toFixed(6)}, ${mosque.longitude.toFixed(6)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function editMosque(id) {
+            const mosque = allMosques.find(m => m.id === id);
+            if (!mosque) return;
+
+            currentEditMosqueId = id;
+            document.getElementById('editMosqueName').value = mosque.name;
+            document.getElementById('editMosqueAddress').value = mosque.address || '';
+            document.getElementById('editMosqueModal').classList.add('active');
+        }
+
+        async function saveMosqueEdit() {
+            const name = document.getElementById('editMosqueName').value.trim();
+            const address = document.getElementById('editMosqueAddress').value.trim();
+
+            if (!name) {
+                alert('⚠️ يرجى إدخال اسم المسجد');
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('user_mosques')
+                    .update({ name, address })
+                    .eq('id', currentEditMosqueId);
+
+                if (error) throw error;
+
+                alert('✅ تم التحديث بنجاح');
+                closeMosqueModal();
+                loadMosques();
+            } catch (error) {
+                alert('❌ حدث خطأ أثناء التحديث: ' + error.message);
+            }
+        }
+
+        async function deleteMosque(id, name) {
+            if (!confirm(`⚠️ هل أنت متأكد من حذف "${name}"؟\n\nلا يمكن التراجع عن هذا الإجراء.`)) {
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('user_mosques')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('✅ تم الحذف بنجاح');
+                loadMosques();
+            } catch (error) {
+                alert('❌ حدث خطأ أثناء الحذف: ' + error.message);
+            }
+        }
+
+        function closeMosqueModal() {
+            document.getElementById('editMosqueModal').classList.remove('active');
+            currentEditMosqueId = null;
+        }
+
+        // Search functionality
+        const mosquesSearchInput = document.getElementById('mosquesSearch');
+        if (mosquesSearchInput) {
+            mosquesSearchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtered = allMosques.filter(m =>
+                    m.name.toLowerCase().includes(query) ||
+                    (m.address && m.address.toLowerCase().includes(query))
+                );
+                displayMosques(filtered);
+            });
         }
     </script>
     -->
