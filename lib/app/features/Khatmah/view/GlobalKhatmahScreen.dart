@@ -463,8 +463,11 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Colors.green),
+          icon:  Icon(Icons.arrow_back_ios_new_rounded,
+            color: isDark
+                ? Colors.white
+                : Colors.black,
+              ),
           onPressed: _isDetailView
               ? _backToDashboard
               : () => Navigator.pop(context),
@@ -479,7 +482,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         centerTitle: true,
         actions: [
           PopupMenuButton<_KhatmahMenuAction>(
-            icon: const Icon(Icons.more_vert_rounded, color: Colors.green),
+            icon:  Icon(Icons.more_vert_rounded,   color: isDark
+                ? Colors.white
+                : Colors.black,),
             offset: const Offset(0, 50),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

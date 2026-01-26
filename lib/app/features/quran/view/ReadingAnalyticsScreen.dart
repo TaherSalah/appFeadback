@@ -7,6 +7,8 @@ import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/quran/data/reading_analytics_service.dart';
 
+import '../../../core/shard/exports/all_exports.dart';
+
 class ReadingAnalyticsScreen extends StatefulWidget {
   const ReadingAnalyticsScreen({super.key});
 
@@ -62,19 +64,58 @@ class _ReadingAnalyticsScreenState extends State<ReadingAnalyticsScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "إحصائيات القراءة",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: isTablet ? 12.sp : 18.sp,
+        appBar: PreferredSize(
+          preferredSize:
+          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          child: AppBar(
+            // leading: IconButton(
+            //   icon: Icon(
+            //     Icons.cure, // غيّرها باللي انت عايزه
+            //     color: isDark ? Colors.white : Colors.black,
+            //   ),
+            //   onPressed: () {
+            //     Scaffold.of(context).openDrawer();
+            //   },
+            // ),
+            // leading: Builder(
+            //   builder: (context) => IconButton(
+            //     icon: Image.asset(
+            //       "assets/images/menu2.png",
+            //       width: 32,
+            //       height: 32,
+            //       fit: BoxFit.contain,
+            //     color:     isDark?Colors.white:Colors.black
+            //     ),
+            //     onPressed: () {
+            //       Scaffold.of(context).openDrawer();
+            //     },
+            //   ),
+            // ),
+            leading: IconButton(
+              icon:  Icon(Icons.arrow_back_ios_new_rounded,
+                color: isDark
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              onPressed:
+
+                  () => Navigator.pop(context),
+            ),
+
+            iconTheme:
+            IconThemeData(color: isDark ? Colors.white : Colors.blue),
+            centerTitle: true,
+            title: Text(
+              "إحصائيات القراءة",
+              style: GoogleFonts.cairo(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
             ),
           ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: const BackButton(),
         ),
+
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(

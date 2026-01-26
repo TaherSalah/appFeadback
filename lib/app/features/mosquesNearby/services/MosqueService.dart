@@ -1,23 +1,72 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import '../models/MosqueModel.dart';
-import 'package:muslimdaily/app/core/utils/log.dart'; 
+import 'package:muslimdaily/app/core/utils/log.dart';
 
 class MosqueService {
   static const String overpassUrl = 'https://overpass-api.de/api/interpreter';
+  final SupabaseClient _supabase = Supabase.instance.client;
 
-  /// Fetch nearby mosques using Overpass API
-  /// [latitude] and [longitude] are user's current location
-  /// [radiusMeters] is the search radius (default 5000m = 5km)
+  /// Get unique device identifier
+  Future<String> getDeviceId() async {
+    final deviceInfo = DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        return androidInfo.id;
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        return iosInfo.identifierForVendor ?? 'unknown';
+      }
+    } catch (e) {
+      log('MosqueService', msg: 'Error getting device ID', error: e);
+    }
+    return 'unknown';
+  }
+
+  /// Fetch nearby mosques using both Overpass API and Supabase
   Future<List<Mosque>> fetchNearbyMosques({
     required double latitude,
     required double longitude,
     int radiusMeters = 5000,
-  }) async { 
-
+  }) async {
     try {
-      // Overpass QL query to find mosques
+      // Fetch both in parallel
+      final results = await Future.wait([
+        _fetchOSMMosques(latitude, longitude, radiusMeters),
+        _fetchUserMosques(latitude, longitude),
+      ]);
+
+      final osmMosques = results[0];
+      final userMosques = results[1];
+
+      // Combine and filter user mosques by distance (Supabase query doesn't do radius easily without PostGIS)
+      final List<Mosque> combined = [...osmMosques];
+
+      for (var userMosque in userMosques) {
+        if (userMosque.distance * 1000 <= radiusMeters) {
+          combined.add(userMosque);
+        }
+      }
+
+      // Sort by distance
+      combined.sort((a, b) => a.distance.compareTo(b.distance));
+
+      return combined;
+    } catch (e) {
+      log('MosqueService', msg: 'Error fetching combined mosques', error: e);
+      return [];
+    }
+  }
+
+  /// Fetch nearby mosques using Overpass API
+  Future<List<Mosque>> _fetchOSMMosques(
+      double latitude, double longitude, int radiusMeters) async {
+    try {
       final query = '''
 [out:json];
 (
@@ -37,51 +86,105 @@ out center;
         final elements = data['elements'] as List;
 
         List<Mosque> mosques = [];
-        
+
         for (var element in elements) {
           try {
-            // For ways, use center coordinates
             if (element['type'] == 'way' && element['center'] != null) {
               element['lat'] = element['center']['lat'];
               element['lon'] = element['center']['lon'];
             }
-            
-            // Parse mosque
-            final mosque = Mosque.fromOverpassNode(element, latitude, longitude);
+            final mosque =
+                Mosque.fromOverpassNode(element, latitude, longitude);
             mosques.add(mosque);
           } catch (e) {
             log('MosqueService', msg: 'Error parsing mosque', error: e);
           }
         }
-
-        // Sort by distance
-        mosques.sort((a, b) => a.distance.compareTo(b.distance));
-        
         return mosques;
-      } else {
-        throw Exception('Failed to fetch mosques: ${response.statusCode}');
       }
-    } catch (e) {
-      log('MosqueService', msg: 'Error fetching mosques', error: e);
       return [];
+    } catch (e) {
+      log('MosqueService', msg: 'Error fetching OSM mosques', error: e);
+      return [];
+    }
+  }
+
+  /// Fetch mosques added by users from Supabase
+  Future<List<Mosque>> _fetchUserMosques(double lat, double lon) async {
+    try {
+      final response = await _supabase.from('user_mosques').select();
+      return (response as List)
+          .map((m) => Mosque.fromSupabase(m, lat, lon))
+          .toList();
+    } catch (e) {
+      log('MosqueService', msg: 'Error fetching user mosques', error: e);
+      return [];
+    }
+  }
+
+  /// Add a new mosque to Supabase
+  Future<bool> addUserMosque({
+    required String name,
+    required String address,
+    required double latitude,
+    required double longitude,
+  }) async {
+    try {
+      final deviceId = await getDeviceId();
+      await _supabase.from('user_mosques').insert({
+        'name': name,
+        'address': address,
+        'latitude': latitude,
+        'longitude': longitude,
+        'device_id': deviceId,
+      });
+      return true;
+    } catch (e) {
+      log('MosqueService', msg: 'Error adding user mosque', error: e);
+      return false;
+    }
+  }
+
+  /// Update an existing user mosque in Supabase
+  Future<bool> updateUserMosque({
+    required String id,
+    required String name,
+    required String address,
+  }) async {
+    try {
+      await _supabase.from('user_mosques').update({
+        'name': name,
+        'address': address,
+      }).eq('id', id);
+      return true;
+    } catch (e) {
+      log('MosqueService', msg: 'Error updating user mosque', error: e);
+      return false;
+    }
+  }
+
+  /// Delete a user mosque from Supabase
+  Future<bool> deleteUserMosque(String id) async {
+    try {
+      await _supabase.from('user_mosques').delete().eq('id', id);
+      return true;
+    } catch (e) {
+      log('MosqueService', msg: 'Error deleting user mosque', error: e);
+      return false;
     }
   }
 
   /// Calculate distance between two points (Haversine formula)
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     const double earthRadius = 6371; // km
-    
     double dLat = _degreesToRadians(lat2 - lat1);
     double dLon = _degreesToRadians(lon2 - lon1);
-    
     double a = (sin(dLat / 2) * sin(dLat / 2)) +
         cos(_degreesToRadians(lat1)) *
             cos(_degreesToRadians(lat2)) *
             sin(dLon / 2) *
             sin(dLon / 2);
-    
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    
     return earthRadius * c;
   }
 
