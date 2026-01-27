@@ -1,19 +1,16 @@
 /* Google Fonts - Cairo for modern Arabic look */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
-
 :root {
     /* Brand Colors */
     --primary-color: #10b981;
     --primary-dark: #059669;
     --primary-light: #d1fae5;
     --accent-color: #3b82f6;
-
     /* Functional Colors */
     --danger-color: #ef4444;
     --warning-color: #f59e0b;
     --success-color: #10b981;
     --info-color: #3b82f6;
-
     /* Light Theme Defaults */
     --bg-body: #f3f4f6;
     --bg-sidebar: #ffffff;
@@ -497,14 +494,12 @@ body {
     text-align: center;
     box-shadow: var(--shadow-lg);
 }
-
 /* Charts Containers */
 .charts-wrapper {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 2rem;
 }
-
 .chart-box {
     height: 350px;
     position: relative;
@@ -522,7 +517,6 @@ body {
     flex-direction: column;
     gap: 0.75rem;
 }
-
 /* RTL adjustment for toast: show on LEFT bottom so it doesn't cover scrollbar/content usually on right */
 [dir="rtl"] .toast-container {
     left: 2rem;
@@ -544,19 +538,15 @@ body {
     animation: slideInLeft 0.3s forwards;
     backdrop-filter: blur(12px);
 }
-
 .toast.success {
     border-color: var(--success-color);
 }
-
 .toast.error {
     border-color: var(--danger-color);
 }
-
 .toast.info {
     border-color: var(--info-color);
 }
-
 .toast-icon {
     font-size: 1.25rem;
 }
@@ -644,20 +634,16 @@ body {
     width: 8px;
     height: 8px;
 }
-
 ::-webkit-scrollbar-track {
     background: var(--bg-body);
 }
-
 ::-webkit-scrollbar-thumb {
     background: #cbd5e1;
     border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
-
 [data-theme="dark"] ::-webkit-scrollbar-thumb {
     background: #4b5563;
 }
