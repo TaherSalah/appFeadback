@@ -98,7 +98,7 @@ function checkAuth() {
     if (!passwordInput) return;
 
     const password = passwordInput.value.trim();
-    const correctPassword = 'admin';
+    const correctPassword = 'Taher';
 
     if (password === correctPassword) {
         try {
