@@ -693,6 +693,7 @@
             font-weight: bold;
         }
 
+
         .badge-optional {
             background: #e8f5e9;
             color: #2e7d32;
@@ -702,7 +703,147 @@
             font-size: 0.75rem;
             font-weight: bold;
         }
+
+        /* Feature Cards */
+        .feature-card {
+            background: var(--feedback-card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.15);
+        }
+
+        .feature-card.disabled {
+            opacity: 0.8;
+            border-color: #eee;
+            background: #fafafa;
+        }
+
+        .feature-card.maintenance {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .feature-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .feature-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-emoji {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .feature-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 28px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background-color: var(--accent-color);
+        }
+
+        .toggle-switch input:checked+.toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-slider:hover {
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .feature-status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .feature-status.active {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .feature-status.maintenance {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .feature-status.hidden {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .status-select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: white;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .status-select:focus {
+            border-color: var(--accent-color);
+        }
     </style>
+
 </head>
 
 <body>
@@ -951,13 +1092,24 @@
         <!-- Feature Control Tab -->
         <div id="featuresTab" class="tab-content">
             <div class="feedback-container">
-                <h3 style="margin-bottom: 25px; color: var(--text-primary);">🎮 التحكم في أقسام التطبيق</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">يمكنك تعطيل أي قسم في
-                    حال وجود صيانة أو مشكلة تقنية دون الحاجة لتحديث التطبيق.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">🎮 التحكم بأقسام التطبيق</h3>
+                    <button class="refresh-btn" onclick="loadFeatures()"
+                        style="padding: 8px 20px; font-size: 0.9rem;">🔄 تحديث</button>
+                </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"
-                    id="featuresGrid">
-                    <!-- Loaded dynamically -->
+                <div
+                    style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--accent-color);">
+                    <p style="margin: 0; color: var(--text-primary); font-size: 0.95rem;">
+                        💡 <strong>ملاحظة:</strong> يمكنك إظهار أو إخفاء الأقسام المختلفة في التطبيق من هنا. الأقسام
+                        المعطلة لن تظهر للمستخدمين.
+                    </p>
+                </div>
+
+                <!-- Features Grid -->
+                <div id="featuresList"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                    <div class="loading">⏳ جاري تحميل الأقسام...</div>
                 </div>
             </div>
         </div>
@@ -1175,6 +1327,7 @@
         </div>
 
         <!-- Banners Tab -->
+
         <div id="bannersTab" class="tab-content">
             <div class="feedback-container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
@@ -3519,7 +3672,132 @@
                 displayMosques(filtered);
             });
         }
+
+        // ============================================
+        // Features Management Functions
+        // ============================================
+
+        let allFeatures = [];
+
+        async function loadFeatures() {
+            try {
+                const featuresList = document.getElementById('featuresList');
+                featuresList.innerHTML = '<div class="loading">⏳ جاري تحميل الأقسام...</div>';
+
+                const { data, error } = await supabaseClient
+                    .from('app_features')
+                    .select('*')
+                    .order('display_name');
+
+                if (error) throw error;
+
+                allFeatures = data || [];
+                displayFeatures();
+            } catch (error) {
+                console.error('Error loading features:', error);
+                document.getElementById('featuresList').innerHTML = `
+                    <div class="error" style="grid-column: 1 / -1;">
+                        ❌ فشل تحميل الأقسام: ${error.message}
+                        <br><br>
+                        <small>تأكد من إنشاء جدول app_features في Supabase</small>
+                    </div>
+                `;
+            }
+        }
+
+        function displayFeatures() {
+            const featuresList = document.getElementById('featuresList');
+
+            if (allFeatures.length === 0) {
+                featuresList.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">📦</div>
+                        <h3>لا توجد أقسام</h3>
+                        <p>لم يتم العثور على أي أقسام في قاعدة البيانات</p>
+                    </div>
+                `;
+                return;
+            }
+
+            featuresList.innerHTML = allFeatures.map(feature => `
+                <div class="feature-card ${!feature.is_enabled ? 'disabled' : ''}">
+                    <div class="feature-header">
+                        <div class="feature-info">
+                            <div class="feature-emoji">${feature.emoji || '📱'}</div>
+                            <div>
+                                <h4 class="feature-name">${feature.display_name}</h4>
+                                <p class="feature-status ${feature.is_enabled ? 'active' : 'inactive'}">
+                                    ${feature.is_enabled ? '✅ مفعّل' : '❌ معطّل'}
+                                </p>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" 
+                                   ${feature.is_enabled ? 'checked' : ''} 
+                                   onchange="toggleFeature('${feature.id}', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function toggleFeature(featureId, isEnabled) {
+            try {
+                const { error } = await supabaseClient
+                    .from('app_features')
+                    .update({
+                        is_enabled: isEnabled,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', featureId);
+
+                if (error) throw error;
+
+                // Update local state
+                const feature = allFeatures.find(f => f.id === featureId);
+                if (feature) {
+                    feature.is_enabled = isEnabled;
+                }
+
+                // Refresh display
+                displayFeatures();
+
+                // Show success message
+                const featureName = allFeatures.find(f => f.id === featureId)?.display_name || 'القسم';
+                const statusText = isEnabled ? 'تفعيل' : 'تعطيل';
+
+                // Create a temporary toast notification
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 30px;
+                    right: 30px;
+                    background: var(--accent-color);
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 12px;
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                    z-index: 9999;
+                    animation: slideIn 0.3s ease;
+                `;
+                toast.textContent = `✅ تم ${statusText} ${featureName} بنجاح`;
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error toggling feature:', error);
+                alert('❌ فشل تحديث حالة القسم: ' + error.message);
+                // Reload to reset state
+                loadFeatures();
+            }
+        }
     </script>
+
     -->
 </body>
 

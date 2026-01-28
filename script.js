@@ -82,6 +82,7 @@ function initializeDashboard() {
     loadErrors();
     loadKidsStories();
     loadCharityStories();
+    loadFeatures(); // Load features control
 
     // Auto-refresh every 60 seconds
     setInterval(() => {
@@ -1391,5 +1392,244 @@ async function exportKhatmahParticipants() {
         alert('✅ تم تصدير القائمة بنجاح');
     } catch (e) {
         alert('❌ فشل تصدير البيانات: ' + e.message);
+    }
+}
+
+// ============================================
+// Features Management Functions
+// ============================================
+
+let allFeatures = []; // Updated for status support
+
+async function loadFeatures() {
+    try {
+        const featuresList = document.getElementById('featuresList');
+        if (!featuresList) return;
+
+        featuresList.innerHTML = '<div class="loading">⏳ جاري تحميل الأقسام...</div>';
+
+        const { data, error } = await supabaseClient
+            .from('app_features')
+            .select('*')
+            .order('display_name');
+
+        if (error) throw error;
+
+        allFeatures = data || [];
+        displayFeatures();
+    } catch (error) {
+        console.error('Error loading features:', error);
+        const featuresList = document.getElementById('featuresList');
+        if (featuresList) {
+            featuresList.innerHTML = `
+                <div class="error" style="grid-column: 1 / -1; padding: 20px; text-align: center; background: rgba(239, 68, 68, 0.1); border-radius: 12px; border: 1px solid #ef4444;">
+                    ❌ فشل تحميل الأقسام: ${error.message}
+                    <br><br>
+                    <small>تأكد من إنشاء جدول app_features في Supabase وتحديثه للنسخة الجديدة</small>
+                </div>
+            `;
+        }
+    }
+}
+
+function displayFeatures() {
+    const featuresList = document.getElementById('featuresList');
+    if (!featuresList) return;
+
+    if (allFeatures.length === 0) {
+        featuresList.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <div class="empty-state-icon">📦</div>
+                <h3>لا توجد أقسام</h3>
+                <p>لم يتم العثور على أي أقسام في قاعدة البيانات</p>
+            </div>
+        `;
+        return;
+    }
+
+    const getStatusText = (status) => {
+        switch (status) {
+            case 'active': return '🟢 نشط';
+            case 'maintenance': return '🟠 صيانة';
+            case 'hidden': return '🔴 مخفي';
+            default: return '⚪ غير معروف';
+        }
+    };
+
+    featuresList.innerHTML = allFeatures.map(feature => {
+        const currentStatus = feature.status || 'active';
+        return `
+            <div class="feature-card ${currentStatus === 'hidden' ? 'disabled' : (currentStatus === 'maintenance' ? 'maintenance' : '')}">
+                <div class="feature-header">
+                    <div class="feature-info">
+                        <div class="feature-emoji">${feature.emoji || '📱'}</div>
+                        <div>
+                            <h4 class="feature-name">${feature.display_name}</h4>
+                            <p class="feature-status ${currentStatus}">
+                                ${getStatusText(currentStatus)}
+                            </p>
+                        </div>
+                    </div>
+                    <select class="status-select" onchange="updateFeatureStatus('${feature.id}', this.value)">
+                        <option value="active" ${currentStatus === 'active' ? 'selected' : ''}>🟢 نشط</option>
+                        <option value="maintenance" ${currentStatus === 'maintenance' ? 'selected' : ''}>🟠 صيانة</option>
+                        <option value="hidden" ${currentStatus === 'hidden' ? 'selected' : ''}>🔴 مخفي</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function updateFeatureStatus(featureId, newStatus) {
+    try {
+        const { error } = await supabaseClient
+            .from('app_features')
+            .update({
+                status: newStatus,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', featureId);
+
+        if (error) throw error;
+
+        // Update local state
+        const feature = allFeatures.find(f => f.id === featureId);
+        if (feature) {
+            feature.status = newStatus;
+        }
+
+        // Refresh display
+        displayFeatures();
+
+        // Show success message
+        const featureName = allFeatures.find(f => f.id === featureId)?.display_name || 'القسم';
+        let statusMsg = '';
+        switch (newStatus) {
+            case 'active': statusMsg = 'تنشيط'; break;
+            case 'maintenance': statusMsg = 'تفعيل وضع الصيانة لـ'; break;
+            case 'hidden': statusMsg = 'إخفاء'; break;
+        }
+
+        showToastNotification(`✅ تم ${statusMsg} ${featureName} بنجاح`);
+
+    } catch (error) {
+        console.error('Error updating feature status:', error);
+        alert('❌ فشل تحديث حالة القسم: ' + error.message);
+        loadFeatures();
+    }
+}
+
+function showToastNotification(message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: var(--accent-color);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
+}
+
+// Keep toggleFeature for fallback
+async function toggleFeature(featureId, isEnabled) {
+    return updateFeatureStatus(featureId, isEnabled ? 'active' : 'hidden');
+}
+
+
+// --- MOSQUES MANAGEMENT ---
+
+async function loadMosques() {
+    const list = document.getElementById('mosquesList');
+    // Check if list exists to avoid errors if tab is not active logic
+    if (!list) return;
+
+    list.innerHTML = '<div class="loading">⏳ جاري تحميل المساجد...</div>';
+
+    try {
+        // Load mosques data from 'user_mosques' table
+        const { data, error } = await supabaseClient
+            .from('user_mosques')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Load unique devices count
+        const { count: devicesCount, error: countError } = await supabaseClient
+            .from('user_mosques')
+            .select('device_id', { count: 'exact', head: true });
+
+        // Calculate stats
+        const total = data.length;
+        const today = data.filter(m => {
+            const date = new Date(m.created_at);
+            const now = new Date();
+            return date.getDate() === now.getDate() &&
+                date.getMonth() === now.getMonth() &&
+                date.getFullYear() === now.getFullYear();
+        }).length;
+
+        // Update stats UI
+        if (document.getElementById('totalMosquesCount'))
+            document.getElementById('totalMosquesCount').textContent = total;
+        if (document.getElementById('mosquesDevicesCount'))
+            document.getElementById('mosquesDevicesCount').textContent = devicesCount || '-';
+        if (document.getElementById('mosquesTodayCount'))
+            document.getElementById('mosquesTodayCount').textContent = today;
+
+        if (!data || data.length === 0) {
+            list.innerHTML = '<div class="empty-state"><h3>لا توجد مساجد</h3><p>لم يتم إضافة أي مساجد حتى الآن</p></div>';
+            return;
+        }
+
+        list.innerHTML = data.map(mosque => `
+            <div class="feedback-card">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <h3 style="margin-bottom: 5px;">${mosque.name || 'مسجد بدون اسم'}</h3>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">
+                            📍 ${(mosque.latitude || 0).toFixed(5)}, ${(mosque.longitude || 0).toFixed(5)}
+                        </div>
+                        ${mosque.address ? `<div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 5px;">🏠 ${mosque.address}</div>` : ''}
+                        <div style="font-size: 0.85rem; color: #666;">
+                            📅 ${new Date(mosque.created_at).toLocaleString('ar-EG')}
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteMosque('${mosque.id}')">🗑️ حذف</button>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (error) {
+        console.error(error);
+        list.innerHTML = `<div class="error">❌ خطأ في تحميل المساجد: ${error.message}</div>`;
+    }
+}
+
+async function deleteMosque(id) {
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذا المسجد؟')) return;
+    try {
+        const { error } = await supabaseClient
+            .from('user_mosques')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        loadMosques();
+    } catch (error) {
+        alert('❌ فشل الحذف: ' + error.message);
     }
 }
