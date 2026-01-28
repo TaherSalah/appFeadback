@@ -740,10 +740,10 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
         ),
         const SizedBox(height: 12),
         _buildProfileCard(isDark),
-        const SizedBox(height: 16),
-        const DailyStreakWidget(),
-        const SizedBox(height: 12),
-        VirtualPetWidget(totalStars: _totalStars),
+        // const SizedBox(height: 16),
+        // const DailyStreakWidget(),
+        // const SizedBox(height: 12),
+        // VirtualPetWidget(totalStars: _totalStars),
         const SizedBox(height: 24),
         Row(
           children: [

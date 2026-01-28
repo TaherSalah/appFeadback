@@ -139,8 +139,9 @@ class _WhatsNewViewState extends State<WhatsNewView>
               margin: EdgeInsets.symmetric(horizontal: 2.w),
               decoration: BoxDecoration(
                 color: _currentPage >= index
-                    ? KColors.primaryColor
-                    : Theme.of(context).primaryColor,
+                      ? KColors.primaryColor
+
+                    : KColors.primary,
                 borderRadius: BorderRadius.circular(10),
                 // ✅ ظل خفيف للشريط النشط
                 boxShadow: _currentPage == index

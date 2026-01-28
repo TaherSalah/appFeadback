@@ -190,8 +190,6 @@ class CalendarService {
         return;
       }
 
-      print('📅 Found ${calendarsResult.data!.length} calendars');
-
       // Try to find a primary calendar or the first writable one
       final calendar = calendarsResult.data!.firstWhere(
           (c) => c.isReadOnly == false && (c.isDefault ?? false),
@@ -207,7 +205,7 @@ class CalendarService {
 
       print('🎯 Using calendar: ${calendar.name} (ID: ${calendar.id})');
 
-      final deviceEvent = Event(calendar.id);
+      final deviceEvent = Event(calendar.id, eventId: event.externalEventId == 'pending_sync' ? null : event.externalEventId);
       deviceEvent.title = event.title;
       deviceEvent.description = event.description;
       
@@ -235,10 +233,11 @@ class CalendarService {
         KHelper.showSuccess(message: 'تمت المزامنة مع تقويم الهاتف بنجاح');
       } else {
         print('❌ Failed to sync event: ${result?.errors}');
-        KHelper.showError(message: 'فشلت المزامنة: ${result?.errors.map((e) => e.errorMessage).join(', ')}');
+         final errorMsg = result?.errors.map((e) => e.errorMessage).join(', ') ?? 'Unknown error';
+        KHelper.showError(message: 'فشلت المزامنة: $errorMsg');
       }
-    } catch (e) {
-      print('❌ Error syncing to device calendar: $e');
+    } catch (e,s) {
+      print('❌ Error syncing to device calendar: $e $s');
       KHelper.showError(message: 'حدث خطأ أثناء المزامنة: $e');
     }
   }

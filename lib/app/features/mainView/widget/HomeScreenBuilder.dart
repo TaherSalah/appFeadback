@@ -230,9 +230,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
         path == '/azkarMassa' ||
         path == '/allazkarlistview') return 'azkar';
     if (path == '/azkarCounter') return 'sebha';
-    if (path == '/compplateKhatna') return 'khatmah';
+    if (path == '/compplateKhatna' || path == '/globalKhatmah') return 'khatmah';
     if (path == Routes.zakatCalculatorRoute) return 'zakat';
-    if (path == '/WirdHomeScreen') return 'charity';
+    if (path == '/WirdHomeScreen') return 'wird';
     if (path == '/QuranRadioView') return 'radio';
     if (path == '/NineBooksScreen' || path == Routes.categoriesRoute)
       return 'hadith';

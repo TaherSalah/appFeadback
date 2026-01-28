@@ -29,31 +29,30 @@ class SystemControlService {
     }
   }
 
-  /// 🎮 Get All Feature Statuses (Active/Maintenance/Hidden)
+  /// 🎮 Get All Feature Statuses (Active/Maintenance/Hidden) from app_features table
   Future<Map<String, String>> getFeatureStatuses() async {
     final prefs = await SharedPreferences.getInstance();
     const String cacheKey = 'cached_feature_statuses';
 
     try {
       final response = await _supabase
-          .from('app_settings')
-          .select('key, value')
-          .filter('key', 'like', 'section_%');
+          .from('app_features')
+          .select('feature_name, status');
 
       if (response != null && response is List) {
         final Map<String, String> statuses = {};
         for (var item in response) {
-          final String key = item['key']
-              .toString()
-              .replaceFirst('section_', '')
-              .replaceFirst('_status', '');
-          statuses[key] = item['value'].toString();
+          final String key = item['feature_name']?.toString() ?? '';
+          final String value = item['status']?.toString() ?? 'active';
+          if (key.isNotEmpty) {
+            statuses[key] = value;
+          }
         }
         await prefs.setString(cacheKey, jsonEncode(statuses));
         return statuses;
       }
     } catch (e) {
-      print('Error fetching feature statuses: $e');
+      print('Error fetching feature statuses from app_features: $e');
     }
 
     final cached = prefs.getString(cacheKey);

@@ -31,6 +31,8 @@
 	    <string>يحتاج رفيق المسلم اليومي إلى موقعك لحساب اتجاه القبلة.</string>
 	    <key>NSUserNotificationUsageDescription</key>
 	    <string>يحتاج رفيق المسلم اليومي لإرسال إشعارات للتذكير بالأذكار ومواقيت الصلاة.</string>
+        <key>NSCalendarsUsageDescription</key>
+        <string>يحتاج التطبيق للوصول إلى التقويم لمزامنة الأحداث والمناسبات.</string>
 
 <!-- مكتبة الكاميرا / الصور - في حالة مشاركة صور أو التقاطها -->
 	    <key>NSCameraUsageDescription</key>

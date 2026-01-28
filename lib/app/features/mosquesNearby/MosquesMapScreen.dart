@@ -35,6 +35,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
 
   // New features state
   bool _isAddingMode = false;
+  bool _isBottomSheetVisible = true; // للتحكم في إظهار/إخفاء القائمة السفلية
   LatLng? _pickedLocation;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -684,25 +685,27 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
             ),
           ),
           actions: [
-            Container(
-              margin: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.black45 : Colors.white70,
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon:
-                    const Icon(Icons.admin_panel_settings, color: Colors.green),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MosqueAdminPanel(),
-                    ),
-                  );
-                },
-              ),
-            ),
+
+            //// أداره المساجد كلها
+            // Container(
+            //   margin: const EdgeInsets.all(8),
+            //   decoration: BoxDecoration(
+            //     color: isDark ? Colors.black45 : Colors.white70,
+            //     shape: BoxShape.circle,
+            //   ),
+            //   child: IconButton(
+            //     icon:
+            //         const Icon(Icons.admin_panel_settings, color: Colors.green),
+            //     onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (context) => const MosqueAdminPanel(),
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
             Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -931,8 +934,34 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                       ],
                     ),
                   ),
-                  if (!_isAddingMode)
+                  // زر إظهار القائمة عندما تكون مخفية
+                  if (!_isAddingMode && !_isBottomSheetVisible)
+                    Positioned(
+                      bottom: 20,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: FadeInUp(
+                          child: FloatingActionButton.extended(
+                            heroTag: "show_sheet",
+                            backgroundColor: Colors.green,
+                            icon: const Icon(Icons.keyboard_arrow_up),
+                            label: Text(
+                              "إظهار المساجد القريبة",
+                              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isBottomSheetVisible = true;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (!_isAddingMode && _isBottomSheetVisible)
                     DraggableScrollableSheet(
+
                       initialChildSize: 0.3,
                       minChildSize: 0.1,
                       maxChildSize: 0.85,
@@ -975,20 +1004,46 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                           fontSize: 18.sp,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: Colors.green.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Text(
-                                        "${_mosques.length} مسجد",
-                                        style: GoogleFonts.cairo(
-                                            color: Colors.green,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.green.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: Text(
+                                            "${_mosques.length} مسجد",
+                                            style: GoogleFonts.cairo(
+                                                color: Colors.green,
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        // زر إخفاء القائمة
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              _isBottomSheetVisible = false;
+                                            });
+                                          },
+                                          borderRadius: BorderRadius.circular(20),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.red.withOpacity(0.1),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.keyboard_arrow_down,
+                                              color: Colors.red,
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -1124,38 +1179,79 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                                 ),
                                               ],
                                             ),
-                                            trailing: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                if (mosque.isUserAdded &&
-                                                    mosque.deviceId ==
-                                                        _currentDeviceId) ...[
-                                                  IconButton(
-                                                    icon: const Icon(Icons.edit,
-                                                        color: Colors.orange,
-                                                        size: 20),
-                                                    onPressed: () =>
-                                                        _showEditMosqueDialog(
-                                                            mosque),
+                                            trailing: Builder(
+                                              builder: (menuContext) {
+                                                return Directionality(
+                                                  textDirection: TextDirection.rtl,
+                                                  child: PopupMenuButton<String>(
+                                                    icon: const Icon(Icons.more_vert),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(12),
+                                                    ),
+                                                    itemBuilder: (_) => [
+                                                      if (mosque.isUserAdded)
+                                                        PopupMenuItem(
+                                                          value: 'edit',
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                                            children: const [
+                                                              Icon(Icons.edit, color: Colors.orange, size: 18),
+                                                              SizedBox(width: 8),
+                                                              Text('تعديل',style: TextStyle(fontFamily: "cairo")),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      if (mosque.isUserAdded)
+                                                        PopupMenuItem(
+                                                          value: 'delete',
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                                            children: const [
+                                                              Icon(Icons.delete_outline, color: Colors.red, size: 18),
+                                                              SizedBox(width: 8),
+                                                              Text('حذف',style: TextStyle(fontFamily: "cairo")),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      PopupMenuItem(
+                                                        value: 'directions',
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                                          children: const [
+                                                            Icon(Icons.directions, color: Colors.blue, size: 18),
+                                                            SizedBox(width: 8),
+                                                            Text('الاتجاهات',style: TextStyle(fontFamily: "cairo"),),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                    onSelected: (value) {
+                                                      // نأخر التنفيذ Frame واحدة
+                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                        if (!menuContext.mounted) return;
+
+                                                        switch (value) {
+                                                          case 'edit':
+                                                            _showEditMosqueDialog(mosque);
+                                                            break;
+                                                          case 'delete':
+                                                            _confirmDelete(mosque);
+                                                            break;
+                                                          case 'directions':
+                                                            _openDirections(mosque);
+                                                            break;
+                                                        }
+                                                      });
+                                                    },
                                                   ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                        Icons.delete_outline,
-                                                        color: Colors.red,
-                                                        size: 20),
-                                                    onPressed: () =>
-                                                        _confirmDelete(mosque),
-                                                  ),
-                                                ],
-                                                IconButton(
-                                                  icon: const Icon(
-                                                      Icons.directions,
-                                                      color: Colors.blue),
-                                                  onPressed: () =>
-                                                      _openDirections(mosque),
-                                                ),
-                                              ],
+                                                );
+                                              },
                                             ),
+
+
                                           ),
                                         ),
                                       );
