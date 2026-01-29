@@ -9,14 +9,20 @@ import 'package:confetti/confetti.dart';
 
 import '../../../core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/responsive_util.dart';
-import 'StoriesScreen.dart';
-import 'GamesMenuScreen.dart';
-import 'VirtualShopScreen.dart';
 import 'DailyChallengesScreen.dart';
+import 'DailyStreakWidget.dart';
+import 'GamesMenuScreen.dart';
+import 'StoriesScreen.dart';
+import 'VirtualPetWidget.dart';
+import 'HadithsForKidsScreen.dart';
+import 'DailyDuasScreen.dart';
+import 'package:muslimdaily/app/features/kids/view/KidsStoriesScreen.dart';
+import 'package:animate_do/animate_do.dart';
 import 'DailyStreakWidget.dart';
 import 'VirtualPetWidget.dart';
 import 'HadithsForKidsScreen.dart';
 import 'DailyDuasScreen.dart';
+import 'VirtualShopScreen.dart';
 
 enum KidsView { home, journey, activities, trophies }
 
@@ -484,7 +490,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
   Future<void> _loadProgress() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _totalStars = prefs.getInt('kids_total_stars') ?? 0;
+      _totalStars = prefs.getInt('kids_total_stars_v2') ?? 0;
       _selectedGender = prefs.getString('kids_gender') ?? 'boy';
       _completedStories = prefs.getInt('completed_stories') ?? 0;
       _completedGames = prefs.getInt('completed_games') ?? 0;
@@ -507,7 +513,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
 
   Future<void> _saveProgress() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('kids_total_stars', _totalStars);
+    await prefs.setInt('kids_total_stars_v2', _totalStars);
     await prefs.setString('kids_gender', _selectedGender);
 
     final Map<String, dynamic> tasksState = {};
@@ -536,6 +542,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       if (!isDone) {
         _totalStars += points;
         _confettiController.play();
+        _saveProgress(); // Ensure it saves immediately
       } else {
         _totalStars -= points;
       }
@@ -730,98 +737,194 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       key: const ValueKey('home'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          _getGreeting(),
-          style: GoogleFonts.cairo(
-            fontSize: 22.sp,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.green.shade800,
+        FadeInDown(
+          child: Container(
+            padding: EdgeInsets.all(20.w),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: isDark 
+                  ? [const Color(0xFF1E293B), const Color(0xFF0F172A)] 
+                  : [const Color(0xFF0EA5E9), const Color(0xFF38BDF8)],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+              ),
+              borderRadius: BorderRadius.circular(30.r),
+              boxShadow: [
+                BoxShadow(
+                  color: (isDark ? Colors.black : const Color(0xFF0EA5E9)).withOpacity(0.2),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 35.r,
+                      backgroundColor: Colors.white.withOpacity(0.2),
+                      child: Text(
+                        _selectedGender == 'boy' ? '👦' : '👧',
+                        style: TextStyle(fontSize: 40.sp),
+                      ),
+                    ),
+                    SizedBox(width: 15.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _getGreeting(),
+                            style: GoogleFonts.cairo(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            _getRankTitle(),
+                            style: GoogleFonts.cairo(
+                              fontSize: 12.sp,
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15.h),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.stars_rounded, color: Colors.amber, size: 24.sp),
+                          SizedBox(width: 8.w),
+                          Text(
+                            '$_totalStars نقطة',
+                            style: GoogleFonts.cairo(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        'إنجاز رائع! 🚀',
+                        style: GoogleFonts.cairo(color: Colors.white70, fontSize: 11.sp),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 12),
-        _buildProfileCard(isDark),
-        // const SizedBox(height: 16),
-        // const DailyStreakWidget(),
-        // const SizedBox(height: 12),
-        // VirtualPetWidget(totalStars: _totalStars),
         const SizedBox(height: 24),
-        Row(
-          children: [
-            const Icon(Icons.stars, color: Colors.amber),
-            const SizedBox(width: 8),
-            Text(
-              "اختر مغامرتك اليوم 🚀",
-              style: GoogleFonts.cairo(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white70 : Colors.black87,
+        FadeInUp(
+          child: Row(
+            children: [
+              const Icon(Icons.auto_awesome_rounded, color: Colors.amber),
+              const SizedBox(width: 8),
+              Text(
+                "اختر مغامرتك اليوم 🌟",
+                style: GoogleFonts.cairo(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 12),
         GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
+          mainAxisSpacing: 16.w,
+          crossAxisSpacing: 16.w,
           childAspectRatio: 1.1,
           children: [
-            _buildQuickNavCard(
-              title: "رحلة الأبطال",
-              emoji: "🗺️",
-              color: Colors.blue,
-              onTap: () => setState(() => _currentView = KidsView.journey),
+            FadeInLeft(
+              child: _buildQuickNavCard(
+                title: "رحلة الأبطال",
+                subtitle: "قصص ومغامرات ✨",
+                emoji: "📖",
+                color: const Color(0xFF6366F1),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    CupertinoPageRoute(builder: (_) => const KidsStoriesScreen()),
+                  );
+                  _loadProgress(); // Refresh stars when coming back
+                },
+              ),
             ),
-            _buildQuickNavCard(
-              title: "المرح والتعلم",
-              emoji: "🎮",
-              color: Colors.orange,
-              onTap: () => setState(() => _currentView = KidsView.activities),
+            FadeInRight(
+              child: _buildQuickNavCard(
+                title: "المرح والتعلم",
+                subtitle: "ألعاب وذكاء 🎮",
+                emoji: "🧩",
+                color: const Color(0xFFF59E0B),
+                onTap: () => setState(() => _currentView = KidsView.activities),
+              ),
             ),
-            _buildQuickNavCard(
-              title: "ألبوم الإنجازات",
-              emoji: "🏆",
-              color: Colors.purple,
-              onTap: () => setState(() => _currentView = KidsView.trophies),
+            FadeInLeft(
+              delay: const Duration(milliseconds: 200),
+              child: _buildQuickNavCard(
+                title: "ألبوم الإنجازات",
+                subtitle: "أوسمتي وبطولاتي 🏆",
+                emoji: "🏅",
+                color: const Color(0xFFEC4899),
+                onTap: () => setState(() => _currentView = KidsView.trophies),
+              ),
             ),
-            _buildQuickNavCard(
-              title: "أدعية يومية",
-              emoji: "🤲",
-              color: Colors.teal,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const DailyDuasScreen()),
-                );
-              },
+            FadeInRight(
+              delay: const Duration(milliseconds: 200),
+              child: _buildQuickNavCard(
+                title: "أدعية يومية",
+                subtitle: "أتعلم وأدعو 🤲",
+                emoji: "🌈",
+                color: const Color(0xFF10B981),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(builder: (_) => const DailyDuasScreen()),
+                  );
+                },
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
       ],
     );
   }
 
   Widget _buildQuickNavCard({
     required String title,
+    required String subtitle,
     required String emoji,
     required Color color,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(28),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [color.withOpacity(0.2), color.withOpacity(0.05)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: color.withOpacity(0.4), width: 2.5),
+          color: Theme.of(context).brightness == Brightness.dark 
+              ? const Color(0xFF1E293B) 
+              : Colors.white,
+          borderRadius: BorderRadius.circular(28.r),
           boxShadow: [
             BoxShadow(
               color: color.withOpacity(0.1),
@@ -829,35 +932,36 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               offset: const Offset(0, 4),
             ),
           ],
+          border: Border.all(color: color.withOpacity(0.1), width: 1),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
-              child: Text(emoji, style: const TextStyle(fontSize: 40)),
+              child: Text(emoji, style: TextStyle(fontSize: 35.sp)),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Text(
               title,
               style: GoogleFonts.cairo(
                 fontWeight: FontWeight.bold,
                 fontSize: 14.sp,
-                color: HSLColor.fromColor(color)
-                    .withLightness((HSLColor.fromColor(color).lightness - 0.2)
-                        .clamp(0.0, 1.0))
-                    .toColor(),
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white 
+                    : Colors.black87,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              subtitle,
+              style: GoogleFonts.cairo(
+                fontSize: 10.sp,
+                color: Colors.grey,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1564,7 +1668,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                     ),
                   ),
                 );
-              },
+              }, subtitle: '',
             ),
             _buildQuickNavCard(
               title: "ألعاب تعليمية",
@@ -1575,7 +1679,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   context,
                   MaterialPageRoute(builder: (_) => const GamesMenuScreen()),
                 );
-              },
+              }, subtitle: '',
             ),
             _buildQuickNavCard(
               title: "المتجر",
@@ -1596,9 +1700,10 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                     ),
                   ),
                 );
-              },
+              }, subtitle: '',
             ),
             _buildQuickNavCard(
+              subtitle: "",
               title: "التحديات",
               emoji: "⚡",
               color: const Color(0xFFE91E63),
@@ -1620,9 +1725,10 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   MaterialPageRoute(
                       builder: (_) => const HadithsForKidsScreen()),
                 );
-              },
+              }, subtitle: '',
             ),
             _buildQuickNavCard(
+              subtitle: "",
               title: "أدعية يومية",
               emoji: "🤲",
               color: const Color(0xFF673AB7),

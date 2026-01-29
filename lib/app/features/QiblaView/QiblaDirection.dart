@@ -19,7 +19,8 @@ import '../../core/widgets/kButtons.dart';
 import 'ARQiblaCameraWidget.dart';
 
 class QiblaDirection extends StatefulWidget {
-  const QiblaDirection({super.key});
+  final bool isActive;
+  const QiblaDirection({super.key, this.isActive = true});
 
   @override
   _QiblaDirectionState createState() => _QiblaDirectionState();
@@ -38,7 +39,26 @@ class _QiblaDirectionState extends State<QiblaDirection> {
   @override
   void initState() {
     super.initState();
-    _initLocationAndCompass();
+    if (widget.isActive) {
+      _initLocationAndCompass();
+    }
+  }
+
+  @override
+  void didUpdateWidget(QiblaDirection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive != oldWidget.isActive) {
+      if (widget.isActive) {
+        _initLocationAndCompass();
+      } else {
+        _stopCompass();
+      }
+    }
+  }
+
+  void _stopCompass() {
+    _compassSubscription?.cancel();
+    _compassSubscription = null;
   }
 
   @override
@@ -70,11 +90,11 @@ class _QiblaDirectionState extends State<QiblaDirection> {
         return;
       }
 
-      print('Position: ${pos.latitude}, ${pos.longitude}');
+      // print('Position: ${pos.latitude}, ${pos.longitude}');
 
       // 4. حساب اتجاه القبلة
       _qiblaDirection = _calculateQiblaDirection(pos.latitude, pos.longitude);
-      print('Qibla direction: $_qiblaDirection');
+      // print('Qibla direction: $_qiblaDirection');
 
       // 6. تشغيل البوصلة فوراً (هام جداً للعمل بدون نت)
       _startCompass();
@@ -82,7 +102,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       // 5. الحصول على اسم الموقع (بشكل منفصل لعدم تعطيل البوصلة)
       _fetchAddress(pos.latitude, pos.longitude);
     } catch (e) {
-      print('Error in init: $e');
+      debugPrint('Error in init: $e');
       if (mounted) {
         setState(() {
           _errorMessage = "حدث خطأ: ${e.toString()}";
@@ -103,7 +123,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
         });
       }
     } catch (e) {
-      print("Address fetch skipped (likely offline): $e");
+      debugPrint("Address fetch skipped (likely offline): $e");
     }
   }
 
@@ -126,7 +146,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       // الاشتراك في أحداث البوصلة
       _compassSubscription =
           FlutterCompass.events!.listen((CompassEvent event) {
-        print('Compass event: ${event.heading}');
+        // print('Compass event: ${event.heading}');
 
         if (mounted) {
           setState(() {
@@ -135,7 +155,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           });
         }
       }, onError: (error) {
-        print('Compass error: $error');
+        debugPrint('Compass error: $error');
         if (mounted) {
           setState(() {
             _errorMessage = "خطأ في البوصلة: $error";
@@ -144,7 +164,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
         }
       });
     } catch (e) {
-      print('Error starting compass: $e');
+      debugPrint('Error starting compass: $e');
       if (mounted) {
         setState(() {
           _errorMessage = "فشل في تشغيل البوصلة";
@@ -182,7 +202,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
     double? angle;
     if (_heading != null && _qiblaDirection != null) {
       angle = (_qiblaDirection! - _heading!) % 360;
-      print('Angle: $angle, Heading: $_heading, Qibla: $_qiblaDirection');
+      // print('Angle: $angle, Heading: $_heading, Qibla: $_qiblaDirection');
     }
 
     return Directionality(
@@ -190,9 +210,15 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       child: Scaffold(
         // backgroundColor: isDark ? Colors.grey[900] : Colors.grey[50],
         appBar: AppBar(
-          leading: CupertinoNavigationBarBackButton(
-            color: isDark ? Colors.white : Colors.black,
-          ),
+          leading: (ModalRoute.of(context)?.canPop ?? false)
+              ? IconButton(
+                  icon: Icon(
+                    CupertinoIcons.back,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+              : null,
           centerTitle: true,
           title: Text(
             "اتجاه القبلة",
@@ -235,7 +261,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                 : _isARMode
                     ? ARQiblaCameraWidget(
                         qiblaDirection: _qiblaDirection ?? 0,
-                        heading: _heading ?? 0)
+                        heading: _heading ?? 0,
+                        isActive: widget.isActive)
                     : _buildCompassWidget(isDark, size, angle),
       ),
     );
@@ -317,8 +344,12 @@ class _QiblaDirectionState extends State<QiblaDirection> {
   Widget _buildCompassWidget(bool isDark, Size size, double? angle) {
     const baseColor = Color(AppStyle.primaryColor);
 
+    // Increase bottom padding if we are in the main tab view (cannot pop)
+    // to avoid overlap with the BottomNavigationBar and FAB.
+    final double bottomPadding = (ModalRoute.of(context)?.canPop ?? false) ? 16.0 : 90.0;
+
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, bottomPadding),
       child: Column(
         children: [
           // البوصلة الرئيسية
@@ -372,31 +403,41 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                   ),
 
                   // البوصلة
-                  if (angle != null)
+                  // البوصلة
+                  if (_heading != null && _qiblaDirection != null) ...[
+                    // 1. Compass Rose (N, S, E, W) - Rotates independently to show True North
+                    // Rotates by -heading so that "North" stays pointing North relative to the world
                     Transform.rotate(
-                      angle: vector.radians(angle),
+                      angle: vector.radians(-_heading!),
                       child: SizedBox(
                         width: size.width * 0.6,
                         height: size.width * 0.6,
                         child: Stack(
-                          children: [
-                            Center(
-                              child: Icon(
-                                Icons.navigation,
-                                size: 50,
-                                color: isDark
-                                    ? Colors.greenAccent
-                                    : Colors.green[700]!,
-                              ),
-                            ),
-                            // اتجاهات البوصلة
-                            ..._buildCompassDirections(
-                                size.width * 0.7, isDark),
-                          ],
+                          children: _buildCompassDirections(
+                              size.width * 0.7, isDark),
                         ),
                       ),
-                    )
-                  else
+                    ),
+
+                    // 2. Qibla Pointer (Arrow) - Points to Qibla
+                    // Rotates by (Qibla - Heading) to point towards Qibla relative to phone
+                    Transform.rotate(
+                      angle: vector.radians((_qiblaDirection! - _heading!) % 360),
+                      child: SizedBox(
+                        width: size.width * 0.6,
+                        height: size.width * 0.6,
+                        child: Center(
+                          child: Icon(
+                            Icons.navigation,
+                            size: 50,
+                            color: isDark
+                                ? Colors.greenAccent
+                                : Colors.green[700]!,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else
                     CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
                         isDark ? Colors.greenAccent : Colors.green[700]!,
@@ -437,7 +478,9 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                   ),
                 ],
               ),
-              child: _buildInfoContent(isDark, angle),
+              child: SingleChildScrollView(
+                child: _buildInfoContent(isDark, angle),
+              ),
             ),
           ),
         ],

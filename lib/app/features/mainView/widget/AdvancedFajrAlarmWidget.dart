@@ -328,9 +328,9 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
             preferredSize: Size.fromHeight(
                 MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
             child: AppBar(
-              leading:  CupertinoNavigationBarBackButton(
+leading:  Navigator.canPop(context) ? CupertinoNavigationBarBackButton(
                 color: isDark?Colors.white : Colors.black,
-              ),
+              ) : null,
               // actions: [
               //   IconButton(
               //     onPressed: () => Navigator.push(

@@ -102,12 +102,12 @@ class MainController extends ControllerMVC {
       "icon": "assets/images/mosque.png",
       "navigate": "/timingScreen"
     },
-    {
-      "title": "التَّقْوِيمُ",
-      "icon": "assets/images/deadline.png",
-      "navigate": "/calendar",
-      "visible": "true"
-    },
+    // {
+    //   "title": "التَّقْوِيمُ",
+    //   "icon": "assets/images/deadline.png",
+    //   "navigate": "/calendar",
+    //   "visible": "true"
+    // },
     {
       "title": "الْقِبْلَةُ",
       "icon": "assets/images/qibla (1).png",
@@ -119,11 +119,11 @@ class MainController extends ControllerMVC {
       "icon": "assets/images/kaaba.png",
       "navigate": Routes.categoriesRoute,
     },
-    {
-      "title": "رَادِيُو الْقُرْآنِ الْكَرِيمِ",
-      "icon": "assets/icons/radio.png",
-      "navigate": "/QuranRadioView"
-    },
+    // {
+    //   "title": "رَادِيُو الْقُرْآنِ الْكَرِيمِ",
+    //   "icon": "assets/icons/radio.png",
+    //   "navigate": "/QuranRadioView"
+    // },
     {
       "title": "أَوْرَادُكَ مِنَ الذِّكْرِ",
       "icon": "assets/images/tauhid.png",
@@ -155,11 +155,11 @@ class MainController extends ControllerMVC {
       "icon": "assets/images/book-stack.png",
       "navigate": "/NineBooksScreen"
     },
-    {
-      "title": "الإِعْدَادَاتُ",
-      "icon": "assets/images/app.png",
-      "navigate": "/settingsRoute"
-    },
+    // {
+    //   "title": "الإِعْدَادَاتُ",
+    //   "icon": "assets/images/app.png",
+    //   "navigate": "/settingsRoute"
+    // },
   ];
 
   static const _arabicDigits = [

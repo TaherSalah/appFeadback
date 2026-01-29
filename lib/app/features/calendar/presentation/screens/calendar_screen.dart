@@ -343,9 +343,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
-            leading: CupertinoNavigationBarBackButton(
+            leading: (ModalRoute.of(context)?.canPop ?? false) ? CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
-            ),
+            ) : null,
             centerTitle: true,
             title: Text(
               "التقويم الإسلامي",

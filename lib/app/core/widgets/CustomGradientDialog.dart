@@ -72,6 +72,7 @@ class CustomGradientDialog extends StatelessWidget {
                       title,
                       style: TextStyle(
                         fontSize: 20,
+                        fontFamily: "cairo",
                         fontWeight: FontWeight.bold,
                         color: titleColor,
                       ),
@@ -85,6 +86,8 @@ class CustomGradientDialog extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.4,
+                        fontFamily: "cairo",
+
                         color: messageColor,
                       ),
                       textAlign: TextAlign.center,
@@ -116,6 +119,8 @@ class CustomGradientDialog extends StatelessWidget {
                               child: Text(
                                 infoText!,
                                 style: TextStyle(
+                                  fontFamily: "cairo",
+
                                   fontSize: 12.5,
                                   color: messageColor,
                                 ),
@@ -150,6 +155,8 @@ class CustomGradientDialog extends StatelessWidget {
                                 secondaryButtonText!,
                                 style: TextStyle(
                                   fontSize: 14,
+                                  fontFamily: "cairo",
+
                                   color: titleColor,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -166,7 +173,10 @@ class CustomGradientDialog extends StatelessWidget {
                             label: Text(
                               primaryButtonText,
                               style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                                  const TextStyle(fontWeight: FontWeight.bold,
+                                    fontFamily: "cairo",
+
+                                  ),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor:

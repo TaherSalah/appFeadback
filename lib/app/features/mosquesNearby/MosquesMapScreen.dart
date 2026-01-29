@@ -14,7 +14,9 @@ import 'package:animate_do/animate_do.dart';
 import '../../core/widgets/KLoading.dart';
 import 'models/MosqueModel.dart';
 import 'services/MosqueService.dart';
+import 'services/MosqueService.dart';
 import 'MosqueAdminPanel.dart';
+import '../../core/widgets/CustomGradientDialog.dart';
 
 class MosquesMapScreen extends StatefulWidget {
   const MosquesMapScreen({super.key});
@@ -580,47 +582,47 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
     );
 
     if (success) {
-      KHelper.showSuccess(message: "تم حفظ المسجد بنجاح");
-      _fetchMosques();
-      setState(() {
-        _isAddingMode = false;
-        _nameController.clear();
-        _addressController.clear();
-      });
-      _showOSMContributionOption();
+      if (mounted) {
+        KHelper.showSuccess(message: "تم حفظ المسجد بنجاح");
+        _fetchMosques();
+        setState(() {
+          _isAddingMode = false;
+          _nameController.clear();
+          _addressController.clear();
+        });
+        _showOSMContributionOption();
+      }
     } else {
-      KHelper.showError(message: "حدث خطأ أثناء الحفظ");
+      if (mounted) {
+        KHelper.showError(message: "حدث خطأ أثناء الحفظ");
+      }
     }
   }
 
   void _showOSMContributionOption() {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
-      builder: (context) => FadeIn(
-        child: AlertDialog(
-          title: Text("المساهمة في الخريطة العالمية",
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-          content: Text(
+      builder: (context) => CustomGradientDialog(
+        title: "المساهمة في الخريطة العالمية",
+        message:
             "تمت إضافة المسجد لتطبيقك. هل ترغب في إضافته أيضاً لخريطة OpenStreetMap لتعم الفائدة عالمياً؟",
-            style: GoogleFonts.cairo(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child:
-                  Text("لاحقاً", style: GoogleFonts.cairo(color: Colors.grey)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, foregroundColor: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-                _openOSMEditor();
-              },
-              child: Text("أضف الآن", style: GoogleFonts.cairo()),
-            ),
-          ],
-        ),
+        icon: Icons.map_outlined,
+        gradientColors: isDark
+            ? [const Color(0xFF1E3A8A), const Color(0xFF172554)]
+            : [const Color(0xFF60A5FA), const Color(0xFF2563EB)],
+        isDark: isDark,
+        onPrimaryPressed: () {
+          Navigator.pop(context);
+          _openOSMEditor();
+        },
+        primaryButtonText: "أضف الآن",
+        primaryButtonColor: Colors.blue,
+        onSecondaryPressed: () => Navigator.pop(context),
+        secondaryButtonText: "لاحقاً",
+        infoText:
+            "إضافتك للمسجد على الخرايط العالمية بيسهل على ملايين المسلمين الوصول ليه. جزاك الله خيراً!",
       ),
     );
   }

@@ -16,6 +16,157 @@ class StoryReaderScreen extends StatefulWidget {
 class _StoryReaderScreenState extends State<StoryReaderScreen> {
   double _fontSize = 18.0;
 
+  void _showSuccessDialog() {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final int stars = widget.story['stars_reward'] ?? 10;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // جسم الديالوج (نمط حذف الورد)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'أحسنت يا بطل! 🎉',
+                      style: GoogleFonts.cairo(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'لقد أتممت قراءة قصة "${widget.story['title']}" بنجاح وتستحق هذه المكافأة!',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.cairo(
+                        fontSize: 15,
+                        color: isDark ? Colors.white70 : Colors.black54,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    // كارت المعلومات الصغير (نمط حذف الورد)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0EA5E9).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: const Color(0xFF0EA5E9).withOpacity(0.2)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                           const Icon(Icons.stars_rounded, color: Color(0xFFF59E0B), size: 28),
+                           const SizedBox(width: 10),
+                           Text(
+                             'لقد حصلت على $stars نجمة ✨',
+                             style: GoogleFonts.cairo(
+                               fontSize: 16,
+                               fontWeight: FontWeight.bold,
+                               color: const Color(0xFF0EA5E9),
+                             ),
+                           ),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 30),
+                    
+                    // الأزرار
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop(); 
+                              Navigator.of(context).pop(true);   // العودة مع مكافأة
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0EA5E9),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'رائع! أريد المزيد',
+                              style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              
+              // الأيقونة العلوية المنبثقة (نمط حذف الورد)
+              Positioned(
+                top: -35,
+                left: 0,
+                right: 0,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 75,
+                    height: 75,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0EA5E9), Color(0xFF6366F1)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0EA5E9).withOpacity(0.4),
+                          blurRadius: 15,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.emoji_events_rounded,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -179,14 +330,15 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                     ],
                     SizedBox(height: 60.h),
                     ElevatedButton.icon(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: _showSuccessDialog,
                       icon: const Icon(Icons.check_circle_rounded),
                       label: Text('لقد قرأت القصة!', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0EA5E9),
                         foregroundColor: Colors.white,
-                        minimumSize: Size(double.infinity, 50.h),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+                        minimumSize: Size(double.infinity, 56.h),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.r)),
                       ),
                     ),
                     SizedBox(height: 30.h),

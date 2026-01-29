@@ -13,11 +13,13 @@ import '../../core/widgets/KLoading.dart';
 class ARQiblaCameraWidget extends StatefulWidget {
   final double qiblaDirection; // Qibla angle (e.g., 130 degrees)
   final double heading;        // Current phone heading
+  final bool isActive;
   
   const ARQiblaCameraWidget({
     super.key,
     required this.qiblaDirection,
     required this.heading,
+    this.isActive = true,
   });
 
   @override
@@ -36,7 +38,9 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
   @override
   void initState() {
     super.initState();
-    _initCamera();
+    if (widget.isActive) {
+      _initCamera();
+    }
     
     // Pulse animation for the Kaaba icon
     _pulseController = AnimationController(
@@ -49,6 +53,24 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
       vsync: this,
       duration: const Duration(seconds: 4),
     )..repeat();
+  }
+
+  @override
+  void didUpdateWidget(ARQiblaCameraWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive != oldWidget.isActive) {
+      if (widget.isActive) {
+        _initCamera();
+      } else {
+        _controller?.dispose();
+        _controller = null;
+        if (mounted) {
+          setState(() {
+            _isCameraInitialized = false;
+          });
+        }
+      }
+    }
   }
 
   Future<void> _initCamera() async {

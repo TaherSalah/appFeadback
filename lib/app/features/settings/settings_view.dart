@@ -43,9 +43,11 @@ class SettingsView extends StatelessWidget {
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
           child: AppBar(
-            leading: CupertinoNavigationBarBackButton(
-              color: isDark ? Colors.white : Colors.black,
-            ),
+leading: Navigator.canPop(context)
+              ? CupertinoNavigationBarBackButton(
+                  color: isDark ? Colors.white : Colors.black,
+                )
+              : null,
             // actions: [
             //   IconButton(
             //     onPressed: () => Navigator.push(

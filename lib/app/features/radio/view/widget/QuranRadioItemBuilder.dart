@@ -125,14 +125,16 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                 // ),
                 leading: const SizedBox(),
                 actions: [
-                  InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: SvgPicture.asset(
-                      "assets/icons/arrow.svg",
-                      color: isDark ? Colors.white : Colors.black,
-                      height: 25,
-                    ),
-                  )
+Navigator.canPop(context)
+                      ? InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: SvgPicture.asset(
+                            "assets/icons/arrow.svg",
+                            color: isDark ? Colors.white : Colors.black,
+                            height: 25,
+                          ),
+                        )
+                      : const SizedBox()
                 ],
               ),
 

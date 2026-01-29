@@ -49,9 +49,9 @@ class Allazkarlistview extends StatelessWidget {
         preferredSize:
             Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
         child: AppBar(
-          leading: CupertinoNavigationBarBackButton(
+leading: Navigator.canPop(context) ? CupertinoNavigationBarBackButton(
             color: isDark ? Colors.white : Colors.black,
-          ),
+          ) : null,
           centerTitle: true,
           title: Text(
             "أذكار متنوعة",

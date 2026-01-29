@@ -579,11 +579,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
                           // const SizedBox(height: 10),
 
-                          // 🔥 قسم تعرف على ربك
-                          if (_featureStatuses['allah_names'] != 'hidden')
-                            const AllahNameWidget(),
 
-                          const SizedBox(height: 10),
 
                           // 🔥 قسم غراس الجنة
                           // const JannahPlanterWidget(),
@@ -609,7 +605,11 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                               child: const CharityEntryWidget(),
                             ),
                           const SizedBox(height: 10),
+                          // 🔥 قسم تعرف على ربك
+                          if (_featureStatuses['allah_names'] != 'hidden')
+                            const AllahNameWidget(),
 
+                          const SizedBox(height: 10),
                           if (_featureStatuses['kids'] != 'hidden')
                             InkWell(
                               onTap: () {

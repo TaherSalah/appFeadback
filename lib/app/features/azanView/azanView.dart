@@ -2650,9 +2650,11 @@ class _AzanViewState extends StateMVC<AzanView> {
         preferredSize:
             Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
         child: AppBar(
-          leading: CupertinoNavigationBarBackButton(
-            color: isDark ? Colors.white : Colors.black,
-          ),
+leading: Navigator.canPop(context)
+              ? CupertinoNavigationBarBackButton(
+                  color: isDark ? Colors.white : Colors.black,
+                )
+              : null,
           centerTitle: true,
           title: Text(
             "مواقيت الصلاة",
