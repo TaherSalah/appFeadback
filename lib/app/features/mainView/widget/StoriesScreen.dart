@@ -6,6 +6,7 @@ import '../../../core/widgets/KLoading.dart';
 import 'kids_data/islamic_stories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/services/content_service.dart';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class StoriesScreen extends StatefulWidget {
   final VoidCallback? onStoryCompleted;
@@ -81,7 +82,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
           centerTitle: true,
         ),
         body: _isLoading
-            ?  Center(child:  KLoading.progressIOSIndicator(context: context))
+            ? Center(child: KLoading.progressIOSIndicator(context: context))
             : ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: _allStories.length,
@@ -214,35 +215,47 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
   }
 
   void _showCompletionDialog() {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
+      type: KDialogType.success,
+      icon: Icons.auto_stories_rounded,
+      title: 'أحسنت يا بطل! 🎉',
+      description: 'لقد أنهيت قصة "${widget.story.title}" بنجاح!',
+      additionalContent: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF10B981).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: const Color(0xFF10B981).withOpacity(0.2)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('🎉'),
-            const SizedBox(width: 8),
+            const Icon(Icons.stars_rounded, color: Color(0xFFF59E0B), size: 28),
+            const SizedBox(width: 10),
             Text(
-              'أحسنت!',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+              'لقد حصلت على ${widget.story.starsReward} نجمة ✨',
+              style: GoogleFonts.cairo(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF10B981),
+              ),
             ),
           ],
         ),
-        content: Text(
-          'لقد أنهيت القصة وحصلت على ${widget.story.starsReward} نجمة!',
-          style: GoogleFonts.cairo(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Close story screen
-            },
-            child: Text('رائع!',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-          ),
-        ],
       ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'رائع!',
+          color: const Color(0xFF10B981),
+          onPressed: () {
+            Navigator.pop(context); // Close dialog
+            Navigator.pop(context); // Close story screen
+          },
+        ),
+      ],
     );
   }
 

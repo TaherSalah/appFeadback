@@ -142,7 +142,7 @@ class MainController extends ControllerMVC {
     },
     {
       "title": "الْمَسَاجِدُ الْقَرِيبَةُ",
-      "icon": "assets/images/mosque.png",
+      "icon": "assets/images/nearbyMosques.webp",
       "navigate": "/mosquesMap"
     },
     {

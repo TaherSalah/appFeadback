@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/utils/style/responsive_util.dart';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class VirtualPetWidget extends StatefulWidget {
   final int totalStars;
@@ -90,65 +91,61 @@ class _VirtualPetWidgetState extends State<VirtualPetWidget> {
   }
 
   void _showPetInfo() {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Text(_getPetEmoji(), style: const TextStyle(fontSize: 30)),
-            const SizedBox(width: 8),
-            Text(
-              _petName,
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'المستوى: ${_getLevelName()}',
-              style: GoogleFonts.cairo(fontSize: 16.sp),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'النجوم: ${widget.totalStars}',
-              style: GoogleFonts.cairo(fontSize: 14.sp),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                _getMotivationMessage(),
-                style: GoogleFonts.cairo(
-                  fontSize: 14.sp,
-                  color: Colors.blue.shade900,
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('إغلاق', style: GoogleFonts.cairo()),
+      type: KDialogType.info,
+      icon: _petType == 'lion'
+          ? Icons.pets_rounded
+          : (_petType == 'bird'
+              ? Icons.flutter_dash_rounded
+              : Icons.pets_rounded),
+      title: _petName,
+      description: 'المستوى: ${_getLevelName()}',
+      additionalContent: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            _getPetEmoji(),
+            style: const TextStyle(fontSize: 60),
           ),
-          if (_petLevel < 5)
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Could navigate to games or challenges
-              },
-              child: Text('اجمع نجوم!', style: GoogleFonts.cairo()),
+          const SizedBox(height: 16),
+          Text(
+            'النجوم المجمعة: ${widget.totalStars} ⭐',
+            style: GoogleFonts.cairo(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF0EA5E9),
             ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0EA5E9).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(15),
+              border:
+                  Border.all(color: const Color(0xFF0EA5E9).withOpacity(0.2)),
+            ),
+            child: Text(
+              _getMotivationMessage(),
+              style: GoogleFonts.cairo(
+                fontSize: 14.sp,
+                color: const Color(0xFF0EA5E9),
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'رائع!',
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
     );
   }
 

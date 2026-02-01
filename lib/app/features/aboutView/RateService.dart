@@ -323,6 +323,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/utils/style/k_dialog_helper.dart';
 
 class RateService {
   final RateMyApp rateMyApp;
@@ -518,206 +519,57 @@ class RateService {
   //   );
   // }
   Future<void> _showCustomDialog(BuildContext context) async {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return showDialog(
+    return KDialogHelper.showCustomDialog(
       context: context,
-      builder: (dialogContext) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: Dialog(
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          backgroundColor: Colors.transparent,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              // جسم الديالوج
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    colors: isDark
-                        ? [const Color(0xFF1B0A0A), const Color(0xFF200505)]
-                        : [const Color(0xFFFFF2F2), const Color(0xFFFFE1E1)],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 18,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // العنوان
-                    Text(
-                      'قيّم تطبيقنا ',
-                      style: GoogleFonts.cairo(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '⭐' * 5,
-                      style: GoogleFonts.cairo(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // الرسالة
-                    Text(
-                      'يساعدنا تقييمك الإيجابي على تطوير التطبيق وإفادة المزيد من المسلمين.',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
-                        fontSize: 14,
-                        height: 1.4,
-                        color: isDark ? Colors.white70 : Colors.black87,
-                      ),
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    // نص توضيحي داخل كارت
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: const Color(0xFF00897B).withOpacity(0.08),
-                        border: Border.all(
-                          color: const Color(0xFF00897B).withOpacity(0.4),
-                          width: 1.2,
-                        ),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.star_rate_rounded,
-                              size: 18, color: Color(0xFF00897B)),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'تقييمك يساعدنا كثيراً في دعم التطبيق.',
-                              style: TextStyle(
-                                fontSize: 12.5,
-                                color: Color(0xFF00897B),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 22),
-
-                    // الأزرار
-                    Row(
-                      children: [
-                        // زر لاحقاً
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.of(dialogContext).pop();
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                color: isDark
-                                    ? Colors.grey.shade400
-                                    : Colors.grey.shade700,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 11),
-                            ),
-                            child: Text(
-                              'لاحقاً',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: isDark
-                                    ? Colors.white
-                                    : Colors.grey.shade800,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(width: 12),
-
-                        // زر تقييم الآن
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () async {
-                              Navigator.of(dialogContext).pop();
-                              await _openStore();
-                            },
-                            icon: const Icon(Icons.star_rounded),
-                            label: const Text('تقييم الآن'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF00897B),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 11),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              // الأيقونة العلوية
-              Positioned(
-                top: -30,
-                left: 0,
-                right: 0,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF00897B), Color(0xFF00695C)],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF00897B).withOpacity(0.5),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.star_rounded,
-                        size: 34,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+      type: KDialogType.success,
+      icon: Icons.star_rounded,
+      title: 'قيّم تطبيقنا ⭐',
+      description:
+          'يساعدنا تقييمك الإيجابي على تطوير التطبيق وإفادة المزيد من المسلمين.',
+      additionalContent: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: const Color(0xFF10B981).withOpacity(0.08),
+          border: Border.all(
+            color: const Color(0xFF10B981).withOpacity(0.4),
+            width: 1.2,
           ),
         ),
+        child: const Row(
+          children: [
+            Icon(Icons.star_rate_rounded, size: 18, color: Color(0xFF10B981)),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'تقييمك يساعدنا كثيراً في دعم التطبيق.',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: Color(0xFF10B981),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'لاحقاً',
+          isPrimary: false,
+          onPressed: () => Navigator.pop(context),
+        ),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'تقييم الآن',
+          color: const Color(0xFF10B981),
+          onPressed: () async {
+            Navigator.pop(context);
+            await _openStore();
+          },
+        ),
+      ],
     );
   }
 

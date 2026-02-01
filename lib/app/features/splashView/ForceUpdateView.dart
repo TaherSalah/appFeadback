@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'dart:io';
-import '../../core/services/system_control_service.dart';
 
 class ForceUpdateView extends StatelessWidget {
   const ForceUpdateView({super.key});
@@ -71,7 +68,7 @@ class ForceUpdateView extends StatelessWidget {
                 ),
                 elevation: 5,
               ),
-              onPressed: () {  },
+              onPressed: () {},
               child: Text(
                 'تحديث الآن 🚀',
                 style: GoogleFonts.cairo(

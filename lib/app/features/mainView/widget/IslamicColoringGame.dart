@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/sounds_helper.dart';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class IslamicColoringGame extends StatefulWidget {
   const IslamicColoringGame({super.key});
@@ -51,83 +52,63 @@ class _IslamicColoringGameState extends State<IslamicColoringGame> {
   }
 
   void _showCompletionDialog() {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Text('🎨'),
-            const SizedBox(width: 8),
-            Text(
-              'رائع!',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-          ],
+      type: KDialogType.success,
+      icon: Icons.palette_rounded,
+      title: 'أحسنت يا فنان! 🎨',
+      description:
+          'أنهيت تلوين ${_coloringPages[_selectedPage]['name']} بشكل رائع!',
+      additionalContent: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF10B981).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: const Color(0xFF10B981).withOpacity(0.2)),
         ),
-        content: Column(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Icon(Icons.stars_rounded, color: Color(0xFFF59E0B), size: 28),
+            const SizedBox(width: 10),
             Text(
-              _coloringPages[_selectedPage]['emoji'],
-              style: const TextStyle(fontSize: 60),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'أنهيت تلوين ${_coloringPages[_selectedPage]['name']}!',
-              style: GoogleFonts.cairo(fontSize: 16.sp),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.star, color: Colors.amber, size: 30),
-                const SizedBox(width: 8),
-                Text(
-                  '+15',
-                  style: GoogleFonts.cairo(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amber,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          if (_selectedPage < _coloringPages.length - 1)
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  _selectedPage++;
-                  _coloredParts.clear();
-                });
-              },
-              child: Text('التالي', style: GoogleFonts.cairo()),
-            ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              if (_selectedPage >= _coloringPages.length - 1) {
-                Navigator.pop(context);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-            child: Text(
-              'تمام',
+              'لقد حصلت على 15 نجمة ✨',
               style: GoogleFonts.cairo(
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: const Color(0xFF10B981),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+      actions: [
+        if (_selectedPage < _coloringPages.length - 1)
+          KDialogHelper.buildButton(
+            context: context,
+            label: 'التالي',
+            isPrimary: false,
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _selectedPage++;
+                _coloredParts.clear();
+              });
+            },
+          ),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'رائع!',
+          color: const Color(0xFF10B981),
+          onPressed: () {
+            Navigator.pop(context);
+            if (_selectedPage >= _coloringPages.length - 1) {
+              Navigator.pop(context);
+            }
+          },
+        ),
+      ],
     );
   }
 

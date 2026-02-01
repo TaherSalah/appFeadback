@@ -36,7 +36,11 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
   ];
 
   final List<String> categories = [
-    'صَبَاح', 'مَسَاء', 'نَوْم', 'بَعْدَ الصَّلَاة', 'أخرى'
+    'صَبَاح',
+    'مَسَاء',
+    'نَوْم',
+    'بَعْدَ الصَّلَاة',
+    'أخرى'
   ];
 
   final List<Map<String, dynamic>> suggestedAdhkar = [
@@ -62,21 +66,22 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: isDark
-                ? ColorScheme.dark(
+                ? const ColorScheme.dark(
                     primary: Colors.tealAccent,
                     onPrimary: Colors.black,
-                    surface: const Color(0xFF1E1E1E),
+                    surface: Color(0xFF1E1E1E),
                     onSurface: Colors.white,
                   )
-                : ColorScheme.light(
-                    primary: const Color(0xFF00897B),
+                : const ColorScheme.light(
+                    primary: Color(0xFF00897B),
                     onPrimary: Colors.white,
                     surface: Colors.white,
                     onSurface: Colors.black,
                   ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: isDark ? Colors.tealAccent : const Color(0xFF00897B),
+                foregroundColor:
+                    isDark ? Colors.tealAccent : const Color(0xFF00897B),
               ),
             ),
           ),
@@ -98,27 +103,24 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       builder: (dialogContext) {
         final textController = TextEditingController();
 
-        final countController =
-        TextEditingController(text: '33');
+        final countController = TextEditingController(text: '33');
 
         int repeatCount = 33;
 
-        final bool isDark =
-            Theme.of(context).brightness == Brightness.dark;
+        final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Dialog(
             backgroundColor: Colors.transparent,
             insetPadding:
-            const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Stack(
               clipBehavior: Clip.none,
               children: [
                 /// جسم الديالوج
                 Container(
-                  padding:
-                  const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                  padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(24),
                     gradient: LinearGradient(
@@ -126,13 +128,13 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                       end: Alignment.bottomLeft,
                       colors: isDark
                           ? [
-                        const Color(0xFF0B2B23),
-                        const Color(0xFF05201B),
-                      ]
+                              const Color(0xFF0B2B23),
+                              const Color(0xFF05201B),
+                            ]
                           : [
-                        const Color(0xFFE0F7F5),
-                        const Color(0xFFB2DFDB),
-                      ],
+                              const Color(0xFFE0F7F5),
+                              const Color(0xFFB2DFDB),
+                            ],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -153,9 +155,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: isDark
-                                  ? Colors.white
-                                  : Colors.black87,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
 
@@ -165,19 +165,14 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                           TextField(
                             controller: textController,
                             style: TextStyle(
-                              color: isDark
-                                  ? Colors.white
-                                  : Colors.black,
+                              color: isDark ? Colors.white : Colors.black,
                             ),
                             decoration: InputDecoration(
                               labelText: 'نص الذكر',
                               filled: true,
-                              fillColor: isDark
-                                  ? Colors.black26
-                                  : Colors.white,
+                              fillColor: isDark ? Colors.black26 : Colors.white,
                               border: OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(14),
                               ),
                             ),
                           ),
@@ -191,9 +186,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                               'عدد التكرار',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isDark
-                                    ? Colors.white70
-                                    : Colors.black54,
+                                color: isDark ? Colors.white70 : Colors.black54,
                               ),
                             ),
                           ),
@@ -207,11 +200,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                               horizontal: 12,
                             ),
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.black26
-                                  : Colors.white,
-                              borderRadius:
-                              BorderRadius.circular(14),
+                              color: isDark ? Colors.black26 : Colors.white,
+                              borderRadius: BorderRadius.circular(14),
                               border: Border.all(
                                 color: isDark
                                     ? Colors.grey.shade600
@@ -227,13 +217,11 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                       setLocalState(() {
                                         repeatCount--;
                                         countController.text =
-                                            repeatCount
-                                                .toString();
+                                            repeatCount.toString();
                                       });
                                     }
                                   },
-                                  icon: const Icon(
-                                      Icons.remove_circle_outline),
+                                  icon: const Icon(Icons.remove_circle_outline),
                                   color: Colors.redAccent,
                                 ),
 
@@ -242,32 +230,24 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                   child: TextField(
                                     controller: countController,
                                     textAlign: TextAlign.center,
-                                    keyboardType:
-                                    TextInputType.number,
+                                    keyboardType: TextInputType.number,
                                     style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight:
-                                      FontWeight.bold,
-                                      color: isDark
-                                          ? Colors.white
-                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          isDark ? Colors.white : Colors.black,
                                     ),
-                                    decoration:
-                                    const InputDecoration(
+                                    decoration: const InputDecoration(
                                       border: InputBorder.none,
                                       isDense: true,
-                                      contentPadding:
-                                      EdgeInsets.zero,
+                                      contentPadding: EdgeInsets.zero,
                                     ),
                                     onChanged: (value) {
-                                      final parsed =
-                                      int.tryParse(value);
+                                      final parsed = int.tryParse(value);
 
-                                      if (parsed != null &&
-                                          parsed > 0) {
+                                      if (parsed != null && parsed > 0) {
                                         setLocalState(() {
-                                          repeatCount =
-                                              parsed;
+                                          repeatCount = parsed;
                                         });
                                       }
                                     },
@@ -280,12 +260,10 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                     setLocalState(() {
                                       repeatCount++;
                                       countController.text =
-                                          repeatCount
-                                              .toString();
+                                          repeatCount.toString();
                                     });
                                   },
-                                  icon: const Icon(
-                                      Icons.add_circle_outline),
+                                  icon: const Icon(Icons.add_circle_outline),
                                   color: Colors.teal,
                                 ),
                               ],
@@ -300,27 +278,18 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                               Expanded(
                                 child: OutlinedButton(
                                   onPressed: () {
-                                    Navigator.of(
-                                        dialogContext)
-                                        .pop();
+                                    Navigator.of(dialogContext).pop();
                                   },
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(
                                       color: isDark
-                                          ? Colors
-                                          .grey.shade400
-                                          : Colors
-                                          .grey.shade600,
+                                          ? Colors.grey.shade400
+                                          : Colors.grey.shade600,
                                     ),
-                                    shape:
-                                    RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius
-                                          .circular(14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
                                     ),
-                                    padding:
-                                    const EdgeInsets
-                                        .symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 11),
                                   ),
                                   child: Text(
@@ -328,57 +297,38 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                                     style: TextStyle(
                                       color: isDark
                                           ? Colors.white
-                                          : Colors.grey
-                                          .shade800,
+                                          : Colors.grey.shade800,
                                     ),
                                   ),
                                 ),
                               ),
-
                               const SizedBox(width: 12),
-
                               Expanded(
                                 child: ElevatedButton.icon(
                                   onPressed: () {
-                                    if (textController
-                                        .text.isNotEmpty) {
+                                    if (textController.text.isNotEmpty) {
                                       setState(() {
                                         selectedAdhkar.add(
                                           Dhikr(
-                                            id: DateTime
-                                                .now()
-                                                .toString(),
-                                            text:
-                                            textController
-                                                .text,
-                                            targetCount:
-                                            repeatCount,
+                                            id: DateTime.now().toString(),
+                                            text: textController.text,
+                                            targetCount: repeatCount,
                                           ),
                                         );
                                       });
 
-                                      Navigator.of(
-                                          dialogContext)
-                                          .pop();
+                                      Navigator.of(dialogContext).pop();
                                     }
                                   },
                                   icon: const Icon(Icons.add),
-                                  label:
-                                  const Text('إضافة'),
+                                  label: const Text('إضافة'),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                    Colors.teal,
-                                    foregroundColor:
-                                    Colors.white,
-                                    shape:
-                                    RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius
-                                          .circular(14),
+                                    backgroundColor: Colors.teal,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
                                     ),
-                                    padding:
-                                    const EdgeInsets
-                                        .symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 11),
                                   ),
                                 ),
@@ -404,18 +354,13 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: const LinearGradient(
-                          colors: [
-                            Colors.teal,
-                            Colors.green
-                          ],
+                          colors: [Colors.teal, Colors.green],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.teal
-                                .withOpacity(0.6),
+                            color: Colors.teal.withOpacity(0.6),
                             blurRadius: 12,
-                            offset:
-                            const Offset(0, 4),
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -437,7 +382,6 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
@@ -448,7 +392,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
@@ -459,18 +403,19 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize:
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
         ),
-
         body: Stack(
           children: [
             Positioned.fill(
               child: Opacity(
                 opacity: isDark ? 0.05 : 0.03,
-                child: Image.asset("assets/images/pattern.webp", repeat: ImageRepeat.repeat),
+                child: Image.asset("assets/images/pattern.webp",
+                    repeat: ImageRepeat.repeat),
               ),
             ),
             CustomScrollView(
@@ -479,28 +424,33 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                   padding: EdgeInsets.all(20.w),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      _buildSectionHeader("اسم الورد", Icons.drive_file_rename_outline, isDark),
+                      _buildSectionHeader(
+                          "اسم الورد", Icons.drive_file_rename_outline, isDark),
                       SizedBox(height: 12.h),
                       _buildNameInput(isDark),
                       SizedBox(height: 24.h),
 
-                      _buildSectionHeader("تكرار الورد", Icons.repeat_rounded, isDark),
+                      _buildSectionHeader(
+                          "تكرار الورد", Icons.repeat_rounded, isDark),
                       SizedBox(height: 12.h),
                       _buildFrequencySelector(isDark),
                       SizedBox(height: 24.h),
 
-                      _buildSectionHeader("وقت التنبيه (اختياري)", Icons.alarm_rounded, isDark),
+                      _buildSectionHeader(
+                          "وقت التنبيه (اختياري)", Icons.alarm_rounded, isDark),
                       SizedBox(height: 12.h),
                       _buildTimePicker(isDark),
                       SizedBox(height: 24.h),
 
                       // ✅ إضافة قسم اختيار اللون
-                      _buildSectionHeader("لون الورد", Icons.color_lens_rounded, isDark),
+                      _buildSectionHeader(
+                          "لون الورد", Icons.color_lens_rounded, isDark),
                       SizedBox(height: 12.h),
                       _buildColorSelector(isDark),
                       SizedBox(height: 24.h),
 
-                      _buildSectionHeader("الفئة", Icons.category_rounded, isDark),
+                      _buildSectionHeader(
+                          "الفئة", Icons.category_rounded, isDark),
                       SizedBox(height: 12.h),
                       _buildCategoryGrid(isDark),
                       if (isCustomCategory) ...[
@@ -509,22 +459,27 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                       ],
                       SizedBox(height: 24.h),
 
-                      _buildSectionHeader("اختر الأذكار", Icons.format_quote_rounded, isDark),
+                      _buildSectionHeader(
+                          "اختر الأذكار", Icons.format_quote_rounded, isDark),
                       SizedBox(height: 12.h),
-                      ...suggestedAdhkar.map((dhikr) => _buildDhikrOption(dhikr, isDark)),
-                      
+                      ...suggestedAdhkar
+                          .map((dhikr) => _buildDhikrOption(dhikr, isDark)),
+
                       if (selectedAdhkar.isNotEmpty) ...[
                         SizedBox(height: 24.h),
                         Row(
                           children: [
-                            _buildSectionHeader("الأذكار المختارة", Icons.playlist_add_check_rounded, isDark),
+                            _buildSectionHeader("الأذكار المختارة",
+                                Icons.playlist_add_check_rounded, isDark),
                             const Spacer(),
                             Text(
                               "اسحب للترتيب",
-                              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey),
+                              style: GoogleFonts.cairo(
+                                  fontSize: 10.sp, color: Colors.grey),
                             ),
                             SizedBox(width: 4.w),
-                            Icon(Icons.drag_indicator, size: 14.sp, color: Colors.grey),
+                            Icon(Icons.drag_indicator,
+                                size: 14.sp, color: Colors.grey),
                           ],
                         ),
                         SizedBox(height: 12.h),
@@ -543,8 +498,10 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                           itemBuilder: (context, index) {
                             final dhikr = selectedAdhkar[index];
                             return KeyedSubtree(
-                              key: ValueKey(dhikr.id + index.toString()), // مفتاح فريد
-                              child: _buildSelectedDhikrItem(dhikr, index, isDark),
+                              key: ValueKey(
+                                  dhikr.id + index.toString()), // مفتاح فريد
+                              child:
+                                  _buildSelectedDhikrItem(dhikr, index, isDark),
                             );
                           },
                         ),
@@ -563,10 +520,10 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             if (nameController.text.isNotEmpty && selectedAdhkar.isNotEmpty) {
-              
               String finalCategory = selectedCategory;
-              if (selectedCategory == 'أخرى' && customCategoryController.text.isNotEmpty) {
-                 finalCategory = customCategoryController.text;
+              if (selectedCategory == 'أخرى' &&
+                  customCategoryController.text.isNotEmpty) {
+                finalCategory = customCategoryController.text;
               }
 
               final newWird = Wird(
@@ -577,20 +534,23 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                 createdAt: DateTime.now(),
                 frequency: selectedFrequency,
                 color: selectedColor, // ✅ حفظ اللون المختار
-                reminderTime: selectedTime != null 
-                    ? "${selectedTime!.hour}:${selectedTime!.minute}" 
+                reminderTime: selectedTime != null
+                    ? "${selectedTime!.hour}:${selectedTime!.minute}"
                     : null,
               );
               Navigator.pop(context, newWird);
             } else {
-              KHelper.showError(message: "يرجى إدخال اسم الورد واختيار ذكر واحد على الأقل");
+              KHelper.showError(
+                  message: "يرجى إدخال اسم الورد واختيار ذكر واحد على الأقل");
             }
           },
-          label: Text("حفظ الورد", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+          label: Text("حفظ الورد",
+              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
           icon: const Icon(Icons.check_circle_outline_rounded),
           backgroundColor: KColors.primaryColor,
-          foregroundColor:Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          foregroundColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),
       ),
     );
@@ -599,11 +559,16 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
   Widget _buildSectionHeader(String title, IconData icon, bool isDark) {
     return Row(
       children: [
-        Icon(icon, size: 20.sp, color: isDark ? Colors.tealAccent : const Color(0xFF00897B)),
+        Icon(icon,
+            size: 20.sp,
+            color: isDark ? Colors.tealAccent : const Color(0xFF00897B)),
         SizedBox(width: 8.w),
         Text(
           title,
-          style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : Colors.black87),
+          style: GoogleFonts.cairo(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white70 : Colors.black87),
         ),
       ],
     );
@@ -614,18 +579,27 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: isDark ? [] : [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 4))
-        ],
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4))
+              ],
       ),
       child: TextField(
         controller: nameController,
-        style: GoogleFonts.cairo(fontSize: 13.sp, color: isDark ? Colors.white : Colors.black87),
+        style: GoogleFonts.cairo(
+            fontSize: 13.sp, color: isDark ? Colors.white : Colors.black87),
         decoration: InputDecoration(
           hintText: "مثال: أذكار ما بعد الصلاة",
           hintStyle: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide.none),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         ),
       ),
     );
@@ -640,12 +614,16 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       ),
       child: TextField(
         controller: customCategoryController,
-        style: GoogleFonts.cairo(fontSize: 13.sp, color: isDark ? Colors.white : Colors.black87),
+        style: GoogleFonts.cairo(
+            fontSize: 13.sp, color: isDark ? Colors.white : Colors.black87),
         decoration: InputDecoration(
           hintText: "اكتب اسم التصنيف الجديد...",
           hintStyle: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide.none),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           prefixIcon: Icon(Icons.edit, color: Colors.amber, size: 18.sp),
         ),
       ),
@@ -671,17 +649,25 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               margin: EdgeInsets.symmetric(horizontal: 4.w),
               padding: EdgeInsets.symmetric(vertical: 10.h),
               decoration: BoxDecoration(
-                color: isSelected ? (isDark ? KColors.primaryColor : const Color(0xFF00897B)) : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
+                color: isSelected
+                    ? (isDark ? KColors.primaryColor : const Color(0xFF00897B))
+                    : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: isSelected ? Colors.transparent : Colors.grey.withOpacity(0.2)),
+                border: Border.all(
+                    color: isSelected
+                        ? Colors.transparent
+                        : Colors.grey.withOpacity(0.2)),
               ),
               child: Center(
                 child: Text(
                   f['label']!,
                   style: GoogleFonts.cairo(
                     fontSize: 11.sp,
-                    color: isSelected ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black87),
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected
+                        ? (isDark ? Colors.black : Colors.white)
+                        : (isDark ? Colors.white70 : Colors.black87),
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ),
@@ -701,38 +687,44 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
           color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
-            color: selectedTime != null 
-                ? (isDark ? KColors.primaryColor: const Color(0xFF00897B))
-                : Colors.transparent
-          ),
-          boxShadow: isDark ? [] : [
-            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 4))
-          ],
+              color: selectedTime != null
+                  ? (isDark ? KColors.primaryColor : const Color(0xFF00897B))
+                  : Colors.transparent),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4))
+                ],
         ),
         child: Row(
           children: [
             Icon(
               Icons.access_time_filled_rounded,
-              color: selectedTime != null 
-                  ? (isDark ? KColors.primaryColor: const Color(0xFF00897B))
+              color: selectedTime != null
+                  ? (isDark ? KColors.primaryColor : const Color(0xFF00897B))
                   : Colors.grey,
               size: 24.sp,
             ),
             SizedBox(width: 12.w),
             Text(
-              selectedTime != null 
-                  ? selectedTime!.format(context) 
+              selectedTime != null
+                  ? selectedTime!.format(context)
                   : "اضغط لضبط ميعاد التنبيه",
               style: GoogleFonts.cairo(
                 fontSize: 14.sp,
                 color: isDark ? Colors.white : Colors.black87,
-                fontWeight: selectedTime != null ? FontWeight.bold : FontWeight.normal,
+                fontWeight:
+                    selectedTime != null ? FontWeight.bold : FontWeight.normal,
               ),
             ),
             if (selectedTime != null) ...[
               const Spacer(),
               IconButton(
-                icon: Icon(Icons.close, color: Colors.red.shade300, size: 20.sp),
+                icon:
+                    Icon(Icons.close, color: Colors.red.shade300, size: 20.sp),
                 onPressed: () => setState(() => selectedTime = null),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -745,7 +737,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
   }
 
   Widget _buildCategoryGrid(bool isDark) {
-    return Container(
+    return SizedBox(
       height: 45.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -765,17 +757,25 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               margin: EdgeInsets.only(left: 8.w),
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               decoration: BoxDecoration(
-                color: isSelected ? (isDark ? KColors.primaryColor : const Color(0xFF00897B)) : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
+                color: isSelected
+                    ? (isDark ? KColors.primaryColor : const Color(0xFF00897B))
+                    : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: isSelected ? Colors.transparent : Colors.grey.withOpacity(0.2)),
+                border: Border.all(
+                    color: isSelected
+                        ? Colors.transparent
+                        : Colors.grey.withOpacity(0.2)),
               ),
               child: Center(
                 child: Text(
                   cat,
                   style: GoogleFonts.cairo(
                     fontSize: 11.sp,
-                    color: isSelected ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black87),
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected
+                        ? (isDark ? Colors.black : Colors.white)
+                        : (isDark ? Colors.white70 : Colors.black87),
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ),
@@ -788,14 +788,21 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
 
   Widget _buildDhikrOption(Map<String, dynamic> dhikr, bool isDark) {
     final isSelected = selectedAdhkar.any((d) => d.text == dhikr['text']);
-    final primaryColor = isDark ? KColors.primaryColor : const Color(0xFF00897B);
+    final primaryColor =
+        isDark ? KColors.primaryColor : const Color(0xFF00897B);
 
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
       decoration: BoxDecoration(
-        color: isSelected ? (isDark ? KColors.primaryColor.withOpacity(0.1) : const Color(0xFF00897B).withOpacity(0.05)) : (isDark ? Colors.white.withOpacity(0.03) : Colors.white),
+        color: isSelected
+            ? (isDark
+                ? KColors.primaryColor.withOpacity(0.1)
+                : const Color(0xFF00897B).withOpacity(0.05))
+            : (isDark ? Colors.white.withOpacity(0.03) : Colors.white),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: isSelected ? primaryColor : Colors.grey.withOpacity(0.2), width: 1.5),
+        border: Border.all(
+            color: isSelected ? primaryColor : Colors.grey.withOpacity(0.2),
+            width: 1.5),
       ),
       child: ListTile(
         onTap: () {
@@ -803,23 +810,37 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
             if (isSelected) {
               selectedAdhkar.removeWhere((d) => d.text == dhikr['text']);
             } else {
-              selectedAdhkar.add(Dhikr(id: DateTime.now().toString(), text: dhikr['text'], targetCount: dhikr['count']));
+              selectedAdhkar.add(Dhikr(
+                  id: DateTime.now().toString(),
+                  text: dhikr['text'],
+                  targetCount: dhikr['count']));
             }
           });
         },
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         leading: Container(
           padding: EdgeInsets.all(10.w),
-          decoration: BoxDecoration(color: isSelected ? primaryColor : Colors.grey.withOpacity(0.1), shape: BoxShape.circle),
-          child: Icon(isSelected ? Icons.check_rounded : Icons.add_rounded, color: isSelected ? (isDark ? Colors.black : Colors.white) : Colors.grey, size: 20.sp),
+          decoration: BoxDecoration(
+              color: isSelected ? primaryColor : Colors.grey.withOpacity(0.1),
+              shape: BoxShape.circle),
+          child: Icon(isSelected ? Icons.check_rounded : Icons.add_rounded,
+              color: isSelected
+                  ? (isDark ? Colors.black : Colors.white)
+                  : Colors.grey,
+              size: 20.sp),
         ),
         title: Text(
           dhikr['text'],
-          style: GoogleFonts.amiri(fontSize: 16.sp, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87, height: 1.4),
+          style: GoogleFonts.amiri(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+              height: 1.4),
         ),
         subtitle: Padding(
           padding: EdgeInsets.only(top: 4.h),
-          child: Text("التكرار: ${dhikr['count']} مرة", style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey)),
+          child: Text("التكرار: ${dhikr['count']} مرة",
+              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey)),
         ),
       ),
     );
@@ -832,21 +853,30 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white12 : Colors.grey.withOpacity(0.1)),
+        border: Border.all(
+            color: isDark ? Colors.white12 : Colors.grey.withOpacity(0.1)),
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 12,
             backgroundColor: const Color(0xFF00897B),
-            child: Text("${index + 1}", style: TextStyle(fontSize: 10.sp, color: Colors.white, fontWeight: FontWeight.bold)),
+            child: Text("${index + 1}",
+                style: TextStyle(
+                    fontSize: 10.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold)),
           ),
           SizedBox(width: 12.w),
           Expanded(
-            child: Text(dhikr.text, style: GoogleFonts.cairo(fontSize: 12.sp, color: isDark ? Colors.white : Colors.black87)),
+            child: Text(dhikr.text,
+                style: GoogleFonts.cairo(
+                    fontSize: 12.sp,
+                    color: isDark ? Colors.white : Colors.black87)),
           ),
           IconButton(
-            icon: Icon(Icons.remove_circle_outline, color: Colors.red.shade300, size: 20.sp),
+            icon: Icon(Icons.remove_circle_outline,
+                color: Colors.red.shade300, size: 20.sp),
             onPressed: () => setState(() => selectedAdhkar.removeAt(index)),
           ),
         ],
@@ -862,16 +892,24 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
         padding: EdgeInsets.symmetric(vertical: 16.h),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: isDark ? Colors.tealAccent : const Color(0xFF00897B), style: BorderStyle.solid, width: 2),
+          border: Border.all(
+              color: isDark ? Colors.tealAccent : const Color(0xFF00897B),
+              style: BorderStyle.solid,
+              width: 2),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_circle_outline_rounded, size: 20.sp, color: isDark ? Colors.tealAccent : const Color(0xFF00897B)),
+            Icon(Icons.add_circle_outline_rounded,
+                size: 20.sp,
+                color: isDark ? Colors.tealAccent : const Color(0xFF00897B)),
             SizedBox(width: 10.w),
             Text(
               "إضافة ذكر مخصص",
-              style: GoogleFonts.cairo(fontSize: 13.sp, fontWeight: FontWeight.bold, color: isDark ? Colors.tealAccent : const Color(0xFF00897B)),
+              style: GoogleFonts.cairo(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.tealAccent : const Color(0xFF00897B)),
             ),
           ],
         ),
@@ -899,12 +937,17 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                 color: Color(colorVal),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
+                  color: isSelected
+                      ? (isDark ? Colors.white : Colors.black)
+                      : Colors.transparent,
                   width: 2.5,
                 ),
                 boxShadow: [
                   if (isSelected)
-                    BoxShadow(color: Color(colorVal).withOpacity(0.4), blurRadius: 8, offset: const Offset(0, 4))
+                    BoxShadow(
+                        color: Color(colorVal).withOpacity(0.4),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4))
                 ],
               ),
               child: isSelected

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/sounds_helper.dart';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class PuzzleGameScreen extends StatefulWidget {
   const PuzzleGameScreen({super.key});
@@ -58,57 +59,32 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
   }
 
   void _showWinDialog() {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Text('🎊'),
-            const SizedBox(width: 8),
-            Text(
-              'ممتاز!',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-          ],
+      type: KDialogType.success,
+      icon: Icons.celebration_rounded,
+      title: 'أحسنت يا بطل! 🎊',
+      description: 'أحسنت! رتبت خطوات الوضوء بشكل صحيح. حصلت على 30 نجمة! ⭐',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'العب مرة أخرى',
+          isPrimary: false,
+          onPressed: () {
+            Navigator.pop(context);
+            _shuffleSteps();
+          },
         ),
-        content: Text(
-          'أحسنت! رتبت خطوات الوضوء بشكل صحيح.\nحصلت على 30 نجمة! ⭐',
-          style: GoogleFonts.cairo(fontSize: 16.sp),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'رائع!',
+          color: const Color(0xFF4CAF50),
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _shuffleSteps();
-            },
-            child: Text(
-              'العب مرة أخرى',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              'رائع!',
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 

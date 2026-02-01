@@ -1975,10 +1975,10 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color:  isDark? Color(AppStyle.primaryColor).withOpacity(0.1) : Color(AppStyle.primaryColor).withOpacity(0.5),
+            color:  isDark? const Color(AppStyle.primaryColor).withOpacity(0.1) : const Color(AppStyle.primaryColor).withOpacity(0.5),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-                color: isDark? Color(AppStyle.primaryColor).withOpacity(0.2) :Color(AppStyle.primaryColor).withOpacity(0.2)),
+                color: isDark? const Color(AppStyle.primaryColor).withOpacity(0.2) :const Color(AppStyle.primaryColor).withOpacity(0.2)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -3123,11 +3123,12 @@ class _CurrencyConverterSheetState extends State<_CurrencyConverterSheet> {
               DropdownButton<Currency>(
                 value: _fromCurrency,
                 onChanged: (v) {
-                  if (v != null)
+                  if (v != null) {
                     setState(() {
                       _fromCurrency = v;
                       _convert();
                     });
+                  }
                 },
                 items: currencies
                     .where((c) => _ratesToUSD.containsKey(c.code))

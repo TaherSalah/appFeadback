@@ -69,11 +69,11 @@ class ZakatPdfService {
                                 fontSize: 24,
                                 fontWeight: pw.FontWeight.bold)),
                         pw.Text("رفيق المسلم اليومي",
-                            style: pw.TextStyle(
+                            style: const pw.TextStyle(
                                 color: PdfColors.white, fontSize: 16)),
                         pw.SizedBox(height: 5),
                          pw.Text("حملة لتنال الأجر",
-                            style: pw.TextStyle(
+                            style: const pw.TextStyle(
                                 color: PdfColors.amber200, fontSize: 12)),       
                       ],
                     ),
@@ -179,7 +179,7 @@ class ZakatPdfService {
                 ),
                 child: pw.Column(
                   children: [
-                    pw.Text("إجمالي الزكاة المستحقة", style: pw.TextStyle(fontSize: 16, color: PdfColors.green900)),
+                    pw.Text("إجمالي الزكاة المستحقة", style: const pw.TextStyle(fontSize: 16, color: PdfColors.green900)),
                     pw.SizedBox(height: 5),
                     pw.Text("${_format(totalZakat)} $currencySymbol", style: pw.TextStyle(fontSize: 30, fontWeight: pw.FontWeight.bold, color: PdfColors.green900)),
                   ],

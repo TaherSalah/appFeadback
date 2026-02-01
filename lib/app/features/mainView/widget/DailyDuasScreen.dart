@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/duas_data.dart';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class DailyDuasScreen extends StatelessWidget {
   const DailyDuasScreen({super.key});
@@ -87,75 +88,41 @@ class DailyDuasScreen extends StatelessWidget {
   }
 
   void _showDuaDialog(BuildContext context, DuaForKids dua) {
-    showDialog(
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Text(dua.emoji, style: const TextStyle(fontSize: 30)),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                dua.title,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
+      type: KDialogType.info,
+      icon: Icons.auto_awesome_rounded,
+      title: dua.title,
+      description: dua.meaning,
+      additionalContent: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color:
+              isDark ? Colors.purple.withOpacity(0.1) : Colors.purple.shade50,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.purple.withOpacity(0.2)),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.purple.shade50,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                dua.arabic,
-                style: GoogleFonts.cairo(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                  height: 2.0,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(Icons.translate, color: Colors.grey, size: 20),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    dua.meaning,
-                    style: GoogleFonts.cairo(
-                      fontSize: 14.sp,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
-            ),
-            child: Text(
-              'حفظته!',
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+        child: Text(
+          dua.arabic,
+          style: GoogleFonts.cairo(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+            height: 2.0,
+            color: isDark ? Colors.white : Colors.purple.shade900,
           ),
-        ],
+          textAlign: TextAlign.center,
+        ),
       ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'حفظته!',
+          color: Colors.purple,
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
     );
   }
 }

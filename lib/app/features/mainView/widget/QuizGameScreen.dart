@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/sounds_helper.dart';
 import 'dart:math';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class QuizGameScreen extends StatefulWidget {
   const QuizGameScreen({super.key});
@@ -90,80 +91,54 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
   void _showFinalScore() {
     final stars = (_score / 10 * 5).round();
 
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Text('🏆'),
-            const SizedBox(width: 8),
-            Text(
-              'انتهى الاختبار!',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'نتيجتك: $_score من ${_questions.length * 10}',
-              style: GoogleFonts.cairo(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'حصلت على $stars نجمة! ⭐',
-              style: GoogleFonts.cairo(fontSize: 16.sp),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _getEncouragementMessage(),
-              style: GoogleFonts.cairo(
-                fontSize: 14.sp,
-                color: Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _resetQuiz();
-            },
-            child: Text(
-              'العب مرة أخرى',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      type: KDialogType.success,
+      icon: Icons.emoji_events_rounded,
+      title: 'انتهى الاختبار! 🎉',
+      description: 'لقد حصلت على $stars نجمة! ⭐',
+      additionalContent: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'نتيجتك: $_score من ${_questions.length * 10}',
+            style: GoogleFonts.cairo(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF10B981),
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+          const SizedBox(height: 12),
+          Text(
+            _getEncouragementMessage(),
+            style: GoogleFonts.cairo(
+              fontSize: 14.sp,
+              color: Colors.grey[600],
             ),
-            child: Text(
-              'تمام',
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'العب مرة أخرى',
+          isPrimary: false,
+          onPressed: () {
+            Navigator.pop(context);
+            _resetQuiz();
+          },
+        ),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'تمام',
+          color: const Color(0xFF10B981),
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+        ),
+      ],
     );
   }
 

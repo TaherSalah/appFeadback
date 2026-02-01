@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/sounds_helper.dart';
 import 'dart:math';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class PrayerMovementsGame extends StatefulWidget {
   const PrayerMovementsGame({super.key});
@@ -98,85 +99,69 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
   void _showFinalScore() {
     final stars = (_score ~/ 10) * 5;
 
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Text('🕌'),
-            const SizedBox(width: 8),
-            Text(
-              'أحسنت!',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      type: KDialogType.success,
+      icon: Icons.mosque_rounded,
+      title: 'أحسنت يا بطل! 🎉',
+      description: 'لقد تعلمت حركات الصلاة بشكل رائع!',
+      additionalContent: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'نتيجتك: $_score/${_movements.length * 10}',
+            style: GoogleFonts.cairo(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF10B981),
             ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'تعلمت حركات الصلاة!',
-              style: GoogleFonts.cairo(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF59E0B).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(15),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'نتيجتك: $_score/${_movements.length * 10}',
-              style: GoogleFonts.cairo(
-                fontSize: 16.sp,
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.star, color: Colors.amber, size: 30),
+                const Icon(Icons.stars_rounded,
+                    color: Color(0xFFF59E0B), size: 24),
                 const SizedBox(width: 8),
                 Text(
-                  '+$stars',
+                  'حصلت على $stars نجمة ✨',
                   style: GoogleFonts.cairo(
-                    fontSize: 24.sp,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.amber,
+                    color: const Color(0xFFF59E0B),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _resetGame();
-            },
-            child: Text('العب مرة أخرى', style: GoogleFonts.cairo()),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-            child: Text(
-              'تمام',
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
           ),
         ],
       ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'العب مرة أخرى',
+          isPrimary: false,
+          onPressed: () {
+            Navigator.pop(context);
+            _resetGame();
+          },
+        ),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'تمام',
+          color: const Color(0xFF10B981),
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+        ),
+      ],
     );
   }
 

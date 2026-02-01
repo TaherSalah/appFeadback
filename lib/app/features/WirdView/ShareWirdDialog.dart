@@ -7,7 +7,6 @@ import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:muslimdaily/app/core/services/image_share_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

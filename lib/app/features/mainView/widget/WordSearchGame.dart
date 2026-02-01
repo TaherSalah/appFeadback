@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/sounds_helper.dart';
-import 'dart:math';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class WordSearchGame extends StatefulWidget {
   const WordSearchGame({super.key});
@@ -68,69 +68,47 @@ class _WordSearchGameState extends State<WordSearchGame> {
   }
 
   void _showWinDialog() {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Text('🎉'),
-            const SizedBox(width: 8),
-            Text(
-              'رائع!',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-          ],
+      type: KDialogType.success,
+      icon: Icons.emoji_events_rounded,
+      title: 'رائع يا بطل! 🎉',
+      description: 'لقد وجدت جميع الكلمات بنجاح وتستحق هذه المكافأة!',
+      additionalContent: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF10B981).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: const Color(0xFF10B981).withOpacity(0.2)),
         ),
-        content: Column(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('🔍', style: TextStyle(fontSize: 60)),
-            const SizedBox(height: 16),
+            const Icon(Icons.stars_rounded, color: Color(0xFFF59E0B), size: 28),
+            const SizedBox(width: 10),
             Text(
-              'وجدت جميع الكلمات!',
+              'لقد حصلت على 20 نجمة ✨',
               style: GoogleFonts.cairo(
-                  fontSize: 18.sp, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.star, color: Colors.amber, size: 30),
-                const SizedBox(width: 8),
-                Text(
-                  '+20',
-                  style: GoogleFonts.cairo(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amber,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-            child: Text(
-              'تمام',
-              style: GoogleFonts.cairo(
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: const Color(0xFF10B981),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'رائع!',
+          color: const Color(0xFF10B981),
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+        ),
+      ],
     );
   }
 

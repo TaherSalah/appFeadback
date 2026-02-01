@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/sounds_helper.dart';
 import 'dart:math';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class AllahNamesGame extends StatefulWidget {
   const AllahNamesGame({super.key});
@@ -69,111 +70,90 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
       KidsSoundHelper.playSuccess();
     }
 
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          isCorrect ? 'صحيح! ✅' : 'خطأ ❌',
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      type: isCorrect ? KDialogType.success : KDialogType.error,
+      icon: isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
+      title: isCorrect ? 'صحيح! ✅' : 'خطأ ❌',
+      description: isCorrect
+          ? 'ممتاز! المعنى صحيح'
+          : 'المعنى الصحيح هو: $_correctAnswer',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'التالي',
+          color: isCorrect ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+          onPressed: () {
+            Navigator.pop(context);
+            if (_currentQuestion < _allahNames.length - 1) {
+              setState(() {
+                _currentQuestion++;
+                _generateQuestion();
+              });
+            } else {
+              _showFinalScore();
+            }
+          },
         ),
-        content: Text(
-          isCorrect ? 'ممتاز! المعنى صحيح' : 'المعنى الصحيح: $_correctAnswer',
-          style: GoogleFonts.cairo(),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              if (_currentQuestion < _allahNames.length - 1) {
-                setState(() {
-                  _currentQuestion++;
-                  _generateQuestion();
-                });
-              } else {
-                _showFinalScore();
-              }
-            },
-            child: Text('التالي', style: GoogleFonts.cairo()),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
   void _showFinalScore() {
-    final stars = _score;
-
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Text('🌟'),
-            const SizedBox(width: 8),
-            Text(
-              'انتهى الاختبار!',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      type: KDialogType.success,
+      icon: Icons.emoji_events_rounded,
+      title: 'انتهى الاختبار! 🌟',
+      description: 'تعلمت ${_allahNames.length} اسماً من أسماء الله الحسنى!',
+      additionalContent: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'نتيجتك: $_score/${_allahNames.length * 5}',
+            style: GoogleFonts.cairo(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF10B981),
             ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'تعلمت ${_allahNames.length} اسماً من أسماء الله الحسنى!',
-              style: GoogleFonts.cairo(fontSize: 16.sp),
-              textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF59E0B).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(15),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'نتيجتك: $_score/${_allahNames.length * 5}',
-              style: GoogleFonts.cairo(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.star, color: Colors.amber, size: 30),
+                const Icon(Icons.stars_rounded,
+                    color: Color(0xFFF59E0B), size: 24),
                 const SizedBox(width: 8),
                 Text(
-                  '+$stars',
+                  'حصلت على $_score نجمة ✨',
                   style: GoogleFonts.cairo(
-                    fontSize: 24.sp,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.amber,
+                    color: const Color(0xFFF59E0B),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-            child: Text(
-              'تمام',
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
           ),
         ],
       ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'رائع!',
+          color: const Color(0xFF10B981),
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+        ),
+      ],
     );
   }
 

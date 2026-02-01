@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lottie/lottie.dart'; // سنستخدم أيقونة متحركة إذا توفرت، أو صورة ثابتة كبديل
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class DailyGiftWidget extends StatefulWidget {
   const DailyGiftWidget({super.key});
@@ -87,128 +87,57 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget>
   }
 
   void _openGift() {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(20),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // الخلفية
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                  border: Border.all(
-                    color: const Color(0xFFFFD700), // ذهبي
-                    width: 2,
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 10),
-                    Text(
-                      "🎉 ربحت هدية! 🎉",
-                      style: GoogleFonts.cairo(
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFFFFD700),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        _todaysGift['type']!,
-                        style: GoogleFonts.cairo(
-                          fontSize: 12.sp,
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      _todaysGift['title']!,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      _todaysGift['content']!,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.amiri(
-                        fontSize: 16.sp,
-                        height: 1.6,
-                        color: isDark ? Colors.grey[300] : Colors.grey[800],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 45,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFD700), // ذهبي
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          setState(() {
-                            _isOpened = true;
-                          });
-                        },
-                        child: Text(
-                          _todaysGift['action']!,
-                          style: GoogleFonts.cairo(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+      type: KDialogType.info,
+      icon: Icons.card_giftcard_rounded,
+      title: "🎉 ربحت هدية! 🎉",
+      description: _todaysGift['title']!,
+      additionalContent: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              _todaysGift['type']!,
+              style: GoogleFonts.cairo(
+                fontSize: 12.sp,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
               ),
-              // أيقونة شريط في الأعلى
-              const Positioned(
-                top: -25,
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Color(0xFFFFD700),
-                  child:
-                      Icon(Icons.card_giftcard, color: Colors.white, size: 30),
-                ),
-              ),
-            ],
+            ),
           ),
-        );
-      },
+          const SizedBox(height: 16),
+          Text(
+            _todaysGift['content']!,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.amiri(
+              fontSize: 18.sp,
+              height: 1.6,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey[100]
+                  : Colors.grey[900],
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: _todaysGift['action']!,
+          color: const Color(0xFFFFD700),
+          onPressed: () {
+            Navigator.pop(context);
+            setState(() {
+              _isOpened = true;
+            });
+          },
+        ),
+      ],
     );
   }
 

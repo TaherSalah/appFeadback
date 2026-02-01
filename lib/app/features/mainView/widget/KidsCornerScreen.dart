@@ -3,26 +3,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:confetti/confetti.dart';
 
 import '../../../core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'DailyChallengesScreen.dart';
-import 'DailyStreakWidget.dart';
 import 'GamesMenuScreen.dart';
 import 'StoriesScreen.dart';
-import 'VirtualPetWidget.dart';
 import 'HadithsForKidsScreen.dart';
 import 'DailyDuasScreen.dart';
 import 'package:muslimdaily/app/features/kids/view/KidsStoriesScreen.dart';
 import 'package:animate_do/animate_do.dart';
-import 'DailyStreakWidget.dart';
-import 'VirtualPetWidget.dart';
-import 'HadithsForKidsScreen.dart';
-import 'DailyDuasScreen.dart';
 import 'VirtualShopScreen.dart';
+import 'KidsStatisticsScreen.dart';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 enum KidsView { home, journey, activities, trophies }
 
@@ -554,25 +550,27 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
   }
 
   Future<void> _resetProgress() async {
-    final confirm = await showDialog<bool>(
+    final confirm = await KDialogHelper.showCustomDialog<bool>(
       context: context,
-      builder: (context) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: AlertDialog(
-          title: Text('تصفير التقدم', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-          content: Text('هل أنت متأكد من تصفير كل تقدمك في ركن المسلم الصغير؟ ستفقد جميع النجوم والأوسمة.', style: GoogleFonts.cairo()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text('نعم، تصفير', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
-            ),
-          ],
+      type: KDialogType.warning,
+      icon: Icons.refresh_rounded,
+      title: 'تصفير التقدم',
+      description:
+          'هل أنت متأكد من تصفير كل تقدمك في ركن المسلم الصغير؟ ستفقد جميع النجوم والأوسمة.',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'إلغاء',
+          isPrimary: false,
+          onPressed: () => Navigator.pop(context, false),
         ),
-      ),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'نعم، تصفير',
+          color: Colors.red,
+          onPressed: () => Navigator.pop(context, true),
+        ),
+      ],
     );
 
     if (confirm == true) {
@@ -742,16 +740,17 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
             padding: EdgeInsets.all(20.w),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: isDark 
-                  ? [const Color(0xFF1E293B), const Color(0xFF0F172A)] 
-                  : [const Color(0xFF0EA5E9), const Color(0xFF38BDF8)],
+                colors: isDark
+                    ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                    : [const Color(0xFF0EA5E9), const Color(0xFF38BDF8)],
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
               ),
               borderRadius: BorderRadius.circular(30.r),
               boxShadow: [
                 BoxShadow(
-                  color: (isDark ? Colors.black : const Color(0xFF0EA5E9)).withOpacity(0.2),
+                  color: (isDark ? Colors.black : const Color(0xFF0EA5E9))
+                      .withOpacity(0.2),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 ),
@@ -796,7 +795,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                 ),
                 SizedBox(height: 15.h),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(20.r),
@@ -806,7 +806,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.stars_rounded, color: Colors.amber, size: 24.sp),
+                          Icon(Icons.stars_rounded,
+                              color: Colors.amber, size: 24.sp),
                           SizedBox(width: 8.w),
                           Text(
                             '$_totalStars نقطة',
@@ -820,7 +821,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                       ),
                       Text(
                         'إنجاز رائع! 🚀',
-                        style: GoogleFonts.cairo(color: Colors.white70, fontSize: 11.sp),
+                        style: GoogleFonts.cairo(
+                            color: Colors.white70, fontSize: 11.sp),
                       ),
                     ],
                   ),
@@ -864,7 +866,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                 onTap: () async {
                   await Navigator.push(
                     context,
-                    CupertinoPageRoute(builder: (_) => const KidsStoriesScreen()),
+                    CupertinoPageRoute(
+                        builder: (_) => const KidsStoriesScreen()),
                   );
                   _loadProgress(); // Refresh stars when coming back
                 },
@@ -886,7 +889,14 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                 subtitle: "أوسمتي وبطولاتي 🏆",
                 emoji: "🏅",
                 color: const Color(0xFFEC4899),
-                onTap: () => setState(() => _currentView = KidsView.trophies),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (_) => const KidsStatisticsScreen()),
+                  );
+                  _loadProgress();
+                },
               ),
             ),
             FadeInRight(
@@ -921,8 +931,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark 
-              ? const Color(0xFF1E293B) 
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF1E293B)
               : Colors.white,
           borderRadius: BorderRadius.circular(28.r),
           boxShadow: [
@@ -951,8 +961,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               style: GoogleFonts.cairo(
                 fontWeight: FontWeight.bold,
                 fontSize: 14.sp,
-                color: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.white 
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
                     : Colors.black87,
               ),
               textAlign: TextAlign.center,
@@ -1003,7 +1013,11 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
-                  value: _levels.where((l) => (l['tasks'] as List).every((t) => t['done'])).length / _levels.length,
+                  value: _levels
+                          .where((l) =>
+                              (l['tasks'] as List).every((t) => t['done']))
+                          .length /
+                      _levels.length,
                   backgroundColor: Colors.blue.withOpacity(0.1),
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                   minHeight: 10,
@@ -1144,7 +1158,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   end: Alignment.bottomCenter,
                   colors: [
                     isLevelComplete ? Colors.green : color,
-                    (_levels[index + 1]['tasks'] as List).every((t) => t['done'])
+                    (_levels[index + 1]['tasks'] as List)
+                            .every((t) => t['done'])
                         ? Colors.green
                         : (_levels[index + 1]['color'] as Color),
                   ],
@@ -1164,13 +1179,13 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       builder: (context) => StatefulBuilder(builder: (context, setModalState) {
         return Directionality(
           textDirection: TextDirection.rtl,
-
           child: Container(
             height: MediaQuery.of(context).size.height * 0.7,
             decoration: BoxDecoration(
               // color: isDark ? const Color(0xFF1E293B) : Colors.white,
               color: AppThemeColors.cardBackgroundColor(context),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(32)),
             ),
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -1246,7 +1261,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           trailing: Text(
                             "+${task['points']} ⭐",
                             style: GoogleFonts.cairo(
-                                color: Colors.amber, fontWeight: FontWeight.bold),
+                                color: Colors.amber,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                       );
@@ -1492,9 +1508,9 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: AppThemeColors.cardBackgroundColor(context),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1554,65 +1570,6 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
     );
   }
 
-  Widget _buildProfileCard(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: _selectedGender == 'boy'
-              ? [const Color(0xFF42A5F5), const Color(0xFF1976D2)]
-              : [const Color(0xFFEC407A), const Color(0xFFC2185B)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 5))
-        ],
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 45,
-            backgroundColor: Colors.white,
-            child: Text(_selectedGender == 'boy' ? "👦" : "🧕",
-                style: const TextStyle(fontSize: 50)),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "المستوى: ${_getRankTitle()}",
-                  style: GoogleFonts.cairo(
-                      fontSize:
-                          ResponsiveUtil.isTablet(context) ? 10.sp : 18.sp,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Text("⭐ $_totalStars نقطة",
-                      style: GoogleFonts.cairo(
-                          fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildActivitiesContent(bool isDark) {
     return Column(
       key: const ValueKey('activities'),
@@ -1668,7 +1625,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                     ),
                   ),
                 );
-              }, subtitle: '',
+              },
+              subtitle: '',
             ),
             _buildQuickNavCard(
               title: "ألعاب تعليمية",
@@ -1679,7 +1637,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   context,
                   MaterialPageRoute(builder: (_) => const GamesMenuScreen()),
                 );
-              }, subtitle: '',
+              },
+              subtitle: '',
             ),
             _buildQuickNavCard(
               title: "المتجر",
@@ -1700,43 +1659,48 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                     ),
                   ),
                 );
-              }, subtitle: '',
+              },
+              subtitle: '',
             ),
             _buildQuickNavCard(
               subtitle: "",
               title: "التحديات",
               emoji: "⚡",
               color: const Color(0xFFE91E63),
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (_) => const DailyChallengesScreen()),
                 );
+                _loadProgress();
               },
             ),
             _buildQuickNavCard(
               title: "أحاديث للأطفال",
               emoji: "📿",
               color: const Color(0xFF009688),
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (_) => const HadithsForKidsScreen()),
                 );
-              }, subtitle: '',
+                _loadProgress();
+              },
+              subtitle: '',
             ),
             _buildQuickNavCard(
               subtitle: "",
               title: "أدعية يومية",
               emoji: "🤲",
               color: const Color(0xFF673AB7),
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const DailyDuasScreen()),
                 );
+                _loadProgress();
               },
             ),
           ],

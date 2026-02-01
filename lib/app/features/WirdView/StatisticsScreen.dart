@@ -67,7 +67,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
-            actions: [
+            actions: const [
               // // زر اختبار الأذان 🧪
               // IconButton(
               //   icon: const Icon(Icons.bug_report, color: Colors.orange),

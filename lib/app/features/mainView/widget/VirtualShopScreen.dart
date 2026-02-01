@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/utils/style/responsive_util.dart';
-import 'dart:convert';
+import '../../../core/utils/style/k_dialog_helper.dart';
 
 class VirtualShopScreen extends StatefulWidget {
   final int currentStars;
@@ -120,139 +120,86 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
       return;
     }
 
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          'تأكيد الشراء',
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      type: KDialogType.info,
+      icon: Icons.shopping_cart_rounded,
+      title: 'تأكيد الشراء',
+      description: 'هل تريد شراء ${item['name']} بـ $cost نجمة؟',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'إلغاء',
+          isPrimary: false,
+          onPressed: () => Navigator.pop(context),
         ),
-        content: Text(
-          'هل تريد شراء ${item['name']} بـ $cost نجمة؟',
-          style: GoogleFonts.cairo(),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'شراء',
+          color: const Color(0xFF4CAF50),
+          onPressed: () {
+            Navigator.pop(context);
+            setState(() {
+              _purchasedItems.add(item['id']);
+              widget.onPurchase(cost);
+            });
+            _savePurchases();
+            _showPurchaseSuccessDialog(item);
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('إلغاء', style: GoogleFonts.cairo()),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _purchasedItems.add(item['id']);
-                widget.onPurchase(cost);
-              });
-              _savePurchases();
-              _showPurchaseSuccessDialog(item);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              'شراء',
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
   void _showInsufficientStarsDialog() {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Text('⭐'),
-            const SizedBox(width: 8),
-            Text(
-              'نجوم غير كافية',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-          ],
+      type: KDialogType.warning,
+      icon: Icons.stars_rounded,
+      title: 'نجوم غير كافية',
+      description: 'احصل على المزيد من النجوم بإكمال المهام والألعاب!',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'حسناً',
+          onPressed: () => Navigator.pop(context),
         ),
-        content: Text(
-          'احصل على المزيد من النجوم بإكمال المهام والألعاب!',
-          style: GoogleFonts.cairo(),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('حسناً', style: GoogleFonts.cairo()),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
   void _showAlreadyOwnedDialog() {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          'تملكه بالفعل',
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      type: KDialogType.info,
+      icon: Icons.inventory_2_rounded,
+      title: 'تملكه بالفعل',
+      description: 'لديك هذا العنصر بالفعل!',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'حسناً',
+          onPressed: () => Navigator.pop(context),
         ),
-        content: Text(
-          'لديك هذا العنصر بالفعل!',
-          style: GoogleFonts.cairo(),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('حسناً', style: GoogleFonts.cairo()),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
   void _showPurchaseSuccessDialog(Map<String, dynamic> item) {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Text('🎉'),
-            const SizedBox(width: 8),
-            Text(
-              'تم الشراء!',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-          ],
+      type: KDialogType.success,
+      icon: Icons.celebration_rounded,
+      title: 'تم الشراء!',
+      description: 'تهانينا! حصلت على ${item['name']} ${item['emoji']}',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'رائع!',
+          color: const Color(0xFF4CAF50),
+          onPressed: () => Navigator.pop(context),
         ),
-        content: Text(
-          'تهانينا! حصلت على ${item['name']} ${item['emoji']}',
-          style: GoogleFonts.cairo(fontSize: 16.sp),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-            child: Text(
-              'رائع!',
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 

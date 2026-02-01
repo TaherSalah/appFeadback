@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/utils/style/responsive_util.dart';
+import '../../../core/utils/style/k_dialog_helper.dart';
 import 'dart:convert';
 
 class DailyChallengesScreen extends StatefulWidget {
@@ -96,118 +97,86 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
         'completed_challenges', jsonEncode(_completedChallenges));
   }
 
+  /// حفظ النقاط المكتسبة من التحديات إلى إجمالي النجوم
+  Future<void> _addStarsReward(int reward) async {
+    final prefs = await SharedPreferences.getInstance();
+    final currentStars = prefs.getInt('kids_total_stars_v2') ?? 0;
+    await prefs.setInt('kids_total_stars_v2', currentStars + reward);
+  }
+
   void _completeChallenge(Map<String, dynamic> challenge) {
     if (_completedChallenges[challenge['id']] == true) {
       return; // Already completed
     }
 
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          'تأكيد إكمال التحدي',
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+      type: KDialogType.info,
+      icon: Icons.help_outline_rounded,
+      title: 'تأكيد الإنجاز',
+      description: 'هل أتممت حقاً: \n"${challenge['title']}"؟',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'ليس بعد',
+          isPrimary: false,
+          onPressed: () => Navigator.pop(context),
         ),
-        content: Text(
-          'هل أكملت: ${challenge['title']}؟',
-          style: GoogleFonts.cairo(),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'نعم، أتممتها',
+          onPressed: () async {
+            Navigator.pop(context);
+            setState(() {
+              _completedChallenges[challenge['id']] = true;
+            });
+            await _saveChallenges();
+            await _addStarsReward(challenge['reward'] as int);
+            _showRewardDialog(challenge);
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('لا', style: GoogleFonts.cairo()),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _completedChallenges[challenge['id']] = true;
-              });
-              _saveChallenges();
-              _showRewardDialog(challenge);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              'نعم',
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
   void _showRewardDialog(Map<String, dynamic> challenge) {
-    showDialog(
+    KDialogHelper.showCustomDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Text('🎉'),
-            const SizedBox(width: 8),
-            Text(
-              'ممتاز!',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'أكملت التحدي!',
-              style: GoogleFonts.cairo(
-                  fontSize: 18.sp, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              challenge['emoji'],
-              style: const TextStyle(fontSize: 50),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.star, color: Colors.amber, size: 30),
-                const SizedBox(width: 8),
-                Text(
-                  '+${challenge['reward']}',
-                  style: GoogleFonts.cairo(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amber,
-                  ),
+      type: KDialogType.success,
+      icon: Icons.stars_rounded,
+      title: 'عمل رائع! 🎉',
+      description: 'لقد حصلت على مكافأة المهمة بنجاح.',
+      additionalContent: Column(
+        children: [
+          Text(
+            challenge['emoji'],
+            style: const TextStyle(fontSize: 60),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.stars_rounded, color: Colors.amber, size: 30),
+              const SizedBox(width: 8),
+              Text(
+                '+${challenge['reward']}',
+                style: GoogleFonts.barlow(
+                  fontSize: 32.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber,
                 ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-            child: Text(
-              'رائع!',
-              style: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
               ),
-            ),
+            ],
           ),
         ],
       ),
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'رائع!',
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
     );
   }
 
