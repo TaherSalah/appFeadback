@@ -19,6 +19,7 @@ import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/khatmah_certificate_screen.dart';
 import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:quran/quran.dart' as quran;
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 
 class GlobalKhatmahScreen extends StatefulWidget {
   const GlobalKhatmahScreen({super.key});
@@ -583,44 +584,72 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
           children: [
             // 0. Community Global Health
-            _buildGlobalCommunityStats(isDark),
+            FadeAnimation(
+              delay: const Duration(milliseconds: 100),
+              child: _buildGlobalCommunityStats(isDark),
+            ),
             const SizedBox(height: 20),
 
             // 1. Personal Impact Header
-            _buildPersonalImpactHeader(isDark),
+            FadeAnimation(
+              delay: const Duration(milliseconds: 200),
+              child: _buildPersonalImpactHeader(isDark),
+            ),
             const SizedBox(height: 10),
 
             // 2. Quick Action
-            _buildQuickJoinButton(isDark),
+            FadeAnimation(
+              delay: const Duration(milliseconds: 300),
+              child: _buildQuickJoinButton(isDark),
+            ),
             const SizedBox(height: 20),
 
             // 2. Active Khatmahs Title
-            _buildSectionTitle(
-                isDark, 'الختمات الجارية', Icons.auto_stories_rounded),
+            FadeAnimation(
+              delay: const Duration(milliseconds: 400),
+              child: _buildSectionTitle(
+                  isDark, 'الختمات الجارية', Icons.auto_stories_rounded),
+            ),
             const SizedBox(height: 15),
 
             // 3. Campaigns List
             ...List.generate(_campaigns.length, (index) {
-              return _buildCampaignCard(isDark, _campaigns[index], index);
+              return StaggeredItemAnimation(
+                index: index,
+                delay: const Duration(milliseconds: 500),
+                child: _buildCampaignCard(isDark, _campaigns[index], index),
+              );
             }),
 
             const SizedBox(height: 30),
 
             // 4. Global Leaderboard
             if (_globalLeaderboard.isNotEmpty) ...[
-              _buildSectionTitle(isDark, 'قائمة الصدارة (أبرز المشاركين)',
-                  Icons.emoji_events_rounded),
+              FadeAnimation(
+                delay: const Duration(milliseconds: 600),
+                child: _buildSectionTitle(isDark, 'قائمة الصدارة (أبرز المشاركين)',
+                    Icons.emoji_events_rounded),
+              ),
               const SizedBox(height: 15),
-              _buildGlobalLeaderboard(isDark),
+              FadeAnimation(
+                delay: const Duration(milliseconds: 700),
+                child: _buildGlobalLeaderboard(isDark),
+              ),
               const SizedBox(height: 30),
             ],
 
             // 5. Recent Activity Feed
             if (_recentGlobalActivity.isNotEmpty) ...[
-              _buildSectionTitle(isDark, 'آخر مساهمات المجتمع',
-                  Icons.record_voice_over_rounded),
+              FadeAnimation(
+                delay: const Duration(milliseconds: 800),
+                child: _buildSectionTitle(isDark, 'آخر مساهمات المجتمع',
+                    Icons.record_voice_over_rounded),
+              ),
               const SizedBox(height: 15),
-              _buildRecentGlobalActivity(isDark),
+              FadeAnimation(
+                delay: const Duration(milliseconds: 900),
+                child: _buildRecentGlobalActivity(isDark),
+              ),
             ],
           ],
         ),
@@ -1345,23 +1374,44 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       child: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: _buildHeader(isDark, campaign),
+            child: FadeAnimation(
+              delay: const Duration(milliseconds: 100),
+              child: _buildHeader(isDark, campaign),
+            ),
           ),
           SliverToBoxAdapter(
-            child: _buildMotivationalQuote(isDark),
+            child: FadeAnimation(
+              delay: const Duration(milliseconds: 200),
+              child: _buildMotivationalQuote(isDark),
+            ),
           ),
           SliverToBoxAdapter(
-            child: _buildSearchBar(isDark, campaign),
+            child: FadeAnimation(
+              delay: const Duration(milliseconds: 300),
+              child: _buildSearchBar(isDark, campaign),
+            ),
           ),
           SliverPadding(
             padding: const EdgeInsets.all(16),
             sliver: _buildGridSliver(campaign),
           ),
           SliverToBoxAdapter(
-            child: _buildRecentActivity(isDark),
+            child: FadeAnimation(
+              delay: const Duration(milliseconds: 500),
+              child: _buildRecentActivity(isDark),
+            ),
           ),
           SliverToBoxAdapter(
-            child: _buildLeaderboard(isDark),
+                  child: FadeAnimation(
+                    delay: const Duration(milliseconds: 100),
+                    child: _buildMainStatsCard(isDark),
+                  ),
+          ),
+          SliverToBoxAdapter(
+            child: FadeAnimation(
+              delay: const Duration(milliseconds: 600),
+              child: _buildLeaderboard(isDark),
+            ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
@@ -1877,7 +1927,11 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             (p) => p['item_index'] == itemIndex,
             orElse: () => {'status': 'available'},
           );
-          return _buildItemCard(campaign, itemIndex, statusData);
+          return StaggeredItemAnimation(
+            index: index,
+            duration: const Duration(milliseconds: 400),
+            child: _buildItemCard(campaign, itemIndex, statusData),
+          );
         },
         childCount: filteredIndices.length,
       ),
@@ -2396,6 +2450,71 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainStatsCard(bool isDark) {
+    if (_isLoading) return const SizedBox.shrink();
+
+    final userCompleted = _userStats['total_completed'] ?? 0;
+    final globalCompleted = _communityGlobalStats['total_completed'] ?? 0;
+    final activeReaders = _communityGlobalStats['active_readers'] ?? 0;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900]?.withOpacity(0.5) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: KColors.primaryColor.withOpacity(0.1)),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            _buildSimpleStat(
+              'ختماتك',
+              userCompleted.toString(),
+              Icons.person_outline_rounded,
+              Colors.amber,
+            ),
+            VerticalDivider(
+              width: 20,
+              thickness: 1,
+              color: Colors.grey.withOpacity(0.2),
+              indent: 5,
+              endIndent: 5,
+            ),
+            _buildSimpleStat(
+              'إجمالي الختمات',
+              globalCompleted.toString(),
+              Icons.auto_awesome_outlined,
+              Colors.green,
+            ),
+            VerticalDivider(
+              width: 20,
+              thickness: 1,
+              color: Colors.grey.withOpacity(0.2),
+              indent: 5,
+              endIndent: 5,
+            ),
+            _buildSimpleStat(
+              'يقرؤون الآن',
+              activeReaders.toString(),
+              Icons.people_outline_rounded,
+              Colors.blue,
+            ),
+          ],
         ),
       ),
     );

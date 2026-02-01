@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import '../../core/shard/exports/all_exports.dart';
 
 class AzkarCounter extends StatefulWidget {
@@ -669,12 +670,17 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
           SizedBox(height: isTablet ? 5.h : 20),
 
           // مؤشر الإحصائيات المحسّن
-          _buildStatsCard(isTablet),
+          FadeAnimation(
+            delay: const Duration(milliseconds: 100),
+            child: _buildStatsCard(isTablet),
+          ),
           SizedBox(height: isTablet ? 30.h : 60),
 
           // المسبحة الدائرية
-          SizedBox(
-            height: isTablet ? 420.h : 360.h,
+          FadeAnimation(
+            delay: const Duration(milliseconds: 300),
+            child: SizedBox(
+              height: isTablet ? 420.h : 360.h,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final size = Size(constraints.maxWidth, constraints.maxHeight);
@@ -953,12 +959,15 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
                 );
               },
             ),
-          ),
+          ),),
 
           SizedBox(height: isTablet ? 35.h : 75),
 
           // أزرار التحكم المحدثة
-          _buildControlButtons(isTablet),
+          FadeAnimation(
+            delay: const Duration(milliseconds: 500),
+            child: _buildControlButtons(isTablet),
+          ),
         ],
       ),
     );

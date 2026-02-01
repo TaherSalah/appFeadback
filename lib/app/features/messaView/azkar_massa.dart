@@ -850,8 +850,9 @@ class _AzkarMassaState extends State<AzkarMassa> {
                                   ? Colors.white
                                   : KColors.primaryColor);
 
-                          return ScrollAppearAnimation(
-                            duration: const Duration(milliseconds: 700),
+                          return StaggeredItemAnimation(
+                            index: zMessaIndex,
+                            duration: const Duration(milliseconds: 500),
                             child: GestureDetector(
                               onTap: () => con.decrementMessa(zMessaIndex),
                               child: AzkerItemBuilder(

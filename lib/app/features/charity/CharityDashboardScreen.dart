@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -195,42 +196,45 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                           children: [
                             // اقتراح الصدقة اليومية
                             // _buildDailySuggestionCard(isDark),
-                            Row(
-                              spacing: 15,
-                              children: [
-                                Expanded(
-                                  child: _buildActionButton(
-                                    Icons.repeat,
-                                    'اضافة صدقات دورية',
-                                    const Color(0xFF10B981),
-                                        () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const RecurringCharityScreen(),
-                                        ),
-                                      ).then((_) => _loadData());
-                                    },
-                                    isDark,
+                            FadeInDown(
+                              duration: const Duration(milliseconds: 600),
+                              child: Row(
+                                spacing: 15,
+                                children: [
+                                  Expanded(
+                                    child: _buildActionButton(
+                                      Icons.repeat,
+                                      'اضافة صدقات دورية',
+                                      const Color(0xFF10B981),
+                                          () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => const RecurringCharityScreen(),
+                                          ),
+                                        ).then((_) => _loadData());
+                                      },
+                                      isDark,
+                                    ),
                                   ),
-                                ),
 
-                                Expanded(
-                                  child: _buildActionButton(
-                                    Icons.add,
+                                  Expanded(
+                                    child: _buildActionButton(
+                                      Icons.add,
 
-                                    'اضافة صدقة حديدة',
-                                    const Color(0xFF10B981),
-                                        () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (_) => const AddCharityScreen()),
-                                          ).then((_) => _loadData());
-                                    },
-                                    isDark,
+                                      'اضافة صدقة حديدة',
+                                      const Color(0xFF10B981),
+                                          () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (_) => const AddCharityScreen()),
+                                            ).then((_) => _loadData());
+                                      },
+                                      isDark,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
 
                             SizedBox(height: 20.h),
@@ -242,19 +246,35 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                             ],
                             
                             // Quick Add Recommendation for Dashboard
-                            _buildQuickAddRow(isDark),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 600),
+                              delay: const Duration(milliseconds: 200),
+                              child: _buildQuickAddRow(isDark),
+                            ),
                             SizedBox(height: 24.h),
 
                             // إحصائيات سريعة
-                            _buildQuickStats(isDark),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 600),
+                              delay: const Duration(milliseconds: 300),
+                              child: _buildQuickStats(isDark),
+                            ),
                             SizedBox(height: 20.h),
 
                             // الهدف الشهري
-                            _buildMonthlyGoalCard(isDark),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 600),
+                              delay: const Duration(milliseconds: 400),
+                              child: _buildMonthlyGoalCard(isDark),
+                            ),
                             SizedBox(height: 20.h),
 
                             // Streak
-                            _buildStreakCard(isDark),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 600),
+                              delay: const Duration(milliseconds: 500),
+                              child: _buildStreakCard(isDark),
+                            ),
                             SizedBox(height: 20.h),
 
                             // الرسم البياني

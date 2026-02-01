@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
-import '../../../../core/shard/exports/all_exports.dart';
+import '../../../../core/shard/exports/all_exports.dart' hide ScaleAnimation;
 import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/utils/style/k_style.dart';
 import '../../../../core/utils/style/k_color.dart';

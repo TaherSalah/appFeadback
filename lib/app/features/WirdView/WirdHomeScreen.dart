@@ -1,4 +1,5 @@
 // =============== الشاشة الرئيسية ===============
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
@@ -132,16 +133,23 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                   CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
-                          child: _buildStatsRow(isDark),
+                        child: FadeInDown(
+                          duration: const Duration(milliseconds: 600),
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+                            child: _buildStatsRow(isDark),
+                          ),
                         ),
                       ),
 
                       // Category Filter Sliver
                       if (categories.length > 1)
                         SliverToBoxAdapter(
-                          child: _buildCategoryFilter(isDark),
+                          child: FadeIn(
+                            duration: const Duration(milliseconds: 500),
+                            delay: const Duration(milliseconds: 200),
+                            child: _buildCategoryFilter(isDark),
+                          ),
                         ),
 
                       // Active Awrad Header
@@ -186,7 +194,11 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
-                              (context, index) => _buildWirdCard(filteredAwrad[index], isDark: isDark),
+                              (context, index) => FadeInUp(
+                                duration: const Duration(milliseconds: 500),
+                                delay: Duration(milliseconds: index * 40),
+                                child: _buildWirdCard(filteredAwrad[index], isDark: isDark),
+                              ),
                               childCount: filteredAwrad.length,
                             ),
                           ),

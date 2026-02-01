@@ -786,8 +786,9 @@ class _AzkarSabahState extends State<AzkarSabah> {
                                   ? Colors.white
                                   : KColors.primaryColor);
 
-                          return ScrollAppearAnimation(
-                            duration: const Duration(milliseconds: 700),
+                          return StaggeredItemAnimation(
+                            index: zSabahIndex,
+                            duration: const Duration(milliseconds: 500),
                             child: GestureDetector(
                               onTap: () => con.decrementSabah(zSabahIndex),
                               child: AzkerItemBuilder(

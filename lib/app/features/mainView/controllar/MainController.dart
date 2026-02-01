@@ -108,10 +108,16 @@ class MainController extends ControllerMVC {
     //   "navigate": "/calendar",
     //   "visible": "true"
     // },
+    // {
+    //   "title": "الْقِبْلَةُ",
+    //   "icon": "assets/images/qibla (1).png",
+    //   "navigate": "/qiblaDirection",
+    //   "visible": "true"
+    // },
     {
-      "title": "الْقِبْلَةُ",
-      "icon": "assets/images/qibla (1).png",
-      "navigate": "/qiblaDirection",
+      "title": "ركن الطفل المسلم",
+      "icon": "assets/images/men.png",
+      "navigate": "/KidsCornerScreen",
       "visible": "true"
     },
     {

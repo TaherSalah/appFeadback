@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/localization/localization_manager.dart';
@@ -73,28 +74,31 @@ class HadithViewItemBuilder extends StatelessWidget {
             child:
             SizedBox(height: ResponsiveUtil.isTablet(context) ? 20 : 15)),
         SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Row(
-                children: [
-                  TextWidget(
-                      fontWeight: FontWeight.w700,
-                      title: LocalizationManager.call("all-departments"),
-                      fontSize: 10.sp),
-                  const Spacer(),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, Routes.categoriesRoute);
-                    },
-                    child: TextWidget(
+            child: FadeAnimation(
+              delay: const Duration(milliseconds: 100),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    TextWidget(
                         fontWeight: FontWeight.w700,
-                        color: CentralizedCubit.isDarkMode
-                            ? KColors.greenColor
-                            : KColors.primaryColor,
-                        title: LocalizationManager.call("view-all"),
-                        fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp),
-                  ),
-                ],
+                        title: LocalizationManager.call("all-departments"),
+                        fontSize: 10.sp),
+                    const Spacer(),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, Routes.categoriesRoute);
+                      },
+                      child: TextWidget(
+                          fontWeight: FontWeight.w700,
+                          color: CentralizedCubit.isDarkMode
+                              ? KColors.greenColor
+                              : KColors.primaryColor,
+                          title: LocalizationManager.call("view-all"),
+                          fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp),
+                    ),
+                  ],
+                ),
               ),
             )),
         SliverToBoxAdapter(child: BlocBuilder<CategoriesBloc, CategoriesState>(
@@ -213,75 +217,79 @@ class HadithViewItemBuilder extends StatelessWidget {
                           crossAxisCount: crossAxisCount,
                           childAspectRatio: childAspectRatio),
                       itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, Routes.cateDetailsRoute,
-                                arguments: CategoriesDetailsPrams(
-                                  categoriesId: bloc.categoriesModal?[index].id,
-                                  subCategoriesCount: bloc
-                                      .categoriesModal?[index].hadeethsCount,
-                                  subCategoriesName:
-                                  bloc.categoriesModal?[index].title,
-                                ));
-                          },
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TextWidget(
-                                    color: CentralizedCubit.isDarkMode
-                                        ? KColors.scoColor
-                                        : KColors.primary2Color,
-                                    fontWeight: FontWeight.w600,
-                                    maxLines: 2,
-                                    fontSize:
-                                    MediaQuery.sizeOf(context).width > 600
-                                        ? 6.sp
-                                        : 10.sp,
-                                    title: value.categoriesModal?[index].title
-                                        .toString() ??
-                                        "",
-                                  ),
-                                  const Spacer(),
-                                  Row(
-                                    children: [
-                                      TextWidget(
-                                        fontSize:
-                                        MediaQuery.sizeOf(context).width >
-                                            600
-                                            ? 5.5.sp
-                                            : 9.sp,
-                                        color: CentralizedCubit.isDarkMode
-                                            ? KColors.circularPercentBg
-                                            : KColors.greyColor,
-                                        fontWeight: FontWeight.w500,
-                                        title: LocalizationManager.call(
-                                            "count-hadiths"),
-                                      ),
-                                      const Spacer(),
-                                      TextWidget(
-                                        fontSize:
-                                        MediaQuery.sizeOf(context).width >
-                                            600
-                                            ? 5.5.sp
-                                            : 9.sp,
-                                        color: CentralizedCubit.isDarkMode
-                                            ? KColors.circularPercentBg
-                                            : KColors.greyColor,
-                                        fontWeight: FontWeight.w500,
-                                        title: value.categoriesModal?[index]
-                                            .hadeethsCount
-                                            .toString() ??
-                                            "",
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                        return StaggeredItemAnimation(
+                          index: index,
+                          duration: const Duration(milliseconds: 400),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, Routes.cateDetailsRoute,
+                                  arguments: CategoriesDetailsPrams(
+                                    categoriesId: bloc.categoriesModal?[index].id,
+                                    subCategoriesCount: bloc
+                                        .categoriesModal?[index].hadeethsCount,
+                                    subCategoriesName:
+                                    bloc.categoriesModal?[index].title,
+                                  ));
+                            },
+                            child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextWidget(
+                                      color: CentralizedCubit.isDarkMode
+                                          ? KColors.scoColor
+                                          : KColors.primary2Color,
+                                      fontWeight: FontWeight.w600,
+                                      maxLines: 2,
+                                      fontSize:
+                                      MediaQuery.sizeOf(context).width > 600
+                                          ? 6.sp
+                                          : 10.sp,
+                                      title: value.categoriesModal?[index].title
+                                          .toString() ??
+                                          "",
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      children: [
+                                        TextWidget(
+                                          fontSize:
+                                          MediaQuery.sizeOf(context).width >
+                                              600
+                                              ? 5.5.sp
+                                              : 9.sp,
+                                          color: CentralizedCubit.isDarkMode
+                                              ? KColors.circularPercentBg
+                                              : KColors.greyColor,
+                                          fontWeight: FontWeight.w500,
+                                          title: LocalizationManager.call(
+                                              "count-hadiths"),
+                                        ),
+                                        const Spacer(),
+                                        TextWidget(
+                                          fontSize:
+                                          MediaQuery.sizeOf(context).width >
+                                              600
+                                              ? 5.5.sp
+                                              : 9.sp,
+                                          color: CentralizedCubit.isDarkMode
+                                              ? KColors.circularPercentBg
+                                              : KColors.greyColor,
+                                          fontWeight: FontWeight.w500,
+                                          title: value.categoriesModal?[index]
+                                              .hadeethsCount
+                                              .toString() ??
+                                              "",
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

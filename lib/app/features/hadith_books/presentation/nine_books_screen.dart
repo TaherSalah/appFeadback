@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/constent/lists.dart';
 import '../../../core/utils/style/k_color.dart';
@@ -96,16 +97,25 @@ leading: Navigator.canPop(context)
                     padding: EdgeInsets.symmetric(vertical: 20.h),
                     child: Column(
                       children: [
-                        BooksCover(
-                          title: Constants.collectionsGroupsTitles[0],
+                        FadeAnimation(
+                          delay: const Duration(milliseconds: 100),
+                          child: BooksCover(
+                            title: Constants.collectionsGroupsTitles[0],
+                          ),
                         ),
                         const Gap(15),
-                        BooksCover(
-                          title: Constants.collectionsGroupsTitles[1],
+                        FadeAnimation(
+                          delay: const Duration(milliseconds: 300),
+                          child: BooksCover(
+                            title: Constants.collectionsGroupsTitles[1],
+                          ),
                         ),
                         const Gap(15),
-                        BooksCover(
-                          title: Constants.collectionsGroupsTitles[2],
+                        FadeAnimation(
+                          delay: const Duration(milliseconds: 500),
+                          child: BooksCover(
+                            title: Constants.collectionsGroupsTitles[2],
+                          ),
                         ),
                         const Gap(30),
                       ],

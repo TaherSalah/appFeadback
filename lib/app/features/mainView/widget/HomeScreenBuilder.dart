@@ -237,7 +237,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     if (path == '/NineBooksScreen' || path == Routes.categoriesRoute)
       return 'hadith';
     if (path == '/mosquesMap') return 'mosques';
-    if (path == '/kidsCorner') return 'kids';
+    if (path == '/kidsCorner' || path == '/KidsCornerScreen') return 'kids';
     if (path == '/timingScreen') return 'timing';
     if (path == '/qiblaDirection') return 'qibla';
     if (path == '/fajrAlarm') return 'fajr_alarm';
@@ -356,22 +356,25 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                   slivers: [
                     // الهيدر الكبير
                     SliverToBoxAdapter(
-                      child: PrayerHeaderSection(
-                        progressValue: con.progressValue,
-                        hijriDate: con.hijriDate,
-                        gregorian: con.gregorian ?? "",
-                        nextPrayer: con.nextPrayer,
-                        remainingTime: con.remainingTimeText,
-                        location: _locationText ?? 'لم يتم تحديد الموقع',
-                        onSettingsTap: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SettingsView(),
-                            ),
-                          );
-                          _onLocationChanged();
-                        },
+                      child: FadeInDown(
+                        duration: const Duration(milliseconds: 600),
+                        child: PrayerHeaderSection(
+                          progressValue: con.progressValue,
+                          hijriDate: con.hijriDate,
+                          gregorian: con.gregorian ?? "",
+                          nextPrayer: con.nextPrayer,
+                          remainingTime: con.remainingTimeText,
+                          location: _locationText ?? 'لم يتم تحديد الموقع',
+                          onSettingsTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SettingsView(),
+                              ),
+                            );
+                            _onLocationChanged();
+                          },
+                        ),
                       ),
                     ),
 
@@ -379,7 +382,11 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                       child: Column(
                         children: [
                           // 📢 Social Media Banner
-                          const SocialBannerWidget(),
+                          FadeIn(
+                            duration: const Duration(milliseconds: 700),
+                            delay: const Duration(milliseconds: 200),
+                            child: const SocialBannerWidget(),
+                          ),
 
                           if (_featureStatuses['news'] != 'hidden' &&
                               _newsData != null &&
@@ -454,45 +461,49 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                           const SizedBox(height: 10),
                           // 📜 خـاطـرة اليوم (CMS)
                           if (_isQuoteVisible)
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? const Color(0xFF16213e)
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                  color:
-                                      const Color(0xFFD4AF37).withOpacity(0.3),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
+                            FadeInRight(
+                              duration: const Duration(milliseconds: 700),
+                              delay: const Duration(milliseconds: 300),
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? const Color(0xFF16213e)
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                    color:
+                                        const Color(0xFFD4AF37).withOpacity(0.3),
                                   ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.format_quote_rounded,
-                                      color: Color(0xFFD4AF37), size: 30),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      _dailyQuote,
-                                      style: GoogleFonts.cairo(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: isDark
-                                            ? Colors.white
-                                            : Colors.black87,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.format_quote_rounded,
+                                        color: Color(0xFFD4AF37), size: 30),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        _dailyQuote,
+                                        style: GoogleFonts.cairo(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black87,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           // 🔥 قسم بماذا تشعر اليوم؟
@@ -503,7 +514,11 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
                           // 🔥 رفيق الجمعة (يظهر فقط يوم الجمعة)
                           if (_featureStatuses['friday_companion'] != 'hidden')
-                            const FridayCompanionWidget(),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 700),
+                              delay: const Duration(milliseconds: 400),
+                              child: const FridayCompanionWidget(),
+                            ),
 
                           // 🔥 منبه الفجر المتقدم
                           // const FajrAlarmEntryWidget(),
@@ -557,9 +572,13 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                       _checkAndNavigate(item['navigate']);
                                     }
                                   },
-                                  child: IslamicCardWidget(
-                                      title: item["title"]!,
-                                      iconPath: item["icon"]!),
+                                  child: FadeInUp(
+                                    duration: const Duration(milliseconds: 600),
+                                    delay: Duration(milliseconds: index * 50),
+                                    child: IslamicCardWidget(
+                                        title: item["title"]!,
+                                        iconPath: item["icon"]!),
+                                  ),
                                 );
                               },
                             );
@@ -587,57 +606,77 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                           // const SizedBox(height: 10),
 
                           if (_featureStatuses['charity'] != 'hidden')
-                            InkWell(
-                              onTap: () {
-                                final status =
-                                    _featureStatuses['charity'] ?? 'active';
-                                if (status == 'maintenance') {
-                                  _showMaintenanceDialog();
-                                } else {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) =>
-                                            CharityDashboardScreen()),
-                                  );
-                                }
-                              },
-                              child: const CharityEntryWidget(),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 700),
+                              delay: const Duration(milliseconds: 500),
+                              child: InkWell(
+                                onTap: () {
+                                  final status =
+                                      _featureStatuses['charity'] ?? 'active';
+                                  if (status == 'maintenance') {
+                                    _showMaintenanceDialog();
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) =>
+                                              CharityDashboardScreen()),
+                                    );
+                                  }
+                                },
+                                child: const CharityEntryWidget(),
+                              ),
                             ),
                           const SizedBox(height: 10),
                           // 🔥 قسم تعرف على ربك
                           if (_featureStatuses['allah_names'] != 'hidden')
-                            const AllahNameWidget(),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 700),
+                              delay: const Duration(milliseconds: 600),
+                              child: const AllahNameWidget(),
+                            ),
 
                           const SizedBox(height: 10),
                           if (_featureStatuses['kids'] != 'hidden')
-                            InkWell(
-                              onTap: () {
-                                final status =
-                                    _featureStatuses['kids'] ?? 'active';
-                                if (status == 'maintenance') {
-                                  _showMaintenanceDialog();
-                                } else {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            KidsCornerScreen()),
-                                  );
-                                }
-                              },
-                              child: const KidsEntryPointWidget(),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 700),
+                              delay: const Duration(milliseconds: 700),
+                              child: InkWell(
+                                onTap: () {
+                                  final status =
+                                      _featureStatuses['kids'] ?? 'active';
+                                  if (status == 'maintenance') {
+                                    _showMaintenanceDialog();
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              KidsCornerScreen()),
+                                    );
+                                  }
+                                },
+                                child: const KidsEntryPointWidget(),
+                              ),
                             ),
 
                           const SizedBox(height: 20),
 
                           if (_featureStatuses['quran_azkar'] != 'hidden')
-                            const AzkarQuranWidget(),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 700),
+                              delay: const Duration(milliseconds: 800),
+                              child: const AzkarQuranWidget(),
+                            ),
 
                           if (_featureStatuses['other_azkar'] != 'hidden')
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              child: const OtherAzkarWidget(),
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 700),
+                              delay: const Duration(milliseconds: 900),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                child: const OtherAzkarWidget(),
+                              ),
                             ),
                         ],
                       ),

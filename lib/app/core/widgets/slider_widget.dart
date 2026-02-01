@@ -41,7 +41,6 @@ class _MainSliderBuilderState extends State<MainSliderBuilder> {
                 widget.height ?? MediaQuery.of(context).size.height * 0.30.h,
             autoPlay: widget.isAutoPlay ?? false,
             enlargeCenterPage: widget.enlargeCenterPage ?? true,
-            animateToClosest: true,
             aspectRatio: 1.0,
             onPageChanged: (index, reason) {
               setState(() {

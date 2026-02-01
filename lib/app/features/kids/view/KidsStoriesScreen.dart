@@ -41,6 +41,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
   }
 
   Future<void> _loadInitialData() async {
+    // Clear cache to fetch fresh data from Supabase
+    ContentService().clearCache();
     await _loadStories();
     await _loadUserStars();
   }
@@ -100,154 +102,160 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        body: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            // Playful Header
-            SliverAppBar(
-              expandedHeight: 180.h,
-              pinned: true,
-              backgroundColor: const Color(0xFF0EA5E9),
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              ),
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
+        body: RefreshIndicator(
+          onRefresh: () async {
+            ContentService().clearCache();
+            await _loadStories();
+          },
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+            slivers: [
+              // Playful Header
+              SliverAppBar(
+                expandedHeight: 180.h,
+                pinned: true,
+                backgroundColor: const Color(0xFF0EA5E9),
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                      ),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                          left: -20,
+                          bottom: -10,
+                          child: Opacity(
+                            opacity: 0.1,
+                            child: Icon(Icons.child_care_rounded, size: 150.sp, color: Colors.white),
+                          ),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'ركن الطفل المسلم 🧸',
+                              style: GoogleFonts.cairo(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24.sp,
+                                color: Colors.white,
+                                shadows: [Shadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 2))],
+                              ),
+                            ),
+                            Text(
+                              'قصص وعبر ومغامرات جميلة ✨',
+                              style: GoogleFonts.cairo(
+                                fontSize: 14.sp,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  child: Stack(
-                    alignment: Alignment.center,
+                ),
+              ),
+
+              // Stats Card (Achievement) V2
+              SliverToBoxAdapter(
+                child: FadeInDown(child: _buildAchievementCard(isDark)),
+              ),
+
+              // Categories Header
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                  child: Row(
                     children: [
-                      Positioned(
-                        left: -20,
-                        bottom: -10,
-                        child: Opacity(
-                          opacity: 0.1,
-                          child: Icon(Icons.child_care_rounded, size: 150.sp, color: Colors.white),
+                      Text(
+                        'اختر مغامرتك القادمة 🚀',
+                        style: GoogleFonts.cairo(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'ركن الطفل المسلم 🧸',
-                            style: GoogleFonts.cairo(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24.sp,
-                              color: Colors.white,
-                              shadows: [Shadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 2))],
-                            ),
-                          ),
-                          Text(
-                            'قصص وعبر ومغامرات جميلة ✨',
-                            style: GoogleFonts.cairo(
-                              fontSize: 14.sp,
-                              color: Colors.white.withOpacity(0.9),
-                            ),
-                          ),
-                        ],
-                      ),
+                      const Spacer(),
+                      Icon(Icons.auto_stories_rounded, color: const Color(0xFF0EA5E9), size: 20.sp),
                     ],
                   ),
                 ),
               ),
-            ),
 
-            // Stats Card (Achievement) V2
-            SliverToBoxAdapter(
-              child: FadeInDown(child: _buildAchievementCard(isDark)),
-            ),
-
-            // Categories Header
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                child: Row(
-                  children: [
-                    Text(
-                      'اختر مغامرتك القادمة 🚀',
-                      style: GoogleFonts.cairo(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    const Spacer(),
-                    Icon(Icons.auto_stories_rounded, color: const Color(0xFF0EA5E9), size: 20.sp),
-                  ],
-                ),
+              // Categories
+              SliverToBoxAdapter(
+                child: _buildCategoriesSection(isDark),
               ),
-            ),
 
-            // Categories
-            SliverToBoxAdapter(
-              child: _buildCategoriesSection(isDark),
-            ),
-
-            // Search Bar
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
-                    borderRadius: BorderRadius.circular(20.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+              // Search Bar
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+                      borderRadius: BorderRadius.circular(20.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (_) => _applyFilters(),
+                      style: GoogleFonts.cairo(fontSize: 14.sp),
+                      decoration: InputDecoration(
+                        hintText: 'ابحث عن قصة جميلة... 🔍',
+                        hintStyle: GoogleFonts.cairo(color: Colors.grey.shade400, fontSize: 13.sp),
+                        prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF0EA5E9)),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       ),
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (_) => _applyFilters(),
-                    style: GoogleFonts.cairo(fontSize: 14.sp),
-                    decoration: InputDecoration(
-                      hintText: 'ابحث عن قصة جميلة... 🔍',
-                      hintStyle: GoogleFonts.cairo(color: Colors.grey.shade400, fontSize: 13.sp),
-                      prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF0EA5E9)),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     ),
                   ),
                 ),
               ),
-            ),
 
-            // Vertical Shelf Grid (V2 Redesign)
-            _isLoading
-                ? SliverFillRemaining(child: Center(child: KLoading.progressIOSIndicator(context: context)))
-                : _filteredStories.isEmpty
-                    ? SliverFillRemaining(child: _buildEmptyState(isDark))
-                    : SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        sliver: SliverGrid(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.7,
-                            crossAxisSpacing: 16.w,
-                            mainAxisSpacing: 16.h,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) => FadeInUp(
-                              delay: Duration(milliseconds: index * 50),
-                              child: _buildBookCoverCard(_filteredStories[index], isDark),
+              // Vertical Shelf Grid (V2 Redesign)
+              _isLoading
+                  ? SliverFillRemaining(child: Center(child: KLoading.progressIOSIndicator(context: context)))
+                  : _filteredStories.isEmpty
+                      ? SliverFillRemaining(child: _buildEmptyState(isDark))
+                      : SliverPadding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          sliver: SliverGrid(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.7,
+                              crossAxisSpacing: 16.w,
+                              mainAxisSpacing: 16.h,
                             ),
-                            childCount: _filteredStories.length,
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) => FadeInUp(
+                                delay: Duration(milliseconds: index * 50),
+                                child: _buildBookCoverCard(_filteredStories[index], isDark),
+                              ),
+                              childCount: _filteredStories.length,
+                            ),
                           ),
                         ),
-                      ),
-            SliverToBoxAdapter(child: SizedBox(height: 100.h)),
-          ],
+              SliverToBoxAdapter(child: SizedBox(height: 100.h)),
+            ],
+          ),
         ),
       ),
     );

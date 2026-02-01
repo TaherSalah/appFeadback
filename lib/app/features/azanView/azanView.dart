@@ -1,3 +1,4 @@
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 // import 'dart:async';
 // import 'dart:math' as math;
 // import 'dart:ui' as ui;
@@ -2140,6 +2141,7 @@ import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/mainView/controllar/MainController.dart';
 import 'package:mvc_pattern/mvc_pattern.dart' hide StateSetter;
 
+import '../../core/shard/widgets/ui_animations.dart';
 import '../../core/utils/style/app_theme_colors.dart';
 import 'adhan_callback.dart';
 import 'adhan_workmanager_service.dart';
@@ -2817,15 +2819,21 @@ leading: Navigator.canPop(context)
                     child: KLoading.progressIOSIndicator(context: context),
                   )
                 else if (selectedCountry != null && selectedCity != null)
-                  buildCurrentLocation(
-                      context, isDark, selectedCountry, selectedCity),
+                  FadeAnimation(
+                    delay: const Duration(milliseconds: 100),
+                    child: buildCurrentLocation(
+                        context, isDark, selectedCountry, selectedCity),
+                  ),
 
                 const SizedBox(height: 24),
 
                 // ⏰ الصلاة القادمة (بطاقة مميزة)
                 if (prayerTimes != null && nextPrayer.isNotEmpty)
-                  _buildNextPrayerCard(context, isDark, nextPrayer,
-                      remainingTimeText, prayerTimes),
+                  FadeAnimation(
+                    delay: const Duration(milliseconds: 200),
+                    child: _buildNextPrayerCard(context, isDark, nextPrayer,
+                        remainingTimeText, prayerTimes),
+                  ),
 
                 const SizedBox(height: 24),
 
@@ -3472,7 +3480,10 @@ leading: Navigator.canPop(context)
         final prayer = prayerData[index];
         final isNext = nextPrayer.contains(prayer["name"] as String);
 
-        return AnimatedContainer(
+        return StaggeredItemAnimation(
+          index: index,
+          duration: const Duration(milliseconds: 400),
+          child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -3559,7 +3570,7 @@ leading: Navigator.canPop(context)
                 ),
               ],
             ),
-          ),
+          ),),
         );
       },
     );

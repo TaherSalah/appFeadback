@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 
 import '../../../core/utils/style/responsive_util.dart';
@@ -54,7 +55,7 @@ leading: Navigator.canPop(context) ? CupertinoNavigationBarBackButton(
           ) : null,
           centerTitle: true,
           title: Text(
-            "أذكار متنوعة",
+            "أذكار المسلم",
             style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
@@ -82,41 +83,19 @@ leading: Navigator.canPop(context) ? CupertinoNavigationBarBackButton(
                       shrinkWrap: true,
                       physics:
                           const NeverScrollableScrollPhysics(), // عشان المكون يكون جزء من ScrollView تانية
-                      children: iconsApp.map((item) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, item['navigate']!);
-                          },
-                          // child: Card(
-                          //   shape: RoundedRectangleBorder(
-                          //     borderRadius: BorderRadius.circular(10),
-                          //     side: const BorderSide(
-                          //         color: Colors.grey, width: 1),
-                          //   ),
-                          //   child: SizedBox(
-                          //     width: 90,
-                          //     height: 75,
-                          //     child: Padding(
-                          //       padding: const EdgeInsets.all(8.0),
-                          //       child: Column(
-                          //         mainAxisAlignment:
-                          //             MainAxisAlignment.spaceBetween,
-                          //         children: [
-                          //           Image.asset(
-                          //             item["icon"]!,
-                          //             width: 90,
-                          //             height: 75,
-                          //             fit: BoxFit.contain,
-                          //           ),
-                          //           const SizedBox(height: 8),
-                          //           TextDefaultWidget(title:item["title"]! ,fontFamily: "me",fontSize: ResponsiveUtil.isTablet(context)? 11.sp : 11.5.sp,fontWeight: ResponsiveUtil.isTablet(context)?FontWeight.w500: FontWeight.bold,)
-                          //         ],
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          child: IslamicCardWidget(
-                              title: item["title"]!, iconPath: item["icon"]!),
+                      children: iconsApp.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final item = entry.value;
+                        return StaggeredItemAnimation(
+                          index: index,
+                          duration: const Duration(milliseconds: 400),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pushNamed(context, item['navigate']!);
+                            },
+                            child: IslamicCardWidget(
+                                title: item["title"]!, iconPath: item["icon"]!),
+                          ),
                         );
                       }).toList(),
                     ),

@@ -18,6 +18,7 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/shard/widgets/ui_animations.dart';
 
 import 'package:url_launcher/url_launcher.dart'; //
 import '../../core/utils/style/app_theme_colors.dart';
@@ -1077,803 +1078,845 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
           child: Column(
             children: [
               // --- Summary / Nisab Card ---
-              _buildNisabCard(isDark, formatMoney),
+              FadeAnimation(
+                delay: const Duration(milliseconds: 100),
+                child: _buildNisabCard(isDark, formatMoney),
+              ),
 
               const SizedBox(height: 16),
 
-              _buildSectionCard(
-                title: "إعدادات عملة البلد",
-                isDark: isDark,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isDark ? Colors.white10 : Colors.grey.shade300,
-                      ),
-                    ),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: const Color(AppStyle.primaryColor).withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.currency_exchange, color: Color(AppStyle.primaryColor), size: 20),
-                      ),
-                      title: Text(
-                        "العملة الحالية",
-                        style: GoogleFonts.cairo(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
+              StaggeredItemAnimation(
+                index: 0,
+                child: _buildSectionCard(
+                  title: "إعدادات عملة البلد",
+                  isDark: isDark,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isDark ? Colors.white10 : Colors.grey.shade300,
                         ),
                       ),
-                      trailing: Theme(
-                        data: Theme.of(context).copyWith(
-                          canvasColor: AppThemeColors.cardBackgroundColor(context),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(AppStyle.primaryColor).withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.currency_exchange, color: Color(AppStyle.primaryColor), size: 20),
                         ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<Currency>(
-                            dropdownColor: AppThemeColors.cardBackgroundColor(context),
-                            value: _selectedCurrency,
-                            icon: Icon(Icons.keyboard_arrow_down, 
-                                color: isDark ? Colors.white70 : Colors.black54),
-                            style: GoogleFonts.cairo(
-                                color: const Color(AppStyle.primaryColor), 
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13.sp),
-                            onChanged: (Currency? newValue) {
-                              if (newValue != null) {
-                                setState(() {
-                                  _selectedCurrency = newValue;
-                                });
-                                _calculate(); // Recalculate if needed
-                              }
-                            },
-                            items: currencies
-                                .map<DropdownMenuItem<Currency>>((Currency value) {
-                              return DropdownMenuItem<Currency>(
-                                value: value,
-                                child: Text("${value.code} (${value.symbol})"),
-                              );
-                            }).toList(),
+                        title: Text(
+                          "العملة الحالية",
+                          style: GoogleFonts.cairo(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        trailing: Theme(
+                          data: Theme.of(context).copyWith(
+                            canvasColor: AppThemeColors.cardBackgroundColor(context),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<Currency>(
+                              dropdownColor: AppThemeColors.cardBackgroundColor(context),
+                              value: _selectedCurrency,
+                              icon: Icon(Icons.keyboard_arrow_down, 
+                                  color: isDark ? Colors.white70 : Colors.black54),
+                              style: GoogleFonts.cairo(
+                                  color: const Color(AppStyle.primaryColor), 
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13.sp),
+                              onChanged: (Currency? newValue) {
+                                if (newValue != null) {
+                                  setState(() {
+                                    _selectedCurrency = newValue;
+                                  });
+                                  _calculate(); // Recalculate if needed
+                                }
+                              },
+                              items: currencies
+                                  .map<DropdownMenuItem<Currency>>((Currency value) {
+                                return DropdownMenuItem<Currency>(
+                                  value: value,
+                                  child: Text("${value.code} (${value.symbol})"),
+                                );
+                              }).toList(),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
 
               // --- Inputs Section ---
               // --- Global Settings (Gold Prices) ---
-              _buildSectionCard(
-                title: "إعدادات الأسعار (مطلوب)",
-                children: [
-                   // Update Prices Button
-                  InkWell(
-                    onTap: _isLoadingPrices ? null : _updatePrices,
-                    child: Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.only(bottom: 16),
-                      padding: const EdgeInsets.all(12),
+              StaggeredItemAnimation(
+                index: 1,
+                child: _buildSectionCard(
+                  title: "إعدادات الأسعار (مطلوب)",
+                  children: [
+                     // Update Prices Button
+                    InkWell(
+                      onTap: _isLoadingPrices ? null : _updatePrices,
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: KColors.primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: KColors.primaryColor.withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (_isLoadingPrices)
+                              const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            else
+                               Icon(Icons.cloud_download_outlined, color: KColors.primaryColor, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              _isLoadingPrices ? "جاري التحديث..." : "تحديث الأسعار تلقائياً للان",
+                              style: GoogleFonts.cairo(
+                                color: KColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Toggle Standard
+                    Container(
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: KColors.primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: KColors.primaryColor.withOpacity(0.3)),
+                        color: isDark ? Colors.black26 : Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (_isLoadingPrices)
-                            const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          else
-                             Icon(Icons.cloud_download_outlined, color: KColors.primaryColor, size: 20),
-                          const SizedBox(width: 8),
-                          Text(
-                            _isLoadingPrices ? "جاري التحديث..." : "تحديث الأسعار تلقائياً للان",
-                            style: GoogleFonts.cairo(
-                              color: KColors.primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12.sp,
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() => _isGoldStandard = true);
+                                _calculate();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: _isGoldStandard
+                                      ? KColors.primaryColor
+                                      : null,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "نصاب الذهب (85g)",
+                                  style: GoogleFonts.cairo(
+                                    color: _isGoldStandard
+                                        ? Colors.white
+                                        : (isDark
+                                            ? Colors.white70
+                                            : Colors.black54),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:ResponsiveUtil.isTablet(context)?9.5.sp:  12.sp,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() => _isGoldStandard = false);
+                                _calculate();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: !_isGoldStandard
+                                      ? KColors.primaryColor
+                                      : null,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "نصاب الفضة (595g)",
+                                  style: GoogleFonts.cairo(
+                                    color: !_isGoldStandard
+                                        ? Colors.white
+                                        : (isDark
+                                            ? Colors.white70
+                                            : Colors.black54),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: ResponsiveUtil.isTablet(context)?9.5.sp:12.sp,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  // Toggle Standard
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.black26 : Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
+                    const SizedBox(height: 12),
+
+                    // Gold Prices Row
+                    Text("أسعار الذهب (الجرام) - أدخل عيار 24 لحساب النصاب",
+                        style: GoogleFonts.cairo(
+                            fontSize: ResponsiveUtil.isTablet(context)?8.sp:12.sp, color: Colors.grey[600]),
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: 8),
+                    Row(
                       children: [
                         Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() => _isGoldStandard = true);
-                              _calculate();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              decoration: BoxDecoration(
-                                color: _isGoldStandard
-                                    ? KColors.primaryColor
-                                    : null,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "نصاب الذهب (85g)",
+                            child: Column(
+                          children: [
+                            Text("عيار 24 (للنصاب)",
                                 style: GoogleFonts.cairo(
-                                  color: _isGoldStandard
-                                      ? Colors.white
-                                      : (isDark
-                                          ? Colors.white70
-                                          : Colors.black54),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:ResponsiveUtil.isTablet(context)?9.5.sp:  12.sp,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                                    fontSize:ResponsiveUtil.isTablet(context)?8.sp: 10.sp, color: Colors.amber[800])),
+                            const SizedBox(height: 4),
+                            _buildSmallInput(
+                                _goldPrice24Controller, isDark, "سعر 24"),
+                          ],
+                        )),
+                        const SizedBox(width: 8),
                         Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() => _isGoldStandard = false);
-                              _calculate();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              decoration: BoxDecoration(
-                                color: !_isGoldStandard
-                                    ? KColors.primaryColor
-                                    : null,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "نصاب الفضة (595g)",
+                            child: Column(
+                          children: [
+                            Text("عيار 21",
                                 style: GoogleFonts.cairo(
-                                  color: !_isGoldStandard
-                                      ? Colors.white
-                                      : (isDark
-                                          ? Colors.white70
-                                          : Colors.black54),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: ResponsiveUtil.isTablet(context)?9.5.sp:12.sp,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                                    fontSize: ResponsiveUtil.isTablet(context)?8.sp:10.sp, color: Colors.grey)),
+                            const SizedBox(height: 4),
+                            _buildSmallInput(
+                                _goldPrice21Controller, isDark, "سعر 21"),
+                          ],
+                        )),
+                        const SizedBox(width: 8),
+                        Expanded(
+                            child: Column(
+                          children: [
+                            Text("عيار 18",
+                                style: GoogleFonts.cairo(
+                                    fontSize:ResponsiveUtil.isTablet(context)?8.sp: 10.sp, color: Colors.grey)),
+                            const SizedBox(height: 4),
+                            _buildSmallInput(
+                                _goldPrice18Controller, isDark, "سعر 18"),
+                          ],
+                        )),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 12),
 
-                  // Gold Prices Row
-                  Text("أسعار الذهب (الجرام) - أدخل عيار 24 لحساب النصاب",
-                      style: GoogleFonts.cairo(
-                          fontSize: ResponsiveUtil.isTablet(context)?8.sp:12.sp, color: Colors.grey[600]),
-                      textAlign: TextAlign.center),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                          child: Column(
-                        children: [
-                          Text("عيار 24 (للنصاب)",
-                              style: GoogleFonts.cairo(
-                                  fontSize:ResponsiveUtil.isTablet(context)?8.sp: 10.sp, color: Colors.amber[800])),
-                          const SizedBox(height: 4),
-                          _buildSmallInput(
-                              _goldPrice24Controller, isDark, "سعر 24"),
-                        ],
-                      )),
-                      const SizedBox(width: 8),
-                      Expanded(
-                          child: Column(
-                        children: [
-                          Text("عيار 21",
-                              style: GoogleFonts.cairo(
-                                  fontSize: ResponsiveUtil.isTablet(context)?8.sp:10.sp, color: Colors.grey)),
-                          const SizedBox(height: 4),
-                          _buildSmallInput(
-                              _goldPrice21Controller, isDark, "سعر 21"),
-                        ],
-                      )),
-                      const SizedBox(width: 8),
-                      Expanded(
-                          child: Column(
-                        children: [
-                          Text("عيار 18",
-                              style: GoogleFonts.cairo(
-                                  fontSize:ResponsiveUtil.isTablet(context)?8.sp: 10.sp, color: Colors.grey)),
-                          const SizedBox(height: 4),
-                          _buildSmallInput(
-                              _goldPrice18Controller, isDark, "سعر 18"),
-                        ],
-                      )),
-                    ],
-                  ),
+                    const SizedBox(height: 12),
 
-                  const SizedBox(height: 12),
-
-                  // Silver Price Row
-                  Text("سعر جرام الفضة اليوم (${_selectedCurrency.symbol})",
-                      style: GoogleFonts.cairo(
-                          fontSize:ResponsiveUtil.isTablet(context)?8.sp: 12.sp, color: Colors.grey[600]),
-                      textAlign: TextAlign.center),
-                  const SizedBox(height: 5),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: _buildSmallInput(
-                        _silverPriceController, isDark, "أدخل سعر جرام الفضة"),
-                  ),
-                ],
-                isDark: isDark,
+                    // Silver Price Row
+                    Text("سعر جرام الفضة اليوم (${_selectedCurrency.symbol})",
+                        style: GoogleFonts.cairo(
+                            fontSize:ResponsiveUtil.isTablet(context)?8.sp: 12.sp, color: Colors.grey[600]),
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: _buildSmallInput(
+                          _silverPriceController, isDark, "أدخل سعر جرام الفضة"),
+                    ),
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 16),
 
               // --- Year Type Toggle ---
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppThemeColors.cardBackgroundColor(context),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("نوع الحول (العام)",
-                            style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.bold,
-                                fontSize:ResponsiveUtil.isTablet(context)?10.sp:  13.sp,
-                                color: isDark ? Colors.white : Colors.black87)),
-                        Text(_isHijriYear ? "هجري (2.5%)" : "ميلادي (2.577%)",
-                            style: GoogleFonts.cairo(
-                                fontSize:ResponsiveUtil.isTablet(context)?7.sp:  11.sp, color: Colors.grey)),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        _buildToggleBtn("هجري", _isHijriYear, () {
-                          setState(() => _isHijriYear = true);
-                          _calculate();
-                        }),
-                        const SizedBox(width: 8),
-                        _buildToggleBtn("ميلادي", !_isHijriYear, () {
-                          setState(() => _isHijriYear = false);
-                          _calculate();
-                        }),
-                      ],
-                    )
-                  ],
+              StaggeredItemAnimation(
+                index: 2,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppThemeColors.cardBackgroundColor(context),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("نوع الحول (العام)",
+                              style: GoogleFonts.cairo(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:ResponsiveUtil.isTablet(context)?10.sp:  13.sp,
+                                  color: isDark ? Colors.white : Colors.black87)),
+                          Text(_isHijriYear ? "هجري (2.5%)" : "ميلادي (2.577%)",
+                              style: GoogleFonts.cairo(
+                                  fontSize:ResponsiveUtil.isTablet(context)?7.sp:  11.sp, color: Colors.grey)),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          _buildToggleBtn("هجري", _isHijriYear, () {
+                            setState(() => _isHijriYear = true);
+                            _calculate();
+                          }),
+                          const SizedBox(width: 8),
+                          _buildToggleBtn("ميلادي", !_isHijriYear, () {
+                            setState(() => _isHijriYear = false);
+                            _calculate();
+                          }),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
 
               const SizedBox(height: 16),
 
               // --- 1. Money Section ---
-              _buildSectionCard(
-                title: "زكاة المال",
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "ملاحظة: لا تجب الزكاة في الحاجات الأصلية كالمسكن الشخصي، السيارات، والأثاث.",
-                            style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.orange.shade800),
+              StaggeredItemAnimation(
+                index: 3,
+                child: _buildSectionCard(
+                  title: "زكاة المال",
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "ملاحظة: لا تجب الزكاة في الحاجات الأصلية كالمسكن الشخصي، السيارات، والأثاث.",
+                              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.orange.shade800),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  _buildInputRow(
-                    label: "الأموال النقدية (كاش/بنك)",
-                    controller: _moneyController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                    trailing: IconButton(
-                      icon: Icon(Icons.help_outline, size: 20, color: KColors.primaryColor),
-                      onPressed: () => _showProfessionalZakatGuide(isDark),
-                      tooltip: "كيف أحسب زكاة راتبي/مهنتي؟",
+                    _buildInputRow(
+                      label: "الأموال النقدية (كاش/بنك)",
+                      controller: _moneyController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                      trailing: IconButton(
+                        icon: Icon(Icons.help_outline, size: 20, color: KColors.primaryColor),
+                        onPressed: () => _showProfessionalZakatGuide(isDark),
+                        tooltip: "كيف أحسب زكاة راتبي/مهنتي؟",
+                      ),
                     ),
-                  ),
-                  _buildInputRow(
-                    label: "مبالغ مستحقة لك عند الغير (ديون جيدة)",
-                    controller: _receivablesController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                  ),
-                ],
-                isDark: isDark,
+                    _buildInputRow(
+                      label: "مبالغ مستحقة لك عند الغير (ديون جيدة)",
+                      controller: _receivablesController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 16),
 
               // --- 2. Assets Section ---
-              _buildSectionCard(
-                title: "زكاة الأصول والممتلكات",
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("طبيعة الاستثمار:", style: GoogleFonts.cairo(fontSize: 12.sp)),
-                        Row(
-                          children: [
-                            _buildToggleBtn("مضاربة", _isSpeculativeStock, () {
-                              setState(() => _isSpeculativeStock = true);
-                              _calculate();
-                            }),
-                            const SizedBox(width: 8),
-                            _buildToggleBtn("استثمار طويل", !_isSpeculativeStock, () {
-                              setState(() => _isSpeculativeStock = false);
-                              _calculate();
-                            }),
-                          ],
-                        ),
-                      ],
+              StaggeredItemAnimation(
+                index: 4,
+                child: _buildSectionCard(
+                  title: "زكاة الأصول والممتلكات",
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("طبيعة الاستثمار:", style: GoogleFonts.cairo(fontSize: 12.sp)),
+                          Row(
+                            children: [
+                              _buildToggleBtn("مضاربة", _isSpeculativeStock, () {
+                                setState(() => _isSpeculativeStock = true);
+                                _calculate();
+                              }),
+                              const SizedBox(width: 8),
+                              _buildToggleBtn("استثمار طويل", !_isSpeculativeStock, () {
+                                setState(() => _isSpeculativeStock = false);
+                                _calculate();
+                              }),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  _buildInputRow(
-                    label: _isSpeculativeStock ? "القيمة السوقية للأسهم" : "إجمالي الأرباح الموزعة",
-                    controller: _stocksController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                  ),
-                  _buildInputRow(
-                    label: "قيمة السندات التي أمتلكها",
-                    controller: _bondsController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                  ),
-                  _buildInputRow(
-                    label: "قيمة الأرباح التي حصلت عليها",
-                    controller: _profitsController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                  ),
-                ],
-                isDark: isDark,
+                    _buildInputRow(
+                      label: _isSpeculativeStock ? "القيمة السوقية للأسهم" : "إجمالي الأرباح الموزعة",
+                      controller: _stocksController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                    _buildInputRow(
+                      label: "قيمة السندات التي أمتلكها",
+                      controller: _bondsController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                    _buildInputRow(
+                      label: "قيمة الأرباح التي حصلت عليها",
+                      controller: _profitsController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 16),
 
               // --- 2.2 Trade & Debts ---
-              _buildSectionCard(
-                title: "زكاة عروض التجارة والديون",
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "ملاحظة: زكاة التجارة على (الكاش + البضائع بسعر البيع + الديون الجيدة). الأصول الثابتة (أثاث، مبيعات، ماكينات) لا زكاة عليها.",
-                            style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.orange.shade800),
+              StaggeredItemAnimation(
+                index: 5,
+                child: _buildSectionCard(
+                  title: "زكاة عروض التجارة والديون",
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "ملاحظة: زكاة التجارة على (الكاش + البضائع بسعر البيع + الديون الجيدة). الأصول الثابتة (أثاث، مبيعات، ماكينات) لا زكاة عليها.",
+                              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.orange.shade800),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  _buildInputRow(
-                    label: "الكاش الموجود في النشاط التجاري",
-                    controller: _tradeCashController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                  ),
-                  _buildInputRow(
-                    label: "قيمة البضائع (بسعر البيع الحالي)",
-                    controller: _tradeGoodsController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                  ),
-                  _buildInputRow(
-                    label: "مبالغ مستحقة للنشاط عند العملاء",
-                    controller: _tradeReceivablesController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                  ),
-                  _buildInputRow(
-                    label: "الديون والالتزامات للغير (تُخصم)",
-                    controller: _debtsController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                    isNegative: true,
-                  ),
-                ],
-                isDark: isDark,
+                    _buildInputRow(
+                      label: "الكاش الموجود في النشاط التجاري",
+                      controller: _tradeCashController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                    _buildInputRow(
+                      label: "قيمة البضائع (بسعر البيع الحالي)",
+                      controller: _tradeGoodsController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                    _buildInputRow(
+                      label: "مبالغ مستحقة للنشاط عند العملاء",
+                      controller: _tradeReceivablesController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                    _buildInputRow(
+                      label: "الديون والالتزامات للغير (تُخصم)",
+                      controller: _debtsController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                      isNegative: true,
+                    ),
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 16),
 
               // --- 3. Gold Section ---
-              _buildSectionCard(
-                title: "زكاة الذهب",
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    child: Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: [
-                        Text("غرض اقتناء الذهب:",
-                            style: GoogleFonts.cairo(fontSize: 12.sp)),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _buildToggleBtn("ادخار/استثمار", _isGoldInvestment, () {
-                              setState(() => _isGoldInvestment = true);
-                              _calculate();
-                            }),
-                            const SizedBox(width: 8),
-                            _buildToggleBtn("زينة شخصية", !_isGoldInvestment, () {
-                              setState(() => _isGoldInvestment = false);
-                              _calculate();
-                            }),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (!_isGoldInvestment)
+              StaggeredItemAnimation(
+                index: 6,
+                child: _buildSectionCard(
+                  title: "زكاة الذهب",
+                  children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          "ملاحظة: ذهب الزينة المعتاد لا زكاة فيه عند جمهور الفقهاء. إذا كان الوزن كبيراً جداً (خارج المعتاد) يُفضل احتسابه كادخار.",
-                          style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.blue.shade800),
-                        ),
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      child: Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          Text("غرض اقتناء الذهب:",
+                              style: GoogleFonts.cairo(fontSize: 12.sp)),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _buildToggleBtn("ادخار/استثمار", _isGoldInvestment, () {
+                                setState(() => _isGoldInvestment = true);
+                                _calculate();
+                              }),
+                              const SizedBox(width: 8),
+                              _buildToggleBtn("زينة شخصية", !_isGoldInvestment, () {
+                                setState(() => _isGoldInvestment = false);
+                                _calculate();
+                              }),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  const SizedBox(height: 8),
-                  // Weights
-                  _buildInputRow(
-                    label: "وزن الذهب عيار 24",
-                    controller: _goldWeight24Controller,
-                    isDark: isDark,
-                    suffix: "جرام",
-                    labelPrefix: "السبائك الخالصة",
-                  ),
-                  _buildInputRow(
-                    label: "وزن الذهب عيار 21",
-                    controller: _goldWeight21Controller,
-                    isDark: isDark,
-                    suffix: "جرام",
-                    labelPrefix: "المشغولات",
-                  ),
-                  _buildInputRow(
-                    label: "وزن الذهب عيار 18",
-                    controller: _goldWeight18Controller,
-                    isDark: isDark,
-                    suffix: "جرام",
-                    labelPrefix: "المشغولات",
-                  ),
-                ],
-                isDark: isDark,
+                    if (!_isGoldInvestment)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            "ملاحظة: ذهب الزينة المعتاد لا زكاة فيه عند جمهور الفقهاء. إذا كان الوزن كبيراً جداً (خارج المعتاد) يُفضل احتسابه كادخار.",
+                            style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.blue.shade800),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 8),
+                    // Weights
+                    _buildInputRow(
+                      label: "وزن الذهب عيار 24",
+                      controller: _goldWeight24Controller,
+                      isDark: isDark,
+                      suffix: "جرام",
+                      labelPrefix: "السبائك الخالصة",
+                    ),
+                    _buildInputRow(
+                      label: "وزن الذهب عيار 21",
+                      controller: _goldWeight21Controller,
+                      isDark: isDark,
+                      suffix: "جرام",
+                      labelPrefix: "المشغولات",
+                    ),
+                    _buildInputRow(
+                      label: "وزن الذهب عيار 18",
+                      controller: _goldWeight18Controller,
+                      isDark: isDark,
+                      suffix: "جرام",
+                      labelPrefix: "المشغولات",
+                    ),
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 16),
 
               // --- 3b. Silver Section ---
-              _buildSectionCard(
-                title: "زكاة الفضة",
-                children: [
-                  _buildInputRow(
-                    label: "وزن الفضة الذي تملكه",
-                    controller: _silverWeightController,
-                    isDark: isDark,
-                    suffix: "الجرام",
-                    labelPrefix: "وحدة القياس",
-                  ),
-                ],
-                isDark: isDark,
+              StaggeredItemAnimation(
+                index: 7,
+                child: _buildSectionCard(
+                  title: "زكاة الفضة",
+                  children: [
+                    _buildInputRow(
+                      label: "وزن الفضة الذي تملكه",
+                      controller: _silverWeightController,
+                      isDark: isDark,
+                      suffix: "الجرام",
+                      labelPrefix: "وحدة القياس",
+                    ),
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 16),
 
-               // --- 4. Real Estate Section ---
-              _buildSectionCard(
-                title: "زكاة العقارات والأراضي",
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("نوع العقار:", style: GoogleFonts.cairo(fontSize: 12.sp)),
-                        Row(
-                          children: [
-                            _buildToggleBtn("للإيجار", !_isRealEstateTrading, () {
-                              setState(() => _isRealEstateTrading = false);
-                              _calculate();
-                            }),
-                            const SizedBox(width: 8),
-                            _buildToggleBtn("للمتاجرة", _isRealEstateTrading, () {
-                              setState(() => _isRealEstateTrading = true);
-                              _calculate();
-                            }),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (!_isRealEstateTrading)
-                    _buildInputRow(
-                      label: "متوسط الإيجار الشهري للعقار",
-                      controller: _realEstateRentController,
-                      isDark: isDark,
-                      suffix: _selectedCurrency.name,
-                    )
-                  else
-                    _buildInputRow(
-                      label: "القيمة السوقية الحالية للعقار",
-                      controller: _realEstateMarketValueController,
-                      isDark: isDark,
-                      suffix: _selectedCurrency.name,
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                // --- 4. Real Estate Section ---
+              StaggeredItemAnimation(
+                index: 8,
+                child: _buildSectionCard(
+                  title: "زكاة العقارات والأراضي",
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(Icons.info_outline, size: 16, color: Colors.blue),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              _isRealEstateTrading 
-                                ? "المتاجرة: زكاتك على القيمة الإجمالية." 
-                                : "للإيجار: زكاتك على صافي الإيراد السنوي.",
-                              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.blue.shade700),
-                            ),
+                          Text("نوع العقار:", style: GoogleFonts.cairo(fontSize: 12.sp)),
+                          Row(
+                            children: [
+                              _buildToggleBtn("للإيجار", !_isRealEstateTrading, () {
+                                setState(() => _isRealEstateTrading = false);
+                                _calculate();
+                              }),
+                              const SizedBox(width: 8),
+                              _buildToggleBtn("للمتاجرة", _isRealEstateTrading, () {
+                                setState(() => _isRealEstateTrading = true);
+                                _calculate();
+                              }),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
-                isDark: isDark,
+                    if (!_isRealEstateTrading)
+                      _buildInputRow(
+                        label: "متوسط الإيجار الشهري للعقار",
+                        controller: _realEstateRentController,
+                        isDark: isDark,
+                        suffix: _selectedCurrency.name,
+                      )
+                    else
+                      _buildInputRow(
+                        label: "القيمة السوقية الحالية للعقار",
+                        controller: _realEstateMarketValueController,
+                        isDark: isDark,
+                        suffix: _selectedCurrency.name,
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.info_outline, size: 16, color: Colors.blue),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _isRealEstateTrading 
+                                  ? "المتاجرة: زكاتك على القيمة الإجمالية." 
+                                  : "للإيجار: زكاتك على صافي الإيراد السنوي.",
+                                style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.blue.shade700),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 16),
 
               // --- 5. Crops Section ---
-              _buildSectionCard(
-                title: "زكاة الزروع والثمار",
-                children: [
-                  Text(
-                    "تختلف النسبة حسب طريقة الري",
-                    style:
-                        GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 10),
-                  // Irrigation Dropdown
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.black12 : Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
+              StaggeredItemAnimation(
+                index: 9,
+                child: _buildSectionCard(
+                  title: "زكاة الزروع والثمار",
+                  children: [
+                    Text(
+                      "تختلف النسبة حسب طريقة الري",
+                      style:
+                          GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey),
                     ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<int>(
-                        value: _irrigationMethod,
-                        isExpanded: true,
-                        dropdownColor:
-                            AppThemeColors.cardBackgroundColor(context),
-                        items: [
-                          DropdownMenuItem(
-                              value: 0,
-                              child: Text("ري طبيعي (مطر/عيون) - 10%",
-                                  style: GoogleFonts.cairo(fontSize: 14.sp))),
-                          DropdownMenuItem(
-                              value: 1,
-                              child: Text("ري صناعي (آلات) - 5%",
-                                  style: GoogleFonts.cairo(fontSize: 14.sp))),
-                          DropdownMenuItem(
-                              value: 2,
-                              child: Text("ري مختلط - 7.5%",
-                                  style: GoogleFonts.cairo(fontSize: 14.sp))),
-                        ],
-                        onChanged: (v) {
-                          setState(() => _irrigationMethod = v ?? 1);
-                          _calculate();
-                        },
+                    const SizedBox(height: 10),
+                    // Irrigation Dropdown
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.black12 : Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<int>(
+                          value: _irrigationMethod,
+                          isExpanded: true,
+                          dropdownColor:
+                              AppThemeColors.cardBackgroundColor(context),
+                          items: [
+                            DropdownMenuItem(
+                                value: 0,
+                                child: Text("ري طبيعي (مطر/عيون) - 10%",
+                                    style: GoogleFonts.cairo(fontSize: 14.sp))),
+                            DropdownMenuItem(
+                                value: 1,
+                                child: Text("ري صناعي (آلات) - 5%",
+                                    style: GoogleFonts.cairo(fontSize: 14.sp))),
+                            DropdownMenuItem(
+                                value: 2,
+                                child: Text("ري مختلط - 7.5%",
+                                    style: GoogleFonts.cairo(fontSize: 14.sp))),
+                          ],
+                          onChanged: (v) {
+                            setState(() => _irrigationMethod = v ?? 1);
+                            _calculate();
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildInputRow(
-                    label: "وزن المحصول",
-                    controller: _cropsWeightController,
-                    isDark: isDark,
-                    suffix: "كيلوجرام",
-                  ),
-                  _buildInputRow(
-                    label: "قيمة المحصول",
-                    controller: _cropsValueController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, right: 12.0),
-                    child: Text(
-                      "* لا تجب الزكاة إلا إذا بلغ المحصول 5 أوسق (653 كجم تقريباً)",
-                      style: GoogleFonts.cairo(
-                          fontSize: 10.sp, color: Colors.grey),
+                    const SizedBox(height: 16),
+                    _buildInputRow(
+                      label: "وزن المحصول",
+                      controller: _cropsWeightController,
+                      isDark: isDark,
+                      suffix: "كيلوجرام",
                     ),
-                  ),
-                ],
-                isDark: isDark,
+                    _buildInputRow(
+                      label: "قيمة المحصول",
+                      controller: _cropsValueController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, right: 12.0),
+                      child: Text(
+                        "* لا تجب الزكاة إلا إذا بلغ المحصول 5 أوسق (653 كجم تقريباً)",
+                        style: GoogleFonts.cairo(
+                            fontSize: 10.sp, color: Colors.grey),
+                      ),
+                    ),
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 16),
 
               // --- 6. Cattle Section ---
-              _buildSectionCard(
-                title: "زكاة الأنعام (المواشي)",
-                children: [
-                   Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "ملاحظة: الزكاة في السائمة (التي ترعى) فقط. أما المعلوفة (التي تشتري لها علفاً أغلب العام) فلا زكاة فيها.",
-                            style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.orange.shade800),
+              StaggeredItemAnimation(
+                index: 10,
+                child: _buildSectionCard(
+                  title: "زكاة الأنعام (المواشي)",
+                  children: [
+                     Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "ملاحظة: الزكاة في السائمة (التي ترعى) فقط. أما المعلوفة (التي تشتري لها علفاً أغلب العام) فلا زكاة فيها.",
+                              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.orange.shade800),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  _buildInputRow(
-                    label: "عدد رؤوس الإبل",
-                    controller: _camelsController,
-                    isDark: isDark,
-                    suffix: "رأس",
-                    labelPrefix: "النصاب: 5 رؤوس",
-                  ),
-                  const SizedBox(height: 8),
-                  _buildInputRow(
-                    label: "عدد رؤوس البقر",
-                    controller: _cowsController,
-                    isDark: isDark,
-                    suffix: "رأس",
-                    labelPrefix: "النصاب: 30 رأس",
-                  ),
-                  const SizedBox(height: 8),
-                  _buildInputRow(
-                    label: "عدد رؤوس الغنم",
-                    controller: _sheepController,
-                    isDark: isDark,
-                    suffix: "رأس",
-                    labelPrefix: "النصاب: 40 رأس",
-                  ),
-                  if (_camelsController.text.isNotEmpty || _cowsController.text.isNotEmpty || _sheepController.text.isNotEmpty)
-                    _buildCattleResultCards(isDark),
-                ],
-                isDark: isDark,
+                    _buildInputRow(
+                      label: "عدد رؤوس الإبل",
+                      controller: _camelsController,
+                      isDark: isDark,
+                      suffix: "رأس",
+                      labelPrefix: "النصاب: 5 رؤوس",
+                    ),
+                    const SizedBox(height: 8),
+                    _buildInputRow(
+                      label: "عدد رؤوس البقر",
+                      controller: _cowsController,
+                      isDark: isDark,
+                      suffix: "رأس",
+                      labelPrefix: "النصاب: 30 رأس",
+                    ),
+                    const SizedBox(height: 8),
+                    _buildInputRow(
+                      label: "عدد رؤوس الغنم",
+                      controller: _sheepController,
+                      isDark: isDark,
+                      suffix: "رأس",
+                      labelPrefix: "النصاب: 40 رأس",
+                    ),
+                    if (_camelsController.text.isNotEmpty || _cowsController.text.isNotEmpty || _sheepController.text.isNotEmpty)
+                      _buildCattleResultCards(isDark),
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 16),
 
               // --- 7. Zakat al-Fitr Section ---
-              _buildSectionCard(
-                title: "زكاة الفطر",
-                children: [
-                  _buildInputRow(
-                    label: "عدد الأفراد",
-                    controller: _fitrMembersController,
-                    isDark: isDark,
-                    suffix: "فرد",
-                  ),
-                  const SizedBox(width: 8),
-                  _buildInputRow(
-                    label: "قيمة الفرد",
-                    controller: _fitrValueController,
-                    isDark: isDark,
-                    suffix: _selectedCurrency.name,
-                  ),
-                  if (_zakatFitrTotal > 0)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      margin: const EdgeInsets.only(top: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.purple.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.purple.shade200),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "إجمالي زكاة الفطر:",
-                            style: GoogleFonts.cairo(
-                              fontSize: 14.sp,
-                              color:
-                                  isDark ? Colors.purpleAccent : Colors.purple,
+              StaggeredItemAnimation(
+                index: 11,
+                child: _buildSectionCard(
+                  title: "زكاة الفطر",
+                  children: [
+                    _buildInputRow(
+                      label: "عدد الأفراد",
+                      controller: _fitrMembersController,
+                      isDark: isDark,
+                      suffix: "فرد",
+                    ),
+                    const SizedBox(width: 8),
+                    _buildInputRow(
+                      label: "قيمة الفرد",
+                      controller: _fitrValueController,
+                      isDark: isDark,
+                      suffix: _selectedCurrency.name,
+                    ),
+                    if (_zakatFitrTotal > 0)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(top: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.purple.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.purple.shade200),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "إجمالي زكاة الفطر:",
+                              style: GoogleFonts.cairo(
+                                fontSize: 14.sp,
+                                color:
+                                    isDark ? Colors.purpleAccent : Colors.purple,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "${formatMoney(_zakatFitrTotal)} ${_selectedCurrency.symbol}",
-                            style: GoogleFonts.cairo(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  isDark ? Colors.purpleAccent : Colors.purple,
+                            Text(
+                              "${formatMoney(_zakatFitrTotal)} ${_selectedCurrency.symbol}",
+                              style: GoogleFonts.cairo(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    isDark ? Colors.purpleAccent : Colors.purple,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                ],
-                isDark: isDark,
+                          ],
+                        ),
+                      )
+                  ],
+                  isDark: isDark,
+                ),
               ),
 
               const SizedBox(height: 30),
 
               // --- Result Breakdown ---
-              _buildResultSection(isDark, formatMoney),
+              FadeAnimation(
+                delay: const Duration(milliseconds: 500),
+                child: _buildResultSection(isDark, formatMoney),
+              ),
 
               // --- Actions (Share, Save, Reminder) ---
               // if (_totalZakat > 0) ...[

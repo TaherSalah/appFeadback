@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
 import 'models/dua_models.dart';
 import 'services/dua_service.dart';
+import '../../core/shard/widgets/ui_animations.dart';
 
 class DuaDetailScreen extends StatefulWidget {
   final Dua dua;
@@ -78,137 +79,155 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
                     padding: EdgeInsets.all(24.w),
                     child: Column(
                       children: [
-                        Text(
-                          widget.dua.category.emoji,
-                          style: TextStyle(fontSize: 60.sp),
+                        StaggeredItemAnimation(
+                          index: 0,
+                          child: Text(
+                            widget.dua.category.emoji,
+                            style: TextStyle(fontSize: 60.sp),
+                          ),
                         ),
                         SizedBox(height: 20.h),
-                        Text(
-                          widget.dua.title,
-                          style: GoogleFonts.cairo(
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 32.h),
-                        Container(
-                          padding: EdgeInsets.all(24.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
+                        StaggeredItemAnimation(
+                          index: 1,
                           child: Text(
-                            widget.dua.arabic,
+                            widget.dua.title,
                             style: GoogleFonts.cairo(
-                              fontSize: 22.sp,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              height: 2.5,
                             ),
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        SizedBox(height: 24.h),
-                        Container(
-                          padding: EdgeInsets.all(20.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.translate,
-                                      color: Colors.white.withOpacity(0.9),
-                                      size: 20.sp),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    'المعنى',
-                                    style: GoogleFonts.cairo(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white.withOpacity(0.9),
-                                    ),
-                                  ),
-                                ],
+                        SizedBox(height: 32.h),
+                        StaggeredItemAnimation(
+                          index: 2,
+                          child: Container(
+                            padding: EdgeInsets.all(24.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Text(
+                              widget.dua.arabic,
+                              style: GoogleFonts.cairo(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                height: 2.5,
                               ),
-                              SizedBox(height: 12.h),
-                              Text(
-                                widget.dua.meaning,
-                                style: GoogleFonts.cairo(
-                                  fontSize: 15.sp,
-                                  color: Colors.white.withOpacity(0.95),
-                                  height: 1.8,
-                                ),
-                              ),
-                            ],
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
-                        if (widget.dua.source != null) ...[
-                          SizedBox(height: 16.h),
-                          Container(
-                            padding: EdgeInsets.all(16.w),
+                        SizedBox(height: 24.h),
+                        StaggeredItemAnimation(
+                          index: 3,
+                          child: Container(
+                            padding: EdgeInsets.all(20.w),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.menu_book,
-                                    color: Colors.white.withOpacity(0.9),
-                                    size: 18.sp),
-                                SizedBox(width: 8.w),
+                                Row(
+                                  children: [
+                                    Icon(Icons.translate,
+                                        color: Colors.white.withOpacity(0.9),
+                                        size: 20.sp),
+                                    SizedBox(width: 8.w),
+                                    Text(
+                                      'المعنى',
+                                      style: GoogleFonts.cairo(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white.withOpacity(0.9),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 12.h),
                                 Text(
-                                  widget.dua.source!,
+                                  widget.dua.meaning,
                                   style: GoogleFonts.cairo(
-                                    fontSize: 13.sp,
-                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 15.sp,
+                                    color: Colors.white.withOpacity(0.95),
+                                    height: 1.8,
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                        ),
+                        if (widget.dua.source != null) ...[
+                          SizedBox(height: 16.h),
+                          StaggeredItemAnimation(
+                            index: 4,
+                            child: Container(
+                              padding: EdgeInsets.all(16.w),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.menu_book,
+                                      color: Colors.white.withOpacity(0.9),
+                                      size: 18.sp),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    widget.dua.source!,
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 13.sp,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                         SizedBox(height: 32.h),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildActionButton(
-                              Icons.copy,
-                              'نسخ',
-                              () {
-                                Clipboard.setData(
-                                    ClipboardData(text: widget.dua.arabic));
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('تم النسخ',
-                                        style: GoogleFonts.cairo()),
-                                  ),
-                                );
-                              },
-                            ),
-                            _buildActionButton(
-                              _isFavorite ? Icons.favorite : Icons.favorite_border,
-                              _isFavorite ? 'مفضل' : 'إضافة',
-                              () async {
-                                await _service.toggleFavorite(widget.dua.id);
-                                setState(() => _isFavorite = !_isFavorite);
-                              },
-                            ),
-                            _buildActionButton(
-                              Icons.share,
-                              'مشاركة',
-                              () {
-                                Share.share(
-                                    '${widget.dua.title}\n\n${widget.dua.arabic}\n\n${widget.dua.meaning}${widget.dua.source != null ? '\n\n${widget.dua.source}' : ''}');
-                              },
-                            ),
-                          ],
+                        StaggeredItemAnimation(
+                          index: 5,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildActionButton(
+                                Icons.copy,
+                                'نسخ',
+                                () {
+                                  Clipboard.setData(
+                                      ClipboardData(text: widget.dua.arabic));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('تم النسخ',
+                                          style: GoogleFonts.cairo()),
+                                    ),
+                                  );
+                                },
+                              ),
+                              _buildActionButton(
+                                _isFavorite ? Icons.favorite : Icons.favorite_border,
+                                _isFavorite ? 'مفضل' : 'إضافة',
+                                () async {
+                                  await _service.toggleFavorite(widget.dua.id);
+                                  setState(() => _isFavorite = !_isFavorite);
+                                },
+                              ),
+                              _buildActionButton(
+                                Icons.share,
+                                'مشاركة',
+                                () {
+                                  Share.share(
+                                      '${widget.dua.title}\n\n${widget.dua.arabic}\n\n${widget.dua.meaning}${widget.dua.source != null ? '\n\n${widget.dua.source}' : ''}');
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

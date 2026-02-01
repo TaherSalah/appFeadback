@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -79,7 +80,11 @@ class _DuasMainScreenState extends State<DuasMainScreen> {
                 itemCount: DuasData.allCategories.length,
                 itemBuilder: (context, index) {
                   final category = DuasData.allCategories[index];
-                  return _buildCategoryCard(category, isDark);
+                  return FadeInRight(
+                    duration: const Duration(milliseconds: 500),
+                    delay: Duration(milliseconds: index * 50),
+                    child: _buildCategoryCard(category, isDark),
+                  );
                 },
               ),
             ),
@@ -91,8 +96,11 @@ class _DuasMainScreenState extends State<DuasMainScreen> {
               child: ListView.builder(
                 padding: EdgeInsets.all(16.w),
                 itemCount: _filteredDuas.length,
-                itemBuilder: (context, index) =>
-                    _buildDuaCard(_filteredDuas[index], isDark),
+                itemBuilder: (context, index) => FadeInUp(
+                  duration: const Duration(milliseconds: 500),
+                  delay: Duration(milliseconds: index * 30),
+                  child: _buildDuaCard(_filteredDuas[index], isDark),
+                ),
               ),
             ),
           ],

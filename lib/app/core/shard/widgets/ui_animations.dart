@@ -424,6 +424,7 @@ class FadeAnimation extends StatefulWidget {
   final Duration duration;
   final Offset offset;
   final bool rebuild;
+  final Duration delay; // Changed to Duration
 
   const FadeAnimation({
     required this.child,
@@ -431,6 +432,7 @@ class FadeAnimation extends StatefulWidget {
     super.key,
     this.offset = const Offset(0.0, -0.2),
     this.duration = const Duration(milliseconds: 400),
+    this.delay = Duration.zero, // Default to zero
   });
 
   @override
@@ -441,16 +443,30 @@ class _FadeAnimationState extends State<FadeAnimation>
     with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Offset> offsetAnimation;
+  late Animation<double> opacityAnimation;
 
   @override
   void initState() {
+    super.initState();
     controller = AnimationController(vsync: this, duration: widget.duration);
+    
     offsetAnimation = Tween<Offset>(
       begin: widget.offset,
       end: Offset.zero,
-    ).animate(controller);
-    controller.forward();
-    super.initState();
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOut));
+
+    opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
+
+    if (widget.delay != Duration.zero) {
+      Future.delayed(widget.delay, () {
+        if (mounted) controller.forward();
+      });
+    } else {
+      controller.forward();
+    }
   }
 
   @override
@@ -462,16 +478,22 @@ class _FadeAnimationState extends State<FadeAnimation>
   @override
   Widget build(BuildContext context) {
     if (widget.rebuild) {
-      offsetAnimation = Tween<Offset>(
-        begin: widget.offset,
-        end: Offset.zero,
-      ).animate(controller);
-      controller.forward(from: 0);
+      controller.reset();
+       if (widget.delay != Duration.zero) {
+        Future.delayed(widget.delay, () {
+          if (mounted) controller.forward();
+        });
+      } else {
+        controller.forward();
+      }
     }
 
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: SlideTransition(position: offsetAnimation, child: widget.child),
+    return FadeTransition( 
+      opacity: opacityAnimation,
+      child: SlideTransition(
+        position: offsetAnimation, 
+        child: widget.child
+      ),
     );
   }
 }
@@ -1156,11 +1178,13 @@ class StaggeredItemAnimation extends StatefulWidget {
   final Widget child;
   final int index;
   final Duration duration;
+  final Duration delay; // Changed to Duration
 
   const StaggeredItemAnimation({
     required this.child,
     required this.index,
     this.duration = const Duration(milliseconds: 300),
+    this.delay = Duration.zero, // Default to zero
     super.key,
   });
 
@@ -1172,17 +1196,27 @@ class _StaggeredItemAnimationState extends State<StaggeredItemAnimation>
     with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Offset> offset;
+  late Animation<double> opacity;
 
   @override
   void initState() {
     controller = AnimationController(vsync: this, duration: widget.duration);
+    
     offset = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOut));
+    
+    opacity = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
+
     Future.delayed(
-      Duration(milliseconds: widget.index * 100),
-      () => controller.forward(),
+      Duration(milliseconds: (widget.index * 100)) + widget.delay,
+      () {
+        if (mounted) controller.forward();
+      },
     );
     super.initState();
   }
@@ -1195,7 +1229,10 @@ class _StaggeredItemAnimationState extends State<StaggeredItemAnimation>
 
   @override
   Widget build(BuildContext context) {
-    return SlideTransition(position: offset, child: widget.child);
+    return FadeTransition( // Added FadeTransition
+      opacity: opacity,
+      child: SlideTransition(position: offset, child: widget.child),
+    );
   }
 }
 

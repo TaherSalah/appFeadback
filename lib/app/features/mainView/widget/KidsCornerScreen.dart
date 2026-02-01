@@ -11,7 +11,6 @@ import '../../../core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'DailyChallengesScreen.dart';
 import 'GamesMenuScreen.dart';
-import 'StoriesScreen.dart';
 import 'HadithsForKidsScreen.dart';
 import 'DailyDuasScreen.dart';
 import 'package:muslimdaily/app/features/kids/view/KidsStoriesScreen.dart';
@@ -1611,20 +1610,12 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               title: "قصص إسلامية",
               emoji: "📚",
               color: const Color(0xFFFF9800),
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => StoriesScreen(
-                      onStoryCompleted: () async {
-                        setState(() => _completedStories++);
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setInt(
-                            'completed_stories', _completedStories);
-                      },
-                    ),
-                  ),
+                  CupertinoPageRoute(builder: (_) => const KidsStoriesScreen()),
                 );
+                _loadProgress();
               },
               subtitle: '',
             ),
