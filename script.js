@@ -1006,9 +1006,18 @@ async function loadKidsStories() {
                 <div style="display: flex; justify-content: space-between; align-items: start;">
                     <div style="display: flex; gap: 15px; align-items: center;">
                         <span style="font-size: 2rem;">${story.emoji}</span>
-                        <div><h3>${story.title}</h3><span class="category-badge" style="background: #fef3c7; color: #d97706;">⭐ ${story.stars_reward} نجمة</span></div>
+                        <div>
+                            <h3>${story.title}</h3>
+                            <div style="display: flex; gap: 5px;">
+                                <span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${story.category || 'منوع'}</span>
+                                <span class="category-badge" style="background: #fef3c7; color: #d97706;">⭐ ${story.stars_reward} نجمة</span>
+                            </div>
+                        </div>
                     </div>
                     <div style="display: flex; gap: 10px;">
+                        <button class="refresh-btn" onclick="editKidsStory('${story.id}')" style="padding: 5px 10px; font-size: 0.8rem; background: #3b82f6;">
+                            ✏️ تعديل
+                        </button>
                         <button class="refresh-btn" onclick="toggleKidsStoryVisibility('${story.id}', ${story.is_visible})" style="padding: 5px 10px; font-size: 0.8rem; background: ${story.is_visible ? '#6b7280' : 'var(--accent-color)'};">
                             ${story.is_visible ? '👁️ إخفاء' : '👁️ إظهار'}
                         </button>
@@ -1022,6 +1031,7 @@ async function loadKidsStories() {
 
 async function addKidsStory() {
     const title = document.getElementById('kidsStoryTitle').value;
+    const category = document.getElementById('kidsStoryCategory').value;
     const emoji = document.getElementById('kidsStoryEmoji').value;
     const stars = parseInt(document.getElementById('kidsStoryStars').value);
     const content = document.getElementById('kidsStoryParagraphs').value;
@@ -1029,7 +1039,7 @@ async function addKidsStory() {
     if (!title || !content || !moral) return alert('⚠️ يرجى تعبئة الحقول');
     const paragraphs = content.split('\n').map(p => p.trim()).filter(p => p.length > 0);
     try {
-        await supabaseClient.from('kids_stories').insert([{ title, emoji: emoji || '📖', stars_reward: stars, paragraphs, content, moral, is_visible: true }]);
+        await supabaseClient.from('kids_stories').insert([{ title, category, emoji: emoji || '📖', stars_reward: stars, paragraphs, content, moral, is_visible: true }]);
         alert('✅ تم إضافة القصة');
         ['kidsStoryTitle', 'kidsStoryEmoji', 'kidsStoryParagraphs', 'kidsStoryMoral'].forEach(id => document.getElementById(id).value = '');
         loadKidsStories();
@@ -1049,6 +1059,76 @@ async function deleteKidsStory(id) {
         await supabaseClient.from('kids_stories').delete().eq('id', id);
         loadKidsStories();
     } catch (e) { alert('❌ فشل: ' + e.message); }
+}
+
+function editKidsStory(id) {
+    supabaseClient.from('kids_stories').select('*').eq('id', id).single().then(({ data, error }) => {
+        if (error) {
+            alert('❌ فشل تحميل القصة: ' + error.message);
+            return;
+        }
+        if (!data) return;
+
+        document.getElementById('editStoryId').value = data.id;
+        document.getElementById('editStoryTitle').value = data.title;
+        document.getElementById('editStoryCategory').value = data.category || 'منوع';
+        document.getElementById('editStoryEmoji').value = data.emoji || '📖';
+        document.getElementById('editStoryStars').value = data.stars_reward || 20;
+        document.getElementById('editStoryParagraphs').value = (data.paragraphs || []).join('\n');
+        document.getElementById('editStoryMoral').value = data.moral || '';
+
+        document.getElementById('editKidsStoryModal').classList.add('active');
+        document.getElementById('editKidsStoryModal').style.display = 'flex';
+    });
+}
+
+async function saveKidsStoryEdit() {
+    const id = document.getElementById('editStoryId').value;
+    const title = document.getElementById('editStoryTitle').value;
+    const category = document.getElementById('editStoryCategory').value;
+    const emoji = document.getElementById('editStoryEmoji').value;
+    const stars = parseInt(document.getElementById('editStoryStars').value);
+    const content = document.getElementById('editStoryParagraphs').value;
+    const moral = document.getElementById('editStoryMoral').value;
+
+    if (!title || !content || !moral) {
+        alert('⚠️ يرجى تعبئة جميع الحقول الأساسية');
+        return;
+    }
+
+    const paragraphs = content.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+    const content_text = paragraphs.join('\n\n');
+
+    try {
+        const { error } = await supabaseClient
+            .from('kids_stories')
+            .update({
+                title,
+                category,
+                emoji: emoji || '📖',
+                stars_reward: stars,
+                paragraphs,
+                content: content_text,
+                moral
+            })
+            .eq('id', id);
+
+        if (error) throw error;
+
+        alert('✅ تم تحديث القصة بنجاح!');
+        closeKidsStoryModal();
+        loadKidsStories();
+    } catch (error) {
+        alert('❌ فشل التحديث: ' + error.message);
+    }
+}
+
+function closeKidsStoryModal() {
+    const modal = document.getElementById('editKidsStoryModal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+    }
 }
 
 // --- CHARITY STORIES ---
