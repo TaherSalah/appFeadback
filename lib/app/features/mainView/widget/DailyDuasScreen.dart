@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,16 +16,38 @@ class DailyDuasScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'أدعية يومية 🤲',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        // appBar: AppBar(
+        //   title: Text(
+        //     'أدعية يومية 🤲',
+        //     style: GoogleFonts.cairo(
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+          ),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+            centerTitle: true,
+            title: Text(
+              'أدعية يومية',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
             ),
           ),
-          centerTitle: true,
         ),
+
         body: GridView.builder(
           padding: const EdgeInsets.all(16),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

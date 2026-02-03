@@ -101,25 +101,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t3_1",
-          "title": "قبلت يد أمي/أبي 😘",
+          "title": "قبلت يد أمي/أبي",
           "points": 20,
           "done": false
         },
         {
           "id": "t3_2",
-          "title": "لم أغضب اليوم 😊",
+          "title": "لم أغضب اليوم",
           "points": 15,
           "done": false
         },
         {
           "id": "t3_3",
-          "title": "أماطة الأذى عن الطريق 🍂",
+          "title": "أماطة الأذى عن الطريق",
           "points": 10,
           "done": false
         },
         {
           "id": "t3_4",
-          "title": "تصدقت بجزء من مصروفي 🪙",
+          "title": "تصدقت بجزء من مصروفي",
           "points": 20,
           "done": false
         },
@@ -133,25 +133,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t4_1",
-          "title": "راجعت سورة قصيرة 📖",
+          "title": "راجعت سورة قصيرة",
           "points": 20,
           "done": false
         },
         {
           "id": "t4_2",
-          "title": "استمعت للقرآن 5 دقائق 🎧",
+          "title": "استمعت للقرآن 5 دقائق",
           "points": 15,
           "done": false
         },
         {
           "id": "t4_3",
-          "title": "حفظت آية جديدة ✨",
+          "title": "حفظت آية جديدة",
           "points": 25,
           "done": false
         },
         {
           "id": "t4_4",
-          "title": "وضعت المصحف في مكان مرتفع ☝️",
+          "title": "وضعت المصحف في مكان مرتفع",
           "points": 10,
           "done": false
         },
@@ -165,25 +165,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t5_1",
-          "title": "اتصلت بجدي/جدتي 📞",
+          "title": "اتصلت بجدي/جدتي",
           "points": 30,
           "done": false
         },
         {
           "id": "t5_2",
-          "title": "لعبت مع أخي/أختي بلطف 🧸",
+          "title": "لعبت مع أخي/أختي بلطف",
           "points": 20,
           "done": false
         },
         {
           "id": "t5_3",
-          "title": "ساعدت في تحضير الطعام 🥗",
+          "title": "ساعدت في تحضير الطعام",
           "points": 25,
           "done": false
         },
         {
           "id": "t5_4",
-          "title": "قلت كلاماً طيباً لأهلي 💬",
+          "title": "قلت كلاماً طيباً لأهلي",
           "points": 15,
           "done": false
         },
@@ -197,25 +197,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t6_1",
-          "title": "صمت جزءاً من اليوم 🥤🚫",
+          "title": "صمت جزءاً من اليوم",
           "points": 40,
           "done": false
         },
         {
           "id": "t6_2",
-          "title": "صليت النوافل (السنن) 🕌",
+          "title": "صليت النوافل (السنن)",
           "points": 35,
           "done": false
         },
         {
           "id": "t6_3",
-          "title": "علمت صديقي حديثاً شريفاً 🤝",
+          "title": "علمت صديقي حديثاً شريفاً",
           "points": 30,
           "done": false
         },
         {
           "id": "t6_4",
-          "title": "ذكرت الله 100 مرة 📿",
+          "title": "ذكرت الله 100 مرة",
           "points": 30,
           "done": false
         },
@@ -230,25 +230,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t7_1",
-          "title": "تأملت في السماء والنجوم 🌌",
+          "title": "تأملت في السماء والنجوم",
           "points": 20,
           "done": false
         },
         {
           "id": "t7_2",
-          "title": "سقيت زرعاً أو حيواناً 🌱",
+          "title": "سقيت زرعاً أو حيواناً",
           "points": 25,
           "done": false
         },
         {
           "id": "t7_3",
-          "title": "قرأت معلومة مفيدة 📚",
+          "title": "قرأت معلومة مفيدة",
           "points": 20,
           "done": false
         },
         {
           "id": "t7_4",
-          "title": "قلت سبحان الله على خلقه 🦜",
+          "title": "قلت سبحان الله على خلقه",
           "points": 20,
           "done": false
         },
@@ -262,25 +262,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t8_1",
-          "title": "استخدمت السواك 🦷",
+          "title": "استخدمت السواك",
           "points": 30,
           "done": false
         },
         {
           "id": "t8_2",
-          "title": "دخلت المنزل باليمين 🦶",
+          "title": "دخلت المنزل باليمين",
           "points": 20,
           "done": false
         },
         {
           "id": "t8_3",
-          "title": "ابتسمت (تبسمك صدقة) 😊",
+          "title": "ابتسمت (تبسمك صدقة)",
           "points": 20,
           "done": false
         },
         {
           "id": "t8_4",
-          "title": "قلت دعاء الدخول/الخروج 🤲",
+          "title": "قلت دعاء الدخول/الخروج",
           "points": 25,
           "done": false
         },
@@ -294,25 +294,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t9_1",
-          "title": "قلت الصدق دائماً ✅",
+          "title": "قلت الصدق دائما",
           "points": 40,
           "done": false
         },
         {
           "id": "t9_2",
-          "title": "حافظت على الوعد 🤝",
+          "title": "حافظت على الوعد",
           "points": 40,
           "done": false
         },
         {
           "id": "t9_3",
-          "title": "نظفت مكاني بعد اللعب 🧹",
+          "title": "نظفت مكاني بعد اللعب",
           "points": 30,
           "done": false
         },
         {
           "id": "t9_4",
-          "title": "سامحت من أخطأ في حقي ❤️",
+          "title": "سامحت من أخطأ في حقي",
           "points": 50,
           "done": false
         },
@@ -326,25 +326,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t10_1",
-          "title": "وفرت في استهلاك الماء 💧",
+          "title": "وفرت في استهلاك الماء",
           "points": 30,
           "done": false
         },
         {
           "id": "t10_2",
-          "title": "أغلقت الأنوار غير الضرورية 💡",
+          "title": "أغلقت الأنوار غير الضرورية",
           "points": 25,
           "done": false
         },
         {
           "id": "t10_3",
-          "title": "جمعت القمامة ووضعتها في الحاوية 🗑️",
+          "title": "جمعت القمامة ووضعتها في الحاوية",
           "points": 30,
           "done": false
         },
         {
           "id": "t10_4",
-          "title": "تحدثت عن أهمية النظافة 🗣️",
+          "title": "تحدثت عن أهمية النظافة",
           "points": 20,
           "done": false
         },
@@ -358,25 +358,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t11_1",
-          "title": "خفضت صوتي أثناء الحديث 🤫",
+          "title": "خفضت صوتي أثناء الحديث",
           "points": 30,
           "done": false
         },
         {
           "id": "t11_2",
-          "title": "استأذنت قبل دخول الغرفة 🚪",
+          "title": "استأذنت قبل دخول الغرفة",
           "points": 25,
           "done": false
         },
         {
           "id": "t11_3",
-          "title": "قلت 'شكراً' و'لو سمحت' 🙏",
+          "title": "قلت 'شكراً' و'لو سمحت'",
           "points": 20,
           "done": false
         },
         {
           "id": "t11_4",
-          "title": "لم أقاطع أحداً أثناء كلامه 🚫",
+          "title": "لم أقاطع أحداً أثناء كلامه",
           "points": 30,
           "done": false
         },
@@ -390,25 +390,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t12_1",
-          "title": "مارست الرياضة اليوم 🏃‍♂️",
+          "title": "مارست الرياضة اليوم️",
           "points": 40,
           "done": false
         },
         {
           "id": "t12_2",
-          "title": "أكلت طعاماً صحياً 🥗",
+          "title": "أكلت طعاماً صحيا",
           "points": 30,
           "done": false
         },
         {
           "id": "t12_3",
-          "title": "ساعدت في حمل أغراض المنزل 🛍️",
+          "title": "ساعدت في حمل أغراض المنزل",
           "points": 40,
           "done": false
         },
         {
           "id": "t12_4",
-          "title": "مشيت إلى المسجد 🕌",
+          "title": "مشيت إلى المسجد",
           "points": 50,
           "done": false
         },
@@ -708,11 +708,11 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       case KidsView.home:
         return "ركن المسلم الصغير";
       case KidsView.journey:
-        return "رحلة الأبطال 🗺️";
+        return "رحلة الأبطال";
       case KidsView.activities:
-        return "المرح والتعلم 🎮";
+        return "المرح والتعلم";
       case KidsView.trophies:
-        return "إنجازاتي 🏆";
+        return "إنجازاتي";
     }
   }
 
@@ -819,7 +819,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                         ],
                       ),
                       Text(
-                        'إنجاز رائع! 🚀',
+                        'إنجاز رائع!',
                         style: GoogleFonts.cairo(
                             color: Colors.white70, fontSize: 11.sp),
                       ),
@@ -837,7 +837,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               const Icon(Icons.auto_awesome_rounded, color: Colors.amber),
               const SizedBox(width: 8),
               Text(
-                "اختر مغامرتك اليوم 🌟",
+                "اختر مغامرتك اليوم",
                 style: GoogleFonts.cairo(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -859,9 +859,18 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
             FadeInLeft(
               child: _buildQuickNavCard(
                 title: "رحلة الأبطال",
-                subtitle: "قصص ومغامرات ✨",
-                emoji: "📖",
+                subtitle: "مهام وتحديات يومية",
+                emoji: "�️",
                 color: const Color(0xFF6366F1),
+                onTap: () => setState(() => _currentView = KidsView.journey),
+              ),
+            ),
+            FadeInRight(
+              child: _buildQuickNavCard(
+                title: "مكتبة الحكايات",
+                subtitle: "قصص ممتعة ومفيدة",
+                emoji: "📖",
+                color: const Color(0xFFF43F5E), // Rose color
                 onTap: () async {
                   await Navigator.push(
                     context,
@@ -875,7 +884,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
             FadeInRight(
               child: _buildQuickNavCard(
                 title: "المرح والتعلم",
-                subtitle: "ألعاب وذكاء 🎮",
+                subtitle: "ألعاب وذكاء",
                 emoji: "🧩",
                 color: const Color(0xFFF59E0B),
                 onTap: () => setState(() => _currentView = KidsView.activities),
@@ -885,7 +894,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               delay: const Duration(milliseconds: 200),
               child: _buildQuickNavCard(
                 title: "ألبوم الإنجازات",
-                subtitle: "أوسمتي وبطولاتي 🏆",
+                subtitle: "أوسمتي وبطولاتي",
                 emoji: "🏅",
                 color: const Color(0xFFEC4899),
                 onTap: () async {
@@ -902,7 +911,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               delay: const Duration(milliseconds: 200),
               child: _buildQuickNavCard(
                 title: "أدعية يومية",
-                subtitle: "أتعلم وأدعو 🤲",
+                subtitle: "أتعلم وأدعو",
                 emoji: "🌈",
                 color: const Color(0xFF10B981),
                 onTap: () {
@@ -1606,28 +1615,31 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           mainAxisSpacing: 16,
           childAspectRatio: 0.9,
           children: [
-            _buildQuickNavCard(
-              title: "قصص إسلامية",
-              emoji: "📚",
-              color: const Color(0xFFFF9800),
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  CupertinoPageRoute(builder: (_) => const KidsStoriesScreen()),
-                );
-                _loadProgress();
-              },
-              subtitle: '',
-            ),
+            // _buildQuickNavCard(
+            //   title: "قصص إسلامية",
+            //   emoji: "📚",
+            //   color: const Color(0xFFFF9800),
+            //   onTap: () async {
+            //     await Navigator.push(
+            //       context,
+            //       CupertinoPageRoute(builder: (_) => const KidsStoriesScreen()),
+            //     );
+            //     _loadProgress();
+            //   },
+            //   subtitle: '',
+            // ),
             _buildQuickNavCard(
               title: "ألعاب تعليمية",
               emoji: "🎮",
               color: const Color(0xFF9C27B0),
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const GamesMenuScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => GamesMenuScreen(onRefresh: _loadProgress),
+                  ),
                 );
+                _loadProgress();
               },
               subtitle: '',
             ),
@@ -1667,20 +1679,20 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                 _loadProgress();
               },
             ),
-            _buildQuickNavCard(
-              title: "أحاديث للأطفال",
-              emoji: "📿",
-              color: const Color(0xFF009688),
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const HadithsForKidsScreen()),
-                );
-                _loadProgress();
-              },
-              subtitle: '',
-            ),
+            // _buildQuickNavCard(
+            //   title: "أحاديث للأطفال",
+            //   emoji: "📿",
+            //   color: const Color(0xFF009688),
+            //   onTap: () async {
+            //     await Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (_) => const HadithsForKidsScreen()),
+            //     );
+            //     _loadProgress();
+            //   },
+            //   subtitle: '',
+            // ),
             _buildQuickNavCard(
               subtitle: "",
               title: "أدعية يومية",

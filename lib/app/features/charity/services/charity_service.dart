@@ -1,4 +1,5 @@
-import 'package:hive/hive.dart';
+import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import '../models/charity_models.dart';
@@ -18,6 +19,12 @@ class CharityService {
   late Box<CharityAchievement> _achievementsBox;
   late Box _settingsBox;
   final Uuid _uuid = const Uuid();
+  
+  /// Get a listenable for charity donations to react to changes
+  ValueListenable<Box<CharityDonation>> get donationsListenable => _charityBox.listenable();
+
+  /// Get a listenable for recurring charities to react to status changes
+  ValueListenable<Box<RecurringCharity>> get recurringListenable => _recurringBox.listenable();
 
   /// تهيئة الخدمة
   Future<void> init() async {

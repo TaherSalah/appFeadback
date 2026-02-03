@@ -9,6 +9,10 @@ import 'package:animate_do/animate_do.dart';
 import '../../../core/services/content_service.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/features/achievements/services/achievement_service.dart';
+import 'package:get_it/get_it.dart';
+import '../../../core/cache/shard_pref/shardpref_obj.dart';
+import '../../achievements/services/achievement_service.dart';
 import 'StoryReaderScreen.dart';
 
 class KidsStoriesScreen extends StatefulWidget {
@@ -24,6 +28,10 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
   List<Map<String, dynamic>> _filteredStories = [];
   String _selectedCategory = 'الكل';
   int _userStars = 0;
+  int _userLevel = 1;
+  double _levelProgress = 0.0;
+  String _userAvatar = '👤';
+  final AchievementService _achievementService = GetIt.I<AchievementService>();
   final TextEditingController _searchController = TextEditingController();
 
   final List<Map<String, String>> _categories = [
@@ -41,26 +49,41 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
   }
 
   Future<void> _loadInitialData() async {
-    // Clear cache to fetch fresh data from Supabase
-    ContentService().clearCache();
+    // ContentService().clearCache(); // Removed to rely on Hive cache
+    _loadUserAvatar();
     await _loadStories();
-    await _loadUserStars();
+    await _loadUserProgress();
   }
 
-  Future<void> _loadUserStars() async {
-    final prefs = await SharedPreferences.getInstance();
+  void _setupSearch() {
+    _searchController.addListener(_applyFilters);
+  }
+
+  void _loadUserAvatar() {
     setState(() {
-      _userStars = prefs.getInt('kids_total_stars_v2') ?? 0;
+      _userAvatar = SharedObj().getEmojiAvatar();
     });
   }
 
-  Future<void> _updateStars(int additionalStars) async {
-    final prefs = await SharedPreferences.getInstance();
-    final newStars = _userStars + additionalStars;
-    await prefs.setInt('kids_total_stars_v2', newStars);
+  void _saveUserAvatar(String avatar) {
+    SharedObj().saveEmojiAvatar(avatar);
     setState(() {
-      _userStars = newStars;
+      _userAvatar = avatar;
     });
+  }
+
+  Future<void> _loadUserProgress() async {
+    final progress = _achievementService.getProgress(); // Changed to use _achievementService
+    setState(() {
+      _userStars = progress.totalPoints;
+      _userLevel = progress.level;
+      _levelProgress = progress.levelProgress;
+    });
+  }
+
+  // No longer manual update, just reload from service
+  void _syncProgress() {
+    _loadUserProgress();
   }
 
   Future<void> _loadStories() async {
@@ -92,6 +115,63 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
         return matchesQuery && matchesCategory;
       }).toList();
     });
+  }
+
+  void _showAvatarSelectionDialog() {
+    final List<String> avatars = ['😀', '😇', '😎', '🤩', '🥳', '🚀', '🌟', '💡', '📖', '🕌', '🧸', '🌈', '👑', '🦸', '🦹'];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('اختر شخصيتك', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5,
+                childAspectRatio: 1,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: avatars.length,
+              itemBuilder: (context, index) {
+                final avatar = avatars[index];
+                return GestureDetector(
+                  onTap: () {
+                    _saveUserAvatar(avatar);
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _userAvatar == avatar ? const Color(0xFF0EA5E9).withOpacity(0.2) : Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: _userAvatar == avatar ? const Color(0xFF0EA5E9) : Colors.transparent,
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        avatar,
+                        style: TextStyle(fontSize: 30.sp),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('إلغاء', style: GoogleFonts.cairo(color: const Color(0xFF0EA5E9))),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -290,9 +370,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
   }
 
   Widget _buildAchievementCard(bool isDark) {
-    final nextLevelStars = ((_userStars / 100).floor() + 1) * 100;
-    final progress = (_userStars % 100) / 100;
-    final level = (_userStars / 100).floor() + 1;
+    final progress = _levelProgress;
+    final level = _userLevel;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
@@ -327,7 +406,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                     borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Text(
-                    'مستواك: بطل مغامر $level 🏆',
+                    'مستواك: بطل مغامر $_userLevel 🏆',
                     style: GoogleFonts.cairo(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -341,7 +420,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                   style: GoogleFonts.cairo(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 20.sp,
+                    fontSize: 18.sp,
                   ),
                 ),
                 SizedBox(height: 15.h),
@@ -370,7 +449,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  'بقي لك ${nextLevelStars - _userStars} نجوم للمستوى القادم',
+                  'استمر في القراءة لتصل للمستوى القادم! 📈',
                   style: GoogleFonts.cairo(
                     color: Colors.white.withOpacity(0.8),
                     fontSize: 11.sp,
@@ -380,14 +459,26 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
             ),
           ),
           SizedBox(width: 20.w),
-          Container(
-            padding: EdgeInsets.all(15.w),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: ZoomIn(
-              child: Icon(Icons.stars_rounded, size: 50.sp, color: Colors.amber),
+          GestureDetector(
+            onTap: _showAvatarSelectionDialog,
+            child: Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withOpacity(0.5), width: 2),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _userAvatar,
+                    style: TextStyle(fontSize: 40.sp),
+                  ),
+                  SizedBox(height: 4.h),
+                  Icon(Icons.edit, color: Colors.white70, size: 12.sp),
+                ],
+              ),
             ),
           ),
         ],
@@ -462,7 +553,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
           CupertinoPageRoute(builder: (context) => StoryReaderScreen(story: story)),
         );
         if (result == true) {
-          _updateStars(story['stars_reward'] ?? 10);
+          _syncProgress();
         }
       },
       child: Container(
@@ -481,6 +572,21 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
           borderRadius: BorderRadius.circular(25.r),
           child: Stack(
             children: [
+              // Completion Badge (Green Dot/Icon)
+              if (GetIt.I<AchievementService>().isStoryCompleted(story['id'].toString()))
+                Positioned(
+                  top: 15.h,
+                  left: 15.w,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.check, color: Colors.white, size: 14),
+                  ),
+                ),
+                
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -572,85 +678,4 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
     );
   }
 
-  Widget _buildStoryCard(Map<String, dynamic> story, bool isDark) {
-    const listGradients = [
-      [Color(0xFFE0F2FE), Color(0xFFBAE6FD)], // Blue
-      [Color(0xFFFEF9C3), Color(0xFFFEF08A)], // Yellow
-      [Color(0xFFF0FDF4), Color(0xFFDCFCE7)], // Green
-      [Color(0xFFFDF2F8), Color(0xFFFCE7F3)], // Pink
-    ];
-    final random = (story['id']?.toString().hashCode ?? 0) % listGradients.length;
-    final gradient = listGradients[random];
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 16.h),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(
-          color: isDark ? Colors.white10 : gradient[1],
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            CupertinoPageRoute(builder: (context) => StoryReaderScreen(story: story)),
-          );
-        },
-        borderRadius: BorderRadius.circular(24.r),
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Row(
-            children: [
-              Container(
-                width: 70.w,
-                height: 70.w,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: gradient),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Center(child: Text(story['emoji'] ?? '📖', style: TextStyle(fontSize: 35.sp))),
-              ),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      story['title'] ?? '',
-                      style: GoogleFonts.cairo(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : const Color(0xFF1E293B),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Icon(Icons.star_rounded, size: 16.sp, color: Colors.amber),
-                        SizedBox(width: 4.w),
-                        Text(
-                          '${story['stars_reward'] ?? 5} نجوم مكافأة',
-                          style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.amber.shade700),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Color(0xFF0EA5E9)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

@@ -244,6 +244,48 @@ class NotificationManager {
           enableVibration: true,
           enableLights: true,
         ),
+
+        // 🔔 قناة التنبيهات قبل الصلاة
+        NotificationChannel(
+          channelKey: 'pre_prayer_channel_v1',
+          channelName: 'تنبيهات قبل الصلاة',
+          channelDescription: 'تنبيه قبل الصلاة بـ 15 دقيقة',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.orange,
+          ledColor: Colors.orange,
+          playSound: true,
+          soundSource: Platform.isAndroid ? 'resource://raw/pre_prayer' : 'pre_prayer.mp3',
+          enableVibration: true,
+          enableLights: true,
+        ),
+
+        // 📢 قناة إقامة الصلاة
+        NotificationChannel(
+          channelKey: 'iqamah_channel_v1',
+          channelName: 'تنبيهات الإقامة',
+          channelDescription: 'تنبيه بموعد إقامة الصلاة',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.blue,
+          ledColor: Colors.blue,
+          playSound: true,
+          soundSource: Platform.isAndroid ? 'resource://raw/iqamah' : 'iqamah.mp3',
+          enableVibration: true,
+          enableLights: true,
+        ),
+
+        // 🌅 قناة وقت الشروق
+        NotificationChannel(
+          channelKey: 'shruq_channel_v1',
+          channelName: 'تنبيه الشروق',
+          channelDescription: 'تنبيه بموعد الشروق',
+          importance: NotificationImportance.High,
+          defaultColor: Colors.amber,
+          ledColor: Colors.amber,
+          playSound: true,
+          soundSource: Platform.isAndroid ? 'resource://raw/shruq' : 'shruq.mp3',
+          enableVibration: true,
+          enableLights: true,
+        ),
       ],
       debug: true,
     );

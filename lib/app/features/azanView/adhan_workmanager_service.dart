@@ -289,6 +289,12 @@ class AdhanWorkManagerService {
     bool useTestCallback = false,
   }) async {
     final now = DateTime.now();
+    
+    // 🕌 تحسين اسم صلاة الظهر لتصبح "الجمعة" في يوم الجمعة
+    String effectivePrayerName = prayerName;
+    if (prayerName == 'الظهر' && prayerTime.weekday == DateTime.friday) {
+      effectivePrayerName = 'الجمعة';
+    }
 
     // تأكد أن الوقت لم يمر (مع هامش صغير 5 ثواني للاختبارات الفورية)
     if (prayerTime.isBefore(now.subtract(Duration(seconds: 5)))) {
@@ -309,12 +315,79 @@ class AdhanWorkManagerService {
       print(
           '📅 جدولة Native ($uniqueId): $prayerName @ ${_formatTime(prayerTime)} on $channelKey');
 
+      // 🔔 جدولة تنبيه "قبل الصلاة بـ 15 دقيقة"
+      final prePrayerTime = prayerTime.subtract(const Duration(minutes: 15));
+      if (prePrayerTime.isAfter(now)) {
+        final preId = 40000 + uniqueId;
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: preId,
+            channelKey: 'pre_prayer_channel_v1',
+            icon: 'resource://drawable/ic_stat_logoapp',
+            title: '\u200Fاقتربت صلاة $effectivePrayerName',
+            body: '\u200Fبقي 15 دقيقة على صلاة $effectivePrayerName',
+            category: NotificationCategory.Reminder,
+            wakeUpScreen: true,
+            autoDismissible: true,
+            payload: {
+              'prayerName': effectivePrayerName,
+              'type': 'pre_prayer',
+            },
+          ),
+          schedule: NotificationCalendar.fromDate(
+            date: prePrayerTime,
+            preciseAlarm: true,
+            allowWhileIdle: true,
+          ),
+        );
+        print('   🔔 تم جدولة تنبيه ما قبل الصلاة (15 دقيقة)');
+      }
+
+      // 📢 جدولة تنبيه "الإقامة" (بعد 15 دقيقة من الأذان)
+      // لا توجد إقامة للشروق
+      if (!prayerName.contains('الشروق')) {
+        final iqamahTime = prayerTime.add(const Duration(minutes: 15));
+        if (iqamahTime.isAfter(now)) {
+          final iqamahId = 50000 + uniqueId;
+          await AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: iqamahId,
+              channelKey: 'iqamah_channel_v1',
+              icon: 'resource://drawable/ic_stat_logoapp',
+              title: '\u200Fحان الآن موعد إقامة صلاة $effectivePrayerName',
+              body: '\u200Fقد قامت الصلاة، قد قامت الصلاة',
+              category: NotificationCategory.Reminder,
+              wakeUpScreen: true,
+              autoDismissible: true,
+              payload: {
+                'prayerName': effectivePrayerName,
+                'type': 'iqamah',
+              },
+            ),
+            schedule: NotificationCalendar.fromDate(
+              date: iqamahTime,
+              preciseAlarm: true,
+              allowWhileIdle: true,
+            ),
+          );
+          print('   📢 تم جدولة تنبيه الإقامة (بعد 15 دقيقة)');
+        }
+      }
+
+      // 🌅 معالجة خاصة للشروق (تغيير القناة)
+      String effectiveChannelKey = channelKey;
+      if (prayerName.contains('الشروق')) {
+        effectiveChannelKey = 'shruq_channel_v1';
+      }
+
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: uniqueId,
-          channelKey: channelKey,
+          channelKey: effectiveChannelKey,
           icon: 'resource://drawable/ic_stat_logoapp',
-          title: '\u200Fحان الآن وقت صلاة $prayerName',
+          title: prayerName.contains('الشروق') 
+              ? '\u200Fحان الآن وقت الشروق' 
+              : '\u200Fحان الآن وقت صلاة $effectivePrayerName',
           body: '\u200Fفي مدينة ${cityName ?? "القاهرة"}',
           category: NotificationCategory.Alarm,
           wakeUpScreen: true,
@@ -328,7 +401,7 @@ class AdhanWorkManagerService {
               ? const Duration(minutes: 4, seconds: 40)
               : Duration(minutes: 3, seconds: 24),
           payload: {
-            'prayerName': prayerName,
+            'prayerName': effectivePrayerName,
             'prayer_time': _formatTime(prayerTime),
             'cityName': cityName ?? "",
             'route': 'adhan_screen',
@@ -342,7 +415,7 @@ class AdhanWorkManagerService {
         ),
       );
 
-      // 🕌 جدولة أذكار بعد الصلاة (اختياري)
+      // 📿 جدولة أذكار بعد الصلاة (تحديث الـ ID لتجنب التعارض)
       final prefs = await SharedPreferences.getInstance();
       final bool remEnabled =
           prefs.getBool('post_prayer_reminder_enabled') ?? false;
@@ -350,7 +423,7 @@ class AdhanWorkManagerService {
 
       if (remEnabled && !prayerName.contains('الشروق')) {
         final reminderTime = prayerTime.add(Duration(minutes: remMinutes));
-        final reminderId = uniqueId + 1000; // استخدام آي دي مختلف
+        final reminderId = 30000 + uniqueId; // استخدام آي دي مختلف وآمن
 
         if (reminderTime.isAfter(now)) {
           await AwesomeNotifications().createNotification(
@@ -359,7 +432,7 @@ class AdhanWorkManagerService {
               channelKey: 'post_prayer_dhikr_channel',
               icon: 'resource://drawable/ic_stat_logoapp',
               title: '📿 أذكار بعد الصلاة',
-              body: 'لا تنسَ قراءة أذكار ما بعد صلاة $prayerName',
+              body: 'لا تنسَ قراءة أذكار ما بعد صلاة $effectivePrayerName',
               category: NotificationCategory.Reminder,
               wakeUpScreen: true,
               autoDismissible: true,
@@ -404,7 +477,7 @@ class AdhanWorkManagerService {
       final hourOffset = Duration(hours: manualOffset);
 
       final fOff = prefs.getInt('fajr_offset') ?? 0;
-      // final sOff = prefs.getInt('sunrise_offset') ?? 0;
+      final sOff = prefs.getInt('sunrise_offset') ?? 0;
       final dOff = prefs.getInt('dhuhr_offset') ?? 0;
       final aOff = prefs.getInt('asr_offset') ?? 0;
       final mOff = prefs.getInt('maghrib_offset') ?? 0;
@@ -415,7 +488,7 @@ class AdhanWorkManagerService {
 
       return {
         'الفجر': prayerTimes.fajr.add(hourOffset).add(Duration(minutes: fOff)),
-        // 'الشروق': prayerTimes.sunrise.add(hourOffset).add(Duration(minutes: sOff)), // لا يوجد أذان للشروق
+        'الشروق': prayerTimes.sunrise.add(hourOffset).add(Duration(minutes: sOff)),
         'الظهر': prayerTimes.dhuhr.add(hourOffset).add(Duration(minutes: dOff)),
         'العصر': prayerTimes.asr.add(hourOffset).add(Duration(minutes: aOff)),
         'المغرب':
@@ -535,48 +608,96 @@ class AdhanWorkManagerService {
   /// جدولة أذان تجريبي للاختبار (بعد عدد معين من الثواني)
   Future<String?> scheduleTestAdhan({int secondsFromNow = 10}) async {
     try {
-      final testTime = DateTime.now().add(Duration(seconds: secondsFromNow));
-      final controlTime = testTime.add(Duration(seconds: 5)); // بعده بـ 5 ثواني
+      final now = DateTime.now();
+      
+      // موعد الأذان التجريبي
+      final adhanTime = now.add(Duration(seconds: secondsFromNow));
+      
+      // موعد التنبيه قبل الصلاة (قبل الأذان بـ 15 ثانية للاختبار السريع)
+      final preAdhanTime = now.add(Duration(seconds: secondsFromNow - 15 > 0 ? secondsFromNow - 15 : 2));
+      
+      // موعد الإقامة (بعد الأذان بـ 15 ثانية للاختبار السريع)
+      final iqamahTime = adhanTime.add(const Duration(seconds: 15));
+      
       final cityName = await _getCityName();
 
-      print('🧪 جدولة أذان تجريبي + إشعار تحكم...');
+      print('🧪 جدولة اختبار شامل (قبل الأذان -> أذان -> إقامة)...');
 
-      // 1. الأذان الأصلي
-      final error = await _schedulePrayer(
-        prayerName: '🧪 اختبار الأذان',
-        prayerTime: testTime,
-        dayOffset: 0,
-        prayerIndex: 98,
-        cityName: cityName,
-        useTestCallback: true,
-      );
-
-      // 2. إشعار تحكم (Control Notification) - بسيط جداً
+      // 1. التنبيه قبل الصلاة
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
-          id: 99999,
-          icon: 'resource://mipmap/launcher_icon',
-
-          channelKey: 'athkar_channel', // قناة عادية شغالة عند المستخدم
-          title: '🛠️ إشعار فحص النظام',
-          body:
-              'لو شوفت الإشعار ده وماشوفتش الأذان، يبقى المشكلة في إعدادات قناة الأذان (الصوت/التنبيه).',
-          category: NotificationCategory.Message,
+          id: 99901,
+          channelKey: 'pre_prayer_channel_v1',
+          title: '🧪 اختبار: اقتربت الصلاة',
+          body: 'تنبيه تجريبي: بقي 15 دقيقة على الصلاة',
+          category: NotificationCategory.Reminder,
           wakeUpScreen: true,
         ),
         schedule: NotificationCalendar.fromDate(
-          date: controlTime,
+          date: preAdhanTime,
           preciseAlarm: true,
           allowWhileIdle: true,
         ),
       );
 
-      if (error == null) {
-        print('✅ تم جدولة الاختبارين');
-        return null;
-      } else {
-        return error;
-      }
+      // 2. الأذان
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 99902,
+          channelKey: 'adhan_channel_v4',
+          title: '🧪 اختبار: حان الآن وقت الصلاة',
+          body: 'تنبيه تجريبي: الله أكبر الله أكبر',
+          category: NotificationCategory.Alarm,
+          wakeUpScreen: true,
+          fullScreenIntent: true,
+          criticalAlert: true,
+        ),
+        schedule: NotificationCalendar.fromDate(
+          date: adhanTime,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      );
+
+      // 3. الإقامة
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 99903,
+          channelKey: 'iqamah_channel_v1',
+          title: '🧪 اختبار: حان الآن موعد الإقامة',
+          body: 'تنبيه تجريبي: قد قامت الصلاة، قد قامت الصلاة',
+          category: NotificationCategory.Reminder,
+          wakeUpScreen: true,
+        ),
+        schedule: NotificationCalendar.fromDate(
+          date: iqamahTime,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      );
+
+      // 4. الشروق (اختبار قناة الشروق)
+      final shruqTime = iqamahTime.add(const Duration(seconds: 15));
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 99904,
+          channelKey: 'shruq_channel_v1',
+          title: '🧪 اختبار: حان الآن وقت الشروق',
+          body: 'تنبيه تجريبي: موعد الشروق',
+          category: NotificationCategory.Alarm,
+          wakeUpScreen: true,
+          fullScreenIntent: true,
+          criticalAlert: true,
+        ),
+        schedule: NotificationCalendar.fromDate(
+          date: shruqTime,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      );
+
+      print('✅ تم جدولة الاختبار الشامل بنجاح (مع الشروق)');
+      return null;
     } catch (e) {
       print('❌ خطأ في جدولة الاختبار: $e');
       return e.toString();
@@ -604,6 +725,12 @@ class AdhanWorkManagerService {
           .cancelSchedulesByChannelKey('adhan_channel_v4');
       await AwesomeNotifications()
           .cancelSchedulesByChannelKey('post_prayer_dhikr_channel');
+      await AwesomeNotifications()
+          .cancelSchedulesByChannelKey('pre_prayer_channel_v1');
+      await AwesomeNotifications()
+          .cancelSchedulesByChannelKey('iqamah_channel_v1');
+      await AwesomeNotifications()
+          .cancelSchedulesByChannelKey('shruq_channel_v1');
 
       print(
           '✅ تم تنظيف الجداول الزمنية بنجاح (مع الحفاظ على الإشعارات الحالية)');

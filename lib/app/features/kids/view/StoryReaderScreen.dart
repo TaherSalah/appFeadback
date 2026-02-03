@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:confetti/confetti.dart';
 import '../../../core/utils/style/k_dialog_helper.dart';
+import '../../achievements/services/achievement_service.dart';
+import 'package:get_it/get_it.dart';
 
 class StoryReaderScreen extends StatefulWidget {
   final Map<String, dynamic> story;
@@ -15,6 +19,128 @@ class StoryReaderScreen extends StatefulWidget {
 
 class _StoryReaderScreenState extends State<StoryReaderScreen> {
   double _fontSize = 18.0;
+  late ScrollController _scrollController;
+  late ConfettiController _confettiController;
+  double _readingProgress = 0.0;
+  bool _isAlreadyCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()..addListener(_onScroll);
+    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    _checkStoryStatus();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.hasClients && _scrollController.position.maxScrollExtent > 0) {
+      final progress = _scrollController.offset / _scrollController.position.maxScrollExtent;
+      setState(() {
+        _readingProgress = progress.clamp(0.0, 1.0);
+      });
+    }
+  }
+
+  Future<void> _checkStoryStatus() async {
+    final storyId = widget.story['id'].toString();
+    final achievementService = GetIt.I<AchievementService>();
+    final isDone = achievementService.isStoryCompleted(storyId);
+    setState(() {
+      _isAlreadyCompleted = isDone;
+    });
+  }
+
+  void _showInteractionDialog() {
+    if (_isAlreadyCompleted) {
+      _showAlreadyCompletedDialog();
+      return;
+    }
+
+    final List<Map<String, dynamic>> interactionOptions = [
+      {
+        'label': 'أحببتها جداً! ❤️',
+        'color': Colors.pinkAccent,
+        'icon': Icons.favorite_rounded,
+      },
+      {
+        'label': 'أصبحت أذكى! 🧠',
+        'color': const Color(0xFF0EA5E9),
+        'icon': Icons.lightbulb_rounded,
+      },
+      {
+        'label': 'عمل رائع! 🌟',
+        'color': Colors.amber,
+        'icon': Icons.stars_rounded,
+      },
+    ];
+
+    KDialogHelper.showCustomDialog(
+      context: context,
+      type: KDialogType.info,
+      icon: Icons.auto_awesome_rounded,
+      title: 'أنت بطل القراءة! 🏆',
+      description: 'كيف شعرت بعد قراءة قصة "${widget.story['title']}"؟',
+      additionalContent: Column(
+        children: interactionOptions.map((opt) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: 10.h),
+            child: KDialogHelper.buildButton(
+              context: context,
+              label: opt['label'],
+              color: opt['color'],
+              icon: opt['icon'],
+              onPressed: () {
+                Navigator.pop(context);
+                _handleCompletion();
+              },
+            ),
+          );
+        }).toList(),
+      ),
+      actions: [],
+    );
+  }
+
+  void _showAlreadyCompletedDialog() {
+    KDialogHelper.showCustomDialog(
+      context: context,
+      type: KDialogType.info,
+      icon: Icons.info_outline_rounded,
+      title: 'بطل القراءة! 📚',
+      description: 'لقد قرأت هذه القصة من قبل وحصلت على النجوم. استمتع بالقراءة مرة أخرى!',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'حسناً',
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handleCompletion() async {
+    final int stars = widget.story['stars_reward'] ?? 20;
+    final storyId = widget.story['id'].toString();
+    final achievementService = GetIt.I<AchievementService>();
+    
+    final success = await achievementService.completeStory(storyId, stars);
+    if (success) {
+      // Also record as a general activity to unlock achievements
+      await achievementService.recordActivity('read_story');
+      
+      // Play celebration!
+      _confettiController.play();
+      
+      _showSuccessDialog();
+    }
+  }
 
   void _showSuccessDialog() {
     final int stars = widget.story['stars_reward'] ?? 10;
@@ -65,19 +191,22 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final emoji = widget.story['emoji'] ?? '✨';
-    final title = widget.story['title'] ?? 'قصة جميلة';
-    final content = widget.story['content'] ?? '';
-    final moral = widget.story['moral'] ?? '';
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final String emoji = widget.story['emoji']?.toString() ?? '✨';
+    final String title = widget.story['title']?.toString() ?? 'قصة جميلة';
+    final String content = widget.story['content']?.toString() ?? '';
+    final String moral = widget.story['moral']?.toString() ?? '';
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor:
             isDark ? const Color(0xFF111827) : const Color(0xFFFDFCF7),
-        body: CustomScrollView(
-          slivers: [
+        body: Stack(
+          children: [
+            CustomScrollView(
+              controller: _scrollController,
+              slivers: [
             // Colorful Header
             SliverAppBar(
               expandedHeight: 200.h,
@@ -180,81 +309,132 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
               ),
             ),
 
-            // Content
             SliverPadding(
               padding: EdgeInsets.all(24.w),
               sliver: SliverToBoxAdapter(
                 child: Column(
-                  children: [
-                    Text(
-                      content,
-                      style: GoogleFonts.cairo(
-                        fontSize: _fontSize.sp,
-                        height: 1.8,
-                        color: isDark ? Colors.white70 : Colors.black87,
-                      ),
-                    ),
+                  children: <Widget>[
+                    ...content.split('\n\n').where((String p) => p.trim().isNotEmpty).map((String paragraph) {
+                      return FadeInUp(
+                        duration: const Duration(milliseconds: 600),
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 20.h),
+                          child: Text(
+                            paragraph.trim(),
+                            style: GoogleFonts.cairo(
+                              fontSize: _fontSize.sp,
+                              height: 1.8,
+                              color: isDark ? Colors.white70 : Colors.black87,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
                     if (moral.isNotEmpty) ...[
                       SizedBox(height: 40.h),
-                      Container(
-                        padding: EdgeInsets.all(20.w),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.withOpacity(isDark ? 0.1 : 0.05),
-                          borderRadius: BorderRadius.circular(20.r),
-                          border:
-                              Border.all(color: Colors.amber.withOpacity(0.3)),
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.stars_rounded,
-                                    color: Colors.amber),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  'ماذا تعلمنا من القصة؟',
-                                  style: GoogleFonts.cairo(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.sp,
-                                    color: Colors.amber.shade800,
+                      FadeInUp(
+                        delay: const Duration(milliseconds: 300),
+                        child: Container(
+                          padding: EdgeInsets.all(20.w),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.withOpacity(isDark ? 0.1 : 0.05),
+                            borderRadius: BorderRadius.circular(20.r),
+                            border:
+                                Border.all(color: Colors.amber.withOpacity(0.3)),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.stars_rounded,
+                                      color: Colors.amber),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    'ماذا تعلمنا من القصة؟',
+                                    style: GoogleFonts.cairo(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.sp,
+                                      color: Colors.amber.shade800,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10.h),
-                            Text(
-                              moral,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.cairo(
-                                fontSize: (_fontSize - 2).sp,
-                                color: isDark ? Colors.white60 : Colors.black54,
-                                fontStyle: FontStyle.italic,
+                                ],
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 10.h),
+                              Text(
+                                moral,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.cairo(
+                                  fontSize: (_fontSize - 2).sp,
+                                  color: isDark ? Colors.white60 : Colors.black54,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                     SizedBox(height: 60.h),
-                    ElevatedButton.icon(
-                      onPressed: _showSuccessDialog,
-                      icon: const Icon(Icons.check_circle_rounded),
-                      label: Text('لقد قرأت القصة!',
-                          style:
-                              GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0EA5E9),
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(double.infinity, 56.h),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.r)),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 500),
+                      child: ElevatedButton.icon(
+                        onPressed: _showInteractionDialog,
+                        icon: Icon(_isAlreadyCompleted ? Icons.check_circle_rounded : Icons.emoji_events_rounded),
+                        label: Text(
+                          _isAlreadyCompleted ? 'تمت القراءة مسبقاً' : 'لقد قرأت القصة!',
+                          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _isAlreadyCompleted ? Colors.grey : const Color(0xFF0EA5E9),
+                          foregroundColor: Colors.white,
+                          minimumSize: Size(double.infinity, 56.h),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.r)),
+                        ),
                       ),
                     ),
                     SizedBox(height: 30.h),
                   ],
                 ),
+              ),
+            ),
+              ],
+            ),
+            
+            // Floating Progress Bar
+            Positioned(
+              top: MediaQuery.of(context).padding.top + kToolbarHeight,
+              left: 0,
+              right: 0,
+              child: LinearProgressIndicator(
+                value: _readingProgress,
+                backgroundColor: Colors.white.withOpacity(0.1),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  isDark ? const Color(0xFF0EA5E9) : Colors.white,
+                ),
+                minHeight: 4.h,
+              ),
+            ),
+
+            // Confetti Celebration
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _confettiController,
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false,
+                colors: const [
+                  Colors.green,
+                  Colors.blue,
+                  Colors.pink,
+                  Colors.orange,
+                  Colors.purple,
+                  Colors.amber,
+                ],
+                numberOfParticles: 30, // number of particles to emit
+                gravity: 0.3, // gravity - or fall speed
               ),
             ),
           ],

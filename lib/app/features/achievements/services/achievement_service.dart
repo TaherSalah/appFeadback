@@ -5,9 +5,11 @@ import '../data/achievements_data.dart';
 class AchievementService {
   static const String _progressBoxName = 'userProgressBox';
   static const String _challengesBoxName = 'challengesBox';
+  static const String _completedStoriesBoxName = 'completedStoriesBox';
 
   late Box _progressBox;
   late Box<Challenge> _challengesBox;
+  late Box<String> _completedStoriesBox;
 
   UserProgress? _userProgress;
 
@@ -16,6 +18,12 @@ class AchievementService {
       _progressBox = await Hive.openBox(_progressBoxName);
     } else {
       _progressBox = Hive.box(_progressBoxName);
+    }
+
+    if (!Hive.isBoxOpen(_completedStoriesBoxName)) {
+      _completedStoriesBox = await Hive.openBox<String>(_completedStoriesBoxName);
+    } else {
+      _completedStoriesBox = Hive.box<String>(_completedStoriesBoxName);
     }
 
     if (!Hive.isBoxOpen(_challengesBoxName)) {
@@ -47,6 +55,20 @@ class AchievementService {
   Future<void> addPoints(int points, {String? reason}) async {
     _userProgress!.addPoints(points);
     await _saveProgress();
+  }
+
+  /// التحقق من إكمال القصة
+  bool isStoryCompleted(String storyId) {
+    return _completedStoriesBox.containsKey(storyId);
+  }
+
+  /// تسجيل إكمال القصة ومنح النقاط (مرة واحدة فقط)
+  Future<bool> completeStory(String storyId, int points) async {
+    if (isStoryCompleted(storyId)) return false;
+
+    await _completedStoriesBox.put(storyId, DateTime.now().toIso8601String());
+    await addPoints(points, reason: 'إكمال قصة');
+    return true;
   }
 
   /// تسجيل نشاط

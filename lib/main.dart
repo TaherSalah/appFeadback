@@ -75,15 +75,7 @@ Future<void> _initAppServices() async {
     systemNavigationBarColor: Colors.transparent,
   ));
 
-  // ✅ 3) تهيئة البيانات
-  HijriCalendar.setLocal('ar_SA');
-  await Di.init();
-  await initializeDateFormatting();
-  await initializeDateFormatting('ar', null);
-  await initializeDateFormatting('en', null);
-  await SharedObj().init();
-
-  // ✅ 4) Hive
+  // ✅ 3) Hive & Data Initialization
   await Hive.initFlutter();
   tz_data.initializeTimeZones();
   try {
@@ -93,7 +85,7 @@ Future<void> _initAppServices() async {
     debugPrint('Could not set local location: $e');
   }
 
-  // Register existing adapters
+  // Register all adapters before Di.init() because services might open boxes
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(KhatmahModelAdapter());
   }
@@ -103,8 +95,6 @@ Future<void> _initAppServices() async {
   if (!Hive.isAdapterRegistered(23)) {
     Hive.registerAdapter(CharityAchievementAdapter());
   }
-
-  // Register new feature adapters
   if (!Hive.isAdapterRegistered(10)) {
     Hive.registerAdapter(CharityDonationAdapter());
   }
@@ -135,25 +125,31 @@ Future<void> _initAppServices() async {
   if (!Hive.isAdapterRegistered(18)) {
     Hive.registerAdapter(ChallengeTypeAdapter());
   }
+  if (!Hive.isAdapterRegistered(25)) {
+    Hive.registerAdapter(CalendarEventAdapter());
+  }
 
-  // Note: CharityCategory enum is handled automatically by CharityDonationAdapter
-
-  // Open existing boxes
+  // ✅ 4) Open Core Boxes
   await Hive.openBox<KhatmahModel>('khatmahBox');
   if (!Hive.isBoxOpen('khatmahPlans')) {
     await Hive.openBox('khatmahPlans');
   }
 
-  // ✅ Note: Charity, Achievements, and Duas boxes are opened by their respective services
+  // ✅ 5) Services Locator
+  await Di.init();
+  
+  // ✅ 6) تهيئة البيانات التكميلية
+  HijriCalendar.setLocal('ar_SA');
+  await initializeDateFormatting();
+  await initializeDateFormatting('ar', null);
+  await initializeDateFormatting('en', null);
+  await SharedObj().init();
 
+  // ✅ Note: Charity, Achievements, and Duas boxes are opened by their respective services
+  
   // NotificationManager replaces all local notification logic
   final notificationManager = NotificationManager();
   await notificationManager.initialize();
-
-  // Register Calendar Adapter
-  if (!Hive.isAdapterRegistered(25)) {
-    Hive.registerAdapter(CalendarEventAdapter());
-  }
 
   // 🚀 Log App Launch Analytics
   AnalyticsService().logAppLaunch();

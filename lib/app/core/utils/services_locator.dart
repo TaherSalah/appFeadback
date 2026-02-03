@@ -13,6 +13,8 @@ import '../cubit/api_client/api_client_bloc.dart';
 import '../cubit/bloc_observer.dart';
 import 'objectbox.dart';
 import '../../features/hadith_books/controllers/books_controller.dart';
+import '../../features/achievements/services/achievement_service.dart';
+import '../services/content_service.dart';
 
 // final sl = GetIt.instance;
 
@@ -51,10 +53,18 @@ abstract class Di {
     _i.registerSingleton<ObjBox>(objBox);
     Get.put<ObjBox>(objBox);
 
-    // Ensure BooksController gets the store if it was already initialized
     if (Get.isRegistered<BooksController>()) {
       Get.find<BooksController>().setStore(objBox.store);
     }
+
+    // Achievements Service
+    final achievementService = AchievementService();
+    await achievementService.init();
+    _i.registerSingleton<AchievementService>(achievementService);
+
+    // Content Service
+    final contentService = ContentService();
+    _i.registerSingleton<ContentService>(contentService);
   }
 
   static DioClientImpl get dioClient => _i.get<DioClientImpl>();

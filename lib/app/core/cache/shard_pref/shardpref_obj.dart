@@ -22,4 +22,13 @@ class SharedObj {
     navigatorKey = GlobalKey<NavigatorState>();
     // await SharedPref.getOnBoardingBool();
   }
+
+  // Kids Avatar Helper
+  Future<void> saveEmojiAvatar(String emoji) async {
+    await prefs?.setString('kids_avatar_emoji', emoji);
+  }
+
+  String getEmojiAvatar() {
+    return prefs?.getString('kids_avatar_emoji') ?? '👤';
+  }
 }

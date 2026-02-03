@@ -27,12 +27,27 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
 
   Future<void> _loadData() async {
     await _charityService.init();
+    _updateStats();
+    // Listen for changes in the charity box
+    _charityService.donationsListenable.addListener(_updateStats);
+    // Listen for changes in the recurring charity box
+    _charityService.recurringListenable.addListener(_updateStats);
+  }
+
+  void _updateStats() {
     if (mounted) {
       setState(() {
         _stats = _charityService.calculateStats();
         _hasDueReminder = _charityService.getDueRecurringCharities().isNotEmpty;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _charityService.donationsListenable.removeListener(_updateStats);
+    _charityService.recurringListenable.removeListener(_updateStats);
+    super.dispose();
   }
 
   @override

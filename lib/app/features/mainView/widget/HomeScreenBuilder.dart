@@ -636,29 +636,29 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                               child: const AllahNameWidget(),
                             ),
 
-                          const SizedBox(height: 10),
-                          if (_featureStatuses['kids'] != 'hidden')
-                            FadeInUp(
-                              duration: const Duration(milliseconds: 700),
-                              delay: const Duration(milliseconds: 700),
-                              child: InkWell(
-                                onTap: () {
-                                  final status =
-                                      _featureStatuses['kids'] ?? 'active';
-                                  if (status == 'maintenance') {
-                                    _showMaintenanceDialog();
-                                  } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              KidsCornerScreen()),
-                                    );
-                                  }
-                                },
-                                child: const KidsEntryPointWidget(),
-                              ),
-                            ),
+                          // const SizedBox(height: 10),
+                          // if (_featureStatuses['kids'] != 'hidden')
+                          //   FadeInUp(
+                          //     duration: const Duration(milliseconds: 700),
+                          //     delay: const Duration(milliseconds: 700),
+                          //     child: InkWell(
+                          //       onTap: () {
+                          //         final status =
+                          //             _featureStatuses['kids'] ?? 'active';
+                          //         if (status == 'maintenance') {
+                          //           _showMaintenanceDialog();
+                          //         } else {
+                          //           Navigator.push(
+                          //             context,
+                          //             MaterialPageRoute(
+                          //                 builder: (context) =>
+                          //                     KidsCornerScreen()),
+                          //           );
+                          //         }
+                          //       },
+                          //       child: const KidsEntryPointWidget(),
+                          //     ),
+                          //   ),
 
                           const SizedBox(height: 20),
 

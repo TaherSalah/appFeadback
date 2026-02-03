@@ -551,7 +551,7 @@ import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 //             ),
 //           ),
 //           actions: [
-//             // // زر اختبار الأذان 🧪
+//             // زر اختبار الأذان 🧪
 //             // IconButton(
 //             //   icon: const Icon(Icons.bug_report, color: Colors.orange),
 //             //   tooltip: 'اختبار الأذان (20 ثانية)',
@@ -570,13 +570,6 @@ import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 //             //       }
 //             //     }
 //             //
-//             //     // Check Exact Alarm (Android 12+)
-//             //     /*
-//             //      // requires specific package or method check usually,
-//             //      // but AwesomeNotifications handles it within scheduling often.
-//             //      // We will rely on the try-catch block to catch 'SecurityException'.
-//             //      */
-//             //
 //             //     try {
 //             //       KHelper.showSuccess(
 //             //           message: 'جاري جدولة الاختبار...'); // Feedback
@@ -585,7 +578,7 @@ import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 //             //           .scheduleTestAdhan(secondsFromNow: 20);
 //             //       if (!mounted) return;
 //             //
-//             //       if (success != null) {
+//             //       if (success == null) {
 //             //         KHelper.showSuccess(
 //             //           message:
 //             //               '🧪 تم جدولة أذان تجريبي بعد 20 ثانية\nانتظر وتأكد من الصوت!',
@@ -593,11 +586,27 @@ import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 //             //       } else {
 //             //         KHelper.showError(
 //             //           message:
-//             //               '❌ فشلت جدولة الأذان التجريبي\nقد يكون بسبب قيود النظام (Alarms Permission)',
+//             //               '❌ فشلت جدولة الأذان التجريبي\n$success',
 //             //         );
 //             //       }
 //             //     } catch (e) {
 //             //       if (!mounted) return;
+//             //       // Show exact error
+//             //       showDialog(
+//             //         context: context,
+//             //         builder: (ctx) => AlertDialog(
+//             //           title: const Text('خطأ في الاختبار'),
+//             //           content: Text(e.toString()),
+//             //           actions: [
+//             //             TextButton(
+//             //                 onPressed: () => Navigator.pop(ctx),
+//             //                 child: const Text('Ok'))
+//             //           ],
+//             //         ),
+//             //       );
+//             //     }
+//             //   },
+//             // ),
 //             //       // Show exact error
 //             //       showDialog(
 //             //         context: context,
@@ -2747,6 +2756,40 @@ leading: Navigator.canPop(context)
             //     }
             //   },
             // ),
+
+            // زر اختبار الأذان 🧪
+            IconButton(
+              icon: const Icon(Icons.bug_report, color: Colors.orange),
+              tooltip: 'اختبار الأذان (20 ثانية)',
+              onPressed: () async {
+                bool isAllowed =
+                    await AwesomeNotifications().isNotificationAllowed();
+                if (!isAllowed) {
+                  await AwesomeNotifications()
+                      .requestPermissionToSendNotifications();
+                  isAllowed =
+                      await AwesomeNotifications().isNotificationAllowed();
+                  if (!isAllowed) {
+                    KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
+                    return;
+                  }
+                }
+
+                try {
+                  KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
+                  final success = await AdhanWorkManagerService()
+                      .scheduleTestAdhan(secondsFromNow: 20);
+                  if (success == null) {
+                    KHelper.showSuccess(
+                        message: '🧪 تم جدولة اختبار شامل بعد 20 ثانية');
+                  } else {
+                    KHelper.showError(message: '❌ فشل الاختبار: $success');
+                  }
+                } catch (e) {
+                  KHelper.showError(message: '❌ خطأ: $e');
+                }
+              },
+            ),
 
             IconButton(
               icon: const Icon(Icons.settings),

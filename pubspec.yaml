@@ -97,6 +97,7 @@ dependencies:
   dots_indicator: ^3.0.0
   geolocator: ^10.0.0
   flutter_compass: ^0.8.1
+  flame: ^1.18.0
   vector_math:
   redacted: ^1.0.12
   toggle_switch: ^2.3.0
