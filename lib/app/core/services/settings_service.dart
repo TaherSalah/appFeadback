@@ -33,6 +33,50 @@ class SettingsService {
     await _prefs.setBool(_kIsAdhanEnabled, value);
   }
 
+  static const String _kIsAdhanVibrationEnabled = 'is_adhan_vibration_enabled';
+  bool get isAdhanVibrationEnabled =>
+      _prefs.getBool(_kIsAdhanVibrationEnabled) ?? false;
+  Future<void> setAdhanVibrationEnabled(bool value) async {
+    await _prefs.setBool(_kIsAdhanVibrationEnabled, value);
+  }
+
+  static const String _kIsPrePrayerReminderEnabled =
+      'is_pre_prayer_reminder_enabled';
+  bool get isPrePrayerReminderEnabled =>
+      _prefs.getBool(_kIsPrePrayerReminderEnabled) ?? true;
+  Future<void> setPrePrayerReminderEnabled(bool value) async {
+    await _prefs.setBool(_kIsPrePrayerReminderEnabled, value);
+  }
+
+  static const String _kIsIqamahReminderEnabled = 'is_iqamah_reminder_enabled';
+  bool get isIqamahReminderEnabled =>
+      _prefs.getBool(_kIsIqamahReminderEnabled) ?? true;
+  Future<void> setIqamahReminderEnabled(bool value) async {
+    await _prefs.setBool(_kIsIqamahReminderEnabled, value);
+  }
+
+  static const String _kIsSunriseReminderEnabled =
+      'is_sunrise_reminder_enabled';
+  bool get isSunriseReminderEnabled =>
+      _prefs.getBool(_kIsSunriseReminderEnabled) ?? true;
+  Future<void> setSunriseReminderEnabled(bool value) async {
+    await _prefs.setBool(_kIsSunriseReminderEnabled, value);
+  }
+
+  static const String _kIsPostPrayerReminderEnabled =
+      'post_prayer_reminder_enabled';
+  bool get isPostPrayerReminderEnabled =>
+      _prefs.getBool(_kIsPostPrayerReminderEnabled) ?? false;
+  Future<void> setPostPrayerReminderEnabled(bool value) async {
+    await _prefs.setBool(_kIsPostPrayerReminderEnabled, value);
+  }
+
+  static const String _kPostReminderMinutes = 'post_reminder_minutes';
+  int get postReminderMinutes => _prefs.getInt(_kPostReminderMinutes) ?? 10;
+  Future<void> setPostReminderMinutes(int value) async {
+    await _prefs.setInt(_kPostReminderMinutes, value);
+  }
+
   // --- Azkar ---
   bool get isAzkarSabahEnabled => _prefs.getBool(_kIsAzkarSabahEnabled) ?? true;
   Future<void> setAzkarSabahEnabled(bool value) async {
@@ -63,7 +107,8 @@ class SettingsService {
 
   // --- Adhan Overlay ---
   static const String _kIsAdhanOverlayEnabled = 'is_adhan_overlay_enabled';
-  bool get isAdhanOverlayEnabled => _prefs.getBool(_kIsAdhanOverlayEnabled) ?? true;
+  bool get isAdhanOverlayEnabled =>
+      _prefs.getBool(_kIsAdhanOverlayEnabled) ?? true;
   Future<void> setAdhanOverlayEnabled(bool value) async {
     await _prefs.setBool(_kIsAdhanOverlayEnabled, value);
   }

@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/features/quran/data/reading_analytics_service.dart';
 import 'package:muslimdaily/app/features/quran/data/reflections_service.dart';
 import 'package:muslimdaily/app/features/quran/view/ReadingAnalyticsScreen.dart';
+import 'package:muslimdaily/app/features/quran/pdf/view/pdf_list_screen.dart';
 
 enum _QuranMenuAction {
   audio,
@@ -136,6 +137,16 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
           icon: Icons.gpp_good_outlined,
           title: "التَّفْسِيرُ",
           route: Routes.tafsirQuranRoute,
+        ),
+        DrawerModle(
+          icon: Icons.picture_as_pdf_outlined,
+          title: "القِرَاءَةُ مِنَ PDF",
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PdfListScreen()),
+            );
+          },
         ),
         DrawerModle(
           icon: Icons.analytics_outlined,

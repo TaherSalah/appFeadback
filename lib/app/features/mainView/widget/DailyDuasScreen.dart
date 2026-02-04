@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/duas_data.dart';
 import '../../../core/utils/style/k_dialog_helper.dart';
@@ -65,22 +66,23 @@ class DailyDuasScreen extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.purple.shade400,
-                      Colors.deepPurple.shade600,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: AppThemeColors.cardBackgroundColor(context),
+                  // gradient: LinearGradient(
+                  //   colors: [
+                  //     Colors.purple.shade400,
+                  //     Colors.deepPurple.shade600,
+                  //   ],
+                  //   begin: Alignment.topLeft,
+                  //   end: Alignment.bottomRight,
+                  // ),
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.purple.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Colors.purple.withOpacity(0.3),
+                  //     blurRadius: 8,
+                  //     offset: const Offset(0, 4),
+                  //   ),
+                  // ],
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

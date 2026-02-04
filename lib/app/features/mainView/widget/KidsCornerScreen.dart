@@ -35,6 +35,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
   int _completedGames = 0;
   int _currentStreakDays = 0;
   String _selectedGender = 'boy'; // 'boy' or 'girl'
+  String _kidName = ''; // Stores the kid's name
   KidsView _currentView = KidsView.home;
 
   // Levels Categories - Expanded to 9 Levels
@@ -99,18 +100,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.volunteer_activism,
       "color": const Color(0xFFFFA726),
       "tasks": [
-        {
-          "id": "t3_1",
-          "title": "قبلت يد أمي/أبي",
-          "points": 20,
-          "done": false
-        },
-        {
-          "id": "t3_2",
-          "title": "لم أغضب اليوم",
-          "points": 15,
-          "done": false
-        },
+        {"id": "t3_1", "title": "قبلت يد أمي/أبي", "points": 20, "done": false},
+        {"id": "t3_2", "title": "لم أغضب اليوم", "points": 15, "done": false},
         {
           "id": "t3_3",
           "title": "أماطة الأذى عن الطريق",
@@ -143,12 +134,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           "points": 15,
           "done": false
         },
-        {
-          "id": "t4_3",
-          "title": "حفظت آية جديدة",
-          "points": 25,
-          "done": false
-        },
+        {"id": "t4_3", "title": "حفظت آية جديدة", "points": 25, "done": false},
         {
           "id": "t4_4",
           "title": "وضعت المصحف في مكان مرتفع",
@@ -163,12 +149,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.family_restroom,
       "color": const Color(0xFFEC407A),
       "tasks": [
-        {
-          "id": "t5_1",
-          "title": "اتصلت بجدي/جدتي",
-          "points": 30,
-          "done": false
-        },
+        {"id": "t5_1", "title": "اتصلت بجدي/جدتي", "points": 30, "done": false},
         {
           "id": "t5_2",
           "title": "لعبت مع أخي/أختي بلطف",
@@ -260,12 +241,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.light_mode,
       "color": const Color(0xFFFFD600), // Yellow/Gold
       "tasks": [
-        {
-          "id": "t8_1",
-          "title": "استخدمت السواك",
-          "points": 30,
-          "done": false
-        },
+        {"id": "t8_1", "title": "استخدمت السواك", "points": 30, "done": false},
         {
           "id": "t8_2",
           "title": "دخلت المنزل باليمين",
@@ -292,18 +268,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.flag,
       "color": const Color(0xFFC62828), // Red
       "tasks": [
-        {
-          "id": "t9_1",
-          "title": "قلت الصدق دائما",
-          "points": 40,
-          "done": false
-        },
-        {
-          "id": "t9_2",
-          "title": "حافظت على الوعد",
-          "points": 40,
-          "done": false
-        },
+        {"id": "t9_1", "title": "قلت الصدق دائما", "points": 40, "done": false},
+        {"id": "t9_2", "title": "حافظت على الوعد", "points": 40, "done": false},
         {
           "id": "t9_3",
           "title": "نظفت مكاني بعد اللعب",
@@ -487,6 +453,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
     setState(() {
       _totalStars = prefs.getInt('kids_total_stars_v2') ?? 0;
       _selectedGender = prefs.getString('kids_gender') ?? 'boy';
+      _kidName = prefs.getString('kids_name') ?? '';
       _completedStories = prefs.getInt('completed_stories') ?? 0;
       _completedGames = prefs.getInt('completed_games') ?? 0;
       _currentStreakDays = prefs.getInt('streak_days') ?? 0;
@@ -510,6 +477,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('kids_total_stars_v2', _totalStars);
     await prefs.setString('kids_gender', _selectedGender);
+    await prefs.setString('kids_name', _kidName);
 
     final Map<String, dynamic> tasksState = {};
     for (var level in _levels) {
@@ -610,9 +578,10 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return "صباح الخير يا بطل! ☀️";
-    if (hour < 17) return "أهلاً بك يا بطل! 👋";
-    return "مساء النور يا بطل! ✨";
+    final nameToUse = _kidName.isEmpty ? 'بطل' : _kidName;
+    if (hour < 12) return "صباح الخير يا $nameToUse! ☀️";
+    if (hour < 17) return "أهلاً بك يا $nameToUse! 👋";
+    return "مساء النور يا $nameToUse!";
   }
 
   @override
@@ -648,7 +617,12 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           : Colors.black,
                     )
                   : IconButton(
-                      icon: const Icon(Icons.arrow_back),
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                      ),
                       onPressed: () =>
                           setState(() => _currentView = KidsView.home),
                     ),
@@ -834,8 +808,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
         FadeInUp(
           child: Row(
             children: [
-              const Icon(Icons.auto_awesome_rounded, color: Colors.amber),
-              const SizedBox(width: 8),
+              // const Icon(Icons.auto_awesome_rounded, color: Colors.amber),
+              // const SizedBox(width: 8),
               Text(
                 "اختر مغامرتك اليوم",
                 style: GoogleFonts.cairo(
@@ -955,15 +929,15 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: EdgeInsets.all(12.w),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Text(emoji, style: TextStyle(fontSize: 35.sp)),
-            ),
-            const SizedBox(height: 8),
+            // Container(
+            //   padding: EdgeInsets.all(12.w),
+            //   decoration: BoxDecoration(
+            //     color: color.withOpacity(0.1),
+            //     shape: BoxShape.circle,
+            //   ),
+            //   child: Text(emoji, style: TextStyle(fontSize: 35.sp)),
+            // ),
+            // const SizedBox(height: 8),
             Text(
               title,
               style: GoogleFonts.cairo(
@@ -975,6 +949,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               ),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 15),
+
             Text(
               subtitle,
               style: GoogleFonts.cairo(
@@ -1510,69 +1486,161 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
   }
 
   void _showAvatarSelection() {
+    final nameController = TextEditingController(text: _kidName);
+    String tempGender = _selectedGender;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: AppThemeColors.cardBackgroundColor(context),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("اختر بطلك",
-                style: GoogleFonts.cairo(
-                    fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 18.sp,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() => _selectedGender = 'boy');
-                    _saveProgress();
-                    Navigator.pop(context);
-                  },
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.blue.withOpacity(0.2),
-                          child:
-                              const Text("👦", style: TextStyle(fontSize: 40))),
-                      const SizedBox(height: 8),
-                      Text("ولد",
-                          style:
-                              GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() => _selectedGender = 'girl');
-                    _saveProgress();
-                    Navigator.pop(context);
-                  },
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.pink.withOpacity(0.2),
-                          child:
-                              const Text("🧕", style: TextStyle(fontSize: 40))),
-                      const SizedBox(height: 8),
-                      Text("بنت",
-                          style:
-                              GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ),
-              ],
+      isScrollControlled: true, // Accommodate keyboard
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheetState) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppThemeColors.cardBackgroundColor(context),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
             ),
-          ],
+            padding: const EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Directionality(
+                textDirection: TextDirection.rtl,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("إعدادات الملف الشخصي",
+                        style: GoogleFonts.cairo(
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 14.sp : 18.sp,
+                            fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 20),
+                    // Name Input
+                    TextField(
+                      controller: nameController,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        labelText: "اسم البطل",
+                        hintText: "أدخل اسمك هنا",
+                        prefixIcon: const Icon(Icons.person),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      style: GoogleFonts.cairo(),
+                    ),
+                    const SizedBox(height: 20),
+                    Text("اختر بطلك",
+                        style: GoogleFonts.cairo(
+                            fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // Boy Option
+                        InkWell(
+                          onTap: () {
+                            setSheetState(() => tempGender = 'boy');
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: tempGender == 'boy'
+                                  ? Border.all(color: Colors.blue, width: 3)
+                                  : null,
+                              borderRadius: BorderRadius.circular(60),
+                            ),
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                    radius: 40,
+                                    backgroundColor: Colors.blue.withOpacity(0.2),
+                                    child: const Text("👦",
+                                        style: TextStyle(fontSize: 40))),
+                                const SizedBox(height: 8),
+                                Text("ولد",
+                                    style: GoogleFonts.cairo(
+                                        fontWeight: FontWeight.bold,
+                                        color: tempGender == 'boy'
+                                            ? Colors.blue
+                                            : null)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Girl Option
+                        InkWell(
+                          onTap: () {
+                            setSheetState(() => tempGender = 'girl');
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: tempGender == 'girl'
+                                  ? Border.all(color: Colors.pink, width: 3)
+                                  : null,
+                              borderRadius: BorderRadius.circular(60),
+                            ),
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                    radius: 40,
+                                    backgroundColor: Colors.pink.withOpacity(0.2),
+                                    child: const Text("🧕",
+                                        style: TextStyle(fontSize: 40))),
+                                const SizedBox(height: 8),
+                                Text("بنت",
+                                    style: GoogleFonts.cairo(
+                                        fontWeight: FontWeight.bold,
+                                        color: tempGender == 'girl'
+                                            ? Colors.pink
+                                            : null)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 25),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _kidName = nameController.text.trim();
+                            _selectedGender = tempGender;
+                          });
+                          _saveProgress();
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              tempGender == 'boy' ? Colors.blue : Colors.pink,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: Text(
+                          "حفظ",
+                          style: GoogleFonts.cairo(
+                            fontSize: 16.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

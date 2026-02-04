@@ -62,7 +62,7 @@ class NotificationManager {
           playSound: true,
           soundSource: fajrPath ??
               (Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3'),
-          enableVibration: true,
+          enableVibration: SettingsService().isAdhanVibrationEnabled,
           enableLights: true,
           ledColor: Colors.orange,
           defaultPrivacy: NotificationPrivacy.Public,
@@ -80,7 +80,7 @@ class NotificationManager {
           playSound: true,
           soundSource: normalPath ??
               (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-          enableVibration: true,
+          enableVibration: SettingsService().isAdhanVibrationEnabled,
           enableLights: true,
           locked: true,
           criticalAlerts: true,
@@ -254,7 +254,9 @@ class NotificationManager {
           defaultColor: Colors.orange,
           ledColor: Colors.orange,
           playSound: true,
-          soundSource: Platform.isAndroid ? 'resource://raw/pre_prayer' : 'pre_prayer.mp3',
+          soundSource: Platform.isAndroid
+              ? 'resource://raw/pre_prayer'
+              : 'pre_prayer.mp3',
           enableVibration: true,
           enableLights: true,
         ),
@@ -268,7 +270,8 @@ class NotificationManager {
           defaultColor: Colors.blue,
           ledColor: Colors.blue,
           playSound: true,
-          soundSource: Platform.isAndroid ? 'resource://raw/iqamah' : 'iqamah.mp3',
+          soundSource:
+              Platform.isAndroid ? 'resource://raw/iqamah' : 'iqamah.mp3',
           enableVibration: true,
           enableLights: true,
         ),
@@ -282,7 +285,8 @@ class NotificationManager {
           defaultColor: Colors.amber,
           ledColor: Colors.amber,
           playSound: true,
-          soundSource: Platform.isAndroid ? 'resource://raw/shruq' : 'shruq.mp3',
+          soundSource:
+              Platform.isAndroid ? 'resource://raw/shruq' : 'shruq.mp3',
           enableVibration: true,
           enableLights: true,
           criticalAlerts: true,
@@ -793,7 +797,6 @@ class NotificationManager {
   // ==========================================
   // 🕌 جدولة الأذان (منقول من main.dart)
   // ==========================================
-
 
   // ==========================================
   // 🕋 تذكيرات الختمة الجماعية

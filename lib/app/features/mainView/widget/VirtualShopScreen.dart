@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -220,43 +221,91 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'المتجر 🏪',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
-            ),
+        // appBar: AppBar(
+        //   title: Text(
+        //     'المتجر 🏪',
+        //     style: GoogleFonts.cairo(
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        //   actions: [
+        //     Center(
+        //       child: Container(
+        //         margin: const EdgeInsets.only(left: 16),
+        //         padding:
+        //             const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        //         decoration: BoxDecoration(
+        //           color: Colors.amber,
+        //           borderRadius: BorderRadius.circular(20),
+        //         ),
+        //         child: Row(
+        //           children: [
+        //             const Icon(Icons.star, color: Colors.white, size: 20),
+        //             const SizedBox(width: 4),
+        //             Text(
+        //               '${widget.currentStars}',
+        //               style: GoogleFonts.cairo(
+        //                 fontWeight: FontWeight.bold,
+        //                 color: Colors.white,
+        //                 fontSize: 14.sp,
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
           ),
-          centerTitle: true,
-          actions: [
-            Center(
-              child: Container(
-                margin: const EdgeInsets.only(left: 16),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.amber,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.white, size: 20),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${widget.currentStars}',
-                      style: GoogleFonts.cairo(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                      ),
+          child: AppBar(
+              actions: [
+                Center(
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 16),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.amber,
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                  ],
+                    child: Row(
+                      children: [
+                        const Icon(Icons.star, color: Colors.white, size: 20),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${widget.currentStars}',
+                          style: GoogleFonts.cairo(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
+              ],
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            centerTitle: true,
+            title: Text(
+              "المتجر",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
-          ],
+          ),
         ),
+
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [

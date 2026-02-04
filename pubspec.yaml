@@ -130,6 +130,7 @@ dependencies:
   latlong2: ^0.9.0
   device_calendar: ^4.3.3
   wakelock_plus: ^1.2.8
+  flutter_cached_pdfview: ^0.4.3
 #  flutter_quran:
 #  quran_library:
 #    path: packges/quran_library-1.3.2
@@ -160,6 +161,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/json/
     - assets/json/
     - assets/icons/
     - assets/athan/

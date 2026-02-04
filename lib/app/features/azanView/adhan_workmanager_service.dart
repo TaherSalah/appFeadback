@@ -49,6 +49,13 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     print('🔄 [Background Task] Running task: $task');
 
+    // 🚀 تهيئة AwesomeNotifications في الخلفية للتأكد من أنها تعمل
+    await AwesomeNotifications().initialize(
+      Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
+      [],
+      debug: false,
+    );
+
     try {
       if (task == 'periodic_adhan_refresh') {
         // إعادة جدولة الأذان تلقائياً في الخلفية
@@ -289,7 +296,7 @@ class AdhanWorkManagerService {
     bool useTestCallback = false,
   }) async {
     final now = DateTime.now();
-    
+
     // 🕌 تحسين اسم صلاة الظهر لتصبح "الجمعة" في يوم الجمعة
     String effectivePrayerName = prayerName;
     if (prayerName == 'الظهر' && prayerTime.weekday == DateTime.friday) {
@@ -302,6 +309,15 @@ class AdhanWorkManagerService {
     }
 
     try {
+      // 💾 تحميل الإعدادات
+      final prefs = await SharedPreferences.getInstance();
+      final bool isPrePrayerEnabled =
+          prefs.getBool('is_pre_prayer_reminder_enabled') ?? true;
+      final bool isIqamahEnabled =
+          prefs.getBool('is_iqamah_reminder_enabled') ?? true;
+      final bool isSunriseEnabled =
+          prefs.getBool('is_sunrise_reminder_enabled') ?? true;
+
       // إنشاء ID فريد لكل صلاة
       final uniqueId = 1000 + (dayOffset * 10) + prayerIndex;
 
@@ -317,7 +333,7 @@ class AdhanWorkManagerService {
 
       // 🔔 جدولة تنبيه "قبل الصلاة بـ 15 دقيقة"
       final prePrayerTime = prayerTime.subtract(const Duration(minutes: 15));
-      if (prePrayerTime.isAfter(now)) {
+      if (prePrayerTime.isAfter(now) && isPrePrayerEnabled) {
         final preId = 40000 + uniqueId;
         await AwesomeNotifications().createNotification(
           content: NotificationContent(
@@ -345,7 +361,7 @@ class AdhanWorkManagerService {
 
       // 📢 جدولة تنبيه "الإقامة" (بعد 15 دقيقة من الأذان)
       // لا توجد إقامة للشروق
-      if (!prayerName.contains('الشروق')) {
+      if (!prayerName.contains('الشروق') && isIqamahEnabled) {
         final iqamahTime = prayerTime.add(const Duration(minutes: 15));
         if (iqamahTime.isAfter(now)) {
           final iqamahId = 50000 + uniqueId;
@@ -376,47 +392,55 @@ class AdhanWorkManagerService {
 
       // 🌅 معالجة خاصة للشروق (تغيير القناة)
       String effectiveChannelKey = channelKey;
+      bool shouldScheduleMainNotification = true;
+
       if (prayerName.contains('الشروق')) {
         effectiveChannelKey = 'shruq_channel_v1';
+        if (!isSunriseEnabled) {
+          shouldScheduleMainNotification = false;
+          print('   🌅 تم تخطي تنبيه الشروق حسب الإعدادات');
+        }
       }
 
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: uniqueId,
-          channelKey: effectiveChannelKey,
-          icon: 'resource://drawable/ic_stat_logoapp',
-          title: prayerName.contains('الشروق') 
-              ? '\u200Fحان الآن وقت الشروق' 
-              : '\u200Fحان الآن وقت صلاة $effectivePrayerName',
-          body: '\u200Fفي مدينة ${cityName ?? "القاهرة"}',
-          category: NotificationCategory.Alarm,
-          wakeUpScreen: true,
-          fullScreenIntent: true,
-          criticalAlert: true,
-          autoDismissible: true,
-          locked: false,
-          displayOnBackground: true,
-          displayOnForeground: true,
-          timeoutAfter: isFajr
-              ? const Duration(minutes: 4, seconds: 40)
-              : Duration(minutes: 3, seconds: 24),
-          payload: {
-            'prayerName': effectivePrayerName,
-            'prayer_time': _formatTime(prayerTime),
-            'cityName': cityName ?? "",
-            'route': 'adhan_screen',
-            'type': 'adhan',
-          },
-        ),
-        schedule: NotificationCalendar.fromDate(
-          date: prayerTime,
-          preciseAlarm: true,
-          allowWhileIdle: true,
-        ),
-      );
+      if (shouldScheduleMainNotification) {
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: uniqueId,
+            channelKey: effectiveChannelKey,
+            icon: 'resource://drawable/ic_stat_logoapp',
+            title: prayerName.contains('الشروق')
+                ? '\u200Fحان الآن وقت الشروق'
+                : '\u200Fحان الآن وقت صلاة $effectivePrayerName',
+            body: '\u200Fفي مدينة ${cityName ?? "القاهرة"}',
+            category: NotificationCategory.Alarm,
+            wakeUpScreen: true,
+            fullScreenIntent: true,
+            criticalAlert: true,
+            autoDismissible: true,
+            locked: false,
+            displayOnBackground: true,
+            displayOnForeground: true,
+            timeoutAfter: isFajr
+                ? const Duration(minutes: 4, seconds: 40)
+                : Duration(minutes: 3, seconds: 24),
+            payload: {
+              'prayerName': effectivePrayerName,
+              'prayer_time': _formatTime(prayerTime),
+              'cityName': cityName ?? "",
+              'route': 'adhan_screen',
+              'type': 'adhan',
+            },
+          ),
+          schedule: NotificationCalendar.fromDate(
+            date: prayerTime,
+            preciseAlarm: true,
+            allowWhileIdle: true,
+          ),
+        );
+      }
 
       // 📿 جدولة أذكار بعد الصلاة (تحديث الـ ID لتجنب التعارض)
-      final prefs = await SharedPreferences.getInstance();
+
       final bool remEnabled =
           prefs.getBool('post_prayer_reminder_enabled') ?? false;
       final int remMinutes = prefs.getInt('post_reminder_minutes') ?? 10;
@@ -488,7 +512,8 @@ class AdhanWorkManagerService {
 
       return {
         'الفجر': prayerTimes.fajr.add(hourOffset).add(Duration(minutes: fOff)),
-        'الشروق': prayerTimes.sunrise.add(hourOffset).add(Duration(minutes: sOff)),
+        'الشروق':
+            prayerTimes.sunrise.add(hourOffset).add(Duration(minutes: sOff)),
         'الظهر': prayerTimes.dhuhr.add(hourOffset).add(Duration(minutes: dOff)),
         'العصر': prayerTimes.asr.add(hourOffset).add(Duration(minutes: aOff)),
         'المغرب':
@@ -609,16 +634,17 @@ class AdhanWorkManagerService {
   Future<String?> scheduleTestAdhan({int secondsFromNow = 10}) async {
     try {
       final now = DateTime.now();
-      
+
       // موعد الأذان التجريبي
       final adhanTime = now.add(Duration(seconds: secondsFromNow));
-      
+
       // موعد التنبيه قبل الصلاة (قبل الأذان بـ 15 ثانية للاختبار السريع)
-      final preAdhanTime = now.add(Duration(seconds: secondsFromNow - 15 > 0 ? secondsFromNow - 15 : 2));
-      
+      final preAdhanTime = now.add(
+          Duration(seconds: secondsFromNow - 15 > 0 ? secondsFromNow - 15 : 2));
+
       // موعد الإقامة (بعد الأذان بـ 15 ثانية للاختبار السريع)
       final iqamahTime = adhanTime.add(const Duration(seconds: 15));
-      
+
       final cityName = await _getCityName();
 
       print('🧪 جدولة اختبار شامل (قبل الأذان -> أذان -> إقامة)...');

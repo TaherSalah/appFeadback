@@ -24,7 +24,13 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
 
   // Local state for UI
   late bool isAdhanEnabled;
+  late bool isAdhanVibrationEnabled;
   late bool isAdhanOverlayEnabled;
+  late bool isPrePrayerReminderEnabled;
+  late bool isIqamahReminderEnabled;
+  late bool isSunriseReminderEnabled;
+  late bool isPostPrayerReminderEnabled;
+  late int postReminderMinutes;
   late bool isAzkarSabahEnabled;
   late bool isAzkarMassaEnabled;
   late bool isAzkarSleepEnabled;
@@ -44,7 +50,13 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
   void _loadCurrentSettings() {
     setState(() {
       isAdhanEnabled = _settings.isAdhanEnabled;
+      isAdhanVibrationEnabled = _settings.isAdhanVibrationEnabled;
       isAdhanOverlayEnabled = _settings.isAdhanOverlayEnabled;
+      isPrePrayerReminderEnabled = _settings.isPrePrayerReminderEnabled;
+      isIqamahReminderEnabled = _settings.isIqamahReminderEnabled;
+      isSunriseReminderEnabled = _settings.isSunriseReminderEnabled;
+      isPostPrayerReminderEnabled = _settings.isPostPrayerReminderEnabled;
+      postReminderMinutes = _settings.postReminderMinutes;
       isAzkarSabahEnabled = _settings.isAzkarSabahEnabled;
       isAzkarMassaEnabled = _settings.isAzkarMassaEnabled;
       isAzkarSleepEnabled = _settings.isAzkarSleepEnabled;
@@ -57,11 +69,17 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
 
   Future<void> _saveAll() async {
     if (_isLoading) return;
-    
+
     setState(() => _isLoading = true);
     try {
       await _settings.setAdhanEnabled(isAdhanEnabled);
+      await _settings.setAdhanVibrationEnabled(isAdhanVibrationEnabled);
       await _settings.setAdhanOverlayEnabled(isAdhanOverlayEnabled);
+      await _settings.setPrePrayerReminderEnabled(isPrePrayerReminderEnabled);
+      await _settings.setIqamahReminderEnabled(isIqamahReminderEnabled);
+      await _settings.setSunriseReminderEnabled(isSunriseReminderEnabled);
+      await _settings.setPostPrayerReminderEnabled(isPostPrayerReminderEnabled);
+      await _settings.setPostReminderMinutes(postReminderMinutes);
       await _settings.setAzkarSabahEnabled(isAzkarSabahEnabled);
       await _settings.setAzkarMassaEnabled(isAzkarMassaEnabled);
       await _settings.setAzkarSleepEnabled(isAzkarSleepEnabled);
@@ -105,7 +123,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
         // ),
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
@@ -116,7 +134,8 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize:
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -147,7 +166,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: ListView(
                     children: [
-                      SizedBox(height: MediaQuery.of(context).padding.top ),
+                      SizedBox(height: MediaQuery.of(context).padding.top),
 
                       // 🕋 الأذان
                       _buildSectionHeader(context, 'الصلوات'),
@@ -183,6 +202,127 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                               });
                             },
                           ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'الاهتزاز مع الأذان',
+                            subtitle: 'تفعيل الاهتزاز عند وقت الصلاة',
+                            icon: Icons.vibration,
+                            iconColor: Colors.purple[400]!,
+                            value: isAdhanVibrationEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isAdhanVibrationEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'تنبيهات قبل الصلاة',
+                            subtitle: 'تنبيه قبل الأذان بـ 15 دقيقة',
+                            icon: Icons.access_time,
+                            iconColor: Colors.orange[800]!,
+                            value: isPrePrayerReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isPrePrayerReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'تنبيهات الإقامة',
+                            subtitle: 'تنبيه بإقامة الصلاة بعد 15 دقيقة',
+                            icon: Icons.timer,
+                            iconColor: Colors.blue[600]!,
+                            value: isIqamahReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isIqamahReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'تنبيه الشروق',
+                            subtitle: 'تنبيه عند موعد شروق الشمس',
+                            icon: Icons.wb_twilight,
+                            iconColor: Colors.amber[600]!,
+                            value: isSunriseReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isSunriseReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'أذكار بعد الصلاة',
+                            subtitle: 'تذكير بقراءة الأذكار بعد الصلاة',
+                            icon: Icons.task_alt,
+                            iconColor: Colors.teal[700]!,
+                            value: isPostPrayerReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isPostPrayerReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          if (isPostPrayerReminderEnabled) ...[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 8),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'التنبيه بعد:',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 12,
+                                      color: isDark
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Slider(
+                                      value: postReminderMinutes.toDouble(),
+                                      min: 5,
+                                      max: 30,
+                                      divisions: 5,
+                                      label: '$postReminderMinutes دقيقة',
+                                      activeColor: Colors.teal,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          postReminderMinutes = val.toInt();
+                                          _hasChanges = true;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Text(
+                                    '$postReminderMinutes دقيقة',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ],
                       ),
 

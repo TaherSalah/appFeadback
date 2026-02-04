@@ -35,11 +35,12 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   final List<Map<String, String>> _categories = [
-    {'name': 'الكل', 'emoji': '🌈', 'color': '0xFF0EA5E9'},
-    {'name': 'قصص الأنبياء', 'emoji': '📖', 'color': '0xFF6366F1'},
-    {'name': 'أخلاق', 'emoji': '🌟', 'color': '0xFFF59E0B'},
-    {'name': 'صحابة', 'emoji': '🕌', 'color': '0xFF10B981'},
-    {'name': 'عبر', 'emoji': '💡', 'color': '0xFFEC4899'},
+    {'name': 'الكل', 'emoji': '', 'color': '0xFF0EA5E9'},
+    {'name': 'قصص الأنبياء', 'emoji': '', 'color': '0xFF6366F1'},
+    {'name': 'منوع', 'emoji': '', 'color': '0xFFF59E0B'},
+    {'name': 'صحابة', 'emoji': '', 'color': '0xFF10B981'},
+    {'name': 'اخلاق', 'emoji': '', 'color': '0xFFEC4899'},
+    {'name': 'قران', 'emoji': '', 'color': '0xFFEC4899'},
   ];
 
   @override
@@ -117,60 +118,235 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
     });
   }
 
+  // void _showAvatarSelectionDialog() {
+  //   final List<String> avatars = ['😀', '😇', '😎', '🤩', '🥳', '🚀', '🌟', '💡', '📖', '🕌', '🧸', '🌈', '👑', '🦸', '🦹'];
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('اختر شخصيتك', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+  //         content: SizedBox(
+  //           width: double.maxFinite,
+  //           child: GridView.builder(
+  //             shrinkWrap: true,
+  //             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //               crossAxisCount: 5,
+  //               childAspectRatio: 1,
+  //               crossAxisSpacing: 10,
+  //               mainAxisSpacing: 10,
+  //             ),
+  //             itemCount: avatars.length,
+  //             itemBuilder: (context, index) {
+  //               final avatar = avatars[index];
+  //               return GestureDetector(
+  //                 onTap: () {
+  //                   _saveUserAvatar(avatar);
+  //                   Navigator.pop(context);
+  //                 },
+  //                 child: Container(
+  //                   decoration: BoxDecoration(
+  //                     color: _userAvatar == avatar ? const Color(0xFF0EA5E9).withOpacity(0.2) : Colors.grey.withOpacity(0.1),
+  //                     borderRadius: BorderRadius.circular(10),
+  //                     border: Border.all(
+  //                       color: _userAvatar == avatar ? const Color(0xFF0EA5E9) : Colors.transparent,
+  //                       width: 2,
+  //                     ),
+  //                   ),
+  //                   child: Center(
+  //                     child: Text(
+  //                       avatar,
+  //                       style: TextStyle(fontSize: 30.sp),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               );
+  //             },
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context),
+  //             child: Text('إلغاء', style: GoogleFonts.cairo(color: const Color(0xFF0EA5E9))),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
   void _showAvatarSelectionDialog() {
-    final List<String> avatars = ['😀', '😇', '😎', '🤩', '🥳', '🚀', '🌟', '💡', '📖', '🕌', '🧸', '🌈', '👑', '🦸', '🦹'];
+    final List<String> avatars = ['😀', '😇', '😎', '🤩', '🥳', '🚀', '🌟', '💡', '📖', '🕌', '🧸', '👑', '🦸', '🦹'];
+
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('اختر شخصيتك', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                childAspectRatio: 1,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: avatars.length,
-              itemBuilder: (context, index) {
-                final avatar = avatars[index];
-                return GestureDetector(
-                  onTap: () {
-                    _saveUserAvatar(avatar);
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: _userAvatar == avatar ? const Color(0xFF0EA5E9).withOpacity(0.2) : Colors.grey.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: _userAvatar == avatar ? const Color(0xFF0EA5E9) : Colors.transparent,
-                        width: 2,
+      barrierDismissible: true,
+      builder: (dialogContext) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding:
+          const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // جسم الديالوج
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: isDark
+                        ? [const Color(0xFF0B1E2D), const Color(0xFF071521)]
+                        : [const Color(0xFFEFF8FF), const Color(0xFFDFF1FF)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // العنوان
+                    Text(
+                      'اختر شخصيتك',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
-                    child: Center(
-                      child: Text(
-                        avatar,
-                        style: TextStyle(fontSize: 30.sp),
+                    const SizedBox(height: 16),
+
+                    // الشبكة
+                    SizedBox(
+                      height: 240,
+                      child: GridView.builder(
+                        gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 5,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemCount: avatars.length,
+                        itemBuilder: (context, index) {
+                          final avatar = avatars[index];
+                          final bool selected = _userAvatar == avatar;
+
+                          return GestureDetector(
+                            onTap: () {
+                              _saveUserAvatar(avatar);
+                              Navigator.of(dialogContext).pop();
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              decoration: BoxDecoration(
+                                color: selected
+                                    ? const Color(0xFF0EA5E9).withOpacity(0.2)
+                                    : Colors.grey.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: selected
+                                      ? const Color(0xFF0EA5E9)
+                                      : Colors.transparent,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  avatar,
+                                  style: TextStyle(fontSize: 30),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    // const SizedBox(height: 10),
+
+                    // زر الإلغاء
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: isDark
+                                ? Colors.grey.shade400
+                                : Colors.grey.shade600,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          padding:
+                          const EdgeInsets.symmetric(vertical: 11),
+                        ),
+                        child: Text(
+                          'إلغاء',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark
+                                ? Colors.white
+                                : Colors.grey.shade800,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // الأيقونة العلوية
+              Positioned(
+                top: -30,
+                left: 0,
+                right: 0,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF0EA5E9),
+                          Color(0xFF38BDF8),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blue.withOpacity(0.6),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.person,
+                        size: 34,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('إلغاء', style: GoogleFonts.cairo(color: const Color(0xFF0EA5E9))),
-            ),
-          ],
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -194,7 +370,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
               SliverAppBar(
                 expandedHeight: 180.h,
                 pinned: true,
-                backgroundColor: const Color(0xFF0EA5E9),
+                backgroundColor: KColors.primaryColor,
+                // backgroundColor: const Color(0xFF0EA5E9),
                 elevation: 0,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
@@ -202,9 +379,9 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                 ),
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
-                    decoration: const BoxDecoration(
+                    decoration:  BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
+                        colors: [KColors.primaryColor, KColors.primaryColor],
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
                       ),
@@ -224,7 +401,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'ركن الطفل المسلم 🧸',
+                              'ركن الطفل المسلم',
                               style: GoogleFonts.cairo(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 24.sp,
@@ -233,7 +410,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                               ),
                             ),
                             Text(
-                              'قصص وعبر ومغامرات جميلة ✨',
+                              'قصص وعبر ومغامرات جميلة',
                               style: GoogleFonts.cairo(
                                 fontSize: 14.sp,
                                 color: Colors.white.withOpacity(0.9),
@@ -259,7 +436,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                   child: Row(
                     children: [
                       Text(
-                        'اختر مغامرتك القادمة 🚀',
+                        'اختر مغامرتك القادمة',
                         style: GoogleFonts.cairo(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
@@ -299,9 +476,9 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                       onChanged: (_) => _applyFilters(),
                       style: GoogleFonts.cairo(fontSize: 14.sp),
                       decoration: InputDecoration(
-                        hintText: 'ابحث عن قصة جميلة... 🔍',
+                        hintText: 'ابحث عن قصة',
                         hintStyle: GoogleFonts.cairo(color: Colors.grey.shade400, fontSize: 13.sp),
-                        prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF0EA5E9)),
+                        prefixIcon:  Icon(Icons.search_rounded, color: KColors.primaryColor),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       ),
@@ -346,8 +523,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('🌈', style: TextStyle(fontSize: 80.sp)),
-          SizedBox(height: 10.h),
+          // Text('🌈', style: TextStyle(fontSize: 80.sp)),
+          // SizedBox(height: 10.h),
           Text(
             'لا توجد قصص بهذا الاسم حالياً!',
             style: GoogleFonts.cairo(
@@ -406,7 +583,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                     borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Text(
-                    'مستواك: بطل مغامر $_userLevel 🏆',
+                    'مستواك: بطل مغامر $_userLevel',
                     style: GoogleFonts.cairo(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -416,7 +593,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                 ),
                 SizedBox(height: 12.h),
                 Text(
-                  'لقد جمعت $_userStars نجمة! ✨',
+                  'لقد جمعت $_userStars نجمة! ',
                   style: GoogleFonts.cairo(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -449,7 +626,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  'استمر في القراءة لتصل للمستوى القادم! 📈',
+                  'استمر في القراءة لتصل للمستوى القادم!',
                   style: GoogleFonts.cairo(
                     color: Colors.white.withOpacity(0.8),
                     fontSize: 11.sp,
@@ -659,7 +836,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0EA5E9),
+                    color: KColors.primaryColor,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10.r),
                       bottomLeft: Radius.circular(10.r),

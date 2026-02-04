@@ -351,6 +351,30 @@ class _AdhanLibraryScreenState extends State<AdhanLibraryScreen> {
         title: const Text('🎵 مكتبة الأذانات'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: "إعادة جدولة",
+            onPressed: () async {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('🔄 جاري إعادة الجدولة...')),
+              );
+              await workService.reschedule(days: 7);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('✅ تمت إعادة الجدولة بنجاح')),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.notifications_active),
+            tooltip: "اختبار فوري",
+            onPressed: () async {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('🧪 جاري جدولة اختبار خلال 10 ثواني...')),
+              );
+              await workService.scheduleTestAdhan(secondsFromNow: 10);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.info_outline),
             onPressed: () => _showCacheInfo(),
           ),

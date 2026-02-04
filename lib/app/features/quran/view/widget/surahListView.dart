@@ -11,6 +11,7 @@ import 'package:quran_library/quran.dart';
 
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../messaView/azkar_massa.dart';
+import '../../pdf/view/quran_pdf_screen.dart';
 
 class SurahListScreen extends StatefulWidget {
   const SurahListScreen({super.key});
@@ -77,7 +78,10 @@ class _SurahListScreenState extends State<SurahListScreen> {
           );
         } else {
           if (mounted) {
-            KHelper.showError(message: "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز (قد تحتاج لتثبيت خدمات جوجل الصوتية)",);
+            KHelper.showError(
+              message:
+                  "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز (قد تحتاج لتثبيت خدمات جوجل الصوتية)",
+            );
             // ScaffoldMessenger.of(context).showSnackBar(
             //   const SnackBar(
             //     content: Text(
@@ -93,7 +97,9 @@ class _SurahListScreenState extends State<SurahListScreen> {
       } catch (e) {
         debugPrint("Speech recognition exception: $e");
         if (mounted) {
-          KHelper.showError(message:  "حدث خطأ أثناء تشغيل البحث الصوتي",);
+          KHelper.showError(
+            message: "حدث خطأ أثناء تشغيل البحث الصوتي",
+          );
           // ScaffoldMessenger.of(context).showSnackBar(
           //   const SnackBar(
           //     content: Text(
@@ -269,6 +275,22 @@ class _SurahListScreenState extends State<SurahListScreen> {
                 Tab(text: "أحزاب"),
               ],
             ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const QuranPdfScreen(),
+                    ),
+                  );
+                },
+                icon:
+                    const Icon(Icons.picture_as_pdf_rounded, color: Colors.red),
+                tooltip: "القراءة من PDF",
+              ),
+              const SizedBox(width: 8),
+            ],
           ),
           body: isLoading == true
               ? Center(
