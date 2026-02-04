@@ -7,28 +7,60 @@ import 'package:flutter/material.dart';
 import 'base_flame_game.dart';
 
 class SunnahHeroRunner extends BaseEducationalGame with TapCallbacks {
-  late HeroPlayer hero;
+  HeroPlayer? hero;
   double spawnTimer = 0;
   final Random random = Random();
-  double gameSpeed = 300;
+  double gameSpeed = 0; // Set in onResize
+  double groundY = 0;
 
   @override
   Future<void> onLoad() async {
     // Elegant gradient sky
-    add(BackgroundGradient(colors: [Colors.blue[900]!, Colors.blue[400]!]));
+    add(BackgroundGradient(colors: [
+      const Color(0xFF0D47A1), // Blue 900
+      const Color(0xFF42A5F5), // Blue 400
+      const Color(0xFFE3F2FD), // Blue 50
+    ]));
     
     // Improved scrolling background with silhouettes
-    add(ScrollingBackground(speed: 40, color: Colors.blue[800]!.withOpacity(0.3), height: 300));
-    add(ScrollingBackground(speed: 80, color: Colors.blue[700]!.withOpacity(0.4), height: 200));
+    add(ScrollingBackground(speedFactor: 0.2, color: Colors.blue[800]!.withOpacity(0.3), heightRatio: 0.5));
+    add(ScrollingBackground(speedFactor: 0.5, color: Colors.blue[700]!.withOpacity(0.4), heightRatio: 0.25));
 
     hero = HeroPlayer();
-    add(hero);
+    add(hero!);
     
+    // Ground
     add(RectangleComponent(
-      position: Vector2(0, size.y - 40),
-      size: Vector2(size.x, 40),
-      paint: Paint()..color = Colors.brown[900]!,
+      position: Vector2(0, size.y - size.y * 0.1),
+      size: Vector2(size.x, size.y * 0.1),
+      paint: Paint()..color = const Color(0xFF3E2723), // Brown 900
     ));
+  }
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    groundY = size.y * 0.9;
+    
+    gameSpeed = size.x * 0.6; // Speed relative to screen width
+    
+    // Resize Hero
+    if (hero != null && children.contains(hero!)) {
+      final double baseUnit = min(size.x, size.y);
+      hero!.size = Vector2(baseUnit * 0.15, baseUnit * 0.20);
+      hero!.groundY = groundY;
+      hero!.position = Vector2(size.x * 0.15, groundY - hero!.size.y);
+      // Update physics constants based on size
+      hero!.gravity = size.y * 2.5;
+      hero!.jumpForce = -size.y * 0.95;
+    }
+    
+    // Resize ground visual
+    final ground = children.whereType<RectangleComponent>().firstOrNull;
+    if (ground != null) {
+      ground.position = Vector2(0, groundY);
+      ground.size = Vector2(size.x, size.y - groundY);
+    }
   }
 
   @override
@@ -37,18 +69,25 @@ class SunnahHeroRunner extends BaseEducationalGame with TapCallbacks {
     if (isGameOver) return;
 
     spawnTimer += dt;
-    if (spawnTimer > 1.5) {
+    // Spawn faster as score increases
+    final spawnInterval = max(1.2, 2.0 - (score * 0.05));
+    
+    if (spawnTimer > spawnInterval) {
       spawnObstacleOrDeed();
       spawnTimer = 0;
-      gameSpeed += 5;
+      gameSpeed += size.x * 0.01;
     }
   }
 
   void spawnObstacleOrDeed() {
+    final double baseUnit = min(size.x, size.y);
+    final itemSize = Vector2.all(baseUnit * 0.12);
+    
     final isGoodDeed = random.nextDouble() > 0.3;
     final item = RunnerItem(
       isGoodDeed: isGoodDeed,
-      position: Vector2(size.x + 50, size.y - 90),
+      position: Vector2(size.x + itemSize.x, groundY - itemSize.y - (isGoodDeed && random.nextBool() ? itemSize.y * 1.5 : 0)), // Flying deeds
+      size: itemSize,
       speed: gameSpeed,
     );
     add(item);
@@ -56,22 +95,23 @@ class SunnahHeroRunner extends BaseEducationalGame with TapCallbacks {
 
   @override
   void onTapDown(TapDownEvent event) {
-    if (isGameOver) return;
-    hero.jump();
+    if (isGameOver || hero == null) return;
+    hero!.jump();
   }
 
   void createHitParticles(Vector2 pos, Color color) {
+    final double baseUnit = min(size.x, size.y);
     add(
       ParticleSystemComponent(
         particle: Particle.generate(
           count: 15,
           lifespan: 0.6,
           generator: (i) => AcceleratedParticle(
-            acceleration: Vector2(0, 300),
-            speed: Vector2(random.nextDouble() * 300 - 150, -random.nextDouble() * 200),
+            acceleration: Vector2(0, size.y * 0.5),
+            speed: Vector2(random.nextDouble() * baseUnit - baseUnit/2, -random.nextDouble() * baseUnit/2),
             position: pos.clone(),
             child: CircleParticle(
-              radius: 4,
+              radius: baseUnit * 0.01,
               paint: Paint()..color = color..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
             ),
           ),
@@ -84,7 +124,7 @@ class SunnahHeroRunner extends BaseEducationalGame with TapCallbacks {
   void restart() {
     super.restart();
     children.whereType<RunnerItem>().forEach((item) => item.removeFromParent());
-    gameSpeed = 300;
+    onGameResize(size); // Reset speeds and hero
   }
 }
 
@@ -106,35 +146,37 @@ class BackgroundGradient extends Component with HasGameRef {
     final starPaint = Paint()..color = Colors.white.withOpacity(0.5);
     final rand = Random(42);
     for(int i=0; i<30; i++) {
-      canvas.drawCircle(Offset(rand.nextDouble() * gameRef.size.x, rand.nextDouble() * gameRef.size.y * 0.6), rand.nextDouble() * 1.5, starPaint);
+      canvas.drawCircle(Offset(rand.nextDouble() * gameRef.size.x, rand.nextDouble() * gameRef.size.y * 0.6), rand.nextDouble() * 2, starPaint);
     }
   }
 }
 
 class ScrollingBackground extends PositionComponent with HasGameRef<SunnahHeroRunner> {
-  final double speed;
+  final double speedFactor; // Relative to game width
   final Color color;
-  final double height;
+  final double heightRatio;
   double xOffset = 0;
 
-  ScrollingBackground({required this.speed, required this.color, this.height = 0});
+  ScrollingBackground({required this.speedFactor, required this.color, required this.heightRatio});
 
   @override
   void render(Canvas canvas) {
-    final h = height > 0 ? height : gameRef.size.y;
-    final y = height > 0 ? gameRef.size.y - height - 40 : 0.0;
+    final h = gameRef.size.y * heightRatio;
+    final yBase = gameRef.size.y - h - (gameRef.size.y * 0.1); // Above ground
     
     final paint = Paint()..color = color;
     
+    final unitW = gameRef.size.x * 0.4;
+    
     for (int i = 0; i < 5; i++) {
-       final shapeX = (i * 250 - xOffset) % (gameRef.size.x + 250) - 100;
-       // Stylized mosque silhouette or hill
+       final shapeX = (i * unitW - xOffset) % (gameRef.size.x + unitW) - unitW;
+       
        final path = Path()
-         ..moveTo(shapeX, h + y)
-         ..lineTo(shapeX + 50, y + h * 0.4)
-         ..lineTo(shapeX + 100, y + h * 0.2)
-         ..lineTo(shapeX + 150, y + h * 0.4)
-         ..lineTo(shapeX + 200, h + y)
+         ..moveTo(shapeX, yBase + h)
+         ..lineTo(shapeX + unitW * 0.2, yBase + h * 0.4)
+         ..lineTo(shapeX + unitW * 0.4, yBase + h * 0.2)
+         ..lineTo(shapeX + unitW * 0.6, yBase + h * 0.4)
+         ..lineTo(shapeX + unitW * 0.8, yBase + h)
          ..close();
        canvas.drawPath(path, paint);
     }
@@ -143,25 +185,19 @@ class ScrollingBackground extends PositionComponent with HasGameRef<SunnahHeroRu
   @override
   void update(double dt) {
     super.update(dt);
-    xOffset += speed * dt;
+    if (gameRef.isGameOver) return;
+    xOffset += gameRef.size.x * speedFactor * dt;
   }
 }
 
 class HeroPlayer extends PositionComponent with HasGameRef<SunnahHeroRunner> {
   double velocityY = 0;
-  final double gravity = 1500;
-  final double jumpForce = -600;
+  double gravity = 0; // Set in onResize
+  double jumpForce = 0; // Set in onResize
   bool isJumping = false;
-  late double groundY;
+  double groundY = 0; // Set in onResize
 
   HeroPlayer() : super(size: Vector2(60, 80));
-
-  @override
-  void onMount() {
-    super.onMount();
-    groundY = gameRef.size.y - 40;
-    position = Vector2(100, groundY - size.y);
-  }
 
   void jump() {
     if (!isJumping) {
@@ -189,15 +225,24 @@ class HeroPlayer extends PositionComponent with HasGameRef<SunnahHeroRunner> {
   void render(Canvas canvas) {
     // Hero with a cape!
     final paint = Paint()..color = Colors.green[500]!;
-    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(5)), paint);
+    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(8)), paint);
     
-    // Cape
+    // Cape animation based on velocity
+    final capePath = Path();
+    capePath.moveTo(0, size.y * 0.2);
+    capePath.quadraticBezierTo(-size.x * 0.5, size.y * 0.3 + (velocityY * 0.02), -size.x * 0.2, size.y * 0.8);
+    capePath.lineTo(0, size.y * 0.3);
+    canvas.drawPath(capePath, Paint()..color = Colors.green[700]!);
+    
+    // Face
+    canvas.drawRect(Rect.fromLTWH(size.x * 0.6, size.y * 0.2, size.x * 0.3, size.y * 0.2), Paint()..color = const Color(0xFFFFCCBC));
+
     const textStyle = TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold);
     final textPainter = TextPainter(
       text: const TextSpan(text: 'بطل السنة', style: textStyle),
       textDirection: TextDirection.rtl,
     )..layout();
-    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
+    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, size.y * 0.5));
   }
 }
 
@@ -205,8 +250,8 @@ class RunnerItem extends PositionComponent with HasGameRef<SunnahHeroRunner> {
   final bool isGoodDeed;
   final double speed;
 
-  RunnerItem({required this.isGoodDeed, required Vector2 position, required this.speed}) 
-      : super(position: position, size: Vector2(40, 40));
+  RunnerItem({required this.isGoodDeed, required Vector2 position, required Vector2 size, required this.speed}) 
+      : super(position: position, size: size);
 
   @override
   void update(double dt) {
@@ -215,7 +260,7 @@ class RunnerItem extends PositionComponent with HasGameRef<SunnahHeroRunner> {
 
     position.x -= speed * dt;
 
-    if (position.distanceTo(gameRef.hero.position) < 40) {
+    if (gameRef.hero != null && position.distanceTo(gameRef.hero!.position + gameRef.hero!.size/2) < (size.x + gameRef.hero!.size.x)/2.5) {
       if (isGoodDeed) {
         gameRef.updateScore(5);
         gameRef.createHitParticles(position + size/2, Colors.amberAccent);
@@ -226,7 +271,7 @@ class RunnerItem extends PositionComponent with HasGameRef<SunnahHeroRunner> {
       removeFromParent();
     }
 
-    if (position.x < -50) {
+    if (position.x < -size.x * 2) {
       removeFromParent();
     }
   }
@@ -242,15 +287,32 @@ class RunnerItem extends PositionComponent with HasGameRef<SunnahHeroRunner> {
     final paint = Paint()..color = color;
     if (isGoodDeed) {
       canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x / 2, paint);
+      // Star Icon
+      const textStyle = TextStyle(fontSize: 20); // Emoji size relative?
+      final textPainter = TextPainter(
+        text: const TextSpan(text: '⭐', style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+       textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
     } else {
       canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(5)), paint);
+       // Warning Icon
+      const textStyle = TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold);
+      final textPainter = TextPainter(
+        text: const TextSpan(text: '!', style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+       textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
     }
     
-    const textStyle = TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold);
+    // Label text
+    final fontSize = size.x * 0.25;
+    const textStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold, shadows: [Shadow(blurRadius: 2)]);
     final textPainter = TextPainter(
-      text: TextSpan(text: isGoodDeed ? 'حسنة' : 'عقبة', style: textStyle),
+      text: TextSpan(text: isGoodDeed ? 'حسنة' : 'عقبة', style: textStyle.copyWith(fontSize: fontSize)),
       textDirection: TextDirection.rtl,
     )..layout();
-    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
+    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, size.y + 2));
   }
 }
+

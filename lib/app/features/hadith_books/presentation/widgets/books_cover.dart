@@ -132,7 +132,6 @@ class BooksCover extends StatelessWidget {
               ],
             ),
           ),
-          
           // Books Grid/List
           Align(
             alignment: Alignment.center,

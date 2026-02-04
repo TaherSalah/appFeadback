@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -95,22 +96,33 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'لعبة ترتيب الوضوء 💧',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+          ),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: _shuffleSteps,
+                tooltip: 'لعبة جديدة',
+              ),
+            ],
+            centerTitle: true,
+            title: Text(
+              "لعبة ترتيب الوضوء",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
             ),
           ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: _shuffleSteps,
-              tooltip: 'خلط من جديد',
-            ),
-          ],
         ),
         body: Column(
           children: [

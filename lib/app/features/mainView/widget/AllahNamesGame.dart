@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'kids_data/sounds_helper.dart';
 import 'dart:math';
@@ -74,7 +76,7 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
       context: context,
       type: isCorrect ? KDialogType.success : KDialogType.error,
       icon: isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
-      title: isCorrect ? 'صحيح! ✅' : 'خطأ ❌',
+      title: isCorrect ? 'صحيح!' : 'خطأ',
       description: isCorrect
           ? 'ممتاز! المعنى صحيح'
           : 'المعنى الصحيح هو: $_correctAnswer',
@@ -104,7 +106,7 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
       context: context,
       type: KDialogType.success,
       icon: Icons.emoji_events_rounded,
-      title: 'انتهى الاختبار! 🌟',
+      title: 'انتهى الاختبار!',
       description: 'تعلمت ${_allahNames.length} اسماً من أسماء الله الحسنى!',
       additionalContent: Column(
         mainAxisSize: MainAxisSize.min,
@@ -165,16 +167,37 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'أسماء الله الحسنى 🌟',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        // appBar: AppBar(
+        //   title: Text(
+        //     'أسماء الله الحسنى 🌟',
+        //     style: GoogleFonts.cairo(
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+          ),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            centerTitle: true,
+            title: Text(
+              "أسماء الله الحسنى",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
             ),
           ),
-          centerTitle: true,
         ),
+
         body: Column(
           children: [
             // Progress
@@ -182,8 +205,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+                gradient:  LinearGradient(
+                  colors: [KColors.primaryColor, KColors.primaryColor],
                 ),
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -223,42 +246,14 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(32),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.amber.shade100,
-                            Colors.orange.shade50
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          const Text(
-                            '🌟',
-                            style: TextStyle(fontSize: 50),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            nameData['name']!,
-                            style: GoogleFonts.cairo(
-                              fontSize: ResponsiveUtil.isTablet(context)
-                                  ? 18.sp
-                                  : 32.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.brown.shade700,
-                            ),
-                          ),
-                        ],
+                    Text(
+                      nameData['name']!,
+                      style: GoogleFonts.cairo(
+                        fontSize: ResponsiveUtil.isTablet(context)
+                            ? 18.sp
+                            : 32.sp,
+                        fontWeight: FontWeight.bold,
+                        color:isDark?KColors.primaryColor :Colors.brown.shade700,
                       ),
                     ),
                     const SizedBox(height: 24),

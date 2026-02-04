@@ -110,7 +110,7 @@ import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 //         coordinates: coordinates,
 //         calculationParams: calculationParams,
 //         cityName: cityName,
-//         days: 30,
+//         days: 7,
 //       );
 //
 //       if (mounted) {
@@ -2230,7 +2230,7 @@ class _AzanViewState extends StateMVC<AzanView> {
         coordinates: coordinates,
         calculationParams: calculationParams,
         cityName: cityName,
-        days: 30,
+        days: 7,
       );
 
       if (mounted) {
@@ -2758,38 +2758,38 @@ leading: Navigator.canPop(context)
             // ),
 
             // زر اختبار الأذان 🧪
-            IconButton(
-              icon: const Icon(Icons.bug_report, color: Colors.orange),
-              tooltip: 'اختبار الأذان (20 ثانية)',
-              onPressed: () async {
-                bool isAllowed =
-                    await AwesomeNotifications().isNotificationAllowed();
-                if (!isAllowed) {
-                  await AwesomeNotifications()
-                      .requestPermissionToSendNotifications();
-                  isAllowed =
-                      await AwesomeNotifications().isNotificationAllowed();
-                  if (!isAllowed) {
-                    KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
-                    return;
-                  }
-                }
-
-                try {
-                  KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
-                  final success = await AdhanWorkManagerService()
-                      .scheduleTestAdhan(secondsFromNow: 20);
-                  if (success == null) {
-                    KHelper.showSuccess(
-                        message: '🧪 تم جدولة اختبار شامل بعد 20 ثانية');
-                  } else {
-                    KHelper.showError(message: '❌ فشل الاختبار: $success');
-                  }
-                } catch (e) {
-                  KHelper.showError(message: '❌ خطأ: $e');
-                }
-              },
-            ),
+            // IconButton(
+            //   icon: const Icon(Icons.bug_report, color: Colors.orange),
+            //   tooltip: 'اختبار الأذان (20 ثانية)',
+            //   onPressed: () async {
+            //     bool isAllowed =
+            //         await AwesomeNotifications().isNotificationAllowed();
+            //     if (!isAllowed) {
+            //       await AwesomeNotifications()
+            //           .requestPermissionToSendNotifications();
+            //       isAllowed =
+            //           await AwesomeNotifications().isNotificationAllowed();
+            //       if (!isAllowed) {
+            //         KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
+            //         return;
+            //       }
+            //     }
+            //
+            //     try {
+            //       KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
+            //       final success = await AdhanWorkManagerService()
+            //           .scheduleTestAdhan(secondsFromNow: 20);
+            //       if (success == null) {
+            //         KHelper.showSuccess(
+            //             message: '🧪 تم جدولة اختبار شامل بعد 20 ثانية');
+            //       } else {
+            //         KHelper.showError(message: '❌ فشل الاختبار: $success');
+            //       }
+            //     } catch (e) {
+            //       KHelper.showError(message: '❌ خطأ: $e');
+            //     }
+            //   },
+            // ),
 
             IconButton(
               icon: const Icon(Icons.settings),
@@ -3407,12 +3407,12 @@ leading: Navigator.canPop(context)
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [Colors.green.shade400, Colors.teal.shade600],
+          colors: [KColors.primaryColor, Colors.teal.shade500],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.green.withOpacity(0.4),
+            color: KColors.primaryColor.withOpacity(0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -3550,7 +3550,7 @@ leading: Navigator.canPop(context)
             ],
             border: isNext
                 ? Border.all(
-                    color: Colors.green,
+                    color: KColors.primaryColor,
                     width: 2,
                   )
                 : null,

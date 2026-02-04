@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,139 +49,195 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
             overlayBuilderMap: {
               'GameOver': (context, game) {
                 _saveScore();
-                return Center(
-                  child: Container(
-                    padding: EdgeInsets.all(24.r),
-                    margin: EdgeInsets.symmetric(horizontal: 24.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(20.r),
-                      boxShadow: [
-                        BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 2)
-                      ]
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'انتهت اللعبة! 🏁',
-                          style: GoogleFonts.cairo(
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                return Container(
+                  color: Colors.black54, // Dim background
+                  child: Center(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: 400.w),
+                        padding: EdgeInsets.all(24.r),
+                        margin: EdgeInsets.symmetric(horizontal: 24.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.95),
+                          borderRadius: BorderRadius.circular(24.r),
+                          boxShadow: [
+                            BoxShadow(color: Colors.black26, blurRadius: 15, spreadRadius: 2, offset: const Offset(0, 5))
+                          ]
                         ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          'مجموع النجوم: ${widget.game.score}',
-                          style: GoogleFonts.cairo(
-                            fontSize: 18.sp,
-                            color: Colors.amber[800],
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(16.r),
+                              decoration: BoxDecoration(
+                                color: Colors.orange[50],
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text('🏁', style: TextStyle(fontSize: 40.sp)),
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              'انتهت اللعبة!',
+                              style: GoogleFonts.cairo(
+                                fontSize: 26.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Container(
+                               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                               decoration: BoxDecoration(
+                                 color: Colors.amber[50],
+                                 borderRadius: BorderRadius.circular(15.r),
+                                 border: Border.all(color: Colors.amber[200]!)
+                               ),
+                               child: Row(
+                                 mainAxisSize: MainAxisSize.min,
+                                 children: [
+                                   Icon(Icons.star_rounded, color: Colors.amber[700], size: 28.sp),
+                                   SizedBox(width: 8.w),
+                                   Text(
+                                     '${widget.game.score}',
+                                     style: GoogleFonts.cairo(
+                                       fontSize: 24.sp,
+                                       color: Colors.amber[800],
+                                       fontWeight: FontWeight.bold,
+                                     ),
+                                   ),
+                                 ],
+                               ),
+                            ),
+                            SizedBox(height: 32.h),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      _hasSaved = false; // Reset for new session
+                                      widget.game.restart();
+                                      widget.game.overlays.remove('GameOver');
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF4CAF50),
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15.r),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'لعب مجدداً',
+                                      style: GoogleFonts.cairo(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                       _saveScore();
+                                       Navigator.pop(context);
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                                      side: BorderSide(color: Colors.grey[300]!, width: 2),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15.r),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'خروج',
+                                      style: GoogleFonts.cairo(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 24.h),
-                        ElevatedButton(
-                          onPressed: () {
-                            _hasSaved = false; // Reset for new session
-                            widget.game.restart();
-                            widget.game.overlays.remove('GameOver');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 32.w,
-                              vertical: 12.h,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.r),
-                            ),
-                          ),
-                          child: Text(
-                            'العب مرة أخرى',
-                            style: GoogleFonts.cairo(
-                              fontSize: 16.sp,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 12.h),
-                        TextButton(
-                          onPressed: () {
-                             _saveScore();
-                             Navigator.pop(context);
-                          },
-                          child: Text(
-                            'خروج',
-                            style: GoogleFonts.cairo(
-                              fontSize: 14.sp,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 );
               },
             },
           ),
-          // Top UI Overlay
+          
+          // Custom Top App Bar / UI Overlay
           SafeArea(
-            child: Padding(
-              padding: EdgeInsets.all(16.r),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.amber, size: 20.sp),
-                        SizedBox(width: 8.w),
-                        ValueListenableBuilder<int>(
-                          valueListenable: widget.game.scoreNotifier,
-                          builder: (context, score, child) {
-                             return Text(
-                              '$score',
-                              style: GoogleFonts.cairo(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.sp,
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Title
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        widget.title,
-                        style: GoogleFonts.cairo(
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                margin: EdgeInsets.all(16.r),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Score Card
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2), // Glassmorphism
+                        borderRadius: BorderRadius.circular(30.r),
+                        border: Border.all(color: Colors.white.withOpacity(0.3)),
+                      ),
+                      child: ClipRRect(
+                         borderRadius: BorderRadius.circular(30.r),
+                         child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.star_rounded, color: Colors.amber, size: 24.sp),
+                                SizedBox(width: 8.w),
+                                ValueListenableBuilder<int>(
+                                  valueListenable: widget.game.scoreNotifier,
+                                  builder: (context, score, child) {
+                                     return Text(
+                                      '$score',
+                                      style: GoogleFonts.cairo(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.sp,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                         ),
                       ),
                     ),
-                  ),
-                  // Close Button
-                  IconButton(
-                    icon: Icon(Icons.close, color: Colors.white, size: 30.sp),
-                    onPressed: () {
-                      _saveScore();
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+                    
+                    Spacer(),
+
+                    // Close Button
+                    GestureDetector(
+                      onTap: () {
+                        _saveScore();
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(8.r),
+                        decoration: BoxDecoration(
+                          color: Colors.black26, 
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withOpacity(0.2))
+                        ),
+                        child: Icon(Icons.close_rounded, color: Colors.white, size: 24.sp),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -189,3 +246,4 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
     );
   }
 }
+

@@ -285,6 +285,7 @@ class NotificationManager {
           soundSource: Platform.isAndroid ? 'resource://raw/shruq' : 'shruq.mp3',
           enableVibration: true,
           enableLights: true,
+          criticalAlerts: true,
         ),
       ],
       debug: true,

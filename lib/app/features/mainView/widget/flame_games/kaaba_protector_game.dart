@@ -6,22 +6,57 @@ import 'package:flutter/material.dart';
 import 'base_flame_game.dart';
 
 class KaabaProtectorGame extends BaseEducationalGame with TapCallbacks, DragCallbacks {
-  late Bird bird;
-  late Kaaba kaaba;
+  Bird? bird;
+  Kaaba? kaaba;
   double spawnTimer = 0;
   final Random random = Random();
-  double enemySpeed = 100;
+  double enemySpeed = 0; // Will be set in onResize
+  
+  // Game constants as percentages of screen size
+  static const double kaabaSizeRatio = 0.15; // 15% of screen width
+  static const double birdSizeRatio = 0.12;  // 12% of screen width
+  static const double elephantSizeRatio = 0.14; // 14% of screen width
+  static const double stoneSizeRatio = 0.04;    // 4% of screen width
 
   @override
   Future<void> onLoad() async {
     // Beautiful desert sunset gradient
-    add(BackgroundGradient(colors: [Colors.orange[900]!, Colors.orange[400]!, Colors.yellow[200]!]));
+    add(BackgroundGradient(colors: [
+      const Color(0xFF1A237E), // Deep Blue (Night/Early Dawn)
+      const Color(0xFFEF6C00), // Orange (Sunset/Sunrise)
+      const Color(0xFFFFD54F), // Light Yellow
+    ]));
     
+    // Initial setup - correct positions will be set in onGameResize
     kaaba = Kaaba();
-    add(kaaba);
+    add(kaaba!);
 
     bird = Bird();
-    add(bird);
+    add(bird!);
+  }
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    // update speed based on width
+    enemySpeed = size.x * 0.25; // Speed takes 4 seconds to cross screen
+    
+    // Determine base unit from smaller dimension to maintain aspect ratio logic
+    final double baseUnit = min(size.x, size.y);
+    
+    // Resize Kaaba
+    if (kaaba != null && children.contains(kaaba!)) {
+      kaaba!.size = Vector2.all(baseUnit * 0.25); 
+      kaaba!.position = Vector2(size.x * 0.05, size.y - kaaba!.size.y - (size.y * 0.05)); // 5% padding
+    }
+
+    // Resize Bird
+    if (bird != null && children.contains(bird!)) {
+       bird!.size = Vector2(baseUnit * 0.15, baseUnit * 0.10);
+       // Keep Y relative, clamp X
+       bird!.position.y = size.y * 0.15; // 15% from top
+       bird!.position.x = bird!.position.x.clamp(bird!.size.x/2, size.x - bird!.size.x/2);
+    }
   }
 
   @override
@@ -30,16 +65,27 @@ class KaabaProtectorGame extends BaseEducationalGame with TapCallbacks, DragCall
     if (isGameOver) return;
 
     spawnTimer += dt;
-    if (spawnTimer > 2.0) {
+    // Spawn faster as score increases
+    final double spawnInterval = max(0.8, 2.0 - (score * 0.05));
+    
+    if (spawnTimer > spawnInterval) {
       spawnElephant();
       spawnTimer = 0;
-      enemySpeed += 2;
+      enemySpeed += size.x * 0.005; // Slightly increase speed relative to screen
     }
   }
 
   void spawnElephant() {
+    final double baseUnit = min(size.x, size.y);
+    final elephantSize = Vector2(baseUnit * 0.18, baseUnit * 0.14);
+    
+    // Spawn at random intervals but ensure fair gameplay
+    // 70% chance ground, 30% chance flying (if we added flying enemies later)
+    // For now simple ground logic
+    
     final elephant = Elephant(
-      position: Vector2(size.x + 50, size.y - 100),
+      position: Vector2(size.x + elephantSize.x, size.y - elephantSize.y - (size.y * 0.05)),
+      size: elephantSize,
       speed: enemySpeed,
     );
     add(elephant);
@@ -47,30 +93,34 @@ class KaabaProtectorGame extends BaseEducationalGame with TapCallbacks, DragCall
 
   @override
   void onTapDown(TapDownEvent event) {
-    if (isGameOver) return;
-    bird.dropStone();
+    if (isGameOver || bird == null) return;
+    bird!.dropStone();
   }
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    if (isGameOver) return;
-    bird.position.x += event.localDelta.x;
-    bird.position.x = bird.position.x.clamp(50, size.x - 50);
+    if (isGameOver || bird == null) return;
+    bird!.position.x += event.localDelta.x;
+    bird!.position.x = bird!.position.x.clamp(bird!.size.x / 2, size.x - bird!.size.x / 2);
   }
 
   void createExplosion(Vector2 pos) {
+    final double baseUnit = min(size.x, size.y);
     add(
       ParticleSystemComponent(
         particle: Particle.generate(
-          count: 25,
-          lifespan: 1.0,
+          count: 30,
+          lifespan: 0.8,
           generator: (i) => AcceleratedParticle(
-            acceleration: Vector2(0, 400),
-            speed: Vector2(random.nextDouble() * 500 - 250, -random.nextDouble() * 400),
+            acceleration: Vector2(0, size.y * 0.8), // Gravity relative to screen height
+            speed: Vector2(
+               (random.nextDouble() - 0.5) * baseUnit * 1.5,
+               -random.nextDouble() * baseUnit * 1.0
+            ),
             position: pos.clone(),
             child: CircleParticle(
-              radius: 5,
-              paint: Paint()..color = Colors.deepOrangeAccent..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+              radius: baseUnit * 0.015,
+              paint: Paint()..color = Colors.deepOrangeAccent..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
             ),
           ),
         ),
@@ -83,7 +133,7 @@ class KaabaProtectorGame extends BaseEducationalGame with TapCallbacks, DragCall
     super.restart();
     children.whereType<Elephant>().forEach((e) => e.removeFromParent());
     children.whereType<Stone>().forEach((s) => s.removeFromParent());
-    enemySpeed = 100;
+    onGameResize(size); // Reset speeds
   }
 }
 
@@ -101,86 +151,138 @@ class BackgroundGradient extends Component with HasGameRef {
       ).createShader(gameRef.size.toRect());
     canvas.drawRect(gameRef.size.toRect(), paint);
     
-    // Draw some dunes
-    final dunePaint = Paint()..color = Colors.brown[600]!.withOpacity(0.4);
-    for(int i=0; i<3; i++) {
-       canvas.drawCircle(Offset(gameRef.size.x * (i/2), gameRef.size.y), gameRef.size.x * 0.4, dunePaint);
+    // Drwaing nicer animated-looking dunes
+    _drawDunes(canvas, const Color(0xffDEB887).withOpacity(0.3), 1.2, 0.5);
+    _drawDunes(canvas, const Color(0xffD2691E).withOpacity(0.5), 0.8, 0.7);
+  }
+
+  void _drawDunes(Canvas canvas, Color color, double heightFactor, double complexity) {
+    final path = Path();
+    path.moveTo(0, gameRef.size.y);
+    
+    for (double i = 0; i <= gameRef.size.x; i += gameRef.size.x / 20) {
+       // Simple sine wave for dunes
+       final y = gameRef.size.y - (sin(i * 0.01 * complexity) * 30 * heightFactor) - (gameRef.size.y * 0.15) ;
+       path.lineTo(i, y);
     }
+    path.lineTo(gameRef.size.x, gameRef.size.y);
+    path.close();
+    canvas.drawPath(path, Paint()..color = color);
   }
 }
 
 class Kaaba extends PositionComponent with HasGameRef<KaabaProtectorGame> {
-  Kaaba() : super(size: Vector2(120, 120));
-
-  @override
-  void onMount() {
-    super.onMount();
-    position = Vector2(0, gameRef.size.y - 160);
-  }
+  // Size is managed by parent onResize
 
   @override
   void render(Canvas canvas) {
+    // Kaaba Body (Cube)
     final paint = Paint()..color = Colors.black;
-    canvas.drawRect(size.toRect(), paint);
+    // Add subtle shadow
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(size.toRect(), const Radius.circular(4)), 
+      paint
+    );
     
-    final goldPaint = Paint()..color = Colors.amber[600]!..strokeWidth = 4;
-    canvas.drawRect(Rect.fromLTWH(0, 25, size.x, 15), goldPaint);
+    // Gold Band (Top)
+    final goldPaint = Paint()..color = const Color(0xFFFFD700);
+    final bandHeight = size.y * 0.15;
+    final bandTop = size.y * 0.2;
+    canvas.drawRect(Rect.fromLTWH(0, bandTop, size.x, bandHeight), goldPaint);
     
-    // Detailed patterns
-    final patternPaint = Paint()..color = Colors.amber[900]!..style = PaintingStyle.stroke;
-    for (double i = 5; i < size.x; i += 20) {
-       canvas.drawRect(Rect.fromLTWH(i, 28, 10, 10), patternPaint);
+    // Calligraphy lines (Simplified simulation)
+    final detailPaint = Paint()
+      ..color = const Color(0xFFFFA000)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+      
+    // Decorative pattern loop
+    for(double i=0; i<size.x; i+= size.x/6) {
+       canvas.drawRect(Rect.fromCenter(
+         center: Offset(i + size.x/12, bandTop + bandHeight/2), 
+         width: size.x/10, height: bandHeight * 0.6
+       ), detailPaint);
     }
 
-    const textStyle = TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold);
+    // Door
+    final doorPaint = Paint()..color = const Color(0xFFFFD700);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.x * 0.65, size.y * 0.55, size.x * 0.25, size.y * 0.45),
+        const Radius.circular(2)
+      ), 
+      doorPaint
+    );
+
+    // Text Label below
+    // Calculate fontsize based on component size
+    final double fontSize = size.y * 0.15;
+    const textStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold, shadows: [
+      Shadow(color: Colors.black, blurRadius: 4, offset: Offset(2, 2))
+    ]);
+    
     final textPainter = TextPainter(
-      text: const TextSpan(text: 'الكعبة المشرفة', style: textStyle),
+      text: TextSpan(text: 'الكعبة المشرفة', style: textStyle.copyWith(fontSize: fontSize)),
       textDirection: TextDirection.rtl,
     )..layout();
-    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
+    
+    // Draw text centered below the Kaaba, slightly up so it's readable
+    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, size.y + 5));
   }
 }
 
 class Bird extends PositionComponent with HasGameRef<KaabaProtectorGame> {
-  Bird() : super(size: Vector2(80, 50));
-
-  @override
-  void onMount() {
-    super.onMount();
-    position = Vector2(gameRef.size.x / 2, 120);
-    anchor = Anchor.center;
-  }
+  // Size managed by parent
 
   void dropStone() {
-    gameRef.add(Stone(position: position.clone()));
+    gameRef.add(Stone(
+      position: position.clone(),
+      size: Vector2(size.x * 0.3, size.x * 0.3) // Stone relative to bird
+    ));
   }
 
   @override
   void render(Canvas canvas) {
-    final paint = Paint()..color = Colors.grey[300]!;
-    // More detailed bird path
-    final path = Path()
-      ..moveTo(0, 25)
-      ..relativeQuadraticBezierTo(20, -30, 40, 0)
-      ..relativeQuadraticBezierTo(20, -30, 40, 0)
-      ..lineTo(40, 50)
-      ..close();
+    final paint = Paint()..color = Colors.white; // Ababil birds described white/greenish usually
+    final path = Path();
+    
+    // Artistic bird shape
+    final w = size.x;
+    final h = size.y;
+    
+    path.moveTo(w * 0.5, h * 0.5); // Body center
+    // Left Wing
+    path.quadraticBezierTo(w * 0.1, h * 0.1, 0, h * 0.4);
+    path.quadraticBezierTo(w * 0.2, h * 0.6, w * 0.4, h * 0.6);
+    // Right Wing
+    path.quadraticBezierTo(w * 0.9, h * 0.1, w, h * 0.4);
+    path.quadraticBezierTo(w * 0.8, h * 0.6, w * 0.6, h * 0.6);
+    // Tail
+    path.lineTo(w * 0.5, h);
+    path.close();
+
+    // Shadow
+    canvas.drawPath(path.shift(const Offset(0, 5)), Paint()..color = Colors.black26..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
     canvas.drawPath(path, paint);
     
-    const textStyle = TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold);
+    // Label
+    final double fontSize = w * 0.18;
+    const textStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold, shadows: [
+       Shadow(color: Colors.black, blurRadius: 2, offset: Offset(1, 1))
+    ]);
     final textPainter = TextPainter(
-      text: const TextSpan(text: 'أبابيل', style: textStyle),
+      text: TextSpan(text: 'أبابيل', style: textStyle.copyWith(fontSize: fontSize)),
       textDirection: TextDirection.rtl,
     )..layout();
-    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, 30));
+    textPainter.paint(canvas, Offset((w - textPainter.width) / 2, -textPainter.height));
   }
 }
 
 class Elephant extends PositionComponent with HasGameRef<KaabaProtectorGame> {
   final double speed;
 
-  Elephant({required Vector2 position, required this.speed}) 
-      : super(position: position, size: Vector2(90, 70));
+  Elephant({required Vector2 position, required Vector2 size, required this.speed}) 
+      : super(position: position, size: size);
 
   @override
   void update(double dt) {
@@ -189,7 +291,8 @@ class Elephant extends PositionComponent with HasGameRef<KaabaProtectorGame> {
 
     position.x -= speed * dt;
 
-    if (position.x < gameRef.kaaba.size.x) {
+    // Check collision with Kaaba
+    if (gameRef.kaaba != null && position.x < gameRef.kaaba!.position.x + gameRef.kaaba!.size.x * 0.5) {
       gameRef.createExplosion(position + size/2);
       gameRef.gameOver();
     }
@@ -198,24 +301,51 @@ class Elephant extends PositionComponent with HasGameRef<KaabaProtectorGame> {
   @override
   void render(Canvas canvas) {
     final paint = Paint()..color = Colors.grey[700]!;
-    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(15)), paint);
+    
+    // Main Body
+    canvas.drawRRect(RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, size.x, size.y * 0.8), 
+      const Radius.circular(8)
+    ), paint);
+    
+    // Head
+    canvas.drawCircle(Offset(size.x * 0.2, size.y * 0.4), size.y * 0.35, paint);
     
     // Trunk
-    canvas.drawRect(Rect.fromLTWH(-10, 20, 20, 10), paint);
+    final trunkPath = Path();
+    trunkPath.moveTo(size.x * 0.1, size.y * 0.5);
+    trunkPath.quadraticBezierTo(size.x * 0.0, size.y * 0.9, size.x * 0.2, size.y * 0.8);
+    final trunkPaint = Paint()..color = Colors.grey[700]!..style = PaintingStyle.stroke ..strokeWidth = size.x * 0.08..strokeCap = StrokeCap.round;
+    canvas.drawPath(trunkPath, trunkPaint);
 
-    const textStyle = TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold);
+    // Legs
+    final legPaint = Paint()..color = Colors.grey[800]!;
+    canvas.drawRect(Rect.fromLTWH(size.x * 0.15, size.y * 0.7, size.x * 0.15, size.y * 0.3), legPaint);
+     canvas.drawRect(Rect.fromLTWH(size.x * 0.65, size.y * 0.7, size.x * 0.15, size.y * 0.3), legPaint);
+
+    // Label
+    final double fontSize = size.x * 0.15;
+    const textStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold, shadows: [
+      Shadow(color: Colors.black, blurRadius: 2, offset: Offset(1, 1))
+    ]);
     final textPainter = TextPainter(
-      text: const TextSpan(text: 'فيل أبرهة', style: textStyle),
+      text: TextSpan(text: 'فيل أبرهة', style: textStyle.copyWith(fontSize: fontSize)),
       textDirection: TextDirection.rtl,
     )..layout();
-    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
+    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, size.y * 0.3));
   }
 }
 
 class Stone extends PositionComponent with HasGameRef<KaabaProtectorGame> {
-  double fallSpeed = 450;
+  double fallSpeed = 0;
 
-  Stone({required Vector2 position}) : super(position: position, size: Vector2(25, 25));
+  Stone({required Vector2 position, required Vector2 size}) : super(position: position, size: size);
+
+  @override
+  void onMount() {
+    super.onMount();
+    fallSpeed = gameRef.size.y * 0.8; // Fall logic relative to screen height
+  }
 
   @override
   void update(double dt) {
@@ -223,7 +353,7 @@ class Stone extends PositionComponent with HasGameRef<KaabaProtectorGame> {
     position.y += fallSpeed * dt;
 
     for (final elephant in gameRef.children.whereType<Elephant>()) {
-      if (position.distanceTo(elephant.position + elephant.size / 2) < 50) {
+      if (toRect().overlaps(elephant.toRect())) {
         gameRef.updateScore(10);
         gameRef.createExplosion(elephant.position + elephant.size / 2);
         elephant.removeFromParent();
@@ -239,18 +369,15 @@ class Stone extends PositionComponent with HasGameRef<KaabaProtectorGame> {
 
   @override
   void render(Canvas canvas) {
-    // Glowing stone
-    final glowPaint = Paint()..color = Colors.redAccent.withOpacity(0.5)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
-    canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x / 2 + 3, glowPaint);
+    // Glowing stone (Baked clay effect)
+    final glowPaint = Paint()..color = Colors.orangeAccent.withOpacity(0.6)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+    canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x * 0.6, glowPaint);
 
-    final paint = Paint()..color = Colors.grey[900]!;
+    final paint = Paint()..color = const Color(0xff8D6E63); // Brownish clay color
     canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x / 2, paint);
     
-    const textStyle = TextStyle(color: Colors.white, fontSize: 8);
-    final textPainter = TextPainter(
-      text: const TextSpan(text: 'سجيل', style: textStyle),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
+    // Label details disabled for stone to reduce clutter/performance cost as they are small and many
   }
 }
+
+

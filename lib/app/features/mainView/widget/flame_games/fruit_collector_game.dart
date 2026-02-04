@@ -5,17 +5,33 @@ import 'package:flutter/material.dart';
 import 'base_flame_game.dart';
 
 class FruitCollectorGame extends BaseEducationalGame with DragCallbacks {
-  late Player player;
+  Player? player;
   double spawnTimer = 0;
   final Random random = Random();
 
   @override
   Future<void> onLoad() async {
     // Add a beautiful gradient background
-    add(BackgroundGradient(colors: [Colors.green[50]!, Colors.blue[50]!]));
+    add(BackgroundGradient(colors: [
+      const Color(0xFFE0F7FA), // Light Cyan
+      const Color(0xFF80DEEA), // Cyan 200
+      const Color(0xFF4DD0E1), // Cyan 300
+    ]));
     
     player = Player();
-    add(player);
+    add(player!);
+  }
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    // Resize Player
+    if (player != null && children.contains(player!)) {
+      final double baseUnit = min(size.x, size.y);
+      player!.size = Vector2(baseUnit * 0.25, baseUnit * 0.15); // Dynamic size
+      player!.position = Vector2(player!.position.x, size.y - player!.size.y - 20);
+      player!.position.x = player!.position.x.clamp(player!.size.x/2, size.x - player!.size.x/2);
+    }
   }
 
   @override
@@ -24,7 +40,10 @@ class FruitCollectorGame extends BaseEducationalGame with DragCallbacks {
     if (isGameOver) return;
 
     spawnTimer += dt;
-    if (spawnTimer > 1.0) {
+    // Increase difficulty over time
+    final spawnInterval = max(0.5, 1.0 - (score * 0.02));
+    
+    if (spawnTimer > spawnInterval) {
       spawnItem();
       spawnTimer = 0;
     }
@@ -32,25 +51,33 @@ class FruitCollectorGame extends BaseEducationalGame with DragCallbacks {
 
   void spawnItem() {
     final isHalal = random.nextBool();
+    final double baseUnit = min(size.x, size.y);
+    final itemSize = Vector2.all(baseUnit * 0.12);
+    
     final item = GameItem(
       isHalal: isHalal,
-      position: Vector2(random.nextDouble() * (size.x - 60) + 30, -50),
+      position: Vector2(
+        random.nextDouble() * (size.x - itemSize.x) + itemSize.x/2, 
+        -itemSize.y
+      ),
+      size: itemSize,
+      speed: size.y * 0.3 + (score * 5), // Speed relative to screen height
     );
     add(item);
   }
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    if (isGameOver) return;
-    player.position.x += event.localDelta.x;
-    player.position.x = player.position.x.clamp(40, size.x - 40);
+    if (isGameOver || player == null) return;
+    player!.position.x += event.localDelta.x;
+    player!.position.x = player!.position.x.clamp(player!.size.x/2, size.x - player!.size.x/2);
   }
 
   @override
   void restart() {
     super.restart();
     children.whereType<GameItem>().forEach((item) => item.removeFromParent());
-    player.position = Vector2(size.x / 2, size.y - 120);
+    onGameResize(size); // Reset positions
   }
 }
 
@@ -68,56 +95,65 @@ class BackgroundGradient extends Component with HasGameRef {
       ).createShader(gameRef.size.toRect());
     canvas.drawRect(gameRef.size.toRect(), paint);
     
-    // Abstract shapes for texture
-    final decorPaint = Paint()..color = Colors.white.withOpacity(0.2);
-    canvas.drawCircle(Offset(gameRef.size.x * 0.8, 100), 50, decorPaint);
-    canvas.drawCircle(Offset(gameRef.size.x * 0.2, 300), 80, decorPaint);
+    // Abstract shapes for texture - modernized
+    final decorPaint = Paint()..color = Colors.white.withOpacity(0.3);
+    canvas.drawCircle(Offset(gameRef.size.x * 0.8, gameRef.size.y * 0.2), gameRef.size.x * 0.1, decorPaint);
+    canvas.drawCircle(Offset(gameRef.size.x * 0.2, gameRef.size.y * 0.6), gameRef.size.x * 0.15, decorPaint);
+    
+    // Subtle ray
+    final rayPaint = Paint()..color = Colors.white.withOpacity(0.1);
+    final path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(gameRef.size.x * 0.4, gameRef.size.y);
+    path.lineTo(gameRef.size.x * 0.6, gameRef.size.y);
+    path.lineTo(gameRef.size.x * 0.2, 0);
+    path.close();
+    canvas.drawPath(path, rayPaint);
   }
 }
 
 class Player extends PositionComponent with HasGameRef<FruitCollectorGame> {
-  Player() : super(size: Vector2(100, 60));
-
-  @override
-  void onMount() {
-    super.onMount();
-    position = Vector2(gameRef.size.x / 2, gameRef.size.y - 120);
-    anchor = Anchor.center;
-  }
+  // Size managed by parent
 
   @override
   void render(Canvas canvas) {
     // Elegant basket design
-    final paint = Paint()..color = Colors.brown[400]!;
+    final paint = Paint()..color = const Color(0xFF8D6E63); // Brown 400
+    
+    // Basket shape
     final path = Path()
       ..moveTo(0, 0)
-      ..lineTo(size.x, 0)
-      ..lineTo(size.x * 0.8, size.y)
-      ..lineTo(size.x * 0.2, size.y)
+      ..cubicTo(0, size.y * 0.8, size.x, size.y * 0.8, size.x, 0) // Curved bottom
       ..close();
+    
     canvas.drawPath(path, paint);
     
-    // Weaving lines
-    final linePaint = Paint()..color = Colors.brown[600]!..style = PaintingStyle.stroke..strokeWidth = 2;
-    for (double i = 10; i < size.x; i += 20) {
-      canvas.drawLine(Offset(i, 0), Offset(i, size.y), linePaint);
+    // Rim
+    canvas.drawRect(Rect.fromLTWH(-5, 0, size.x + 10, size.y * 0.15), Paint()..color = const Color(0xFF6D4C41));
+    
+    // Pattern
+    final linePaint = Paint()..color = const Color(0xFF5D4037)..style = PaintingStyle.stroke..strokeWidth = 2;
+    for (double i = size.x * 0.2; i < size.x * 0.9; i += size.x * 0.2) {
+       canvas.drawLine(Offset(i, size.y * 0.1), Offset(i, size.y * 0.7), linePaint);
     }
 
-    const textStyle = TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold);
+    // Label
+    final fontSize = size.x * 0.15;
+    const textStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold, shadows: [Shadow(blurRadius: 2, color: Colors.black26)]);
     final textPainter = TextPainter(
-      text: const TextSpan(text: 'سلة الخيرات', style: textStyle),
+      text: TextSpan(text: 'سلة الخيرات', style: textStyle.copyWith(fontSize: fontSize)),
       textDirection: TextDirection.rtl,
     )..layout();
-    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
+    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, size.y * 0.3));
   }
 }
 
 class GameItem extends PositionComponent with HasGameRef<FruitCollectorGame> {
   final bool isHalal;
-  double speed = 200;
+  final double speed;
 
-  GameItem({required this.isHalal, required Vector2 position}) 
-      : super(position: position, size: Vector2(50, 50));
+  GameItem({required this.isHalal, required Vector2 position, required Vector2 size, required this.speed}) 
+      : super(position: position, size: size);
 
   @override
   void update(double dt) {
@@ -126,7 +162,7 @@ class GameItem extends PositionComponent with HasGameRef<FruitCollectorGame> {
 
     position.y += speed * dt;
 
-    if (position.distanceTo(gameRef.player.position) < 50) {
+    if (gameRef.player != null && position.distanceTo(gameRef.player!.position + gameRef.player!.size/2) < (size.x + gameRef.player!.size.x)/3) {
       if (isHalal) {
         gameRef.updateScore(1);
       } else {
@@ -142,20 +178,30 @@ class GameItem extends PositionComponent with HasGameRef<FruitCollectorGame> {
 
   @override
   void render(Canvas canvas) {
-    final color = isHalal ? Colors.greenAccent : Colors.redAccent;
+    final color = isHalal ? Colors.green : Colors.red;
     
-    // Glow effect
-    final glowPaint = Paint()..color = color.withOpacity(0.3)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-    canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x / 2 + 5, glowPaint);
-
+    // Fruit/Item shape (Simple circle with leaf for fruit)
     final paint = Paint()..color = color;
     canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x / 2, paint);
     
-    const textStyle = TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold);
+    // Highlight
+    canvas.drawCircle(Offset(size.x * 0.35, size.y * 0.35), size.x * 0.1, Paint()..color = Colors.white.withOpacity(0.4));
+    
+    // Label using Emoji for better visuals
+    final fontSize = size.x * 0.4; // Large emoji
     final textPainter = TextPainter(
-      text: TextSpan(text: isHalal ? 'حلال' : 'حرام', style: textStyle),
-      textDirection: TextDirection.rtl,
+      text: TextSpan(text: isHalal ? '🍏' : '🦗', style: TextStyle(fontSize: fontSize)),
+      textDirection: TextDirection.ltr,
     )..layout();
     textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
+    
+    // Text label below
+    final labelSize = size.x * 0.25;
+     final labelPainter = TextPainter(
+      text: TextSpan(text: isHalal ? 'حلال' : 'حرام', style: TextStyle(color: Colors.white, fontSize: labelSize, fontWeight: FontWeight.bold, shadows: [const Shadow(blurRadius: 2)])),
+      textDirection: TextDirection.rtl,
+    )..layout();
+    labelPainter.paint(canvas, Offset((size.x - labelPainter.width) / 2, size.y / 2 + size.y * 0.1));
   }
 }
+

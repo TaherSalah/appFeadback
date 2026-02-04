@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -157,23 +158,51 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'لعبة الذاكرة 🧠',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        // appBar: AppBar(
+        //   title: Text(
+        //     'لعبة الذاكرة 🧠',
+        //     style: GoogleFonts.cairo(
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        //   actions: [
+        //     IconButton(
+        //       icon: const Icon(Icons.refresh),
+        //       onPressed: _initializeGame,
+        //       tooltip: 'لعبة جديدة',
+        //     ),
+        //   ],
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+          ),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: _initializeGame,
+                  tooltip: 'لعبة جديدة',
+                ),
+              ],
+            centerTitle: true,
+            title: Text(
+              "لعبة الذاكرة",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
             ),
           ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: _initializeGame,
-              tooltip: 'لعبة جديدة',
-            ),
-          ],
         ),
+
         body: Column(
           children: [
             // Score panel

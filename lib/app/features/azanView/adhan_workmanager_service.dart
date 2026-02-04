@@ -53,7 +53,7 @@ void callbackDispatcher() {
       if (task == 'periodic_adhan_refresh') {
         // إعادة جدولة الأذان تلقائياً في الخلفية
         print('🔄 [Background Task] Rescheduling Azan...');
-        await AdhanWorkManagerService().reschedule(days: 30);
+        await AdhanWorkManagerService().reschedule(days: 7);
       }
     } catch (e) {
       print('❌ [Background Task] Error: $e');
