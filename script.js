@@ -80,9 +80,9 @@ function initializeDashboard() {
     loadAnalytics();
     loadSettings();
     loadErrors();
-    loadKidsStories();
     loadCharityStories();
     loadFeatures(); // Load features control
+    loadPdfBooks(); // Load PDF books
 
     // Auto-refresh every 60 seconds
     setInterval(() => {
@@ -149,6 +149,7 @@ function switchTab(tabId) {
         case 'errors': loadErrors(); break;
         case 'settings': loadSettings(); break;
         case 'mosques': loadMosques(); break;
+        case 'pdfBooks': loadPdfBooks(); break;
     }
 }
 
@@ -1711,5 +1712,103 @@ async function deleteMosque(id) {
         loadMosques();
     } catch (error) {
         alert('❌ فشل الحذف: ' + error.message);
+    }
+}
+// --- PDF BOOKS MANAGEMENT ---
+async function loadPdfBooks() {
+    const list = document.getElementById('pdfBooksList');
+    if (list) list.innerHTML = '<div class="loading">⏳ جاري تحميل الكتب...</div>';
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('pdf_books')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            if (list) list.innerHTML = '<div class="empty-state">ℹ️ لا توجد كتب في المكتبة حالياً</div>';
+            return;
+        }
+
+        if (list) {
+            list.innerHTML = data.map(book => `
+                <div class="update-item" style="display: flex; gap: 20px; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+                    ${book.coverUrl ? `<img src="${book.coverUrl}" style="width: 60px; height: 80px; object-fit: cover; border-radius: 6px;">` : '<div style="width: 60px; height: 80px; background: #eee; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📖</div>'}
+                    <div style="flex: 1;">
+                        <h4 style="color: var(--text-primary); margin-bottom: 5px;">${book.title}</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">${book.description || 'بدون وصف'}</p>
+                        <div style="font-size: 0.75rem; color: #999; display: flex; gap: 15px;">
+                            <span>📁 ${book.fileName}</span>
+                            <span>🔗 <a href="${book.url}" target="_blank" style="color: var(--accent-color);">رابط الملف</a></span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="delete-btn" onclick="deletePdfBook('${book.id}')" style="font-size: 0.8rem; padding: 5px 12px;">🗑️ حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (e) {
+        console.error('Error loading PDF books:', e);
+        if (list) list.innerHTML = `<div class="error">❌ خطأ في تحميل الكتب: ${e.message}</div>`;
+    }
+}
+
+async function addPdfBook() {
+    const title = document.getElementById('pdfTitle').value.trim();
+    const url = document.getElementById('pdfUrl').value.trim();
+    const description = document.getElementById('pdfDescription').value.trim();
+    const coverUrl = document.getElementById('pdfCoverUrl').value.trim();
+    const fileName = document.getElementById('pdfFileName').value.trim();
+
+    if (!title || !url || !fileName) {
+        alert('⚠️ يرجى إدخال العنوان والرابط واسم الملف على الأقل');
+        return;
+    }
+
+    try {
+        const { error } = await supabaseClient
+            .from('pdf_books')
+            .insert([{
+                title,
+                url,
+                description,
+                coverUrl: coverUrl || null,
+                fileName
+            }]);
+
+        if (error) throw error;
+
+        alert('✅ تم إضافة الكتاب بنجاح');
+
+        // Clear fields
+        document.getElementById('pdfTitle').value = '';
+        document.getElementById('pdfUrl').value = '';
+        document.getElementById('pdfDescription').value = '';
+        document.getElementById('pdfCoverUrl').value = '';
+        document.getElementById('pdfFileName').value = '';
+
+        loadPdfBooks();
+    } catch (e) {
+        alert('❌ فشل إضافة الكتاب: ' + e.message);
+    }
+}
+
+async function deletePdfBook(id) {
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذا الكتاب نهائياً؟')) return;
+
+    try {
+        const { error } = await supabaseClient
+            .from('pdf_books')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        loadPdfBooks();
+    } catch (e) {
+        alert('❌ فشل الحذف: ' + e.message);
     }
 }
