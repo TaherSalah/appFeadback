@@ -331,7 +331,7 @@ class MainController extends ControllerMVC {
       );
 
       calculatePrayerTimes();
-      await AdhanWorkManagerService().initialize();
+      await AdhanWorkManagerService().initialize(forceReschedule: true);
       setState(() {});
     } catch (e) {
       if (!silent) KHelper.showError(message: 'حدث خطأ أثناء تحديد الموقع');
@@ -388,7 +388,7 @@ class MainController extends ControllerMVC {
 
     // إعادة الحساب والجدولة
     calculatePrayerTimes();
-    await AdhanWorkManagerService().initialize();
+    await AdhanWorkManagerService().initialize(forceReschedule: true);
     setState(() {});
   }
 
@@ -521,7 +521,7 @@ class MainController extends ControllerMVC {
 
     await _saveSelection();
     calculatePrayerTimes();
-    await AdhanWorkManagerService().initialize();
+    await AdhanWorkManagerService().initialize(forceReschedule: true);
     setState(() {});
   }
 
@@ -535,7 +535,7 @@ class MainController extends ControllerMVC {
 
     await _saveSelection();
     calculatePrayerTimes();
-    await AdhanWorkManagerService().initialize();
+    await AdhanWorkManagerService().initialize(forceReschedule: true);
     setState(() {});
   }
 

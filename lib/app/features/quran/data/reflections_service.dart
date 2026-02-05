@@ -36,4 +36,24 @@ class ReflectionsService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_getVerseKey(surahId, ayahId));
   }
+
+  Future<Map<int, String>> getAllReflections() async {
+    final prefs = await SharedPreferences.getInstance();
+    final allKeys = prefs.getKeys();
+    final Map<int, String> reflections = {};
+
+    for (final key in allKeys) {
+      if (key.startsWith('reflection_page_')) {
+        final pageIndexStr = key.replaceFirst('reflection_page_', '');
+        final pageIndex = int.tryParse(pageIndexStr);
+        if (pageIndex != null) {
+          final content = prefs.getString(key);
+          if (content != null && content.isNotEmpty) {
+            reflections[pageIndex] = content;
+          }
+        }
+      }
+    }
+    return reflections;
+  }
 }

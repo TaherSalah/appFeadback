@@ -153,6 +153,13 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
           title: "إِحْصَائِيَّاتُ القِرَاءَةِ",
           onTap: _openAnalytics,
         ),
+        DrawerModle(
+          icon: Icons.description_outlined,
+          title: "قائمة الخواطر",
+          onTap: () {
+            Navigator.pushNamed(context, "/reflectionsList");
+          },
+        ),
       ],
     ),
     DrawerSection(

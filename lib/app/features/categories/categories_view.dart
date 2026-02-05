@@ -26,24 +26,22 @@ class _CategoriesViewState extends State<CategoriesView> {
   void initState() {
     super.initState();
     _bloc = CategoriesBloc(CategoriesRepoImmp());
-    _checkInitialConnection();
+    _loadData();
   }
 
-  Future<void> _checkInitialConnection() async {
+  void _loadData() async {
     final result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.none) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showNoInternetDialog();
-      });
+      _showNoInternetDialog();
     } else {
-      _loadData();
+      _bloc.getAllCategories();
     }
   }
 
   void _showNoInternetDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (ctx) => NoInternetDialog(
         onRetrySuccess: () {
           Navigator.pop(ctx); // Close dialog
@@ -51,10 +49,6 @@ class _CategoriesViewState extends State<CategoriesView> {
         },
       ),
     );
-  }
-
-  void _loadData() {
-    _bloc.getAllCategories();
   }
 
   @override

@@ -25,6 +25,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:quran_library/quran.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'app/features/calendar/data/models/calendar_event_model.dart';
+import 'app/features/quran/pdf/data/pdf_book_model.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -128,12 +129,16 @@ Future<void> _initAppServices() async {
   if (!Hive.isAdapterRegistered(25)) {
     Hive.registerAdapter(CalendarEventAdapter());
   }
+  if (!Hive.isAdapterRegistered(30)) {
+    Hive.registerAdapter(PdfBookModelAdapter());
+  }
 
   // ✅ 4) Open Core Boxes
   await Hive.openBox<KhatmahModel>('khatmahBox');
   if (!Hive.isBoxOpen('khatmahPlans')) {
     await Hive.openBox('khatmahPlans');
   }
+  await Hive.openBox<PdfBookModel>('pdfBooksBox');
 
   // ✅ 5) Services Locator
   await Di.init();

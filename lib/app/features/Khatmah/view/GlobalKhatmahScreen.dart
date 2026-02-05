@@ -20,6 +20,7 @@ import 'package:muslimdaily/app/features/Khatmah/view/khatmah_certificate_screen
 import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
+import 'package:muslimdaily/app/core/services/feature_guard_service.dart';
 
 class GlobalKhatmahScreen extends StatefulWidget {
   const GlobalKhatmahScreen({super.key});
@@ -75,10 +76,17 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 5));
     _currentQuote = _quotes[math.Random().nextInt(_quotes.length)];
-    _loadData();
-
-    // Show help dialog on first visit
+    
+    // Check feature status on entry
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final canAccess = await FeatureGuardService().canAccess(context, 'global_khatmah');
+      if (!canAccess && mounted) {
+        Navigator.pop(context);
+        return;
+      }
+      
+      _loadData();
+
       final prefs = await SharedPreferences.getInstance();
       final hasSeenHelp = prefs.getBool('global_khatmah_help_seen') ?? false;
       if (!hasSeenHelp && mounted) {
@@ -89,6 +97,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   }
 
   Future<void> _loadData() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     // 1. Load Campaigns

@@ -54,6 +54,7 @@ import '../../../features/achievements/ChallengesManagementScreen.dart';
 import '../../../features/achievements/LeaderboardScreen.dart';
 import '../../../features/duas/DuasMainScreen.dart';
 import '../../../features/calendar/presentation/screens/calendar_screen.dart'; // [NEW]
+import 'package:muslimdaily/app/features/quran/view/widget/ReflectionsListScreen.dart';
 import '../../shard/exports/all_exports.dart';
 
 class Routes {
@@ -281,6 +282,9 @@ class RouteGenerator {
       // === Global Khatmah ===
       case '/globalKhatmah':
         return MaterialPageRoute(builder: (_) => const GlobalKhatmahScreen());
+
+      case '/reflectionsList':
+        return MaterialPageRoute(builder: (_) => const ReflectionsListScreen());
 
       default:
         return unDefinedRoute();

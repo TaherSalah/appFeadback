@@ -112,7 +112,9 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "حان الان موعد صلاة",
+                    widget.prayerName?.contains('الشروق') == true
+                        ? "حان الآن موعد"
+                        : "حان الان موعد صلاة",
                     style: GoogleFonts.amiri(
                       fontSize: 35.sp,
                       color: Colors.white,
@@ -142,6 +144,22 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                       ],
                     ),
                   ),
+                  if (widget.prayerName?.contains('الشروق') == true) ...[
+                    SizedBox(height: 10.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 30.w),
+                      child: Text(
+                        "«صلاة الضحى صلاة الأوابين وهي صدقة عن كل مفصل من مفاصلك»",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.amiri(
+                          fontSize: 20.sp,
+                          color: Colors.amberAccent,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                   if (widget.cityName != null) ...[
                     SizedBox(height: 10.h),
                     Text(

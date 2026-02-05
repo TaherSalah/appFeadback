@@ -9,6 +9,7 @@ import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:muslimdaily/app/core/services/system_control_service.dart';
 import 'package:muslimdaily/app/core/services/home_widget_service.dart';
 
 // ==========================================
@@ -207,13 +208,23 @@ class AdhanWorkManagerService {
     final prefs = await SharedPreferences.getInstance();
     final manualOffset = prefs.getInt('manual_offset') ?? 0;
     final fOff = prefs.getInt('fajr_offset') ?? 0;
+    final sOff = prefs.getInt('sunrise_offset') ?? 0;
     final dOff = prefs.getInt('dhuhr_offset') ?? 0;
     final aOff = prefs.getInt('asr_offset') ?? 0;
     final mOff = prefs.getInt('maghrib_offset') ?? 0;
     final iOff = prefs.getInt('isha_offset') ?? 0;
 
+    // 🌍 أضف التعديلات العالمية للهاش لضمان إعادة الجدولة إذا تغيرت من السيرفر
+    final globalOffsets = await SystemControlService().getGlobalPrayerOffsets();
+    final gFajr = globalOffsets['fajr'] ?? 0;
+    final gSunrise = globalOffsets['sunrise'] ?? 0;
+    final gDhuhr = globalOffsets['dhuhr'] ?? 0;
+    final gAsr = globalOffsets['asr'] ?? 0;
+    final gMaghrib = globalOffsets['maghrib'] ?? 0;
+    final gIsha = globalOffsets['isha'] ?? 0;
+
     // Create a simple signature string
-    return "${c.latitude}_${c.longitude}_${p.method.index}_${p.madhab.index}_${city}_${manualOffset}_${fOff}_${dOff}_${aOff}_${mOff}_${iOff}";
+    return "${c.latitude}_${c.longitude}_${p.method.index}_${p.madhab.index}_${city}_${manualOffset}_${fOff}_${sOff}_${dOff}_${aOff}_${mOff}_${iOff}_${gFajr}_${gSunrise}_${gDhuhr}_${gAsr}_${gMaghrib}_${gIsha}";
   }
 
   // ==========================================
@@ -409,9 +420,11 @@ class AdhanWorkManagerService {
             channelKey: effectiveChannelKey,
             icon: 'resource://drawable/ic_stat_logoapp',
             title: prayerName.contains('الشروق')
-                ? '\u200Fحان الآن وقت الشروق'
+                ? '\u200Fحان الآن وقت الشروق ✨'
                 : '\u200Fحان الآن وقت صلاة $effectivePrayerName',
-            body: '\u200Fفي مدينة ${cityName ?? "القاهرة"}',
+            body: prayerName.contains('الشروق')
+                ? '\u200Fصلاة الضحى صلاة الأوابين وهي صدقة عن كل مفصل من مفاصلك'
+                : '\u200Fفي مدينة ${cityName ?? "القاهرة"}',
             category: NotificationCategory.Alarm,
             wakeUpScreen: true,
             fullScreenIntent: true,
@@ -507,18 +520,37 @@ class AdhanWorkManagerService {
       final mOff = prefs.getInt('maghrib_offset') ?? 0;
       final iOff = prefs.getInt('isha_offset') ?? 0;
 
+      // 🌍 تحميل التعديلات العامة من السيرفر (أو الكاش) لتكون متطابقة مع الواجهة
+      final globalOffsets = await SystemControlService().getGlobalPrayerOffsets();
+      final gFajr = globalOffsets['fajr'] ?? 0;
+      final gSunrise = globalOffsets['sunrise'] ?? 0;
+      final gDhuhr = globalOffsets['dhuhr'] ?? 0;
+      final gAsr = globalOffsets['asr'] ?? 0;
+      final gMaghrib = globalOffsets['maghrib'] ?? 0;
+      final gIsha = globalOffsets['isha'] ?? 0;
+
       final components = DateComponents(date.year, date.month, date.day);
       final prayerTimes = PrayerTimes(coords, components, calculationParams);
 
       return {
-        'الفجر': prayerTimes.fajr.add(hourOffset).add(Duration(minutes: fOff)),
-        'الشروق':
-            prayerTimes.sunrise.add(hourOffset).add(Duration(minutes: sOff)),
-        'الظهر': prayerTimes.dhuhr.add(hourOffset).add(Duration(minutes: dOff)),
-        'العصر': prayerTimes.asr.add(hourOffset).add(Duration(minutes: aOff)),
-        'المغرب':
-            prayerTimes.maghrib.add(hourOffset).add(Duration(minutes: mOff)),
-        'العشاء': prayerTimes.isha.add(hourOffset).add(Duration(minutes: iOff)),
+        'الفجر': prayerTimes.fajr
+            .add(hourOffset)
+            .add(Duration(minutes: fOff + gFajr)),
+        'الشروق': prayerTimes.sunrise
+            .add(hourOffset)
+            .add(Duration(minutes: sOff + gSunrise)),
+        'الظهر': prayerTimes.dhuhr
+            .add(hourOffset)
+            .add(Duration(minutes: dOff + gDhuhr)),
+        'العصر': prayerTimes.asr
+            .add(hourOffset)
+            .add(Duration(minutes: aOff + gAsr)),
+        'المغرب': prayerTimes.maghrib
+            .add(hourOffset)
+            .add(Duration(minutes: mOff + gMaghrib)),
+        'العشاء': prayerTimes.isha
+            .add(hourOffset)
+            .add(Duration(minutes: iOff + gIsha)),
       };
     } catch (e) {
       print('❌ خطأ في حساب أوقات الصلاة: $e');

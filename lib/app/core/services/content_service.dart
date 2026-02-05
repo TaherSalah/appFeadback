@@ -16,57 +16,108 @@ class ContentService {
   List<Map<String, dynamic>>? _cachedKidsStories;
   List<Map<String, dynamic>>? _cachedRadioStations;
 
-  static const String _kidsStoriesCacheBoxName = 'kidsStoriesCacheBox';
-  late Box _kidsStoriesCacheBox;
+  static const String _kidsStoriesBoxName = 'kidsStoriesCacheBox';
+  static const String _charityStoriesBoxName = 'charityStoriesCacheBox';
+  static const String _radioStationsBoxName = 'radioStationsCacheBox';
+  static const String _activeContentBoxName = 'activeContentCacheBox';
+
+  late Box _kidsStoriesBox;
+  late Box _charityStoriesBox;
+  late Box _radioStationsBox;
+  late Box _activeContentBox;
+  
   bool _isInitialized = false;
 
   Future<void> init() async {
     if (_isInitialized) return;
-    if (!Hive.isBoxOpen(_kidsStoriesCacheBoxName)) {
-      _kidsStoriesCacheBox = await Hive.openBox(_kidsStoriesCacheBoxName);
-    } else {
-      _kidsStoriesCacheBox = Hive.box(_kidsStoriesCacheBoxName);
-    }
+    
+    _kidsStoriesBox = await _openBox(_kidsStoriesBoxName);
+    _charityStoriesBox = await _openBox(_charityStoriesBoxName);
+    _radioStationsBox = await _openBox(_radioStationsBoxName);
+    _activeContentBox = await _openBox(_activeContentBoxName);
+    
     _isInitialized = true;
   }
 
+  Future<Box> _openBox(String name) async {
+    if (!Hive.isBoxOpen(name)) {
+      return await Hive.openBox(name);
+    }
+    return Hive.box(name);
+  }
+
   /// Fetch active content (Articles, Tips, etc.)
-  /// Returns a list of maps
   Future<List<Map<String, dynamic>>> getActiveContent() async {
+    await init();
     if (_cachedActiveContent != null) return _cachedActiveContent!;
 
     try {
+      final connectivity = await Connectivity().checkConnectivity();
+      if (connectivity == ConnectivityResult.none) {
+        final cached = _activeContentBox.get('items');
+        if (cached != null) {
+          _cachedActiveContent = List<Map<String, dynamic>>.from(
+            (cached as List).map((e) => Map<String, dynamic>.from(e))
+          );
+          return _cachedActiveContent!;
+        }
+        return [];
+      }
+
       final response = await _supabase
           .from('app_content')
           .select('*')
           .eq('is_active', true)
           .order('created_at', ascending: false)
-          .limit(5); // Fetch latest 5 items
+          .limit(5);
 
-      // Cache the result
-      _cachedActiveContent = List<Map<String, dynamic>>.from(response);
-      return _cachedActiveContent!;
+      final data = List<Map<String, dynamic>>.from(response);
+      await _activeContentBox.put('items', data);
+      _cachedActiveContent = data;
+      return data;
     } catch (e) {
       print('Failed to fetch content: $e');
+      final cached = _activeContentBox.get('items');
+      if (cached != null) {
+        _cachedActiveContent = List<Map<String, dynamic>>.from(
+          (cached as List).map((e) => Map<String, dynamic>.from(e))
+        );
+        return _cachedActiveContent!;
+      }
       return [];
     }
   }
 
   /// Fetch visible Charity stories
   Future<List<Map<String, dynamic>>> getCharityStories() async {
+    await init();
     if (_cachedCharityStories != null) return _cachedCharityStories!;
 
     try {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        final cached = _charityStoriesBox.get('stories');
+        if (cached != null) {
+          _cachedCharityStories = _castToList(cached);
+          return _cachedCharityStories!;
+        }
+        return [];
+      }
+
       final response = await _supabase
           .from('charity_stories')
           .select('*')
           .eq('is_visible', true)
           .order('created_at', ascending: false);
 
-      _cachedCharityStories = List<Map<String, dynamic>>.from(response);
-      return _cachedCharityStories!;
+      final data = List<Map<String, dynamic>>.from(response);
+      await _charityStoriesBox.put('stories', data);
+      _cachedCharityStories = data;
+      return data;
     } catch (e) {
       print('Failed to fetch charity stories: $e');
+      final cached = _charityStoriesBox.get('stories');
+      if (cached != null) return _castToList(cached);
       return [];
     }
   }
@@ -74,29 +125,19 @@ class ContentService {
   /// Fetch visible Kids stories
   Future<List<Map<String, dynamic>>> getKidsStories() async {
     await init();
-    
-    if (_cachedKidsStories != null) {
-      return _cachedKidsStories!;
-    }
+    if (_cachedKidsStories != null) return _cachedKidsStories!;
 
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
-      final isOffline = connectivityResult == ConnectivityResult.none;
-
-      if (isOffline) {
-        print('📶 App is offline, loading kids stories from cache...');
-        final cachedData = _kidsStoriesCacheBox.get('stories');
-        if (cachedData != null) {
-          _cachedKidsStories = List<Map<String, dynamic>>.from(
-            (cachedData as List).map((e) => Map<String, dynamic>.from(e))
-          );
+      if (connectivityResult == ConnectivityResult.none) {
+        final cached = _kidsStoriesBox.get('stories');
+        if (cached != null) {
+          _cachedKidsStories = _castToList(cached);
           return _cachedKidsStories!;
         }
-        _cachedKidsStories = _getFallbackKidsStories();
-        return _cachedKidsStories!;
+        return _getFallbackKidsStories();
       }
 
-      print('🔍 Fetching kids stories from Supabase...');
       final response = await _supabase
           .from('kids_stories')
           .select('*')
@@ -104,7 +145,6 @@ class ContentService {
           .order('created_at', ascending: false);
 
       final rawStories = List<Map<String, dynamic>>.from(response);
-      
       final stories = rawStories.map((s) {
         String content = s['content'] ?? '';
         if (content.isEmpty && s['paragraphs'] != null) {
@@ -112,7 +152,6 @@ class ContentService {
             content = (s['paragraphs'] as List).join('\n\n');
           }
         }
-        
         return {
           'id': s['id'],
           'title': s['title'] ?? 'بدون عنوان',
@@ -124,22 +163,14 @@ class ContentService {
         };
       }).toList();
 
-      // Update cache
-      await _kidsStoriesCacheBox.put('stories', stories);
-      
+      await _kidsStoriesBox.put('stories', stories);
       _cachedKidsStories = stories;
-      return _cachedKidsStories!;
+      return stories;
     } catch (e) {
-      print('❌ Error fetching kids stories: $e');
-      final cachedData = _kidsStoriesCacheBox.get('stories');
-      if (cachedData != null) {
-        _cachedKidsStories = List<Map<String, dynamic>>.from(
-          (cachedData as List).map((e) => Map<String, dynamic>.from(e))
-        );
-      } else {
-        _cachedKidsStories = _getFallbackKidsStories();
-      }
-      return _cachedKidsStories!;
+      print('Error fetching kids stories: $e');
+      final cached = _kidsStoriesBox.get('stories');
+      if (cached != null) return _castToList(cached);
+      return _getFallbackKidsStories();
     }
   }
 
@@ -207,21 +238,42 @@ class ContentService {
 
   /// Fetch Radio Stations
   Future<List<Map<String, dynamic>>> getRadioStations() async {
+    await init();
     if (_cachedRadioStations != null) return _cachedRadioStations!;
 
     try {
+      final connectivity = await Connectivity().checkConnectivity();
+      if (connectivity == ConnectivityResult.none) {
+        final cached = _radioStationsBox.get('stations');
+        if (cached != null) {
+          _cachedRadioStations = _castToList(cached);
+          return _cachedRadioStations!;
+        }
+        return [];
+      }
+
       final response = await _supabase
           .from('radio_channels')
           .select('*')
           .eq('is_active', true)
           .order('order_index', ascending: true);
 
-      _cachedRadioStations = List<Map<String, dynamic>>.from(response);
-      return _cachedRadioStations!;
+      final data = List<Map<String, dynamic>>.from(response);
+      await _radioStationsBox.put('stations', data);
+      _cachedRadioStations = data;
+      return data;
     } catch (e) {
       print('Failed to fetch radio stations: $e');
+      final cached = _radioStationsBox.get('stations');
+      if (cached != null) return _castToList(cached);
       return [];
     }
+  }
+
+  List<Map<String, dynamic>> _castToList(dynamic data) {
+    return List<Map<String, dynamic>>.from(
+      (data as List).map((e) => Map<String, dynamic>.from(e))
+    );
   }
 
   /// Clear all cache (Call this on refresh)

@@ -24,13 +24,17 @@ class CalendarEventAdapter extends TypeAdapter<CalendarEvent> {
       isDone: fields[4] as bool,
       isHijriEvent: fields[5] as bool,
       type: fields[6] as String,
+      colorValue: fields[7] as int?,
+      reminderDateTime: fields[8] as DateTime?,
+      recurrence: fields[9] as String?,
+      externalEventId: fields[10] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CalendarEvent obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,7 +48,15 @@ class CalendarEventAdapter extends TypeAdapter<CalendarEvent> {
       ..writeByte(5)
       ..write(obj.isHijriEvent)
       ..writeByte(6)
-      ..write(obj.type);
+      ..write(obj.type)
+      ..writeByte(7)
+      ..write(obj.colorValue)
+      ..writeByte(8)
+      ..write(obj.reminderDateTime)
+      ..writeByte(9)
+      ..write(obj.recurrence)
+      ..writeByte(10)
+      ..write(obj.externalEventId);
   }
 
   @override

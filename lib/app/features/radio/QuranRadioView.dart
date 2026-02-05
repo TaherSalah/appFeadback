@@ -41,12 +41,10 @@ class _QuranRadioViewState extends State<QuranRadioView> {
             state.status == ConnectivityStatus.disconnected) {
           showDialog(
             context: context,
-            barrierDismissible: false,
-            builder: (ctx) => NoInternetDialog(
+            barrierDismissible: true,
+            builder: (context) => NoInternetDialog(
               onRetrySuccess: () {
-                Navigator.pop(ctx);
-                // Trigger a re-check or let the listener handle the reconnection state
-                context.read<CentralizedCubit>().checkConnectivity();
+                Navigator.pop(context);
               },
             ),
           );
