@@ -31,13 +31,13 @@ class PdfBookModel {
 
   factory PdfBookModel.fromJson(Map<String, dynamic> json) {
     return PdfBookModel(
-      id: json['id'].toString(),
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      url: json['url'] ?? '',
-      fileName: json['fileName'] ?? '',
-      coverUrl: json['coverUrl'],
-      isDownloaded: false, // Corrected syntax: using colon for named argument
+      id: (json['id'] ?? '').toString(),
+      title: json['title'] ?? json['name'] ?? '',
+      description: json['description'] ?? json['desc'] ?? '',
+      url: json['url'] ?? json['pdf_url'] ?? '',
+      fileName: json['fileName'] ?? json['file_name'] ?? '',
+      coverUrl: json['coverUrl'] ?? json['cover_url'] ?? json['image_url'],
+      isDownloaded: false,
     );
   }
 

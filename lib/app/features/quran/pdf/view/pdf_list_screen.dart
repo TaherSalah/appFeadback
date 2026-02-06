@@ -29,7 +29,8 @@ class _PdfListScreenState extends State<PdfListScreen> {
   }
 
   Future<void> _loadBooks() async {
-    final canAccess = await FeatureGuardService().canAccess(context, 'pdf_library');
+    final canAccess =
+        await FeatureGuardService().canAccess(context, 'pdf_library');
     if (!canAccess && mounted) {
       if (mounted) Navigator.pop(context);
       return;
@@ -37,10 +38,10 @@ class _PdfListScreenState extends State<PdfListScreen> {
 
     if (!mounted) return;
     setState(() => _isLoading = true);
-    
+
     try {
       final books = await _pdfService.fetchPdfBooks();
-      
+
       // Check download status for each book
       for (var book in books) {
         book.isDownloaded = await _pdfService.isPdfDownloaded(book.fileName);
@@ -120,7 +121,7 @@ class _PdfListScreenState extends State<PdfListScreen> {
         // ),
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
@@ -131,7 +132,8 @@ class _PdfListScreenState extends State<PdfListScreen> {
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize:
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -144,11 +146,13 @@ class _PdfListScreenState extends State<PdfListScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.library_books_outlined, size: 80, color: Colors.grey),
+                        const Icon(Icons.library_books_outlined,
+                            size: 80, color: Colors.grey),
                         const SizedBox(height: 16),
                         Text(
                           'المكتبة فارغة حالياً',
-                          style: GoogleFonts.cairo(fontSize: 18, color: Colors.grey),
+                          style: GoogleFonts.cairo(
+                              fontSize: 18, color: Colors.grey),
                         ),
                         const SizedBox(height: 8),
                         ElevatedButton(
@@ -180,7 +184,33 @@ class _PdfListScreenState extends State<PdfListScreen> {
                               color: Colors.red.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Icon(Icons.picture_as_pdf, color: Colors.red),
+                            child: book.coverUrl != null &&
+                                    book.coverUrl!.isNotEmpty
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(
+                                      book.coverUrl!,
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return const Center(
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2),
+                                        );
+                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(Icons.picture_as_pdf,
+                                            color: Colors.red);
+                                      },
+                                    ),
+                                  )
+                                : const Icon(Icons.picture_as_pdf,
+                                    color: Colors.red),
                           ),
                           title: Text(
                             book.title,
@@ -202,7 +232,8 @@ class _PdfListScreenState extends State<PdfListScreen> {
                                 const SizedBox(height: 8),
                                 if (isDownloading)
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       LinearProgressIndicator(value: progress),
                                       const SizedBox(height: 4),
@@ -212,11 +243,14 @@ class _PdfListScreenState extends State<PdfListScreen> {
                                   )
                                 else
                                   Text(
-                                    book.isDownloaded ? 'جاهز للقراءة' : 'يحتاج للتحميل',
+                                    book.isDownloaded
+                                        ? 'جاهز للقراءة'
+                                        : 'يحتاج للتحميل',
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color:
-                                          book.isDownloaded ? Colors.green : Colors.blue,
+                                      color: book.isDownloaded
+                                          ? Colors.green
+                                          : Colors.blue,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -228,11 +262,17 @@ class _PdfListScreenState extends State<PdfListScreen> {
                                 ? null
                                 : () => _handleBookAction(book),
                             icon: Icon(
-                              book.isDownloaded ? Icons.menu_book : Icons.download,
-                              color: book.isDownloaded ? Colors.green : Colors.blue,
+                              book.isDownloaded
+                                  ? Icons.menu_book
+                                  : Icons.download,
+                              color: book.isDownloaded
+                                  ? Colors.green
+                                  : Colors.blue,
                             ),
                           ),
-                          onTap: isDownloading ? null : () => _handleBookAction(book),
+                          onTap: isDownloading
+                              ? null
+                              : () => _handleBookAction(book),
                         ),
                       );
                     },

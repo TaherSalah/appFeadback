@@ -4,7 +4,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'dart:io';
-import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 
 // ✅ دالة الـ Callback المبسطة - تشغيل الأذان عبر قنوات الإشعارات
@@ -78,29 +77,12 @@ void alarmCallback(int id) async {
     );
 
     print("✅ تم إرسال الإشعار بنجاح (ID: $notificationId)");
-
-    // 5️⃣ انتظار 3 دقائق ثم إرسال إشعار الانتهاء
-    await Future.delayed(const Duration(minutes: 3));
-
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: notificationId + 1,
-        channelKey: 'athkar_channel',
-        title: '✅ انتهى وقت أذان $prayerName',
-        body: prayerName.contains('الفجر')
-            ? 'الصلاة خير من النوم، تقبل الله طاعتكم'
-            : 'حي على الصلاة، حي على الفلاح',
-        notificationLayout: NotificationLayout.Default,
-      ),
-    );
-
     print("✅ اكتمل callback الأذان");
   } catch (e, s) {
     print("❌ خطأ في alarmCallback: $e");
     print("Stack: $s");
   }
 }
-
 
 String _getPrayerDescription(String prayerName) {
   if (prayerName.contains('الفجر')) {
