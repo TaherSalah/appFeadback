@@ -162,121 +162,152 @@ class _PdfListScreenState extends State<PdfListScreen> {
                       ],
                     ),
                   )
-                : ListView.builder(
+                : GridView.builder(
                     padding: const EdgeInsets.all(16),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.65,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
                     itemCount: _books.length,
                     itemBuilder: (context, index) {
                       final book = _books[index];
                       final progress = _downloadProgress[book.id];
                       final isDownloading = progress != null;
 
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        elevation: 2,
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(12),
-                          leading: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: book.coverUrl != null &&
-                                    book.coverUrl!.isNotEmpty
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      book.coverUrl!,
-                                      width: 50,
-                                      height: 50,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return const Center(
-                                          child: CircularProgressIndicator(
-                                              strokeWidth: 2),
-                                        );
-                                      },
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return const Icon(Icons.picture_as_pdf,
-                                            color: Colors.red);
-                                      },
-                                    ),
-                                  )
-                                : const Icon(Icons.picture_as_pdf,
-                                    color: Colors.red),
-                          ),
-                          title: Text(
-                            book.title,
-                            style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  book.description,
-                                  style: GoogleFonts.cairo(
-                                      fontSize: 12, color: Colors.grey),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                      return GestureDetector(
+                        onTap: isDownloading
+                            ? null
+                            : () => _handleBookAction(book),
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          elevation: 3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // Book Cover
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withOpacity(0.05),
+                                    borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(15)),
+                                  ),
+                                  child: book.coverUrl != null &&
+                                          book.coverUrl!.isNotEmpty
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              const BorderRadius.vertical(
+                                                  top: Radius.circular(15)),
+                                          child: Image.network(
+                                            book.coverUrl!,
+                                            fit: BoxFit.cover,
+                                            loadingBuilder: (context, child,
+                                                loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                        strokeWidth: 2),
+                                              );
+                                            },
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return const Center(
+                                                child: Icon(Icons.picture_as_pdf,
+                                                    color: Colors.red, size: 40),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                      : const Center(
+                                          child: Icon(Icons.picture_as_pdf,
+                                              color: Colors.red, size: 40),
+                                        ),
                                 ),
-                                const SizedBox(height: 8),
-                                if (isDownloading)
-                                  Column(
+                              ),
+                              // Book Details
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      LinearProgressIndicator(value: progress),
-                                      const SizedBox(height: 4),
-                                      Text('${(progress * 100).toInt()}%',
-                                          style: const TextStyle(fontSize: 10)),
+                                      Text(
+                                        book.title,
+                                        style: GoogleFonts.cairo(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
+                                            height: 1.2),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const Spacer(),
+                                      if (isDownloading)
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            LinearProgressIndicator(
+                                              value: progress,
+                                              minHeight: 4,
+                                              borderRadius:
+                                                  BorderRadius.circular(2),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text('${(progress * 100).toInt()}%',
+                                                style: const TextStyle(
+                                                    fontSize: 9)),
+                                          ],
+                                        )
+                                      else
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                book.isDownloaded
+                                                    ? 'جاهز'
+                                                    : 'تحميل',
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: book.isDownloaded
+                                                      ? Colors.green
+                                                      : Colors.blue,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Icon(
+                                              book.isDownloaded
+                                                  ? Icons.check_circle
+                                                  : Icons.download_for_offline,
+                                              size: 18,
+                                              color: book.isDownloaded
+                                                  ? Colors.green
+                                                  : Colors.blue,
+                                            ),
+                                          ],
+                                        ),
                                     ],
-                                  )
-                                else
-                                  Text(
-                                    book.isDownloaded
-                                        ? 'جاهز للقراءة'
-                                        : 'يحتاج للتحميل',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: book.isDownloaded
-                                          ? Colors.green
-                                          : Colors.blue,
-                                      fontWeight: FontWeight.bold,
-                                    ),
                                   ),
-                              ],
-                            ),
+                                ),
+                              ),
+                            ],
                           ),
-                          trailing: IconButton(
-                            onPressed: isDownloading
-                                ? null
-                                : () => _handleBookAction(book),
-                            icon: Icon(
-                              book.isDownloaded
-                                  ? Icons.menu_book
-                                  : Icons.download,
-                              color: book.isDownloaded
-                                  ? Colors.green
-                                  : Colors.blue,
-                            ),
-                          ),
-                          onTap: isDownloading
-                              ? null
-                              : () => _handleBookAction(book),
                         ),
                       );
                     },
                   ),
+
       ),
     );
   }

@@ -150,7 +150,11 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
         if (mounted) {
           setState(() {
-            _heading = event.heading;
+            double? heading = event.heading;
+            if (heading != null) {
+              heading = (heading < 0) ? (360 + heading) : heading;
+            }
+            _heading = heading;
             _isLoading = false;
           });
         }
@@ -346,7 +350,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
     // Increase bottom padding if we are in the main tab view (cannot pop)
     // to avoid overlap with the BottomNavigationBar and FAB.
-    final double bottomPadding = (ModalRoute.of(context)?.canPop ?? false) ? 16.0 : 90.0;
+    final double bottomPadding =
+        (ModalRoute.of(context)?.canPop ?? false) ? 16.0 : 90.0;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, bottomPadding),
@@ -354,7 +359,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
         children: [
           // البوصلة الرئيسية
           Expanded(
-            flex: 3,
+            flex: 1,
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 20),
               child: Stack(
@@ -413,8 +418,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                         width: size.width * 0.6,
                         height: size.width * 0.6,
                         child: Stack(
-                          children: _buildCompassDirections(
-                              size.width * 0.7, isDark),
+                          children:
+                              _buildCompassDirections(size.width * 0.7, isDark),
                         ),
                       ),
                     ),
@@ -422,7 +427,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                     // 2. Qibla Pointer (Arrow) - Points to Qibla
                     // Rotates by (Qibla - Heading) to point towards Qibla relative to phone
                     Transform.rotate(
-                      angle: vector.radians((_qiblaDirection! - _heading!) % 360),
+                      angle:
+                          vector.radians((_qiblaDirection! - _heading!) % 360),
                       child: SizedBox(
                         width: size.width * 0.6,
                         height: size.width * 0.6,
@@ -463,7 +469,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
           // معلومات القبلة
           Expanded(
-            flex: 2,
+            flex: 1,
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),

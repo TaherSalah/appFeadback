@@ -767,38 +767,38 @@ SliverToBoxAdapter(
                             ),
                           ),
 
-                          const SizedBox(height: 16),
-                          // Test Button
-                          FadeAnimation(
-                            delay: const Duration(milliseconds: 600),
-                            child: Center(
-                              child: TextButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const AdhanOverlayScreen(
-                                        prayerName: "الفجر",
-                                        cityName: "تجربة المنبه",
-                                        prayerTime: "04:30 ص",
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: Icon(Icons.play_circle_outline, color: goldColor),
-                                label: Text(
-                                  "تجربة شكل المنبه",
-                                  style: GoogleFonts.cairo(
-                                      color: goldColor, fontWeight: FontWeight.bold),
-                                ),
-                                style: TextButton.styleFrom(
-                                  backgroundColor: goldColor.withOpacity(0.1),
-                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
-                                ),
-                              ),
-                            ),
-                          ),
+                          // const SizedBox(height: 16),
+                          // // Test Button
+                          // FadeAnimation(
+                          //   delay: const Duration(milliseconds: 600),
+                          //   child: Center(
+                          //     child: TextButton.icon(
+                          //       onPressed: () {
+                          //         Navigator.push(
+                          //           context,
+                          //           MaterialPageRoute(
+                          //             builder: (_) => const AdhanOverlayScreen(
+                          //               prayerName: "الفجر",
+                          //               cityName: "تجربة المنبه",
+                          //               prayerTime: "04:30 ص",
+                          //             ),
+                          //           ),
+                          //         );
+                          //       },
+                          //       icon: Icon(Icons.play_circle_outline, color: goldColor),
+                          //       label: Text(
+                          //         "تجربة شكل المنبه",
+                          //         style: GoogleFonts.cairo(
+                          //             color: goldColor, fontWeight: FontWeight.bold),
+                          //       ),
+                          //       style: TextButton.styleFrom(
+                          //         backgroundColor: goldColor.withOpacity(0.1),
+                          //         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
 
                           const SizedBox(height: 32),
 
