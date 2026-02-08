@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart'; // Added this import as Colors and Icons are used.
+import 'dart:convert';
 
 import '../../../../core/localization/localization_manager.dart';
 import '../../../../core/cubit/centralized_cubit.dart';
@@ -28,6 +29,25 @@ class DetailsViewItemBuilder extends StatefulWidget {
 }
 
 class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
+  String? _parseGrade(String? gradeJson) {
+    if (gradeJson == null) return null;
+    try {
+      if (gradeJson.trim().startsWith('[')) {
+        final List<dynamic> data = jsonDecode(gradeJson);
+        if (data.isNotEmpty && data[0] is Map) {
+          final grade = data[0]['grade'];
+          final gradedBy = data[0]['graded_by'];
+          if (grade != null) {
+            return gradedBy != null ? "$grade ($gradedBy)" : grade;
+          }
+        }
+      }
+      return gradeJson;
+    } catch (e) {
+      return gradeJson;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HadithDetailsBloc, HadithDetailsState>(
@@ -270,7 +290,9 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   TextWidget(
-                                      title: bloc.hadithDetailsModal?.grade ??
+                                      title: _parseGrade(bloc
+                                              .hadithDetailsModal?.grade
+                                              ?.toString()) ??
                                           "غير متوفر",
                                       height: 2,
                                       fontFamily: "me",
