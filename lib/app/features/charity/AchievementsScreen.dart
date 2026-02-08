@@ -24,27 +24,27 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
   final List<Map<String, dynamic>> _allAchievementDefinitions = [
     {
       'id': 'first_donation',
-      'title': 'أول الغيث 🌧️',
+      'title': 'أول الغيث',
       'description': 'قمت بأول تبرع لك في التطبيق',
       'icon': '🥇',
     },
     {
       'id': 'streak_7',
-      'title': 'المحسن المثابر 👏',
+      'title': 'المحسن المثابر ',
       'description': 'حافظت على التبرع لمدة 7 أيام متتالية',
-      'icon': '🔥',
-    },
-    {
-      'id': 'generous_1000',
-      'title': 'اليد السخية 💰',
-      'description': 'تجاوز إجمالي صدقاتك 1000 جنيه',
       'icon': '💎',
     },
     {
+      'id': 'generous_1000',
+      'title': 'اليد السخية ',
+      'description': 'تجاوز إجمالي صدقاتك 1000 جنيه',
+      'icon': '💰',
+    },
+    {
       'id': 'goal_reached',
-      'title': 'محقق الأهداف 🎯',
+      'title': 'محقق الأهداف ',
       'description': 'حققت هدفك المالي لهذا الشهر بالكامل',
-      'icon': '🏆',
+      'icon': '🎯',
     },
   ];
 

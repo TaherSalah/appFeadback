@@ -33,7 +33,7 @@ class ZakatPdfService {
     final ttfBold = pw.Font.ttf(boldFontData);
 
     // Load Images
-    final logoImage = await imageFromAssetBundle('assets/images/ic_stat_notify.png');
+    final logoImage = await imageFromAssetBundle('assets/images/logoApp.png');
     final appStoreImage = await imageFromAssetBundle('assets/images/app-store.png');
     final playStoreImage = await imageFromAssetBundle('assets/images/playstore.png');
     final huaweiImage = await imageFromAssetBundle('assets/images/huawei.png'); 

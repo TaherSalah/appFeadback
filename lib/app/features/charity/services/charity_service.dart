@@ -171,13 +171,13 @@ class CharityService {
     final dailySuggestion = (monthlyIncome * 0.01) / 30;
 
     final motivations = [
-      '\"ما نقص مال من صدقة\" - حديث شريف',
-      '\"الصدقة تطفئ الخطيئة كما يطفئ الماء النار\" - حديث شريف',
-      'صدقتك اليوم قد تكون سبب رزقك غداً',
-      '\"داووا مرضاكم بالصدقة\" - حديث شريف',
-      'صدقة اليوم خير من صدقة الغد',
+      '\"مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ\" - صحيح مسلم',
+      '\"الصَّدَقَةُ تُطْفِئُ الخَطِيئَةَ كَمَا يُطْفِئُ المَاءُ النَّارَ\" - صحيح الترمذي',
+      '\"اتَّقُوا النَّارَ وَلَوْ بِشِقِّ تَمْرَةٍ\" - صحيح البخاري ومسلم',
+      '\"كُلُّ امْرِئٍ فِي ظِلِّ صَدَقَتِهِ حَتَّى يُفْصَلَ بَيْنَ النَّاسِ\" - صحيح ابن حبان',
+      '\"إِنَّ الصَّدَقَةَ لَتُطْفِئُ عَنْ أَهْلِهَا حَرَّ القُبُورِ\" - السلسلة الصحيحة',
+      '\"صَنَائِعُ الْمَعْرُوفِ تَقِي مَصَارِعَ السُّوءِ وَالآفَاتِ وَالْهَلَكَاتِ\" - مستدرك الحاكم (حسن)',
     ];
-
     final random = DateTime.now().millisecond % motivations.length;
 
     return CharitySuggestion(
@@ -257,8 +257,8 @@ class CharityService {
         content: NotificationContent(
           id: 900,
           channelKey: 'charity_reminder_channel',
-          title: 'تذكير الصدقة اليومي 🤲',
-          body: '\"ما نقص مال من صدقة\".. لا تنسَ صدقتك اليوم ولو بشق تمرة 🌿',
+          title: 'تذكير الصدقة اليومي ',
+          body: '\"ما نقص مال من صدقة\".. لا تنسَ صدقتك اليوم ولو بشق تمرة ',
           notificationLayout: NotificationLayout.Default,
           payload: {'route': 'charity_dashboard'},
         ),
@@ -276,9 +276,9 @@ class CharityService {
         content: NotificationContent(
           id: 901,
           channelKey: 'charity_reminder_channel',
-          title: 'تذكير الصدقة الأسبوعي ✨',
+          title: 'تذكير الصدقة الأسبوعي ',
           body:
-              'يوم مبارك.. تذكر أن الصدقة تطفئ الخطيئة كما يطفئ الماء النار 💧',
+              'يوم مبارك.. تذكر أن مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ، وَمَا زَادَ اللهُ عَبْدًا بِعَفْوٍ إِلَّا عِزًّا، وَمَا تَوَاضَعَ أَحَدٌ لِلَّهِ إِلَّا رَفَعَهُ اللهُ',
           notificationLayout: NotificationLayout.Default,
           payload: {'route': 'charity_dashboard'},
         ),
@@ -311,9 +311,9 @@ class CharityService {
         !unlocked.any((a) => a.id == 'first_donation')) {
       newAchievements.add(CharityAchievement(
         id: 'first_donation',
-        title: 'أول الغيث 🌧️',
+        title: 'أول الغيث ️',
         description: 'قمت بأول تبرع لك في التطبيق',
-        icon: '🥇',
+        icon: '',
         unlockedDate: DateTime.now(),
       ));
     }
@@ -322,9 +322,9 @@ class CharityService {
     if (stats.longestStreak >= 7 && !unlocked.any((a) => a.id == 'streak_7')) {
       newAchievements.add(CharityAchievement(
         id: 'streak_7',
-        title: 'المحسن المثابر 👏',
+        title: 'المحسن المثابر ',
         description: 'حافظت على التبرع لمدة 7 أيام متتالية',
-        icon: '🔥',
+        icon: '',
         unlockedDate: DateTime.now(),
       ));
     }
@@ -334,9 +334,9 @@ class CharityService {
         !unlocked.any((a) => a.id == 'generous_1000')) {
       newAchievements.add(CharityAchievement(
         id: 'generous_1000',
-        title: 'اليد السخية 💰',
+        title: 'اليد السخية ',
         description: 'تجاوز إجمالي صدقاتك 1000 جنيه',
-        icon: '💎',
+        icon: '',
         unlockedDate: DateTime.now(),
         goalValue: 1000,
       ));
@@ -347,9 +347,9 @@ class CharityService {
     if (goalProgress >= 1.0 && !unlocked.any((a) => a.id == 'goal_reached')) {
       newAchievements.add(CharityAchievement(
         id: 'goal_reached',
-        title: 'محقق الأهداف 🎯',
+        title: 'محقق الأهداف',
         description: 'حققت هدفك المالي لهذا الشهر بالكامل',
-        icon: '🏆',
+        icon: '',
         unlockedDate: DateTime.now(),
       ));
     }
@@ -365,7 +365,7 @@ class CharityService {
       content: NotificationContent(
         id: achievement.id.hashCode.abs(),
         channelKey: 'achievement_unlocked_channel',
-        title: 'إنجاز جديد فتح! ✨',
+        title: 'إنجاز جديد فتح!',
         body:
             'لقد حصلت على وسام [${achievement.title}] - ${achievement.description}',
         notificationLayout: NotificationLayout.Default,
@@ -449,7 +449,7 @@ class CharityService {
       content: NotificationContent(
         id: notificationId,
         channelKey: 'charity_reminder_channel',
-        title: 'موعد الصدقة الدورية: ${recurring.title} 🤲',
+        title: 'موعد الصدقة الدورية: ${recurring.title}',
         body:
             'حان موعد إخراج صدقتك الشهرية بمقدار ${recurring.amount} ${recurring.currency}',
         notificationLayout: NotificationLayout.Default,

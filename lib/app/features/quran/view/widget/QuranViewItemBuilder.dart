@@ -1287,7 +1287,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                         onPageChanged: _handlePageChanged,
                                         itemBuilder: (context, index) {
                                           return QuranLibraryScreen(
-                                            appIconPathForPlayAudioInBackground: "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/ic_stat_notify.png",
+                                            appIconPathForPlayAudioInBackground: "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
                                             backgroundColor: _backgroundColor,
                                             withPageView: false,
                                             isDark: isDark,
@@ -1304,7 +1304,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                         },
                                       )
                                     : QuranLibraryScreen(
-                              appIconPathForPlayAudioInBackground: "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/ic_stat_notify.png",
+                              appIconPathForPlayAudioInBackground: "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
 
                               backgroundColor: _backgroundColor,
                                         // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
