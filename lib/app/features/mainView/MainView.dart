@@ -115,15 +115,15 @@ class _MainViewState extends State<MainView> {
               //     const Color(0xFFFFD700),
               //   ],
               // ),
-              color: primaryColor,
-              boxShadow: [
-                BoxShadow(
-                  color: primaryColor.withOpacity(0.4),
-                  blurRadius: 8,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              color: Colors.transparent,
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: primaryColor.withOpacity(0.4),
+              //     blurRadius: 8,
+              //     spreadRadius: 2,
+              //     offset: const Offset(0, 4),
+              //   ),
+              // ],
             ),
             child: FloatingActionButton(
               onPressed: () => _onTabTapped(2), // Index 2 is Hadith (Center)
@@ -136,7 +136,7 @@ class _MainViewState extends State<MainView> {
               //   color: Colors.white,
               // ),
               child: Image.asset("assets/images/qibla.png",height: 65,
-                width: 65,)
+                width: 65,fit: BoxFit.fill,)
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

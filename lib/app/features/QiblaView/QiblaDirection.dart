@@ -213,51 +213,92 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         // backgroundColor: isDark ? Colors.grey[900] : Colors.grey[50],
-        appBar: AppBar(
-          leading: (ModalRoute.of(context)?.canPop ?? false)
-              ? IconButton(
+        // appBar: AppBar(
+        //   leading: (ModalRoute.of(context)?.canPop ?? false)
+        //       ? IconButton(
+        //           icon: Icon(
+        //             CupertinoIcons.back,
+        //             color: isDark ? Colors.white : Colors.black,
+        //           ),
+        //           onPressed: () => Navigator.of(context).pop(),
+        //         )
+        //       : null,
+        //   centerTitle: true,
+        //   title: Text(
+        //     "اتجاه القبلة",
+        //     style: GoogleFonts.cairo(
+        //       color: isDark ? Colors.greenAccent : Colors.green[700],
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: isTablet ? 20 : 18,
+        //     ),
+        //   ),
+        //   backgroundColor: isDark ? Colors.grey[850] : Colors.white,
+        //   elevation: 0,
+        //   actions: [
+        //     IconButton(
+        //       icon: Icon(
+        //           _isARMode ? Icons.compass_calibration : Icons.camera_alt),
+        //       tooltip: _isARMode ? "الوضع الكلاسيكي" : "AR وضع",
+        //       onPressed: () {
+        //         setState(() {
+        //           _isARMode = !_isARMode;
+        //         });
+        //         // Fluttertoast.showToast(
+        //         //     msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
+        //         //     backgroundColor: Colors.amber,
+        //         //     textColor: Colors.black);
+        //         KHelper.showSuccess(
+        //             message:
+        //                 _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled");
+        //       },
+        //     ),
+        //     IconButton(
+        //       icon: const Icon(Icons.refresh),
+        //       onPressed: _initLocationAndCompass,
+        //     ),
+        //   ],
+        // ),
+        appBar: PreferredSize(
+          preferredSize:
+          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          child: AppBar(
+              actions: [
+                IconButton(
                   icon: Icon(
-                    CupertinoIcons.back,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              : null,
-          centerTitle: true,
-          title: Text(
-            "اتجاه القبلة",
-            style: GoogleFonts.cairo(
-              color: isDark ? Colors.greenAccent : Colors.green[700],
-              fontWeight: FontWeight.bold,
-              fontSize: isTablet ? 20 : 18,
+                      _isARMode ? Icons.compass_calibration : Icons.camera_alt),
+                  tooltip: _isARMode ? "الوضع الكلاسيكي" : "AR وضع",
+                  onPressed: () {
+                    setState(() {
+                      _isARMode = !_isARMode;
+                    });
+                    // Fluttertoast.showToast(
+                    //     msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
+                    //     backgroundColor: Colors.amber,
+                    //     textColor: Colors.black);
+                    KHelper.showSuccess(
+                        message:
+                            _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled");
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: _initLocationAndCompass,
+                ),
+              ],
+            iconTheme:
+            IconThemeData(color: isDark ? Colors.white : Colors.blue),
+            centerTitle: true,
+            title: Text(
+              "اتجاه القبلة",
+              style: GoogleFonts.cairo(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
             ),
           ),
-          backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: Icon(
-                  _isARMode ? Icons.compass_calibration : Icons.camera_alt),
-              tooltip: _isARMode ? "الوضع الكلاسيكي" : "AR وضع",
-              onPressed: () {
-                setState(() {
-                  _isARMode = !_isARMode;
-                });
-                // Fluttertoast.showToast(
-                //     msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
-                //     backgroundColor: Colors.amber,
-                //     textColor: Colors.black);
-                KHelper.showSuccess(
-                    message:
-                        _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled");
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: _initLocationAndCompass,
-            ),
-          ],
         ),
+
         body: _isLoading
             ? _buildLoadingWidget(isDark)
             : _errorMessage.isNotEmpty
@@ -485,10 +526,12 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                 ],
               ),
               child: SingleChildScrollView(
+
                 child: _buildInfoContent(isDark, angle),
               ),
             ),
           ),
+          const SizedBox(height: 15,),
         ],
       ),
     );
@@ -496,6 +539,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
   Widget _buildInfoContent(bool isDark, double? angle) {
     return Column(
+      spacing: 6,
       mainAxisSize: MainAxisSize.min,
       children: [
         // معلومات الموقع
@@ -531,7 +575,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           ],
         ),
 
-        const SizedBox(height: 15),
+        const SizedBox(height: 20),
 
         // رسالة التوجيه
         if (angle != null)

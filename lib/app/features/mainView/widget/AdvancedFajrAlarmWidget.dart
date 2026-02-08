@@ -314,7 +314,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final goldColor = const Color(0xFFD4AF37);
+    final goldColor = KColors.primaryColor;
     final bgColor = isDark ? const Color(0xFF0F0F1E) : const Color(0xFFFAFAFA);
     // final cardColor = isDark ? const Color(0xFF1A1A2E) : Colors.white;
     final cardColor = AppThemeColors.cardBackgroundColor(context);
@@ -323,565 +323,560 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
     return Directionality(
 
       textDirection: TextDirection.rtl,
-      child: SafeArea(
-        child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(
-                MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
-            child: AppBar(
-leading:  Navigator.canPop(context) ? CupertinoNavigationBarBackButton(
-                color: isDark?Colors.white : Colors.black,
-              ) : null,
-              // actions: [
-              //   IconButton(
-              //     onPressed: () => Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) => CreateKhatmahScreen(),
-              //       ),
-              //     ),
-              //     icon: const Icon(Icons.add),
-              //   )
-              // ],
-              centerTitle: true,
-              title: Text(
-                "منبه الفجر",
-                style: GoogleFonts.cairo(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: MediaQuery.sizeOf(context).width > 600
-                      ? 12.sp
-                      : 18.sp,
-                ),
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          child: AppBar(
+      leading:  Navigator.canPop(context) ? CupertinoNavigationBarBackButton(
+              color: isDark?Colors.white : Colors.black,
+            ) : null,
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => CreateKhatmahScreen(),
+            //       ),
+            //     ),
+            //     icon: const Icon(Icons.add),
+            //   )
+            // ],
+            centerTitle: true,
+            title: Text(
+              "منبه الفجر",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.sizeOf(context).width > 600
+                    ? 12.sp
+                    : 18.sp,
               ),
             ),
           ),
-        
-          // backgroundColor: bgColor,
-          body: Stack(
-            children: [
-              // Background Pattern
-              Positioned.fill(
-                child: Opacity(
-                  opacity: 0.03,
-                  child: Image.asset(
-                    "assets/images/pattern.webp",
-                    repeat: ImageRepeat.repeat,
-                  ),
-                ),
-              ),
-        
-              CustomScrollView(
-                slivers: [
+        ),
 
-SliverToBoxAdapter(
-  child: FadeAnimation(
-    child: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: 15.h),
-          // Time Display
-          GestureDetector(
-            onTap: _pickTime,
+        // backgroundColor: bgColor,
+        body: Stack(
+          children: [
+            // Background Pattern
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.03,
+                child: Image.asset(
+                  "assets/images/pattern.webp",
+                  repeat: ImageRepeat.repeat,
+                ),
+              ),
+            ),
+
+            CustomScrollView(
+              slivers: [
+
+      SliverToBoxAdapter(
+        child: FadeAnimation(
+          child: Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  _formatTime12h(_time),
-                  style: GoogleFonts.barlow(
-                    fontSize: 50.sp,
-                    fontWeight: FontWeight.w500,
-                    color: goldColor,
-                    height: 1,
-                  ),
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(height: 15.h),
+        // Time Display
+        GestureDetector(
+          onTap: _pickTime,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _formatTime12h(_time),
+                style: GoogleFonts.barlow(
+                  fontSize: 50.sp,
+                  fontWeight: FontWeight.w500,
+                  color: goldColor,
+                  height: 1,
                 ),
-                const SizedBox(height: 15),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: goldColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.edit,
-                          color: goldColor, size: 14),
-                      const SizedBox(width: 6),
-                      Text(
-                        "اضغط لتعديل الوقت",
-                        style: GoogleFonts.cairo(
-                          fontSize: 12.sp,
-                          color: goldColor,
-                        ),
+              ),
+              const SizedBox(height: 15),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: goldColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.edit,
+                        color: goldColor, size: 14),
+                    const SizedBox(width: 6),
+                    Text(
+                      "اضغط لتعديل الوقت",
+                      style: GoogleFonts.cairo(
+                        fontSize: 12.sp,
+                        color: goldColor,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 15)
+      ],
             ),
           ),
-          SizedBox(height: 15)
-        ],
+        ),
       ),
-    ),
-  ),
-),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Countdown & Fajr Time Reference
-                          if (_isEnabled || _currentFajrTime != null)
-                            StaggeredItemAnimation(
-                              index: 1,
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 24),
-                                padding: const EdgeInsets.all(16),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Countdown & Fajr Time Reference
+                        if (_isEnabled || _currentFajrTime != null)
+                          StaggeredItemAnimation(
+                            index: 1,
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 24),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: cardColor,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                    color: goldColor.withOpacity(0.2), width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  if (_isEnabled)
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            "المتبقي",
+                                            style: GoogleFonts.cairo(
+                                              fontSize: 12.sp,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            _toArabicNums(_timeLeft),
+                                            style: GoogleFonts.barlow(
+                                              fontSize: 20.sp,
+                                              fontWeight: FontWeight.bold,
+                                              color: goldColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  if (_isEnabled && _currentFajrTime != null)
+                                    Container(
+                                      width: 1,
+                                      height: 40,
+                                      color: Colors.grey.withOpacity(0.2),
+                                    ),
+                                  if (_currentFajrTime != null)
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            "أذان الفجر اليوم",
+                                            style: GoogleFonts.cairo(
+                                              fontSize: 12.sp,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            _toArabicNums(_currentFajrTime!),
+                                            style: GoogleFonts.barlow(
+                                              fontSize: 20.sp,
+                                              fontWeight: FontWeight.bold,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        StaggeredItemAnimation(
+                          index: 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "أيام التنبيه",
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                  TextButton.icon(
+                                    onPressed: _toggleAllDays,
+                                    icon: Icon(
+                                      _selectedDays.length == 7
+                                          ? Icons.check_circle
+                                          : Icons.circle_outlined,
+                                      size: 18,
+                                      color: goldColor,
+                                    ),
+                                    label: Text(
+                                      _selectedDays.length == 7
+                                          ? "إلغاء الكل"
+                                          : "تحديد الكل",
+                                      style: GoogleFonts.cairo(
+                                        fontSize: 12.sp,
+                                        color: goldColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              // Days Selector (Modern Circular Design)
+                              Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
                                 decoration: BoxDecoration(
                                   color: cardColor,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                      color: goldColor.withOpacity(0.2), width: 1),
+                                  borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: Colors.black.withOpacity(0.03),
                                       blurRadius: 10,
                                       offset: const Offset(0, 4),
                                     ),
                                   ],
                                 ),
                                 child: Row(
-                                  children: [
-                                    if (_isEnabled)
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              "المتبقي",
-                                              style: GoogleFonts.cairo(
-                                                fontSize: 12.sp,
-                                                color: Colors.grey,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: List.generate(7, (index) {
+                                    final actualDays = [6, 7, 1, 2, 3, 4, 5];
+                                    int day = actualDays[index];
+                                    bool isSelected = _selectedDays.contains(day);
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        InkWell(
+                                          onTap: () => _toggleDay(day),
+                                          borderRadius: BorderRadius.circular(50),
+                                          child: AnimatedContainer(
+                                            duration:
+                                                const Duration(milliseconds: 300),
+                                            width: 42.w,
+                                            height: 42.w,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              gradient: isSelected
+                                                  ? LinearGradient(
+                                                      colors: [
+                                                        goldColor,
+                                                        goldColor.withOpacity(0.8),
+                                                      ],
+                                                      begin: Alignment.topLeft,
+                                                      end: Alignment.bottomRight,
+                                                    )
+                                                  : null,
+                                              color: isSelected
+                                                  ? null
+                                                  : (isDark
+                                                      ? Colors.white.withOpacity(0.05)
+                                                      : Colors.grey.withOpacity(0.1)),
+                                              boxShadow: isSelected
+                                                  ? [
+                                                      BoxShadow(
+                                                        color: goldColor
+                                                            .withOpacity(0.3),
+                                                        blurRadius: 8,
+                                                        offset: const Offset(0, 4),
+                                                      ),
+                                                    ]
+                                                  : [],
+                                              border: Border.all(
+                                                color: isSelected
+                                                    ? Colors.transparent
+                                                    : (isDark
+                                                        ? Colors.white12
+                                                        : Colors.black12),
+                                                width: 1,
                                               ),
                                             ),
-                                            Text(
-                                              _toArabicNums(_timeLeft),
-                                              style: GoogleFonts.barlow(
-                                                fontSize: 20.sp,
-                                                fontWeight: FontWeight.bold,
-                                                color: goldColor,
+                                            child: Center(
+                                              child: Text(
+                                                _getDayAbbr(day),
+                                                style: GoogleFonts.cairo(
+                                                  fontSize: 14.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: isSelected
+                                                      ? Colors.white
+                                                      : (isDark
+                                                          ? Colors.white70
+                                                          : Colors.black54),
+                                                ),
                                               ),
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    if (_isEnabled && _currentFajrTime != null)
-                                      Container(
-                                        width: 1,
-                                        height: 40,
-                                        color: Colors.grey.withOpacity(0.2),
-                                      ),
-                                    if (_currentFajrTime != null)
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              "أذان الفجر اليوم",
-                                              style: GoogleFonts.cairo(
-                                                fontSize: 12.sp,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            Text(
-                                              _toArabicNums(_currentFajrTime!),
-                                              style: GoogleFonts.barlow(
-                                                fontSize: 20.sp,
-                                                fontWeight: FontWeight.bold,
-                                                color: isDark
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                              ),
-                                            ),
-                                          ],
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          _getDayName(day).length > 6
+                                              ? _getDayName(day).substring(0, 7)
+                                              : _getDayName(day),
+                                          style: GoogleFonts.cairo(
+                                            fontSize: 10.sp,
+                                            color: isSelected
+                                                ? goldColor
+                                                : textColor.withOpacity(0.5),
+                                            fontWeight: isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
                                         ),
-                                      ),
-                                  ],
+                                      ],
+                                    );
+                                  }),
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        // Settings List
+                        StaggeredItemAnimation(
+                          index: 3,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: cardColor,
+                              borderRadius: BorderRadius.circular(16),
                             ),
-        
-                          StaggeredItemAnimation(
-                            index: 2,
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "أيام التنبيه",
-                                      style: GoogleFonts.cairo(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: textColor,
-                                      ),
+                                _buildSettingsTile(
+                                  title: "تفعيل المنبه",
+                                  subtitle: "تشغيل أو إيقاف المنبه بالكامل",
+                                  icon: Icons.alarm,
+                                  dragging: Switch(
+                                    value: _isEnabled,
+                                    activeColor: goldColor,
+                                    onChanged: (val) {
+                                      setState(() => _isEnabled = val);
+                                    },
+                                  ),
+                                  textColor: textColor,
+                                ),
+                                const Divider(height: 1, indent: 50),
+                                _buildSettingsTile(
+                                  title: "اهتزاز الهاتف",
+                                  subtitle: "تفعيل الاهتزاز مع الصوت",
+                                  icon: Icons.vibration,
+                                  dragging: Switch(
+                                    value: _vibrate,
+                                    activeColor: goldColor,
+                                    onChanged: (val) =>
+                                        setState(() => _vibrate = val),
+                                  ),
+                                  textColor: textColor,
+                                ),
+                                const Divider(height: 1, indent: 50),
+                                _buildSettingsTile(
+                                  title: "تدرج الصوت",
+                                  subtitle: "يبدأ الصوت منخفضاً ثم يرتفع",
+                                  icon: Icons.volume_up_rounded,
+                                  dragging: Switch(
+                                    value: _fadeIn,
+                                    activeColor: goldColor,
+                                    onChanged: (val) =>
+                                        setState(() => _fadeIn = val),
+                                  ),
+                                  textColor: textColor,
+                                ),
+                                const Divider(height: 1, indent: 50),
+                                ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 4),
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFD4AF37).withOpacity(0.1),
+                                      shape: BoxShape.circle,
                                     ),
-                                    TextButton.icon(
-                                      onPressed: _toggleAllDays,
-                                      icon: Icon(
-                                        _selectedDays.length == 7
-                                            ? Icons.check_circle
-                                            : Icons.circle_outlined,
-                                        size: 18,
-                                        color: goldColor,
+                                    child: const Icon(Icons.snooze,
+                                        color: Color(0xFFD4AF37), size: 20),
+                                  ),
+                                  title: Text(
+                                    "عدد التنبيهات (غفوة)",
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () => setState(() =>
+                                            _repetitions = (_repetitions > 1)
+                                                ? _repetitions - 1
+                                                : 1),
+                                        icon: Icon(Icons.remove_circle_outline,
+                                            color: textColor.withOpacity(0.5)),
                                       ),
-                                      label: Text(
-                                        _selectedDays.length == 7
-                                            ? "إلغاء الكل"
-                                            : "تحديد الكل",
-                                        style: GoogleFonts.cairo(
-                                          fontSize: 12.sp,
-                                          color: goldColor,
+                                      Text(
+                                        _toArabicNums(_repetitions.toString()),
+                                        style: GoogleFonts.barlow(
+                                          fontSize: 18.sp,
                                           fontWeight: FontWeight.bold,
+                                          color: goldColor,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                // Days Selector (Modern Circular Design)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  decoration: BoxDecoration(
-                                    color: cardColor,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.03),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 4),
+                                      IconButton(
+                                        onPressed: () => setState(() =>
+                                            _repetitions = (_repetitions < 5)
+                                                ? _repetitions + 1
+                                                : 5),
+                                        icon: Icon(Icons.add_circle_outline,
+                                            color: textColor.withOpacity(0.5)),
                                       ),
                                     ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: List.generate(7, (index) {
-                                      final actualDays = [6, 7, 1, 2, 3, 4, 5];
-                                      int day = actualDays[index];
-                                      bool isSelected = _selectedDays.contains(day);
-                                      return Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          InkWell(
-                                            onTap: () => _toggleDay(day),
-                                            borderRadius: BorderRadius.circular(50),
-                                            child: AnimatedContainer(
-                                              duration:
-                                                  const Duration(milliseconds: 300),
-                                              width: 42.w,
-                                              height: 42.w,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                gradient: isSelected
-                                                    ? LinearGradient(
-                                                        colors: [
-                                                          goldColor,
-                                                          goldColor.withOpacity(0.8),
-                                                        ],
-                                                        begin: Alignment.topLeft,
-                                                        end: Alignment.bottomRight,
-                                                      )
-                                                    : null,
-                                                color: isSelected
-                                                    ? null
-                                                    : (isDark
-                                                        ? Colors.white.withOpacity(0.05)
-                                                        : Colors.grey.withOpacity(0.1)),
-                                                boxShadow: isSelected
-                                                    ? [
-                                                        BoxShadow(
-                                                          color: goldColor
-                                                              .withOpacity(0.3),
-                                                          blurRadius: 8,
-                                                          offset: const Offset(0, 4),
-                                                        ),
-                                                      ]
-                                                    : [],
-                                                border: Border.all(
-                                                  color: isSelected
-                                                      ? Colors.transparent
-                                                      : (isDark
-                                                          ? Colors.white12
-                                                          : Colors.black12),
-                                                  width: 1,
-                                                ),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  _getDayAbbr(day),
-                                                  style: GoogleFonts.cairo(
-                                                    fontSize: 14.sp,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: isSelected
-                                                        ? Colors.white
-                                                        : (isDark
-                                                            ? Colors.white70
-                                                            : Colors.black54),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            _getDayName(day).length > 6
-                                                ? _getDayName(day).substring(0, 7)
-                                                : _getDayName(day),
-                                            style: GoogleFonts.cairo(
-                                              fontSize: 10.sp,
-                                              color: isSelected
-                                                  ? goldColor
-                                                  : textColor.withOpacity(0.5),
-                                              fontWeight: isSelected
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    }),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-        
-                          const SizedBox(height: 32),
-        
-                          // Settings List
-                          StaggeredItemAnimation(
-                            index: 3,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: cardColor,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Column(
-                                children: [
-                                  _buildSettingsTile(
-                                    title: "تفعيل المنبه",
-                                    subtitle: "تشغيل أو إيقاف المنبه بالكامل",
-                                    icon: Icons.alarm,
-                                    dragging: Switch(
-                                      value: _isEnabled,
-                                      activeColor: goldColor,
-                                      onChanged: (val) {
-                                        setState(() => _isEnabled = val);
-                                      },
-                                    ),
-                                    textColor: textColor,
+                        ),
+
+                        // const SizedBox(height: 16),
+                        // // Test Button
+                        // FadeAnimation(
+                        //   delay: const Duration(milliseconds: 600),
+                        //   child: Center(
+                        //     child: TextButton.icon(
+                        //       onPressed: () {
+                        //         Navigator.push(
+                        //           context,
+                        //           MaterialPageRoute(
+                        //             builder: (_) => const AdhanOverlayScreen(
+                        //               prayerName: "الفجر",
+                        //               cityName: "تجربة المنبه",
+                        //               prayerTime: "04:30 ص",
+                        //             ),
+                        //           ),
+                        //         );
+                        //       },
+                        //       icon: Icon(Icons.play_circle_outline, color: goldColor),
+                        //       label: Text(
+                        //         "تجربة شكل المنبه",
+                        //         style: GoogleFonts.cairo(
+                        //             color: goldColor, fontWeight: FontWeight.bold),
+                        //       ),
+                        //       style: TextButton.styleFrom(
+                        //         backgroundColor: goldColor.withOpacity(0.1),
+                        //         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+
+                        const SizedBox(height: 32),
+
+                        // Quote
+                        FadeAnimation(
+                          delay: const Duration(milliseconds: 800),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: goldColor.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                  color: goldColor.withOpacity(0.2), width: 1),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(Icons.format_quote,
+                                    color: goldColor, size: 28),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _currentQuote,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.amiri(
+                                    fontSize: 16.sp,
+                                    height: 1.8,
+                                    color: textColor.withOpacity(0.9),
                                   ),
-                                  const Divider(height: 1, indent: 50),
-                                  _buildSettingsTile(
-                                    title: "اهتزاز الهاتف",
-                                    subtitle: "تفعيل الاهتزاز مع الصوت",
-                                    icon: Icons.vibration,
-                                    dragging: Switch(
-                                      value: _vibrate,
-                                      activeColor: goldColor,
-                                      onChanged: (val) =>
-                                          setState(() => _vibrate = val),
-                                    ),
-                                    textColor: textColor,
-                                  ),
-                                  const Divider(height: 1, indent: 50),
-                                  _buildSettingsTile(
-                                    title: "تدرج الصوت",
-                                    subtitle: "يبدأ الصوت منخفضاً ثم يرتفع",
-                                    icon: Icons.volume_up_rounded,
-                                    dragging: Switch(
-                                      value: _fadeIn,
-                                      activeColor: goldColor,
-                                      onChanged: (val) =>
-                                          setState(() => _fadeIn = val),
-                                    ),
-                                    textColor: textColor,
-                                  ),
-                                  const Divider(height: 1, indent: 50),
-                                  ListTile(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 4),
-                                    leading: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: goldColor.withOpacity(0.1),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(Icons.snooze,
-                                          color: goldColor, size: 20),
-                                    ),
-                                    title: Text(
-                                      "عدد التنبيهات (غفوة)",
-                                      style: GoogleFonts.cairo(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: textColor,
-                                      ),
-                                    ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                          onPressed: () => setState(() =>
-                                              _repetitions = (_repetitions > 1)
-                                                  ? _repetitions - 1
-                                                  : 1),
-                                          icon: Icon(Icons.remove_circle_outline,
-                                              color: textColor.withOpacity(0.5)),
-                                        ),
-                                        Text(
-                                          _toArabicNums(_repetitions.toString()),
-                                          style: GoogleFonts.barlow(
-                                            fontSize: 18.sp,
-                                            fontWeight: FontWeight.bold,
-                                            color: goldColor,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () => setState(() =>
-                                              _repetitions = (_repetitions < 5)
-                                                  ? _repetitions + 1
-                                                  : 5),
-                                          icon: Icon(Icons.add_circle_outline,
-                                              color: textColor.withOpacity(0.5)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
+                        ),
 
-                          // const SizedBox(height: 16),
-                          // // Test Button
-                          // FadeAnimation(
-                          //   delay: const Duration(milliseconds: 600),
-                          //   child: Center(
-                          //     child: TextButton.icon(
-                          //       onPressed: () {
-                          //         Navigator.push(
-                          //           context,
-                          //           MaterialPageRoute(
-                          //             builder: (_) => const AdhanOverlayScreen(
-                          //               prayerName: "الفجر",
-                          //               cityName: "تجربة المنبه",
-                          //               prayerTime: "04:30 ص",
-                          //             ),
-                          //           ),
-                          //         );
-                          //       },
-                          //       icon: Icon(Icons.play_circle_outline, color: goldColor),
-                          //       label: Text(
-                          //         "تجربة شكل المنبه",
-                          //         style: GoogleFonts.cairo(
-                          //             color: goldColor, fontWeight: FontWeight.bold),
-                          //       ),
-                          //       style: TextButton.styleFrom(
-                          //         backgroundColor: goldColor.withOpacity(0.1),
-                          //         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-
-                          const SizedBox(height: 32),
-
-                          // Quote
-                          FadeAnimation(
-                            delay: const Duration(milliseconds: 800),
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: goldColor.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                    color: goldColor.withOpacity(0.2), width: 1),
-                              ),
-                              child: Column(
-                                children: [
-                                  Icon(Icons.format_quote,
-                                      color: goldColor, size: 28),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    _currentQuote,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.amiri(
-                                      fontSize: 16.sp,
-                                      height: 1.8,
-                                      color: textColor.withOpacity(0.9),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-        
-                          const SizedBox(height: 100),
-                        ],
-                      ),
+                        const SizedBox(height: 100),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-        
-              // Save Button (Fixed at bottom)
-              Positioned(
-                bottom: 24,
-                left: 20,
-                right: 20,
-                child: FadeAnimation(
-                  delay: const Duration(milliseconds: 1000),
-                  child: ElevatedButton(
-                    onPressed: _applySettings,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: KColors.primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
-                      elevation: 8,
-                      shadowColor: goldColor.withOpacity(0.4),
-                    ),
-                    child: _isCheckingPermissions
-                        ?  SizedBox(
-                            width: 24,
-                            height: 24,
-                            child:
-                            // CircularProgressIndicator(
-                            //   color: Colors.white,
-                            //   strokeWidth: 2.5,
-                            // ),
-                      KLoading.progressIOSIndicator(context: context,progressColor: Colors.white)
-                          )
-                        : Text(
-                            "حفظ التغييرات",
-                            style: GoogleFonts.cairo(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                 ),
+              ],
+            ),
+
+            // Save Button (Fixed at bottom)
+            Positioned(
+              bottom: 24,
+              left: 20,
+              right: 20,
+              child: FadeAnimation(
+                delay: const Duration(milliseconds: 1000),
+                child: ElevatedButton(
+                  onPressed: _applySettings,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: KColors.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    elevation: 8,
+                    shadowColor: goldColor.withOpacity(0.4),
+                  ),
+                  child: _isCheckingPermissions
+                      ?  SizedBox(
+                          width: 24,
+                          height: 24,
+                          child:
+                          // CircularProgressIndicator(
+                          //   color: Colors.white,
+                          //   strokeWidth: 2.5,
+                          // ),
+                    KLoading.progressIOSIndicator(context: context,progressColor: Colors.white)
+                        )
+                      : Text(
+                          "حفظ التغييرات",
+                          style: GoogleFonts.cairo(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
