@@ -67,7 +67,8 @@ Future<void> _initAppServices() async {
   // ✅ 1) Initialize Supabase
   await Supabase.initialize(
     url: 'https://kghwboxevphvxtsagrer.supabase.co',
-    anonKey: 'sb_publishable_Kl3FXiXa7AHEokVvCiImmQ_03UL91M0',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaHdib3hldnBodnh0c2FncmVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxMjcwNzUsImV4cCI6MjA4MTcwMzA3NX0.PPh6rwxDbHGHHyHBUjdEz1WWdF_psdygbtF0nY5hNR4',
   );
 
   // ✅ 2) تخصيصات النظام
@@ -143,7 +144,7 @@ Future<void> _initAppServices() async {
 
   // ✅ 5) Services Locator
   await Di.init();
-  
+
   // ✅ 6) تهيئة البيانات التكميلية
   HijriCalendar.setLocal('ar_SA');
   await initializeDateFormatting();
@@ -152,7 +153,7 @@ Future<void> _initAppServices() async {
   await SharedObj().init();
 
   // ✅ Note: Charity, Achievements, and Duas boxes are opened by their respective services
-  
+
   // NotificationManager replaces all local notification logic
   final notificationManager = NotificationManager();
   await notificationManager.initialize();

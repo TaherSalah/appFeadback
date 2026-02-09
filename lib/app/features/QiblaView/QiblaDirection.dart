@@ -150,7 +150,11 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
         if (mounted) {
           setState(() {
-            _heading = event.heading;
+            double? heading = event.heading;
+            if (heading != null) {
+              heading = (heading < 0) ? (360 + heading) : heading;
+            }
+            _heading = heading;
             _isLoading = false;
           });
         }
@@ -209,51 +213,92 @@ class _QiblaDirectionState extends State<QiblaDirection> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         // backgroundColor: isDark ? Colors.grey[900] : Colors.grey[50],
-        appBar: AppBar(
-          leading: (ModalRoute.of(context)?.canPop ?? false)
-              ? IconButton(
+        // appBar: AppBar(
+        //   leading: (ModalRoute.of(context)?.canPop ?? false)
+        //       ? IconButton(
+        //           icon: Icon(
+        //             CupertinoIcons.back,
+        //             color: isDark ? Colors.white : Colors.black,
+        //           ),
+        //           onPressed: () => Navigator.of(context).pop(),
+        //         )
+        //       : null,
+        //   centerTitle: true,
+        //   title: Text(
+        //     "اتجاه القبلة",
+        //     style: GoogleFonts.cairo(
+        //       color: isDark ? Colors.greenAccent : Colors.green[700],
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: isTablet ? 20 : 18,
+        //     ),
+        //   ),
+        //   backgroundColor: isDark ? Colors.grey[850] : Colors.white,
+        //   elevation: 0,
+        //   actions: [
+        //     IconButton(
+        //       icon: Icon(
+        //           _isARMode ? Icons.compass_calibration : Icons.camera_alt),
+        //       tooltip: _isARMode ? "الوضع الكلاسيكي" : "AR وضع",
+        //       onPressed: () {
+        //         setState(() {
+        //           _isARMode = !_isARMode;
+        //         });
+        //         // Fluttertoast.showToast(
+        //         //     msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
+        //         //     backgroundColor: Colors.amber,
+        //         //     textColor: Colors.black);
+        //         KHelper.showSuccess(
+        //             message:
+        //                 _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled");
+        //       },
+        //     ),
+        //     IconButton(
+        //       icon: const Icon(Icons.refresh),
+        //       onPressed: _initLocationAndCompass,
+        //     ),
+        //   ],
+        // ),
+        appBar: PreferredSize(
+          preferredSize:
+          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          child: AppBar(
+              actions: [
+                IconButton(
                   icon: Icon(
-                    CupertinoIcons.back,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              : null,
-          centerTitle: true,
-          title: Text(
-            "اتجاه القبلة",
-            style: GoogleFonts.cairo(
-              color: isDark ? Colors.greenAccent : Colors.green[700],
-              fontWeight: FontWeight.bold,
-              fontSize: isTablet ? 20 : 18,
+                      _isARMode ? Icons.compass_calibration : Icons.camera_alt),
+                  tooltip: _isARMode ? "الوضع الكلاسيكي" : "AR وضع",
+                  onPressed: () {
+                    setState(() {
+                      _isARMode = !_isARMode;
+                    });
+                    // Fluttertoast.showToast(
+                    //     msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
+                    //     backgroundColor: Colors.amber,
+                    //     textColor: Colors.black);
+                    KHelper.showSuccess(
+                        message:
+                            _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled");
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: _initLocationAndCompass,
+                ),
+              ],
+            iconTheme:
+            IconThemeData(color: isDark ? Colors.white : Colors.blue),
+            centerTitle: true,
+            title: Text(
+              "اتجاه القبلة",
+              style: GoogleFonts.cairo(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
             ),
           ),
-          backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: Icon(
-                  _isARMode ? Icons.compass_calibration : Icons.camera_alt),
-              tooltip: _isARMode ? "الوضع الكلاسيكي" : "AR وضع",
-              onPressed: () {
-                setState(() {
-                  _isARMode = !_isARMode;
-                });
-                // Fluttertoast.showToast(
-                //     msg: _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled",
-                //     backgroundColor: Colors.amber,
-                //     textColor: Colors.black);
-                KHelper.showSuccess(
-                    message:
-                        _isARMode ? "AR Mode Enabled" : "Classic Mode Enabled");
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: _initLocationAndCompass,
-            ),
-          ],
         ),
+
         body: _isLoading
             ? _buildLoadingWidget(isDark)
             : _errorMessage.isNotEmpty
@@ -346,7 +391,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
     // Increase bottom padding if we are in the main tab view (cannot pop)
     // to avoid overlap with the BottomNavigationBar and FAB.
-    final double bottomPadding = (ModalRoute.of(context)?.canPop ?? false) ? 16.0 : 90.0;
+    final double bottomPadding =
+        (ModalRoute.of(context)?.canPop ?? false) ? 16.0 : 90.0;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, bottomPadding),
@@ -354,7 +400,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
         children: [
           // البوصلة الرئيسية
           Expanded(
-            flex: 3,
+            flex: 1,
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 20),
               child: Stack(
@@ -413,8 +459,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                         width: size.width * 0.6,
                         height: size.width * 0.6,
                         child: Stack(
-                          children: _buildCompassDirections(
-                              size.width * 0.7, isDark),
+                          children:
+                              _buildCompassDirections(size.width * 0.7, isDark),
                         ),
                       ),
                     ),
@@ -422,7 +468,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                     // 2. Qibla Pointer (Arrow) - Points to Qibla
                     // Rotates by (Qibla - Heading) to point towards Qibla relative to phone
                     Transform.rotate(
-                      angle: vector.radians((_qiblaDirection! - _heading!) % 360),
+                      angle:
+                          vector.radians((_qiblaDirection! - _heading!) % 360),
                       child: SizedBox(
                         width: size.width * 0.6,
                         height: size.width * 0.6,
@@ -463,7 +510,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
           // معلومات القبلة
           Expanded(
-            flex: 2,
+            flex: 1,
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -479,10 +526,12 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                 ],
               ),
               child: SingleChildScrollView(
+
                 child: _buildInfoContent(isDark, angle),
               ),
             ),
           ),
+          const SizedBox(height: 15,),
         ],
       ),
     );
@@ -490,6 +539,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
   Widget _buildInfoContent(bool isDark, double? angle) {
     return Column(
+      spacing: 6,
       mainAxisSize: MainAxisSize.min,
       children: [
         // معلومات الموقع
@@ -525,7 +575,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           ],
         ),
 
-        const SizedBox(height: 15),
+        const SizedBox(height: 20),
 
         // رسالة التوجيه
         if (angle != null)

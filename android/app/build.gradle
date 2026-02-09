@@ -32,7 +32,8 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.rafiq.muslimdaily"
     compileSdkVersion 36
-    ndkVersion "28.1.13356709"
+//    ndkVersion "28.1.13356709"
+      ndkVersion = "28.2.13676358"
 //    ndkVersion flutter.ndkVersion
 
     compileOptions {

@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quran_library/quran_library.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/features/quran/data/reflection_model.dart';
 import 'package:muslimdaily/app/features/quran/data/reflections_service.dart';
+import 'package:muslimdaily/app/features/quran/view/widget/page_reflections_screen.dart';
 
 class ReflectionsListScreen extends StatefulWidget {
   const ReflectionsListScreen({super.key});
@@ -15,7 +17,7 @@ class ReflectionsListScreen extends StatefulWidget {
 class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
   final ReflectionsService _reflectionsService = ReflectionsService();
   bool _isLoading = true;
-  Map<int, String> _reflections = {};
+  Map<int, List<Reflection>> _reflections = {};
 
   @override
   void initState() {
@@ -87,18 +89,13 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
       itemCount: sortedPages.length,
       itemBuilder: (context, index) {
         final pageIndex = sortedPages[index];
-        final content = _reflections[pageIndex]!;
+        final reflections = _reflections[pageIndex]!;
         final pageNumber = pageIndex + 1;
         
-        // Use QuranLibrary to get surah name if possible, or just show page number
-        String surahName = "";
-        try {
-           // We might need to find which surah this page belongs to
-           // This is a simplified approach, usually quran packages provide this
-           surahName = "صفحة $pageNumber"; 
-        } catch (e) {
-           surahName = "صفحة $pageNumber";
-        }
+        // Get the most recent reflection for preview
+        final latestReflection = reflections.reduce(
+          (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
+        );
 
         return Card(
           elevation: 2,
@@ -107,13 +104,16 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
           color: isDark ? const Color(0xFF1B263B) : Colors.white,
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              // Navigate back to Quran page
-              Navigator.pushNamed(
+            onTap: () async {
+              // Navigate to page reflections screen
+              await Navigator.push(
                 context,
-                "/surahListScreen",
-                arguments: pageIndex,
+                MaterialPageRoute(
+                  builder: (context) => PageReflectionsScreen(pageIndex: pageIndex),
+                ),
               );
+              // Reload after returning
+              _loadReflections();
             },
             child: Padding(
               padding: EdgeInsets.all(16.h),
@@ -130,7 +130,7 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          surahName,
+                          "صفحة $pageNumber",
                           style: GoogleFonts.cairo(
                             fontSize: 12.sp,
                             fontWeight: FontWeight.bold,
@@ -138,25 +138,54 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
                           ),
                         ),
                       ),
-                      Text(
-                        "صفحة ${pageIndex + 1}",
-                        style: GoogleFonts.cairo(
-                          fontSize: 12.sp,
-                          color: isDark ? Colors.white54 : Colors.grey[600],
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.note_alt,
+                              size: 14.sp,
+                              color: Colors.orange,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              "${reflections.length} خاطرة",
+                              style: GoogleFonts.cairo(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 10.h),
                   Text(
-                    content,
+                    latestReflection.content,
                     style: GoogleFonts.cairo(
                       fontSize: 14.sp,
                       color: isDark ? Colors.white : Colors.black87,
                     ),
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (reflections.length > 1) ...[
+                    SizedBox(height: 8.h),
+                    Text(
+                      "و ${reflections.length - 1} خاطرة أخرى...",
+                      style: GoogleFonts.cairo(
+                        fontSize: 12.sp,
+                        color: isDark ? Colors.white54 : Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

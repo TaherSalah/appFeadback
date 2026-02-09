@@ -881,21 +881,21 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                 },
               ),
             ),
-            FadeInRight(
-              delay: const Duration(milliseconds: 200),
-              child: _buildQuickNavCard(
-                title: "أدعية يومية",
-                subtitle: "أتعلم وأدعو",
-                emoji: "🌈",
-                color: const Color(0xFF10B981),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(builder: (_) => const DailyDuasScreen()),
-                  );
-                },
-              ),
-            ),
+            // FadeInRight(
+            //   delay: const Duration(milliseconds: 200),
+            //   child: _buildQuickNavCard(
+            //     title: "أدعية يومية",
+            //     subtitle: "أتعلم وأدعو",
+            //     emoji: "🌈",
+            //     color: const Color(0xFF10B981),
+            //     onTap: () {
+            //       Navigator.push(
+            //         context,
+            //         CupertinoPageRoute(builder: (_) => const DailyDuasScreen()),
+            //       );
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ],
@@ -1711,28 +1711,28 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               },
               subtitle: '',
             ),
-            _buildQuickNavCard(
-              title: "المتجر",
-              emoji: "🏪",
-              color: const Color(0xFF00BCD4),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => VirtualShopScreen(
-                      currentStars: _totalStars,
-                      onPurchase: (cost) {
-                        setState(() {
-                          _totalStars -= cost;
-                        });
-                        _saveProgress();
-                      },
-                    ),
-                  ),
-                );
-              },
-              subtitle: '',
-            ),
+            // _buildQuickNavCard(
+            //   title: "المتجر",
+            //   emoji: "🏪",
+            //   color: const Color(0xFF00BCD4),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (_) => VirtualShopScreen(
+            //           currentStars: _totalStars,
+            //           onPurchase: (cost) {
+            //             setState(() {
+            //               _totalStars -= cost;
+            //             });
+            //             _saveProgress();
+            //           },
+            //         ),
+            //       ),
+            //     );
+            //   },
+            //   subtitle: '',
+            // ),
             _buildQuickNavCard(
               subtitle: "",
               title: "التحديات",
@@ -1761,19 +1761,19 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
             //   },
             //   subtitle: '',
             // ),
-            _buildQuickNavCard(
-              subtitle: "",
-              title: "أدعية يومية",
-              emoji: "🤲",
-              color: const Color(0xFF673AB7),
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const DailyDuasScreen()),
-                );
-                _loadProgress();
-              },
-            ),
+            // _buildQuickNavCard(
+            //   subtitle: "",
+            //   title: "أدعية يومية",
+            //   emoji: "🤲",
+            //   color: const Color(0xFF673AB7),
+            //   onTap: () async {
+            //     await Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (_) => const DailyDuasScreen()),
+            //     );
+            //     _loadProgress();
+            //   },
+            // ),
           ],
         ),
         const SizedBox(height: 40),

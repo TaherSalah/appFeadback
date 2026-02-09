@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/features/quran/data/reading_analytics_service.dart';
 import 'package:muslimdaily/app/features/quran/data/reflections_service.dart';
 import 'package:muslimdaily/app/features/quran/view/ReadingAnalyticsScreen.dart';
+import 'package:muslimdaily/app/features/quran/view/widget/page_reflections_screen.dart';
 import 'package:muslimdaily/app/features/quran/pdf/view/pdf_list_screen.dart';
 
 enum _QuranMenuAction {
@@ -274,10 +275,10 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   bool _hasPageNote = false;
 
   Future<void> _checkPageNote(int pageIndex) async {
-    final note = await _reflectionsService.getPageNote(pageIndex);
+    final count = await _reflectionsService.getPageReflectionsCount(pageIndex);
     if (mounted) {
       setState(() {
-        _hasPageNote = note != null && note.isNotEmpty;
+        _hasPageNote = count > 0;
       });
     }
   }
@@ -285,24 +286,16 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   Future<void> _showPageNoteDialog() async {
     if (_currentPage == null) return;
 
-    final note = await _reflectionsService.getPageNote(_currentPage!);
-
-    if (!mounted) return;
-
-    await showDialog(
-      context: context,
-      builder: (context) => _NoteDialog(
-        initialText: note,
-        onSave: (text) async {
-          await _reflectionsService.savePageNote(_currentPage!, text);
-          _checkPageNote(_currentPage!);
-        },
-        onDelete: () async {
-          await _reflectionsService.deletePageNote(_currentPage!);
-          _checkPageNote(_currentPage!);
-        },
+    // Navigate to the new multi-reflections screen
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PageReflectionsScreen(pageIndex: _currentPage!),
       ),
     );
+
+    // Refresh the note indicator after returning
+    _checkPageNote(_currentPage!);
   }
 
   Future<void> _openAnalytics() async {
@@ -1294,6 +1287,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                         onPageChanged: _handlePageChanged,
                                         itemBuilder: (context, index) {
                                           return QuranLibraryScreen(
+                                            appIconPathForPlayAudioInBackground: "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
                                             backgroundColor: _backgroundColor,
                                             withPageView: false,
                                             isDark: isDark,
@@ -1310,7 +1304,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                         },
                                       )
                                     : QuranLibraryScreen(
-                                        backgroundColor: _backgroundColor,
+                              appIconPathForPlayAudioInBackground: "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
+
+                              backgroundColor: _backgroundColor,
                                         // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
                                         withPageView: true,
                                         isDark: isDark,

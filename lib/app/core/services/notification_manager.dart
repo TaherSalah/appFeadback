@@ -299,7 +299,17 @@ class NotificationManager {
   Future<bool> checkAndRequestExactAlarmPermission() async {
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     if (!isAllowed) {
-      await AwesomeNotifications().requestPermissionToSendNotifications();
+      await AwesomeNotifications().requestPermissionToSendNotifications(
+        permissions: [
+          NotificationPermission.Alert,
+          NotificationPermission.Sound,
+          NotificationPermission.Badge,
+          NotificationPermission.Vibration,
+          NotificationPermission.Light,
+          NotificationPermission.CriticalAlert,
+          NotificationPermission.FullScreenIntent,
+        ],
+      );
       isAllowed = await AwesomeNotifications().isNotificationAllowed();
     }
     return isAllowed;
@@ -338,7 +348,7 @@ class NotificationManager {
   /// Note: Adhan is handled by AdhanWorkManagerService, but we can control its 'enable' state via SettingsService
   /// which AdhanWorkManagerService should check before notifying.
   Future<void> rescheduleAll({bool force = false}) async {
-    print('🔄 Rescheduling all notifications based on settings...');
+    // print('🔄 Rescheduling all notifications based on settings...');
 
     // إلغاء كل التذكيرات المجدولة (ما عدا الأذان الذي يديره WorkManager مبدئياً)
     // أو يمكننا إلغاء الأذان أيضاً إذا أردنا إيقافه تماماً
@@ -367,7 +377,7 @@ class NotificationManager {
     // If called from main.dart on startup, force might be false (default)
     await AdhanWorkManagerService().initialize(forceReschedule: force);
 
-    print('✅ Reschedule completed.');
+    // print('✅ Reschedule completed.');
   }
 
   Future<void> _setupDailyReminders() async {
@@ -584,7 +594,7 @@ class NotificationManager {
 
   Future<void> _scheduleSalawat() async {
     int minutes = _settingsService.getSalatAlaNabiMinutes();
-    print('Scheduling Salawat every $minutes minutes');
+    // print('Scheduling Salawat every $minutes minutes');
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -628,8 +638,8 @@ class NotificationManager {
     // Default 5 minutes interval, but we could make it settings based later
     const int intervalMinutes = 5;
 
-    print(
-        '🕒 Scheduling Advanced Fajr Alarm at $hour:$minute for days: $days with $repetitions repetitions (Interval: ${intervalMinutes}m)');
+    // print(
+    //     '🕒 Scheduling Advanced Fajr Alarm at $hour:$minute for days: $days with $repetitions repetitions (Interval: ${intervalMinutes}m)');
 
     for (int day in days) {
       for (int r = 0; r < repetitions; r++) {
@@ -677,7 +687,7 @@ class NotificationManager {
             "✅ Scheduled Alarm ID: $uniqueId for Day: $day at $finalHour:$finalMinute");
       }
     }
-    print('✅ All Advanced Fajr Alarms scheduled successfully.');
+    // print('✅ All Advanced Fajr Alarms scheduled successfully.');
   }
 
   Future<void> scheduleWirdReminder(
@@ -955,7 +965,7 @@ class NotificationManager {
   }
 
   Future<void> scheduleBasicSystemTest() async {
-    print('Scheduling basic system test (no custom sound)...');
+    // print('Scheduling basic system test (no custom sound)...');
     try {
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
@@ -969,7 +979,7 @@ class NotificationManager {
           date: DateTime.now().add(const Duration(seconds: 5)),
         ),
       );
-      print('✅ Basic system test scheduled.');
+      // print('✅ Basic system test scheduled.');
     } catch (e) {
       print('❌ Error scheduling basic test: $e');
     }

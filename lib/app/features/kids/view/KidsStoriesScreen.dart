@@ -262,7 +262,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                               child: Center(
                                 child: Text(
                                   avatar,
-                                  style: TextStyle(fontSize: 30),
+                                  style: const TextStyle(fontSize: 30),
                                 ),
                               ),
                             ),
@@ -357,6 +357,27 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+            centerTitle: true,
+            title: Text(
+              'ركن الطفل المسلم',
+              style: GoogleFonts.cairo(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+            ),
+          ),
+        ),
+
         backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         body: RefreshIndicator(
           onRefresh: () async {
@@ -367,64 +388,65 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
             physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
             slivers: [
               // Playful Header
-              SliverAppBar(
-                expandedHeight: 180.h,
-                pinned: true,
-                backgroundColor: KColors.primaryColor,
-                // backgroundColor: const Color(0xFF0EA5E9),
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    decoration:  BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [KColors.primaryColor, KColors.primaryColor],
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                      ),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Positioned(
-                          left: -20,
-                          bottom: -10,
-                          child: Opacity(
-                            opacity: 0.1,
-                            child: Icon(Icons.child_care_rounded, size: 150.sp, color: Colors.white),
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'ركن الطفل المسلم',
-                              style: GoogleFonts.cairo(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24.sp,
-                                color: Colors.white,
-                                shadows: [Shadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 2))],
-                              ),
-                            ),
-                            Text(
-                              'قصص وعبر ومغامرات جميلة',
-                              style: GoogleFonts.cairo(
-                                fontSize: 14.sp,
-                                color: Colors.white.withOpacity(0.9),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              // SliverAppBar(
+              //   expandedHeight: 180.h,
+              //   pinned: true,
+              //   // backgroundColor: KColors.primaryColor,
+              //   // backgroundColor: const Color(0xFF0EA5E9),
+              //   elevation: 0,
+              //   leading: IconButton(
+              //     icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+              //     onPressed: () => Navigator.pop(context),
+              //   ),
+              //   flexibleSpace: FlexibleSpaceBar(
+              //     background: Container(
+              //       decoration:  BoxDecoration(
+              //         // gradient: LinearGradient(
+              //         //   colors: [KColors.primaryColor, KColors.primaryColor],
+              //         //   begin: Alignment.topRight,
+              //         //   end: Alignment.bottomLeft,
+              //         // ),
+              //       ),
+              //       child: Stack(
+              //         alignment: Alignment.center,
+              //         children: [
+              //           Positioned(
+              //             left: -20,
+              //             bottom: -10,
+              //             child: Opacity(
+              //               opacity: 0.1,
+              //               child: Icon(Icons.child_care_rounded, size: 150.sp, color: Colors.white),
+              //             ),
+              //           ),
+              //           Column(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: [
+              //               Text(
+              //                 'ركن الطفل المسلم',
+              //                 style: GoogleFonts.cairo(
+              //                   fontWeight: FontWeight.bold,
+              //                   fontSize: 24.sp,
+              //                   color: Colors.white,
+              //                   shadows: [Shadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 2))],
+              //                 ),
+              //               ),
+              //               Text(
+              //                 'قصص وعبر ومغامرات جميلة',
+              //                 style: GoogleFonts.cairo(
+              //                   fontSize: 14.sp,
+              //                   color: Colors.white.withOpacity(0.9),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
 
               // Stats Card (Achievement) V2
+              const SliverToBoxAdapter(child: SizedBox(height: 15,),),
               SliverToBoxAdapter(
                 child: FadeInDown(child: _buildAchievementCard(isDark)),
               ),

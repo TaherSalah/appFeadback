@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -31,6 +32,24 @@ class HadithInArabic extends StatelessWidget {
         .replaceAll(RegExp(r'<[^>]*>'), ''); // Remove any other tags
   }
 
+  String _parseGrade(String gradeJson) {
+    try {
+      if (gradeJson.trim().startsWith('[')) {
+        final List<dynamic> data = jsonDecode(gradeJson);
+        if (data.isNotEmpty && data[0] is Map) {
+          final grade = data[0]['grade'];
+          final gradedBy = data[0]['graded_by'];
+          if (grade != null) {
+            return gradedBy != null ? "$grade ($gradedBy)" : grade;
+          }
+        }
+      }
+      return gradeJson;
+    } catch (e) {
+      return gradeJson;
+    }
+  }
+
   final booksCtrl = Get.find<BooksController>();
 
   void copyText(String text) async {
@@ -50,7 +69,8 @@ class HadithInArabic extends StatelessWidget {
     );
   }
 
-  Future<void> _showCategoryDialog(BuildContext context, ARHadithModel hadith) async {
+  Future<void> _showCategoryDialog(
+      BuildContext context, ARHadithModel hadith) async {
     final categories = [
       'أخلاق',
       'عبادات',
@@ -66,9 +86,10 @@ class HadithInArabic extends StatelessWidget {
       builder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final baseColor = KColors.primaryColor;
-        
+
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
           child: Container(
             padding: EdgeInsets.all(20.r),
             decoration: BoxDecoration(
@@ -93,7 +114,8 @@ class HadithInArabic extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       margin: EdgeInsets.only(bottom: 10.h),
-                      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12.h, horizontal: 16.w),
                       decoration: BoxDecoration(
                         color: baseColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12.r),
@@ -132,13 +154,12 @@ class HadithInArabic extends StatelessWidget {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.sizeOf(context);
     final baseColor = KColors.primaryColor;
-    
+
     final shareFullText = """
 حديث رقم: ${arabicHadith.hadithNumber}
 ${_cleanHtmlTags(arabicHadith.hadithText)}
@@ -179,7 +200,8 @@ ${_cleanHtmlTags(otherLangHadithText)}
               ),
               boxShadow: [
                 BoxShadow(
-                  color: (isDark ? Colors.black : const Color(0xFFD4AF37)).withOpacity(0.12),
+                  color: (isDark ? Colors.black : const Color(0xFFD4AF37))
+                      .withOpacity(0.12),
                   blurRadius: 15,
                   offset: const Offset(0, 5),
                 ),
@@ -195,7 +217,8 @@ ${_cleanHtmlTags(otherLangHadithText)}
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.w, vertical: 4.h),
                         decoration: BoxDecoration(
                           color: baseColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20.r),
@@ -210,24 +233,32 @@ ${_cleanHtmlTags(otherLangHadithText)}
                         ),
                       ),
                       if (arabicHadith.grade1 != null)
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Text(
-                            arabicHadith.grade1!,
-                            style: GoogleFonts.cairo(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green,
+                        Flexible(
+                          child: Container(
+                            constraints: BoxConstraints(
+                              maxWidth: size.width * 0.5,
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12.w, vertical: 4.h),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Text(
+                              _parseGrade(arabicHadith.grade1!),
+                              style: GoogleFonts.cairo(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                     ],
                   ),
-                  
+
                   SizedBox(height: 20.h),
 
                   // Arabic Hadith Text
@@ -244,10 +275,10 @@ ${_cleanHtmlTags(otherLangHadithText)}
                   ),
 
                   SizedBox(height: 20.h),
-                  
+
                   // Divider
                   _OrnamentDivider(color: baseColor),
-                  
+
                   SizedBox(height: 10.h),
 
                   // Translation Section
@@ -289,8 +320,9 @@ ${_cleanHtmlTags(otherLangHadithText)}
                   // Action Buttons
                   GetBuilder<BooksController>(
                     builder: (ctrl) {
-                      final isBookmarked = ctrl.isBookmarked(arabicHadith.id ?? 0);
-                      
+                      final isBookmarked =
+                          ctrl.isBookmarked(arabicHadith.id ?? 0);
+
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -304,12 +336,15 @@ ${_cleanHtmlTags(otherLangHadithText)}
                           SizedBox(width: 4.w),
                           Expanded(
                             child: _ActionButton(
-                              icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                              icon: isBookmarked
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
                               label: isBookmarked ? "محفوظ" : "حفظ",
                               onTap: () async {
                                 if (!isBookmarked) {
                                   // Show category selection dialog
-                                  await _showCategoryDialog(context, arabicHadith);
+                                  await _showCategoryDialog(
+                                      context, arabicHadith);
                                 } else {
                                   // Remove bookmark
                                   await ctrl.toggleBookmark(arabicHadith);
@@ -335,7 +370,8 @@ ${_cleanHtmlTags(otherLangHadithText)}
                                   pageBuilder: (context, anim1, anim2) =>
                                       PremiumShareCard(
                                     azkarName: arabicHadith.bookName,
-                                    text: _cleanHtmlTags(arabicHadith.hadithText),
+                                    text:
+                                        _cleanHtmlTags(arabicHadith.hadithText),
                                     source: arabicHadith.grade1,
                                   ),
                                 );
@@ -347,7 +383,8 @@ ${_cleanHtmlTags(otherLangHadithText)}
                             child: _ActionButton(
                               icon: Icons.share_rounded,
                               label: "مشاركة",
-                              onTap: () => shareText(shareFullText, "حديث نبوي شريف"),
+                              onTap: () =>
+                                  shareText(shareFullText, "حديث نبوي شريف"),
                             ),
                           ),
                         ],
@@ -358,7 +395,7 @@ ${_cleanHtmlTags(otherLangHadithText)}
               ),
             ),
           ),
-          
+
           // Badge (Hadith number in circle above the card)
           Positioned(
             top: -15.h,
@@ -435,15 +472,16 @@ class _ActionButton extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   label,
-              style: GoogleFonts.cairo(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: isHighlighted
-                    ? primary
-                    : (isDark ? Colors.white70 : Colors.grey[900]),
+                  style: GoogleFonts.cairo(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: isHighlighted
+                        ? primary
+                        : (isDark ? Colors.white70 : Colors.grey[900]),
+                  ),
                 ),
-              ),),),
-
+              ),
+            ),
           ],
         ),
       ),
@@ -468,7 +506,10 @@ class _OrnamentDivider extends StatelessWidget {
               height: 1,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [color.withOpacity(0.0), color.withOpacity(isDark ? 0.7 : 0.6)],
+                  colors: [
+                    color.withOpacity(0.0),
+                    color.withOpacity(isDark ? 0.7 : 0.6)
+                  ],
                 ),
               ),
             ),
@@ -483,7 +524,8 @@ class _OrnamentDivider extends StatelessWidget {
             child: Container(
               width: 4.r,
               height: 4.r,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: color.withOpacity(0.9)),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle, color: color.withOpacity(0.9)),
             ),
           ),
           Expanded(
@@ -491,7 +533,10 @@ class _OrnamentDivider extends StatelessWidget {
               height: 1,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [color.withOpacity(isDark ? 0.7 : 0.6), color.withOpacity(0.0)],
+                  colors: [
+                    color.withOpacity(isDark ? 0.7 : 0.6),
+                    color.withOpacity(0.0)
+                  ],
                 ),
               ),
             ),
