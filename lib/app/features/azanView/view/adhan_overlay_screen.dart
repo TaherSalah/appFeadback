@@ -143,6 +143,7 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                         ),
                       ],
                     ),
+
                   ),
                   if (widget.prayerName?.contains('الشروق') == true) ...[
                     SizedBox(height: 10.h),

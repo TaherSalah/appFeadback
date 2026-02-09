@@ -138,16 +138,16 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
           title: "التَّفْسِيرُ",
           route: Routes.tafsirQuranRoute,
         ),
-        DrawerModle(
-          icon: Icons.picture_as_pdf_outlined,
-          title: "القِرَاءَةُ مِنَ PDF",
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PdfListScreen()),
-            );
-          },
-        ),
+        // DrawerModle(
+        //   icon: Icons.picture_as_pdf_outlined,
+        //   title: "القِرَاءَةُ مِنَ PDF",
+        //   onTap: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (context) => const PdfListScreen()),
+        //     );
+        //   },
+        // ),
         DrawerModle(
           icon: Icons.analytics_outlined,
           title: "إِحْصَائِيَّاتُ القِرَاءَةِ",

@@ -303,18 +303,25 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                                       ),
                                       items: const [
                                         DropdownMenuItem(
+                                          alignment: AlignmentGeometry.centerRight,
                                             value: 7, child: Text("7 أيام")),
                                         DropdownMenuItem(
+                                            alignment: AlignmentGeometry.centerRight,
                                             value: 10, child: Text("10 أيام")),
                                         DropdownMenuItem(
+                                            alignment: AlignmentGeometry.centerRight,
                                             value: 15, child: Text("15 يوم")),
                                         DropdownMenuItem(
+                                            alignment: AlignmentGeometry.centerRight,
                                             value: 20, child: Text("20 يوم")),
                                         DropdownMenuItem(
+                                            alignment: AlignmentGeometry.centerRight,
                                             value: 30, child: Text("30 يوم")),
                                         DropdownMenuItem(
+                                            alignment: AlignmentGeometry.centerRight,
                                             value: 60, child: Text("60 يوم")),
                                         DropdownMenuItem(
+                                            alignment: AlignmentGeometry.centerRight,
                                             value: 90, child: Text("90 يوم")),
                                       ],
                                       value: _days,
@@ -385,9 +392,11 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                                       ),
                                       items: const [
                                         DropdownMenuItem(
+                                            alignment: AlignmentGeometry.centerRight,
                                             value: "صفحات",
                                             child: Text("صفحات")),
                                         DropdownMenuItem(
+                                            alignment: AlignmentGeometry.centerRight,
                                             value: "أجزاء",
                                             child: Text("أجزاء")),
                                       ],
@@ -435,11 +444,12 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                               width: MediaQuery.sizeOf(context).width * 0.7,
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [KColors.primaryColor, Color(0xFF4CAF50)],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
+                                // gradient: LinearGradient(
+                                //   colors: [KColors.primaryColor, Color(0xFF4CAF50)],
+                                //   begin: Alignment.topLeft,
+                                //   end: Alignment.bottomRight,
+                                // ),
+                                color: KColors.primaryColor,
                                 borderRadius: BorderRadius.circular(30),
                                 boxShadow: [
                                   BoxShadow(

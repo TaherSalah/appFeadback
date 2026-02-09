@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:muslimdaily/app/core/services/system_control_service.dart';
 import 'package:muslimdaily/app/core/services/home_widget_service.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 // ==========================================
 // 🧪 Callback مبسط للاختبار
@@ -40,6 +41,24 @@ void testSimpleCallback(int id) async {
 
   // استدعاء الـ callback الأصلي
   alarmCallback(id);
+}
+
+// ==========================================
+// ⏱️ Widget Update Callback (Exact Alarm)
+// ==========================================
+@pragma('vm:entry-point')
+void widgetUpdateCallback(int id, Map<String, dynamic> params) async {
+  print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  print('🔄 [Widget Update] Running background update via AlarmManager (ID: $id)');
+  print('🕐 Time: ${DateTime.now()}');
+  
+  // Ensure we can access services
+  try {
+    await AdhanWorkManagerService().updateWidget();
+    print('✅ [Widget Update] Widget updated successfully.');
+  } catch (e) {
+    print('❌ [Widget Update] Failed: $e');
+  }
 }
 
 // ==========================================
@@ -487,6 +506,29 @@ class AdhanWorkManagerService {
         }
       }
 
+      // 📿 جدولة أذكار بعد الصلاة (تحديث الـ ID لتجنب التعارض)
+      // ... (code omitted) ...
+      
+      // ==========================================
+      // 📱 جدولة تحديث الويدجت (بعد الصلاة مباشرة)
+      // ==========================================
+      final int widgetUpdateId = 70000 + uniqueId;
+      // نؤخر التحديث دقيقة واحدة لضمان أن وقت "الآن" أصبح بعد وقت الصلاة
+      // وبالتالي getNextPrayer() ترجع الصلاة التالية
+      final widgetUpdateTime = prayerTime.add(const Duration(minutes: 1));
+      
+      if (widgetUpdateTime.isAfter(now)) {
+        await AndroidAlarmManager.oneShotAt(
+          widgetUpdateTime,
+          widgetUpdateId,
+          widgetUpdateCallback,
+          exact: true,
+          wakeup: true,
+          rescheduleOnReboot: true,
+        );
+        // print('   📱 تم جدولة تحديث الويدجت عند ${_formatTime(widgetUpdateTime)}');
+      }
+
       print('✅ تم الجدولة بنجاح (Native)');
       return null; // ✅ نجاح (لا يوجد خطأ)
     } catch (e) {
@@ -792,6 +834,13 @@ class AdhanWorkManagerService {
 
       print(
           '✅ تم تنظيف الجداول الزمنية بنجاح (مع الحفاظ على الإشعارات الحالية)');
+          
+      // 3️⃣ إلغاء تحديثات الويدجت المجدولة (AlarmManager)
+      // Note: We can't cancel all alarms easily without IDs, but rescheduling overwrites them.
+      // However, if we want to be clean, we loop through potential IDs if we knew them.
+      // Since uniqueId is based on day/prayer, we rely on overwrite or new schedules.
+      // For now, we will assume overwriting is sufficient as IDs are deterministic.
+      
     } catch (e) {
       print('❌ خطأ في إلغاء المهام: $e');
     }
@@ -971,14 +1020,73 @@ class AdhanWorkManagerService {
     try {
       final next = await getNextPrayer();
       if (next != null) {
+        final city = await _getCityName();
+        final prayerTimes = await _getPrayerTimesForDate(DateTime.now());
+        
+        // Update Simple Widget
         await HomeWidgetService.updateWidget(
           prayerName: next['name'],
           prayerTime: next['formattedTime'],
-          city: await _getCityName(),
+          city: city,
+        );
+
+        // Update Full Widget
+        await HomeWidgetService.updateFullPrayerWidget(
+          fajrTime: _formatTime(prayerTimes['الفجر']!),
+          sunriseTime: _formatTime(prayerTimes['الشروق']!),
+          dhuhrTime: _formatTime(prayerTimes['الظهر']!),
+          asrTime: _formatTime(prayerTimes['العصر']!),
+          maghribTime: _formatTime(prayerTimes['المغرب']!),
+          ishaTime: _formatTime(prayerTimes['العشاء']!),
+          nextPrayer: next['name'],
+          nextPrayerTime: next['time'], // Pass DateTime for Chronometer
+          city: city,
         );
       }
+      
+      // Update Azkar widget with a daily azkar
+      await _updateAzkarWidget();
     } catch (e) {
       print('❌ فشل تحديث الويدجت: $e');
+    }
+  }
+
+  /// تحديث widget الأذكار بذكر يومي
+  Future<void> _updateAzkarWidget() async {
+    try {
+      final now = DateTime.now();
+      final isMorning = now.hour >= 4 && now.hour < 12;
+      
+      // قائمة أذكار مختصرة للـ widget
+      final morningAzkar = [
+        ('أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ', 1, 'أذكار الصباح'),
+        ('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', 100, 'أذكار الصباح'),
+        ('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ', 100, 'أذكار الصباح'),
+        ('اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا', 1, 'أذكار الصباح'),
+        ('اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ', 3, 'أذكار الصباح'),
+      ];
+      
+      final eveningAzkar = [
+        ('أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ', 1, 'أذكار المساء'),
+        ('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', 100, 'أذكار المساء'),
+        ('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ', 100, 'أذكار المساء'),
+        ('اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا', 1, 'أذكار المساء'),
+        ('أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', 3, 'أذكار المساء'),
+      ];
+      
+      final azkarList = isMorning ? morningAzkar : eveningAzkar;
+      
+      // اختيار ذكر عشوائي بناءً على اليوم
+      final dayIndex = now.day % azkarList.length;
+      final selectedAzkar = azkarList[dayIndex];
+      
+      await HomeWidgetService.updateAzkarWidget(
+        azkarText: selectedAzkar.$1,
+        repetitions: selectedAzkar.$2,
+        title: selectedAzkar.$3,
+      );
+    } catch (e) {
+      print('❌ فشل تحديث widget الأذكار: $e');
     }
   }
 }

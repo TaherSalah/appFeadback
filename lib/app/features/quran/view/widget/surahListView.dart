@@ -275,22 +275,22 @@ class _SurahListScreenState extends State<SurahListScreen> {
                 Tab(text: "أحزاب"),
               ],
             ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const QuranPdfScreen(),
-                    ),
-                  );
-                },
-                icon:
-                    const Icon(Icons.picture_as_pdf_rounded, color: Colors.red),
-                tooltip: "القراءة من PDF",
-              ),
-              const SizedBox(width: 8),
-            ],
+            // actions: [
+            //   IconButton(
+            //     onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (context) => const QuranPdfScreen(),
+            //         ),
+            //       );
+            //     },
+            //     icon:
+            //         const Icon(Icons.picture_as_pdf_rounded, color: Colors.red),
+            //     tooltip: "القراءة من PDF",
+            //   ),
+            //   const SizedBox(width: 8),
+            // ],
           ),
           body: isLoading == true
               ? Center(

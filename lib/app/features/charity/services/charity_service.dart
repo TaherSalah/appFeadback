@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import '../models/charity_models.dart';
+import '../../../core/services/home_widget_service.dart';
 
 class CharityService {
   static const String _charityBoxName = 'charityBox';
@@ -75,17 +76,20 @@ class CharityService {
     await _charityBox.put(donation.id, donation);
     await _updateLongestStreak();
     await checkAchievements(); // تحقق من الإنجازات بعد كل تبرع
+    await _updateCharityWidget(); // تحديث الـ widget
   }
 
   /// تحديث صدقة
   Future<void> updateDonation(CharityDonation donation) async {
     await _charityBox.put(donation.id, donation);
+    await _updateCharityWidget(); // تحديث الـ widget
   }
 
   /// حذف صدقة
   Future<void> deleteDonation(String id) async {
     await _charityBox.delete(id);
     await _updateLongestStreak();
+    await _updateCharityWidget(); // تحديث الـ widget
   }
 
   /// الحصول على جميع الصدقات
@@ -563,6 +567,23 @@ class CharityService {
       'ديسمبر'
     ];
     return months[month - 1];
+  }
+
+  // ======== Widget Update ========
+
+  /// تحديث widget الصدقة على الشاشة الرئيسية
+  Future<void> _updateCharityWidget() async {
+    try {
+      final stats = calculateStats();
+      await HomeWidgetService.updateCharityWidget(
+        monthlyTotal: stats.totalThisMonth,
+        streakDays: stats.currentStreak,
+        currency: ' ج.م',
+        title: 'صدقاتي هذا الشهر',
+      );
+    } catch (e) {
+      debugPrint('❌ Error updating charity widget: $e');
+    }
   }
 
   // ======== Test Methods ========

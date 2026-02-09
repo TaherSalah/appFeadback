@@ -8,7 +8,7 @@ import es.antonborri.home_widget.HomeWidgetPlugin
 import android.app.PendingIntent
 import android.content.Intent
 
-class HomeWidgetProvider : AppWidgetProvider() {
+class AzkarWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -16,31 +16,31 @@ class HomeWidgetProvider : AppWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             val widgetData = HomeWidgetPlugin.getData(context)
-            val views = RemoteViews(context.packageName, R.layout.widget_layout)
+            val views = RemoteViews(context.packageName, R.layout.azkar_widget_layout)
 
-            val prayerName = widgetData.getString("prayer_name", "--")
-            val prayerTime = widgetData.getString("prayer_time", "--:--")
-            val city = widgetData.getString("city", "--")
+            // Get Azkar data from shared preferences
+            val azkarText = widgetData.getString("azkar_text", "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ")
+            val azkarCount = widgetData.getString("azkar_count", "33")
+            val azkarTitle = widgetData.getString("azkar_title", "أذكار اليوم")
 
-            views.setTextViewText(R.id.widget_prayer_name, prayerName)
-            views.setTextViewText(R.id.widget_prayer_time, prayerTime)
-            views.setTextViewText(R.id.widget_city, city)
+            views.setTextViewText(R.id.widget_azkar_text, azkarText)
+            views.setTextViewText(R.id.widget_azkar_count, azkarCount)
+            views.setTextViewText(R.id.widget_azkar_title, azkarTitle)
 
-            // Set click intent to open Prayer Times in app
+            // Set click intent to open app
             val intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                putExtra("open_screen", "prayer_times")
+                putExtra("open_screen", "azkar")
             }
             val pendingIntent = PendingIntent.getActivity(
                 context,
-                0,
+                1,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-            views.setOnClickPendingIntent(R.id.widget_prayer_time, pendingIntent)
+            views.setOnClickPendingIntent(R.id.widget_azkar_text, pendingIntent)
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
     }
 }
-

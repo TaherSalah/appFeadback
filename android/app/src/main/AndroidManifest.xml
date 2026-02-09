@@ -1,90 +1,4 @@
-<!--<manifest xmlns:android="http://schemas.android.com/apk/res/android">-->
-<!--&lt;!&ndash;    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />&ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.WAKE_LOCK" />-->
-<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>-->
-<!--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>-->
-<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>-->
-<!--    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>-->
-<!--    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>-->
-<!--    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>-->
-<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />-->
-<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />-->
-<!--    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>-->
-<!--    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>-->
-<!--    &lt;!&ndash; أذونات الإشعارات والمهام في الخلفية &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.VIBRATE"/>-->
-<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>-->
-<!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>-->
 
-<!--    <application-->
-<!--        android:name="${applicationName}"-->
-<!--        android:icon="@mipmap/launcher_icon"-->
-<!--        android:label='رفيق المسلم اليومي'-->
-<!--        android:usesCleartextTraffic="true">-->
-<!--        <uses-library android:name="org.apache.http.legacy" android:required="false"/>-->
-
-<!--        <activity-->
-<!--            android:name=".MainActivity"-->
-<!--            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"-->
-<!--            android:exported="true"-->
-<!--            android:hardwareAccelerated="true"-->
-<!--            android:launchMode="singleTop"-->
-<!--            android:taskAffinity=""-->
-<!--            android:theme="@style/LaunchTheme"-->
-<!--            android:windowSoftInputMode="adjustResize">-->
-<!--            <meta-data-->
-<!--                android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"-->
-<!--                android:value="androidx.media3.session.MediaSessionService" />-->
-
-<!--            <meta-data-->
-<!--                android:name="flutter.notification_icon"-->
-<!--                android:resource="@mipmap/launcher_icon" />-->
-
-<!--            <meta-data-->
-<!--                android:name="io.flutter.embedding.android.NormalTheme"-->
-<!--                android:resource="@style/NormalTheme" />-->
-<!--            <meta-data-->
-<!--                android:name="com.google.firebase.messaging.default_notification_icon"-->
-<!--                android:resource="@mipmap/launcher_icon" /> &lt;!&ndash; الأيقونة اللي هتحطها &ndash;&gt;-->
-<!--            <meta-data-->
-<!--                android:name="firebase_messaging_auto_init_enabled"-->
-<!--                android:value="false" />-->
-<!--            <meta-data-->
-<!--                android:name="com.google.firebase.messaging.default_notification_channel_id"-->
-<!--                android:value="default_channel" />-->
-
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
-
-<!--        &lt;!&ndash; WorkManager Receiver &ndash;&gt;-->
-<!--        <receiver-->
-<!--            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-<!--                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
-<!--        <meta-data-->
-<!--            android:name="flutterEmbedding"-->
-<!--            android:value="2" />-->
-<!--        <service-->
-<!--            android:name="de.julianassmann.flutter_background.IsolateHolderService"-->
-<!--            android:exported="false"-->
-<!--            android:foregroundServiceType="mediaPlayback" />-->
-
-<!--    </application>-->
-<!--    <queries>-->
-<!--        <intent>-->
-<!--            <action android:name="android.intent.action.PROCESS_TEXT" />-->
-<!--            <data android:mimeType="text/plain" />-->
-<!--        </intent>-->
-<!--    </queries>-->
-<!--</manifest>-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- الأذونات الموجودة -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -207,6 +121,33 @@
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
+        </receiver>
+
+        <!-- Azkar Widget -->
+        <receiver android:name=".AzkarWidgetProvider" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/azkar_widget_info" />
+        </receiver>
+
+        <!-- Charity Widget -->
+        <receiver android:name=".CharityWidgetProvider" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/charity_widget_info" />
+        </receiver>
+
+        <!-- Full Prayer Times Widget -->
+        <receiver android:name=".FullPrayerWidgetProvider" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/full_prayer_widget_info" />
         </receiver>
     </application>
 

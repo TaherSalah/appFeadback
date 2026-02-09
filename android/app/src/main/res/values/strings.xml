@@ -9,4 +9,10 @@
         notifications at exact Islamic prayer times, which is
         essential for users religious practice.
     </string>
+
+    <!-- Widget Descriptions -->
+    <string name="prayer_widget_description">عرض الصلاة القادمة ووقتها على الشاشة الرئيسية</string>
+    <string name="full_prayer_widget_description">عرض جميع مواقيت الصلاة مع تمييز الصلاة القادمة</string>
+    <string name="azkar_widget_description">عرض أذكار يومية من أذكار الصباح والمساء</string>
+    <string name="charity_widget_description">متابعة صدقاتك الشهرية وأيام التبرع المتتالية</string>
 </resources>

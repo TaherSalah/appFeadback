@@ -26,6 +26,7 @@ import 'package:quran_library/quran.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'app/features/calendar/data/models/calendar_event_model.dart';
 import 'app/features/quran/pdf/data/pdf_book_model.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -155,6 +156,13 @@ Future<void> _initAppServices() async {
   // NotificationManager replaces all local notification logic
   final notificationManager = NotificationManager();
   await notificationManager.initialize();
+
+  // ✅ 7) Initialize Android Alarm Manager for exact widget updates
+  try {
+    await AndroidAlarmManager.initialize();
+  } catch (e) {
+    debugPrint('⚠️ AndroidAlarmManager init failed (might be not needed on iOS): $e');
+  }
 
   // 🚀 Log App Launch Analytics
   AnalyticsService().logAppLaunch();

@@ -3,10 +3,9 @@
     android:minWidth="140dp"
     android:minHeight="140dp"
     android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/widget_layout"
+    android:initialLayout="@layout/charity_widget_layout"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
-    android:previewLayout="@layout/widget_layout"
-    android:description="@string/prayer_widget_description">
+    android:previewLayout="@layout/charity_widget_layout"
+    android:description="@string/charity_widget_description">
 </appwidget-provider>
-
