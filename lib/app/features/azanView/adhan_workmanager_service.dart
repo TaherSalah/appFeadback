@@ -29,10 +29,12 @@ void testSimpleCallback(int id) async {
       content: NotificationContent(
         id: 77777,
         channelKey: 'adhan_channel_v4', // Use adhan channel for sound test
-        title: '⚡ اختبار فوري',
+        title: 'اختبار فوري',
         body: 'تم استدعاء الخلفية بنجاح الآن.',
         notificationLayout: NotificationLayout.Default,
         wakeUpScreen: true,
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        color: const Color(0xFF178B74),
       ),
     );
   } catch (e) {
@@ -49,9 +51,10 @@ void testSimpleCallback(int id) async {
 @pragma('vm:entry-point')
 void widgetUpdateCallback(int id, Map<String, dynamic> params) async {
   print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  print('🔄 [Widget Update] Running background update via AlarmManager (ID: $id)');
+  print(
+      '🔄 [Widget Update] Running background update via AlarmManager (ID: $id)');
   print('🕐 Time: ${DateTime.now()}');
-  
+
   // Ensure we can access services
   try {
     await AdhanWorkManagerService().updateWidget();
@@ -382,6 +385,9 @@ class AdhanWorkManagerService {
               category: NotificationCategory.Reminder,
               wakeUpScreen: true,
               autoDismissible: true,
+              largeIcon: 'resource://drawable/ic_stat_logoapp',
+              notificationLayout: NotificationLayout.BigText,
+              color: const Color(0xFF178B74),
               payload: {
                 'prayerName': effectivePrayerName,
                 'type': 'pre_prayer',
@@ -417,6 +423,9 @@ class AdhanWorkManagerService {
                 category: NotificationCategory.Reminder,
                 wakeUpScreen: true,
                 autoDismissible: true,
+                largeIcon: 'resource://drawable/ic_stat_logoapp',
+                notificationLayout: NotificationLayout.BigText,
+                color: const Color(0xFF178B74),
                 payload: {
                   'prayerName': effectivePrayerName,
                   'type': 'iqamah',
@@ -456,7 +465,7 @@ class AdhanWorkManagerService {
               channelKey: effectiveChannelKey,
               icon: 'resource://drawable/ic_stat_logoapp',
               title: prayerName.contains('الشروق')
-                  ? '\u200Fحان الآن وقت الشروق ✨'
+                  ? '\u200Fحان الآن وقت الشروق'
                   : '\u200Fحان الآن وقت صلاة $effectivePrayerName',
               body: prayerName.contains('الشروق')
                   ? '\u200Fصلاة الضحى صلاة الأوابين وهي صدقة عن كل مفصل من مفاصلك'
@@ -469,6 +478,9 @@ class AdhanWorkManagerService {
               locked: false,
               displayOnBackground: true, // IMPORTANT for Android 10+
               displayOnForeground: true,
+              largeIcon: 'resource://drawable/ic_stat_logoapp',
+              notificationLayout: NotificationLayout.BigText,
+              color: const Color(0xFF178B74),
               timeoutAfter: isFajr
                   ? const Duration(minutes: 4, seconds: 40)
                   : const Duration(minutes: 3, seconds: 24),
@@ -494,7 +506,7 @@ class AdhanWorkManagerService {
 
       // 📿 جدولة أذكار بعد الصلاة (تحديث الـ ID لتجنب التعارض)
       // ... (code omitted) ...
-      
+
       // ==========================================
       // ==========================================
       // 📱 جدولة تحديث الويدجت (بعد الصلاة مباشرة)
@@ -503,7 +515,7 @@ class AdhanWorkManagerService {
       // نؤخر التحديث دقيقة واحدة لضمان أن وقت "الآن" أصبح بعد وقت الصلاة
       // وبالتالي getNextPrayer() ترجع الصلاة التالية
       final widgetUpdateTime = prayerTime.add(const Duration(minutes: 1));
-      
+
       if (widgetUpdateTime.isAfter(now)) {
         await AndroidAlarmManager.oneShotAt(
           widgetUpdateTime,
@@ -533,11 +545,14 @@ class AdhanWorkManagerService {
                 id: reminderId,
                 channelKey: 'post_prayer_dhikr_channel',
                 icon: 'resource://drawable/ic_stat_logoapp',
-                title: '📿 أذكار بعد الصلاة',
+                title: 'أذكار بعد الصلاة',
                 body: 'لا تنسَ قراءة أذكار ما بعد صلاة $effectivePrayerName',
                 category: NotificationCategory.Reminder,
                 wakeUpScreen: true,
                 autoDismissible: true,
+                largeIcon: 'resource://drawable/ic_stat_logoapp',
+                notificationLayout: NotificationLayout.BigText,
+                color: const Color(0xFF178B74),
                 payload: {
                   'route': '/allazkarlistview', // Navigate back to azkar
                 },
@@ -756,10 +771,13 @@ class AdhanWorkManagerService {
         content: NotificationContent(
           id: 99901,
           channelKey: 'pre_prayer_channel_v1',
-          title: '🧪 اختبار: اقتربت الصلاة',
-          body: 'تنبيه تجريبي: بقي 15 دقيقة على الصلاة',
+          title: 'اختبار: اقتربت الصلاة',
+          body: 'تنبيه تجريبي: باقي 15 دقيقة على الصلاة',
           category: NotificationCategory.Reminder,
           wakeUpScreen: true,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          notificationLayout: NotificationLayout.BigText,
+          color: const Color(0xFF178B74),
         ),
         schedule: NotificationCalendar.fromDate(
           date: preAdhanTime,
@@ -773,12 +791,15 @@ class AdhanWorkManagerService {
         content: NotificationContent(
           id: 99902,
           channelKey: 'adhan_channel_v4',
-          title: '🧪 اختبار: حان الآن وقت الصلاة',
+          title: 'اختبار: حان الآن وقت الصلاة',
           body: 'تنبيه تجريبي: الله أكبر الله أكبر',
           category: NotificationCategory.Alarm,
           wakeUpScreen: true,
           fullScreenIntent: true,
           criticalAlert: true,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          notificationLayout: NotificationLayout.BigText,
+          color: const Color(0xFF178B74),
         ),
         schedule: NotificationCalendar.fromDate(
           date: adhanTime,
@@ -792,10 +813,12 @@ class AdhanWorkManagerService {
         content: NotificationContent(
           id: 99903,
           channelKey: 'iqamah_channel_v1',
-          title: '🧪 اختبار: حان الآن موعد الإقامة',
+          title: 'اختبار: حان الآن موعد الإقامة',
           body: 'تنبيه تجريبي: قد قامت الصلاة، قد قامت الصلاة',
           category: NotificationCategory.Reminder,
           wakeUpScreen: true,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          notificationLayout: NotificationLayout.BigText,
         ),
         schedule: NotificationCalendar.fromDate(
           date: iqamahTime,
@@ -862,13 +885,12 @@ class AdhanWorkManagerService {
 
       print(
           '✅ تم تنظيف الجداول الزمنية بنجاح (مع الحفاظ على الإشعارات الحالية)');
-          
+
       // 3️⃣ إلغاء تحديثات الويدجت المجدولة (AlarmManager)
       // Note: We can't cancel all alarms easily without IDs, but rescheduling overwrites them.
       // However, if we want to be clean, we loop through potential IDs if we knew them.
       // Since uniqueId is based on day/prayer, we rely on overwrite or new schedules.
       // For now, we will assume overwriting is sufficient as IDs are deterministic.
-      
     } catch (e) {
       print('❌ خطأ في إلغاء المهام: $e');
     }
@@ -1050,7 +1072,7 @@ class AdhanWorkManagerService {
       if (next != null) {
         final city = await _getCityName();
         final prayerTimes = await _getPrayerTimesForDate(DateTime.now());
-        
+
         // Update Simple Widget
         await HomeWidgetService.updateWidget(
           prayerName: next['name'],
@@ -1071,7 +1093,7 @@ class AdhanWorkManagerService {
           city: city,
         );
       }
-      
+
       // Update Azkar widget with a daily azkar
       await _updateAzkarWidget();
     } catch (e) {
@@ -1084,30 +1106,46 @@ class AdhanWorkManagerService {
     try {
       final now = DateTime.now();
       final isMorning = now.hour >= 4 && now.hour < 12;
-      
+
       // قائمة أذكار مختصرة للـ widget
       final morningAzkar = [
         ('أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ', 1, 'أذكار الصباح'),
         ('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', 100, 'أذكار الصباح'),
-        ('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ', 100, 'أذكار الصباح'),
+        (
+          'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ',
+          100,
+          'أذكار الصباح'
+        ),
         ('اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا', 1, 'أذكار الصباح'),
-        ('اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ', 3, 'أذكار الصباح'),
+        (
+          'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ',
+          3,
+          'أذكار الصباح'
+        ),
       ];
-      
+
       final eveningAzkar = [
         ('أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ', 1, 'أذكار المساء'),
         ('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', 100, 'أذكار المساء'),
-        ('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ', 100, 'أذكار المساء'),
+        (
+          'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ',
+          100,
+          'أذكار المساء'
+        ),
         ('اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا', 1, 'أذكار المساء'),
-        ('أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', 3, 'أذكار المساء'),
+        (
+          'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ',
+          3,
+          'أذكار المساء'
+        ),
       ];
-      
+
       final azkarList = isMorning ? morningAzkar : eveningAzkar;
-      
+
       // اختيار ذكر عشوائي بناءً على اليوم
       final dayIndex = now.day % azkarList.length;
       final selectedAzkar = azkarList[dayIndex];
-      
+
       await HomeWidgetService.updateAzkarWidget(
         azkarText: selectedAzkar.$1,
         repetitions: selectedAzkar.$2,

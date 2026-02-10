@@ -16,6 +16,8 @@ import 'package:muslimdaily/app/features/Khatmah/view/GlobalKhatmahScreen.dart';
 import 'package:muslimdaily/app/features/charity/AchievementsScreen.dart';
 import 'package:muslimdaily/app/features/calendar/presentation/screens/calendar_screen.dart';
 import 'package:muslimdaily/app/features/mainView/widget/AllAzkarListView.dart';
+import 'package:muslimdaily/app/features/notifications/view/notification_dialog_screen.dart';
+import 'package:hijri/hijri_calendar.dart' as hijri;
 
 class NotificationManager {
   static final NotificationManager _instance = NotificationManager._internal();
@@ -64,8 +66,10 @@ class NotificationManager {
               (Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3'),
           enableVibration: SettingsService().isAdhanVibrationEnabled,
           enableLights: true,
-          ledColor: Colors.orange,
+          ledColor: const Color(0xFF178B74),
+          defaultColor: const Color(0xFF178B74),
           defaultPrivacy: NotificationPrivacy.Public,
+          locked: false,
           criticalAlerts: true,
         ),
 
@@ -75,14 +79,14 @@ class NotificationManager {
           channelName: 'أذان الصلاة',
           channelDescription: 'تشغيل صوت الأذان',
           importance: NotificationImportance.Max,
-          defaultColor: Colors.green,
-          ledColor: Colors.green,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           soundSource: normalPath ??
               (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
           enableVibration: SettingsService().isAdhanVibrationEnabled,
           enableLights: true,
-          locked: true,
+          locked: false,
           criticalAlerts: true,
         ),
 
@@ -92,8 +96,8 @@ class NotificationManager {
           channelName: 'أذكار الصباح',
           channelDescription: 'حان وقت أذكار الصباح',
           importance: NotificationImportance.High,
-          defaultColor: Colors.blue,
-          ledColor: Colors.blue,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           soundSource:
               Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
           playSound: true,
@@ -106,8 +110,8 @@ class NotificationManager {
           channelName: 'أذكار المساء',
           channelDescription: 'تذكير أذكار المساء',
           importance: NotificationImportance.High,
-          defaultColor: Colors.blue,
-          ledColor: Colors.blue,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           soundSource:
               Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
           playSound: true,
@@ -120,8 +124,8 @@ class NotificationManager {
           channelName: 'أذكار النوم',
           channelDescription: 'تذكير أذكار النوم',
           importance: NotificationImportance.High,
-          defaultColor: Colors.blue,
-          ledColor: Colors.blue,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           soundSource:
               Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
           playSound: true,
@@ -134,8 +138,8 @@ class NotificationManager {
           channelName: 'قيام الليل',
           channelDescription: 'وقت قيام الليل',
           importance: NotificationImportance.High,
-          defaultColor: Colors.blue,
-          ledColor: Colors.blue,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           soundSource: Platform.isAndroid ? 'resource://raw/qiam' : 'qiam.mp3',
           playSound: true,
           enableVibration: true,
@@ -148,8 +152,8 @@ class NotificationManager {
           channelName: 'الصلاة على النبي',
           channelDescription: 'تذكير بالالصلاة على النبي',
           importance: NotificationImportance.High,
-          defaultColor: Colors.teal,
-          ledColor: Colors.teal,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           soundSource:
               Platform.isAndroid ? 'resource://raw/profet' : 'profet.mp3',
@@ -163,8 +167,8 @@ class NotificationManager {
           channelName: 'ورد القرآن',
           channelDescription: 'تذكير بالورد اليومي',
           importance: NotificationImportance.High,
-          defaultColor: Colors.purple,
-          ledColor: Colors.purple,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -175,8 +179,8 @@ class NotificationManager {
           channelName: 'أذكار بعد الصلاة',
           channelDescription: 'تذكير بأذكار ما بعد الصلاة',
           importance: NotificationImportance.High,
-          defaultColor: Colors.green,
-          ledColor: Colors.green,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           soundSource:
               Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
@@ -190,8 +194,8 @@ class NotificationManager {
           channelName: 'الحديث اليومي',
           channelDescription: 'تذكير بحديث اليوم',
           importance: NotificationImportance.High,
-          defaultColor: Colors.amber,
-          ledColor: Colors.amber,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -202,8 +206,8 @@ class NotificationManager {
           channelName: 'تذكير الزكاة',
           channelDescription: 'تذكير بمرور الحول على الزكاة',
           importance: NotificationImportance.High,
-          defaultColor: Colors.green,
-          ledColor: Colors.green,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -214,8 +218,8 @@ class NotificationManager {
           channelName: 'تذكير الصدقة',
           channelDescription: 'تذكير بالصدقة اليومية والأسبوعية والدورية',
           importance: NotificationImportance.High,
-          defaultColor: Colors.green,
-          ledColor: Colors.green,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -226,8 +230,8 @@ class NotificationManager {
           channelName: 'إنجازات الصدقة',
           channelDescription: 'إشعارات عند فتح إنجاز جديد في قسم الصدقة',
           importance: NotificationImportance.High,
-          defaultColor: Colors.amber,
-          ledColor: Colors.amber,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -238,8 +242,8 @@ class NotificationManager {
           channelName: 'تذكير التقويم',
           channelDescription: 'تنبيهات للمناسبات والأحداث الخاصة في التقويم',
           importance: NotificationImportance.High,
-          defaultColor: Colors.purple,
-          ledColor: Colors.purple,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           enableVibration: true,
           enableLights: true,
@@ -251,8 +255,8 @@ class NotificationManager {
           channelName: 'تنبيهات قبل الصلاة',
           channelDescription: 'تنبيه قبل الصلاة بـ 15 دقيقة',
           importance: NotificationImportance.High,
-          defaultColor: Colors.orange,
-          ledColor: Colors.orange,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           soundSource: Platform.isAndroid
               ? 'resource://raw/pre_prayer'
@@ -267,8 +271,8 @@ class NotificationManager {
           channelName: 'تنبيهات الإقامة',
           channelDescription: 'تنبيه بموعد إقامة الصلاة',
           importance: NotificationImportance.High,
-          defaultColor: Colors.blue,
-          ledColor: Colors.blue,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           soundSource:
               Platform.isAndroid ? 'resource://raw/iqamah' : 'iqamah.mp3',
@@ -282,8 +286,8 @@ class NotificationManager {
           channelName: 'تنبيه الشروق',
           channelDescription: 'تنبيه بموعد الشروق',
           importance: NotificationImportance.High,
-          defaultColor: Colors.amber,
-          ledColor: Colors.amber,
+          defaultColor: const Color(0xFF178B74),
+          ledColor: const Color(0xFF178B74),
           playSound: true,
           soundSource:
               Platform.isAndroid ? 'resource://raw/shruq' : 'shruq.mp3',
@@ -328,12 +332,15 @@ class NotificationManager {
       content: NotificationContent(
         id: 9999,
         channelKey: 'fajr_adhan_channel_v4',
-        title: '🔔 اختبار فوري',
+        title: 'اختبار فوري',
         body: 'إذا وصلك هذا الصوت، فنظام المنبهات يعمل بنجاح!',
         category: NotificationCategory.Alarm,
         wakeUpScreen: true,
         fullScreenIntent: true,
         criticalAlert: true,
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
       ),
       schedule: NotificationCalendar.fromDate(
         date: testTime,
@@ -408,19 +415,20 @@ class NotificationManager {
         );
       }
 
-      // 📖 ورد القرآن (Always on for now, or add setting later)
-      await _scheduleDailyNotification(
-        id: 3,
-        channelKey: 'quran_channel',
-        title: 'ورد القرآن اليومي',
-        body: 'لا تنسَ وردك اليومي من القرآن الكريم',
-        hour: 20,
-        minute: 0,
-        payload: {'route': 'quran_wird'},
-      );
+      // 📖 ورد القرآن
+      if (_settingsService.isDailyQuranReminderEnabled) {
+        await _scheduleDailyNotification(
+          id: 3,
+          channelKey: 'quran_channel',
+          title: 'ورد القرآن اليومي',
+          body: 'لا تنسَ وردك اليومي من القرآن الكريم',
+          hour: 20,
+          minute: 0,
+          payload: {'route': 'quran_wird'},
+        );
+      }
 
       // 📿 حديث اليوم (متجدد يومياً)
-      // await _scheduleHadithSeries(); // Old way
       await scheduleHadithSeries();
 
       // 😴 أذكار النوم
@@ -456,6 +464,46 @@ class NotificationManager {
 
       // ⏰ منبه الفجر المتقدم
       await _scheduleAdvancedFajrAlarm();
+
+      // 🍽️ تذكير صيام الاثنين والخميس
+      if (_settingsService.isFastingReminderEnabled) {
+        await _scheduleFastingReminders();
+      }
+
+      // 🕌 سنن الجمعة (الكهف وساعة الاستجابة)
+      if (_settingsService.isFridayRemindersEnabled) {
+        await _scheduleFridayReminders();
+      }
+
+      // ⚪ الأيام البيض (13، 14، 15 هجرياً)
+      if (_settingsService.isWhiteDaysReminderEnabled) {
+        await _scheduleWhiteDaysReminders();
+      }
+
+      // ✨ المناسبات الإسلامية
+      if (_settingsService.isReligiousOccasionsEnabled) {
+        await _scheduleReligiousOccasions();
+      }
+
+      // 🌕 سورة الملك
+      if (_settingsService.isMulkReminderEnabled) {
+        await _scheduleMulkReminder();
+      }
+
+      // ☀️ صلاة الضحى
+      if (_settingsService.isDuhaReminderEnabled) {
+        await _scheduleDuhaReminder();
+      }
+
+      // 💡 سنة اليوم
+      if (_settingsService.isSunnahReminderEnabled) {
+        await _scheduleSunnahReminder();
+      }
+
+      // 🤲 الدعاء بين الأذان والإقامة
+      if (_settingsService.isBetweenAdhanIqamahEnabled) {
+        await _scheduleBetweenAdhanIqamah();
+      }
     } catch (e, stackTrace) {
       print('❌ Error in scheduling reminders: $e');
       print(stackTrace);
@@ -495,7 +543,9 @@ class NotificationManager {
             body: '\u200F$hadithText',
             notificationLayout: NotificationLayout.BigText,
             category: NotificationCategory.Reminder,
+            largeIcon: 'resource://drawable/ic_stat_logoapp',
             payload: {'route': 'daily_hadith'},
+            color: const Color(0xFF178B74),
           ),
           schedule: NotificationCalendar.fromDate(
             date: scheduledDate,
@@ -574,12 +624,14 @@ class NotificationManager {
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
-        icon: 'resource://mipmap/launcher_icon',
+        icon: 'resource://drawable/ic_stat_logoapp',
         id: id,
         channelKey: channelKey,
         title: '\u200F$title',
         body: '\u200F$body',
-        notificationLayout: NotificationLayout.Default,
+        notificationLayout: NotificationLayout
+            .Default, // Changed from BigText to Default if the body is short, but user wants chic. BigText is generally safer for varying lengths. Let's stick to BigText for better appearance.
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
         payload: payload,
       ),
       schedule: NotificationCalendar(
@@ -600,11 +652,13 @@ class NotificationManager {
       content: NotificationContent(
         id: 888, // Constant ID for the repeating schedule
         channelKey: 'salawat_channel',
-        icon: 'resource://mipmap/launcher_icon',
+        icon: 'resource://drawable/ic_stat_logoapp',
         title: 'ﷺ',
         body: 'اللهم صل وسلم على نبينا محمد',
         notificationLayout: NotificationLayout.Default,
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
         payload: {'route': 'salawat'},
+        color: const Color(0xFF178B74),
       ),
       schedule: NotificationInterval(
         interval: Duration(minutes: minutes),
@@ -662,7 +716,7 @@ class NotificationManager {
           content: NotificationContent(
             id: uniqueId,
             channelKey: 'fajr_adhan_channel_v4',
-            title: '⏰ منبه الفجر المتقدم',
+            title: 'منبه الفجر المتقدم',
             body: r == 0
                 ? 'حان وقت الاستيقاظ لصلاة الفجر'
                 : 'تذكير إضافي: صلاة الفجر خير من النوم ', // Different body for snoozes
@@ -672,6 +726,9 @@ class NotificationManager {
             criticalAlert: true,
             autoDismissible: true, // User must dismiss it
             locked: false, // Requires interaction
+            largeIcon: 'resource://drawable/ic_stat_logoapp',
+            notificationLayout: NotificationLayout.BigText,
+            color: const Color(0xFF178B74),
           ),
           schedule: NotificationCalendar(
             weekday: day,
@@ -688,6 +745,378 @@ class NotificationManager {
       }
     }
     // print('✅ All Advanced Fajr Alarms scheduled successfully.');
+  }
+
+  // ==========================================
+  // 🍽️ تذكير الصيام (الاثنين والخميس)
+  // ==========================================
+  Future<void> _scheduleFastingReminders() async {
+    // تذكير صيام الاثنين (يوم الأحد الساعة 8 مساءً)
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 701,
+        channelKey:
+            'sabah_athkar_channel', // using existing channel for simplicity
+        title: 'تذكير صيام الاثنين',
+        body: 'غداً يوم الاثنين، تذكير بصيام يوم في سبيل الله',
+        category: NotificationCategory.Reminder,
+        payload: {'route': 'fasting_reminder'},
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar(
+        weekday: 7, // Sunday
+        hour: 20,
+        minute: 0,
+        second: 0,
+        repeats: true,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+
+    // تذكير صيام الخميس (يوم الأربعاء الساعة 8 مساءً)
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 702,
+        channelKey: 'sabah_athkar_channel',
+        title: 'تذكير صيام الخميس',
+        body: 'غداً يوم الخميس، تذكير بصيام يوم في سبيل الله',
+        category: NotificationCategory.Reminder,
+        payload: {'route': 'fasting_reminder'},
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar(
+        weekday: 3, // Wednesday
+        hour: 20,
+        minute: 0,
+        second: 0,
+        repeats: true,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  // ==========================================
+  // 🕌 سنن الجمعة
+  // ==========================================
+  Future<void> _scheduleFridayReminders() async {
+    // 📖 قراءة سورة الكهف (الجمعة 9 صباحاً)
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 801,
+        channelKey: 'quran_channel',
+        title: 'سورة الكهف',
+        body:
+            'قال ﷺ: «من قرأ سورة الكهف يوم الجمعة أضاء له من النور ما بين الجمعتين»',
+        category: NotificationCategory.Reminder,
+        payload: {'route': 'kahf_reminder'},
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar(
+        weekday: 5, // Friday
+        hour: 9,
+        minute: 0,
+        second: 0,
+        repeats: true,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+
+    // 🤲 ساعة الاستجابة (الجمعة 4:30 عصراً)
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 802,
+        channelKey: 'sabah_athkar_channel',
+        title: 'ساعة الاستجابة',
+        body:
+            'في يوم الجمعة ساعة لا يسأل الله أحد فيها شيئا وهو قائم يصلي إلا أعطاه الله إياه',
+        category: NotificationCategory.Reminder,
+        payload: {'route': 'friday_hour_reminder'},
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar(
+        weekday: 5, // Friday
+        hour: 16,
+        minute: 30,
+        second: 0,
+        repeats: true,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  // ==========================================
+  // ⚪ تذكير الأيام البيض (13، 14، 15 هجرياً)
+  // ==========================================
+  Future<void> _scheduleWhiteDaysReminders() async {
+    try {
+      final now = DateTime.now();
+      final currentHijri = hijri.HijriCalendar.fromDate(now);
+
+      // We want to schedule for 13, 14, 15 of current month
+      // AND 13, 14, 15 of next month to ensure we always have 3-6 scheduled
+      List<int> monthsToSchedule = [currentHijri.hMonth];
+      if (currentHijri.hMonth == 12) {
+        monthsToSchedule.add(1);
+      } else {
+        monthsToSchedule.add(currentHijri.hMonth + 1);
+      }
+
+      int notificationIdBase = 900;
+      int count = 0;
+
+      for (int hMonth in monthsToSchedule) {
+        int hYear = currentHijri.hYear;
+        if (hMonth < currentHijri.hMonth) hYear++;
+
+        for (int hDay in [13, 14, 15]) {
+          final hDate = hijri.HijriCalendar();
+          final gregDate = hDate.hijriToGregorian(hYear, hMonth, hDay);
+          // Reminder on the evening BEFORE (8 PM)
+          final reminderDate =
+              DateTime(gregDate.year, gregDate.month, gregDate.day)
+                  .subtract(const Duration(hours: 4)); // 8 PM of previous day
+
+          if (reminderDate.isAfter(now)) {
+            await AwesomeNotifications().createNotification(
+              content: NotificationContent(
+                id: notificationIdBase + count,
+                channelKey: 'sabah_athkar_channel',
+                title: 'صيام الأيام البيض',
+                body:
+                    'غداً يوم ${hDate.hDay} $hMonth، نذكركم بصيام الأيام البيض',
+                category: NotificationCategory.Reminder,
+                payload: {'route': 'white_days_reminder'},
+                largeIcon: 'resource://drawable/ic_stat_logoapp',
+                notificationLayout: NotificationLayout.BigText,
+                color: const Color(0xFF178B74),
+              ),
+              schedule: NotificationCalendar.fromDate(
+                date: reminderDate,
+                preciseAlarm: true,
+                allowWhileIdle: true,
+              ),
+            );
+            count++;
+          }
+        }
+      }
+      print('✅ Scheduled $count White Days reminders.');
+    } catch (e) {
+      print('❌ Error scheduling White Days reminders: $e');
+    }
+  }
+
+  // ==========================================
+  // ✨ المناسبات الإسلامية
+  // ==========================================
+  Future<void> _scheduleReligiousOccasions() async {
+    try {
+      final now = DateTime.now();
+      final currentHijri = hijri.HijriCalendar.fromDate(now);
+
+      // List of annual occasions (Month, Day, Title, Virtue/Info)
+      final occasions = [
+        [1, 1, 'رأس السنة الهجرية', 'بداية عام هجري جديد، فرصة لتجديد النية'],
+        [
+          1,
+          10,
+          'يوم عاشوراء',
+          'قال ﷺ: صيام يوم عاشوراء أحتسب على الله أن يكفر السنة التي قبله'
+        ],
+        [
+          3,
+          12,
+          'المولد النبوي الشريف',
+          'ذكرى مولد سيد الخلق ﷺ، فرصة للإكثار من الصلاة عليه'
+        ],
+        [7, 27, 'الإسراء والمعراج', 'معجزة النبي ﷺ ورحلته المباركة'],
+        [8, 15, 'ليلة النصف من شعبان', 'ليلة ترفع فيها الأعمال إلى الله'],
+        [9, 1, 'بداية شهر رمضان', 'شهر الرحمة والمغفرة والعتق من النار'],
+        [10, 1, 'عيد الفطر المبارك', 'عيد المسلمين، شكر لله على تمام الصيام'],
+        [
+          12,
+          9,
+          'يوم عرفة',
+          'قال ﷺ: صيام يوم عرفة أحتسب على الله أن يكفر السنة التي قبله والسنة التي بعده'
+        ],
+        [12, 10, 'عيد الأضحى المبارك', 'يوم النحر، أعظم الأيام عند الله'],
+      ];
+
+      int notificationIdBase = 1000;
+      int count = 0;
+
+      for (var occasion in occasions) {
+        int hMonth = occasion[0] as int;
+        int hDay = occasion[1] as int;
+        String title = occasion[2] as String;
+        String body = occasion[3] as String;
+
+        int hYear = currentHijri.hYear;
+        // If the occasion already passed this year, schedule for next year
+        if (hMonth < currentHijri.hMonth ||
+            (hMonth == currentHijri.hMonth && hDay < currentHijri.hDay)) {
+          hYear++;
+        }
+
+        final hDate = hijri.HijriCalendar();
+        final gregDate = hDate.hijriToGregorian(hYear, hMonth, hDay);
+        // Remind at 8 AM on the day of occasion
+        final reminderDate =
+            DateTime(gregDate.year, gregDate.month, gregDate.day, 8, 0);
+
+        if (reminderDate.isAfter(now)) {
+          await AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: notificationIdBase + count,
+              channelKey: 'sabah_athkar_channel',
+              title: title,
+              body: body,
+              category: NotificationCategory.Reminder,
+              payload: {
+                'route': 'religious_occasion_reminder',
+                'title': title,
+                'body': body
+              },
+              largeIcon: 'resource://drawable/ic_stat_logoapp',
+              notificationLayout: NotificationLayout.BigText,
+              color: const Color(0xFF178B74),
+            ),
+            schedule: NotificationCalendar.fromDate(
+              date: reminderDate,
+              preciseAlarm: true,
+              allowWhileIdle: true,
+            ),
+          );
+          count++;
+        }
+      }
+      print('✅ Scheduled $count religious occasion reminders.');
+    } catch (e) {
+      print('❌ Error scheduling religious occasions: $e');
+    }
+  }
+
+  // ==========================================
+  // 🌕 سورة الملك
+  // ==========================================
+  Future<void> _scheduleMulkReminder() async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1100,
+        channelKey: 'quran_channel',
+        title: 'سورة الملك',
+        body:
+            'قال النبي ﷺ عن سورة الملك: هي المانعة، هي المنجية، تنجيه من عذاب القبر',
+        category: NotificationCategory.Reminder,
+        payload: {'route': 'mulk_reminder'},
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar(
+        hour: 22, // 10 PM
+        minute: 0,
+        second: 0,
+        repeats: true,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  // ==========================================
+  // ☀️ صلاة الضحى
+  // ==========================================
+  Future<void> _scheduleDuhaReminder() async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1101,
+        channelKey: 'sabah_athkar_channel',
+        title: 'صلاة الضحى',
+        body:
+            'يصبح على كل سلامى من أحدكم صدقة.. ويجزئ من ذلك ركعتان يركعهما من الضحى',
+        category: NotificationCategory.Reminder,
+        payload: {'route': 'duha_reminder'},
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar(
+        hour: 9, // 9 AM
+        minute: 30,
+        second: 0,
+        repeats: true,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  // ==========================================
+  // 💡 سنة اليوم
+  // ==========================================
+  Future<void> _scheduleSunnahReminder() async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1102,
+        channelKey: 'sabah_athkar_channel',
+        title: 'سنة اليوم',
+        body: 'إحياء سنة من سنن المصطفى ﷺ، اضغط لتتعرف على سنة اليوم',
+        category: NotificationCategory.Reminder,
+        payload: {'route': 'sunnah_reminder'},
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar(
+        hour: 12, // 12 PM
+        minute: 0,
+        second: 0,
+        repeats: true,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  // ==========================================
+  // 🤲 الدعاء بين الأذان والإقامة
+  // ==========================================
+  Future<void> _scheduleBetweenAdhanIqamah() async {
+    // We'll schedule a single general reminder for now, as precise tracking of 5 prayers is complex here
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1103,
+        channelKey: 'sabah_athkar_channel',
+        title: 'الدعاء بين الأذان والإقامة',
+        body: 'قال ﷺ: لا يُرد الدعاء بين الأذان والإقامة؛ فادعوا',
+        category: NotificationCategory.Reminder,
+        payload: {'route': 'adhan_iqamah_reminder'},
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar(
+        hour: 18, // 6 PM (Common time for Maghrib/Isha gap)
+        minute: 0,
+        second: 0,
+        repeats: true,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
   }
 
   Future<void> scheduleWirdReminder(
@@ -752,10 +1181,13 @@ class NotificationManager {
         content: NotificationContent(
           id: notificationId,
           channelKey: 'sabah_athkar_channel', // نستخدم قناة الأذكار العامة
-          title: '📿 حان وقت وردك',
+          title: 'حان وقت وردك',
           body: 'تذكير بقراءة ورد: $wirdName',
           category: NotificationCategory.Reminder,
           wakeUpScreen: true,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          notificationLayout: NotificationLayout.BigText,
+          color: const Color(0xFF178B74),
         ),
         schedule: schedule,
       );
@@ -787,6 +1219,9 @@ class NotificationManager {
           category: NotificationCategory.Reminder,
           wakeUpScreen: true,
           payload: {'route': 'calendar_screen'},
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          notificationLayout: NotificationLayout.BigText,
+          color: const Color(0xFF178B74),
         ),
         schedule: NotificationCalendar.fromDate(
           date: scheduledDate,
@@ -960,6 +1395,127 @@ class NotificationManager {
       case 'allazkarlistview':
         navigator
             .push(MaterialPageRoute(builder: (_) => const Allazkarlistview()));
+        break;
+
+      // New Routes
+      case 'fasting_reminder':
+        navigator.push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) => NotificationDialogScreen(
+              title: 'فضل الصيام',
+              content:
+                  '1. عن سَهلٍ رَضِيَ الله تعالى عنه أنَّ النَّبيَّ صلَّى اللهُ عليه وسلَّم قال: ((إنَّ في الجنَّةِ بابًا يقال له: الريَّانُ، يدخُلُ منه الصَّائِمونَ يومَ القيامةِ، لا يدخُلُ منه أحدٌ غَيرُهم. فيقال: أين الصَّائِمونَ؟ فيقومونَ، لا يدخُلُ منه أحدٌ غَيرُهم، فإذا دخَلُوا أُغلِقَ، فلم يدخُلْ منه أحدٌ ))\n\n'
+                  '2. عن أبي سعيدٍ رَضِيَ الله تعالى عنه، عن النبيِّ صلَّى اللهُ عليه وسلَّم أنَّه قال: ((من صام يومًا في سبيلِ الله، باعَدَ اللهُ وَجهَه عن النَّارِ سَبعينَ خريفًا ))',
+            ),
+          ),
+        );
+        break;
+
+      case 'kahf_reminder':
+        // Open Quran at Page 293 (Surah Al-Kahf start page in standard Mushaf)
+        navigator.push(MaterialPageRoute(
+            builder: (_) => const QuranView(initialPage: 293)));
+        break;
+
+      case 'friday_hour_reminder':
+        navigator.push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) => const NotificationDialogScreen(
+              title: 'دعاء ساعة الاستجابة',
+              content:
+                  'اللَّهُمَّ رَبَّ السَّمَوَاتِ وَرَبَّ الأرْضِ وَرَبَّ العَرْشِ العَظِيمِ، رَبَّنَا وَرَبَّ كُلِّ شيءٍ، فَالِقَ الحَبِّ وَالنَّوَى، وَمُنْزِلَ التَّوْرَاةِ وَالإِنْجِيلِ وَالْفُرْقَانِ، أَعُوذُ بكَ مِن شَرِّ كُلِّ شيءٍ أَنْتَ آخِذٌ بنَاصِيَتِهِ، اللَّهُمَّ أَنْتَ الأوَّلُ فليسَ قَبْلَكَ شيءٌ، وَأَنْتَ الآخِرُ فليسَ بَعْدَكَ شيءٌ، وَأَنْتَ الظَّاهِرُ فليسَ فَوْقَكَ شيءٌ، وَأَنْتَ البَاطِنُ فليسَ دُونَكَ شيءٌ، اقْضِ عَنَّا الدَّيْنَ، وَأَغْنِنَا مِنَ الفَقْرِ.\n\n'
+                  'أسألك اللهم إن كان رزقي في السماء فأنزله، وإن كان في الأرض فأخرجه، وأسألك برحمتك إن كان رزقي بعيدًا فقربه، وإن كان قريبًا فيسره، وإن كان قليلًا فكثره، وإن كان كثيرًا، فبارك لي فيه. اللهم اكفني بحلالك عن حرامك، وأغنني بفضلك عمن سواك. اللهم يا رازق السائلين، ويا ذا القوة المتين، يا غياث المستغيثين، أسألك رزقًا واسعًا طيبًا من رزقك. يا راحم المساكين، ويا ذا القوة المتين، ويا خير الناصرين، يا ولي المؤمنين، يا غيّاث المستغيثين، إياك نعبد وإيّاك نستعين، اللهم إني أسألك رزقًا واسعًا طيبًا.',
+            ),
+          ),
+        );
+        break;
+
+      case 'white_days_reminder':
+        navigator.push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) => const NotificationDialogScreen(
+              title: 'فضل صيام الأيام البيض',
+              content:
+                  'عن جرير بن عبد الله رضي الله عنه عن النبي صلى الله عليه وسلم قال: «صيام ثلاثة أيام من كل شهر صيام الدهر، وأيام البيض صبيحة ثلاث عشرة وأربع عشرة وخمس عشرة» (رواه النسائي)\n\n'
+                  'وعن أبي هريرة رضي الله عنه قال: «أوصاني خليلي صلى الله عليه وسلم بثلاث: صيام ثلاثة أيام من كل شهر، وركعتي الضحى، وأن أوتر قبل أن أنام» (متفق عليه)',
+            ),
+          ),
+        );
+        break;
+
+      case 'mulk_reminder':
+        // Surah Al-Mulk is on page 562
+        navigator.push(MaterialPageRoute(
+            builder: (_) => const QuranView(initialPage: 562)));
+        break;
+
+      case 'duha_reminder':
+        navigator.push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) => const NotificationDialogScreen(
+              title: 'فضل صلاة الضحى',
+              content:
+                  'قال رسول الله ﷺ: «يُصْبِحُ علَى كُلِّ سُلَامَى مِن أَحَدِكُمْ صَدَقَةٌ، فَكُلُّ تَسْبِيحَةٍ صَدَقَةٌ، وَكُلُّ تَحْمِيدَةٍ صَدَقَةٌ، وَكُلُّ تَهْلِيلَةٍ صَدَقَةٌ، وَكُلُّ تَكْبِيرَةٍ صَدَقَةٌ، وَأَمْرٌ بالمَعْرُوفِ صَدَقَةٌ، وَنَهْيٌ عَنِ المُنْكَرِ صَدَقَةٌ، وَيُجْزِئُ مِن ذلكَ رَكْعَتَانِ يَرْكَعُهُما مِنَ الضُّحَى» (رواه مسلم)',
+            ),
+          ),
+        );
+        break;
+
+      case 'sunnah_reminder':
+        // We can pick a random Sunnah or just show a high-quality selection
+        final sunnahs = [
+          'تبسمك في وجه أخيك لك صدقة',
+          'البدء بالسلام قبل الكلام',
+          'النوم على طهارة وعلى الجانب الأيمن',
+          'التسمية قبل الأكل والأكل باليمين ومما يليك',
+          'نفض الفراش قبل النوم',
+          'الدعاء عند لبس الثوب الجديد',
+        ];
+        final randomSunnah =
+            sunnahs[DateTime.now().millisecond % sunnahs.length];
+
+        navigator.push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) => NotificationDialogScreen(
+              title: 'سنة اليوم',
+              content:
+                  'سنة اليوم هي: $randomSunnah\n\nقال ﷺ: «من سنَّ في الإسلام سنةً حسنةً فله أجرها وأجر من عمل بها بعده من غير أن ينقص من أجورهم شيء»',
+            ),
+          ),
+        );
+        break;
+
+      case 'adhan_iqamah_reminder':
+        navigator.push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) => const NotificationDialogScreen(
+              title: 'الدعاء بين الأذان والإقامة',
+              content:
+                  'عن أنس بن مالك رضي الله عنه قال: قال رسول الله ﷺ: «لا يُردُّ الدَّعاءُ بينَ الأذانِ والإقامةِ» (رواه الترمذي)\n\n'
+                  'اغتنم هذه اللحظات المباركة في التضرع إلى الله وسؤاله من فضله العظيم.',
+            ),
+          ),
+        );
+        break;
+
+      case 'religious_occasion_reminder':
+        final title = receivedAction.payload?['title'] ?? 'مناسبة إسلامية';
+        final body = receivedAction.payload?['body'] ?? '';
+        navigator.push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) => NotificationDialogScreen(
+              title: title,
+              content: body,
+            ),
+          ),
+        );
         break;
     }
   }

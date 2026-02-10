@@ -160,7 +160,7 @@
 //     tz.setLocalLocation(tz.getLocation(tz.local.name));
 //
 //     const AndroidInitializationSettings androidSettings =
-//         AndroidInitializationSettings('@mipmap/ic_launcher');
+//         AndroidInitializationSettings('@drawable/ic_stat_logoapp');
 //
 //     const InitializationSettings settings =
 //         InitializationSettings(android: androidSettings);
@@ -221,7 +221,7 @@
 //       'channel_name',
 //       importance: Importance.max,
 //       priority: Priority.high,
-//       icon: "@mipmap/launcher_icon",
+//       icon: "@drawable/ic_stat_logoapp",
 //     );
 //
 //     const NotificationDetails notificationDetails =

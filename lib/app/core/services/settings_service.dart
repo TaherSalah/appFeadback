@@ -23,6 +23,23 @@ class SettingsService {
   static const String _kFajrAlarmVibrate = 'fajr_alarm_vibrate';
   static const String _kFajrAlarmFadeIn = 'fajr_alarm_fade_in';
 
+  // New Reminders
+  static const String _kIsFastingReminderEnabled =
+      'is_fasting_reminder_enabled';
+  static const String _kIsFridayRemindersEnabled =
+      'is_friday_reminders_enabled';
+  static const String _kIsDailyQuranReminderEnabled =
+      'is_daily_quran_reminder_enabled';
+  static const String _kIsWhiteDaysReminderEnabled =
+      'is_white_days_reminder_enabled';
+  static const String _kIsReligiousOccasionsEnabled =
+      'is_religious_occasions_enabled';
+  static const String _kIsMulkReminderEnabled = 'is_mulk_reminder_enabled';
+  static const String _kIsDuhaReminderEnabled = 'is_duha_reminder_enabled';
+  static const String _kIsSunnahReminderEnabled = 'is_sunnah_reminder_enabled';
+  static const String _kIsBetweenAdhanIqamahEnabled =
+      'is_between_adhan_iqamah_enabled';
+
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
   }
@@ -155,4 +172,50 @@ class SettingsService {
   bool get fajrAlarmFadeIn => _prefs.getBool(_kFajrAlarmFadeIn) ?? false;
   Future<void> setFajrAlarmFadeIn(bool value) async =>
       await _prefs.setBool(_kFajrAlarmFadeIn, value);
+
+  // --- New Reminders ---
+  bool get isFastingReminderEnabled =>
+      _prefs.getBool(_kIsFastingReminderEnabled) ?? false;
+  Future<void> setFastingReminderEnabled(bool value) async =>
+      await _prefs.setBool(_kIsFastingReminderEnabled, value);
+
+  bool get isFridayRemindersEnabled =>
+      _prefs.getBool(_kIsFridayRemindersEnabled) ?? true;
+  Future<void> setFridayRemindersEnabled(bool value) async =>
+      await _prefs.setBool(_kIsFridayRemindersEnabled, value);
+
+  bool get isDailyQuranReminderEnabled =>
+      _prefs.getBool(_kIsDailyQuranReminderEnabled) ?? true;
+  Future<void> setDailyQuranReminderEnabled(bool value) async =>
+      await _prefs.setBool(_kIsDailyQuranReminderEnabled, value);
+
+  bool get isWhiteDaysReminderEnabled =>
+      _prefs.getBool(_kIsWhiteDaysReminderEnabled) ?? true;
+  Future<void> setWhiteDaysReminderEnabled(bool value) async =>
+      await _prefs.setBool(_kIsWhiteDaysReminderEnabled, value);
+
+  bool get isReligiousOccasionsEnabled =>
+      _prefs.getBool(_kIsReligiousOccasionsEnabled) ?? true;
+  Future<void> setReligiousOccasionsEnabled(bool value) async =>
+      await _prefs.setBool(_kIsReligiousOccasionsEnabled, value);
+
+  bool get isMulkReminderEnabled =>
+      _prefs.getBool(_kIsMulkReminderEnabled) ?? true;
+  Future<void> setMulkReminderEnabled(bool value) async =>
+      await _prefs.setBool(_kIsMulkReminderEnabled, value);
+
+  bool get isDuhaReminderEnabled =>
+      _prefs.getBool(_kIsDuhaReminderEnabled) ?? true;
+  Future<void> setDuhaReminderEnabled(bool value) async =>
+      await _prefs.setBool(_kIsDuhaReminderEnabled, value);
+
+  bool get isSunnahReminderEnabled =>
+      _prefs.getBool(_kIsSunnahReminderEnabled) ?? true;
+  Future<void> setSunnahReminderEnabled(bool value) async =>
+      await _prefs.setBool(_kIsSunnahReminderEnabled, value);
+
+  bool get isBetweenAdhanIqamahEnabled =>
+      _prefs.getBool(_kIsBetweenAdhanIqamahEnabled) ?? true;
+  Future<void> setBetweenAdhanIqamahEnabled(bool value) async =>
+      await _prefs.setBool(_kIsBetweenAdhanIqamahEnabled, value);
 }

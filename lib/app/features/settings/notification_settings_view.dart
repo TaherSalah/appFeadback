@@ -7,9 +7,9 @@ import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
-import '../../core/utils/style/app_theme_colors.dart';
+import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
+import 'package:muslimdaily/app/features/settings/view/notification_test_view.dart';
 
 class NotificationSettingsView extends StatefulWidget {
   const NotificationSettingsView({super.key});
@@ -38,6 +38,17 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
   late bool isSalatAlaNabiEnabled;
   late int salatFrequency;
 
+  // New Reminders
+  late bool isFastingReminderEnabled;
+  late bool isFridayRemindersEnabled;
+  late bool isDailyQuranReminderEnabled;
+  late bool isWhiteDaysReminderEnabled;
+  late bool isReligiousOccasionsEnabled;
+  late bool isMulkReminderEnabled;
+  late bool isDuhaReminderEnabled;
+  late bool isSunnahReminderEnabled;
+  late bool isBetweenAdhanIqamahEnabled;
+
   bool _hasChanges = false;
   bool _isLoading = false;
 
@@ -63,6 +74,18 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       isQiyamEnabled = _settings.isQiyamEnabled;
       isSalatAlaNabiEnabled = _settings.isSalatAlaNabiEnabled;
       salatFrequency = _settings.getSalatAlaNabiMinutes();
+
+      // New Reminders
+      isFastingReminderEnabled = _settings.isFastingReminderEnabled;
+      isFridayRemindersEnabled = _settings.isFridayRemindersEnabled;
+      isDailyQuranReminderEnabled = _settings.isDailyQuranReminderEnabled;
+      isWhiteDaysReminderEnabled = _settings.isWhiteDaysReminderEnabled;
+      isReligiousOccasionsEnabled = _settings.isReligiousOccasionsEnabled;
+      isMulkReminderEnabled = _settings.isMulkReminderEnabled;
+      isDuhaReminderEnabled = _settings.isDuhaReminderEnabled;
+      isSunnahReminderEnabled = _settings.isSunnahReminderEnabled;
+      isBetweenAdhanIqamahEnabled = _settings.isBetweenAdhanIqamahEnabled;
+
       _hasChanges = false;
     });
   }
@@ -86,6 +109,17 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       await _settings.setQiyamEnabled(isQiyamEnabled);
       await _settings.setSalatAlaNabiEnabled(isSalatAlaNabiEnabled);
       await _settings.setSalatAlaNabiMinutes(salatFrequency);
+
+      // New Reminders
+      await _settings.setFastingReminderEnabled(isFastingReminderEnabled);
+      await _settings.setFridayRemindersEnabled(isFridayRemindersEnabled);
+      await _settings.setDailyQuranReminderEnabled(isDailyQuranReminderEnabled);
+      await _settings.setWhiteDaysReminderEnabled(isWhiteDaysReminderEnabled);
+      await _settings.setReligiousOccasionsEnabled(isReligiousOccasionsEnabled);
+      await _settings.setMulkReminderEnabled(isMulkReminderEnabled);
+      await _settings.setDuhaReminderEnabled(isDuhaReminderEnabled);
+      await _settings.setSunnahReminderEnabled(isSunnahReminderEnabled);
+      await _settings.setBetweenAdhanIqamahEnabled(isBetweenAdhanIqamahEnabled);
 
       // Trigger notification rescheduling
       await NotificationManager().rescheduleAll();
@@ -436,7 +470,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                                   ),
                                   const SizedBox(height: 12),
                                   SizedBox(
-                                    height: 48,
+                                    height: 80,
                                     child: ListView(
                                       scrollDirection: Axis.horizontal,
                                       children: [
@@ -458,7 +492,187 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                         ],
                       ),
 
-                      const SizedBox(height: 100), // Space for button
+                      const SizedBox(height: 24),
+
+                      // 🌟 تذكيرات إضافية
+                      _buildSectionHeader(context, 'تذكيرات إضافية'),
+                      _buildSettingsCard(
+                        context,
+                        children: [
+                          _buildSwitchTile(
+                            context,
+                            title: 'تذكير صيام الاثنين والخميس',
+                            subtitle: 'تذكير مساء الأحد والأربعاء',
+                            icon: Icons.date_range,
+                            iconColor: Colors.deepPurple[400]!,
+                            value: isFastingReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isFastingReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'سنن الجمعة',
+                            subtitle: 'سورة الكهف وساعة الاستجابة',
+                            icon: Icons.calendar_today,
+                            iconColor: Colors.teal[600]!,
+                            value: isFridayRemindersEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isFridayRemindersEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'ورد القرآن اليومي',
+                            subtitle: 'تذكير يومي بقراءة الورد',
+                            icon: Icons.menu_book,
+                            iconColor: Colors.brown[400]!,
+                            value: isDailyQuranReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isDailyQuranReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'تذكير الأيام البيض',
+                            subtitle: 'تذكير بأيام 13 و14 و15 من كل شهر هجري',
+                            icon: Icons.calendar_month_outlined,
+                            iconColor: Colors.blueAccent[400]!,
+                            value: isWhiteDaysReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isWhiteDaysReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'المناسبات الإسلامية',
+                            subtitle: 'تذكير بعرفة، عاشوراء، رمضان والأعياد',
+                            icon: Icons.auto_awesome,
+                            iconColor: Colors.amber[600]!,
+                            value: isReligiousOccasionsEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isReligiousOccasionsEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'سورة الملك',
+                            subtitle: 'تذكير بقراءة سورة الملك قبل النوم',
+                            icon: Icons.nightlight_round,
+                            iconColor: Colors.indigo[400]!,
+                            value: isMulkReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isMulkReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'صلاة الضحى',
+                            subtitle: 'تذكير بصلاة الأوابين',
+                            icon: Icons.wb_sunny_outlined,
+                            iconColor: Colors.orange[400]!,
+                            value: isDuhaReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isDuhaReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'سنة اليوم',
+                            subtitle: 'إشعار يومي بسنة من السنن المهجورة',
+                            icon: Icons.lightbulb_outline,
+                            iconColor: Colors.lightBlue[400]!,
+                            value: isSunnahReminderEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isSunnahReminderEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'الدعاء بين الأذان والإقامة',
+                            subtitle: 'تذكير بالدعاء في هذا الوقت المبارك',
+                            icon: Icons.message_outlined,
+                            iconColor: Colors.cyan[600]!,
+                            value: isBetweenAdhanIqamahEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isBetweenAdhanIqamahEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Test Button
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 100),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  isDark ? Colors.grey[800] : Colors.grey[200],
+                              foregroundColor:
+                                  isDark ? Colors.white : Colors.black87,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationTestView(),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.build_circle_outlined),
+                            label: Text(
+                              'اختبار التنبيهات (للمطورين)',
+                              style: GoogleFonts.cairo(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -480,7 +694,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
               backgroundColor: KColors.primaryColor,
               elevation: (_hasChanges && !_isLoading) ? 8 : 0,
               label: _isLoading
-                  ? SizedBox(
+                  ? const SizedBox(
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(
@@ -518,7 +732,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
         style: GoogleFonts.cairo(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: isDark ? const Color(0xFFD4AF37) : const Color(0xFFB8860B),
+          color: isDark ? KColors.primaryColor : const Color(0xFFB8860B),
         ),
       ),
     );
@@ -601,37 +815,79 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0),
-      child: ChoiceChip(
-        label: Text(
-          '$minutes دقيقة',
-          style: GoogleFonts.cairo(
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      padding: const EdgeInsets.only(left: 10.0),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            salatFrequency = minutes;
+            _hasChanges = true;
+          });
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          width: 75,
+          decoration: BoxDecoration(
+            gradient: isSelected
+                ? const LinearGradient(
+                    colors: [Color(0xFFD4AF37), Color(0xFFFFD700)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                : null,
             color: isSelected
-                ? Colors.white
-                : (isDark ? Colors.white70 : Colors.black87),
-          ),
-        ),
-        selected: isSelected,
-        selectedColor: const Color(0xFFD4AF37),
-        backgroundColor:
-            isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(
+                ? null
+                : (isDark ? const Color(0xFF1E293B) : Colors.white),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
               color: isSelected
                   ? Colors.transparent
-                  : Colors.grey.withOpacity(0.3),
-            )),
-        onSelected: (bool selected) {
-          if (selected) {
-            setState(() {
-              salatFrequency = minutes;
-              _hasChanges = true;
-            });
-          }
-        },
+                  : (isDark ? Colors.white12 : Colors.grey.shade200),
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFFD4AF37).withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(isDark ? 0.1 : 0.03),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '$minutes',
+                style: GoogleFonts.cairo(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  height: 1.0,
+                  color: isSelected
+                      ? Colors.white
+                      : (isDark ? Colors.white : Colors.black87),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'دقيقة',
+                style: GoogleFonts.cairo(
+                  fontSize: 10,
+                  height: 1.0,
+                  color: isSelected
+                      ? Colors.white.withOpacity(0.9)
+                      : (isDark ? Colors.grey : Colors.grey.shade600),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

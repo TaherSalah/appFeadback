@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
-import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+
 import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/feedback_view.dart';
@@ -43,11 +44,13 @@ class SettingsView extends StatelessWidget {
           preferredSize:
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
           child: AppBar(
-leading: Navigator.canPop(context)
-              ? CupertinoNavigationBarBackButton(
-                  color: isDark ? Colors.white : Colors.black,
-                )
-              : null,
+            leading: Navigator.canPop(context)
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back_ios),
+                    color: isDark ? Colors.white : Colors.black,
+                    onPressed: () => Navigator.of(context).pop(),
+                  )
+                : null,
             // actions: [
             //   IconButton(
             //     onPressed: () => Navigator.push(
@@ -199,6 +202,7 @@ leading: Navigator.canPop(context)
                                     ? 'تلقائي'
                                     : (val > 0 ? '+$val يوم' : '$val يوم');
                                 return DropdownMenuItem(
+                                  alignment: AlignmentGeometry.centerRight,
                                   value: val,
                                   child: Text(label),
                                 );
@@ -271,14 +275,17 @@ leading: Navigator.canPop(context)
                                 },
                                 items: const [
                                   DropdownMenuItem(
+                                    alignment: AlignmentGeometry.centerRight,
                                     value: ThemeMode.system,
                                     child: Text('تلقائي'),
                                   ),
                                   DropdownMenuItem(
+                                    alignment: AlignmentGeometry.centerRight,
                                     value: ThemeMode.light,
                                     child: Text('فاتح ☀️'),
                                   ),
                                   DropdownMenuItem(
+                                    alignment: AlignmentGeometry.centerRight,
                                     value: ThemeMode.dark,
                                     child: Text('داكن 🌙'),
                                   ),
@@ -729,7 +736,8 @@ leading: Navigator.canPop(context)
         style: GoogleFonts.cairo(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: isDark ? const Color(0xFFD4AF37) : const Color(0xFFB8860B),
+          // color: isDark ? const Color(0xFFD4AF37) : const Color(0xFFB8860B),
+          color: isDark ? KColors.primaryColor : const Color(0xFFB8860B),
         ),
       ),
     );
