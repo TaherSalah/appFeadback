@@ -20,7 +20,8 @@ class VersionCheckService {
           .select('*')
           .order('created_at', ascending: false)
           .limit(1)
-          .maybeSingle();
+          .maybeSingle()
+          .timeout(const Duration(seconds: 3));
 
       if (response == null) return;
 

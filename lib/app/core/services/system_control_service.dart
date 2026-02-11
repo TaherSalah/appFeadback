@@ -34,10 +34,29 @@ class SystemControlService {
     final prefs = await SharedPreferences.getInstance();
     const String cacheKey = 'cached_feature_statuses';
 
+    // 🏎️ Return cached data immediately if available
+    final cached = prefs.getString(cacheKey);
+    Map<String, String> cachedMap = {};
+    if (cached != null) {
+      try {
+        final Map<String, dynamic> decoded = jsonDecode(cached);
+        cachedMap =
+            decoded.map((key, value) => MapEntry(key, value.toString()));
+      } catch (_) {}
+    }
+
+    // 🛰️ Fetch in background and update cache
+    _fetchAndCacheStatuses(cacheKey);
+
+    return cachedMap;
+  }
+
+  Future<void> _fetchAndCacheStatuses(String cacheKey) async {
     try {
       final response = await _supabase
           .from('app_features')
-          .select('feature_name, status');
+          .select('feature_name, status')
+          .timeout(const Duration(seconds: 3));
 
       if (response != null && response is List) {
         final Map<String, String> statuses = {};
@@ -48,60 +67,64 @@ class SystemControlService {
             statuses[key] = value;
           }
         }
+        final prefs = await SharedPreferences.getInstance();
         await prefs.setString(cacheKey, jsonEncode(statuses));
-        return statuses;
       }
     } catch (e) {
-      print('Error fetching feature statuses from app_features: $e');
+      print('Error fetching feature statuses: $e');
     }
-
-    final cached = prefs.getString(cacheKey);
-    if (cached != null) {
-      try {
-        final Map<String, dynamic> decoded = jsonDecode(cached);
-        return decoded.map((key, value) => MapEntry(key, value.toString()));
-      } catch (e) {
-        return {};
-      }
-    }
-    return {};
   }
 
   /// 📖 Get Quote of the Day with Offline Fallback
   Future<String> getQuoteOfTheDay() async {
     final prefs = await SharedPreferences.getInstance();
+    final cachedQuote = prefs.getString(_quoteCacheKey);
+
+    // 🛰️ Trigger background fetch
+    _fetchAndCacheQuote();
+
+    return cachedQuote ?? 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ';
+  }
+
+  Future<void> _fetchAndCacheQuote() async {
     try {
       final response = await _supabase
           .from('app_settings')
           .select('value')
           .eq('key', 'quote_of_the_day')
-          .maybeSingle();
+          .maybeSingle()
+          .timeout(const Duration(seconds: 3));
 
       if (response != null && response['value'] != null) {
         final quote = response['value'] as String;
+        final prefs = await SharedPreferences.getInstance();
         await prefs.setString(_quoteCacheKey, quote);
-        return quote;
       }
     } catch (e) {
       print('Error fetching quote: $e');
     }
-    // Fallback to cache or hardcoded default
-    return prefs.getString(_quoteCacheKey) ??
-        'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ';
   }
 
   /// 👁️ Check if Quote should be visible
   Future<bool> isQuoteVisible() async {
     final prefs = await SharedPreferences.getInstance();
     const String key = 'cached_quote_visible';
+    final cached = prefs.getBool(key) ?? false;
 
+    // 🛰️ Trigger background fetch
+    _fetchAndCacheQuoteVisibility(key);
+
+    return cached;
+  }
+
+  Future<void> _fetchAndCacheQuoteVisibility(String cacheKey) async {
     try {
-      // Fetch all settings and filter in Dart to be safe
-      final response =
-          await _supabase.from('app_settings').select('key, value');
+      final response = await _supabase
+          .from('app_settings')
+          .select('key, value')
+          .timeout(const Duration(seconds: 3));
 
       if (response != null && response is List) {
-        // Broad check for any key that looks like a quote enable toggle
         final targetKeys = [
           'quote_enabled',
           'quote_visible',
@@ -110,29 +133,21 @@ class SystemControlService {
           'quote_active'
         ];
 
+        bool isVisible = false;
         for (var item in response) {
           if (targetKeys.contains(item['key'].toString())) {
             final val = item['value'].toString().toLowerCase();
-            // Explicit false/0 -> Hide
-            if (val == 'false' || val == '0') {
-              await prefs.setBool(key, false);
-              return false;
-            }
-            // Explicit true/1 -> Show
             if (val == 'true' || val == '1') {
-              await prefs.setBool(key, true);
-              return true;
+              isVisible = true;
             }
           }
         }
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool(cacheKey, isVisible);
       }
     } catch (e) {
-      // If network fails, return cached value, defaulting to FALSE for safety
-      return prefs.getBool(key) ?? false;
+      print('Error fetching quote visibility: $e');
     }
-
-    // Default to FALSE if no keys found.
-    return prefs.getBool(key) ?? false;
   }
 
   /// 📢 Get News Marquee Metadata
@@ -142,47 +157,56 @@ class SystemControlService {
     const String labelKey = 'cached_news_label';
     const String typeKey = 'cached_news_type';
 
-    try {
-      // Fetch all to avoid filter issues and be more robust
-      final response = await _supabase
-          .from('app_settings')
-          .select('key, value');
-
-      if (response != null && response is List) {
-        final data = response as List;
-        
-        final newsActiveVal = _findValue(data, 'news_active')?.toLowerCase();
-        final active = newsActiveVal == 'true' || newsActiveVal == '1' || newsActiveVal == 'active';
-        
-        final news = _findValue(data, 'news_marquee');
-        final label = _findValue(data, 'news_marquee_label') ?? 'تنبيه عاجل';
-        final type = _findValue(data, 'news_marquee_type') ?? 'urgent';
-
-        print('📢 News Ticker - Active: $active, Text: $news');
-
-        if (active && news != null && news.trim().isNotEmpty) {
-          await prefs.setString(newsKey, news);
-          await prefs.setString(labelKey, label);
-          await prefs.setString(typeKey, type);
-          return {'text': news, 'label': label, 'type': type};
-        } else if (!active) {
-          await prefs.remove(newsKey);
-          return null;
-        }
-      }
-    } catch (e) {
-      print('Error fetching news metadata: $e');
-    }
-
     final cachedNews = prefs.getString(newsKey);
     if (cachedNews != null) {
+      // 🛰️ Trigger background fetch
+      _fetchAndCacheNews();
       return {
         'text': cachedNews,
         'label': prefs.getString(labelKey) ?? 'تنبيه عاجل',
         'type': prefs.getString(typeKey) ?? 'urgent',
       };
     }
+
+    // If no cache, return null immediately but fetch for next time
+    _fetchAndCacheNews();
     return null;
+  }
+
+  Future<void> _fetchAndCacheNews() async {
+    final prefs = await SharedPreferences.getInstance();
+    const String newsKey = 'cached_news_marquee';
+    const String labelKey = 'cached_news_label';
+    const String typeKey = 'cached_news_type';
+
+    try {
+      final response = await _supabase
+          .from('app_settings')
+          .select('key, value')
+          .timeout(const Duration(seconds: 3));
+
+      if (response != null && response is List) {
+        final data = response as List;
+        final newsActiveVal = _findValue(data, 'news_active')?.toLowerCase();
+        final active = newsActiveVal == 'true' ||
+            newsActiveVal == '1' ||
+            newsActiveVal == 'active';
+
+        final news = _findValue(data, 'news_marquee');
+        final label = _findValue(data, 'news_marquee_label') ?? 'تنبيه عاجل';
+        final type = _findValue(data, 'news_marquee_type') ?? 'urgent';
+
+        if (active && news != null && news.trim().isNotEmpty) {
+          await prefs.setString(newsKey, news);
+          await prefs.setString(labelKey, label);
+          await prefs.setString(typeKey, type);
+        } else {
+          await prefs.remove(newsKey);
+        }
+      }
+    } catch (e) {
+      print('Error fetching news: $e');
+    }
   }
 
   String? _findValue(List data, String key) {
@@ -195,20 +219,36 @@ class SystemControlService {
 
   /// 🖼️ Get Active Banners
   Future<List<Map<String, dynamic>>> getBanners() async {
+    final prefs = await SharedPreferences.getInstance();
+    const String key = 'cached_banners';
+    final cached = prefs.getString(key);
+
+    _fetchAndCacheBanners(key);
+
+    if (cached != null) {
+      try {
+        return List<Map<String, dynamic>>.from(jsonDecode(cached));
+      } catch (_) {}
+    }
+    return [];
+  }
+
+  Future<void> _fetchAndCacheBanners(String cacheKey) async {
     try {
       final response = await _supabase
           .from('banners')
           .select('*')
           .eq('is_active', true)
-          .order('created_at', ascending: false);
+          .order('created_at', ascending: false)
+          .timeout(const Duration(seconds: 4));
 
       if (response != null && response is List) {
-        return List<Map<String, dynamic>>.from(response);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(cacheKey, jsonEncode(response));
       }
     } catch (e) {
       print('Error fetching banners: $e');
     }
-    return [];
   }
 
   /// 📝 Log Error to Supabase
@@ -337,12 +377,31 @@ class SystemControlService {
     final prefs = await SharedPreferences.getInstance();
     const String cacheKey = 'cached_global_offsets';
 
+    // 🏎️ Return cached offsets immediately
+    final cached = prefs.getString(cacheKey);
+    Map<String, int> offsets = {};
+    if (cached != null) {
+      try {
+        final Map<String, dynamic> decoded = jsonDecode(cached);
+        offsets = decoded
+            .map((key, value) => MapEntry(key, int.parse(value.toString())));
+      } catch (_) {}
+    }
+
+    // 🛰️ Trigger background update
+    _fetchAndCacheGlobalOffsets(cacheKey);
+
+    return offsets;
+  }
+
+  Future<void> _fetchAndCacheGlobalOffsets(String cacheKey) async {
     try {
       final response = await _supabase
           .from('app_settings')
           .select('key, value')
           .filter('key', 'in',
-              '("prayer_offset_fajr", "prayer_offset_sunrise", "prayer_offset_dhuhr", "prayer_offset_asr", "prayer_offset_maghrib", "prayer_offset_isha")');
+              '("prayer_offset_fajr", "prayer_offset_sunrise", "prayer_offset_dhuhr", "prayer_offset_asr", "prayer_offset_maghrib", "prayer_offset_isha")')
+          .timeout(const Duration(seconds: 3));
 
       if (response != null && response is List) {
         final Map<String, int> offsets = {};
@@ -351,24 +410,12 @@ class SystemControlService {
           final value = int.tryParse(item['value'].toString()) ?? 0;
           offsets[key] = value;
         }
+        final prefs = await SharedPreferences.getInstance();
         await prefs.setString(cacheKey, jsonEncode(offsets));
-        return offsets;
       }
     } catch (e) {
       print('Error fetching global offsets: $e');
     }
-
-    final cached = prefs.getString(cacheKey);
-    if (cached != null) {
-      try {
-        final Map<String, dynamic> decoded = jsonDecode(cached);
-        return decoded
-            .map((key, value) => MapEntry(key, int.parse(value.toString())));
-      } catch (e) {
-        return {};
-      }
-    }
-    return {};
   }
 
   /// 📢 Get Social Media Banner Config

@@ -246,14 +246,19 @@ class MainController extends ControllerMVC {
     hijriAdjustment = prefs.getInt(_kHijriAdjustmentKey) ?? 0;
     _updateHijriDate();
 
-    // تحميل التعديلات العامة من السيرفر
-    final globalOffsets = await SystemControlService().getGlobalPrayerOffsets();
-    globalFajrOffset = globalOffsets['fajr'] ?? 0;
-    globalSunriseOffset = globalOffsets['sunrise'] ?? 0;
-    globalDhuhrOffset = globalOffsets['dhuhr'] ?? 0;
-    globalAsrOffset = globalOffsets['asr'] ?? 0;
-    globalMaghribOffset = globalOffsets['maghrib'] ?? 0;
-    globalIshaOffset = globalOffsets['isha'] ?? 0;
+    // تحميل التعديلات العامة من السيرفر (والكاش)
+    // 💡 لا ننتظر النتيجة بشكل يعطل فتح التطبيق
+    SystemControlService().getGlobalPrayerOffsets().then((globalOffsets) {
+      globalFajrOffset = globalOffsets['fajr'] ?? 0;
+      globalSunriseOffset = globalOffsets['sunrise'] ?? 0;
+      globalDhuhrOffset = globalOffsets['dhuhr'] ?? 0;
+      globalAsrOffset = globalOffsets['asr'] ?? 0;
+      globalMaghribOffset = globalOffsets['maghrib'] ?? 0;
+      globalIshaOffset = globalOffsets['isha'] ?? 0;
+
+      calculatePrayerTimes();
+      setState(() {});
+    });
 
     calculatePrayerTimes();
     setState(() {});

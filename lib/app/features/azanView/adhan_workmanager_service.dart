@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:muslimdaily/app/core/services/system_control_service.dart';
 import 'package:muslimdaily/app/core/services/home_widget_service.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:muslimdaily/app/core/services/AdhanDiagnosticHelper.dart';
 
 // ==========================================
 // 🧪 Callback مبسط للاختبار
@@ -180,10 +181,14 @@ class AdhanWorkManagerService {
       // تحديث الويدجت الشاشة الرئيسية
       await updateWidget();
 
+      // ✅ التحقق من نجاح الجدولة وإرسال إشعار تأكيد
+      await _verifyAndNotifyScheduling();
+
       print('✅ تم تهيئة خدمة الأذان بنجاح');
     } catch (e, stackTrace) {
       print('❌ خطأ في تهيئة AdhanService: $e');
       print('Stack Trace: $stackTrace');
+      await AdhanDiagnosticHelper.logError('فشل التهيئة: $e');
     }
   }
 
@@ -321,6 +326,7 @@ class AdhanWorkManagerService {
     } catch (e, stackTrace) {
       print('❌ خطأ في جدولة الصلوات: $e');
       print('Stack Trace: $stackTrace');
+      await AdhanDiagnosticHelper.logError('فشل جدولة الصلوات: $e');
     }
   }
 
@@ -576,6 +582,7 @@ class AdhanWorkManagerService {
       return errors.isEmpty ? null : errors.join(", ");
     } catch (e) {
       print('❌ خطأ في جدولة $prayerName: $e');
+      await AdhanDiagnosticHelper.logError('فشل جدولة $prayerName: $e');
       return e.toString(); // ❌ إرجاع نص الخطأ
     }
   }
@@ -935,6 +942,52 @@ class AdhanWorkManagerService {
     } catch (e) {
       print('❌ خطأ في الحصول على الصلاة التالية: $e');
       return null;
+    }
+  }
+
+  // ==========================================
+  // ✅ التحقق من نجاح الجدولة
+  // ==========================================
+
+  /// التحقق من نجاح الجدولة وإرسال إشعار تأكيد
+  Future<void> _verifyAndNotifyScheduling() async {
+    try {
+      // الحصول على جميع الإشعارات المجدولة
+      final scheduled =
+          await AwesomeNotifications().listScheduledNotifications();
+
+      // تصفية إشعارات الأذان فقط
+      final adhanNotifications = scheduled.where((notification) {
+        final channelKey = notification.content?.channelKey ?? '';
+        return channelKey.contains('adhan') || channelKey.contains('fajr');
+      }).toList();
+
+      final count = adhanNotifications.length;
+
+      if (count > 0) {
+        print('✅ تم التحقق من الجدولة: $count إشعار أذان مجدول');
+
+        // إرسال إشعار تأكيد للمستخدم
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: 99998,
+            channelKey: 'sabah_athkar_channel',
+            title: '\u200Fتم جدولة الأذان بنجاح',
+            body: '\u200Fتم جدولة $count صلاة للأيام القادمة',
+            icon: 'resource://drawable/ic_stat_logoapp',
+            notificationLayout: NotificationLayout.Default,
+            category: NotificationCategory.Status,
+            autoDismissible: true,
+            color: const Color(0xFF178B74),
+          ),
+        );
+      } else {
+        print('⚠️ تحذير: لم يتم جدولة أي إشعارات أذان!');
+        await AdhanDiagnosticHelper.logError('لم يتم جدولة أي إشعارات أذان');
+      }
+    } catch (e) {
+      print('❌ خطأ في التحقق من الجدولة: $e');
+      await AdhanDiagnosticHelper.logError('فشل التحقق من الجدولة: $e');
     }
   }
 

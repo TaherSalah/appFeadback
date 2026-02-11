@@ -10,6 +10,7 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/features/settings/view/notification_test_view.dart';
+import 'package:muslimdaily/app/features/azanView/view/AdhanDiagnosticScreen.dart';
 
 class NotificationSettingsView extends StatefulWidget {
   const NotificationSettingsView({super.key});
@@ -640,7 +641,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
 
                       // Test Button
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 100),
+                        padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
@@ -667,6 +668,42 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                             icon: const Icon(Icons.build_circle_outlined),
                             label: Text(
                               'اختبار التنبيهات (للمطورين)',
+                              style: GoogleFonts.cairo(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Diagnostic Button
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 100),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  isDark ? Colors.teal[900] : Colors.teal[50],
+                              foregroundColor:
+                                  isDark ? Colors.tealAccent : Colors.teal[800],
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AdhanDiagnosticScreen(),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.medical_services_outlined),
+                            label: Text(
+                              'تشخيص مشاكل الأذان',
                               style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.bold),
                             ),

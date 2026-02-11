@@ -77,34 +77,46 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     super.initState();
 
     // 🚀 Check for updates & Daily Quote & News & Banners
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final service = SystemControlService();
+
+      // 1. Check for updates (Background)
       VersionCheckService().checkForUpdates(context);
 
-      final service = SystemControlService();
-      final quote = await service.getQuoteOfTheDay();
-      final isQuoteVisible = await service.isQuoteVisible();
-      final newsData = await service.getNewsMarquee();
-      final banners = await service.getBanners();
-      final featureStatuses = await service.getFeatureStatuses();
+      // 2. Load Quote (Asynchronous)
+      service.getQuoteOfTheDay().then((quote) {
+        if (mounted) setState(() => _dailyQuote = quote);
+      });
+
+      // 3. Load Quote Visibility
+      service.isQuoteVisible().then((isVisible) {
+        if (mounted) setState(() => _isQuoteVisible = isVisible);
+      });
+
+      // 4. Load News Marquee
+      service.getNewsMarquee().then((newsData) {
+        if (mounted) setState(() => _newsData = newsData);
+      });
+
+      // 5. Load Banners
+      service.getBanners().then((banners) {
+        if (mounted) setState(() => _banners = banners);
+      });
+
+      // 6. Load Feature Statuses
+      service.getFeatureStatuses().then((statuses) {
+        if (mounted) setState(() => _featureStatuses = statuses);
+      });
 
       // 🎨 Update Theme Color dynamically
-      final themeColor = await service.getThemePrimaryColor();
-      if (mounted) {
-        context.read<CentralizedCubit>().updateDynamicColor(themeColor);
-      }
+      service.getThemePrimaryColor().then((themeColor) {
+        if (mounted) {
+          context.read<CentralizedCubit>().updateDynamicColor(themeColor);
+        }
+      });
 
       // 📢 Check for Broadcast Message
       _checkBroadcast();
-
-      if (mounted) {
-        setState(() {
-          _dailyQuote = quote;
-          _isQuoteVisible = isQuoteVisible;
-          _newsData = newsData;
-          _banners = banners;
-          _featureStatuses = featureStatuses;
-        });
-      }
     });
 
     loadSurahList();
@@ -230,7 +242,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
         path == '/azkarMassa' ||
         path == '/allazkarlistview') return 'azkar';
     if (path == '/azkarCounter') return 'sebha';
-    if (path == '/compplateKhatna' || path == '/globalKhatmah') return 'khatmah';
+    if (path == '/compplateKhatna' || path == '/globalKhatmah')
+      return 'khatmah';
     if (path == Routes.zakatCalculatorRoute) return 'zakat';
     if (path == '/WirdHomeScreen') return 'wird';
     if (path == '/QuranRadioView') return 'radio';
@@ -474,8 +487,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                       : Colors.white,
                                   borderRadius: BorderRadius.circular(15),
                                   border: Border.all(
-                                    color:
-                                        const Color(0xFFD4AF37).withOpacity(0.3),
+                                    color: const Color(0xFFD4AF37)
+                                        .withOpacity(0.3),
                                   ),
                                   boxShadow: [
                                     BoxShadow(
@@ -529,7 +542,6 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
                           // 🔥 جدول الطاعات
                           // const WorshipTrackerWidget(),
-
                         ],
                       ),
                     ),
@@ -553,11 +565,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                               builder: (context, state) {
                                 return InkWell(
                                   onTap: () async {
-                                    bool needsInternet =
-                                        item["navigate"] ==
-                                                Routes.categoriesRoute ||
-                                            item["navigate"] ==
-                                                "/QuranRadioView";
+                                    bool needsInternet = item["navigate"] ==
+                                            Routes.categoriesRoute ||
+                                        item["navigate"] == "/QuranRadioView";
 
                                     if (((state is ConnectivityState &&
                                                 state.status ==
@@ -597,8 +607,6 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                   : 20),
 
                           // const SizedBox(height: 10),
-
-
 
                           // 🔥 قسم غراس الجنة
                           // const JannahPlanterWidget(),
@@ -674,7 +682,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                               duration: const Duration(milliseconds: 700),
                               delay: const Duration(milliseconds: 900),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
                                 child: const OtherAzkarWidget(),
                               ),
                             ),
