@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +15,7 @@ class SystemControlService {
 
   final _supabase = Supabase.instance.client;
   static const String _quoteCacheKey = 'cached_daily_quote';
+  static const MethodChannel _channel = MethodChannel('com.muslimdaily.app/system_control');
 
   /// 🛠️ Check if Maintenance Mode is active
   Future<bool> isMaintenanceModeActive() async {
@@ -473,5 +476,46 @@ class SystemControlService {
     } catch (e) {
       // Sliently fail for analytics
     }
+  }
+
+  /// 🔇 Activate Silent Mode for a specific duration (minutes)
+  Future<void> activateSilentMode(int durationMinutes) async {
+    if (!Platform.isAndroid) return;
+    try {
+      print('🔇 Activating Auto-Silent Mode for $durationMinutes minutes');
+      await _setRingerMode('vibrate'); // Or 'silent'
+
+      // Schedule revert
+      final revertTime = DateTime.now().add(Duration(minutes: durationMinutes));
+      await AndroidAlarmManager.oneShotAt(
+        revertTime,
+        888, // Unique ID for revert alarm
+        revertSilentModeCallback,
+        exact: true,
+        wakeup: true,
+      );
+    } catch (e) {
+      print('❌ Fail to activate silent mode: $e');
+    }
+  }
+
+  Future<void> _setRingerMode(String mode) async {
+    try {
+      await _channel.invokeMethod('setRingerMode', {'mode': mode});
+    } catch (e) {
+      print('❌ MethodChannel Error (setRingerMode): $e');
+    }
+  }
+}
+
+/// 🔄 Callback to revert silent mode
+@pragma('vm:entry-point')
+void revertSilentModeCallback() async {
+  print('🔊 Reverting Silent Mode to normal');
+  const MethodChannel channel = MethodChannel('com.muslimdaily.app/system_control');
+  try {
+    await channel.invokeMethod('setRingerMode', {'mode': 'normal'});
+  } catch (e) {
+    print('❌ Failed to revert ringer mode: $e');
   }
 }

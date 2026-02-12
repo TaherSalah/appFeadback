@@ -3741,6 +3741,12 @@ leading: Navigator.canPop(context)
               key: 'STOP_ADHAN',
               label: 'إيقاف الأذان',
               actionType: ActionType.DismissAction,
+              isDangerousOption: true,
+            ),
+            NotificationActionButton(
+              key: 'MUTE_ADHAN',
+              label: 'كتم الصوت',
+              actionType: ActionType.DismissAction,
             ),
           ],
         );

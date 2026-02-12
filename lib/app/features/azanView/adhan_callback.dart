@@ -5,6 +5,7 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'dart:io';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
+import 'package:muslimdaily/app/core/services/system_control_service.dart';
 
 // ✅ دالة الـ Callback المبسطة - تشغيل الأذان عبر قنوات الإشعارات
 @pragma('vm:entry-point')
@@ -27,6 +28,12 @@ void alarmCallback(int id) async {
     print("   🕌 الصلاة: $prayerName");
     print("   📍 المدينة: $cityName");
     print("   ⏰ الوقت: $prayerTime");
+
+    // 🔴 [Auto-Silent] Activate if enabled
+    if (prefs.getBool('is_auto_silent_enabled') ?? false) {
+      final duration = prefs.getInt('auto_silent_duration') ?? 20;
+      await SystemControlService().activateSilentMode(duration);
+    }
 
     // 2️⃣ تهيئة AwesomeNotifications بكافة القنوات
     await NotificationManager.updateAllChannels();
@@ -66,14 +73,21 @@ void alarmCallback(int id) async {
           'route': 'adhan_screen',
         },
       ),
-      actionButtons: [
-        NotificationActionButton(
-          key: 'DISMISS',
-          label: 'إيقاف',
-          actionType: ActionType.DismissAction,
-          isDangerousOption: false,
-        ),
-      ],
+      actionButtons: (prefs.getBool('is_stop_action_enabled') ?? true)
+          ? [
+              NotificationActionButton(
+                key: 'STOP_ADHAN',
+                label: 'إيقاف الأذان',
+                actionType: ActionType.DismissAction,
+                isDangerousOption: true,
+              ),
+              NotificationActionButton(
+                key: 'MUTE_ADHAN',
+                label: 'كتم الصوت',
+                actionType: ActionType.DismissAction,
+              ),
+            ]
+          : null,
     );
 
     print("✅ تم إرسال الإشعار بنجاح (ID: $notificationId)");

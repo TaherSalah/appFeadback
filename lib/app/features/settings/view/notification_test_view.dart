@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
 
 class NotificationTestView extends StatelessWidget {
   const NotificationTestView({super.key});
@@ -306,6 +307,21 @@ class NotificationTestView extends StatelessWidget {
               criticalAlert: category == NotificationCategory.Alarm,
               payload: payload,
             ),
+            actionButtons: category == NotificationCategory.Alarm
+                ? [
+                    NotificationActionButton(
+                      key: 'STOP_ADHAN',
+                      label: 'إيقاف الأذان',
+                      actionType: ActionType.DismissAction,
+                      isDangerousOption: true,
+                    ),
+                    NotificationActionButton(
+                      key: 'MUTE_ADHAN',
+                      label: 'كتم الصوت',
+                      actionType: ActionType.DismissAction,
+                    ),
+                  ]
+                : null,
           );
 
           if (context.mounted) {

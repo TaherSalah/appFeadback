@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:workmanager/workmanager.dart';
-
+import 'package:just_audio/just_audio.dart';
 import 'package:adhan/adhan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'adhan_callback.dart';
@@ -44,6 +44,66 @@ void testSimpleCallback(int id) async {
 
   // استدعاء الـ callback الأصلي
   alarmCallback(id);
+}
+
+// ==========================================
+// ⏱️ Widget Update Callback (Exact Alarm)
+// ==========================================
+
+// ==========================================
+// 🔊 Play Adhan Callback (Background Audio)
+// ==========================================
+@pragma('vm:entry-point')
+void playAdhanCallback(int id, Map<String, dynamic> params) async {
+  print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  print('🔊 [Adhan Player] Starting background playback (ID: $id)');
+  print('🕐 Time: ${DateTime.now()}');
+
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    // 🔴 [Auto-Silent] Activate if enabled
+    if (prefs.getBool('is_auto_silent_enabled') ?? false) {
+      final duration = prefs.getInt('auto_silent_duration') ?? 20;
+      await SystemControlService().activateSilentMode(duration);
+    }
+
+    final String? soundPath = params['soundPath'];
+    if (soundPath == null) {
+      print('⚠️ [Adhan Player] No sound path provided.');
+      return;
+    }
+
+    print('📂 Playing: $soundPath');
+
+    // Initialize Player
+    final player = AudioPlayer();
+    
+    // Set source
+    if (soundPath.startsWith('http')) {
+       await player.setUrl(soundPath);
+    } else {
+       await player.setFilePath(soundPath.replaceFirst('file://', ''));
+    }
+
+    // Play
+    await player.setVolume(1.0);
+    await player.play();
+    
+    print('✅ [Adhan Player] Playback started successfully.');
+
+    // Keep isolate alive while playing (limited by system)
+    // In a real foreground service, this would be more robust.
+    // For now, we rely on the AlarmManager wakelock.
+    
+    // Optional: Dispose after some time (e.g. 5 mins)
+    await Future.delayed(const Duration(minutes: 5));
+    await player.dispose();
+    print('🛑 [Adhan Player] Playback finished and player disposed.');
+
+  } catch (e) {
+    print('❌ [Adhan Player] Failed: $e');
+    await AdhanDiagnosticHelper.logError('Background Audio Failed: $e');
+  }
 }
 
 // ==========================================
@@ -134,61 +194,70 @@ class AdhanWorkManagerService {
         existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
         backoffPolicy: BackoffPolicy.linear,
       );
+      
+      // 🚀 تشغيل باقي المنطق في الخلفية (عدم انتظار) لتسريع فتح التطبيق
+      Future(() async {
+          try {
+              // check if we really need to reschedule
+              if (!forceReschedule &&
+                  !await _shouldReschedule(coordinates, calculationParams, cityName)) {
+                print(
+                    '✅ [AdhanWorkManager] Skipping reschedule: Schedules are up-to-date.');
+                return;
+              }
 
-      // check if we really need to reschedule
-      if (!forceReschedule &&
-          !await _shouldReschedule(coordinates, calculationParams, cityName)) {
-        print(
-            '✅ [AdhanWorkManager] Skipping reschedule: Schedules are up-to-date.');
-        return;
-      }
+              print('🚀 بدء تهيئة خدمة الأذان Exact Alarm (Async)...');
 
-      print('🚀 بدء تهيئة خدمة الأذان Exact Alarm...');
+              // تهيئة SettingsService
+              await SettingsService().init();
 
-      // تهيئة SettingsService
-      await SettingsService().init();
+              // التحقق من تفعيل الأذان
+              if (!SettingsService().isAdhanEnabled) {
+                print('🔕 الأذان معطل من الإعدادات. لن يتم جدولة أي شيء.');
+                await cancelAll(); // ضمان إلغاء القديم
+                return;
+              }
 
-      // التحقق من تفعيل الأذان
-      if (!SettingsService().isAdhanEnabled) {
-        print('🔕 الأذان معطل من الإعدادات. لن يتم جدولة أي شيء.');
-        await cancelAll(); // ضمان إلغاء القديم
-        return;
-      }
+              // 1️⃣ تحديث قنوات الإشعارات بالأصوات المختارة
+              await updateNotificationChannels();
 
-      // 1️⃣ تحديث قنوات الإشعارات بالأصوات المختارة
-      await updateNotificationChannels();
+              // 🔍 التحقق من صلاحية المنبهات الدقيقة (Exact Alarms)
+              if (Platform.isAndroid) {
+                await NotificationManager().checkAndRequestExactAlarmPermission();
+              }
 
-      // 🔍 التحقق من صلاحية المنبهات الدقيقة (Exact Alarms)
-      if (Platform.isAndroid) {
-        await NotificationManager().checkAndRequestExactAlarmPermission();
-      }
+              // 2️⃣ إلغاء أي مهام قديمة
+              await cancelAll();
 
-      // 2️⃣ إلغاء أي مهام قديمة
-      await cancelAll();
+              // 2️⃣ جدولة الأذان لعدة أيام
+              await scheduleAllPrayersForMultipleDays(
+                coordinates: coordinates,
+                calculationParams: calculationParams,
+                cityName: cityName,
+                days: days,
+              );
 
-      // 2️⃣ جدولة الأذان لعدة أيام
-      await scheduleAllPrayersForMultipleDays(
-        coordinates: coordinates,
-        calculationParams: calculationParams,
-        cityName: cityName,
-        days: days,
-      );
+              // حفظ حالة الجدولة الحالية
+              await _saveCurrentScheduleState(
+                  coordinates, calculationParams, cityName ?? "Unknown");
 
-      // حفظ حالة الجدولة الحالية
-      await _saveCurrentScheduleState(
-          coordinates, calculationParams, cityName ?? "Unknown");
+              // تحديث الويدجت الشاشة الرئيسية
+              await updateWidget();
 
-      // تحديث الويدجت الشاشة الرئيسية
-      await updateWidget();
+              // ✅ التحقق من نجاح الجدولة وإرسال إشعار تأكيد
+              await _verifyAndNotifyScheduling();
 
-      // ✅ التحقق من نجاح الجدولة وإرسال إشعار تأكيد
-      await _verifyAndNotifyScheduling();
-
-      print('✅ تم تهيئة خدمة الأذان بنجاح');
+              print('✅ تم تهيئة خدمة الأذان بنجاح');
+          } catch (e, stackTrace) {
+               print('❌ خطأ في تهيئة AdhanService (Async): $e');
+               print('Stack Trace: $stackTrace');
+               await AdhanDiagnosticHelper.logError('فشل التهيئة: $e');
+          }
+      });
+      
     } catch (e, stackTrace) {
-      print('❌ خطأ في تهيئة AdhanService: $e');
+      print('❌ خطأ في تهيئة WorkManager: $e');
       print('Stack Trace: $stackTrace');
-      await AdhanDiagnosticHelper.logError('فشل التهيئة: $e');
     }
   }
 
@@ -366,12 +435,13 @@ class AdhanWorkManagerService {
       // إنشاء ID فريد لكل صلاة
       final uniqueId = 1000 + (dayOffset * 10) + prayerIndex;
 
-      // تحديد القناة المناسبة
       final bool isFajr = prayerName.contains('الفجر');
 
-      // ✅ تصحيح القنوات: استخدام V4 دائمًا
-      final String channelKey =
-          isFajr ? 'fajr_adhan_channel_v4' : 'adhan_channel_v4';
+      // 🔑 تحديد معلومات الصوت والقناة (ديناميكياً)
+      final String type = prayerName.contains('الفجر') ? 'fajr' : 'normal';
+      final String? selectedAdhanId = await getSelectedAdhan(type);
+      final String channelKey = getChannelKey(type, selectedAdhanId);
+      final String? soundPath = await getAdhanPath(type);
 
       print(
           '📅 جدولة Native ($uniqueId): $prayerName @ ${_formatTime(prayerTime)} on $channelKey');
@@ -497,13 +567,45 @@ class AdhanWorkManagerService {
                 'route': 'adhan_screen',
                 'type': 'adhan',
               },
+
+              // customSound: null, // 🔇 Disable notification sound for custom
+             // playSound: false,  // We handle sound manually
             ),
             schedule: NotificationCalendar.fromDate(
               date: prayerTime,
               preciseAlarm: true,
               allowWhileIdle: true,
             ),
+            actionButtons: [
+              NotificationActionButton(
+                key: 'STOP_ADHAN',
+                label: 'إيقاف الأذان',
+                actionType: ActionType.DismissAction,
+                isDangerousOption: true,
+              ),
+              NotificationActionButton(
+                key: 'MUTE_ADHAN',
+                label: 'كتم الصوت',
+                actionType: ActionType.DismissAction,
+              ),
+            ],
           );
+
+          // 🔊 جدولة تشغيل الصوت يدوياً في الخلفية (Radical Solution)
+          if (soundPath != null) {
+            final int alarmId = 90000 + uniqueId;
+             await AndroidAlarmManager.oneShotAt(
+              prayerTime,
+              alarmId,
+              playAdhanCallback,
+              exact: true,
+              wakeup: true,
+              rescheduleOnReboot: true,
+              params: {'soundPath': soundPath},
+            );
+            print('✅ [AlarmManager] Audio playback scheduled for $effectivePrayerName');
+          }
+
         }
       } catch (e) {
         print('❌ خطأ في جدولة Adhan Main: $e');
@@ -813,6 +915,19 @@ class AdhanWorkManagerService {
           preciseAlarm: true,
           allowWhileIdle: true,
         ),
+        actionButtons: [
+          NotificationActionButton(
+            key: 'STOP_ADHAN',
+            label: 'إيقاف الأذان',
+            actionType: ActionType.DismissAction,
+            isDangerousOption: true,
+          ),
+          NotificationActionButton(
+            key: 'MUTE_ADHAN',
+            label: 'كتم الصوت',
+            actionType: ActionType.DismissAction,
+          ),
+        ],
       );
 
       // 3. الإقامة
@@ -860,6 +975,115 @@ class AdhanWorkManagerService {
       print('❌ خطأ في جدولة الاختبار: $e');
       return e.toString();
     }
+  }
+
+  /// جدولة أذان تجريبي لصلاة محددة (للتأكد من الصوت المخصص)
+  Future<String?> scheduleSpecificPrayerTest(String prayerName,
+      {int secondsFromNow = 5}) async {
+    try {
+      final now = DateTime.now();
+      final adhanTime = now.add(Duration(seconds: secondsFromNow));
+
+      print('🧪 اختبار أذان مخصص لصلاة: $prayerName');
+
+      // 1. الحصول على معلومات الصوت والقناة (ديناميكياً)
+      final String type = prayerName.contains('الفجر') ? 'fajr' : 'normal';
+      final String? selectedAdhanId = await getSelectedAdhan(type);
+      final String channelKey = getChannelKey(type, selectedAdhanId);
+      final String? soundPath = await getAdhanPath(type);
+      final String soundId = selectedAdhanId ?? 'unknown';
+
+      // 📝 إضافة سجل مطول للتشخيص
+      final logMsg = 'Test Adhan: $prayerName, SoundId: $soundId, Path: ${soundPath ?? "DEFAULT"}, Channel: $channelKey';
+      print('🧪 $logMsg');
+      await AdhanDiagnosticHelper.logError(logMsg);
+
+      // 2. إنشاء الإشعار (صامت أو بصوت افتراضي فقط للعرض)
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 99910 + prayerName.length,
+          channelKey: channelKey,
+          title: '🧪 اختبار $prayerName ($soundId)',
+          body: 'المسار: ${soundPath ?? "افتراضي"}',
+          category: NotificationCategory.Alarm,
+          wakeUpScreen: true,
+          fullScreenIntent: true,
+          criticalAlert: true,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          notificationLayout: NotificationLayout.BigText,
+          color: const Color(0xFF178B74),
+          // 🔇 Stop relying on notification sound for custom files
+          customSound: null, 
+          //playSound: false, // We handle sound manually
+        ),
+        schedule: NotificationCalendar.fromDate(
+          date: adhanTime,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+        actionButtons: [
+          NotificationActionButton(
+            key: 'STOP_ADHAN',
+            label: 'إيقاف الأذان',
+            actionType: ActionType.DismissAction,
+            isDangerousOption: true,
+          ),
+          NotificationActionButton(
+            key: 'MUTE_ADHAN',
+            label: 'كتم الصوت',
+            actionType: ActionType.DismissAction,
+          ),
+        ],
+      );
+
+      // 3. 🔊 جدولة تشغيل الصوت يدوياً في الخلفية (Radical Solution)
+      if (soundPath != null) {
+        final int alarmId = 88880 + prayerName.length;
+        await AndroidAlarmManager.oneShotAt(
+          adhanTime,
+          alarmId,
+          playAdhanCallback,
+          exact: true,
+          wakeup: true,
+          rescheduleOnReboot: true,
+          params: {'soundPath': soundPath},
+        );
+        print('✅ [AlarmManager] Audio playback scheduled at $adhanTime');
+      }
+
+
+      return null;
+    } catch (e) {
+      print('❌ خطأ في اختبار أذان $prayerName: $e');
+      return e.toString();
+    }
+  }
+
+  // ==========================================
+  // 🎵 إدارة أصوات الأذان وتوليد مفاتيح القنوات
+  // ==========================================
+
+  /// توليد مفتاح قناة فريد بناءً على نوع الصلاة ومعرف الصوت
+  /// يضمن هذا رن الأذان بالصوت الجديد فوراً على أندرويد
+  static String getChannelKey(String type, String? adhanId) {
+    if (adhanId == null || adhanId.isEmpty) {
+      return type == 'fajr' ? 'fajr_adhan_channel_v4' : 'adhan_channel_v4';
+    }
+    // تنظيف المعرف من أي رموز غير مسموحة في الـ key
+    final cleanId = adhanId.replaceAll(RegExp(r'[^a-zA-Z0-9_]'), '_');
+    return '${type}_adhan_channel_$cleanId';
+  }
+
+  /// الحصول على مفاتيح القنوات الحالية (للفجر والعادي) بناءً على الإعدادات
+  static Future<Map<String, String>> getCurrentChannels() async {
+    final prefs = await SharedPreferences.getInstance();
+    final selectedFajr = prefs.getString('selected_adhan_fajr');
+    final selectedNormal = prefs.getString('selected_adhan_normal');
+
+    return {
+      'fajr': getChannelKey('fajr', selectedFajr),
+      'normal': getChannelKey('normal', selectedNormal),
+    };
   }
 
   /// إلغاء جميع المهام بشكل سريع وفعال
@@ -967,20 +1191,20 @@ class AdhanWorkManagerService {
       if (count > 0) {
         print('✅ تم التحقق من الجدولة: $count إشعار أذان مجدول');
 
-        // إرسال إشعار تأكيد للمستخدم
-        await AwesomeNotifications().createNotification(
-          content: NotificationContent(
-            id: 99998,
-            channelKey: 'sabah_athkar_channel',
-            title: '\u200Fتم جدولة الأذان بنجاح',
-            body: '\u200Fتم جدولة $count صلاة للأيام القادمة',
-            icon: 'resource://drawable/ic_stat_logoapp',
-            notificationLayout: NotificationLayout.Default,
-            category: NotificationCategory.Status,
-            autoDismissible: true,
-            color: const Color(0xFF178B74),
-          ),
-        );
+        // إرسال إشعار تأكيد للمستخدم (تم تعطيله بناءً على طلب المستخدم)
+        // await AwesomeNotifications().createNotification(
+        //   content: NotificationContent(
+        //     id: 99998,
+        //     channelKey: 'sabah_athkar_channel',
+        //     title: '\u200Fتم جدولة الأذان بنجاح',
+        //     body: '\u200Fتم جدولة $count صلاة للأيام القادمة',
+        //     icon: 'resource://drawable/ic_stat_logoapp',
+        //     notificationLayout: NotificationLayout.Default,
+        //     category: NotificationCategory.Status,
+        //     autoDismissible: true,
+        //     color: const Color(0xFF178B74),
+        //   ),
+        // );
       } else {
         print('⚠️ تحذير: لم يتم جدولة أي إشعارات أذان!');
         await AdhanDiagnosticHelper.logError('لم يتم جدولة أي إشعارات أذان');
@@ -1076,8 +1300,12 @@ class AdhanWorkManagerService {
   Future<void> setSelectedAdhan(String type, String adhanId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_adhan_$type', adhanId);
-    // تحديث القنوات فوراً عند التغيير
+    
+    // 1. تحديث القنوات فوراً عند التغيير
     await updateNotificationChannels();
+    
+    // 2. إعادة جدولة الصلوات فوراً لتطبيق الصوت الجديد على القنوات الجديدة المجدولة
+    await initialize(forceReschedule: true);
   }
 
   /// الحصول على الأذان المختار
@@ -1091,11 +1319,13 @@ class AdhanWorkManagerService {
     final selectedId = await getSelectedAdhan(type);
     if (selectedId == null) return null;
 
+    // الحصول على مجلد التخزين (نفس المنطق المستخدم في athanModal.dart)
     final appDir = await getApplicationDocumentsDirectory();
     final filePath = '${appDir.path}/adhans/$selectedId.mp3';
     final file = File(filePath);
 
     if (await file.exists()) {
+      // ✅ FIX: awesome_notifications requires file:// URI for customSound
       return 'file://$filePath';
     }
     return null;

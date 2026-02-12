@@ -49,6 +49,10 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
   late bool isDuhaReminderEnabled;
   late bool isSunnahReminderEnabled;
   late bool isBetweenAdhanIqamahEnabled;
+  late bool isMuteActionEnabled;
+  late bool isStopActionEnabled;
+  late bool isAutoSilentEnabled;
+  late int autoSilentDuration;
 
   bool _hasChanges = false;
   bool _isLoading = false;
@@ -86,6 +90,10 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       isDuhaReminderEnabled = _settings.isDuhaReminderEnabled;
       isSunnahReminderEnabled = _settings.isSunnahReminderEnabled;
       isBetweenAdhanIqamahEnabled = _settings.isBetweenAdhanIqamahEnabled;
+      isMuteActionEnabled = _settings.isMuteActionEnabled;
+      isStopActionEnabled = _settings.isStopActionEnabled;
+      isAutoSilentEnabled = _settings.isAutoSilentEnabled;
+      autoSilentDuration = _settings.autoSilentDuration;
 
       _hasChanges = false;
     });
@@ -121,6 +129,10 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       await _settings.setDuhaReminderEnabled(isDuhaReminderEnabled);
       await _settings.setSunnahReminderEnabled(isSunnahReminderEnabled);
       await _settings.setBetweenAdhanIqamahEnabled(isBetweenAdhanIqamahEnabled);
+      await _settings.setMuteActionEnabled(isMuteActionEnabled);
+      await _settings.setStopActionEnabled(isStopActionEnabled);
+      await _settings.setAutoSilentEnabled(isAutoSilentEnabled);
+      await _settings.setAutoSilentDuration(autoSilentDuration);
 
       // Trigger notification rescheduling
       await NotificationManager().rescheduleAll();
@@ -203,7 +215,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                     children: [
                       SizedBox(height: MediaQuery.of(context).padding.top),
 
-                      // 🕋 الأذان
+                      // �🕋 الأذان
                       _buildSectionHeader(context, 'الصلوات'),
                       _buildSettingsCard(
                         context,
@@ -346,6 +358,91 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                                   ),
                                   Text(
                                     '$postReminderMinutes دقيقة',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // ✨ مميزات حصرية
+                      _buildSectionHeader(context, 'مميزات إضافية '),
+                      _buildSettingsCard(
+                        context,
+                        children: [
+                          _buildSwitchTile(
+                            context,
+                            title: 'زر إيقاف الصوت',
+                            subtitle: 'إضافة زر "إيقاف" في التنبيه لكتمة بسرعة',
+                            icon: Icons.volume_off_outlined,
+                            iconColor: Colors.red[400]!,
+                            value: isMuteActionEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isMuteActionEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'وضع الصمت التلقائي',
+                            subtitle: 'تحويل الهاتف للصامت تلقائياً بعد الأذان',
+                            icon: Icons.do_not_disturb_on_outlined,
+                            iconColor: Colors.indigo[600]!,
+                            value: isAutoSilentEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isAutoSilentEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          if (isAutoSilentEnabled) ...[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 8),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'مدة الصمت:',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 12,
+                                      color: isDark
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Slider(
+                                      value: autoSilentDuration.toDouble(),
+                                      min: 5,
+                                      max: 60,
+                                      divisions: 11,
+                                      label: '$autoSilentDuration دقيقة',
+                                      activeColor: Colors.indigo,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          autoSilentDuration = val.toInt();
+                                          _hasChanges = true;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Text(
+                                    '$autoSilentDuration دقيقة',
                                     style: GoogleFonts.cairo(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -637,79 +734,156 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                         ],
                       ),
 
+                      // ✨ مميزات إضافية (Premium)
                       const SizedBox(height: 24),
+                      _buildSectionHeader(context, 'مميزات إضافية'),
+                      _buildSettingsCard(
+                        context,
+                        children: [
+                          _buildSwitchTile(
+                            context,
+                            title: 'زر إيقاف الصوت',
+                            subtitle: 'إظهار زر الإيقاف في التنبيهات',
+                            icon: Icons.notifications_off_outlined,
+                            iconColor: Colors.red[400]!,
+                            value: isStopActionEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isStopActionEnabled = val;
+                                isMuteActionEnabled = val; // Link them together
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          _buildDivider(isDark),
+                          _buildSwitchTile(
+                            context,
+                            title: 'وضع الصمت التلقائي',
+                            subtitle: 'تحويل الهاتف للوضع الصامت بعد الأذان',
+                            icon: Icons.do_not_disturb_on_outlined,
+                            iconColor: Colors.indigo[400]!,
+                            value: isAutoSilentEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isAutoSilentEnabled = val;
+                                _hasChanges = true;
+                              });
+                            },
+                          ),
+                          if (isAutoSilentEnabled) ...[
+                            _buildDivider(isDark),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.timer_outlined,
+                                      size: 20, color: Colors.indigo[400]),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'مدة الصمت: $autoSilentDuration دقيقة',
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 14,
+                                      color: isDark
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Slider(
+                                      value: autoSilentDuration.toDouble(),
+                                      min: 5,
+                                      max: 60,
+                                      divisions: 11,
+                                      activeColor: Colors.indigo[400],
+                                      onChanged: (val) {
+                                        setState(() {
+                                          autoSilentDuration = val.toInt();
+                                          _hasChanges = true;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+
+                      const SizedBox(height: 75),
 
                       // Test Button
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  isDark ? Colors.grey[800] : Colors.grey[200],
-                              foregroundColor:
-                                  isDark ? Colors.white : Colors.black87,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 0,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const NotificationTestView(),
-                                ),
-                              );
-                            },
-                            icon: const Icon(Icons.build_circle_outlined),
-                            label: Text(
-                              'اختبار التنبيهات (للمطورين)',
-                              style: GoogleFonts.cairo(
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(bottom: 16),
+                      //   child: SizedBox(
+                      //     width: double.infinity,
+                      //     child: ElevatedButton.icon(
+                      //       style: ElevatedButton.styleFrom(
+                      //         backgroundColor:
+                      //             isDark ? Colors.grey[800] : Colors.grey[200],
+                      //         foregroundColor:
+                      //             isDark ? Colors.white : Colors.black87,
+                      //         padding: const EdgeInsets.symmetric(vertical: 12),
+                      //         shape: RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(12),
+                      //         ),
+                      //         elevation: 0,
+                      //       ),
+                      //       onPressed: () {
+                      //         Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //             builder: (context) =>
+                      //                 const NotificationTestView(),
+                      //           ),
+                      //         );
+                      //       },
+                      //       icon: const Icon(Icons.build_circle_outlined),
+                      //       label: Text(
+                      //         'اختبار التنبيهات (للمطورين)',
+                      //         style: GoogleFonts.cairo(
+                      //             fontWeight: FontWeight.bold),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
 
                       // Diagnostic Button
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 100),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  isDark ? Colors.teal[900] : Colors.teal[50],
-                              foregroundColor:
-                                  isDark ? Colors.tealAccent : Colors.teal[800],
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 0,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AdhanDiagnosticScreen(),
-                                ),
-                              );
-                            },
-                            icon: const Icon(Icons.medical_services_outlined),
-                            label: Text(
-                              'تشخيص مشاكل الأذان',
-                              style: GoogleFonts.cairo(
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(bottom: 100),
+                      //   child: SizedBox(
+                      //     width: double.infinity,
+                      //     child: ElevatedButton.icon(
+                      //       style: ElevatedButton.styleFrom(
+                      //         backgroundColor:
+                      //             isDark ? Colors.teal[900] : Colors.teal[50],
+                      //         foregroundColor:
+                      //             isDark ? Colors.tealAccent : Colors.teal[800],
+                      //         padding: const EdgeInsets.symmetric(vertical: 12),
+                      //         shape: RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(12),
+                      //         ),
+                      //         elevation: 0,
+                      //       ),
+                      //       onPressed: () {
+                      //         Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //             builder: (context) =>
+                      //                 const AdhanDiagnosticScreen(),
+                      //           ),
+                      //         );
+                      //       },
+                      //       icon: const Icon(Icons.medical_services_outlined),
+                      //       label: Text(
+                      //         'تشخيص مشاكل الأذان',
+                      //         style: GoogleFonts.cairo(
+                      //             fontWeight: FontWeight.bold),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

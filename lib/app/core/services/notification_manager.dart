@@ -26,6 +26,22 @@ class NotificationManager {
 
   final SettingsService _settingsService = SettingsService();
 
+  // 🔊 إيقاف صوت الإشعارات والأذان فوراً
+  static Future<void> stopAdhan() async {
+    print('🛑 Requesting to stop all notifications and adhan audio...');
+    try {
+      // 1. إيقاف الإشعارات (هذا يوقف الصوت إذا كان تابعاً للقناة)
+      await AwesomeNotifications().dismissAllNotifications();
+      
+      // 2. إيقاف أي صوت مشغل عبر AudioManager (إذا كان مفعلاً)
+      // await AudioManager().stop(); 
+      
+      print('✅ All notifications dismissed/stopped.');
+    } catch (e) {
+      print('❌ Error stopping adhan: $e');
+    }
+  }
+
   Future<void> initialize() async {
     await _settingsService.init();
 
@@ -52,12 +68,15 @@ class NotificationManager {
     final fajrPath = await AdhanWorkManagerService().getAdhanPath('fajr');
     final normalPath = await AdhanWorkManagerService().getAdhanPath('normal');
 
+    // جلب مفاتيح القنوات الحالية بناءً على أصوات الأذان المختارة
+    final currentChannels = await AdhanWorkManagerService.getCurrentChannels();
+
     await AwesomeNotifications().initialize(
       Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
       [
-        // 🌅 قناة أذان الفجر
+        // 🌅 قناة أذان الفجر (ديناميكية)
         NotificationChannel(
-          channelKey: 'fajr_adhan_channel_v4',
+          channelKey: currentChannels['fajr']!,
           channelName: 'أذان الفجر',
           channelDescription: 'تشغيل أذان الفجر',
           importance: NotificationImportance.Max,
@@ -73,9 +92,9 @@ class NotificationManager {
           criticalAlerts: true,
         ),
 
-        // 🕌 قناة الأذان العادي
+        // 🕌 قناة الأذان العادي (ديناميكية)
         NotificationChannel(
-          channelKey: 'adhan_channel_v4',
+          channelKey: currentChannels['normal']!,
           channelName: 'أذان الصلاة',
           channelDescription: 'تشغيل صوت الأذان',
           importance: NotificationImportance.Max,
@@ -1391,10 +1410,15 @@ class NotificationManager {
         navigator
             .push(MaterialPageRoute(builder: (_) => const CalendarScreen()));
         break;
-      case '/allazkarlistview':
       case 'allazkarlistview':
         navigator
             .push(MaterialPageRoute(builder: (_) => const Allazkarlistview()));
+        break;
+      case 'STOP_ADHAN':
+      case 'MUTE_ADHAN':
+        // These are DismissActions, but we can explicitly stop audio here if needed.
+        // For now, they will dismiss the notification.
+        print('🛑 Adhan Stopped/Muted by user.');
         break;
 
       // New Routes

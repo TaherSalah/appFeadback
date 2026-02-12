@@ -39,6 +39,10 @@ class SettingsService {
   static const String _kIsSunnahReminderEnabled = 'is_sunnah_reminder_enabled';
   static const String _kIsBetweenAdhanIqamahEnabled =
       'is_between_adhan_iqamah_enabled';
+  static const String _kIsMuteActionEnabled = 'is_mute_action_enabled';
+  static const String _kIsStopActionEnabled = 'is_stop_action_enabled';
+  static const String _kIsAutoSilentEnabled = 'is_auto_silent_enabled';
+  static const String _kAutoSilentDuration = 'auto_silent_duration';
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -218,4 +222,21 @@ class SettingsService {
       _prefs.getBool(_kIsBetweenAdhanIqamahEnabled) ?? true;
   Future<void> setBetweenAdhanIqamahEnabled(bool value) async =>
       await _prefs.setBool(_kIsBetweenAdhanIqamahEnabled, value);
+
+  // --- Premium Features ---
+  bool get isMuteActionEnabled => _prefs.getBool(_kIsMuteActionEnabled) ?? true;
+  Future<void> setMuteActionEnabled(bool value) async =>
+      await _prefs.setBool(_kIsMuteActionEnabled, value);
+
+  bool get isStopActionEnabled => _prefs.getBool(_kIsStopActionEnabled) ?? true;
+  Future<void> setStopActionEnabled(bool value) async =>
+      await _prefs.setBool(_kIsStopActionEnabled, value);
+
+  bool get isAutoSilentEnabled => _prefs.getBool(_kIsAutoSilentEnabled) ?? false;
+  Future<void> setAutoSilentEnabled(bool value) async =>
+      await _prefs.setBool(_kIsAutoSilentEnabled, value);
+
+  int get autoSilentDuration => _prefs.getInt(_kAutoSilentDuration) ?? 20;
+  Future<void> setAutoSilentDuration(int value) async =>
+      await _prefs.setInt(_kAutoSilentDuration, value);
 }
