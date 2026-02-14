@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:muslimdaily/app/features/mainView/widget/IslamicCardWidget.dart';
 import 'package:muslimdaily/app/features/settings/settings_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -69,6 +70,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
   List<Map<String, dynamic>> _banners = [];
   Map<String, String> _featureStatuses = {};
 
+  final GlobalKey _prayerHeaderKey = GlobalKey();
+  final GlobalKey _featuresGridKey = GlobalKey();
+
   @override
   void initState() {
     centralizedCubit = context.read<CentralizedCubit>();
@@ -78,6 +82,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
 
     // 🚀 Check for updates & Daily Quote & News & Banners
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkFirstLaunch();
       final service = SystemControlService();
 
       // 1. Check for updates (Background)
@@ -259,6 +264,21 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     return 'none';
   }
 
+  Future<void> _checkFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool hasShownShowcase = prefs.getBool('showcase_home') ?? false;
+
+    if (!hasShownShowcase) {
+      if (mounted) {
+        ShowCaseWidget.of(context).startShowCase([
+          _prayerHeaderKey,
+          _featuresGridKey,
+        ]);
+        prefs.setBool('showcase_home', true);
+      }
+    }
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -369,24 +389,29 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                   slivers: [
                     // الهيدر الكبير
                     SliverToBoxAdapter(
-                      child: FadeInDown(
-                        duration: const Duration(milliseconds: 600),
-                        child: PrayerHeaderSection(
-                          progressValue: con.progressValue,
-                          hijriDate: con.hijriDate,
-                          gregorian: con.gregorian ?? "",
-                          nextPrayer: con.nextPrayer,
-                          remainingTime: con.remainingTimeText,
-                          location: _locationText ?? 'لم يتم تحديد الموقع',
-                          onSettingsTap: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SettingsView(),
-                              ),
-                            );
-                            _onLocationChanged();
-                          },
+                      child: Showcase(
+                        key: _prayerHeaderKey,
+                        description:
+                            'هنا يمكنك متابعة مواقيت الصلاة والوقت المتبقي للصلاة التالية',
+                        child: FadeInDown(
+                          duration: const Duration(milliseconds: 600),
+                          child: PrayerHeaderSection(
+                            progressValue: con.progressValue,
+                            hijriDate: con.hijriDate,
+                            gregorian: con.gregorian ?? "",
+                            nextPrayer: con.nextPrayer,
+                            remainingTime: con.remainingTimeText,
+                            location: _locationText ?? 'لم يتم تحديد الموقع',
+                            onSettingsTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SettingsView(),
+                                ),
+                              );
+                              _onLocationChanged();
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -550,50 +575,59 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                     SliverPadding(
                       padding: EdgeInsets.symmetric(
                           horizontal: isTab ? 10.w : 5.0, vertical: 8),
-                      sliver: SliverGrid(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: isTab ? 30 : 7,
-                          mainAxisSpacing: isTab ? 20 : 15,
-                          childAspectRatio: isTab ? 1.9 : 1.20,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final item = activeIcons[index];
-                            return BlocBuilder<CentralizedCubit,
-                                CentralizedState>(
-                              builder: (context, state) {
-                                return InkWell(
-                                  onTap: () async {
-                                    bool needsInternet = item["navigate"] ==
-                                            Routes.categoriesRoute ||
-                                        item["navigate"] == "/QuranRadioView";
+                      sliver: SliverToBoxAdapter(
+                        child: Showcase(
+                          key: _featuresGridKey,
+                          description:
+                              'هنا تجد كافة ميزات التطبيق: القرآن الكريم، الأذكار، والمزيد',
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: isTab ? 30 : 7,
+                              mainAxisSpacing: isTab ? 20 : 15,
+                              childAspectRatio: isTab ? 1.9 : 1.20,
+                            ),
+                            itemBuilder: (context, index) {
+                              final item = activeIcons[index];
+                              return BlocBuilder<CentralizedCubit,
+                                  CentralizedState>(
+                                builder: (context, state) {
+                                  return InkWell(
+                                    onTap: () async {
+                                      bool needsInternet = item["navigate"] ==
+                                              Routes.categoriesRoute ||
+                                          item["navigate"] == "/QuranRadioView";
 
-                                    if (((state is ConnectivityState &&
-                                                state.status ==
-                                                    ConnectivityStatus
-                                                        .disconnected) ==
-                                            true) &&
-                                        needsInternet) {
-                                      KHelper.showError(
-                                          message:
-                                              "يرجي التحقق من اتصالك بالانترنت");
-                                    } else {
-                                      _checkAndNavigate(item['navigate']);
-                                    }
-                                  },
-                                  child: FadeInUp(
-                                    duration: const Duration(milliseconds: 600),
-                                    delay: Duration(milliseconds: index * 50),
-                                    child: IslamicCardWidget(
-                                        title: item["title"]!,
-                                        iconPath: item["icon"]!),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          childCount: activeIcons.length,
+                                      if (((state is ConnectivityState &&
+                                                  state.status ==
+                                                      ConnectivityStatus
+                                                          .disconnected) ==
+                                              true) &&
+                                          needsInternet) {
+                                        KHelper.showError(
+                                            message:
+                                                "يرجي التحقق من اتصالك بالانترنت");
+                                      } else {
+                                        _checkAndNavigate(item['navigate']);
+                                      }
+                                    },
+                                    child: FadeInUp(
+                                      duration:
+                                          const Duration(milliseconds: 600),
+                                      delay: Duration(milliseconds: index * 50),
+                                      child: IslamicCardWidget(
+                                          title: item["title"]!,
+                                          iconPath: item["icon"]!),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            itemCount: activeIcons.length,
+                          ),
                         ),
                       ),
                     ),

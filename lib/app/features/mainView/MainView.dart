@@ -12,6 +12,9 @@ import 'package:muslimdaily/app/features/settings/settings_view.dart';
 import 'package:muslimdaily/app/core/widgets/CustomGradientDialog.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 
+import 'package:showcaseview/showcaseview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class MainView extends StatefulWidget {
   const MainView({super.key});
 
@@ -20,12 +23,35 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
+  final GlobalKey _homeKey = GlobalKey();
+  final GlobalKey _radioKey = GlobalKey();
+  final GlobalKey _settingsKey = GlobalKey();
+  final GlobalKey _qiblaKey = GlobalKey();
+
   int _currentIndex = 0;
   final Set<int> _loadedIndices = {0};
 
   @override
   void initState() {
     super.initState();
+    _checkFirstLaunch();
+  }
+
+  Future<void> _checkFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool hasShownShowcase = prefs.getBool('showcase_main_nav') ?? false;
+
+    if (!hasShownShowcase) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([
+          _homeKey,
+          _qiblaKey,
+          _radioKey,
+          _settingsKey,
+        ]);
+        prefs.setBool('showcase_main_nav', true);
+      });
+    }
   }
 
   List<Widget> _buildScreens() {
@@ -53,143 +79,168 @@ class _MainViewState extends State<MainView> {
     final primaryColor = Theme.of(context).primaryColor;
     final navBarColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final selectedItemColor = const Color(0xFFD4AF37); // Gold color
-    final unselectedItemColor = isDark ? Colors.grey.shade600 : Colors.grey.shade600;
+    final unselectedItemColor =
+        isDark ? Colors.grey.shade600 : Colors.grey.shade600;
 
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: WillPopScope(
-        onWillPop: () async {
-          if (_currentIndex != 0) {
-            setState(() {
-              _currentIndex = 0;
-            });
-            return false;
-          } else {
-            final shouldExit = await showDialog<bool>(
-              context: context,
-              builder: (context) {
-                return CustomGradientDialog(
-
-                  title: "الخروج من التطبيق",
-                  message: "هل أنت متأكد أنك تريد الخروج من التطبيق؟",
-                  icon: Icons.power_settings_new_rounded,
-                  gradientColors: isDark
-                      ? [const Color(0xFF991B1B), const Color(0xFF7F1D1D)]
-                      : [const Color(0xFFEF4444), const Color(0xFFDC2626)],
-                  isDark: isDark,
-                  onPrimaryPressed: () => Navigator.of(context).pop(true),
-                  primaryButtonText: "خروج",
-                  primaryButtonColor:
-                      isDark ? const Color(0xFF7F1D1D) : const Color(0xFFDC2626),
-                  onSecondaryPressed: () => Navigator.of(context).pop(false),
-                  secondaryButtonText: "إلغاء",
-                );
-              },
-            );
-            return shouldExit ?? false;
-          }
-        },
-        child: Scaffold(
-          extendBody: true, // Allows content to flow behind the FAB
-          body: IndexedStack(
-            index: _currentIndex,
-            children: (() {
-              final screens = _buildScreens();
-              return List.generate(screens.length, (index) {
-                return _loadedIndices.contains(index)
-                    ? screens[index]
-                    : const SizedBox.shrink();
+      child: ShowCaseWidget(
+        builder: (context) => WillPopScope(
+          onWillPop: () async {
+            if (_currentIndex != 0) {
+              setState(() {
+                _currentIndex = 0;
               });
-            })(),
-          ),
-          floatingActionButton: Container(
-            height: 65,
-            width: 65,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              // gradient: LinearGradient(
-              //   begin: Alignment.topLeft,
-              //   end: Alignment.bottomRight,
-              //   colors: [
-              //     const Color(0xFFD4AF37),
-              //     const Color(0xFFFFD700),
-              //   ],
-              // ),
-              color: Colors.transparent,
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: primaryColor.withOpacity(0.4),
-              //     blurRadius: 8,
-              //     spreadRadius: 2,
-              //     offset: const Offset(0, 4),
-              //   ),
-              // ],
+              return false;
+            } else {
+              final shouldExit = await showDialog<bool>(
+                context: context,
+                builder: (context) {
+                  return CustomGradientDialog(
+                    title: "الخروج من التطبيق",
+                    message: "هل أنت متأكد أنك تريد الخروج من التطبيق؟",
+                    icon: Icons.power_settings_new_rounded,
+                    gradientColors: isDark
+                        ? [const Color(0xFF991B1B), const Color(0xFF7F1D1D)]
+                        : [const Color(0xFFEF4444), const Color(0xFFDC2626)],
+                    isDark: isDark,
+                    onPrimaryPressed: () => Navigator.of(context).pop(true),
+                    primaryButtonText: "خروج",
+                    primaryButtonColor: isDark
+                        ? const Color(0xFF7F1D1D)
+                        : const Color(0xFFDC2626),
+                    onSecondaryPressed: () => Navigator.of(context).pop(false),
+                    secondaryButtonText: "إلغاء",
+                  );
+                },
+              );
+              return shouldExit ?? false;
+            }
+          },
+          child: Scaffold(
+            extendBody: true, // Allows content to flow behind the FAB
+            body: IndexedStack(
+              index: _currentIndex,
+              children: (() {
+                final screens = _buildScreens();
+                return List.generate(screens.length, (index) {
+                  return _loadedIndices.contains(index)
+                      ? screens[index]
+                      : const SizedBox.shrink();
+                });
+              })(),
             ),
-            child: FloatingActionButton(
-              onPressed: () => _onTabTapped(2), // Index 2 is Hadith (Center)
-              backgroundColor: Colors.transparent,
-              elevation: 0,
+            floatingActionButton: Showcase(
+              key: _qiblaKey,
+              description: 'اضغط هنا لتحديد اتجاه القبلة بدقة',
+              child: Container(
+                height: 65,
+                width: 65,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  // gradient: LinearGradient(
+                  //   begin: Alignment.topLeft,
+                  //   end: Alignment.bottomRight,
+                  //   colors: [
+                  //     const Color(0xFFD4AF37),
+                  //     const Color(0xFFFFD700),
+                  //   ],
+                  // ),
+                  color: Colors.transparent,
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: primaryColor.withOpacity(0.4),
+                  //     blurRadius: 8,
+                  //     spreadRadius: 2,
+                  //     offset: const Offset(0, 4),
+                  //   ),
+                  // ],
+                ),
+                child: FloatingActionButton(
+                  onPressed: () =>
+                      _onTabTapped(2), // Index 2 is Hadith (Center)
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
 
-              // child: Icon(
-              //   Icons.compass_calibration_rounded,
-              //   size: 30,
-              //   color: Colors.white,
-              // ),
-              child: Image.asset("assets/images/qibla.png",height: 65,
-                width: 65,fit: BoxFit.fill,)
+                  // child: Icon(
+                  //   Icons.compass_calibration_rounded,
+                  //   size: 30,
+                  //   color: Colors.white,
+                  // ),
+                  child: Image.asset(
+                    "assets/images/qibla.png",
+                    height: 65,
+                    width: 65,
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              ),
             ),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          bottomNavigationBar: BottomAppBar(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            height: 70,
-            color: navBarColor,
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 8,
-            elevation: 10,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                // Right Side (Home & Prayer)
-                _buildNavItem(
-                  index: 0,
-                  icon: Icons.home_filled,
-                  label: 'الرَّئِيسِيَّة',
-                  isSelected: _currentIndex == 0,
-                  color: selectedItemColor,
-                  unselectedColor: unselectedItemColor,
-                ),
-                _buildNavItem(
-                  index: 1,
-                  icon: Icons.calendar_month_outlined,
-                  label: 'التَّقْوِيمُ',
-                  isSelected: _currentIndex == 1,
-                  color: selectedItemColor,
-                  unselectedColor: unselectedItemColor,
-                ),
-                
-                // Spacer for FAB
-                const SizedBox(width: 48),
-        
-                // Left Side (Radio & Settings)
-                _buildNavItem(
-                  index: 3,
-                  icon: Icons.radio_rounded,
-                  label: 'الرَّادِيُو',
-                  isSelected: _currentIndex == 3,
-                  color: selectedItemColor,
-                  unselectedColor: unselectedItemColor,
-                ),
-                _buildNavItem(
-                  index: 4,
-                  icon: Icons.settings_rounded,
-                  label: 'الإِعْدَادَاتُ',
-                  isSelected: _currentIndex == 4,
-                  color: selectedItemColor,
-                  unselectedColor: unselectedItemColor,
-                ),
-              ],
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            bottomNavigationBar: BottomAppBar(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              height: 70,
+              color: navBarColor,
+              shape: const CircularNotchedRectangle(),
+              notchMargin: 8,
+              elevation: 10,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  // Right Side (Home & Prayer)
+                  Showcase(
+                    key: _homeKey,
+                    description: 'العودة للشاشة الرئيسية ومواقيت الصلاة',
+                    child: _buildNavItem(
+                      index: 0,
+                      icon: Icons.home_filled,
+                      label: 'الرَّئِيسِيَّة',
+                      isSelected: _currentIndex == 0,
+                      color: selectedItemColor,
+                      unselectedColor: unselectedItemColor,
+                    ),
+                  ),
+                  _buildNavItem(
+                    index: 1,
+                    icon: Icons.calendar_month_outlined,
+                    label: 'التَّقْوِيمُ',
+                    isSelected: _currentIndex == 1,
+                    color: selectedItemColor,
+                    unselectedColor: unselectedItemColor,
+                  ),
+
+                  // Spacer for FAB
+                  const SizedBox(width: 48),
+
+                  // Left Side (Radio & Settings)
+                  Showcase(
+                    key: _radioKey,
+                    description: 'استمع للقرآن الكريم مباشرة عبر إذاعاتنا',
+                    child: _buildNavItem(
+                      index: 3,
+                      icon: Icons.radio_rounded,
+                      label: 'الرَّادِيُو',
+                      isSelected: _currentIndex == 3,
+                      color: selectedItemColor,
+                      unselectedColor: unselectedItemColor,
+                    ),
+                  ),
+                  Showcase(
+                    key: _settingsKey,
+                    description: 'تخصيص إعدادات التطبيق والتنبيهات',
+                    child: _buildNavItem(
+                      index: 4,
+                      icon: Icons.settings_rounded,
+                      label: 'الإِعْدَادَاتُ',
+                      isSelected: _currentIndex == 4,
+                      color: selectedItemColor,
+                      unselectedColor: unselectedItemColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

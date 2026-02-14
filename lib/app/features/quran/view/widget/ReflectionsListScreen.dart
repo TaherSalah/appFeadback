@@ -42,13 +42,48 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "قائمة الخواطر",
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        // appBar: AppBar(
+        //   title: Text(
+        //     "قائمة الخواطر",
+        //     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+        //   ),
+        //   centerTitle: true,
+        // ),
+        appBar: PreferredSize(
+          preferredSize:
+          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          child: AppBar(
+            leading: Navigator.canPop(context)
+                ? IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              color: isDark ? Colors.white : Colors.black,
+              onPressed: () => Navigator.of(context).pop(),
+            )
+                : null,
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => CreateKhatmahScreen(),
+            //       ),
+            //     ),
+            //     icon: const Icon(Icons.add),
+            //   )
+            // ],
+            centerTitle: true,
+            title: Text(
+                "قائمة الخواطر",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
+            ),
           ),
-          centerTitle: true,
         ),
+
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _reflections.isEmpty

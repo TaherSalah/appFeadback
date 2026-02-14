@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
@@ -46,7 +47,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
   }
 
   Future<void> _loadReflections() async {
-    final reflections = await _reflectionsService.getPageReflections(widget.pageIndex);
+    final reflections =
+        await _reflectionsService.getPageReflections(widget.pageIndex);
     if (mounted) {
       setState(() {
         _reflections = reflections;
@@ -91,15 +93,19 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
           content,
         );
         // Update color separately if needed
-        final reflections = await _reflectionsService.getPageReflections(widget.pageIndex);
+        final reflections =
+            await _reflectionsService.getPageReflections(widget.pageIndex);
         final index = reflections.indexWhere((r) => r.id == reflection.id);
         if (index != -1) {
           reflections[index] = reflections[index].copyWith(color: color);
-          await _reflectionsService.deleteReflection(widget.pageIndex, reflection.id);
-          await _reflectionsService.addReflection(widget.pageIndex, content, color: color);
+          await _reflectionsService.deleteReflection(
+              widget.pageIndex, reflection.id);
+          await _reflectionsService.addReflection(widget.pageIndex, content,
+              color: color);
         }
       } else {
-        await _reflectionsService.addReflection(widget.pageIndex, content, color: color);
+        await _reflectionsService.addReflection(widget.pageIndex, content,
+            color: color);
       }
       _loadReflections();
     }
@@ -112,7 +118,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
     );
 
     if (confirmed == true) {
-      await _reflectionsService.deleteReflection(widget.pageIndex, reflection.id);
+      await _reflectionsService.deleteReflection(
+          widget.pageIndex, reflection.id);
       _loadReflections();
       KHelper.showSuccess(message: 'تم حذف الخاطرة بنجاح');
     }
@@ -139,7 +146,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
       for (var i = 0; i < _reflections.length; i++) {
         final r = _reflections[i];
         buffer.writeln('${i + 1}. ${r.color.name}');
-        buffer.writeln('   التاريخ: ${intl.DateFormat('yyyy/MM/dd HH:mm').format(r.createdAt)}');
+        buffer.writeln(
+            '   التاريخ: ${intl.DateFormat('yyyy/MM/dd HH:mm').format(r.createdAt)}');
         buffer.writeln('   ${r.content}');
         buffer.writeln();
       }
@@ -198,90 +206,100 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
             ),
-              title: _isSearching
-                  ? TextField(
-                      controller: _searchController,
-                      autofocus: true,
-                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
-                      decoration: InputDecoration(
-                        hintText: 'ابحث في الخواطر...',
-                        hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.black54),
-                        border: InputBorder.none,
-                      ),
-                      onChanged: _filterReflections,
-                    )
-
-                  : Text(
-                      'خواطر صفحة $pageNumber',
-                  style: GoogleFonts.cairo(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                      fontSize:
-                      MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+            title: _isSearching
+                ? TextField(
+                    controller: _searchController,
+                    autofocus: true,
+                    style:
+                        TextStyle(color: isDark ? Colors.white : Colors.black),
+                    decoration: InputDecoration(
+                      hintText: 'ابحث في الخواطر...',
+                      hintStyle: TextStyle(
+                          color: isDark ? Colors.white54 : Colors.black54),
+                      border: InputBorder.none,
                     ),
-              centerTitle: true,
-              actions: [
-                if (_isSearching)
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      setState(() {
-                        _isSearching = false;
-                        _searchController.clear();
-                        _filterReflections('');
-                      });
-                    },
+                    onChanged: _filterReflections,
                   )
-                else ...[
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      setState(() => _isSearching = true);
-                    },
-                    tooltip: 'بحث',
+                : Text(
+                    'خواطر صفحة $pageNumber',
+                    style: GoogleFonts.cairo(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.sizeOf(context).width > 600
+                            ? 12.sp
+                            : 18.sp),
                   ),
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert),
-                    onSelected: (value) {
-                      switch (value) {
-                        case 'export':
-                          _exportReflections();
-                          break;
-                        case 'stats':
-                          _showStatistics();
-                          break;
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'export',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.share, size: 20),
-                            const SizedBox(width: 8),
-                            Text('تصدير الخواطر', style: GoogleFonts.cairo(),textAlign: TextAlign.right,),
-                          ],
-                        ),
+            centerTitle: true,
+            actions: [
+              if (_isSearching)
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = false;
+                      _searchController.clear();
+                      _filterReflections('');
+                    });
+                  },
+                )
+              else ...[
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    setState(() => _isSearching = true);
+                  },
+                  tooltip: 'بحث',
+                ),
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert),
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'export':
+                        _exportReflections();
+                        break;
+                      case 'stats':
+                        _showStatistics();
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'export',
+                      child: Row(
+                        children: [
+                          // const SizedBox(width: 8),
+                          Text(
+                            'تصدير الخواطر',
+                            style: GoogleFonts.cairo(),
+                            textAlign: TextAlign.right,
+                          ),
+                          const SizedBox(width: 15),
+
+                          const Icon(Icons.share, size: 20),
+                        ],
                       ),
-                      PopupMenuItem(
-                        value: 'stats',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.bar_chart, size: 20),
-                            const SizedBox(width: 8),
-                            Text('الإحصائيات', style: GoogleFonts.cairo()),
-                          ],
-                        ),
+                    ),
+                    PopupMenuItem(
+                      value: 'stats',
+                      child: Row(
+                        children: [
+                          // const SizedBox(width: 8),
+                          Text('الإحصائيات', style: GoogleFonts.cairo()),
+                          const SizedBox(width: 30),
+
+                          const Icon(Icons.bar_chart, size: 20),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ],
+            ],
             // title: Text(
             //   "احزاب القران الكريم",
             //   style: GoogleFonts.cairo(
@@ -292,10 +310,9 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
             // ),
           ),
         ),
-
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => _showAddEditDialog(),
-          backgroundColor: Colors.teal,
+          backgroundColor: KColors.primaryColor,
           icon: const Icon(Icons.add, color: Colors.white),
           label: Text(
             'إضافة خاطرة',
@@ -317,7 +334,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   children: [
                     _buildColorChip(null, 'الكل', isDark),
-                    ...ReflectionColor.values.map((color) => _buildColorChip(color, color.name, isDark)),
+                    ...ReflectionColor.values.map(
+                        (color) => _buildColorChip(color, color.name, isDark)),
                   ],
                 ),
               ),
@@ -348,10 +366,13 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
           });
         },
         backgroundColor: color?.color.withOpacity(0.2),
-        selectedColor: color?.color.withOpacity(0.4) ?? Colors.teal.withOpacity(0.4),
+        selectedColor:
+            color?.color.withOpacity(0.4) ?? Colors.teal.withOpacity(0.4),
         labelStyle: GoogleFonts.cairo(
           fontSize: 12.sp,
-          color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+          color: isSelected
+              ? Colors.white
+              : (isDark ? Colors.white70 : Colors.black87),
         ),
       ),
     );
@@ -420,7 +441,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                   children: [
                     if (reflection.color != ReflectionColor.none)
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.w, vertical: 4.h),
                         decoration: BoxDecoration(
                           color: reflection.color.color.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(8),
@@ -461,15 +483,18 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                     ),
                     SizedBox(width: 8.w),
                     IconButton(
-                      icon: Icon(Icons.edit_outlined, size: 18.sp, color: Colors.blue),
-                      onPressed: () => _showAddEditDialog(reflection: reflection),
+                      icon: Icon(Icons.edit_outlined,
+                          size: 18.sp, color: Colors.blue),
+                      onPressed: () =>
+                          _showAddEditDialog(reflection: reflection),
                       tooltip: 'تعديل',
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                     ),
                     SizedBox(width: 8.w),
                     IconButton(
-                      icon: Icon(Icons.delete_outline_rounded, size: 18.sp, color: Colors.red),
+                      icon: Icon(Icons.delete_outline_rounded,
+                          size: 18.sp, color: Colors.red),
                       onPressed: () => _deleteReflection(reflection),
                       tooltip: 'حذف',
                       padding: EdgeInsets.zero,
@@ -484,10 +509,13 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
               width: double.infinity,
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[50],
+                color:
+                    isDark ? Colors.white.withOpacity(0.05) : Colors.grey[50],
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[200]!,
+                  color: isDark
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.grey[200]!,
                 ),
               ),
               child: Text(
@@ -499,12 +527,17 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                 ),
               ),
             ),
-            if (reflection.updatedAt.difference(reflection.createdAt).inSeconds > 1)
+            if (reflection.updatedAt
+                    .difference(reflection.createdAt)
+                    .inSeconds >
+                1)
               Padding(
                 padding: EdgeInsets.only(top: 8.h),
                 child: Row(
                   children: [
-                    Icon(Icons.edit, size: 11.sp, color: isDark ? Colors.white38 : Colors.grey[500]),
+                    Icon(Icons.edit,
+                        size: 11.sp,
+                        color: isDark ? Colors.white38 : Colors.grey[500]),
                     SizedBox(width: 4.w),
                     Text(
                       'تم التعديل ${_formatDate(reflection.updatedAt)}',
@@ -615,14 +648,20 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                       controller: _controller,
                       maxLines: 5,
                       autofocus: true,
-                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                      style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black),
                       decoration: InputDecoration(
                         hintText: "اكتب ما في ذهنك هنا...",
-                        hintStyle: TextStyle(color: isDark ? Colors.grey : Colors.grey[600]),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                        hintStyle: TextStyle(
+                            color: isDark ? Colors.grey : Colors.grey[600]),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15)),
                         filled: true,
-                        fillColor: isDark ? Colors.white12 : Colors.white.withOpacity(0.6),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        fillColor: isDark
+                            ? Colors.white12
+                            : Colors.white.withOpacity(0.6),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                       ),
                     ),
                     SizedBox(height: 16.h),
@@ -637,7 +676,8 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                     SizedBox(height: 8.h),
                     GestureDetector(
                       onTap: () async {
-                        final selected = await showModalBottomSheet<ReflectionColor>(
+                        final selected =
+                            await showModalBottomSheet<ReflectionColor>(
                           context: context,
                           backgroundColor: Colors.transparent,
                           builder: (context) => _ColorPickerBottomSheet(
@@ -650,9 +690,12 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                         }
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 12.h),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white12 : Colors.white.withOpacity(0.6),
+                          color: isDark
+                              ? Colors.white12
+                              : Colors.white.withOpacity(0.6),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _selectedColor.color.withOpacity(0.5),
@@ -672,7 +715,8 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: _selectedColor.color.withOpacity(0.4),
+                                        color: _selectedColor.color
+                                            .withOpacity(0.4),
                                         blurRadius: 4,
                                         spreadRadius: 1,
                                       ),
@@ -684,7 +728,8 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                                   _selectedColor.name,
                                   style: GoogleFonts.cairo(
                                     fontSize: 14.sp,
-                                    color: isDark ? Colors.white : Colors.black87,
+                                    color:
+                                        isDark ? Colors.white : Colors.black87,
                                   ),
                                 ),
                               ],
@@ -705,16 +750,21 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                             onPressed: () => Navigator.pop(context),
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(
-                                color: isDark ? Colors.grey.shade400 : Colors.indigo.shade300,
+                                color: isDark
+                                    ? Colors.grey.shade400
+                                    : Colors.indigo.shade300,
                               ),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14)),
                               padding: const EdgeInsets.symmetric(vertical: 11),
                             ),
                             child: Text(
                               'إلغاء',
                               style: TextStyle(
                                 fontSize: 14.sp,
-                                color: isDark ? Colors.white : const Color(0xFF1A237E),
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1A237E),
                               ),
                             ),
                           ),
@@ -735,7 +785,8 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF3F51B5),
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14)),
                               padding: const EdgeInsets.symmetric(vertical: 11),
                             ),
                           ),
@@ -769,7 +820,8 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                     ],
                   ),
                   child: const Center(
-                    child: Icon(Icons.edit_note_rounded, size: 42, color: Colors.white),
+                    child: Icon(Icons.edit_note_rounded,
+                        size: 42, color: Colors.white),
                   ),
                 ),
               ),
@@ -783,40 +835,192 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
 
 // Delete confirmation dialog
 class _DeleteConfirmDialog extends StatelessWidget {
+  const _DeleteConfirmDialog({super.key});
+
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1B263B) : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28.sp),
-            SizedBox(width: 8.w),
-            Text('تأكيد الحذف', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp)),
+            /// Body
+            Container(
+              padding: EdgeInsets.fromLTRB(20.w, 40.h, 20.w, 20.h),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24.r),
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: isDark
+                      ? [const Color(0xFF2B0B0B), const Color(0xFF200505)]
+                      : [const Color(0xFFFFF2F2), const Color(0xFFFFE1E1)],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'تأكيد الحذف',
+                    style: GoogleFonts.cairo(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'هل أنت متأكد من حذف هذه الخاطرة؟\nلا يمكن التراجع عن هذا الإجراء.',
+                    style: GoogleFonts.cairo(
+                      fontSize: 13.sp,
+                      height: 1.4,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 16.h),
+
+                  /// Info Card
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 10.h,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.r),
+                      color: Colors.red.withOpacity(0.06),
+                      border: Border.all(
+                        color: Colors.red.withOpacity(0.5),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.info_outline,
+                            size: 18, color: Colors.red),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: Text(
+                            'سيتم حذف العنصر نهائيًا من القائمة.',
+                            style: GoogleFonts.cairo(
+                              fontSize: 12.5.sp,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20.h),
+
+                  /// Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () =>
+                              Navigator.of(context).pop(false),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: isDark
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade600,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14.r),
+                            ),
+                            padding:
+                            EdgeInsets.symmetric(vertical: 11.h),
+                          ),
+                          child: Text(
+                            'إلغاء',
+                            style: GoogleFonts.cairo(
+                              fontSize: 14.sp,
+                              color: isDark
+                                  ? Colors.white
+                                  : Colors.grey.shade800,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () =>
+                              Navigator.of(context).pop(true),
+                          icon: const Icon(Icons.delete_outline),
+                          label: Text(
+                            'حذف',
+                            style: GoogleFonts.cairo(),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(14.r),
+                            ),
+                            padding:
+                            EdgeInsets.symmetric(vertical: 11.h),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            /// Top Icon
+            Positioned(
+              top: -30.h,
+              left: 0,
+              right: 0,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 60.w,
+                  height: 60.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [Colors.red, Colors.deepOrange],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.red.withOpacity(0.6),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.delete_forever_rounded,
+                      size: 34,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
-        content: Text(
-          'هل أنت متأكد من حذف هذه الخاطرة؟ لا يمكن التراجع عن هذا الإجراء.',
-          style: GoogleFonts.cairo(fontSize: 14.sp),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            child: Text('حذف', style: GoogleFonts.cairo(color: Colors.white)),
-          ),
-        ],
       ),
     );
   }
@@ -847,7 +1051,9 @@ class _StatisticsDialog extends StatelessWidget {
           children: [
             Icon(Icons.bar_chart, color: Colors.teal, size: 28.sp),
             SizedBox(width: 8.w),
-            Text('إحصائيات الخواطر', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp)),
+            Text('إحصائيات الخواطر',
+                style: GoogleFonts.cairo(
+                    fontWeight: FontWeight.bold, fontSize: 16.sp)),
           ],
         ),
         content: Column(
@@ -856,18 +1062,22 @@ class _StatisticsDialog extends StatelessWidget {
           children: [
             Text(
               'صفحة ${pageIndex + 1}',
-              style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold),
+              style: GoogleFonts.cairo(
+                  fontSize: 14.sp, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16.h),
             _buildStatRow('إجمالي الخواطر', totalCount.toString(), Colors.teal),
             SizedBox(height: 12.h),
-            Text('التصنيفات:', style: GoogleFonts.cairo(fontSize: 13.sp, fontWeight: FontWeight.bold)),
+            Text('التصنيفات:',
+                style: GoogleFonts.cairo(
+                    fontSize: 13.sp, fontWeight: FontWeight.bold)),
             SizedBox(height: 8.h),
             ...colorCounts.entries.map((entry) {
               if (entry.value > 0) {
                 return Padding(
                   padding: EdgeInsets.only(bottom: 8.h),
-                  child: _buildStatRow(entry.key.name, entry.value.toString(), entry.key.color),
+                  child: _buildStatRow(
+                      entry.key.name, entry.value.toString(), entry.key.color),
                 );
               }
               return const SizedBox.shrink();
@@ -902,7 +1112,9 @@ class _StatisticsDialog extends StatelessWidget {
             Text(label, style: GoogleFonts.cairo(fontSize: 13.sp)),
           ],
         ),
-        Text(value, style: GoogleFonts.cairo(fontSize: 13.sp, fontWeight: FontWeight.bold)),
+        Text(value,
+            style: GoogleFonts.cairo(
+                fontSize: 13.sp, fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -962,16 +1174,20 @@ class _ColorPickerBottomSheet extends StatelessWidget {
               itemBuilder: (context, index) {
                 final color = ReflectionColor.values[index];
                 final isSelected = color == selectedColor;
-                
+
                 return InkWell(
                   onTap: () => Navigator.pop(context, color),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                    margin:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? color.color.withOpacity(0.15)
-                          : (isDark ? Colors.white.withOpacity(0.05) : Colors.grey[50]),
+                          : (isDark
+                              ? Colors.white.withOpacity(0.05)
+                              : Colors.grey[50]),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected ? color.color : Colors.transparent,
@@ -1010,7 +1226,9 @@ class _ColorPickerBottomSheet extends StatelessWidget {
                             color.name,
                             style: GoogleFonts.cairo(
                               fontSize: 15.sp,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                               color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),

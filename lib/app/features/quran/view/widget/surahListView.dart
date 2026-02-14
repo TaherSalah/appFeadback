@@ -9,9 +9,9 @@ import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart' as surahModel;
 import 'package:quran_library/quran.dart';
 
+import 'package:showcaseview/showcaseview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import '../../../messaView/azkar_massa.dart';
-import '../../pdf/view/quran_pdf_screen.dart';
 
 class SurahListScreen extends StatefulWidget {
   const SurahListScreen({super.key});
@@ -21,6 +21,10 @@ class SurahListScreen extends StatefulWidget {
 }
 
 class _SurahListScreenState extends State<SurahListScreen> {
+  final GlobalKey _tabKey = GlobalKey();
+  final GlobalKey _searchKey = GlobalKey();
+  final GlobalKey _voiceSearchKey = GlobalKey();
+
   final List<String> surahs = QuranLibrary.getAllSurahs();
   final List<BookmarkModel> bookmark = QuranLibrary().usedBookmarks;
 
@@ -219,11 +223,28 @@ class _SurahListScreenState extends State<SurahListScreen> {
     });
   }
 
+  Future<void> _checkFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool hasShownShowcase = prefs.getBool('showcase_quran_list') ?? false;
+
+    if (!hasShownShowcase) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([
+          _tabKey,
+          _searchKey,
+          _voiceSearchKey,
+        ]);
+        prefs.setBool('showcase_quran_list', true);
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     loadSurahInfo();
     _initSpeech();
+    _checkFirstLaunch();
   }
 
   @override
@@ -237,43 +258,53 @@ class _SurahListScreenState extends State<SurahListScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor:
-                isDark ? const Color(0xff05060a) : const Color(0xfff4f6f8),
-            leading: CupertinoNavigationBarBackButton(
-              color: isDark ? Colors.white : Colors.black,
-            ),
-            centerTitle: true,
-            title: Text(
-              "فِهْرِسُ القُرْآنِ الكَرِيم",
-              style: GoogleFonts.cairo(
-                  color: Colors.green,
-                  fontWeight: FontWeight.w900,
-                  fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp),
-            ),
-            bottom: TabBar(
-              indicatorColor: KColors.primaryColor,
-              indicatorWeight: 3,
-              indicatorSize: TabBarIndicatorSize.label,
-              labelColor: KColors.primaryColor,
-              unselectedLabelColor: isDark ? Colors.white38 : Colors.black38,
-              labelStyle: GoogleFonts.cairo(
-                fontWeight: FontWeight.w900,
-                fontSize: 16.sp,
+      child: ShowCaseWidget(
+        builder: (context) => DefaultTabController(
+          length: 3,
+          child: Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor:
+                  isDark ? const Color(0xff05060a) : const Color(0xfff4f6f8),
+              leading: CupertinoNavigationBarBackButton(
+                color: isDark ? Colors.white : Colors.black,
               ),
-              unselectedLabelStyle: GoogleFonts.cairo(
-                fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
+              centerTitle: true,
+              title: Text(
+                "فِهْرِسُ القُرْآنِ الكَرِيم",
+                style: GoogleFonts.cairo(
+                    color: Colors.green,
+                    fontWeight: FontWeight.w900,
+                    fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp),
               ),
-              tabs: const [
-                Tab(text: "سورة"),
-                Tab(text: "جزء"),
-                Tab(text: "أحزاب"),
-              ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(48),
+                child: Showcase(
+                  key: _tabKey,
+                  description: 'يمكنك التنقل بين فهرس السور، الأجزاء، والأحزاب',
+                  child: TabBar(
+                    indicatorColor: KColors.primaryColor,
+                    indicatorWeight: 3,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    labelColor: KColors.primaryColor,
+                    unselectedLabelColor:
+                        isDark ? Colors.white38 : Colors.black38,
+                    labelStyle: GoogleFonts.cairo(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 16.sp,
+                    ),
+                    unselectedLabelStyle: GoogleFonts.cairo(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                    ),
+                    tabs: const [
+                      Tab(text: "سورة"),
+                      Tab(text: "جزء"),
+                      Tab(text: "أحزاب"),
+                    ],
+                  ),
+                ),
+              ),
             ),
             // actions: [
             //   IconButton(
@@ -291,108 +322,121 @@ class _SurahListScreenState extends State<SurahListScreen> {
             //   ),
             //   const SizedBox(width: 8),
             // ],
-          ),
-          body: isLoading == true
-              ? Center(
-                  child: KLoading.progressIOSIndicator(
-                      radius: 15.r, context: context),
-                )
-              : Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: isDark
-                          ? const [
-                              Color(0xff05060a),
-                              Color(0xff0d1514),
-                            ]
-                          : const [
-                              Color(0xfff4f6f8),
-                              Color(0xfffdfcf9),
-                            ],
+            body: isLoading == true
+                ? Center(
+                    child: KLoading.progressIOSIndicator(
+                        radius: 15.r, context: context),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: isDark
+                            ? const [
+                                Color(0xff05060a),
+                                Color(0xff0d1514),
+                              ]
+                            : const [
+                                Color(0xfff4f6f8),
+                                Color(0xfffdfcf9),
+                              ],
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Showcase(
+                                  key: _searchKey,
+                                  description:
+                                      'ابحث عن السورة بسرعة بالاسم أو الرقم',
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.05),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                child: CupertinoSearchTextField(
-                                  controller: _searchController,
-                                  onChanged: _filterAll,
-                                  placeholder: "بحث باسم السورة او الرقم...",
-                                  backgroundColor: isDark
-                                      ? Colors.white.withOpacity(0.05)
-                                      : Colors.white,
-                                  style: TextStyle(
-                                      color:
-                                          isDark ? Colors.white : Colors.black),
+                                    child: CupertinoSearchTextField(
+                                      controller: _searchController,
+                                      onChanged: _filterAll,
+                                      placeholder:
+                                          "بحث باسم السورة او الرقم...",
+                                      backgroundColor: isDark
+                                          ? Colors.white.withOpacity(0.05)
+                                          : Colors.white,
+                                      style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            GestureDetector(
-                              onTap: _listen,
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: _isListening
-                                      ? Colors.red.withOpacity(0.1)
-                                      : Colors.green.withOpacity(0.1),
-                                  border: Border.all(
+                              const SizedBox(width: 12),
+                              Showcase(
+                                key: _voiceSearchKey,
+                                description:
+                                    'تحدث وسأقوم بالبحث لك عن السورة تلقائياً',
+                                child: GestureDetector(
+                                  onTap: _listen,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _isListening
+                                          ? Colors.red.withOpacity(0.1)
+                                          : Colors.green.withOpacity(0.1),
+                                      border: Border.all(
+                                          color: _isListening
+                                              ? Colors.red
+                                              : Colors.green,
+                                          width: 1.5),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: (_isListening
+                                                  ? Colors.red
+                                                  : Colors.green)
+                                              .withOpacity(0.15),
+                                          blurRadius: 8,
+                                          spreadRadius: 1,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      _isListening ? Icons.mic : Icons.mic_none,
                                       color: _isListening
                                           ? Colors.red
                                           : Colors.green,
-                                      width: 1.5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: (_isListening
-                                              ? Colors.red
-                                              : Colors.green)
-                                          .withOpacity(0.15),
-                                      blurRadius: 8,
-                                      spreadRadius: 1,
+                                      size: 22,
                                     ),
-                                  ],
-                                ),
-                                child: Icon(
-                                  _isListening ? Icons.mic : Icons.mic_none,
-                                  color:
-                                      _isListening ? Colors.red : Colors.green,
-                                  size: 22,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            _buildSurahTab(),
-                            _buildJozTab(),
-                            _buildHizbTab(),
-                          ],
+                        Expanded(
+                          child: TabBarView(
+                            children: [
+                              _buildSurahTab(),
+                              _buildJozTab(),
+                              _buildHizbTab(),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+          ),
         ),
       ),
     );

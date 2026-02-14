@@ -1,3 +1,4 @@
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -76,12 +77,15 @@ void alarmCallback(int id) async {
       actionButtons: (prefs.getBool('is_stop_action_enabled') ?? true)
           ? [
               NotificationActionButton(
+                color: KColors.primaryColor,
+
                 key: 'STOP_ADHAN',
                 label: 'إيقاف الأذان',
                 actionType: ActionType.DismissAction,
                 isDangerousOption: true,
               ),
               NotificationActionButton(
+                color: Colors.red,
                 key: 'MUTE_ADHAN',
                 label: 'كتم الصوت',
                 actionType: ActionType.DismissAction,

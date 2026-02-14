@@ -3,6 +3,7 @@ import 'package:workmanager/workmanager.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:adhan/adhan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/utils/style/k_color.dart';
 import 'adhan_callback.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
@@ -578,6 +579,7 @@ class AdhanWorkManagerService {
             ),
             actionButtons: [
               NotificationActionButton(
+                color: KColors.primaryColor,
                 key: 'STOP_ADHAN',
                 label: 'إيقاف الأذان',
                 actionType: ActionType.DismissAction,
@@ -918,12 +920,14 @@ class AdhanWorkManagerService {
         actionButtons: [
           NotificationActionButton(
             key: 'STOP_ADHAN',
+            color: KColors.primaryColor,
             label: 'إيقاف الأذان',
             actionType: ActionType.DismissAction,
             isDangerousOption: true,
           ),
           NotificationActionButton(
             key: 'MUTE_ADHAN',
+            color: Colors.red,
             label: 'كتم الصوت',
             actionType: ActionType.DismissAction,
           ),
@@ -1024,12 +1028,14 @@ class AdhanWorkManagerService {
         actionButtons: [
           NotificationActionButton(
             key: 'STOP_ADHAN',
+            color: KColors.primaryColor,
             label: 'إيقاف الأذان',
             actionType: ActionType.DismissAction,
             isDangerousOption: true,
           ),
           NotificationActionButton(
             key: 'MUTE_ADHAN',
+            color: Colors.red,
             label: 'كتم الصوت',
             actionType: ActionType.DismissAction,
           ),

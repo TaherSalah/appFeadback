@@ -311,6 +311,7 @@ class NotificationTestView extends StatelessWidget {
                 ? [
                     NotificationActionButton(
                       key: 'STOP_ADHAN',
+                      color: KColors.primaryColor,
                       label: 'إيقاف الأذان',
                       actionType: ActionType.DismissAction,
                       isDangerousOption: true,
@@ -318,6 +319,7 @@ class NotificationTestView extends StatelessWidget {
                     NotificationActionButton(
                       key: 'MUTE_ADHAN',
                       label: 'كتم الصوت',
+                      color: Colors.red,
                       actionType: ActionType.DismissAction,
                     ),
                   ]
