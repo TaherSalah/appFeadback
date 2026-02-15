@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/QiblaView/QiblaDirection.dart';
-import 'package:muslimdaily/app/features/azanView/azanView.dart';
 import 'package:muslimdaily/app/features/calendar/presentation/screens/calendar_screen.dart';
-import 'package:muslimdaily/app/features/hadith_books/presentation/nine_books_screen.dart';
 import 'package:muslimdaily/app/features/mainView/widget/HomeScreenBuilder.dart';
 import 'package:muslimdaily/app/features/radio/QuranRadioView.dart';
 import 'package:muslimdaily/app/features/settings/settings_view.dart';

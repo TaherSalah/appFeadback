@@ -27,6 +27,9 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'app/features/calendar/data/models/calendar_event_model.dart';
 import 'app/features/quran/pdf/data/pdf_book_model.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -48,7 +51,7 @@ Future<void> main() async {
   try {
     await _initAppServices();
   } catch (e, s) {
-    print('❌ خطأ في تهيئة التطبيق: $e\n$s');
+    logger.e('❌ خطأ في تهيئة التطبيق: $e', error: e, stackTrace: s);
   }
 
   runApp(
@@ -162,7 +165,8 @@ Future<void> _initAppServices() async {
   try {
     await AndroidAlarmManager.initialize();
   } catch (e) {
-    debugPrint('⚠️ AndroidAlarmManager init failed (might be not needed on iOS): $e');
+    debugPrint(
+        '⚠️ AndroidAlarmManager init failed (might be not needed on iOS): $e');
   }
 
   // 🚀 Log App Launch Analytics

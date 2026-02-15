@@ -18,6 +18,7 @@ import 'package:muslimdaily/app/features/calendar/presentation/screens/calendar_
 import 'package:muslimdaily/app/features/mainView/widget/AllAzkarListView.dart';
 import 'package:muslimdaily/app/features/notifications/view/notification_dialog_screen.dart';
 import 'package:hijri/hijri_calendar.dart' as hijri;
+import 'package:muslimdaily/main.dart';
 
 class NotificationManager {
   static final NotificationManager _instance = NotificationManager._internal();
@@ -534,7 +535,7 @@ class NotificationManager {
   // ==========================================
   Future<void> scheduleHadithSeries() async {
     try {
-      print("📅 جاري جدولة سلسلة الأحاديث لـ 30 يوماً...");
+      logger.i("📅 جاري جدولة سلسلة الأحاديث لـ 30 يوماً...");
 
       // 1️⃣ إلغاء الجدولة القديمة للأحاديث
       await AwesomeNotifications()
@@ -573,9 +574,9 @@ class NotificationManager {
           ),
         );
       }
-      print("✅ تم جدولة الأحاديث بنجاح");
+      logger.i("✅ تم جدولة الأحاديث بنجاح");
     } catch (e) {
-      print("❌ خطأ في جدولة الأحاديث: $e");
+      logger.e("❌ خطأ في جدولة الأحاديث: $e");
     }
   }
 
@@ -699,7 +700,7 @@ class NotificationManager {
         .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
 
     if (!_settingsService.isFajrAlarmEnabled) {
-      print("🔕 Advanced Fajr Alarm is DISABLED.");
+      logger.e("🔕 Advanced Fajr Alarm is DISABLED.");
       return;
     }
 
@@ -759,7 +760,7 @@ class NotificationManager {
             allowWhileIdle: true,
           ),
         );
-        print(
+        logger.i(
             "✅ Scheduled Alarm ID: $uniqueId for Day: $day at $finalHour:$finalMinute");
       }
     }
@@ -931,9 +932,9 @@ class NotificationManager {
           }
         }
       }
-      print('✅ Scheduled $count White Days reminders.');
+      logger.i('✅ Scheduled $count White Days reminders.');
     } catch (e) {
-      print('❌ Error scheduling White Days reminders: $e');
+      logger.e('❌ Error scheduling White Days reminders: $e');
     }
   }
 
@@ -1021,9 +1022,10 @@ class NotificationManager {
           count++;
         }
       }
-      print('✅ Scheduled $count religious occasion reminders.');
+      logger.i('✅ Scheduled $count religious occasion reminders.');
+
     } catch (e) {
-      print('❌ Error scheduling religious occasions: $e');
+      logger.e('❌ Error scheduling religious occasions: $e');
     }
   }
 
@@ -1210,9 +1212,9 @@ class NotificationManager {
         ),
         schedule: schedule,
       );
-      print('✅ تم جدولة تذكير الورد ($wirdName) الساعة $timeStr - $frequency');
+      logger.i('✅ تم جدولة تذكير الورد ($wirdName) الساعة $timeStr - $frequency');
     } catch (e) {
-      print('❌ خطأ في جدولة تذكير الورد: $e');
+      logger.e('❌ خطأ في جدولة تذكير الورد: $e');
     }
   }
 
@@ -1248,9 +1250,9 @@ class NotificationManager {
           allowWhileIdle: true,
         ),
       );
-      print('✅ تم جدولة تذكير التقويم: $title في $scheduledDate');
+      logger.i('✅ تم جدولة تذكير التقويم: $title في $scheduledDate');
     } catch (e) {
-      print('❌ خطأ في جدولة تذكير التقويم: $e');
+      logger.e('❌ خطأ في جدولة تذكير التقويم: $e');
     }
   }
 
@@ -1291,18 +1293,18 @@ class NotificationManager {
           allowWhileIdle: true,
         ),
       );
-      print('✅ تم جدولة تذكير الختمة للورد $index بعد ساعتين');
+      logger.i('✅ تم جدولة تذكير الختمة للورد $index بعد ساعتين');
     } catch (e) {
-      print('❌ خطأ في جدولة تذكير الختمة: $e');
+      logger.e('❌ خطأ في جدولة تذكير الختمة: $e');
     }
   }
 
   Future<void> cancelCommunityKhatmahReminder(int index) async {
     try {
       await AwesomeNotifications().cancel(10000 + index);
-      print('✅ تم إلغاء تذكير الختمة للورد $index');
+      logger.i('✅ تم إلغاء تذكير الختمة للورد $index');
     } catch (e) {
-      print('❌ خطأ في إلغاء تذكير الختمة: $e');
+      logger.e('❌ خطأ في إلغاء تذكير الختمة: $e');
     }
   }
 
@@ -1318,7 +1320,7 @@ class NotificationManager {
   @pragma('vm:entry-point')
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
-    print('📱 Notification Displayed: ${receivedNotification.id}');
+    logger.i('📱 Notification Displayed: ${receivedNotification.id}');
 
     // Check if this is an Adhan notification with route
     final route = receivedNotification.payload?['route'];
@@ -1351,7 +1353,7 @@ class NotificationManager {
   @pragma('vm:entry-point')
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
-    print('🎯 Notification Clicked: ${receivedAction.payload}');
+    logger.i('🎯 Notification Clicked: ${receivedAction.payload}');
 
     final navigator = CentralizedCubit.navigatorKey.currentState;
     if (navigator == null) return;
@@ -1418,7 +1420,7 @@ class NotificationManager {
       case 'MUTE_ADHAN':
         // These are DismissActions, but we can explicitly stop audio here if needed.
         // For now, they will dismiss the notification.
-        print('🛑 Adhan Stopped/Muted by user.');
+      logger.i('🛑 Adhan Stopped/Muted by user.');
         break;
 
       // New Routes
@@ -1561,7 +1563,7 @@ class NotificationManager {
       );
       // print('✅ Basic system test scheduled.');
     } catch (e) {
-      print('❌ Error scheduling basic test: $e');
+      logger.e('❌ Error scheduling basic test: $e');
     }
   }
 }

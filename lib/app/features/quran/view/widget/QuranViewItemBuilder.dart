@@ -19,7 +19,6 @@ import 'package:muslimdaily/app/features/quran/data/reading_analytics_service.da
 import 'package:muslimdaily/app/features/quran/data/reflections_service.dart';
 import 'package:muslimdaily/app/features/quran/view/ReadingAnalyticsScreen.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/page_reflections_screen.dart';
-import 'package:muslimdaily/app/features/quran/pdf/view/pdf_list_screen.dart';
 
 enum _QuranMenuAction {
   audio,

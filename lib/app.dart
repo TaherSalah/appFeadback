@@ -11,6 +11,7 @@ import 'app/core/utils/constent/router.dart';
 import 'app/core/utils/style/k_color.dart';
 import 'app/features/categories/data/repo/categories_repo_immp.dart';
 import 'app/features/categories/view/controller/categories_bloc.dart';
+import 'main.dart';
 
 // import 'main.dart';
 
@@ -70,7 +71,7 @@ class _MashkahAppState extends State<MashkahApp> {
         );
       }
     } catch (e) {
-      print("❌ Error checking launch notification: $e");
+      logger.e("❌ Error checking launch notification: $e");
     }
   }
 

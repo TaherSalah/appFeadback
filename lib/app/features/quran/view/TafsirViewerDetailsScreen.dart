@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
-import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:quran_library/quran.dart';
 

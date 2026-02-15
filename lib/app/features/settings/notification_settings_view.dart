@@ -7,10 +7,8 @@ import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
-import 'package:muslimdaily/app/features/settings/view/notification_test_view.dart';
-import 'package:muslimdaily/app/features/azanView/view/AdhanDiagnosticScreen.dart';
+
 
 class NotificationSettingsView extends StatefulWidget {
   const NotificationSettingsView({super.key});

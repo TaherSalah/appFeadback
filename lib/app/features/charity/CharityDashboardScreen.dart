@@ -5,17 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/app_theme_colors.dart';
 import '../../core/utils/style/responsive_util.dart';
 import '../../core/widgets/KLoading.dart';
-import '../../core/widgets/kButtons.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 import 'AddCharityScreen.dart';
 import 'CharityHistoryScreen.dart';
-import 'CharityStoriesScreen.dart';
-import 'CharityPlatformsScreen.dart';
+
 import 'RecurringCharityScreen.dart';
 import 'MonthlyGoalScreen.dart';
 import 'ReminderSettingsScreen.dart';

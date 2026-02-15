@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../main.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/widgets/KLoading.dart';
 
@@ -77,8 +78,8 @@ class UpdateService {
       final response = await _dio.get(UPDATE_API_URL);
 
       if (response.statusCode == 200) {
-        print("response.statusCode ${response.statusCode}");
-        print("response.statusCode ${response.data}");
+        logger.e("response.statusCode ${response.statusCode}");
+        logger.e("response.statusCode ${response.data}");
         // لو response.data String → حوله ل JSON
         final Map<String, dynamic> jsonData =
             response.data is String ? jsonDecode(response.data) : response.data;
@@ -86,7 +87,7 @@ class UpdateService {
         return AppUpdateModel.fromJson(jsonData);
       }
     } catch (e) {
-      print('❌ Error checking for updates: $e');
+      logger.e('❌ Error checking for updates: $e');
     }
     return null;
   }

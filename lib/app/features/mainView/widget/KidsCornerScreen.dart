@@ -11,11 +11,8 @@ import '../../../core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'DailyChallengesScreen.dart';
 import 'GamesMenuScreen.dart';
-import 'HadithsForKidsScreen.dart';
-import 'DailyDuasScreen.dart';
 import 'package:muslimdaily/app/features/kids/view/KidsStoriesScreen.dart';
 import 'package:animate_do/animate_do.dart';
-import 'VirtualShopScreen.dart';
 import 'KidsStatisticsScreen.dart';
 import '../../../core/utils/style/k_dialog_helper.dart';
 

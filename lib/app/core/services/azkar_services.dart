@@ -3,6 +3,7 @@
 
 
 import 'package:dio/dio.dart';
+import 'package:muslimdaily/main.dart';
 
 import '../model/all_azkar_modal.dart';
 import '../model/azkar_massa_model.dart';
@@ -20,7 +21,7 @@ class AzkarRemoteServices {
       }
       throw Exception('Error To Catch azkkkar data');
     } catch (error) {
-      print('errrrrrrrror$error');
+      logger.e(error);
     }
   }
   fetchAzkar() async {
@@ -33,7 +34,7 @@ class AzkarRemoteServices {
       }
       throw Exception('Error To Catch azkkkar data');
     } catch (error) {
-      print('errrrrrrrror$error');
+      logger.e(error);
     }
   }
 }

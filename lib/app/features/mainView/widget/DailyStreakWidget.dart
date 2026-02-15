@@ -14,7 +14,6 @@ class DailyStreakWidget extends StatefulWidget {
 
 class _DailyStreakWidgetState extends State<DailyStreakWidget> {
   int _streakDays = 0;
-  String _lastVisitDate = '';
 
   @override
   void initState() {
@@ -51,7 +50,6 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
 
       setState(() {
         _streakDays = currentStreak;
-        _lastVisitDate = today;
       });
 
       // Show reward if milestone reached
@@ -61,7 +59,6 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
     } else {
       setState(() {
         _streakDays = prefs.getInt('streak_days') ?? 0;
-        _lastVisitDate = lastVisit;
       });
     }
   }

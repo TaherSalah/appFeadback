@@ -1,6 +1,4 @@
-import 'package:muslimdaily/app/core/model/all_azkar_modal.dart';
-import 'package:muslimdaily/app/core/model/azkar_massa_model.dart';
-import 'package:muslimdaily/app/core/services/azkar_services.dart';
+
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';

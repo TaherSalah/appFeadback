@@ -2,6 +2,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import '../../../main.dart';
+
 class ContentService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
@@ -115,7 +117,8 @@ class ContentService {
       _cachedCharityStories = data;
       return data;
     } catch (e) {
-      print('Failed to fetch charity stories: $e');
+      logger.e('Failed to fetch charity stories: $e');
+
       final cached = _charityStoriesBox.get('stories');
       if (cached != null) return _castToList(cached);
       return [];

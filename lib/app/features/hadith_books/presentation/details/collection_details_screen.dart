@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
 import '../../../../core/utils/constent/lists.dart';
-import '../../../../core/utils/style/responsive_util.dart';
 import '../../controllers/books_controller.dart';
 import '../../controllers/extensions/books_getters_extension.dart';
 import 'widgets/about_book.dart';

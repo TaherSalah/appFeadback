@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:geolocator/geolocator.dart';
-import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
@@ -128,7 +127,6 @@ void showThemeSheet(
 
   // بيانات الموقع داخل الـ BottomSheet
   Map<String, dynamic> countries = {};
-  Map<String, dynamic> cities = {};
   String? selectedCountry;
   String? selectedCity;
   bool isLocationLoading = true;
@@ -197,7 +195,6 @@ void showThemeSheet(
       setState(() {
         countries = loadedCountries;
         selectedCountry = country;
-        cities = loadedCities;
         selectedCity = city;
         allowLocationUsage = savedAllow ?? true;
         isLocationLoading = false;
@@ -277,8 +274,6 @@ void showThemeSheet(
 
       setState(() {
         selectedCountry = displayCountry;
-        cities = (countries[bestCountry!] as Map<String, dynamic>)
-          ..removeWhere((k, v) => v == null);
         selectedCity = displayCity;
       });
       await saveLocation(true);

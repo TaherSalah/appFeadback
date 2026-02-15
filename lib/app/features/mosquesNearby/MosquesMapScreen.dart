@@ -10,12 +10,9 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:animate_do/animate_do.dart';
-
 import '../../core/widgets/KLoading.dart';
 import 'models/MosqueModel.dart';
 import 'services/MosqueService.dart';
-import 'services/MosqueService.dart';
-import 'MosqueAdminPanel.dart';
 import '../../core/widgets/CustomGradientDialog.dart';
 
 class MosquesMapScreen extends StatefulWidget {
@@ -41,7 +38,6 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
   LatLng? _pickedLocation;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  String? _currentDeviceId;
 
   @override
   void initState() {
@@ -51,7 +47,6 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
   }
 
   Future<void> _initDeviceId() async {
-    _currentDeviceId = await _mosqueService.getDeviceId();
   }
 
   Future<void> _initLocation() async {

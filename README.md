@@ -2,6 +2,8 @@
 
 <div align="center">
 
+**flutter build apk --release --split-per-abi**
+
 ![Logo](assets/images/logoApp.png)
 
 **تطبيق شامل للمسلم في حياته اليومية**

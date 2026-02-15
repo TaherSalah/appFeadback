@@ -270,7 +270,7 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                     pw.Column(
                       children: [
                         pw.Text('شهادة شكر وتقدير', style: pw.TextStyle(font: fontBold, fontSize: 32, color: PdfColors.amber700), textDirection: pw.TextDirection.rtl),
-                        pw.Text('Certificate of Appreciation', style: pw.TextStyle(fontSize: 10, color: PdfColors.grey)),
+                        pw.Text('Certificate of Appreciation', style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey)),
                       ],
                     ),
                     pw.Column(

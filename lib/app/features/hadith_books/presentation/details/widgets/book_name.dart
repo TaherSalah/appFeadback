@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/utils/style/responsive_util.dart';
 import '../../../data/models/collection_model.dart';

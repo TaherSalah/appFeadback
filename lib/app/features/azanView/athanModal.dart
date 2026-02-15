@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
@@ -344,7 +343,6 @@ class _AdhanLibraryScreenState extends State<AdhanLibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(

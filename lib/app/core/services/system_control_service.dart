@@ -7,6 +7,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../main.dart';
+
 class SystemControlService {
   static final SystemControlService _instance =
       SystemControlService._internal();
@@ -74,7 +76,7 @@ class SystemControlService {
         await prefs.setString(cacheKey, jsonEncode(statuses));
       }
     } catch (e) {
-      print('Error fetching feature statuses: $e');
+      logger.e('Error fetching feature statuses: $e');
     }
   }
 
@@ -104,7 +106,7 @@ class SystemControlService {
         await prefs.setString(_quoteCacheKey, quote);
       }
     } catch (e) {
-      print('Error fetching quote: $e');
+      logger.e('Error fetching quote: $e');
     }
   }
 
@@ -149,7 +151,7 @@ class SystemControlService {
         await prefs.setBool(cacheKey, isVisible);
       }
     } catch (e) {
-      print('Error fetching quote visibility: $e');
+      logger.e('Error fetching quote visibility: $e');
     }
   }
 
@@ -208,7 +210,7 @@ class SystemControlService {
         }
       }
     } catch (e) {
-      print('Error fetching news: $e');
+      logger.e('Error fetching news: $e');
     }
   }
 
@@ -250,7 +252,7 @@ class SystemControlService {
         await prefs.setString(cacheKey, jsonEncode(response));
       }
     } catch (e) {
-      print('Error fetching banners: $e');
+      logger.e('Error fetching banners: $e');
     }
   }
 
@@ -285,7 +287,7 @@ class SystemControlService {
         'device_info': info,
       });
     } catch (e) {
-      print('Failed to log error to Supabase: $e');
+      logger.e('Failed to log error to Supabase: $e');
     }
   }
 
@@ -309,7 +311,7 @@ class SystemControlService {
         }
       }
     } catch (e) {
-      print('Error fetching broadcast: $e');
+      logger.e('Error fetching broadcast: $e');
     }
     return null;
   }
@@ -334,7 +336,7 @@ class SystemControlService {
         return null;
       }
     } catch (e) {
-      print('Error fetching theme color: $e');
+      logger.e('Error fetching theme color: $e');
     }
     return prefs.getString(cacheKey);
   }
@@ -360,7 +362,7 @@ class SystemControlService {
         return links;
       }
     } catch (e) {
-      print('Error fetching support links: $e');
+      logger.e('Error fetching support links: $e');
     }
 
     final cached = prefs.getString(cacheKey);
@@ -417,7 +419,7 @@ class SystemControlService {
         await prefs.setString(cacheKey, jsonEncode(offsets));
       }
     } catch (e) {
-      print('Error fetching global offsets: $e');
+      logger.e('Error fetching global offsets: $e');
     }
   }
 
@@ -451,7 +453,7 @@ class SystemControlService {
         return config;
       }
     } catch (e) {
-      print('Error fetching social banner config: $e');
+      logger.e('Error fetching social banner config: $e');
     }
 
     // Fallback to cache
@@ -482,7 +484,7 @@ class SystemControlService {
   Future<void> activateSilentMode(int durationMinutes) async {
     if (!Platform.isAndroid) return;
     try {
-      print('🔇 Activating Auto-Silent Mode for $durationMinutes minutes');
+      logger.i('🔇 Activating Auto-Silent Mode for $durationMinutes minutes');
       await _setRingerMode('vibrate'); // Or 'silent'
 
       // Schedule revert
@@ -495,7 +497,7 @@ class SystemControlService {
         wakeup: true,
       );
     } catch (e) {
-      print('❌ Fail to activate silent mode: $e');
+      logger.e('❌ Fail to activate silent mode: $e');
     }
   }
 
@@ -503,7 +505,7 @@ class SystemControlService {
     try {
       await _channel.invokeMethod('setRingerMode', {'mode': mode});
     } catch (e) {
-      print('❌ MethodChannel Error (setRingerMode): $e');
+      logger.e('❌ MethodChannel Error (setRingerMode): $e');
     }
   }
 }
@@ -511,11 +513,11 @@ class SystemControlService {
 /// 🔄 Callback to revert silent mode
 @pragma('vm:entry-point')
 void revertSilentModeCallback() async {
-  print('🔊 Reverting Silent Mode to normal');
+  logger.i('🔊 Reverting Silent Mode to normal');
   const MethodChannel channel = MethodChannel('com.muslimdaily.app/system_control');
   try {
     await channel.invokeMethod('setRingerMode', {'mode': 'normal'});
   } catch (e) {
-    print('❌ Failed to revert ringer mode: $e');
+    logger.e('❌ Failed to revert ringer mode: $e');
   }
 }

@@ -407,7 +407,6 @@ class AdhanWorkManagerService {
     required int dayOffset,
     required int prayerIndex,
     String? cityName,
-    bool useTestCallback = false,
   }) async {
     final now = DateTime.now();
     final errors = <String>[];

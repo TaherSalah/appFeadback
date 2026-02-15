@@ -7,16 +7,12 @@ import '../../../core/utils/style/responsive_util.dart';
 import 'MemoryGameScreen.dart';
 import 'PuzzleGameScreen.dart';
 import 'QuizGameScreen.dart';
-import 'InteractiveWuduScreen.dart';
-import 'PrayerMovementsGame.dart';
 import 'AllahNamesGame.dart';
 import 'flame_games/flame_game_wrapper.dart';
 import 'flame_games/fruit_collector_game.dart';
 import 'flame_games/sunnah_hero_runner.dart';
 import 'flame_games/kaaba_protector_game.dart';
-import 'flame_games/mosque_stacker_game.dart';
 import 'flame_games/quran_word_connector.dart';
-import 'flame_games/hajj_journey_platformer.dart';
 
 class GamesMenuScreen extends StatelessWidget {
   final VoidCallback? onRefresh;

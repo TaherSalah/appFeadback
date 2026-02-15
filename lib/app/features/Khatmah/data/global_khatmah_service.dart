@@ -1,6 +1,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:async';
 
+import '../../../../main.dart';
+
 class GlobalKhatmahService {
   static final GlobalKhatmahService _instance = GlobalKhatmahService._internal();
   factory GlobalKhatmahService() => _instance;
@@ -21,7 +23,7 @@ class GlobalKhatmahService {
         return List<Map<String, dynamic>>.from(response);
       }
     } catch (e) {
-      print('Error fetching active campaigns: $e');
+      logger.e('Error fetching active campaigns: $e');
     }
     return [];
   }
@@ -39,7 +41,7 @@ class GlobalKhatmahService {
         return List<Map<String, dynamic>>.from(response);
       }
     } catch (e) {
-      print('Error fetching campaign progress: $e');
+      logger.e('Error fetching campaign progress: $e');
     }
     return [];
   }
@@ -123,7 +125,7 @@ class GlobalKhatmahService {
           .lt('updated_at', twentyFourHoursAgo);
           
     } catch (e) {
-      print('Error in autoReleaseExpiredClaims: $e');
+      logger.e('Error in autoReleaseExpiredClaims: $e');
     }
   }
 
@@ -163,7 +165,7 @@ class GlobalKhatmahService {
         'history': data,
       };
     } catch (e) {
-      print('Error fetching user stats: $e');
+      logger.e('Error fetching user stats: $e');
       return {'total_completed': 0, 'community_percent': '0', 'history': []};
     }
   }
@@ -211,7 +213,7 @@ class GlobalKhatmahService {
           
       return List<Map<String, dynamic>>.from(response as List);
     } catch (e) {
-      print('Error fetching recent global activity: $e');
+      logger.e('Error fetching recent global activity: $e');
       return [];
     }
   }
@@ -246,7 +248,7 @@ class GlobalKhatmahService {
         'today_completions': (todayCompletionsResp as List).length,
       };
     } catch (e) {
-      print('Error fetching global stats: $e');
+      logger.e('Error fetching global stats: $e');
       return {'total_completed': 0, 'active_readers': 0, 'today_completions': 0};
     }
   }

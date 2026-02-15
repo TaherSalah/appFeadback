@@ -19,7 +19,7 @@ class HadithOfDayView extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final baseColor = KColors.primaryColor;
     final hadithCtrl = Get.find<HadithOfDayController>();
-    final booksCtrl = Get.find<BooksController>();
+    Get.find<BooksController>();
 
     return Scaffold(
       appBar: AppBar(

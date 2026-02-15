@@ -36,13 +36,23 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
   void initState() {
     super.initState();
     _loadFavoriteStatus();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Small delay to ensure SharedPreferences is loaded if needed,
-      // but usually postFrameCallback is fine.
-      try {
-        ShowCaseWidget.of(context).startShowCase([_pdfKey, _favKey, _shareKey]);
-      } catch (e) {}
-    });
+    _checkShowcaseStatus();
+  }
+
+  Future<void> _checkShowcaseStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool hasShownShowcase =
+        prefs.getBool('showcase_user_guide_detail') ?? false;
+
+    if (!hasShownShowcase) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        try {
+          ShowCaseWidget.of(context)
+              .startShowCase([_pdfKey, _favKey, _shareKey]);
+          prefs.setBool('showcase_user_guide_detail', true);
+        } catch (e) {}
+      });
+    }
   }
 
   Future<void> _loadFavoriteStatus() async {
@@ -514,7 +524,7 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                     children: [
                       CircleAvatar(
                         backgroundColor: Colors.green.withOpacity(0.1),
-                        child: Icon(Icons.lightbulb_outline,
+                        child:const Icon(Icons.lightbulb_outline,
                             color: Colors.green, size: 20),
                       ),
                       const SizedBox(width: 12),

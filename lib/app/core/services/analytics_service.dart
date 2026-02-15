@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
+import '../../../main.dart';
 import 'location_service.dart';
 
 class AnalyticsService {
@@ -45,7 +46,8 @@ class AnalyticsService {
 
     } catch (e) {
       // Fail silently to not disturb user
-      print('CoreAnalytics Error: $e');
+      logger.e('CoreAnalytics Error: $e');
+
     }
   }
 }

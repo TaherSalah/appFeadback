@@ -5,6 +5,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+// ignore: unused_import
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/khatmah_model.dart';

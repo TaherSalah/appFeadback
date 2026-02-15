@@ -3,7 +3,6 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:muslimdaily/app/features/calendar/data/models/calendar_event_model.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:device_calendar/device_calendar.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 

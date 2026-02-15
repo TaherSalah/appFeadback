@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/k_helper.dart';
+// ignore: unused_import
 import '../../messaView/azkar_massa.dart';
 
 class OtherAzkarWidget extends StatefulWidget {

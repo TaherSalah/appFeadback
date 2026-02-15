@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/constent/lists.dart';
-import '../../../core/utils/style/k_color.dart';
 import '../controllers/books_controller.dart';
 import 'widgets/books_cover.dart';
 
@@ -44,7 +43,7 @@ class _NineBooksScreenState extends State<NineBooksScreen> {
   @override
   Widget build(BuildContext context) {
     // Ensure controller is initialized
-    final BooksController booksCtrl = Get.put(BooksController());
+    Get.put(BooksController());
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return ShowCaseWidget(
       builder: (context) => Scaffold(

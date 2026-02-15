@@ -5,8 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
+// ignore: undefined_hidden_name
 import '../../../../core/shard/exports/all_exports.dart' hide ScaleAnimation;
 import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/utils/style/k_style.dart';

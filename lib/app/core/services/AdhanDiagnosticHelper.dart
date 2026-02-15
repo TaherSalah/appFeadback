@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:muslimdaily/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -68,7 +69,8 @@ class AdhanDiagnosticHelper {
         };
       }).toList();
     } catch (e) {
-      print('❌ خطأ في جلب الإشعارات المجدولة: $e');
+
+      logger.e('❌ خطأ في جلب الإشعارات المجدولة: $e');
       return [];
     }
   }
@@ -106,7 +108,8 @@ class AdhanDiagnosticHelper {
         final status = await Permission.ignoreBatteryOptimizations.status;
         ignoreBatteryOptimizations = status.isGranted;
       } catch (e) {
-        print('❌ خطأ في فحص الأذونات: $e');
+
+        logger.e('❌ خطأ في فحص الأذونات: $e');
       }
     }
 
@@ -125,7 +128,8 @@ class AdhanDiagnosticHelper {
       final status = await Permission.ignoreBatteryOptimizations.status;
       return status.isGranted;
     } catch (e) {
-      print('❌ خطأ في فحص Battery Optimization: $e');
+
+      logger.e('❌ خطأ في فحص Battery Optimization: $e');
       return false;
     }
   }
@@ -136,7 +140,7 @@ class AdhanDiagnosticHelper {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getStringList('adhan_errors') ?? [];
     } catch (e) {
-      print('❌ خطأ في جلب الأخطاء: $e');
+      logger.e('❌ خطأ في جلب الأخطاء: $e');
       return [];
     }
   }
@@ -150,7 +154,7 @@ class AdhanDiagnosticHelper {
       // الاحتفاظ بآخر 20 خطأ فقط
       await prefs.setStringList('adhan_errors', errors.take(20).toList());
     } catch (e) {
-      print('❌ خطأ في حفظ الخطأ: $e');
+      logger.e('❌ خطأ في حفظ الخطأ: $e');
     }
   }
 
@@ -160,7 +164,7 @@ class AdhanDiagnosticHelper {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('adhan_errors');
     } catch (e) {
-      print('❌ خطأ في مسح الأخطاء: $e');
+      logger.e('❌ خطأ في مسح الأخطاء: $e');
     }
   }
 
@@ -185,7 +189,7 @@ class AdhanDiagnosticHelper {
         'settings_hash': lastSettingsHash,
       };
     } catch (e) {
-      print('❌ خطأ في جلب معلومات الجدولة: $e');
+      logger.e('❌ خطأ في جلب معلومات الجدولة: $e');
       return {
         'last_schedule_time': 'Error',
         'days_since_last_schedule': -1,

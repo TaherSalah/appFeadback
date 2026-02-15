@@ -177,7 +177,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SettingsView());
 
       case '/WirdHomeScreen':
-        return MaterialPageRoute(builder: (_) => WirdHomeScreen());
+        return MaterialPageRoute(builder: (_) => const WirdHomeScreen());
 
       case '/azkarMassa':
         return MaterialPageRoute(builder: (_) => const AzkarMassa());
@@ -229,7 +229,7 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) => const CollectionDetailsScreen());
       case '/ReadView':
-        return MaterialPageRoute(builder: (_) => ReadView());
+        return MaterialPageRoute(builder: (_) => const ReadView());
 
       case Routes.zakatCalculatorRoute:
         return MaterialPageRoute(builder: (_) => const ZakatCalculatorView());
@@ -273,7 +273,7 @@ class RouteGenerator {
 
         // ===  Kids Corner Screen ===
       case "/KidsCornerScreen":
-        return MaterialPageRoute(builder: (_) =>  KidsCornerScreen());
+        return MaterialPageRoute(builder: (_) =>  const KidsCornerScreen());
 
       // === Calendar ===
       case '/calendar':

@@ -3,7 +3,6 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
-import '../../messaView/azkar_massa.dart';
 
 class AzkarQuranWidget extends StatefulWidget {
   const AzkarQuranWidget({super.key});

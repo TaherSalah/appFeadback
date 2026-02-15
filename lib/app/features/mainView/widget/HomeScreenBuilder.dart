@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:muslimdaily/app/features/mainView/widget/IslamicCardWidget.dart';
 import 'package:muslimdaily/app/features/settings/settings_view.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
@@ -16,19 +15,13 @@ import '../../Khatmah/data/khatmah_model.dart';
 import '../../charity/CharityDashboardScreen.dart';
 import 'AzkarQuranWidget.dart';
 import 'CharityEntryWidget.dart';
-import 'KidsCornerScreen.dart';
 import 'OtherAzkarWidget.dart';
 import '../controllar/MainController.dart';
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import 'PrayerHeaderSection.dart';
-import 'SoulComfortWidget.dart';
 import 'AllahNameWidget.dart';
-import 'KidsEntryPointWidget.dart';
 import 'FridayCompanionWidget.dart';
-import 'DailyStreakWidget.dart';
-import 'FajrAlarmEntryWidget.dart';
-import '../../azanView/view/adhan_overlay_screen.dart';
 import '../../../core/services/version_check_service.dart';
 import '../../../core/services/system_control_service.dart';
 import '../../../core/widgets/ScrollingText.dart';
@@ -306,7 +299,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
   }
 
   void loadBookmark() async {
-    final id = await getBookmark();
+    await getBookmark();
     setState(() {});
   }
 

@@ -22,6 +22,8 @@ import 'package:quran/quran.dart' as quran;
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/services/feature_guard_service.dart';
 
+import '../../../../main.dart';
+
 class GlobalKhatmahScreen extends StatefulWidget {
   const GlobalKhatmahScreen({super.key});
 
@@ -2222,7 +2224,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         ),
       );
     } catch (e) {
-      print('Error calculating Quran page: $e');
+      logger.e('Error calculating Quran page: $e');
       Navigator.push(
         context,
         MaterialPageRoute(

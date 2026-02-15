@@ -4,9 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/utils/style/k_color.dart';
-import '../../../../core/utils/style/responsive_util.dart';
 import '../../controllers/books_controller.dart';
-import '../../data/models/ar_hadith_model.dart';
 
 
 class ChapterExpansionWidget extends StatelessWidget {

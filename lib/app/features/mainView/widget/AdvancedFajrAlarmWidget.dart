@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
-import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,7 +9,6 @@ import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
-import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import '../../../core/utils/style/app_theme_colors.dart';

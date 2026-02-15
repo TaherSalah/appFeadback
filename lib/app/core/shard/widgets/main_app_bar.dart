@@ -1,10 +1,8 @@
 import 'dart:ui' as ui;
 
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 
 import '../exports/all_exports.dart';
-import 'def_text_widget.dart';
 
 PreferredSizeWidget mainAppBarWidget(
     context, selectedFontSize, void Function(String?)? onChanged) {

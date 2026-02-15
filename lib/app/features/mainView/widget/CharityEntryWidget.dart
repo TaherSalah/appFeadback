@@ -5,7 +5,6 @@ import '../../charity/CharityDashboardScreen.dart';
 import '../../charity/services/charity_service.dart';
 import '../../charity/models/charity_models.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
-import '../../../core/utils/style/k_color.dart';
 
 class CharityEntryWidget extends StatefulWidget {
   const CharityEntryWidget({super.key});

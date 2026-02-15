@@ -2135,14 +2135,12 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:adhan/adhan.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
@@ -2150,7 +2148,6 @@ import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/mainView/controllar/MainController.dart';
 import 'package:mvc_pattern/mvc_pattern.dart' hide StateSetter;
 
-import '../../core/shard/widgets/ui_animations.dart';
 import '../../core/utils/style/app_theme_colors.dart';
 import 'adhan_callback.dart';
 import 'adhan_workmanager_service.dart';
@@ -2648,8 +2645,6 @@ class _AzanViewState extends StateMVC<AzanView> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const baseColor = Color(AppStyle.primaryColor);
-
     final selectedCountry = con.selectedCountry;
     final selectedCity = con.selectedCity;
     final prayerTimes = con.prayerTimes;
