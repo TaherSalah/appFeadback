@@ -15,7 +15,7 @@ import '../mainView/view/MaintenanceScreen.dart';
 
 class VersionService {
   static const String _lastVersionKey = 'last_app_version';
-  static const String _isFirstTimeKey = 'is_first_tتال';
+  static const String _isFirstTimeKey = 'is_first_ال';
 
   /// التحقق من حالة التطبيق (أول مرة، تحديث، أو استخدام عادي)
   static Future<AppState> checkAppState() async {

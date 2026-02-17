@@ -1136,113 +1136,115 @@ class _ColorPickerBottomSheet extends StatelessWidget {
             topRight: Radius.circular(24),
           ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar
-            Container(
-              margin: EdgeInsets.only(top: 12.h),
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white24 : Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                margin: EdgeInsets.only(top: 12.h),
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white24 : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            SizedBox(height: 16.h),
-            // Title
-            Text(
-              'اختر التصنيف',
-              style: GoogleFonts.cairo(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+              SizedBox(height: 16.h),
+              // Title
+              Text(
+                'اختر التصنيف',
+                style: GoogleFonts.cairo(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
               ),
-            ),
-            SizedBox(height: 16.h),
-            // Color options
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: ReflectionColor.values.length,
-              itemBuilder: (context, index) {
-                final color = ReflectionColor.values[index];
-                final isSelected = color == selectedColor;
+              SizedBox(height: 16.h),
+              // Color options
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: ReflectionColor.values.length,
+                itemBuilder: (context, index) {
+                  final color = ReflectionColor.values[index];
+                  final isSelected = color == selectedColor;
 
-                return InkWell(
-                  onTap: () => Navigator.pop(context, color),
-                  child: Container(
-                    margin:
-                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? color.color.withOpacity(0.15)
-                          : (isDark
-                              ? Colors.white.withOpacity(0.05)
-                              : Colors.grey[50]),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected ? color.color : Colors.transparent,
-                        width: 2,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        // Color circle
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: color.color,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: color.color.withOpacity(0.4),
-                                blurRadius: 8,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: isSelected
-                              ? const Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                  size: 20,
-                                )
-                              : null,
+                  return InkWell(
+                    onTap: () => Navigator.pop(context, color),
+                    child: Container(
+                      margin:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? color.color.withOpacity(0.15)
+                            : (isDark
+                            ? Colors.white.withOpacity(0.05)
+                            : Colors.grey[50]),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected ? color.color : Colors.transparent,
+                          width: 2,
                         ),
-                        SizedBox(width: 16.w),
-                        // Color name
-                        Expanded(
-                          child: Text(
-                            color.name,
-                            style: GoogleFonts.cairo(
-                              fontSize: 15.sp,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      child: Row(
+                        children: [
+                          // Color circle
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: color.color,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: color.color.withOpacity(0.4),
+                                  blurRadius: 8,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: isSelected
+                                ? const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 20,
+                            )
+                                : null,
+                          ),
+                          SizedBox(width: 16.w),
+                          // Color name
+                          Expanded(
+                            child: Text(
+                              color.name,
+                              style: GoogleFonts.cairo(
+                                fontSize: 15.sp,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: isDark ? Colors.white : Colors.black87,
+                              ),
                             ),
                           ),
-                        ),
-                        // Selected indicator
-                        if (isSelected)
-                          Icon(
-                            Icons.check_circle,
-                            color: color.color,
-                            size: 24,
-                          ),
-                      ],
+                          // Selected indicator
+                          if (isSelected)
+                            Icon(
+                              Icons.check_circle,
+                              color: color.color,
+                              size: 24,
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 16.h),
-          ],
-        ),
+                  );
+                },
+              ),
+              SizedBox(height: 16.h),
+            ],
+          ),
+        )
       ),
     );
   }

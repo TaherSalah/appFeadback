@@ -733,83 +733,83 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                       ),
 
                       // ✨ مميزات إضافية (Premium)
-                      const SizedBox(height: 24),
-                      _buildSectionHeader(context, 'مميزات إضافية'),
-                      _buildSettingsCard(
-                        context,
-                        children: [
-                          _buildSwitchTile(
-                            context,
-                            title: 'زر إيقاف الصوت',
-                            subtitle: 'إظهار زر الإيقاف في التنبيهات',
-                            icon: Icons.notifications_off_outlined,
-                            iconColor: Colors.red[400]!,
-                            value: isStopActionEnabled,
-                            onChanged: (val) {
-                              setState(() {
-                                isStopActionEnabled = val;
-                                isMuteActionEnabled = val; // Link them together
-                                _hasChanges = true;
-                              });
-                            },
-                          ),
-                          _buildDivider(isDark),
-                          _buildSwitchTile(
-                            context,
-                            title: 'وضع الصمت التلقائي',
-                            subtitle: 'تحويل الهاتف للوضع الصامت بعد الأذان',
-                            icon: Icons.do_not_disturb_on_outlined,
-                            iconColor: Colors.indigo[400]!,
-                            value: isAutoSilentEnabled,
-                            onChanged: (val) {
-                              setState(() {
-                                isAutoSilentEnabled = val;
-                                _hasChanges = true;
-                              });
-                            },
-                          ),
-                          if (isAutoSilentEnabled) ...[
-                            _buildDivider(isDark),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.timer_outlined,
-                                      size: 20, color: Colors.indigo[400]),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'مدة الصمت: $autoSilentDuration دقيقة',
-                                    style: GoogleFonts.cairo(
-                                      fontSize: 14,
-                                      color: isDark
-                                          ? Colors.white70
-                                          : Colors.black54,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Slider(
-                                      value: autoSilentDuration.toDouble(),
-                                      min: 5,
-                                      max: 60,
-                                      divisions: 11,
-                                      activeColor: Colors.indigo[400],
-                                      onChanged: (val) {
-                                        setState(() {
-                                          autoSilentDuration = val.toInt();
-                                          _hasChanges = true;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-
                       const SizedBox(height: 75),
+                      // _buildSectionHeader(context, 'مميزات إضافية'),
+                      // _buildSettingsCard(
+                      //   context,
+                      //   children: [
+                      //     _buildSwitchTile(
+                      //       context,
+                      //       title: 'زر إيقاف الصوت',
+                      //       subtitle: 'إظهار زر الإيقاف في التنبيهات',
+                      //       icon: Icons.notifications_off_outlined,
+                      //       iconColor: Colors.red[400]!,
+                      //       value: isStopActionEnabled,
+                      //       onChanged: (val) {
+                      //         setState(() {
+                      //           isStopActionEnabled = val;
+                      //           isMuteActionEnabled = val; // Link them together
+                      //           _hasChanges = true;
+                      //         });
+                      //       },
+                      //     ),
+                      //     _buildDivider(isDark),
+                      //     _buildSwitchTile(
+                      //       context,
+                      //       title: 'وضع الصمت التلقائي',
+                      //       subtitle: 'تحويل الهاتف للوضع الصامت بعد الأذان',
+                      //       icon: Icons.do_not_disturb_on_outlined,
+                      //       iconColor: Colors.indigo[400]!,
+                      //       value: isAutoSilentEnabled,
+                      //       onChanged: (val) {
+                      //         setState(() {
+                      //           isAutoSilentEnabled = val;
+                      //           _hasChanges = true;
+                      //         });
+                      //       },
+                      //     ),
+                      //     if (isAutoSilentEnabled) ...[
+                      //       _buildDivider(isDark),
+                      //       Padding(
+                      //         padding: const EdgeInsets.symmetric(
+                      //             horizontal: 16, vertical: 8),
+                      //         child: Row(
+                      //           children: [
+                      //             Icon(Icons.timer_outlined,
+                      //                 size: 20, color: Colors.indigo[400]),
+                      //             const SizedBox(width: 8),
+                      //             Text(
+                      //               'مدة الصمت: $autoSilentDuration دقيقة',
+                      //               style: GoogleFonts.cairo(
+                      //                 fontSize: 14,
+                      //                 color: isDark
+                      //                     ? Colors.white70
+                      //                     : Colors.black54,
+                      //               ),
+                      //             ),
+                      //             Expanded(
+                      //               child: Slider(
+                      //                 value: autoSilentDuration.toDouble(),
+                      //                 min: 5,
+                      //                 max: 60,
+                      //                 divisions: 11,
+                      //                 activeColor: Colors.indigo[400],
+                      //                 onChanged: (val) {
+                      //                   setState(() {
+                      //                     autoSilentDuration = val.toInt();
+                      //                     _hasChanges = true;
+                      //                   });
+                      //                 },
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ],
+                      // ),
+                      //
+                      // const SizedBox(height: 75),
 
                       // Test Button
                       // Padding(
