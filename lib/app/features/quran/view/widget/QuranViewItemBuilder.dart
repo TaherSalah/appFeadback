@@ -955,29 +955,29 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                     ),
                   ),
                 ),
-              // FontsDownloadDialog(
-              //   topBarStyle: QuranTopBarStyle(
-              //     iconColor: isDark ? Colors.white : Colors.blue,
-              //   ),
-              //   downloadFontsDialogStyle: DownloadFontsDialogStyle(
-              //     iconColor: isDark ? Colors.white : Colors.blueAccent,
-              //     headerTitle: 'الخطوط المتاحة',
-              //     titleColor: isDark ? Colors.white : Colors.black,
-              //     notes:
-              //         'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خط مصحف المدينة من اسفل وتفعيله بدلا من الخط الاساسي',
-              //     notesColor: isDark ? Colors.white : Colors.black,
-              //     linearProgressBackgroundColor: Colors.blue.shade100,
-              //     linearProgressColor: Colors.blue,
-              //     downloadButtonBackgroundColor: Colors.blue,
-              //     downloadingText: 'جارِ التحميل',
-              //     backgroundColor: isDark
-              //         ? const Color(0xff1E1E1E)
-              //         : const Color(0xFFF7EFE0),
-              //   ),
-              //   languageCode: 'ar',
-              //   isFontsLocal: false, // تحميل من النت
-              //   isDark: isDark,
-              // ),
+              FontsDownloadDialog(
+                topBarStyle: QuranTopBarStyle(
+                  iconColor: isDark ? Colors.white : Colors.blue,
+                ),
+                downloadFontsDialogStyle: DownloadFontsDialogStyle(
+                  iconColor: isDark ? Colors.white : Colors.blueAccent,
+                  headerTitle: 'الخطوط المتاحة',
+                  titleColor: isDark ? Colors.white : Colors.black,
+                  notes:
+                      'لجعل مظهر المصحف مشابه لمصحف المدينة يمكنك تحميل خط مصحف المدينة من اسفل وتفعيله بدلا من الخط الاساسي',
+                  notesColor: isDark ? Colors.white : Colors.black,
+                  linearProgressBackgroundColor: Colors.blue.shade100,
+                  linearProgressColor: Colors.blue,
+                  downloadButtonBackgroundColor: Colors.blue,
+                  downloadingText: 'جارِ التحميل',
+                  backgroundColor: isDark
+                      ? const Color(0xff1E1E1E)
+                      : const Color(0xFFF7EFE0),
+                ),
+                languageCode: 'ar',
+                isFontsLocal: false, // تحميل من النت
+                isDark: isDark,
+              ),
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: PopupMenuButton<_QuranMenuAction>(
@@ -1286,26 +1286,30 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                         onPageChanged: _handlePageChanged,
                                         itemBuilder: (context, index) {
                                           return QuranLibraryScreen(
-                                            appIconPathForPlayAudioInBackground: "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
+                                            appIconPathForPlayAudioInBackground:
+                                                "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
                                             backgroundColor: _backgroundColor,
                                             withPageView: false,
                                             isDark: isDark,
                                             appLanguageCode: "ar",
                                             isFontsLocal: false,
                                             pageIndex: index,
+
                                             ayahIconColor: ayahIconColor,
                                             topBottomQuranStyle: topBottomStyle,
                                             ayahMenuStyle: ayahMenuStyle,
                                             indexTabStyle: indexTabStyle,
-                                            useDefaultAppBar: false,
+                                            useDefaultAppBar: true,
                                             parentContext: context,
+
                                           );
                                         },
                                       )
                                     : QuranLibraryScreen(
-                              appIconPathForPlayAudioInBackground: "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
+                                        appIconPathForPlayAudioInBackground:
+                                            "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
 
-                              backgroundColor: _backgroundColor,
+                                        backgroundColor: _backgroundColor,
                                         // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
                                         withPageView: true,
                                         isDark: isDark,
@@ -1316,7 +1320,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                         topBottomQuranStyle: topBottomStyle,
                                         ayahMenuStyle: ayahMenuStyle,
                                         indexTabStyle: indexTabStyle,
-                                        useDefaultAppBar: false,
+                                        useDefaultAppBar: true,
                                         parentContext: context,
                                         onPageChanged: (page) {
                                           _handlePageChanged(page);

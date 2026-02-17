@@ -7,7 +7,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-
 import '../../cubit/api_client/api_client_bloc.dart';
 import '../../utils/style/k_helper.dart';
 import '../api_services.dart';
@@ -30,8 +29,8 @@ class DioClientImpl {
         onErrorCallback: apiClientBloc.onErrorCallBack,
         onRetry: apiClientBloc.scheduleRetry,
       ))
-      ..addAll(otherInterceptors)
-      ..add(PrettyDioLogger());
+      ..addAll(otherInterceptors);
+    // ..add(PrettyDioLogger());
     if (baseOptions != null) {
       options = baseOptions!;
     }

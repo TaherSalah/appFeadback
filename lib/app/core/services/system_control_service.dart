@@ -17,7 +17,8 @@ class SystemControlService {
 
   final _supabase = Supabase.instance.client;
   static const String _quoteCacheKey = 'cached_daily_quote';
-  static const MethodChannel _channel = MethodChannel('com.muslimdaily.app/system_control');
+  static const MethodChannel _channel =
+      MethodChannel('com.muslimdaily.app/system_control');
 
   /// 🛠️ Check if Maintenance Mode is active
   Future<bool> isMaintenanceModeActive() async {
@@ -61,7 +62,7 @@ class SystemControlService {
       final response = await _supabase
           .from('app_features')
           .select('feature_name, status')
-          .timeout(const Duration(seconds: 3));
+          .timeout(const Duration(seconds: 10));
 
       if (response != null && response is List) {
         final Map<String, String> statuses = {};
@@ -98,7 +99,7 @@ class SystemControlService {
           .select('value')
           .eq('key', 'quote_of_the_day')
           .maybeSingle()
-          .timeout(const Duration(seconds: 3));
+          .timeout(const Duration(seconds: 10));
 
       if (response != null && response['value'] != null) {
         final quote = response['value'] as String;
@@ -127,7 +128,7 @@ class SystemControlService {
       final response = await _supabase
           .from('app_settings')
           .select('key, value')
-          .timeout(const Duration(seconds: 3));
+          .timeout(const Duration(seconds: 10));
 
       if (response != null && response is List) {
         final targetKeys = [
@@ -188,7 +189,7 @@ class SystemControlService {
       final response = await _supabase
           .from('app_settings')
           .select('key, value')
-          .timeout(const Duration(seconds: 3));
+          .timeout(const Duration(seconds: 10));
 
       if (response != null && response is List) {
         final data = response as List;
@@ -245,7 +246,7 @@ class SystemControlService {
           .select('*')
           .eq('is_active', true)
           .order('created_at', ascending: false)
-          .timeout(const Duration(seconds: 4));
+          .timeout(const Duration(seconds: 10));
 
       if (response != null && response is List) {
         final prefs = await SharedPreferences.getInstance();
@@ -406,7 +407,7 @@ class SystemControlService {
           .select('key, value')
           .filter('key', 'in',
               '("prayer_offset_fajr", "prayer_offset_sunrise", "prayer_offset_dhuhr", "prayer_offset_asr", "prayer_offset_maghrib", "prayer_offset_isha")')
-          .timeout(const Duration(seconds: 3));
+          .timeout(const Duration(seconds: 10));
 
       if (response != null && response is List) {
         final Map<String, int> offsets = {};
@@ -514,7 +515,8 @@ class SystemControlService {
 @pragma('vm:entry-point')
 void revertSilentModeCallback() async {
   logger.i('🔊 Reverting Silent Mode to normal');
-  const MethodChannel channel = MethodChannel('com.muslimdaily.app/system_control');
+  const MethodChannel channel =
+      MethodChannel('com.muslimdaily.app/system_control');
   try {
     await channel.invokeMethod('setRingerMode', {'mode': 'normal'});
   } catch (e) {

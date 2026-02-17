@@ -114,7 +114,7 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
   Future<void> _deleteReflection(Reflection reflection) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => _DeleteConfirmDialog(),
+      builder: (context) => const _DeleteConfirmDialog(),
     );
 
     if (confirmed == true) {
@@ -835,7 +835,7 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
 
 // Delete confirmation dialog
 class _DeleteConfirmDialog extends StatelessWidget {
-  const _DeleteConfirmDialog({super.key});
+  const _DeleteConfirmDialog();
 
   @override
   Widget build(BuildContext context) {
@@ -933,8 +933,7 @@ class _DeleteConfirmDialog extends StatelessWidget {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () =>
-                              Navigator.of(context).pop(false),
+                          onPressed: () => Navigator.of(context).pop(false),
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(
                               color: isDark
@@ -944,16 +943,14 @@ class _DeleteConfirmDialog extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14.r),
                             ),
-                            padding:
-                            EdgeInsets.symmetric(vertical: 11.h),
+                            padding: EdgeInsets.symmetric(vertical: 11.h),
                           ),
                           child: Text(
                             'إلغاء',
                             style: GoogleFonts.cairo(
                               fontSize: 14.sp,
-                              color: isDark
-                                  ? Colors.white
-                                  : Colors.grey.shade800,
+                              color:
+                                  isDark ? Colors.white : Colors.grey.shade800,
                             ),
                           ),
                         ),
@@ -961,8 +958,7 @@ class _DeleteConfirmDialog extends StatelessWidget {
                       SizedBox(width: 12.w),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () =>
-                              Navigator.of(context).pop(true),
+                          onPressed: () => Navigator.of(context).pop(true),
                           icon: const Icon(Icons.delete_outline),
                           label: Text(
                             'حذف',
@@ -972,11 +968,9 @@ class _DeleteConfirmDialog extends StatelessWidget {
                             backgroundColor: Colors.red,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.circular(14.r),
+                              borderRadius: BorderRadius.circular(14.r),
                             ),
-                            padding:
-                            EdgeInsets.symmetric(vertical: 11.h),
+                            padding: EdgeInsets.symmetric(vertical: 11.h),
                           ),
                         ),
                       ),
