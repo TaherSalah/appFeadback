@@ -210,7 +210,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                         context,
                         title: "فيسبوك",
                         icon: facebook,
-                        isSvg: true,
+                        isSvg: false,
                         color: const Color(0xFF1877F2),
                         onTap: () => _launchURL(linkFacebook),
                       ),
@@ -229,11 +229,10 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                   ],
                 ),
                 SizedBox(height: 24.h),
-
-                // Share Section
                 _buildSectionTitle(
-                    "شارك الثواب", Icons.share_rounded, Colors.green),
-                SizedBox(height: 12.h),
+                    "قيم التطبيق", Icons.star_rate_outlined, Colors.green),
+                SizedBox(height: 24.h),
+                
                 _buildActionButton(
                   context,
                   title: "قيّم التطبيق على المتجر",
@@ -244,6 +243,12 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                       context.read<RateService>().askForReview(context),
                 ),
                 SizedBox(height: 25.h),
+                // Share Section
+
+                _buildSectionTitle(
+                    "شارك الثواب", Icons.share_rounded, Colors.purple),
+                SizedBox(height: 12.h),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -252,11 +257,14 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                     _buildStoreIcon(appleStore, shareAppStore),
                   ],
                 ),
-                SizedBox(height: 10.h),
+                // SizedBox(height: 10.h),
 
                 // Rights Section
                 Divider(color: isDark ? Colors.white10 : Colors.grey.shade300),
-                SizedBox(height: 10.h),
+                // SizedBox(height: 10.h),
+                _buildSectionTitle(
+                    AppString.KDevlop, Icons.developer_mode_outlined, Colors.red),
+                SizedBox(height: 12.h),
                 Text(
                   AppString.KAppRights,
                   textAlign: TextAlign.center,
@@ -266,7 +274,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 8.h),
+                Image.asset("assets/images/perLogo.png",height: 80,)
               ],
             ),
           ),
@@ -444,11 +453,11 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
+                blurRadius: 8,
               ),
             ],
           ),
-          child: Image.asset(icon, height: 30),
+          child: Image.asset(icon, height: 29),
         ),
       ),
     );

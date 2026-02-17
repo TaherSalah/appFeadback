@@ -10,9 +10,11 @@ class AppString {
   static const String KAppRate = 'تقييم التطبيق';
   static const String KAppVersion = 'version : 1.0.0';
   static const String KAppRights =
-      '\u{1f60e} Designed and Developed by Taher Salah ';
+      'Designed and Developed by Taher Salah ';
+  // '\u{1f60e} Designed and Developed by Taher Salah ';
+
   static const String KPrayerAppBar = 'أذكار بعد الصلاة المكتوبة';
-  static const String KAppAbout = 'عن البرنامج';
+  static const String KAppAbout = 'عن التطبيق';
   static const String KDevlop = 'تطوير';
   static const String KContact = 'تواصل معنا';
   static const String KSadka = 'صدقة جارية';

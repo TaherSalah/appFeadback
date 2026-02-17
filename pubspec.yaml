@@ -109,7 +109,7 @@ dependencies:
   flutter_widget_from_html: ^0.16.0
   workmanager: ^0.9.0+3
   showcaseview: ^3.0.0
-  quran_library: ^2.3.5
+  quran_library: ^3.0.1
   screen_brightness: ^2.1.7
 #  quran_library:
 #    git:

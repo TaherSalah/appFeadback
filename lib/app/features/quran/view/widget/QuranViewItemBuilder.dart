@@ -29,7 +29,7 @@ enum _QuranMenuAction {
   share,
   note,
   autoscroll,
-  confirm
+  confirm,
 }
 
 class QuranViewItemBuilder extends StatefulWidget {
@@ -955,6 +955,25 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                     ),
                   ),
                 ),
+              IconButton(
+                icon: const Icon(Icons.info_outline_rounded),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: TajweedMenuWidget(
+                          languageCode: "ar",
+                          isDark: isDark,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
               FontsDownloadDialog(
                 topBarStyle: QuranTopBarStyle(
                   iconColor: isDark ? Colors.white : Colors.blue,
@@ -1287,7 +1306,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                         itemBuilder: (context, index) {
                                           return QuranLibraryScreen(
                                             appIconPathForPlayAudioInBackground:
-                                                "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
+                                                "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/perLogo.png",
                                             backgroundColor: _backgroundColor,
                                             withPageView: false,
                                             isDark: isDark,
@@ -1307,7 +1326,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                       )
                                     : QuranLibraryScreen(
                                         appIconPathForPlayAudioInBackground:
-                                            "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/logoApp.png",
+                                            "https://raw.githubusercontent.com/TaherSalah/shareCardImage/refs/heads/master/perLogo.png",
 
                                         backgroundColor: _backgroundColor,
                                         // backgroundColor:isDark? Color(0xFF101623):Color(0xFFF7F1E1),
@@ -1733,22 +1752,22 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   }
 }
 
-class _NoteDialog extends StatefulWidget {
+class NoteDialogWidget extends StatefulWidget {
   final String? initialText;
   final ValueChanged<String> onSave;
   final VoidCallback onDelete;
 
-  const _NoteDialog({
+  const NoteDialogWidget({
     this.initialText,
     required this.onSave,
     required this.onDelete,
   });
 
   @override
-  State<_NoteDialog> createState() => _NoteDialogState();
+  State<NoteDialogWidget> createState() => _NoteDialogWidgetState();
 }
 
-class _NoteDialogState extends State<_NoteDialog> {
+class _NoteDialogWidgetState extends State<NoteDialogWidget> {
   late TextEditingController _controller;
 
   @override
