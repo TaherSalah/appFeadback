@@ -1318,7 +1318,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                             topBottomQuranStyle: topBottomStyle,
                                             ayahMenuStyle: ayahMenuStyle,
                                             indexTabStyle: indexTabStyle,
-                                            useDefaultAppBar: true,
+                                            useDefaultAppBar: false,
                                             parentContext: context,
 
                                           );
@@ -1339,7 +1339,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                         topBottomQuranStyle: topBottomStyle,
                                         ayahMenuStyle: ayahMenuStyle,
                                         indexTabStyle: indexTabStyle,
-                                        useDefaultAppBar: true,
+                                        useDefaultAppBar: false,
                                         parentContext: context,
                                         onPageChanged: (page) {
                                           _handlePageChanged(page);
