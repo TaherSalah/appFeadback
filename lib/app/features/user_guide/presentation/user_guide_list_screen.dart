@@ -99,12 +99,20 @@ class _UserGuideListScreenState extends State<UserGuideListScreen>
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
+          leading: Navigator.canPop(context)
+              ? IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            color: isDark ? Colors.white : Colors.black,
+            onPressed: () => Navigator.of(context).pop(),
+          )
+              : null,
           title: Text(
             "دليل المستخدم",
             style: GoogleFonts.cairo(
               color: Colors.green,
               fontWeight: FontWeight.bold,
-              fontSize: 18.sp,
+              fontSize:
+              MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
             ),
           ),
           bottom: PreferredSize(

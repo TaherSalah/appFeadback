@@ -38,6 +38,7 @@ class _MainViewContentState extends State<MainViewContent> {
   final GlobalKey _radioKey = GlobalKey();
   final GlobalKey _settingsKey = GlobalKey();
   final GlobalKey _qiblaKey = GlobalKey();
+  final GlobalKey _calendarKey = GlobalKey();
 
   int _currentIndex = 0;
   final Set<int> _loadedIndices = {0};
@@ -56,6 +57,7 @@ class _MainViewContentState extends State<MainViewContent> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ShowCaseWidget.of(context).startShowCase([
           _homeKey,
+          _calendarKey,
           _qiblaKey,
           _radioKey,
           _settingsKey,
@@ -207,18 +209,21 @@ class _MainViewContentState extends State<MainViewContent> {
                   unselectedColor: unselectedItemColor,
                 ),
               ),
-              _buildNavItem(
-                index: 1,
-                icon: Icons.calendar_month_outlined,
-                label: 'التَّقْوِيمُ',
-                isSelected: _currentIndex == 1,
-                color: selectedItemColor,
-                unselectedColor: unselectedItemColor,
+              Showcase(
+                key: _calendarKey,
+                description: 'التقويم الهجري والميلادي وكتابة المهام',
+                child: _buildNavItem(
+                  index: 1,
+                  icon: Icons.calendar_month_outlined,
+                  label: 'التَّقْوِيمُ',
+                  isSelected: _currentIndex == 1,
+                  color: selectedItemColor,
+                  unselectedColor: unselectedItemColor,
+                ),
               ),
 
               // Spacer for FAB
               const SizedBox(width: 48),
-
               // Left Side (Radio & Settings)
               Showcase(
                 key: _radioKey,

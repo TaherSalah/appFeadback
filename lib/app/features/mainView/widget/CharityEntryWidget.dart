@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import '../../charity/CharityDashboardScreen.dart';
 import '../../charity/services/charity_service.dart';
 import '../../charity/models/charity_models.dart';
@@ -116,9 +117,9 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'مُساعد الصدقة',
+                                  'مُتتبع الصدقة',
                                   style: GoogleFonts.cairo(
-                                    fontSize: 16.sp,
+                                    fontSize:ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
                                     fontWeight: FontWeight.bold,
                                     color: AppThemeColors.cardHeaderColor(context),
                                   ),
@@ -244,7 +245,7 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
               Text(
                 value,
                 style: GoogleFonts.cairo(
-                  fontSize: 22.sp,
+                  fontSize:ResponsiveUtil.isTablet(context)?9.5.sp :22.sp,
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
@@ -254,7 +255,7 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                 Text(
                   unit,
                   style: GoogleFonts.cairo(
-                    fontSize: 10.sp,
+                    fontSize: ResponsiveUtil.isTablet(context)?8.sp :10.sp,
                     fontWeight: FontWeight.w600,
                     color: color.withOpacity(0.7),
                   ),
@@ -266,7 +267,7 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
           Text(
             label,
             style: GoogleFonts.cairo(
-              fontSize: 11.sp,
+              fontSize:ResponsiveUtil.isTablet(context)?8.sp: 11.sp,
               fontWeight: FontWeight.w500,
               color: AppThemeColors.cardSubtitleColor(context),
             ),

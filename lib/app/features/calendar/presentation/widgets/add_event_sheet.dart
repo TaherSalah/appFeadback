@@ -447,34 +447,34 @@ class _AddEventSheetState extends State<AddEventSheet> {
                     ),
 
                     // Sync Toggle
-                    SwitchListTile(
-                      title: Text(
-                        'مزامنة مع التقويم',
-                        style: GoogleFonts.cairo(
-                            fontWeight: FontWeight.bold, color: textColor),
-                      ),
-                      subtitle: _syncToDevice
-                          ? Text(
-                              'سيتم حفظ نسخة في تقويم الهاتف',
-                              style: GoogleFonts.cairo(
-                                  fontSize: 10.sp, color: hintColor),
-                            )
-                          : null,
-                      secondary: Container(
-                        padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                          color: _syncToDevice
-                              ? Colors.blue.withOpacity(0.1)
-                              : Colors.transparent,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.sync,
-                            color: _syncToDevice ? Colors.blue : hintColor),
-                      ),
-                      value: _syncToDevice,
-                      activeColor: Colors.blue,
-                      onChanged: (val) => setState(() => _syncToDevice = val),
-                    ),
+                    // SwitchListTile(
+                    //   title: Text(
+                    //     'مزامنة مع التقويم',
+                    //     style: GoogleFonts.cairo(
+                    //         fontWeight: FontWeight.bold, color: textColor),
+                    //   ),
+                    //   subtitle: _syncToDevice
+                    //       ? Text(
+                    //           'سيتم حفظ نسخة في تقويم الهاتف',
+                    //           style: GoogleFonts.cairo(
+                    //               fontSize: 10.sp, color: hintColor),
+                    //         )
+                    //       : null,
+                    //   secondary: Container(
+                    //     padding: EdgeInsets.all(8.w),
+                    //     decoration: BoxDecoration(
+                    //       color: _syncToDevice
+                    //           ? Colors.blue.withOpacity(0.1)
+                    //           : Colors.transparent,
+                    //       shape: BoxShape.circle,
+                    //     ),
+                    //     child: Icon(Icons.sync,
+                    //         color: _syncToDevice ? Colors.blue : hintColor),
+                    //   ),
+                    //   value: _syncToDevice,
+                    //   activeColor: Colors.blue,
+                    //   onChanged: (val) => setState(() => _syncToDevice = val),
+                    // ),
                   ],
                 ),
               ),
