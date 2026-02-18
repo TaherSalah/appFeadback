@@ -1293,7 +1293,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                           child: Padding(
                             padding: EdgeInsets.zero,
                             child: _currentPage == null
-                                ? Center(
+                                ? Center(   
                                     child: KLoading.progressIOSIndicator(
                                         context: context),
                                   )

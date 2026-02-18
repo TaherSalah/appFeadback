@@ -278,6 +278,7 @@ class NotificationManager {
           defaultColor: const Color(0xFF178B74),
           ledColor: const Color(0xFF178B74),
           playSound: true,
+
           soundSource: Platform.isAndroid
               ? 'resource://raw/pre_prayer'
               : 'pre_prayer.mp3',
@@ -287,6 +288,7 @@ class NotificationManager {
 
         // 📢 قناة إقامة الصلاة
         NotificationChannel(
+
           channelKey: 'iqamah_channel_v1',
           channelName: 'تنبيهات الإقامة',
           channelDescription: 'تنبيه بموعد إقامة الصلاة',
