@@ -161,6 +161,42 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
     }
   }
 
+  Future<void> _requestDisplayOverApps() async {
+    try {
+      final status = await Permission.systemAlertWindow.request();
+
+      if (mounted) {
+        if (status.isGranted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('✅ تم منح إذن الظهور فوق التطبيقات'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          _loadDiagnostics();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content:
+                  Text('⚠️ لم يتم منح الإذن. يرجى تفعيله من إعدادات النظام'),
+              backgroundColor: Colors.orange,
+              duration: Duration(seconds: 4),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ خطأ: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -255,6 +291,10 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
 
           // معلومات الجدولة
           _buildScheduleCard(isDark, scheduledCount),
+          const SizedBox(height: 16),
+
+          // دليل خاص بنوع الجهاز
+          _buildDeviceSpecificGuide(isDark),
           const SizedBox(height: 16),
 
           // الأخطاء
@@ -400,6 +440,14 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
               batteryOptDisabled,
               onTap: !batteryOptDisabled ? _requestBatteryOptimization : null,
             ),
+            _buildCheckItem(
+              isDark,
+              'الظهور فوق التطبيقات',
+              permissions['display_over_apps'] ?? false,
+              onTap: !(permissions['display_over_apps'] ?? false)
+                  ? _requestDisplayOverApps
+                  : null,
+            ),
           ],
         ),
       ),
@@ -489,6 +537,112 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
                       fontSize: 12,
                       color: isDark ? Colors.white70 : Colors.black54,
                     ),
+                  ),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeviceSpecificGuide(bool isDark) {
+    final deviceBrand =
+        _diagnosticReport!['device_brand'] as String? ?? 'unknown';
+
+    if (deviceBrand.contains('realme') || deviceBrand.contains('oppo')) {
+      return _buildGuideCard(
+        isDark,
+        title: 'إرشادات لمستخدمي Realme / Oppo',
+        icon: Icons.lightbulb_outline,
+        color: Colors.orange,
+        steps: [
+          'اذهب إلى إعدادات الهاتف > التطبيقات > إدارة التطبيقات.',
+          'ابحث عن تطبيق "رفيق المسلم" واضغط عليه.',
+          'تأكد من تفعيل "التشغيل التلقائي" (Auto-start).',
+          'اضغط على "استهلاك البطارية" واختر "السماح بالنشاط في الخلفية".',
+          'تأكد من تفعيل "العرض فوق التطبيقات الأخرى" و"العرض على قفل الشاشة".',
+        ],
+      );
+    } else if (deviceBrand.contains('xiaomi')) {
+      return _buildGuideCard(
+        isDark,
+        title: 'إرشادات لمستخدمي Xiaomi',
+        icon: Icons.lightbulb_outline,
+        color: Colors.orange,
+        steps: [
+          'اذهب إلى الإعدادات > التطبيقات > إذن التشغيل التلقائي.',
+          'قم بتفعيل "التشغيل التلقائي" لتطبيق "رفيق المسلم".',
+          'اذهب إلى الإعدادات > البطارية > ترو فير البطارية (App Battery Saver).',
+          'اختر تطبيق "رفيق المسلم" وحدد "لا توجد قيود" (No restrictions).',
+        ],
+      );
+    } else if (deviceBrand.contains('huawei')) {
+      return _buildGuideCard(
+        isDark,
+        title: 'إرشادات لمستخدمي Huawei',
+        icon: Icons.lightbulb_outline,
+        color: Colors.orange,
+        steps: [
+          'اذهب إلى الإعدادات > البطارية > تشغيل التطبيقات (App Launch).',
+          'ابحث عن "رفيق المسلم" وأوقف التشغيل التلقائي له.',
+          'ستظهر قائمة، تأكد من تفعيل "التشغيل في الخلفية".',
+        ],
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildGuideCard(bool isDark,
+      {required String title,
+      required IconData icon,
+      required Color color,
+      required List<String> steps}) {
+    return Card(
+      color: isDark ? const Color(0xFF1A1A00) : const Color(0xFFFFFDE7),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: color.withOpacity(0.3))),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: color),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...steps.map((step) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('• ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: color)),
+                      Expanded(
+                        child: Text(
+                          step,
+                          style: TextStyle(
+                            fontSize: 13,
+                            height: 1.4,
+                            color: isDark ? Colors.white70 : Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 )),
           ],
@@ -619,6 +773,8 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
         return 'صلاحية المنبهات الدقيقة';
       case 'ignore_battery_optimizations':
         return 'تجاهل تحسين البطارية';
+      case 'display_over_apps':
+        return 'الظهور فوق التطبيقات';
       default:
         return key;
     }

@@ -17,7 +17,6 @@ export 'package:muslimdaily/app/core/shard/widgets/my_divider.dart';
 export 'package:muslimdaily/app/core/shard/widgets/splach_builder.dart';
 export 'package:muslimdaily/app/core/model/azkar_massa_model.dart';
 export 'package:muslimdaily/app/core/model/all_azkar_modal.dart';
-export 'package:muslimdaily/app/core/shard/widgets/counter_widget_builder.dart';
 export 'dart:convert';
 export 'package:adhan/adhan.dart';
 export 'package:dropdown_button2/dropdown_button2.dart';

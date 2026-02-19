@@ -957,22 +957,31 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                 ),
               IconButton(
                 icon: const Icon(Icons.info_outline_rounded),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: TajweedMenuWidget(
-                          languageCode: "ar",
-                          isDark: isDark,
-                        ),
-                      );
-                    },
-                  );
-                },
+                  onPressed: () {
+                    QuranCtrl.instance.isShowControl.value = true;
+                    QuranCtrl.instance.update(['isShowControl']);
+
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: Dialog(
+                            alignment: AlignmentGeometry.centerRight,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: TajweedMenuWidget(
+                          
+                              languageCode: "ar",
+                              isDark: isDark,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+
               ),
               FontsDownloadDialog(
                 topBarStyle: QuranTopBarStyle(

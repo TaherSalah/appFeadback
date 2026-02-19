@@ -32,6 +32,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/widgets/CustomGradientDialog.dart';
 import '../../../core/widgets/SocialBannerWidget.dart';
+import '../../azanView/widget/AdhanStatusBanner.dart';
 
 class MainViewBuilder extends StatefulWidget {
   const MainViewBuilder({super.key});
@@ -407,6 +408,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                           ),
                         ),
                       ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: const AdhanStatusBanner(),
                     ),
 
                     SliverToBoxAdapter(

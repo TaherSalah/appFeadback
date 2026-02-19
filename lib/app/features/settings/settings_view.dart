@@ -12,6 +12,7 @@ import 'package:muslimdaily/app/features/settings/feedback_view.dart';
 import 'package:muslimdaily/app/features/settings/feedback_history_view.dart';
 import '../mainView/controllar/MainController.dart';
 import '../user_guide/presentation/user_guide_list_screen.dart';
+import '../azanView/widget/AdhanStatusBanner.dart';
 
 import '../../core/utils/style/app_theme_colors.dart';
 
@@ -89,6 +90,8 @@ class _SettingsViewState extends State<SettingsView> {
                   return ListView(
                     children: [
                       SizedBox(height: MediaQuery.of(context).padding.top + 10),
+
+                      const AdhanStatusBanner(),
 
                       // 🔔 قسم التنبيهات والموقع
                       _buildSectionHeader(context, 'عام'),

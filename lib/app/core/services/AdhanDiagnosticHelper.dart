@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:muslimdaily/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
@@ -14,6 +15,7 @@ class AdhanDiagnosticHelper {
     final scheduled = await getScheduledAdhans();
     final errors = await getRecentErrors();
     final batteryOptimization = await checkBatteryOptimization();
+    final deviceBrand = await getDeviceBrand();
 
     return {
       'settings': settings,
@@ -22,8 +24,43 @@ class AdhanDiagnosticHelper {
       'scheduled_notifications': scheduled,
       'recent_errors': errors,
       'battery_optimization_disabled': batteryOptimization,
+      'device_brand': deviceBrand,
       'timestamp': DateTime.now().toIso8601String(),
     };
+  }
+
+  /// الحصول على ماركة الجهاز
+  static Future<String> getDeviceBrand() async {
+    if (!Platform.isAndroid) return 'iOS';
+    try {
+      final deviceInfo = DeviceInfoPlugin();
+      final androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.manufacturer.toLowerCase();
+    } catch (e) {
+      return 'unknown';
+    }
+  }
+
+  /// التحقق مما إذا كان نظام الأذان لا يعمل بكفاءة
+  static Future<bool> isAdhanUnhealthy() async {
+    if (!Platform.isAndroid) return false;
+
+    final settings = await checkSettings();
+    if (!settings['adhan_enabled']!) return false;
+
+    final permissions = await checkPermissions();
+    final batteryOptimizationDisabled = await checkBatteryOptimization();
+
+    // نعتبر النظام غير صحي إذا كان أي من الأذونات الأساسية معطلاً
+    // أو إذا كانت تحسينات البطارية مفعلة
+    if (!permissions['notifications_allowed']! ||
+        !permissions['schedule_exact_alarm']! ||
+        !permissions['display_over_apps']! ||
+        !batteryOptimizationDisabled) {
+      return true;
+    }
+
+    return false;
   }
 
   /// فحص جميع الإشعارات المجدولة للأذان
@@ -69,7 +106,6 @@ class AdhanDiagnosticHelper {
         };
       }).toList();
     } catch (e) {
-
       logger.e('❌ خطأ في جلب الإشعارات المجدولة: $e');
       return [];
     }
@@ -97,6 +133,7 @@ class AdhanDiagnosticHelper {
 
     bool scheduleExactAlarm = true;
     bool ignoreBatteryOptimizations = false;
+    bool displayOverApps = true;
 
     if (Platform.isAndroid) {
       try {
@@ -107,8 +144,11 @@ class AdhanDiagnosticHelper {
         // فحص تحسين البطارية
         final status = await Permission.ignoreBatteryOptimizations.status;
         ignoreBatteryOptimizations = status.isGranted;
-      } catch (e) {
 
+        // فحص صلاحية الظهور فوق التطبيقات
+        final overlayStatus = await Permission.systemAlertWindow.status;
+        displayOverApps = overlayStatus.isGranted;
+      } catch (e) {
         logger.e('❌ خطأ في فحص الأذونات: $e');
       }
     }
@@ -117,7 +157,20 @@ class AdhanDiagnosticHelper {
       'notifications_allowed': notificationAllowed,
       'schedule_exact_alarm': scheduleExactAlarm,
       'ignore_battery_optimizations': ignoreBatteryOptimizations,
+      'display_over_apps': displayOverApps,
     };
+  }
+
+  /// فحص صلاحية الظهور فوق التطبيقات
+  static Future<bool> checkSystemAlertWindow() async {
+    if (!Platform.isAndroid) return true;
+    try {
+      final status = await Permission.systemAlertWindow.status;
+      return status.isGranted;
+    } catch (e) {
+      logger.e('❌ خطأ في فحص System Alert Window: $e');
+      return false;
+    }
   }
 
   /// فحص تحسين البطارية
@@ -128,7 +181,6 @@ class AdhanDiagnosticHelper {
       final status = await Permission.ignoreBatteryOptimizations.status;
       return status.isGranted;
     } catch (e) {
-
       logger.e('❌ خطأ في فحص Battery Optimization: $e');
       return false;
     }
