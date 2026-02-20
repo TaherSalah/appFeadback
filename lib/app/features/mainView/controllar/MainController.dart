@@ -274,6 +274,10 @@ class MainController extends ControllerMVC {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_kHijriAdjustmentKey, val);
     _updateHijriDate();
+    
+    // تحديث الويدجت فوراً ليعكس التغيير
+    await AdhanWorkManagerService().updateWidget();
+    
     setState(() {});
   }
 

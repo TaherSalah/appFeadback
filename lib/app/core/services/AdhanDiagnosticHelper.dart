@@ -53,9 +53,9 @@ class AdhanDiagnosticHelper {
 
     // نعتبر النظام غير صحي إذا كان أي من الأذونات الأساسية معطلاً
     // أو إذا كانت تحسينات البطارية مفعلة
+    // ملاحظة: تم استبعاد display_over_apps لتجنب مشاكل سياسة جوجل بلاي
     if (!permissions['notifications_allowed']! ||
         !permissions['schedule_exact_alarm']! ||
-        !permissions['display_over_apps']! ||
         !batteryOptimizationDisabled) {
       return true;
     }

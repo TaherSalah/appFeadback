@@ -1322,7 +1322,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                             appLanguageCode: "ar",
                                             isFontsLocal: false,
                                             pageIndex: index,
-
                                             ayahIconColor: ayahIconColor,
                                             topBottomQuranStyle: topBottomStyle,
                                             ayahMenuStyle: ayahMenuStyle,

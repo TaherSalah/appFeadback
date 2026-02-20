@@ -21,10 +21,14 @@ class HomeWidgetProvider : AppWidgetProvider() {
             val prayerName = widgetData.getString("prayer_name", "--")
             val prayerTime = widgetData.getString("prayer_time", "--:--")
             val city = widgetData.getString("city", "--")
+            val timeLeft = widgetData.getString("time_left", "")
+            val hijriDate = widgetData.getString("hijri_date", "")
 
             views.setTextViewText(R.id.widget_prayer_name, prayerName)
             views.setTextViewText(R.id.widget_prayer_time, prayerTime)
             views.setTextViewText(R.id.widget_city, city)
+            views.setTextViewText(R.id.widget_time_left, timeLeft)
+            views.setTextViewText(R.id.widget_hijri_date, hijriDate)
 
             // Set click intent to open Prayer Times in app
             val intent = Intent(context, MainActivity::class.java).apply {

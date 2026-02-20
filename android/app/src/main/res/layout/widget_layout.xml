@@ -1,82 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Enhanced Premium Prayer Times Widget Layout -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/widget_background_premium"
-    android:padding="12dp">
+    android:padding="16dp">
 
-    <LinearLayout
+    <!-- Next Prayer Label -->
+    <TextView
+        android:id="@+id/widget_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:text="Next prayer"
+        android:textColor="#BBDEFB"
+        android:textSize="12sp" />
+
+    <!-- Prayer Name -->
+    <TextView
+        android:id="@+id/widget_prayer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/widget_title"
+        android:layout_alignParentStart="true"
+        android:text="Dhuhr"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <!-- Prayer Time -->
+    <TextView
+        android:id="@+id/widget_prayer_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/widget_prayer_name"
+        android:layout_alignParentStart="true"
+        android:text="12:09 PM"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <!-- Divider Line -->
+    <ImageView
+        android:id="@+id/widget_divider"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="1dp"
+        android:layout_above="@+id/widget_bottom_row"
+        android:layout_marginBottom="6dp"
+        android:background="#40FFFFFF" 
+        android:contentDescription="divider" />
 
-        <!-- Header with Icon -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+    <!-- Time Left Label -->
+    <TextView
+        android:id="@+id/widget_time_left_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/widget_divider"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="2dp"
+        android:text="الوقت المتبقي :"
+        android:textColor="#BBDEFB"
+        android:textSize="11sp" />
 
-            <TextView
-                android:id="@+id/widget_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🕌"
-                android:textSize="16sp"
-                android:layout_marginEnd="6dp"/>
+    <!-- Time Left Value -->
+    <TextView
+        android:id="@+id/widget_time_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/widget_time_left_label"
+        android:layout_alignParentStart="true"
+        android:text="5 hours 33 minutes"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/widget_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="الصلاة القادمة"
-                android:textColor="#B8C5D6"
-                android:textSize="11sp"
-                android:fontFamily="sans-serif-medium" />
-        </LinearLayout>
+    <!-- Bottom Row -->
+    <LinearLayout
+        android:id="@+id/widget_bottom_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
 
-        <!-- Prayer Name -->
+        <!-- Hijri Date -->
         <TextView
-            android:id="@+id/widget_prayer_name"
-            android:layout_width="wrap_content"
+            android:id="@+id/widget_hijri_date"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="العصر"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginTop="6dp"
-            android:fontFamily="sans-serif-medium"
-            android:shadowColor="#40000000"
-            android:shadowDx="0"
-            android:shadowDy="2"
-            android:shadowRadius="4"/>
+            android:layout_weight="1"
+            android:text="Ramadan 1, 1447 AH"
+            android:textColor="#E3F2FD"
+            android:textSize="11sp" />
 
-        <!-- Prayer Time with Glow Effect -->
-        <TextView
-            android:id="@+id/widget_prayer_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="3:16 م"
-            android:textColor="#FFD700"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-black"
-            android:shadowColor="#80FFD700"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="10"/>
-
-        <!-- City Name -->
+        <!-- City -->
         <TextView
             android:id="@+id/widget_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="القاهرة"
-            android:textColor="#8899AA"
-            android:textSize="10sp"
-            android:layout_marginTop="4dp" />
+            android:text="Cairo"
+            android:textColor="#90CAF9"
+            android:textSize="15sp" />
 
     </LinearLayout>
+
 </RelativeLayout>

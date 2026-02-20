@@ -90,7 +90,7 @@ class _FridayCompanionWidgetState extends State<FridayCompanionWidget>
   // ─── Friday check + SharedPrefs load ────────
   Future<void> _checkFridayAndLoad() async {
     final now = DateTime.now();
-    _isVisible = (now.weekday != DateTime.friday);
+    _isVisible = (now.weekday == DateTime.friday);
     // For testing: _isVisible = true;
 
     if (!_isVisible) {

@@ -560,7 +560,7 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
           'ابحث عن تطبيق "رفيق المسلم" واضغط عليه.',
           'تأكد من تفعيل "التشغيل التلقائي" (Auto-start).',
           'اضغط على "استهلاك البطارية" واختر "السماح بالنشاط في الخلفية".',
-          'تأكد من تفعيل "العرض فوق التطبيقات الأخرى" و"العرض على قفل الشاشة".',
+          'تأكد من تفعيل "العرض على شاشة القفل" (Show on Lock Screen).',
         ],
       );
     } else if (deviceBrand.contains('xiaomi')) {
@@ -572,8 +572,9 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
         steps: [
           'اذهب إلى الإعدادات > التطبيقات > إذن التشغيل التلقائي.',
           'قم بتفعيل "التشغيل التلقائي" لتطبيق "رفيق المسلم".',
-          'اذهب إلى الإعدادات > البطارية > ترو فير البطارية (App Battery Saver).',
-          'اختر تطبيق "رفيق المسلم" وحدد "لا توجد قيود" (No restrictions).',
+          'اذهب إلى الإعدادات > البطارية > توفير البطارية.',
+          'اختر تطبيق "رفيق المسلم" وحدد "لا توجد قيود".',
+          'تأكد من إذن "نمط عرض شاشة القفل" (Show on Lock Screen).',
         ],
       );
     } else if (deviceBrand.contains('huawei')) {
@@ -583,9 +584,10 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
         icon: Icons.lightbulb_outline,
         color: Colors.orange,
         steps: [
-          'اذهب إلى الإعدادات > البطارية > تشغيل التطبيقات (App Launch).',
+          'اذهب إلى الإعدادات > البطارية > تشغيل التطبيقات.',
           'ابحث عن "رفيق المسلم" وأوقف التشغيل التلقائي له.',
           'ستظهر قائمة، تأكد من تفعيل "التشغيل في الخلفية".',
+          'تأكد من تفعيل "الإشعارات على شاشة القفل".',
         ],
       );
     }
@@ -682,6 +684,19 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
             side: BorderSide(
               color: isDark ? Colors.tealAccent : const Color(0xFF178B74),
             ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton.icon(
+          onPressed: () => openAppSettings(),
+          icon: const Icon(Icons.info_outline),
+          label: const Text('فتح معلومات التطبيق لضبط الأذونات'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueGrey,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ],

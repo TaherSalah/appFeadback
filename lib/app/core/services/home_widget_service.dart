@@ -66,12 +66,20 @@ class HomeWidgetService {
     required String prayerName,
     required String prayerTime,
     required String city,
+    String? timeLeft,
+    String? hijriDate,
   }) async {
     try {
       // Save data to SharedPreferences
       await HomeWidget.saveWidgetData<String>('prayer_name', prayerName);
       await HomeWidget.saveWidgetData<String>('prayer_time', prayerTime);
       await HomeWidget.saveWidgetData<String>('city', city);
+      if (timeLeft != null) {
+        await HomeWidget.saveWidgetData<String>('time_left', timeLeft);
+      }
+      if (hijriDate != null) {
+        await HomeWidget.saveWidgetData<String>('hijri_date', hijriDate);
+      }
 
       // Request widget update
       await HomeWidget.updateWidget(

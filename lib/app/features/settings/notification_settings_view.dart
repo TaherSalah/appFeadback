@@ -9,6 +9,8 @@ import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 
+import '../azanView/view/AdhanDiagnosticScreen.dart';
+
 
 class NotificationSettingsView extends StatefulWidget {
   const NotificationSettingsView({super.key});
@@ -213,7 +215,31 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                     children: [
                       SizedBox(height: MediaQuery.of(context).padding.top),
 
-                      // �🕋 الأذان
+                      // 🛠️ حل المشاكل
+                      _buildSettingsCard(
+                        context,
+                        children: [
+                          _buildListTile(
+                            context,
+                            title: 'حل مشاكل الأذان والتنبيهات',
+                            subtitle: 'إذا كان الأذان لا يعمل أو يتوقف، اضغط هنا',
+                            icon: Icons.build_circle_outlined,
+                            iconColor: Colors.redAccent,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AdhanDiagnosticScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 🕋 الأذان
                       _buildSectionHeader(context, 'الصلوات'),
                       _buildSettingsCard(
                         context,
@@ -1016,6 +1042,46 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       value: value,
       activeColor: const Color(0xFFD4AF37),
       onChanged: onChanged,
+    );
+  }
+
+  Widget _buildListTile(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconColor,
+    required VoidCallback onTap,
+  }) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      leading: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: iconColor.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: iconColor, size: 22),
+      ),
+      title: Text(
+        title,
+        style: GoogleFonts.cairo(
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          color: isDark ? Colors.white : Colors.black87,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: GoogleFonts.cairo(
+          fontSize: 11,
+          color: Colors.grey,
+        ),
+      ),
+      trailing: const Icon(Icons.arrow_forward_ios_rounded,
+          size: 14, color: Colors.grey),
+      onTap: onTap,
     );
   }
 

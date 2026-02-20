@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:hijri/hijri_calendar.dart' as hijri;
 import 'package:workmanager/workmanager.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:adhan/adhan.dart';
@@ -133,12 +134,8 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     print('🔄 [Background Task] Running task: $task');
 
-    // 🚀 تهيئة AwesomeNotifications في الخلفية للتأكد من أنها تعمل
-    await AwesomeNotifications().initialize(
-      Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
-      [],
-      debug: false,
-    );
+    // 🚀 تهيئة القنوات في الخلفية للتأكد من وجودها
+    await NotificationManager.updateAllChannels();
 
     try {
       if (task == 'periodic_adhan_refresh') {
@@ -895,11 +892,16 @@ class AdhanWorkManagerService {
         ),
       );
 
-      // 2. الأذان
+      // 2. الأذان (مع الصوت والقناة الصحيحة)
+      // الحصول على القناة والصوت الحالي للأذان العادي
+      final String? selectedAdhanId = await getSelectedAdhan('normal');
+      final String channelKey = getChannelKey('normal', selectedAdhanId);
+      final String? soundPath = await getAdhanPath('normal');
+
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: 99902,
-          channelKey: 'adhan_channel_v4',
+          channelKey: channelKey, // ✅ استخدام القناة الصحيحة
           title: 'اختبار: حان الآن وقت الصلاة',
           body: 'تنبيه تجريبي: الله أكبر الله أكبر',
           category: NotificationCategory.Alarm,
@@ -909,6 +911,9 @@ class AdhanWorkManagerService {
           largeIcon: 'resource://drawable/ic_stat_logoapp',
           notificationLayout: NotificationLayout.BigText,
           color: const Color(0xFF178B74),
+          // 🔇 تعطيل الصوت من الإشعار نفسه لأننا سنشغله يدوياً إذا وجد مسار مخصص
+          // لكن إذا لم يوجد مسار مخصص (null)، سيعتمد على صوت القناة الافتراضي
+          customSound: null,
         ),
         schedule: NotificationCalendar.fromDate(
           date: adhanTime,
@@ -932,6 +937,21 @@ class AdhanWorkManagerService {
         ],
       );
 
+      // 🔊 جدولة تشغيل الصوت يدوياً في الخلفية (Radical Solution)
+      if (soundPath != null) {
+        final int alarmId = 99902 + 5000;
+        await AndroidAlarmManager.oneShotAt(
+          adhanTime,
+          alarmId,
+          playAdhanCallback,
+          exact: true,
+          wakeup: true,
+          rescheduleOnReboot: true,
+          params: {'soundPath': soundPath},
+        );
+        print('✅ [Test] Audio playback scheduled via AlarmManager');
+      }
+
       // 3. الإقامة
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
@@ -943,6 +963,7 @@ class AdhanWorkManagerService {
           wakeUpScreen: true,
           largeIcon: 'resource://drawable/ic_stat_logoapp',
           notificationLayout: NotificationLayout.BigText,
+          color: const Color(0xFF178B74),
         ),
         schedule: NotificationCalendar.fromDate(
           date: iqamahTime,
@@ -963,6 +984,7 @@ class AdhanWorkManagerService {
           wakeUpScreen: true,
           fullScreenIntent: true,
           criticalAlert: true,
+          color: const Color(0xFF178B74),
         ),
         schedule: NotificationCalendar.fromDate(
           date: shruqTime,
@@ -971,7 +993,7 @@ class AdhanWorkManagerService {
         ),
       );
 
-      print('✅ تم جدولة الاختبار الشامل بنجاح (مع الشروق)');
+      print('✅ تم جدولة الاختبار الشامل بنجاح (مع الشروق والصوت)');
       return null;
     } catch (e) {
       print('❌ خطأ في جدولة الاختبار: $e');
@@ -1140,7 +1162,11 @@ class AdhanWorkManagerService {
       final prayerTimes = await _getPrayerTimesForDate(DateTime.now());
       final now = DateTime.now();
 
-      for (var entry in prayerTimes.entries) {
+      // ترتيب الصلوات الأساسية فقط (تجاهل الشروق في حساب "القادمة")
+      final obligatoryPrayers = Map.from(prayerTimes);
+      obligatoryPrayers.remove('الشروق');
+
+      for (var entry in obligatoryPrayers.entries) {
         if (entry.value.isAfter(now)) {
           final timeUntil = entry.value.difference(now);
           return {
@@ -1153,10 +1179,11 @@ class AdhanWorkManagerService {
         }
       }
 
+      // إذا انتهت صلوات اليوم، نأخذ الفجر من يوم غد
       final tomorrowPrayers = await _getPrayerTimesForDate(
         DateTime.now().add(const Duration(days: 1)),
       );
-      final firstPrayer = tomorrowPrayers.entries.first;
+      final firstPrayer = tomorrowPrayers.entries.firstWhere((e) => e.key == 'الفجر');
       final timeUntil = firstPrayer.value.difference(now);
 
       return {
@@ -1194,21 +1221,6 @@ class AdhanWorkManagerService {
 
       if (count > 0) {
         print('✅ تم التحقق من الجدولة: $count إشعار أذان مجدول');
-
-        // إرسال إشعار تأكيد للمستخدم (تم تعطيله بناءً على طلب المستخدم)
-        // await AwesomeNotifications().createNotification(
-        //   content: NotificationContent(
-        //     id: 99998,
-        //     channelKey: 'sabah_athkar_channel',
-        //     title: '\u200Fتم جدولة الأذان بنجاح',
-        //     body: '\u200Fتم جدولة $count صلاة للأيام القادمة',
-        //     icon: 'resource://drawable/ic_stat_logoapp',
-        //     notificationLayout: NotificationLayout.Default,
-        //     category: NotificationCategory.Status,
-        //     autoDismissible: true,
-        //     color: const Color(0xFF178B74),
-        //   ),
-        // );
       } else {
         print('⚠️ تحذير: لم يتم جدولة أي إشعارات أذان!');
         await AdhanDiagnosticHelper.logError('لم يتم جدولة أي إشعارات أذان');
@@ -1276,13 +1288,6 @@ class AdhanWorkManagerService {
   }
 
   /// استرجاع تفضيلات الأذان المحفوظة
-  /// (هذه الدالة تحتاج ترجع Map أو كائن مخصص حسب استخدام azanView.dart)
-  /// بناءً على الاستخدام في الملف الآخر، يبدو أنها ترجع SharedPreferences أو كائن شبيه.
-  /// لكن بناءً على الاسم، سنعيدة SharedPreferences instance لأن الكود المستخدم كان:
-  /// final prefs = await ...getAdhanPreferences();
-  /// وهذا يوحي بأنها كانت تعيد prefs مباشرة أو كائن به بيانات.
-  /// دعونا نتحقق من azanView.dart لنفهم المتوقع.
-  /// ولكن للأمان، سنعيد الـ SharedPreferences instance نفسها كما يوحي الكود.
   Future<SharedPreferences> getAdhanPreferences() async {
     return await SharedPreferences.getInstance();
   }
@@ -1323,13 +1328,11 @@ class AdhanWorkManagerService {
     final selectedId = await getSelectedAdhan(type);
     if (selectedId == null) return null;
 
-    // الحصول على مجلد التخزين (نفس المنطق المستخدم في athanModal.dart)
     final appDir = await getApplicationDocumentsDirectory();
     final filePath = '${appDir.path}/adhans/$selectedId.mp3';
     final file = File(filePath);
 
     if (await file.exists()) {
-      // ✅ FIX: awesome_notifications requires file:// URI for customSound
       return 'file://$filePath';
     }
     return null;
@@ -1339,14 +1342,7 @@ class AdhanWorkManagerService {
   Future<void> updateNotificationChannels() async {
     try {
       print('🎵 تحديث قنوات الأذان (عبر NotificationManager):');
-
-      // ⚠️ تم إيقاف الحذف القسري لأنه قد يسبب مشاكل في الجدولة
-      // await AwesomeNotifications().removeChannel('fajr_adhan_channel_v4');
-      // await AwesomeNotifications().removeChannel('adhan_channel_v4');
-
-      // 🚀 استخدام NotificationManager لتحديث كافة القنوات (وليس الأذان فقط)
       await NotificationManager.updateAllChannels();
-
       print('✅ تم تحديث جميع قنوات الإشعارات بنجاح');
     } catch (e) {
       print('❌ فشل تحديث قنوات الإشعارات: $e');
@@ -1360,11 +1356,30 @@ class AdhanWorkManagerService {
         final city = await _getCityName();
         final prayerTimes = await _getPrayerTimesForDate(DateTime.now());
 
+        // حساب الوقت المتبقي
+        final Duration timeUntil = next['timeUntil'];
+        String timeLeftStr = "";
+        if (timeUntil.inHours > 0) {
+          timeLeftStr = "متبقي ${timeUntil.inHours} ساعة و ${timeUntil.inMinutes % 60} دقيقة";
+        } else {
+          timeLeftStr = "متبقي ${timeUntil.inMinutes} دقيقة";
+        }
+
+
+        // حساب التاريخ الهجري مع التعديل اليدوي
+        final prefs = await SharedPreferences.getInstance();
+        final int hijriAdjustment = prefs.getInt('hijri_adjustment') ?? 0;
+        final adjustedDate = DateTime.now().add(Duration(days: hijriAdjustment));
+        final hijriDate = hijri.HijriCalendar.fromDate(adjustedDate);
+        final hijriDateStr = "${hijriDate.hDay} ${hijriDate.longMonthName}، ${hijriDate.hYear} هـ";
+
         // Update Simple Widget
-        await HomeWidgetService.updateWidget(
+        await HomeWidgetService.updatePrayerTimesWidget(
           prayerName: next['name'],
           prayerTime: next['formattedTime'],
           city: city,
+          timeLeft: timeLeftStr,
+          hijriDate: hijriDateStr,
         );
 
         // Update Full Widget
@@ -1376,12 +1391,11 @@ class AdhanWorkManagerService {
           maghribTime: _formatTime(prayerTimes['المغرب']!),
           ishaTime: _formatTime(prayerTimes['العشاء']!),
           nextPrayer: next['name'],
-          nextPrayerTime: next['time'], // Pass DateTime for Chronometer
+          nextPrayerTime: next['time'],
           city: city,
         );
       }
 
-      // Update Azkar widget with a daily azkar
       await _updateAzkarWidget();
     } catch (e) {
       print('❌ فشل تحديث الويدجت: $e');
@@ -1442,4 +1456,5 @@ class AdhanWorkManagerService {
       print('❌ فشل تحديث widget الأذكار: $e');
     }
   }
-}
+  }
+
