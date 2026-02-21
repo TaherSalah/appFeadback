@@ -10,7 +10,7 @@ import 'package:muslimdaily/app/features/hadith/hadith_view.dart';
 import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
 import 'package:muslimdaily/app/features/charity/CharityDashboardScreen.dart';
-import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
+import 'package:muslimdaily/app/core/services/adhan_logic/prayer_scheduler_service.dart';
 import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/GlobalKhatmahScreen.dart';
 import 'package:muslimdaily/app/features/charity/AchievementsScreen.dart';
@@ -33,10 +33,10 @@ class NotificationManager {
     try {
       // 1. إيقاف الإشعارات (هذا يوقف الصوت إذا كان تابعاً للقناة)
       await AwesomeNotifications().dismissAllNotifications();
-      
+
       // 2. إيقاف أي صوت مشغل عبر AudioManager (إذا كان مفعلاً)
-      // await AudioManager().stop(); 
-      
+      // await AudioManager().stop();
+
       print('✅ All notifications dismissed/stopped.');
     } catch (e) {
       print('❌ Error stopping adhan: $e');
@@ -61,16 +61,18 @@ class NotificationManager {
       }
     });
 
-    // 🚀 تهيئة خدمة الأذان (التي ستقوم بدورها بتحديث القنوات بالأصوات المختارة)
-    await AdhanWorkManagerService().initialize();
+    // 🚀 تهيئة خدمة الأذان عبر النظام الجديد
+    await PrayerSchedulerService().initialize();
   }
 
   static Future<void> updateAllChannels() async {
-    final fajrPath = await AdhanWorkManagerService().getAdhanPath('fajr');
-    final normalPath = await AdhanWorkManagerService().getAdhanPath('normal');
-
-    // جلب مفاتيح القنوات الحالية بناءً على أصوات الأذان المختارة
-    final currentChannels = await AdhanWorkManagerService.getCurrentChannels();
+    // القنوات الثابتة للأذان (لا تتغير ديناميكياً في هذا النظام)
+    const fajrPath = null;
+    const normalPath = null;
+    final currentChannels = {
+      'fajr': 'fajr_adhan_channel_v4',
+      'normal': 'adhan_channel_v4',
+    };
 
     await AwesomeNotifications().initialize(
       Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
@@ -278,7 +280,6 @@ class NotificationManager {
           defaultColor: const Color(0xFF178B74),
           ledColor: const Color(0xFF178B74),
           playSound: true,
-
           soundSource: Platform.isAndroid
               ? 'resource://raw/pre_prayer'
               : 'pre_prayer.mp3',
@@ -288,7 +289,6 @@ class NotificationManager {
 
         // 📢 قناة إقامة الصلاة
         NotificationChannel(
-
           channelKey: 'iqamah_channel_v1',
           channelName: 'تنبيهات الإقامة',
           channelDescription: 'تنبيه بموعد إقامة الصلاة',
@@ -404,7 +404,7 @@ class NotificationManager {
     // 🚀 إعادة جدولة الأذان
     // When calling rescheduleAll manually, we usually WANT to force an update (e.g. settings changed)
     // If called from main.dart on startup, force might be false (default)
-    await AdhanWorkManagerService().initialize(forceReschedule: force);
+    await PrayerSchedulerService().reschedule();
 
     // print('✅ Reschedule completed.');
   }
@@ -1025,7 +1025,6 @@ class NotificationManager {
         }
       }
       logger.i('✅ Scheduled $count religious occasion reminders.');
-
     } catch (e) {
       logger.e('❌ Error scheduling religious occasions: $e');
     }
@@ -1214,7 +1213,8 @@ class NotificationManager {
         ),
         schedule: schedule,
       );
-      logger.i('✅ تم جدولة تذكير الورد ($wirdName) الساعة $timeStr - $frequency');
+      logger
+          .i('✅ تم جدولة تذكير الورد ($wirdName) الساعة $timeStr - $frequency');
     } catch (e) {
       logger.e('❌ خطأ في جدولة تذكير الورد: $e');
     }
@@ -1422,7 +1422,7 @@ class NotificationManager {
       case 'MUTE_ADHAN':
         // These are DismissActions, but we can explicitly stop audio here if needed.
         // For now, they will dismiss the notification.
-      logger.i('🛑 Adhan Stopped/Muted by user.');
+        logger.i('🛑 Adhan Stopped/Muted by user.');
         break;
 
       // New Routes
