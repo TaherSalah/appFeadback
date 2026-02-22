@@ -25,7 +25,7 @@ class NotificationManager {
   factory NotificationManager() => _instance;
   NotificationManager._internal();
 
-  final SettingsService _settingsService = SettingsService();
+//   final SettingsService _settingsService = SettingsService();
 
   // 🔊 إيقاف صوت الإشعارات والأذان فوراً
   static Future<void> stopAdhan() async {
@@ -44,7 +44,7 @@ class NotificationManager {
   }
 
   Future<void> initialize() async {
-    await _settingsService.init();
+    await SettingsService().init();
 
     await updateAllChannels();
 
@@ -74,252 +74,339 @@ class NotificationManager {
       'normal': 'adhan_channel_v4',
     };
 
-    await AwesomeNotifications().initialize(
-      Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
-      [
-        // 🌅 قناة أذان الفجر (ديناميكية)
-        NotificationChannel(
-          channelKey: currentChannels['fajr']!,
-          channelName: 'أذان الفجر',
-          channelDescription: 'تشغيل أذان الفجر',
-          importance: NotificationImportance.Max,
-          playSound: true,
-          soundSource: fajrPath ??
-              (Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3'),
-          enableVibration: SettingsService().isAdhanVibrationEnabled,
-          enableLights: true,
-          ledColor: const Color(0xFF178B74),
-          defaultColor: const Color(0xFF178B74),
-          defaultPrivacy: NotificationPrivacy.Public,
-          locked: false,
-          criticalAlerts: true,
-        ),
+    print(
+        '🔔 [NotificationManager] Initializing Awesome Notifications channels...');
 
-        // 🕌 قناة الأذان العادي (ديناميكية)
-        NotificationChannel(
-          channelKey: currentChannels['normal']!,
-          channelName: 'أذان الصلاة',
-          channelDescription: 'تشغيل صوت الأذان',
-          importance: NotificationImportance.Max,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          soundSource: normalPath ??
-              (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-          enableVibration: SettingsService().isAdhanVibrationEnabled,
-          enableLights: true,
-          locked: false,
-          criticalAlerts: true,
-        ),
+    final channels = [
+      // 🌅 قناة أذان الفجر (ديناميكية)
+      NotificationChannel(
+        channelKey: currentChannels['fajr']!,
+        channelName: 'أذان الفجر',
+        channelDescription: 'تشغيل أذان الفجر',
+        importance: NotificationImportance.Max,
+        playSound: true,
+        soundSource: fajrPath ??
+            (Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3'),
+        enableVibration: SettingsService().isAdhanVibrationEnabled,
+        enableLights: true,
+        ledColor: const Color(0xFF178B74),
+        defaultColor: const Color(0xFF178B74),
+        defaultPrivacy: NotificationPrivacy.Public,
+        locked: false,
+        criticalAlerts: true,
+      ),
 
-        // 📿 قناة الأذكار والتذكيرات
-        NotificationChannel(
-          channelKey: 'sabah_athkar_channel',
-          channelName: 'أذكار الصباح',
-          channelDescription: 'حان وقت أذكار الصباح',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          soundSource:
-              Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
+      // 🕌 قناة الأذان العادي (ديناميكية)
+      NotificationChannel(
+        channelKey: currentChannels['normal']!,
+        channelName: 'أذان الصلاة',
+        channelDescription: 'تشغيل صوت الأذان',
+        importance: NotificationImportance.Max,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        soundSource: normalPath ??
+            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+        enableVibration: SettingsService().isAdhanVibrationEnabled,
+        enableLights: true,
+        locked: false,
+        criticalAlerts: true,
+      ),
 
-        NotificationChannel(
-          channelKey: 'mesaa_athkar_channel',
-          channelName: 'أذكار المساء',
-          channelDescription: 'تذكير أذكار المساء',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          soundSource:
-              Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
+      // 📿 قناة الأذكار والتذكيرات
+      NotificationChannel(
+        channelKey: 'sabah_athkar_channel',
+        channelName: 'أذكار الصباح',
+        channelDescription: 'حان وقت أذكار الصباح',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        soundSource:
+            Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
 
-        NotificationChannel(
-          channelKey: 'sleep_athkar_channel',
-          channelName: 'أذكار النوم',
-          channelDescription: 'تذكير أذكار النوم',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          soundSource:
-              Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
+      NotificationChannel(
+        channelKey: 'mesaa_athkar_channel',
+        channelName: 'أذكار المساء',
+        channelDescription: 'تذكير أذكار المساء',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        soundSource:
+            Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
 
-        NotificationChannel(
-          channelKey: 'qiam_channel',
-          channelName: 'قيام الليل',
-          channelDescription: 'وقت قيام الليل',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          soundSource: Platform.isAndroid ? 'resource://raw/qiam' : 'qiam.mp3',
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
+      NotificationChannel(
+        channelKey: 'sleep_athkar_channel',
+        channelName: 'أذكار النوم',
+        channelDescription: 'تذكير أذكار النوم',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        soundSource:
+            Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
 
-        // 🤲 قناة الصلاة على النبي
-        NotificationChannel(
-          channelKey: 'salawat_channel',
-          channelName: 'الصلاة على النبي',
-          channelDescription: 'تذكير بالالصلاة على النبي',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          soundSource:
-              Platform.isAndroid ? 'resource://raw/profet' : 'profet.mp3',
-          enableVibration: true,
-          enableLights: true,
-        ),
+      NotificationChannel(
+        channelKey: 'qiam_channel',
+        channelName: 'قيام الليل',
+        channelDescription: 'وقت قيام الليل',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        soundSource: Platform.isAndroid ? 'resource://raw/qiam' : 'qiam.mp3',
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
 
-        // 📖 قناة القرآن
-        NotificationChannel(
-          channelKey: 'quran_channel',
-          channelName: 'ورد القرآن',
-          channelDescription: 'تذكير بالورد اليومي',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
-        // 🤲 قناة أذكار بعد الصلاة
-        NotificationChannel(
-          channelKey: 'post_prayer_dhikr_channel',
-          channelName: 'أذكار بعد الصلاة',
-          channelDescription: 'تذكير بأذكار ما بعد الصلاة',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          soundSource:
-              Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
-          enableVibration: true,
-          enableLights: true,
-        ),
+      // 🤲 قناة الصلاة على النبي
+      NotificationChannel(
+        channelKey: 'salawat_channel',
+        channelName: 'الصلاة على النبي',
+        channelDescription: 'تذكير بالصلاة على النبي',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        soundSource:
+            Platform.isAndroid ? 'resource://raw/profet' : 'profet.mp3',
+        enableVibration: true,
+        enableLights: true,
+      ),
 
-        // 📿 قناة الحديث اليومي
-        NotificationChannel(
-          channelKey: 'hadith_channel',
-          channelName: 'الحديث اليومي',
-          channelDescription: 'تذكير بحديث اليوم',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
-        // 💰 قناة تذكير الزكاة
-        NotificationChannel(
-          channelKey: 'zakat_reminder_channel',
-          channelName: 'تذكير الزكاة',
-          channelDescription: 'تذكير بمرور الحول على الزكاة',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
-        // 💰 قناة تذكيرات الصدقة
-        NotificationChannel(
-          channelKey: 'charity_reminder_channel',
-          channelName: 'تذكير الصدقة',
-          channelDescription: 'تذكير بالصدقة اليومية والأسبوعية والدورية',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
-        // 🏆 قناة الإنجازات
-        NotificationChannel(
-          channelKey: 'achievement_unlocked_channel',
-          channelName: 'إنجازات الصدقة',
-          channelDescription: 'إشعارات عند فتح إنجاز جديد في قسم الصدقة',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
-        // 🗓️ قناة تذكير التقويم
-        NotificationChannel(
-          channelKey: 'calendar_reminders_channel',
-          channelName: 'تذكير التقويم',
-          channelDescription: 'تنبيهات للمناسبات والأحداث الخاصة في التقويم',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          enableVibration: true,
-          enableLights: true,
-        ),
+      // 📖 قناة القرآن
+      NotificationChannel(
+        channelKey: 'quran_channel',
+        channelName: 'ورد القرآن',
+        channelDescription: 'تذكير بالورد اليومي',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
+      // 🤲 قناة أذكار بعد الصلاة
+      NotificationChannel(
+        channelKey: 'post_prayer_dhikr_channel',
+        channelName: 'أذكار بعد الصلاة',
+        channelDescription: 'تذكير بأذكار ما بعد الصلاة',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        soundSource:
+            Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
+        enableVibration: true,
+        enableLights: true,
+      ),
 
-        // 🔔 قناة التنبيهات قبل الصلاة
-        NotificationChannel(
-          channelKey: 'pre_prayer_channel_v1',
-          channelName: 'تنبيهات قبل الصلاة',
-          channelDescription: 'تنبيه قبل الصلاة بـ 15 دقيقة',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          soundSource: Platform.isAndroid
-              ? 'resource://raw/pre_prayer'
-              : 'pre_prayer.mp3',
-          enableVibration: true,
-          enableLights: true,
-        ),
+      // 📿 قناة الحديث اليومي
+      NotificationChannel(
+        channelKey: 'hadith_channel',
+        channelName: 'الحديث اليومي',
+        channelDescription: 'تذكير بحديث اليوم',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
+      // 💰 قناة تذكير الزكاة
+      NotificationChannel(
+        channelKey: 'zakat_reminder_channel',
+        channelName: 'تذكير الزكاة',
+        channelDescription: 'تذكير بمرور الحول على الزكاة',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
+      // 💰 قناة تذكيرات الصدقة
+      NotificationChannel(
+        channelKey: 'charity_reminder_channel',
+        channelName: 'تذكير الصدقة',
+        channelDescription: 'تذكير بالصدقة اليومية والأسبوعية والدورية',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
+      // 🏆 قناة الإنجازات
+      NotificationChannel(
+        channelKey: 'achievement_unlocked_channel',
+        channelName: 'إنجازات الصدقة',
+        channelDescription: 'إشعارات عند فتح إنجاز جديد في قسم الصدقة',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
+      // 🗓️ قناة تذكير التقويم
+      NotificationChannel(
+        channelKey: 'calendar_reminders_channel',
+        channelName: 'تذكير التقويم',
+        channelDescription: 'تنبيهات للمناسبات والأحداث الخاصة في التقويم',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+      ),
 
-        // 📢 قناة إقامة الصلاة
-        NotificationChannel(
-          channelKey: 'iqamah_channel_v1',
-          channelName: 'تنبيهات الإقامة',
-          channelDescription: 'تنبيه بموعد إقامة الصلاة',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          soundSource:
-              Platform.isAndroid ? 'resource://raw/iqamah' : 'iqamah.mp3',
-          enableVibration: true,
-          enableLights: true,
-        ),
+      // 🔔 قناة التنبيهات قبل الصلاة
+      NotificationChannel(
+        channelKey: 'pre_prayer_channel_v1',
+        channelName: 'تنبيهات قبل الصلاة',
+        channelDescription: 'تنبيه قبل الصلاة بـ 15 دقيقة',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        soundSource:
+            Platform.isAndroid ? 'resource://raw/pre_prayer' : 'pre_prayer.mp3',
+        enableVibration: true,
+        enableLights: true,
+      ),
 
-        // 🌅 قناة وقت الشروق
-        NotificationChannel(
-          channelKey: 'shruq_channel_v1',
-          channelName: 'تنبيه الشروق',
-          channelDescription: 'تنبيه بموعد الشروق',
-          importance: NotificationImportance.High,
-          defaultColor: const Color(0xFF178B74),
-          ledColor: const Color(0xFF178B74),
-          playSound: true,
-          soundSource:
-              Platform.isAndroid ? 'resource://raw/shruq' : 'shruq.mp3',
-          enableVibration: true,
-          enableLights: true,
-          criticalAlerts: true,
-        ),
-      ],
-      debug: true,
-    );
+      // 📢 قناة إقامة الصلاة
+      NotificationChannel(
+        channelKey: 'iqamah_channel_v1',
+        channelName: 'تنبيهات الإقامة',
+        channelDescription: 'تنبيه بموعد إقامة الصلاة',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        soundSource:
+            Platform.isAndroid ? 'resource://raw/iqamah' : 'iqamah.mp3',
+        enableVibration: true,
+        enableLights: true,
+      ),
+
+      // 🌅 قناة وقت الشروق
+      NotificationChannel(
+        channelKey: 'shruq_channel_v1',
+        channelName: 'تنبيه الشروق',
+        channelDescription: 'تنبيه بموعد الشروق',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        soundSource: Platform.isAndroid ? 'resource://raw/shruq' : 'shruq.mp3',
+        enableVibration: true,
+        enableLights: true,
+        criticalAlerts: true,
+      ),
+
+      // 🕌 Legacy Channels from NotifyHelper (Old Adhan Logic)
+      NotificationChannel(
+        channelKey: 'prayers_notifications_channel_ak',
+        channelName: 'Prayer Times Notifications',
+        channelDescription: 'Notification channel for Prayer Times',
+        ledColor: Colors.white,
+        importance: NotificationImportance.Max,
+        playSound: true,
+        soundSource: 'resource://raw/aqsa_athan',
+      ),
+      NotificationChannel(
+        channelKey: 'prayers_notifications_channel_ak_saqqaf',
+        channelName: 'Prayer Times Notifications saqqaf',
+        channelDescription: 'Notification channel for Prayer Times',
+        ledColor: Colors.white,
+        importance: NotificationImportance.Max,
+        playSound: true,
+        soundSource: 'resource://raw/saqqaf_athan',
+      ),
+      NotificationChannel(
+        channelKey: 'prayers_notifications_channel_ak_sarihi',
+        channelName: 'Prayer Times Notifications sarihi',
+        channelDescription: 'Notification channel for Prayer Times',
+        ledColor: Colors.white,
+        importance: NotificationImportance.Max,
+        playSound: true,
+        soundSource: 'resource://raw/sarihi_athan',
+      ),
+      NotificationChannel(
+        channelKey: 'prayers_notifications_channel_ak_baset',
+        channelName: 'Prayer Times Notifications baset',
+        channelDescription: 'Notification channel for Prayer Times',
+        ledColor: Colors.white,
+        importance: NotificationImportance.Max,
+        playSound: true,
+        soundSource: 'resource://raw/baset_athan',
+      ),
+      NotificationChannel(
+        channelKey: 'prayers_notifications_channel_ak_qatami',
+        channelName: 'Prayer Times Notifications qatami',
+        channelDescription: 'Notification channel for Prayer Times',
+        ledColor: Colors.white,
+        importance: NotificationImportance.Max,
+        playSound: true,
+        soundSource: 'resource://raw/qatami_athan',
+      ),
+      NotificationChannel(
+        channelKey: 'prayers_notifications_channel_ak_salah',
+        channelName: 'Prayer Times Notifications salah',
+        channelDescription: 'Notification channel for Prayer Times',
+        ledColor: Colors.white,
+        importance: NotificationImportance.Max,
+        playSound: true,
+        soundSource: 'resource://raw/salah_athan',
+      ),
+      NotificationChannel(
+        channelKey: 'prayers_notifications_channel_ak_notification',
+        channelName: 'App Notifications',
+        channelDescription: 'Notification channel for App Notifications',
+        ledColor: Colors.white,
+        importance: NotificationImportance.Max,
+        playSound: true,
+        soundSource: 'resource://raw/notification',
+      ),
+    ];
+
+    try {
+      await AwesomeNotifications().initialize(
+        Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
+        channels,
+        debug: true,
+      );
+      print(
+          '✅ [NotificationManager] Awesome Notifications initialized successfully.');
+    } catch (e) {
+      print(
+          '❌ [NotificationManager] Failed to initialize Awesome Notifications: $e');
+      // Try to initialize ONE BY ONE to find the bad one
+      for (var channel in channels) {
+        try {
+          await AwesomeNotifications().setChannel(channel);
+          print(
+              '✅ [NotificationManager] Channel ${channel.channelKey} initialized.');
+        } catch (ex) {
+          print(
+              '❌ [NotificationManager] Channel ${channel.channelKey} FAILED: $ex');
+        }
+      }
+      rethrow;
+    }
   }
 
   Future<bool> checkAndRequestExactAlarmPermission() async {
@@ -412,7 +499,7 @@ class NotificationManager {
   Future<void> _setupDailyReminders() async {
     try {
       // 🌅 أذكار الصباح
-      if (_settingsService.isAzkarSabahEnabled) {
+      if (SettingsService().isAzkarSabahEnabled) {
         await _scheduleDailyNotification(
           id: 1,
           channelKey: 'sabah_athkar_channel',
@@ -425,7 +512,7 @@ class NotificationManager {
       }
 
       // 🌙 أذكار المساء
-      if (_settingsService.isAzkarMassaEnabled) {
+      if (SettingsService().isAzkarMassaEnabled) {
         await _scheduleDailyNotification(
           id: 2,
           channelKey: 'mesaa_athkar_channel',
@@ -438,7 +525,7 @@ class NotificationManager {
       }
 
       // 📖 ورد القرآن
-      if (_settingsService.isDailyQuranReminderEnabled) {
+      if (SettingsService().isDailyQuranReminderEnabled) {
         await _scheduleDailyNotification(
           id: 3,
           channelKey: 'quran_channel',
@@ -454,7 +541,7 @@ class NotificationManager {
       await scheduleHadithSeries();
 
       // 😴 أذكار النوم
-      if (_settingsService.isAzkarSleepEnabled) {
+      if (SettingsService().isAzkarSleepEnabled) {
         await _scheduleDailyNotification(
           id: 6,
           channelKey: 'sleep_athkar_channel',
@@ -467,7 +554,7 @@ class NotificationManager {
       }
 
       // 🌙 قيام الليل
-      if (_settingsService.isQiyamEnabled) {
+      if (SettingsService().isQiyamEnabled) {
         await _scheduleDailyNotification(
           id: 7,
           channelKey: 'qiam_channel',
@@ -480,7 +567,7 @@ class NotificationManager {
       }
 
       // 🤲 الصلاة على النبي
-      if (_settingsService.isSalatAlaNabiEnabled) {
+      if (SettingsService().isSalatAlaNabiEnabled) {
         await _scheduleSalawat();
       }
 
@@ -488,42 +575,42 @@ class NotificationManager {
       await _scheduleAdvancedFajrAlarm();
 
       // 🍽️ تذكير صيام الاثنين والخميس
-      if (_settingsService.isFastingReminderEnabled) {
+      if (SettingsService().isFastingReminderEnabled) {
         await _scheduleFastingReminders();
       }
 
       // 🕌 سنن الجمعة (الكهف وساعة الاستجابة)
-      if (_settingsService.isFridayRemindersEnabled) {
+      if (SettingsService().isFridayRemindersEnabled) {
         await _scheduleFridayReminders();
       }
 
       // ⚪ الأيام البيض (13، 14، 15 هجرياً)
-      if (_settingsService.isWhiteDaysReminderEnabled) {
+      if (SettingsService().isWhiteDaysReminderEnabled) {
         await _scheduleWhiteDaysReminders();
       }
 
       // ✨ المناسبات الإسلامية
-      if (_settingsService.isReligiousOccasionsEnabled) {
+      if (SettingsService().isReligiousOccasionsEnabled) {
         await _scheduleReligiousOccasions();
       }
 
       // 🌕 سورة الملك
-      if (_settingsService.isMulkReminderEnabled) {
+      if (SettingsService().isMulkReminderEnabled) {
         await _scheduleMulkReminder();
       }
 
       // ☀️ صلاة الضحى
-      if (_settingsService.isDuhaReminderEnabled) {
+      if (SettingsService().isDuhaReminderEnabled) {
         await _scheduleDuhaReminder();
       }
 
       // 💡 سنة اليوم
-      if (_settingsService.isSunnahReminderEnabled) {
+      if (SettingsService().isSunnahReminderEnabled) {
         await _scheduleSunnahReminder();
       }
 
       // 🤲 الدعاء بين الأذان والإقامة
-      if (_settingsService.isBetweenAdhanIqamahEnabled) {
+      if (SettingsService().isBetweenAdhanIqamahEnabled) {
         await _scheduleBetweenAdhanIqamah();
       }
     } catch (e, stackTrace) {
@@ -667,7 +754,7 @@ class NotificationManager {
   }
 
   Future<void> _scheduleSalawat() async {
-    int minutes = _settingsService.getSalatAlaNabiMinutes();
+    int minutes = SettingsService().getSalatAlaNabiMinutes();
     // print('Scheduling Salawat every $minutes minutes');
 
     await AwesomeNotifications().createNotification(
@@ -692,7 +779,7 @@ class NotificationManager {
   }
 
   Future<void> scheduleAdvancedFajrAlarm() async {
-    await _settingsService.init();
+    await SettingsService().init();
     await _scheduleAdvancedFajrAlarm();
   }
 
@@ -701,15 +788,15 @@ class NotificationManager {
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
 
-    if (!_settingsService.isFajrAlarmEnabled) {
+    if (!SettingsService().isFajrAlarmEnabled) {
       logger.e("🔕 Advanced Fajr Alarm is DISABLED.");
       return;
     }
 
-    final hour = _settingsService.fajrAlarmHour;
-    final minute = _settingsService.fajrAlarmMinute;
-    final days = _settingsService.fajrAlarmDays; // 1-7 (Mon-Sun)
-    final repetitions = _settingsService.fajrAlarmRepetitions;
+    final hour = SettingsService().fajrAlarmHour;
+    final minute = SettingsService().fajrAlarmMinute;
+    final days = SettingsService().fajrAlarmDays; // 1-7 (Mon-Sun)
+    final repetitions = SettingsService().fajrAlarmRepetitions;
 
     // Default 5 minutes interval, but we could make it settings based later
     const int intervalMinutes = 5;
@@ -1324,24 +1411,22 @@ class NotificationManager {
       ReceivedNotification receivedNotification) async {
     logger.i('📱 Notification Displayed: ${receivedNotification.id}');
 
-    // Check if this is an Adhan notification with route
     final route = receivedNotification.payload?['route'];
     if (route == 'adhan_screen') {
-      // Check if overlay is enabled
-      final settings = SettingsService();
-      await settings.init();
+      // Small delay to ensure Flutter's navigator is ready
+      await Future.delayed(const Duration(milliseconds: 300));
 
-      if (settings.isAdhanOverlayEnabled) {
-        final navigator = CentralizedCubit.navigatorKey.currentState;
-        if (navigator != null) {
-          navigator.push(MaterialPageRoute(
-            builder: (_) => AdhanOverlayScreen(
-              prayerName: receivedNotification.payload?['prayerName'],
-              cityName: receivedNotification.payload?['cityName'],
-              prayerTime: receivedNotification.payload?['prayer_time'],
-            ),
-          ));
-        }
+      final navigator = CentralizedCubit.navigatorKey.currentState;
+      if (navigator != null) {
+        // Show the adhan overlay screen whenever notification fires
+        // (whether app is in foreground, background, or locked screen)
+        navigator.push(MaterialPageRoute(
+          builder: (_) => AdhanOverlayScreen(
+            prayerName: receivedNotification.payload?['prayerName'],
+            cityName: receivedNotification.payload?['cityName'],
+            prayerTime: receivedNotification.payload?['prayer_time'],
+          ),
+        ));
       }
     }
   }

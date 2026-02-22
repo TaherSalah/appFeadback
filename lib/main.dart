@@ -23,10 +23,12 @@ import 'app/features/duas/models/dua_models.dart';
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:quran_library/quran.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'app/features/calendar/data/models/calendar_event_model.dart';
 import 'app/features/quran/pdf/data/pdf_book_model.dart';
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'app/core/services/adhan_logic/notify_helper.dart';
+import 'app/core/services/adhan_logic/background_services.dart';
 import 'package:logger/logger.dart';
 
 final logger = Logger();
@@ -161,12 +163,11 @@ Future<void> _initAppServices() async {
   final notificationManager = NotificationManager();
   await notificationManager.initialize();
 
-  // ✅ 7) Initialize Android Alarm Manager for exact widget updates
+  // ✅ 7) Initialize Background Services for Adhan and Widgets
   try {
-    await AndroidAlarmManager.initialize();
+    await BGServices().registerTask();
   } catch (e) {
-    debugPrint(
-        '⚠️ AndroidAlarmManager init failed (might be not needed on iOS): $e');
+    debugPrint('⚠️ BGServices init failed: $e');
   }
 
   // 🚀 Log App Launch Analytics

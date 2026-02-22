@@ -17,13 +17,11 @@ class HomeWidgetProvider : AppWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             val widgetData = HomeWidgetPlugin.getData(context)
             val views = RemoteViews(context.packageName, R.layout.widget_layout)
-
             val prayerName = widgetData.getString("prayer_name", "--")
             val prayerTime = widgetData.getString("prayer_time", "--:--")
             val city = widgetData.getString("city", "--")
             val timeLeft = widgetData.getString("time_left", "")
             val hijriDate = widgetData.getString("hijri_date", "")
-
             views.setTextViewText(R.id.widget_prayer_name, prayerName)
             views.setTextViewText(R.id.widget_prayer_time, prayerTime)
             views.setTextViewText(R.id.widget_city, city)

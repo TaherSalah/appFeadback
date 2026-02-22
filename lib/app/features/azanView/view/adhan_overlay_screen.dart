@@ -1,10 +1,14 @@
+import 'dart:developer' show log;
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:muslimdaily/app/features/QiblaView/QiblaDirection.dart';
 import 'package:muslimdaily/app/features/mainView/MainView.dart';
 import 'package:muslimdaily/app/features/prayerView/post_prayer_azkar.dart';
 import 'package:muslimdaily/app/features/quran/quranView.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdhanOverlayScreen extends StatefulWidget {
   final String? prayerName;
@@ -26,6 +30,7 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  AudioPlayer? _audioPlayer;
 
   @override
   void initState() {
@@ -38,19 +43,95 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
+
+    // Start playing the selected Adhan sound with a small delay
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _playAdhanSound();
+    });
+  }
+
+  Future<void> _playAdhanSound() async {
+    print('🌙 [AdhanOverlay] Starting audio playback sequence...');
+    try {
+      // Setup audio session to use Alarm stream so it plays even on silent
+      print('🌙 [AdhanOverlay] Configuring AudioSession...');
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration(
+        avAudioSessionCategory: AVAudioSessionCategory.playback,
+        avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.duckOthers,
+        avAudioSessionMode: AVAudioSessionMode.defaultMode,
+        avAudioSessionRouteSharingPolicy:
+            AVAudioSessionRouteSharingPolicy.defaultPolicy,
+        avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
+        androidAudioAttributes: AndroidAudioAttributes(
+          contentType: AndroidAudioContentType.music,
+          flags: AndroidAudioFlags.audibilityEnforced,
+          usage: AndroidAudioUsage.alarm, // ← This is key! Uses alarm volume
+        ),
+        androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
+        androidWillPauseWhenDucked: false,
+      ));
+
+      await session.setActive(true);
+      print('🌙 [AdhanOverlay] AudioSession active.');
+
+      // Get the saved Adhan path
+      final prefs = await SharedPreferences.getInstance();
+      final isFajr = widget.prayerName?.contains('الفجر') ?? false;
+      String? adhanPath = isFajr
+          ? prefs.getString('adhan_path_fajir')
+          : prefs.getString('adhan_path');
+
+      print(
+          '🌙 [AdhanOverlay] Preference adhanPath: $adhanPath (isFajr: $isFajr)');
+
+      _audioPlayer = AudioPlayer();
+      await _audioPlayer!.setVolume(1.0);
+
+      if (adhanPath != null && adhanPath.startsWith('/')) {
+        // It's a local file path (downloaded custom adhan)
+        print('🔊 [AdhanOverlay] Playing from local file: $adhanPath');
+        await _audioPlayer!.setFilePath(adhanPath);
+      } else {
+        // Default: use the bundled Adhan asset
+        final assetName =
+            isFajr ? 'assets/athan/fajr.mp3' : 'assets/athan/athan.mp3';
+        print('🔊 [AdhanOverlay] Playing from asset: $assetName');
+        await _audioPlayer!.setAsset(assetName);
+      }
+
+      print('🌙 [AdhanOverlay] Audio source set. Starting playback...');
+      _audioPlayer!.play();
+      print('🌙 [AdhanOverlay] Playback started.');
+    } catch (e, stack) {
+      print('❌ [AdhanOverlay] Error playing Adhan sound: $e');
+      print('❌ [AdhanOverlay] Stack: $stack');
+    }
+  }
+
+  Future<void> _stopAndClose() async {
+    await _audioPlayer?.stop();
+    await _audioPlayer?.dispose();
+    _audioPlayer = null;
+    final session = await AudioSession.instance;
+    await session.setActive(false);
   }
 
   @override
   void dispose() {
+    _stopAndClose();
     _controller.dispose();
     super.dispose();
   }
 
-  void _closeScreen() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const MainView()),
-      (Route<dynamic> route) => false,
-    );
+  void _closeScreen() async {
+    await _stopAndClose();
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const MainView()),
+        (Route<dynamic> route) => false,
+      );
+    }
   }
 
   @override
@@ -119,8 +200,8 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                       fontSize: 35.sp,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      shadows: [
-                        const Shadow(
+                      shadows: const [
+                        Shadow(
                           blurRadius: 10,
                           color: Colors.black,
                           offset: Offset(0, 5),
@@ -128,22 +209,20 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                       ],
                     ),
                   ),
-
                   Text(
                     widget.prayerName ?? "وقت الصلاة",
                     style: GoogleFonts.amiri(
                       fontSize: 48.sp,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      shadows: [
-                        const Shadow(
+                      shadows: const [
+                        Shadow(
                           blurRadius: 10,
                           color: Colors.black,
                           offset: Offset(0, 5),
                         ),
                       ],
                     ),
-
                   ),
                   if (widget.prayerName?.contains('الشروق') == true) ...[
                     SizedBox(height: 10.h),
@@ -206,27 +285,42 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                   _buildActionButton(
                     icon: Icons.mosque,
                     label: "أذكار الصلاة",
-                    onTap: () {
-                      _closeScreen();
-                      // Navigate to Athkar (defaulting to messaa or sabah based on time if needed, 
-                      // or just general athkar view if available. For now routing to MainView -> Athkar logic)
-                       // You might want to direct to a specific Athkar page. 
-                       // Assuming AzkarMassa for PM and Sabah for AM or generally MainView
-                       Navigator.push(context, MaterialPageRoute(builder: (_) => const PrayerAzkar()));
+                    onTap: () async {
+                      await _stopAndClose();
+                      if (mounted) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (_) => const PrayerAzkar()),
+                          (r) => false,
+                        );
+                      }
                     },
                   ),
                   _buildActionButton(
                     icon: Icons.menu_book,
                     label: "القرآن",
-                    onTap: () {
-                       Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranView())); 
+                    onTap: () async {
+                      await _stopAndClose();
+                      if (mounted) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (_) => const QuranView()),
+                          (r) => false,
+                        );
+                      }
                     },
                   ),
                   _buildActionButton(
                     icon: Icons.explore,
                     label: "القبلة",
-                    onTap: () {
-                       Navigator.push(context, MaterialPageRoute(builder: (_) => const QiblaDirection())); 
+                    onTap: () async {
+                      await _stopAndClose();
+                      if (mounted) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (_) => const QiblaDirection()),
+                          (r) => false,
+                        );
+                      }
                     },
                   ),
                 ],

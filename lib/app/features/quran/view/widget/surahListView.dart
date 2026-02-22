@@ -7,6 +7,7 @@ import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart' as surahModel;
+import 'package:muslimdaily/main.dart';
 import 'package:quran_library/quran.dart';
 
 import 'package:showcaseview/showcaseview.dart';
@@ -453,10 +454,12 @@ class _SurahListScreenState extends State<SurahListScreen> {
       physics: const BouncingScrollPhysics(),
       itemCount: _filteredSurahItems.length,
       itemBuilder: (ctx, index) {
+
         final item = _filteredSurahItems[index];
         final surah = item.model;
         final realIndex = item.index;
         final isDark = Theme.of(context).brightness == Brightness.dark;
+        logger.t("item.arabicName ${item.arabicName}");
 
         final types = surah.type == "medinan"
             ? "assets/images/madina.png"

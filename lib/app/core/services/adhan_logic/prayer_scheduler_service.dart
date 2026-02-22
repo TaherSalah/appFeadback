@@ -404,12 +404,56 @@ class PrayerSchedulerService {
     await prefs.setInt(
         'adhan_last_schedule_time', DateTime.now().millisecondsSinceEpoch);
     await prefs.setString(
-        'adhan_settings_hash', _generateHash(coords, cityName));
+        'adhan_settings_hash', await _generateHash(coords, cityName));
   }
 
-  String _generateHash(LatLng? coords, String? cityName) {
+  Future<String> _generateHash(LatLng? coords, String? cityName) async {
+    final prefs = await SharedPreferences.getInstance();
+    final isAdhanEnabled = prefs.getBool('is_adhan_enabled') ?? true;
     final lat = coords?.latitude.toStringAsFixed(3) ?? '0';
     final lng = coords?.longitude.toStringAsFixed(3) ?? '0';
-    return '${lat}_${lng}_${cityName ?? 'unknown'}';
+    return '${lat}_${lng}_${cityName ?? 'unknown'}_$isAdhanEnabled';
+  }
+
+  Future<void> scheduleTest({int secondsFromNow = 5}) async {
+    final scheduledTime = DateTime.now().add(Duration(seconds: secondsFromNow));
+    final cityName = await _getSavedCityName();
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 99999,
+        channelKey:
+            'fajr_adhan_channel_v4', // Use Fajr channel for test to ensure high importance
+        title: '🔔 اختبار الأذان المختار',
+        body: 'مدينة $cityName - اختبار نظام التنبيهات الجديد',
+        category: NotificationCategory.Alarm,
+        wakeUpScreen: true,
+        fullScreenIntent: true,
+        criticalAlert: true,
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+        payload: {
+          'prayerName': 'اختبار',
+          'prayer_time': _formatTime(scheduledTime),
+          'cityName': cityName,
+          'route': 'adhan_screen',
+          'type': 'test',
+          'sound_type': 'sound', // MANDATORY for NotifyHelper to play sound
+        },
+      ),
+      schedule: NotificationCalendar.fromDate(
+        date: scheduledTime,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'STOP_ADHAN',
+          label: 'إيقاف',
+          actionType: ActionType.DismissAction,
+        ),
+      ],
+    );
+    log('🧪 Test notification scheduled for $scheduledTime', name: _tag);
   }
 }
