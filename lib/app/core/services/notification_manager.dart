@@ -193,6 +193,7 @@ class NotificationManager {
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
+        soundSource: Platform.isAndroid ? 'resource://raw/notification' : 'notification.wav',
         enableVibration: true,
         enableLights: true,
       ),
@@ -220,6 +221,8 @@ class NotificationManager {
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
+        soundSource: Platform.isAndroid ? 'resource://raw/notification' : 'notification.wav',
+
         enableVibration: true,
         enableLights: true,
       ),
@@ -231,6 +234,8 @@ class NotificationManager {
         importance: NotificationImportance.High,
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
+        soundSource: Platform.isAndroid ? 'resource://raw/notification' : 'notification.wav',
+
         playSound: true,
         enableVibration: true,
         enableLights: true,
@@ -245,6 +250,8 @@ class NotificationManager {
         ledColor: const Color(0xFF178B74),
         playSound: true,
         enableVibration: true,
+        soundSource: Platform.isAndroid ? 'resource://raw/notification' : 'notification.wav',
+
         enableLights: true,
       ),
       // 🏆 قناة الإنجازات
@@ -256,6 +263,8 @@ class NotificationManager {
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
+        soundSource: Platform.isAndroid ? 'resource://raw/notification' : 'notification.wav',
+
         enableVibration: true,
         enableLights: true,
       ),
@@ -268,6 +277,8 @@ class NotificationManager {
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
+        soundSource: Platform.isAndroid ? 'resource://raw/notification' : 'notification.wav',
+
         enableVibration: true,
         enableLights: true,
       ),
@@ -281,6 +292,7 @@ class NotificationManager {
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
+
         soundSource:
             Platform.isAndroid ? 'resource://raw/pre_prayer' : 'pre_prayer.mp3',
         enableVibration: true,
@@ -325,7 +337,8 @@ class NotificationManager {
         ledColor: Colors.white,
         importance: NotificationImportance.Max,
         playSound: true,
-        soundSource: 'resource://raw/aqsa_athan',
+        soundSource: normalPath ??
+            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
       ),
       NotificationChannel(
         channelKey: 'prayers_notifications_channel_ak_saqqaf',
@@ -334,7 +347,8 @@ class NotificationManager {
         ledColor: Colors.white,
         importance: NotificationImportance.Max,
         playSound: true,
-        soundSource: 'resource://raw/saqqaf_athan',
+        soundSource: normalPath ??
+            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
       ),
       NotificationChannel(
         channelKey: 'prayers_notifications_channel_ak_sarihi',
@@ -343,7 +357,8 @@ class NotificationManager {
         ledColor: Colors.white,
         importance: NotificationImportance.Max,
         playSound: true,
-        soundSource: 'resource://raw/sarihi_athan',
+        soundSource: normalPath ??
+            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
       ),
       NotificationChannel(
         channelKey: 'prayers_notifications_channel_ak_baset',
@@ -352,7 +367,8 @@ class NotificationManager {
         ledColor: Colors.white,
         importance: NotificationImportance.Max,
         playSound: true,
-        soundSource: 'resource://raw/baset_athan',
+        soundSource: normalPath ??
+            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
       ),
       NotificationChannel(
         channelKey: 'prayers_notifications_channel_ak_qatami',
@@ -361,7 +377,8 @@ class NotificationManager {
         ledColor: Colors.white,
         importance: NotificationImportance.Max,
         playSound: true,
-        soundSource: 'resource://raw/qatami_athan',
+        soundSource: normalPath ??
+            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
       ),
       NotificationChannel(
         channelKey: 'prayers_notifications_channel_ak_salah',
@@ -370,7 +387,8 @@ class NotificationManager {
         ledColor: Colors.white,
         importance: NotificationImportance.Max,
         playSound: true,
-        soundSource: 'resource://raw/salah_athan',
+        soundSource: normalPath ??
+            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
       ),
       NotificationChannel(
         channelKey: 'prayers_notifications_channel_ak_notification',

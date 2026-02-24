@@ -10,6 +10,7 @@ class MainActivity: AudioServiceActivity() {
         super.onCreate(savedInstanceState)
 
         // Ensure the activity shows over the lock screen and turns on the screen
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
@@ -21,5 +22,6 @@ class MainActivity: AudioServiceActivity() {
                         or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
             )
         }
+        */
     }
 }
