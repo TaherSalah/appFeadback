@@ -81,8 +81,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        // backgroundColor:
+        //     isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         appBar: AppBar(
           centerTitle: true,
           actions: [
@@ -179,16 +179,16 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                 child: _buildFAQSection(isDark),
               ),
 
-              const SizedBox(height: 32),
-              Text(
-                "أدوات إسلامية ذات صلة",
-                style: GoogleFonts.cairo(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 16),
+              // const SizedBox(height: 32),
+              // Text(
+              //   "أدوات إسلامية ذات صلة",
+              //   style: GoogleFonts.cairo(
+              //     fontSize: 14.sp,
+              //     fontWeight: FontWeight.bold,
+              //     color: Colors.grey,
+              //   ),
+              // ),
+              // const SizedBox(height: 16),
             ],
           ),
         ),

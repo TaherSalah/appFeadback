@@ -9,8 +9,10 @@ import '../../Khatmah/view/KhatmahDashboard.dart';
 import '../../WirdView/TasbihScreen.dart';
 import '../../WirdView/data/Wird.dart';
 import '../../WirdView/data/WirdManager.dart';
-import '../../quran/view/SurahDetailScreen.dart'; // Assuming this exists or will utilize SurahDetailScreen directly
-import '../../quran/SurahModel.dart'; // Adjust import path
+import 'package:quran_library/quran_library.dart' hide SurahModel;
+import '../../quran/view/widget/QuranViewItemBuilder.dart';
+import '../../quran/view/SurahDetailScreen.dart'; 
+import '../../quran/SurahModel.dart'; 
 import 'dart:convert'; // For jsonDecode
 
 class LastActivityWidget extends StatefulWidget {
@@ -25,6 +27,10 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
   int? _bookmarkVerseId;
   String? _bookmarkVerseName;
   String? _bookmarkedSurahJson; // To load full surah if needed
+  
+  // Last Read Quran Data
+  int? _lastReadPage;
+  String? _lastReadSurahName;
 
   // Wird Data
   Wird? _lastWird;
@@ -50,6 +56,44 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
       _bookmarkVerseName = prefs.getString('bookmark_verseName');
       _bookmarkedSurahJson = prefs.getString('bookmarked_surah');
     });
+
+    // 1.1 Load Last Read Quran Page
+    final lastPage = prefs.getInt('last_page');
+    print("DEBUG: last_page from prefs: $lastPage");
+    
+    // Log all keys starting with last_page to help identify campaign-specific progress
+    final allKeys = prefs.getKeys();
+    for (var key in allKeys) {
+      if (key.startsWith('last_page')) {
+        print("DEBUG: Storage Key found: $key = ${prefs.get(key)}");
+      }
+    }
+
+    if (lastPage != null) {
+      try {
+        final ql = QuranLibrary();
+        
+        // Give a tiny delay for library assets buffer if needed (sometimes helps on cold start)
+        List<AyahModel> ayahs = ql.getPageAyahsByPageNumber(pageNumber: lastPage + 1);
+        
+        if (ayahs.isEmpty) {
+          // Retry once after 200ms if empty
+          await Future.delayed(const Duration(milliseconds: 200));
+          ayahs = ql.getPageAyahsByPageNumber(pageNumber: lastPage + 1);
+        }
+
+        print("DEBUG: ayahs found for page ${lastPage + 1}: ${ayahs.length}");
+        if (ayahs.isNotEmpty) {
+          setState(() {
+            _lastReadPage = lastPage + 1;
+            // Use .toString() as safely as possible
+            _lastReadSurahName = ayahs.first.arabicName.toString();
+          });
+        }
+      } catch (e) {
+        print("DEBUG: ERROR loading last read page: $e");
+      }
+    }
 
     // 2. Load Last Wird
     final lastWirdId = prefs.getString('last_opened_wird_id');
@@ -93,118 +137,123 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
 
     // If no data at all, return empty
     if (_bookmarkVerseId == null &&
+        _lastReadPage == null &&
         _lastWird == null &&
         _activeKhatmah == null) {
       return const SizedBox.shrink();
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: isTab ? 10.0 : 16.0, vertical: 8),
-          child: Text(
-            "متابعة القراءة والنشاط",
-            style: GoogleFonts.cairo(
-              fontSize: isTab ? 14.sp : 16.sp,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black38,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: isTab ? 170.h : 150.h, // Adaptive height
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            children: [
-              if (_bookmarkVerseId != null && _bookmarkVerseName != null)
-                _buildCard(
-                  context,
-                  title: "القرآن الكريم",
-                  subtitle: "تابع من حيث توقفت",
-                  detail: _bookmarkVerseName!,
-                  icon: Icons.book,
-                  color: Colors.brown.shade400,
-                  isDark: isDark,
-                  onTap: () async {
-                    if (_bookmarkedSurahJson != null) {
-                      try {
-                        final surah = SurahModel.fromJson(
-                            jsonDecode(_bookmarkedSurahJson!));
-                        final prefs = await SharedPreferences.getInstance();
-                        final List<String>? jsonList =
-                            prefs.getStringList('saved_surahs');
-                        List<SurahModel> allSurahs = [];
-                        if (jsonList != null) {
-                          allSurahs = jsonList
-                              .map((j) => SurahModel.fromJson(jsonDecode(j)))
-                              .toList();
-                        }
+    return SizedBox(
 
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => SurahDetailScreen(
-                                      surah: surah,
-                                      allSurahs: allSurahs,
-                                      verseId: _bookmarkVerseId!,
-                                      isDark: isDark,
-                                    )));
-                      } catch (e) {
-                        print("Error parsing saved surah: $e");
-                      }
+      height: isTab ? 170.h : 150.h, // Adaptive height
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        children: [
+          if (_lastReadPage != null && _lastReadSurahName != null)
+            _buildCard(
+              context,
+              title: "آخر قراءة",
+              subtitle: "تابع من صفحة $_lastReadPage",
+              detail: "سورة $_lastReadSurahName",
+              icon: Icons.menu_book_rounded,
+              color: Colors.green,
+              isDark: isDark,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QuranViewItemBuilder(
+                      initialPage: _lastReadPage! - 1, // 0-indexed for the builder
+                    ),
+                  ),
+                ).then((_) => _loadData());
+              },
+            ),
+          if (_bookmarkVerseId != null && _bookmarkVerseName != null)
+            _buildCard(
+              context,
+              title: "علامة حفظ",
+              subtitle: "انتقل إلى الآية",
+              detail: _bookmarkVerseName!,
+              icon: Icons.bookmark,
+              color: Colors.brown.shade400,
+              isDark: isDark,
+              onTap: () async {
+                if (_bookmarkedSurahJson != null) {
+                  try {
+                    final surah = SurahModel.fromJson(
+                        jsonDecode(_bookmarkedSurahJson!));
+                    final prefs = await SharedPreferences.getInstance();
+                    final List<String>? jsonList =
+                        prefs.getStringList('saved_surahs');
+                    List<SurahModel> allSurahs = [];
+                    if (jsonList != null) {
+                      allSurahs = jsonList
+                          .map((j) => SurahModel.fromJson(jsonDecode(j)))
+                          .toList();
                     }
-                  },
-                ),
-              if (_lastWird != null)
-                _buildCard(
-                  context,
-                  title: "الأوراد",
-                  subtitle:
-                      _lastWird!.isCompleted ? "تم إكمال الورد" : "أكمل وردك",
-                  detail: _lastWird!.name,
-                  icon: _lastWird!.isCompleted
-                      ? Icons.check_circle
-                      : Icons.access_time_filled,
-                  color: _lastWird!.isCompleted ? Colors.green : Colors.teal,
-                  isDark: isDark,
-                  onTap: () {
+
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TasbihScreen(
-                          wird: _lastWird!,
-                          isDark: isDark,
-                        ),
-                      ),
-                    ).then((_) => _loadData());
-                  },
-                ),
-              if (_activeKhatmah != null)
-                _buildCard(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => SurahDetailScreen(
+                                  surah: surah,
+                                  allSurahs: allSurahs,
+                                  verseId: _bookmarkVerseId!,
+                                  isDark: isDark,
+                                ))).then((_) => _loadData());
+                  } catch (e) {
+                    print("Error parsing saved surah: $e");
+                  }
+                }
+              },
+            ),
+          if (_lastWird != null)
+            _buildCard(
+              context,
+              title: "الأوراد",
+              subtitle:
+                  _lastWird!.isCompleted ? "تم إكمال الورد" : "أكمل وردك",
+              detail: _lastWird!.name,
+              icon: _lastWird!.isCompleted
+                  ? Icons.check_circle
+                  : Icons.access_time_filled,
+              color: _lastWird!.isCompleted ? Colors.green : Colors.teal,
+              isDark: isDark,
+              onTap: () {
+                Navigator.push(
                   context,
-                  title: "الختمة",
-                  subtitle: "تقدمك الحالي",
-                  detail:
-                      "${(_activeKhatmah!.progressPercent * 100).toInt()}% - الباقي ${_activeKhatmah!.daysLeft} يوم",
-                  icon: Icons.pie_chart,
-                  color: Colors.purple.shade400,
-                  isDark: isDark,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const KhatmahDashboard(),
-                      ),
-                    ).then((_) => _loadData());
-                  },
-                ),
-            ],
-          ),
-        ),
-      ],
+                  MaterialPageRoute(
+                    builder: (context) => TasbihScreen(
+                      wird: _lastWird!,
+                      isDark: isDark,
+                    ),
+                  ),
+                ).then((_) => _loadData());
+              },
+            ),
+          if (_activeKhatmah != null)
+            _buildCard(
+              context,
+              title: "الختمة",
+              subtitle: "تقدمك الحالي",
+              detail:
+                  "${(_activeKhatmah!.progressPercent * 100).toInt()}% - الباقي ${_activeKhatmah!.daysLeft} يوم",
+              icon: Icons.pie_chart,
+              color: Colors.purple.shade400,
+              isDark: isDark,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const KhatmahDashboard(),
+                  ),
+                ).then((_) => _loadData());
+              },
+            ),
+        ],
+      ),
     );
   }
 
@@ -219,7 +268,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
     required VoidCallback onTap,
   }) {
     return Container(
-      width: 210.w, // Adaptive width
+      width: 345.w, // Adaptive width
       margin: EdgeInsets.symmetric(horizontal: 6.w),
       child: Card(
         elevation: 4,

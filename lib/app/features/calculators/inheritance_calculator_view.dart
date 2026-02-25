@@ -166,8 +166,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        // backgroundColor:
+        //     isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         // appBar: AppBar(
         //   title: Text("حاسبة المواريث الاحترافية",
         //       style: GoogleFonts.cairo(

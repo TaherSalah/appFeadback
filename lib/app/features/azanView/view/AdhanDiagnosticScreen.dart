@@ -1,8 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:muslimdaily/app/core/services/AdhanDiagnosticHelper.dart';
+import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:android_intent_plus/android_intent.dart';
+import 'dart:io';
+
+import '../../../core/shard/exports/all_exports.dart';
 
 class AdhanDiagnosticScreen extends StatefulWidget {
   const AdhanDiagnosticScreen({Key? key}) : super(key: key);
@@ -204,30 +211,62 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF0B1E15) : const Color(0xFFF5F9F7),
-        appBar: AppBar(
-          title: const Text('تشخيص نظام الأذان'),
-          backgroundColor:
-              isDark ? const Color(0xFF0F2419) : const Color(0xFF178B74),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: _isLoading ? null : _loadDiagnostics,
-              tooltip: 'تحديث',
+        // backgroundColor:
+        //     isDark ? const Color(0xFF0B1E15) : const Color(0xFFF5F9F7),
+        // appBar: AppBar(
+        //   title: const Text('تشخيص نظام الأذان'),
+        //   backgroundColor:
+        //       isDark ? const Color(0xFF0F2419) : const Color(0xFF178B74),
+        //   actions: [
+        //     IconButton(
+        //       icon: const Icon(Icons.refresh),
+        //       onPressed: _isLoading ? null : _loadDiagnostics,
+        //       tooltip: 'تحديث',
+        //     ),
+        //     IconButton(
+        //       icon: const Icon(Icons.copy),
+        //       onPressed: _isLoading ? null : _copyReport,
+        //       tooltip: 'نسخ التقرير',
+        //     ),
+        //   ],
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          child: AppBar(
+            leading:  CupertinoNavigationBarBackButton(
+              color:isDark?Colors.white : Colors.black,
             ),
-            IconButton(
-              icon: const Icon(Icons.copy),
-              onPressed: _isLoading ? null : _copyReport,
-              tooltip: 'نسخ التقرير',
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => CreateKhatmahScreen(),
+            //       ),
+            //     ),
+            //     icon: const Icon(Icons.add),
+            //   )
+            // ],
+            centerTitle: true,
+            title: Text(
+              'تشخيص نظام الأذان',
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.sizeOf(context).width > 600
+                    ? 12.sp
+                    : 18.sp,
+              ),
             ),
-          ],
+          ),
         ),
+
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _errorMessage != null
                 ? _buildError()
-                : _buildContent(isDark),
+                : _buildContent(isDark, context),
       ),
     );
   }
@@ -263,13 +302,14 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
     );
   }
 
-  Widget _buildContent(bool isDark) {
+  Widget _buildContent(bool isDark, BuildContext context) {
     final settings = _diagnosticReport!['settings'] as Map<String, bool>;
     final permissions = _diagnosticReport!['permissions'] as Map<String, bool>;
     final scheduledCount = _diagnosticReport!['scheduled_count'] as int;
     final batteryOptDisabled =
         _diagnosticReport!['battery_optimization_disabled'] as bool;
     final errors = _diagnosticReport!['recent_errors'] as List<String>;
+    final channels = _diagnosticReport!['channels'] as Map<String, dynamic>?;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -289,12 +329,22 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
           _buildPermissionsCard(isDark, permissions, batteryOptDisabled),
           const SizedBox(height: 16),
 
+          // القنوات (جديد)
+          if (channels != null) ...[
+            _buildChannelsCard(isDark, channels),
+            const SizedBox(height: 16),
+          ],
+
           // معلومات الجدولة
-          _buildScheduleCard(isDark, scheduledCount),
-          const SizedBox(height: 16),
+          // _buildScheduleCard(isDark, scheduledCount),
+          // const SizedBox(height: 16),
 
           // دليل خاص بنوع الجهاز
           _buildDeviceSpecificGuide(isDark),
+          const SizedBox(height: 16),
+
+          // دليل عام لتحسين البطارية
+          _buildGeneralBatteryGuide(isDark),
           const SizedBox(height: 16),
 
           // الأخطاء
@@ -304,10 +354,64 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
           ],
 
           // الأزرار
-          _buildActionButtons(isDark),
+          _buildActionButtons(isDark, context),
         ],
       ),
     );
+  }
+
+  Widget _buildChannelsCard(bool isDark, Map<String, dynamic> channels) {
+    return Card(
+      color: isDark ? const Color(0xFF0F2419) : Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.notification_important,
+                    color: isDark ? Colors.tealAccent : Colors.teal),
+                const SizedBox(width: 8),
+                Text(
+                  'قنوات الإشعارات',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...channels.entries.map((entry) => _buildCheckItem(
+                  isDark,
+                  _getChannelLabel(entry.key),
+                  entry.value as bool,
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getChannelLabel(String key) {
+    switch (key) {
+      case 'fajr_adhan_channel_v4':
+        return 'أذان الفجر';
+      case 'adhan_channel_v4':
+        return 'الأذان العادي';
+      case 'pre_prayer_channel_v1':
+        return 'تنبيه قبل الصلاة';
+      case 'iqamah_channel_v1':
+        return 'تنبيه الإقامة';
+      case 'shruq_channel_v1':
+        return 'تنبيه الشروق';
+      default:
+        return key;
+    }
   }
 
   Widget _buildStatusCard(
@@ -325,7 +429,7 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
         scheduledCount > 0;
 
     return Card(
-      color: isDark ? const Color(0xFF0F2419) : Colors.white,
+      color: AppThemeColors.cardBackgroundColor(context),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -367,7 +471,7 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
 
   Widget _buildSettingsCard(bool isDark, Map<String, bool> settings) {
     return Card(
-      color: isDark ? const Color(0xFF0F2419) : Colors.white,
+      color: AppThemeColors.cardBackgroundColor(context),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -405,7 +509,7 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
   Widget _buildPermissionsCard(
       bool isDark, Map<String, bool> permissions, bool batteryOptDisabled) {
     return Card(
-      color: isDark ? const Color(0xFF0F2419) : Colors.white,
+      color: AppThemeColors.cardBackgroundColor(context),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -559,7 +663,7 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
           'اذهب إلى إعدادات الهاتف > التطبيقات > إدارة التطبيقات.',
           'ابحث عن تطبيق "رفيق المسلم" واضغط عليه.',
           'تأكد من تفعيل "التشغيل التلقائي" (Auto-start).',
-          'اضغط على "استهلاك البطارية" واختر "السماح بالنشاط في الخلفية".',
+          'اضغط على "استهلاك البطارية" واختر "السماح بالنشاط في الخلفية" (Allow background activity).',
           'تأكد من تفعيل "العرض على شاشة القفل" (Show on Lock Screen).',
         ],
       );
@@ -570,10 +674,10 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
         icon: Icons.lightbulb_outline,
         color: Colors.orange,
         steps: [
-          'اذهب إلى الإعدادات > التطبيقات > إذن التشغيل التلقائي.',
+          'اذهب إلى الإعدادات > التطبيقات > إذن التشغيل التلقائي (Autostart).',
           'قم بتفعيل "التشغيل التلقائي" لتطبيق "رفيق المسلم".',
-          'اذهب إلى الإعدادات > البطارية > توفير البطارية.',
-          'اختر تطبيق "رفيق المسلم" وحدد "لا توجد قيود".',
+          'اذهب إلى الإعدادات > البطارية > توفير البطارية (Battery saver).',
+          'اختر تطبيق "رفيق المسلم" وحدد "لا توجد قيود" (No restrictions).',
           'تأكد من إذن "نمط عرض شاشة القفل" (Show on Lock Screen).',
         ],
       );
@@ -584,10 +688,37 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
         icon: Icons.lightbulb_outline,
         color: Colors.orange,
         steps: [
-          'اذهب إلى الإعدادات > البطارية > تشغيل التطبيقات.',
-          'ابحث عن "رفيق المسلم" وأوقف التشغيل التلقائي له.',
-          'ستظهر قائمة، تأكد من تفعيل "التشغيل في الخلفية".',
+          'اذهب إلى الإعدادات > البطارية > تشغيل التطبيقات (App Launch).',
+          'ابحث عن "رفيق المسلم" وأوقف "الإدارة التلقائية" (Manage automatically).',
+          'ستظهر قائمة، تأكد من تفعيل "التشغيل في الخلفية" (Run in background).',
           'تأكد من تفعيل "الإشعارات على شاشة القفل".',
+        ],
+      );
+    } else if (deviceBrand.contains('samsung')) {
+      return _buildGuideCard(
+        isDark,
+        title: 'إرشادات لمستخدمي Samsung',
+        icon: Icons.lightbulb_outline,
+        color: Colors.orange,
+        steps: [
+          'اذهب إلى الإعدادات > التطبيقات > رفيق المسلم > البطارية.',
+          'اختر "غير مقيد" (Unrestricted) للسماح بالعمل في الخلفية.',
+          'ارجع لإعدادات التطبيق وتأكد من تفعيل "تنبيهات شاشة القفل".',
+          'تأكد من عدم وجود التطبيق في قائمة "التطبيقات في وضع السكون".',
+        ],
+      );
+    } else if (deviceBrand.contains('google') ||
+        deviceBrand.contains('pixel') ||
+        deviceBrand.contains('nokia')) {
+      return _buildGuideCard(
+        isDark,
+        title: 'إرشادات لمستخدمي Stock Android / Pixel',
+        icon: Icons.lightbulb_outline,
+        color: Colors.orange,
+        steps: [
+          'اذهب إلى الإعدادات > التطبيقات > رفيق المسلم > البطارية.',
+          'اختر "غير مقيد" (Unrestricted).',
+          'تأكد من منح إذن "التنبيهات" بالكامل.',
         ],
       );
     }
@@ -595,11 +726,36 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
     return const SizedBox.shrink();
   }
 
+  Widget _buildGeneralBatteryGuide(bool isDark) {
+    return _buildGuideCard(
+      isDark,
+      title: 'دليل عام لتحسين البطارية',
+      icon: Icons.help_outline,
+      color: Colors.blue,
+      steps: [
+        'أنظمة أندرويد الحديثة تغلق التطبيقات في الخلفية لتوفير البطارية.',
+        'لضمان عمل الأذان، يجب استثناء التطبيق من قيود البطارية.',
+        'يمكنك زيارة موقع Don\'t Kill My App لمزيد من التفاصيل حسب نوع هاتفك.',
+      ],
+      action: TextButton.icon(
+        onPressed: () async {
+          final url = Uri.parse('https://dontkillmyapp.com/');
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          }
+        },
+        icon: const Icon(Icons.open_in_new, size: 16),
+        label: const Text('زيارة الموقع (Don\'t Kill My App)'),
+      ),
+    );
+  }
+
   Widget _buildGuideCard(bool isDark,
       {required String title,
       required IconData icon,
       required Color color,
-      required List<String> steps}) {
+      required List<String> steps,
+      Widget? action}) {
     return Card(
       color: isDark ? const Color(0xFF1A1A00) : const Color(0xFFFFFDE7),
       elevation: 2,
@@ -647,23 +803,55 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
                     ],
                   ),
                 )),
+            if (action != null) ...[
+              const Divider(),
+              action,
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildActionButtons(bool isDark) {
+  Widget _buildActionButtons(bool isDark, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // ElevatedButton.icon(
+        //   onPressed: _isLoading ? null : _rescheduleAdhan,
+        //   icon: const Icon(Icons.refresh),
+        //   label: const Text('إعادة جدولة الأذان'),
+        //   style: ElevatedButton.styleFrom(
+        //     backgroundColor: const Color(0xFF178B74),
+        //     foregroundColor: Colors.white,
+        //     padding: const EdgeInsets.symmetric(vertical: 16),
+        //     shape:
+        //         RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        //   ),
+        // ),
+        // const SizedBox(height: 12),
+        // OutlinedButton.icon(
+        //   onPressed: _isLoading ? null : _testAdhan,
+        //   icon: const Icon(Icons.science),
+        //   label: const Text('اختبار الأذان (10 ثواني)'),
+        //   style: OutlinedButton.styleFrom(
+        //     foregroundColor:
+        //         isDark ? Colors.tealAccent : const Color(0xFF178B74),
+        //     padding: const EdgeInsets.symmetric(vertical: 16),
+        //     shape:
+        //         RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        //     side: BorderSide(
+        //       color: isDark ? Colors.tealAccent : const Color(0xFF178B74),
+        //     ),
+        //   ),
+        // ),
+        // const SizedBox(height: 12),
         ElevatedButton.icon(
-          onPressed: _isLoading ? null : _rescheduleAdhan,
-          icon: const Icon(Icons.refresh),
-          label: const Text('إعادة جدولة الأذان'),
+          onPressed: () => _openNotificationSettings(),
+          icon: const Icon(Icons.notifications_active),
+          label: const Text('إعدادات إشعارات التطبيق'),
           style: ElevatedButton.styleFrom(
-            backgroundColor:
-                isDark ? const Color(0xFF178B74) : const Color(0xFF178B74),
+            backgroundColor: Colors.teal,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape:
@@ -672,35 +860,39 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
         ),
         const SizedBox(height: 12),
         OutlinedButton.icon(
-          onPressed: _isLoading ? null : _testAdhan,
-          icon: const Icon(Icons.science),
-          label: const Text('اختبار الأذان (10 ثواني)'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor:
-                isDark ? Colors.tealAccent : const Color(0xFF178B74),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            side: BorderSide(
-              color: isDark ? Colors.tealAccent : const Color(0xFF178B74),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton.icon(
           onPressed: () => openAppSettings(),
           icon: const Icon(Icons.info_outline),
-          label: const Text('فتح معلومات التطبيق لضبط الأذونات'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueGrey,
-            foregroundColor: Colors.white,
+          label: const Text('فتح معلومات التطبيق (App Info)'),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.blueGrey,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            side: const BorderSide(color: Colors.blueGrey),
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _openNotificationSettings() async {
+    if (Platform.isAndroid) {
+      try {
+        // use android_intent_plus to open notification settings specifically
+        final intent = AndroidIntent(
+          action: 'android.settings.APP_NOTIFICATION_SETTINGS',
+          arguments: <String, dynamic>{
+            'android.provider.extra.APP_PACKAGE': 'com.rafiq.muslimdaily',
+          },
+        );
+        await intent.launch();
+      } catch (e) {
+        // Fallback
+        await openAppSettings();
+      }
+    } else {
+      await openAppSettings();
+    }
   }
 
   Widget _buildCheckItem(bool isDark, String label, bool value,

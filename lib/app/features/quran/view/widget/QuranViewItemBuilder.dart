@@ -496,9 +496,13 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       _currentPage = lastPage;
     });
     _checkPageNote(lastPage);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_currentPage != null) {
         QuranLibrary().jumpToPage(_currentPage! + 1);
+        // Eagerly save the current page to ensure it's in SharedPreferences even if no scrolling happens
+        final prefs = await SharedPreferences.getInstance();
+        final key = widget.campaignId != null ? 'last_page_${widget.campaignId}' : 'last_page';
+        await prefs.setInt(key, _currentPage!);
       }
     });
   }

@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:muslimdaily/app/features/mainView/widget/IslamicCardWidget.dart';
+import 'package:muslimdaily/app/features/mainView/widget/LastActivityWidget.dart';
 import 'package:muslimdaily/app/features/settings/settings_view.dart';
 import 'package:hive/hive.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
@@ -11,6 +12,7 @@ import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/utils/style/k_helper.dart';
+import '../../../core/widgets/SocialBannerWidget.dart';
 import '../../Khatmah/data/khatmah_model.dart';
 import '../../charity/CharityDashboardScreen.dart';
 import 'AzkarQuranWidget.dart';
@@ -31,7 +33,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/widgets/CustomGradientDialog.dart';
-import '../../../core/widgets/SocialBannerWidget.dart';
 import '../../azanView/widget/AdhanStatusBanner.dart';
 
 class MainViewBuilder extends StatefulWidget {
@@ -47,6 +48,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
   }
 
   late MainController con;
+  int _refreshCounter = 0;
   late CentralizedCubit centralizedCubit;
   int? verseId;
   String? verseName;
@@ -154,7 +156,13 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
       return;
     }
 
-    Navigator.pushNamed(context, navigatePath);
+    Navigator.pushNamed(context, navigatePath).then((_) {
+      if (mounted) {
+        setState(() {
+          _refreshCounter++;
+        });
+      }
+    });
   }
 
   void _showMaintenanceDialog() {
@@ -494,8 +502,15 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                 );
                               }),
                             ),
+                          
+                          // 🔥 نشاطات اليوم (تابع القراءة، الأوراد، الختمة)
+                          FadeInUp(
+                            duration: const Duration(milliseconds: 700),
+                            delay: const Duration(milliseconds: 250),
+                            child: LastActivityWidget(key: ValueKey('last_activity_$_refreshCounter')),
+                          ),
 
-                          const SizedBox(height: 10),
+                          // const SizedBox(height: 10),
                           // 📜 خـاطـرة اليوم (CMS)
                           if (_isQuoteVisible)
                             FadeInRight(

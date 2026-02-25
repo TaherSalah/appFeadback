@@ -45,6 +45,7 @@ class NotificationManager {
 
   Future<void> initialize() async {
     await SettingsService().init();
+    await _removeLegacyChannels();
 
     await updateAllChannels();
 
@@ -330,78 +331,81 @@ class NotificationManager {
       ),
 
       // 🕌 Legacy Channels from NotifyHelper (Old Adhan Logic)
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak',
-        channelName: 'Prayer Times Notifications',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_saqqaf',
-        channelName: 'Prayer Times Notifications saqqaf',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_sarihi',
-        channelName: 'Prayer Times Notifications sarihi',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_baset',
-        channelName: 'Prayer Times Notifications baset',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_qatami',
-        channelName: 'Prayer Times Notifications qatami',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_salah',
-        channelName: 'Prayer Times Notifications salah',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_notification',
-        channelName: 'App Notifications',
-        channelDescription: 'Notification channel for App Notifications',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: 'resource://raw/notification',
-      ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak',
+      //   channelName: 'Prayer Times Notifications',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_saqqaf',
+      //   channelName: 'Prayer Times Notifications saqqaf',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_sarihi',
+      //   channelName: 'Prayer Times Notifications sarihi',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_baset',
+      //   channelName: 'Prayer Times Notifications baset',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_qatami',
+      //   channelName: 'Prayer Times Notifications qatami',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_salah',
+      //   channelName: 'Prayer Times Notifications salah',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_notification',
+      //   channelName: 'App Notifications',
+      //   channelDescription: 'Notification channel for App Notifications',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: 'resource://raw/notification',
+      // ),
     ];
 
     try {
+      // 🧹 Remove Legacy Channels (Clean up Android Settings)
+      await _removeLegacyChannels();
+
       await AwesomeNotifications().initialize(
         Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
         channels,
@@ -1669,6 +1673,27 @@ class NotificationManager {
       // print('✅ Basic system test scheduled.');
     } catch (e) {
       logger.e('❌ Error scheduling basic test: $e');
+    }
+  }
+
+  /// 🧹 إزالة القنوات القديمة من نظام أندرويد لتنظيف قائمة الإعدادات
+  static Future<void> _removeLegacyChannels() async {
+    final legacyChannelKeys = [
+      'prayers_notifications_channel_ak',
+      'prayers_notifications_channel_ak_saqqaf',
+      'prayers_notifications_channel_ak_sarihi',
+      'prayers_notifications_channel_ak_baset',
+      'prayers_notifications_channel_ak_qatami',
+      'prayers_notifications_channel_ak_salah',
+      'prayers_notifications_channel_ak_notification',
+    ];
+
+    for (String key in legacyChannelKeys) {
+      try {
+        await AwesomeNotifications().removeChannel(key);
+      } catch (e) {
+        // تجاهل الخطأ إذا لم تكن القناة موجودة
+      }
     }
   }
 }
