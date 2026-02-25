@@ -94,8 +94,19 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
         await _audioPlayer!.setFilePath(adhanPath);
       } else {
         // Default: use the bundled Adhan asset
-        final assetName =
-            isFajr ? 'assets/athan/fajr.mp3' : 'assets/athan/athan.mp3';
+        String assetName;
+        if (widget.prayerName?.contains('الشروق') == true) {
+          assetName = 'assets/athan/shruq.mp3';
+        } else if (widget.prayerName?.contains('الإقامة') == true) {
+          assetName = 'assets/athan/iqamah.mp3';
+        } else if (widget.prayerName?.contains('قيام') == true) {
+          assetName = 'assets/athan/qiam.mp3';
+        } else if (isFajr) {
+          assetName = 'assets/athan/fajr.mp3';
+        } else {
+          assetName = 'assets/athan/athan.mp3';
+        }
+
         print('🔊 [AdhanOverlay] Playing from asset: $assetName');
         await _audioPlayer!.setAsset(assetName);
       }
