@@ -244,6 +244,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     if (path == '/compplateKhatna' || path == '/globalKhatmah')
       return 'khatmah';
     if (path == Routes.zakatCalculatorRoute) return 'zakat';
+    if (path == Routes.inheritanceCalculatorRoute) return 'inheritance';
+    if (path == Routes.expiationCalculatorRoute) return 'expiation';
     if (path == '/WirdHomeScreen') return 'wird';
     if (path == '/QuranRadioView') return 'radio';
     if (path == '/NineBooksScreen' || path == Routes.categoriesRoute)

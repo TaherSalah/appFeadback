@@ -1983,25 +1983,6 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     );
   }
 
-  // --- Widgets ---
-
-  Widget _buildActionButton({
-    required bool isDark,
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return ElevatedButton.icon(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: KColors.primaryColor,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      icon: Icon(icon, size: 18),
-      label: Text(label, style: GoogleFonts.cairo()),
-    );
-  }
 
   Widget _buildNisabCard(bool isDark, String Function(double) formatter) {
     double goldNisab = 85 * (double.tryParse(_goldPrice24Controller.text.replaceAll(',', '')) ?? 0);

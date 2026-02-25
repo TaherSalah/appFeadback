@@ -19,6 +19,8 @@ import 'package:muslimdaily/app/features/rokiaView/rokia.dart';
 import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/splashView/splash.dart';
 import 'package:muslimdaily/app/features/zakatView/zakat_calculator_view.dart';
+import 'package:muslimdaily/app/features/calculators/inheritance_calculator_view.dart';
+import 'package:muslimdaily/app/features/calculators/expiation_calculator_view.dart';
 import 'package:muslimdaily/app/features/kids/view/KidsStoriesScreen.dart';
 
 import '../../../features/WirdView/WirdHomeScreen.dart';
@@ -94,6 +96,8 @@ class Routes {
   static const String quranKhitamRoute = "/QuranKhitamView";
   static const String tafsirQuranRoute = "/TafsirQuranView";
   static const String zakatCalculatorRoute = "/ZakatCalculator";
+  static const String inheritanceCalculatorRoute = "/InheritanceCalculator";
+  static const String expiationCalculatorRoute = "/ExpiationCalculator";
   static const String settingsRoute = "/settings";
   static const String fajrAlarmRoute = "/fajrAlarm";
   static const String kidsStoriesRoute = "/kidsStories";
@@ -234,6 +238,14 @@ class RouteGenerator {
       case Routes.zakatCalculatorRoute:
         return MaterialPageRoute(builder: (_) => const ZakatCalculatorView());
 
+      case Routes.inheritanceCalculatorRoute:
+        return MaterialPageRoute(
+            builder: (_) => const InheritanceCalculatorView());
+
+      case Routes.expiationCalculatorRoute:
+        return MaterialPageRoute(
+            builder: (_) => const ExpiationCalculatorView());
+
       case '/mosquesMap':
         return MaterialPageRoute(builder: (_) => const MosquesMapScreen());
 
@@ -271,9 +283,9 @@ class RouteGenerator {
       case Routes.kidsStoriesRoute:
         return MaterialPageRoute(builder: (_) => const KidsStoriesScreen());
 
-        // ===  Kids Corner Screen ===
+      // ===  Kids Corner Screen ===
       case "/KidsCornerScreen":
-        return MaterialPageRoute(builder: (_) =>  const KidsCornerScreen());
+        return MaterialPageRoute(builder: (_) => const KidsCornerScreen());
 
       // === Calendar ===
       case '/calendar':

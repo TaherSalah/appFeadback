@@ -142,9 +142,19 @@ class MainController extends ControllerMVC {
       "subtitle": "شَارِكِ الْمُجْتَمَعَ فِي الْخَتْمِ"
     },
     {
+      "title": "حَاسِبَةُ الْمَوَارِيثِ",
+      "icon": "assets/images/claculator.png",
+      "navigate": Routes.inheritanceCalculatorRoute
+    },
+    {
       "title": "حَاسِبَةُ الزَّكَاةِ",
       "icon": "assets/images/charity.png",
       "navigate": Routes.zakatCalculatorRoute
+    },
+    {
+      "title": "حَاسِبَةُ الْكَفَّارَاتِ",
+      "icon": "assets/images/claculatorss.png",
+      "navigate": Routes.expiationCalculatorRoute
     },
     {
       "title": "الْمَسَاجِدُ الْقَرِيبَةُ",
@@ -274,10 +284,10 @@ class MainController extends ControllerMVC {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_kHijriAdjustmentKey, val);
     _updateHijriDate();
-    
+
     // تحديث الويدجت فوراً ليعكس التغيير
     await AdhanWorkManagerService().updateWidget();
-    
+
     setState(() {});
   }
 
