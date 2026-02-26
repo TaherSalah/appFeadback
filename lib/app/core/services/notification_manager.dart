@@ -19,6 +19,7 @@ import 'package:muslimdaily/app/features/mainView/widget/AllAzkarListView.dart';
 import 'package:muslimdaily/app/features/notifications/view/notification_dialog_screen.dart';
 import 'package:hijri/hijri_calendar.dart' as hijri;
 import 'package:muslimdaily/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationManager {
   static final NotificationManager _instance = NotificationManager._internal();
@@ -57,9 +58,23 @@ class NotificationManager {
 
     await AwesomeNotifications().isNotificationAllowed().then((allowed) {
       if (!allowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications();
+        AwesomeNotifications().requestPermissionToSendNotifications(
+          permissions: [
+            NotificationPermission.Alert,
+            NotificationPermission.Sound,
+            NotificationPermission.Badge,
+            NotificationPermission.Vibration,
+            NotificationPermission.Light,
+            NotificationPermission.CriticalAlert,
+            NotificationPermission.FullScreenIntent,
+            NotificationPermission.PreciseAlarms, // ⭐ مطلوب لـ Infinix/Realme
+          ],
+        );
       }
     });
+
+    // ⭐ طلب إعفاء تحسين البطارية (مطلوب لـ Infinix وRealme لتشغيل الأذان على الشاشة المقفولة)
+    await _requestBatteryExemptionIfNeeded();
 
     // 🚀 تهيئة خدمة الأذان عبر النظام الجديد
     await PrayerSchedulerService().initialize();
@@ -458,6 +473,31 @@ class NotificationManager {
     }
   }
 
+  /// ⭐ يطلب إعفاء تحسين البطارية مرة واحدة فقط (عند أول تشغيل)
+  /// هذا الحل أساسي لأجهزة Infinix وRealme وXiaomi وOppo
+  Future<void> _requestBatteryExemptionIfNeeded() async {
+    if (!Platform.isAndroid) return;
+    try {
+      final prefs = await _getPrefs();
+      final alreadyRequested = prefs.getBool('battery_exemption_requested') ?? false;
+      if (alreadyRequested) return;
+
+      // هذه الدالة تفتح صفحة "السماح بضبط التنبيهات والتذكيرات" على Android 12+
+      // وهي الخطوة المطلوبة لضمان دقة أوقات الأذان على Infinix وRealme
+      await AwesomeNotifications().showAlarmPage();
+      await prefs.setBool('battery_exemption_requested', true);
+    } catch (e) {
+      // تجاهل الخطأ — على أجهزة Android القديمة الدالة غير موجودة وهذا طبيعي
+    }
+  }
+
+  /// الحصول على SharedPreferences (يُخزّن instance واحد)
+  static SharedPreferences? _prefsInstance;
+  static Future<SharedPreferences> _getPrefs() async {
+    _prefsInstance ??= await SharedPreferences.getInstance();
+    return _prefsInstance!;
+  }
+
   Future<void> scheduleInstantTestNotification() async {
     DateTime testTime = DateTime.now().add(const Duration(seconds: 10));
 
@@ -644,50 +684,47 @@ class NotificationManager {
   }
 
   // ==========================================
-  // 📅 جدولة الأحاديث (منقول من main.dart)
+  // 📅 جدولة الأحاديث
   // ==========================================
   Future<void> scheduleHadithSeries() async {
     try {
-      logger.i("📅 جاري جدولة سلسلة الأحاديث لـ 30 يوماً...");
+      logger.i("📅 جاري جدولة حديث اليوم...");
 
-      // 1️⃣ إلغاء الجدولة القديمة للأحاديث
+      // 1️⃣ إلغاء الجدولة القديمة
       await AwesomeNotifications()
           .cancelSchedulesByChannelKey('hadith_channel');
 
       final now = DateTime.now();
-      // ⏰ وقت الحديث: 11 صباحاً كل يوم
-      DateTime baselineTime = DateTime(now.year, now.month, now.day, 11, 0);
 
-      if (baselineTime.isBefore(now)) {
-        baselineTime = baselineTime.add(const Duration(days: 1));
-      }
+      // 3️⃣ اختيار الحديث المناسب ليوم السنة الحالي (يتغير كل يوم تلقائياً)
+      final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+      final todayHadith = dailyHadiths[dayOfYear % dailyHadiths.length];
 
-      // 2️⃣ جدولة حديث مختلف لكل يوم لمدة 30 يوم
-      for (int i = 0; i < 30; i++) {
-        final scheduledDate = baselineTime.add(Duration(days: i));
-        // اختيار حديث من القائمة
-        final hadithText = dailyHadiths[i % dailyHadiths.length];
+      // 4️⃣ إشعار يومي واحد متكرر للأبد — repeats: true
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 500,
+          channelKey: 'hadith_channel',
+          title: '\u200F حديث اليوم',
+          body: '\u200F$todayHadith',
+          notificationLayout: NotificationLayout.BigText,
+          category: NotificationCategory.Reminder,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          payload: {'route': 'daily_hadith'},
+          color: const Color(0xFF178B74),
+        ),
+        schedule: NotificationCalendar(
+          hour: 11,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+          repeats: true,        // ✅ يتكرر كل يوم للأبد
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      );
 
-        await AwesomeNotifications().createNotification(
-          content: NotificationContent(
-            id: 500 + i,
-            channelKey: 'hadith_channel', // تأكد من وجود هذه القناة
-            title: '\u200F حديث اليوم',
-            body: '\u200F$hadithText',
-            notificationLayout: NotificationLayout.BigText,
-            category: NotificationCategory.Reminder,
-            largeIcon: 'resource://drawable/ic_stat_logoapp',
-            payload: {'route': 'daily_hadith'},
-            color: const Color(0xFF178B74),
-          ),
-          schedule: NotificationCalendar.fromDate(
-            date: scheduledDate,
-            allowWhileIdle: true,
-            preciseAlarm: true,
-          ),
-        );
-      }
-      logger.i("✅ تم جدولة الأحاديث بنجاح");
+      logger.i("✅ تم جدولة حديث اليوم بنجاح (يومي متكرر)");
     } catch (e) {
       logger.e("❌ خطأ في جدولة الأحاديث: $e");
     }

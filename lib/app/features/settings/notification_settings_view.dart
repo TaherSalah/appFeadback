@@ -839,40 +839,40 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                       // const SizedBox(height: 75),
 
                       // Test Button
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  isDark ? Colors.grey[800] : Colors.grey[200],
-                              foregroundColor:
-                                  isDark ? Colors.white : Colors.black87,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 0,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const NotificationTestView(),
-                                ),
-                              );
-                            },
-                            icon: const Icon(Icons.build_circle_outlined),
-                            label: Text(
-                              'اختبار التنبيهات (للمطورين)',
-                              style: GoogleFonts.cairo(
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(bottom: 16),
+                      //   child: SizedBox(
+                      //     width: double.infinity,
+                      //     child: ElevatedButton.icon(
+                      //       style: ElevatedButton.styleFrom(
+                      //         backgroundColor:
+                      //             isDark ? Colors.grey[800] : Colors.grey[200],
+                      //         foregroundColor:
+                      //             isDark ? Colors.white : Colors.black87,
+                      //         padding: const EdgeInsets.symmetric(vertical: 12),
+                      //         shape: RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(12),
+                      //         ),
+                      //         elevation: 0,
+                      //       ),
+                      //       onPressed: () {
+                      //         Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //             builder: (context) =>
+                      //                 const NotificationTestView(),
+                      //           ),
+                      //         );
+                      //       },
+                      //       icon: const Icon(Icons.build_circle_outlined),
+                      //       label: Text(
+                      //         'اختبار التنبيهات (للمطورين)',
+                      //         style: GoogleFonts.cairo(
+                      //             fontWeight: FontWeight.bold),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
 
                       // Diagnostic Button
                       // Padding(

@@ -172,95 +172,97 @@ class _WhatsNewViewState extends State<WhatsNewView>
         position: _slideAnimation,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // ✅ الصورة التوضيحية مع Scale Animation
-              ScaleTransition(
-                scale: _scaleAnimation,
-                child: Hero(
-                  tag: 'feature_${feature.imagePath}',
-                  child: Container(
-                    height: 510.h,
-                    width: MediaQuery.sizeOf(context).width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      // ✅ ظل جميل للصورة
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // ✅ الصورة التوضيحية مع Scale Animation
+                ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Hero(
+                    tag: 'feature_${feature.imagePath}',
+                    child: Container(
+                      height: 510.h,
+                      width: MediaQuery.sizeOf(context).width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        // ✅ ظل جميل للصورة
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.asset(
+                          feature.imagePath,
+                          fit: BoxFit.contain,
                         ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.asset(
-                        feature.imagePath,
-                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
                 ),
-              ),
-
-              SizedBox(height: 10.h),
-
-              // ✅ عنوان الميزة مع أنيميشن
-              TweenAnimationBuilder<double>(
-                duration: const Duration(milliseconds: 800),
-                tween: Tween(begin: 0.0, end: 1.0),
-                curve: Curves.easeOut,
-                builder: (context, value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Transform.translate(
-                      offset: Offset(0, 20 * (1 - value)),
-                      child: child,
+            
+                SizedBox(height: 10.h),
+            
+                // ✅ عنوان الميزة مع أنيميشن
+                TweenAnimationBuilder<double>(
+                  duration: const Duration(milliseconds: 800),
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  curve: Curves.easeOut,
+                  builder: (context, value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(0, 20 * (1 - value)),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Text(
+                    feature.title,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.cairo(
+                      fontSize: ResponsiveUtil.isTablet(context) ? 15.sp : 20.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? KColors.primaryColor : Colors.black87,
                     ),
-                  );
-                },
-                child: Text(
-                  feature.title,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
-                    fontSize: ResponsiveUtil.isTablet(context) ? 15.sp : 20.sp,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? KColors.primaryColor : Colors.black87,
                   ),
                 ),
-              ),
-
-              SizedBox(height: 10.h),
-
-              // ✅ وصف الميزة مع تأخير في الأنيميشن
-              TweenAnimationBuilder<double>(
-                duration: const Duration(milliseconds: 1000),
-                tween: Tween(begin: 0.0, end: 1.0),
-                curve: Curves.easeOut,
-                builder: (context, value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Transform.translate(
-                      offset: Offset(0, 30 * (1 - value)),
-                      child: child,
+            
+                SizedBox(height: 10.h),
+            
+                // ✅ وصف الميزة مع تأخير في الأنيميشن
+                TweenAnimationBuilder<double>(
+                  duration: const Duration(milliseconds: 1000),
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  curve: Curves.easeOut,
+                  builder: (context, value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(0, 30 * (1 - value)),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Text(
+                    feature.description,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.cairo(
+                      fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 15.sp,
+                      color: Colors.grey.shade700,
+                      height: 1.5,
                     ),
-                  );
-                },
-                child: Text(
-                  feature.description,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
-                    fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 15.sp,
-                    color: Colors.grey.shade700,
-                    height: 1.5,
                   ),
                 ),
-              ),
-
-              SizedBox(height: 10.h),
-            ],
+            
+                SizedBox(height: 10.h),
+              ],
+            ),
           ),
         ),
       ),

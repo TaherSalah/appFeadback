@@ -884,28 +884,14 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
           Icon(Icons.info_outline, color: KColors.primaryColor, size: 20.sp),
           SizedBox(width: 10.w),
           Expanded(
-            child: RichText(
+            child: Text(
+              "هذه النتائج استرشادية فقط، ويرجى الرجوع لأهل العلم والاختصاص.",
               textAlign: TextAlign.justify,
-              text: TextSpan(
-                style: GoogleFonts.cairo(
-                  fontSize: 12.sp,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.5,
-                ),
-                children: [
-                  TextSpan(
-                    text: "تنويه: ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red.shade700,
-                    ),
-                  ),
-                  const TextSpan(
-
-                    text:
-                        "ليس ضرورياً الإجابة عن كل الأسئلة، وتحديدك لجهة القرابة يكون منسوباً للمتوفى مثل (للزوجة) هي زوجة المتوفى و(لأب) هو أب المتوفى و(لأخ) هو أخ للمتوفى وهكذا.",
-                  ),
-                ],
+              style: GoogleFonts.cairo(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white70 : Colors.black87,
+                height: 1.5,
               ),
             ),
           ),

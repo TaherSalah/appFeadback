@@ -2673,38 +2673,38 @@ class _AzanViewState extends StateMVC<AzanView> {
             ),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.bug_report, color: Colors.orange),
-              tooltip: 'اختبار الأذان (20 ثانية)',
-              onPressed: () async {
-                bool isAllowed =
-                    await AwesomeNotifications().isNotificationAllowed();
-                if (!isAllowed) {
-                  await AwesomeNotifications()
-                      .requestPermissionToSendNotifications();
-                  isAllowed =
-                      await AwesomeNotifications().isNotificationAllowed();
-                  if (!isAllowed) {
-                    KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
-                    return;
-                  }
-                }
-
-                try {
-                  KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
-                  final success = await AdhanWorkManagerService()
-                      .scheduleTestAdhan(secondsFromNow: 20);
-                  if (success == null) {
-                    KHelper.showSuccess(
-                        message: '🧪 تم جدولة اختبار شامل بعد 20 ثانية');
-                  } else {
-                    KHelper.showError(message: '❌ فشل الاختبار: $success');
-                  }
-                } catch (e) {
-                  KHelper.showError(message: '❌ خطأ: $e');
-                }
-              },
-            ),
+            // IconButton(
+            //   icon: const Icon(Icons.bug_report, color: Colors.orange),
+            //   tooltip: 'اختبار الأذان (20 ثانية)',
+            //   onPressed: () async {
+            //     bool isAllowed =
+            //         await AwesomeNotifications().isNotificationAllowed();
+            //     if (!isAllowed) {
+            //       await AwesomeNotifications()
+            //           .requestPermissionToSendNotifications();
+            //       isAllowed =
+            //           await AwesomeNotifications().isNotificationAllowed();
+            //       if (!isAllowed) {
+            //         KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
+            //         return;
+            //       }
+            //     }
+            //
+            //     try {
+            //       KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
+            //       final success = await AdhanWorkManagerService()
+            //           .scheduleTestAdhan(secondsFromNow: 20);
+            //       if (success == null) {
+            //         KHelper.showSuccess(
+            //             message: '🧪 تم جدولة اختبار شامل بعد 20 ثانية');
+            //       } else {
+            //         KHelper.showError(message: '❌ فشل الاختبار: $success');
+            //       }
+            //     } catch (e) {
+            //       KHelper.showError(message: '❌ خطأ: $e');
+            //     }
+            //   },
+            // ),
 
             IconButton(
               icon: const Icon(Icons.settings),

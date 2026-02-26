@@ -80,116 +80,121 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
 
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-        // backgroundColor:
-        //     isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        appBar: AppBar(
-          centerTitle: true,
-          actions: [
-            _buildCurrencyDropdown(isDark),
-          ],
-          leading: Navigator.canPop(context)
-              ? IconButton(
-                  icon: const Icon(Icons.arrow_back_ios),
-                  color: isDark ? Colors.white : Colors.black,
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              : null,
-          title: Text(
-            "حاسبة الكفارات",
-            style: GoogleFonts.cairo(
-              color: Colors.green,
-              fontWeight: FontWeight.bold,
-              fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+      child: SafeArea(
+        bottom: true,
+        child: Scaffold(
+          // backgroundColor:
+          //     isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+          appBar: AppBar(
+            centerTitle: true,
+            actions: [
+              _buildCurrencyDropdown(isDark),
+            ],
+            leading: Navigator.canPop(context)
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back_ios),
+                    color: isDark ? Colors.white : Colors.black,
+                    onPressed: () => Navigator.of(context).pop(),
+                  )
+                : null,
+            title: Text(
+              "حاسبة الكفارات",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
             ),
           ),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Text(
-                "اختر نوع الحساب",
-                style: GoogleFonts.cairo(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _buildDisclaimerNote(isDark),
+                const SizedBox(height: 16),
+                Text(
+                  "اختر نوع الحساب",
+                  style: GoogleFonts.cairo(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // 1. Type Selection Cards
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTypeCard(
-                      type: ExpiationType.fasting,
-                      title: "الفدية",
-                      subtitle:
-                          "لمن لا يستطيع القيام بعذر دائم (مرض مزمن، كبر سن)",
-                      icon: Icons.bakery_dining_outlined,
-                      isSelected: _selectedType == ExpiationType.fasting,
-                      isDark: isDark,
+                // 1. Type Selection Cards
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildTypeCard(
+                        type: ExpiationType.fasting,
+                        title: "الفدية",
+                        subtitle:
+                            "لمن لا يستطيع القيام بعذر دائم (مرض مزمن، كبر سن)",
+                        icon: Icons.bakery_dining_outlined,
+                        isSelected: _selectedType == ExpiationType.fasting,
+                        isDark: isDark,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildTypeCard(
-                      type: ExpiationType.intentionalFasting,
-                      title: "الكفارة",
-                      subtitle: "لمن أفطر عمداً في رمضان بغير عذر شرعي",
-                      icon: Icons.menu_book_outlined,
-                      isSelected:
-                          _selectedType == ExpiationType.intentionalFasting,
-                      isDark: isDark,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildTypeCard(
+                        type: ExpiationType.intentionalFasting,
+                        title: "الكفارة",
+                        subtitle: "لمن أفطر عمداً في رمضان بغير عذر شرعي",
+                        icon: Icons.menu_book_outlined,
+                        isSelected:
+                            _selectedType == ExpiationType.intentionalFasting,
+                        isDark: isDark,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // 2. Calculator Card
-              StaggeredItemAnimation(
-                index: 1,
-                child: _buildCalculatorCard(isDark),
-              ),
+                // 2. Calculator Card
+                StaggeredItemAnimation(
+                  index: 1,
+                  child: _buildCalculatorCard(isDark),
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // 3. Info Box "What is Fidya/Kaffara?"
-              StaggeredItemAnimation(
-                index: 2,
-                child: _buildInfoBox(isDark),
-              ),
+                // 3. Info Box "What is Fidya/Kaffara?"
+                StaggeredItemAnimation(
+                  index: 2,
+                  child: _buildInfoBox(isDark),
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // 4. Comparison Table
-              StaggeredItemAnimation(
-                index: 3,
-                child: _buildComparisonTable(isDark),
-              ),
+                // 4. Comparison Table
+                StaggeredItemAnimation(
+                  index: 3,
+                  child: _buildComparisonTable(isDark),
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // 5. FAQ Section
-              StaggeredItemAnimation(
-                index: 4,
-                child: _buildFAQSection(isDark),
-              ),
+                // 5. FAQ Section
+                StaggeredItemAnimation(
+                  index: 4,
+                  child: _buildFAQSection(isDark),
+                ),
 
-              // const SizedBox(height: 32),
-              // Text(
-              //   "أدوات إسلامية ذات صلة",
-              //   style: GoogleFonts.cairo(
-              //     fontSize: 14.sp,
-              //     fontWeight: FontWeight.bold,
-              //     color: Colors.grey,
-              //   ),
-              // ),
-              // const SizedBox(height: 16),
-            ],
+                // const SizedBox(height: 32),
+                // Text(
+                //   "أدوات إسلامية ذات صلة",
+                //   style: GoogleFonts.cairo(
+                //     fontSize: 14.sp,
+                //     fontWeight: FontWeight.bold,
+                //     color: Colors.grey,
+                //   ),
+                // ),
+                // const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
@@ -783,4 +788,36 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
       ],
     );
   }
+
+  Widget _buildDisclaimerNote(bool isDark) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: KColors.primaryColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: KColors.primaryColor.withOpacity(0.1)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline, color: KColors.primaryColor, size: 20.sp),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              "هذه النتائج استرشادية فقط، ويرجى الرجوع لأهل العلم والاختصاص.",
+              textAlign: TextAlign.justify,
+              style: GoogleFonts.cairo(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white70 : Colors.black87,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
