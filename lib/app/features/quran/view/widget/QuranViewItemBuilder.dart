@@ -945,7 +945,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             //   ),
             // ),
             iconTheme:
-                IconThemeData(color: isDark ? Colors.white : Colors.blue),
+                IconThemeData(color: isDark ? Colors.white : KColors.primaryColor),
             actions: [
               if (_isSharing)
                 const Center(
@@ -989,7 +989,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               ),
               FontsDownloadDialog(
                 topBarStyle: QuranTopBarStyle(
-                  iconColor: isDark ? Colors.white : Colors.blue,
+                  iconColor: isDark ? Colors.white : KColors.primaryColor,
                 ),
                 downloadFontsDialogStyle: DownloadFontsDialogStyle(
                   iconColor: isDark ? Colors.white : Colors.blueAccent,

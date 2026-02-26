@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/QiblaView/QiblaDirection.dart';
 import 'package:muslimdaily/app/features/mainView/MainView.dart';
 import 'package:muslimdaily/app/features/prayerView/post_prayer_azkar.dart';
 import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/services/notification_manager.dart';
 
 class AdhanOverlayScreen extends StatefulWidget {
   final String? prayerName;
@@ -44,6 +46,9 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
+    // 🛑 Stop system notification adhan sound immediately before playing our own
+    NotificationManager.stopAdhan();
+
     // Start playing the selected Adhan sound with a small delay
     Future.delayed(const Duration(milliseconds: 500), () {
       _playAdhanSound();
@@ -78,12 +83,16 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
       // Get the saved Adhan path
       final prefs = await SharedPreferences.getInstance();
       final isFajr = widget.prayerName?.contains('الفجر') ?? false;
+      final isShuruq = widget.prayerName?.contains('الشروق') ?? false;
+
       String? adhanPath = isFajr
           ? prefs.getString('adhan_path_fajir')
-          : prefs.getString('adhan_path');
+          : isShuruq
+              ? null // Shuruq always uses default sound for now
+              : prefs.getString('adhan_path');
 
       print(
-          '🌙 [AdhanOverlay] Preference adhanPath: $adhanPath (isFajr: $isFajr)');
+          '🌙 [AdhanOverlay] Preference adhanPath: $adhanPath (isFajr: $isFajr, isShuruq: $isShuruq)');
 
       _audioPlayer = AudioPlayer();
       await _audioPlayer!.setVolume(1.0);
@@ -95,18 +104,13 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
       } else {
         // Default: use the bundled Adhan asset
         String assetName;
-        if (widget.prayerName?.contains('الشروق') == true) {
+        if (isShuruq) {
           assetName = 'assets/athan/shruq.mp3';
-        } else if (widget.prayerName?.contains('الإقامة') == true) {
-          assetName = 'assets/athan/iqamah.mp3';
-        } else if (widget.prayerName?.contains('قيام') == true) {
-          assetName = 'assets/athan/qiam.mp3';
         } else if (isFajr) {
           assetName = 'assets/athan/fajr.mp3';
         } else {
           assetName = 'assets/athan/athan.mp3';
         }
-
         print('🔊 [AdhanOverlay] Playing from asset: $assetName');
         await _audioPlayer!.setAsset(assetName);
       }
@@ -166,7 +170,7 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.3),
+                    Colors.black.withOpacity(0.4),
                     Colors.black.withOpacity(0.6),
                   ],
                 ),
@@ -195,7 +199,6 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
               ),
             ),
           ),
-
           // Central Content (Animated)
           Center(
             child: FadeTransition(
@@ -236,7 +239,7 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                     ),
                   ),
                   if (widget.prayerName?.contains('الشروق') == true) ...[
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 20.h),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 30.w),
                       child: Text(
@@ -244,7 +247,7 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                         textAlign: TextAlign.center,
                         style: GoogleFonts.amiri(
                           fontSize: 20.sp,
-                          color: Colors.amberAccent,
+                          color: KColors.whiteDarkColor,
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.w500,
                         ),

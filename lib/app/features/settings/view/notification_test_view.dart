@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/services/notification_manager.dart';
 
 class NotificationTestView extends StatelessWidget {
   const NotificationTestView({super.key});
@@ -37,6 +36,7 @@ class NotificationTestView extends StatelessWidget {
             title: 'حان وقت صلاة الفجر',
             body: 'الصلاة خير من النوم',
             category: NotificationCategory.Alarm,
+            payload: {'route': 'adhan_screen', 'prayerName': 'الفجر'},
           ),
           _buildTestButton(
             context,
@@ -45,6 +45,7 @@ class NotificationTestView extends StatelessWidget {
             title: 'حان وقت الصلاة',
             body: 'لاتنسي أذكار بعد الصلاة المفروضة',
             category: NotificationCategory.Alarm,
+            payload: {'route': 'adhan_screen', 'prayerName': 'الظهر'},
           ),
           _buildTestButton(
             context,
@@ -66,6 +67,8 @@ class NotificationTestView extends StatelessWidget {
             channelKey: 'shruq_channel_v1',
             title: 'وقت الشروق',
             body: 'حان موعد شروق الشمس',
+            category: NotificationCategory.Alarm,
+            payload: {'route': 'adhan_screen', 'prayerName': 'الشروق'},
           ),
           const SizedBox(height: 20),
           _buildSectionHeader(context, 'الأذكار اليومية'),

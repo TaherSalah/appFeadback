@@ -21,7 +21,6 @@ import '../categories_details.dart';
 import '../controller/categories_bloc.dart';
 import '../controller/categories_state.dart';
 
-
 class CategoriesViewItemBuilder extends StatelessWidget {
   const CategoriesViewItemBuilder({super.key});
 
@@ -45,7 +44,6 @@ class CategoriesViewItemBuilder extends StatelessWidget {
       childAspectRatio = 0.7;
     }
     return CustomScrollView(
-
       slivers: [
         SliverAppBar(
           centerTitle: true,
@@ -55,7 +53,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
           ),
           leading: const SizedBox(),
           actions: [
@@ -63,7 +61,13 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: SvgPicture.asset("assets/icons/arrow.svg",color: Theme.of(context).brightness == Brightness.dark ?Colors.white:Colors.black,height: 25,))
+                child: SvgPicture.asset(
+                  "assets/icons/arrow.svg",
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                  height: 25,
+                ))
           ],
         ),
 
@@ -188,12 +192,11 @@ class CategoriesViewItemBuilder extends StatelessWidget {
 
         const SliverToBoxAdapter(child: SizedBox(height: 15)),
         SliverToBoxAdapter(child: BlocBuilder<CategoriesBloc, CategoriesState>(
-
           builder: (BuildContext context, state) {
-
-         if (state is CategoriesStateSuccess) {
+            if (state is CategoriesStateSuccess) {
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Row(
                   children: [
                     TextWidget(
@@ -299,13 +302,16 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                 ),
               );
             } else if (state is HadithSearchStateLoading) {
-              return Center(child: KLoading.progressIOSIndicator(context: context));
+              return Center(
+                  child: KLoading.progressIOSIndicator(context: context));
             } else {
               return state.maybeMap(
                 error: (value) => TextWidget(title: value.failure),
-                loading: (value) => KLoading.progressIOSIndicator(radius: 15,context: context),
+                loading: (value) =>
+                    KLoading.progressIOSIndicator(radius: 15, context: context),
                 success: (value) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
 
                   return GridView.builder(
                       padding: EdgeInsets.zero,
@@ -335,8 +341,11 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                                     ));
                               },
                               child: Card(
-                                color: AppThemeColors.cardBackgroundColor(context),
-                                shape: BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
+                                color:
+                                    AppThemeColors.cardBackgroundColor(context),
+                                shape: BeveledRectangleBorder(
+                                    borderRadius:
+                                        BorderRadiusGeometry.circular(15)),
 
                                 // shadowColor:
                                 //     KColors.whiteColor.withOpacity(0.6),
@@ -345,8 +354,10 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 8, horizontal: 10),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       TextWidget(
                                         maxLines: 1,
@@ -358,21 +369,21 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                                             ? KColors.whiteColor
                                             : KColors.blackColor,
                                         fontWeight: FontWeight.w600,
-
                                         fontSize:
-                                        MediaQuery.sizeOf(context).width > 600
-                                            ? 6.sp
-                                            : 13.sp,
+                                            MediaQuery.sizeOf(context).width >
+                                                    600
+                                                ? 6.sp
+                                                : 13.sp,
                                       ),
                                       const Spacer(),
                                       Row(
                                         children: [
                                           TextWidget(
-                                              title: LocalizationManager.call(
-                                                  "count-hadiths"),
-                                            fontSize:
-                                            MediaQuery.sizeOf(context).width >
-                                                600
+                                            title: LocalizationManager.call(
+                                                "count-hadiths"),
+                                            fontSize: MediaQuery.sizeOf(context)
+                                                        .width >
+                                                    600
                                                 ? 5.5.sp
                                                 : 10.sp,
                                             color: isDark
@@ -384,9 +395,9 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                                           TextWidget(
                                             title:
                                                 "${value.categoriesModal?[index].hadeethsCount}",
-                                            fontSize:
-                                            MediaQuery.sizeOf(context).width >
-                                                600
+                                            fontSize: MediaQuery.sizeOf(context)
+                                                        .width >
+                                                    600
                                                 ? 5.5.sp
                                                 : 10.sp,
                                             color: isDark
@@ -457,46 +468,46 @@ class CardPackagesExamBuilderWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).width > 600
-                          ? constraints.maxHeight * 0.65
-                          : calculatedHeight,
-                      child: cardImgUrl != null
-                          ? KImageWidget(imageUrl: cardImgUrl.toString())
-                          : Image.asset(
-                              width: double.infinity,
-                              cardImg.toString(),
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextWidget(
-                                title: cardTitle,
-                                color: titleColor,
-                                textAlign: textAlign,
-                                fontSize: titleSize,
-                                maxLines: 3,
-                                fontWeight: FontWeight.w700),
-                            TextWidget(
-                                title: description.toString(),
-                                textAlign: textAlign,
-                                fontSize: desSize,
-                                maxLines: 2,
-                                color: descColor,
-                                fontWeight: FontWeight.w400),
-                            customDividerWidget(
-                                color: KColors.greyColor.withOpacity(0.2),
-                                thickness: 1.5)
-                          ]),
-                    ))
-                  ])));
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).width > 600
+                      ? constraints.maxHeight * 0.65
+                      : calculatedHeight,
+                  child: cardImgUrl != null
+                      ? KImageWidget(imageUrl: cardImgUrl.toString())
+                      : Image.asset(
+                          width: double.infinity,
+                          cardImg.toString(),
+                          fit: BoxFit.cover,
+                        ),
+                ),
+                Expanded(
+                    child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextWidget(
+                            title: cardTitle,
+                            color: titleColor,
+                            textAlign: textAlign,
+                            fontSize: titleSize,
+                            maxLines: 3,
+                            fontWeight: FontWeight.w700),
+                        TextWidget(
+                            title: description.toString(),
+                            textAlign: textAlign,
+                            fontSize: desSize,
+                            maxLines: 2,
+                            color: descColor,
+                            fontWeight: FontWeight.w400),
+                        customDividerWidget(
+                            color: KColors.greyColor.withOpacity(0.2),
+                            thickness: 1.5)
+                      ]),
+                ))
+              ])));
     });
   }
 }

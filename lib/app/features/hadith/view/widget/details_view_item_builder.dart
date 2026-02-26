@@ -46,61 +46,63 @@ class HadithViewItemBuilder extends StatelessWidget {
       childAspectRatio = 0.7;
     }
     return CustomScrollView(
-
       slivers: [
         SliverAppBar(
           centerTitle: true,
           // title: Text("موسوعة الاحاديث"),
           title: Text(
             "موسوعة الاحاديث",
-
             style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
           ),
           leading: const SizedBox(),
           actions: [
             InkWell(
                 onTap: () {
                   Navigator.pop(context);
-
                 },
-                child: SvgPicture.asset("assets/icons/arrow.svg",color: Colors.black,height: 25,))
+                child: SvgPicture.asset(
+                  "assets/icons/arrow.svg",
+                  color: Colors.black,
+                  height: 25,
+                ))
           ],
         ),
         SliverToBoxAdapter(
             child:
-            SizedBox(height: ResponsiveUtil.isTablet(context) ? 20 : 15)),
+                SizedBox(height: ResponsiveUtil.isTablet(context) ? 20 : 15)),
         SliverToBoxAdapter(
             child: FadeAnimation(
-              delay: const Duration(milliseconds: 100),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Row(
-                  children: [
-                    TextWidget(
-                        fontWeight: FontWeight.w700,
-                        title: LocalizationManager.call("all-departments"),
-                        fontSize: 10.sp),
-                    const Spacer(),
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, Routes.categoriesRoute);
-                      },
-                      child: TextWidget(
-                          fontWeight: FontWeight.w700,
-                          color: CentralizedCubit.isDarkMode
-                              ? KColors.greenColor
-                              : KColors.primaryColor,
-                          title: LocalizationManager.call("view-all"),
-                          fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp),
-                    ),
-                  ],
+          delay: const Duration(milliseconds: 100),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: [
+                TextWidget(
+                    fontWeight: FontWeight.w700,
+                    title: LocalizationManager.call("all-departments"),
+                    fontSize: 10.sp),
+                const Spacer(),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.categoriesRoute);
+                  },
+                  child: TextWidget(
+                      fontWeight: FontWeight.w700,
+                      color: CentralizedCubit.isDarkMode
+                          ? KColors.greenColor
+                          : KColors.primaryColor,
+                      title: LocalizationManager.call("view-all"),
+                      fontSize:
+                          ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp),
                 ),
-              ),
-            )),
+              ],
+            ),
+          ),
+        )),
         SliverToBoxAdapter(child: BlocBuilder<CategoriesBloc, CategoriesState>(
           builder: (BuildContext context, state) {
             CategoriesBloc bloc = CategoriesBloc.get(context);
@@ -120,26 +122,26 @@ class HadithViewItemBuilder extends StatelessWidget {
                     Center(
                       child: Padding(
                         padding:
-                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 5),
+                            EdgeInsets.symmetric(horizontal: 10.w, vertical: 5),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             TextWidget(
                               title:
-                              "${LocalizationManager.call("notSearchFound")} ",
+                                  "${LocalizationManager.call("notSearchFound")} ",
                               fontSize:
-                              ResponsiveUtil.isTablet(context) ? 8.sp : 10,
+                                  ResponsiveUtil.isTablet(context) ? 8.sp : 10,
                             ),
                             TextWidget(
                               fontWeight: FontWeight.w600,
                               fontSize:
-                              ResponsiveUtil.isTablet(context) ? 8.sp : 10,
+                                  ResponsiveUtil.isTablet(context) ? 8.sp : 10,
                               color: CentralizedCubit.isDarkMode
                                   ? KColors.primary
                                   : KColors.primary2Color,
                               title:
-                              "${CategoriesBloc.get(context).searchKeyboardController.text} ",
+                                  "${CategoriesBloc.get(context).searchKeyboardController.text} ",
                             ),
                           ],
                         ),
@@ -153,11 +155,11 @@ class HadithViewItemBuilder extends StatelessWidget {
                       child: CustomButton(
                         horizontalPadding: 2,
                         verticalPadding:
-                        ResponsiveUtil.isTablet(context) ? 14.h : 7,
+                            ResponsiveUtil.isTablet(context) ? 14.h : 7,
                         radius: 6.r,
                         title: LocalizationManager.call('goCatePage'),
                         fontSize:
-                        ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp,
+                            ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp,
                         backgroundColor: CentralizedCubit.isDarkMode
                             ? KColors.blackColor
                             : KColors.primary2Color,
@@ -172,7 +174,9 @@ class HadithViewItemBuilder extends StatelessWidget {
 
               // If results are found, render the HTML content
               return Directionality(
-                textDirection: LocalizationManager.isEn?TextDirection.rtl:TextDirection.rtl,
+                textDirection: LocalizationManager.isEn
+                    ? TextDirection.rtl
+                    : TextDirection.rtl,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5),
                   child: HtmlWidget(
@@ -181,13 +185,14 @@ class HadithViewItemBuilder extends StatelessWidget {
                         // You can modify the inline CSS like this using textStyle for that class.
                         return {
                           'color':
-                          '#178B74', // Set the color to green for this class
+                              '#178B74', // Set the color to green for this class
                         };
                       } else if (element.classes.contains('hadith-info')) {
                         return {
                           'border-radius': '13px',
-                          'background-color':
-                          CentralizedCubit.isDarkMode ? '#313131' : '#F9F9F9',
+                          'background-color': CentralizedCubit.isDarkMode
+                              ? '#313131'
+                              : '#F9F9F9',
                           'margin-top': '15px',
                           'padding': '8px',
                           'margin-bottom': '15px',
@@ -195,13 +200,15 @@ class HadithViewItemBuilder extends StatelessWidget {
                       }
                       return null; // If not matching, return null
                     },
-                    textStyle: const TextStyle(fontFamily: "cairo", height: 2.0),
+                    textStyle:
+                        const TextStyle(fontFamily: "cairo", height: 2.0),
                     responseContent,
                   ),
                 ),
               );
             } else if (state is HadithSearchStateLoading) {
-              return Center(child: KLoading.progressIOSIndicator(context: context));
+              return Center(
+                  child: KLoading.progressIOSIndicator(context: context));
             } else {
               return state.maybeMap(
                 orElse: () {
@@ -225,11 +232,12 @@ class HadithViewItemBuilder extends StatelessWidget {
                               Navigator.pushNamed(
                                   context, Routes.cateDetailsRoute,
                                   arguments: CategoriesDetailsPrams(
-                                    categoriesId: bloc.categoriesModal?[index].id,
+                                    categoriesId:
+                                        bloc.categoriesModal?[index].id,
                                     subCategoriesCount: bloc
                                         .categoriesModal?[index].hadeethsCount,
                                     subCategoriesName:
-                                    bloc.categoriesModal?[index].title,
+                                        bloc.categoriesModal?[index].title,
                                   ));
                             },
                             child: Card(
@@ -237,7 +245,7 @@ class HadithViewItemBuilder extends StatelessWidget {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     TextWidget(
@@ -247,11 +255,11 @@ class HadithViewItemBuilder extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                       maxLines: 2,
                                       fontSize:
-                                      MediaQuery.sizeOf(context).width > 600
-                                          ? 6.sp
-                                          : 10.sp,
+                                          MediaQuery.sizeOf(context).width > 600
+                                              ? 6.sp
+                                              : 10.sp,
                                       title: value.categoriesModal?[index].title
-                                          .toString() ??
+                                              .toString() ??
                                           "",
                                     ),
                                     const Spacer(),
@@ -259,10 +267,10 @@ class HadithViewItemBuilder extends StatelessWidget {
                                       children: [
                                         TextWidget(
                                           fontSize:
-                                          MediaQuery.sizeOf(context).width >
-                                              600
-                                              ? 5.5.sp
-                                              : 9.sp,
+                                              MediaQuery.sizeOf(context).width >
+                                                      600
+                                                  ? 5.5.sp
+                                                  : 9.sp,
                                           color: CentralizedCubit.isDarkMode
                                               ? KColors.circularPercentBg
                                               : KColors.greyColor,
@@ -273,17 +281,17 @@ class HadithViewItemBuilder extends StatelessWidget {
                                         const Spacer(),
                                         TextWidget(
                                           fontSize:
-                                          MediaQuery.sizeOf(context).width >
-                                              600
-                                              ? 5.5.sp
-                                              : 9.sp,
+                                              MediaQuery.sizeOf(context).width >
+                                                      600
+                                                  ? 5.5.sp
+                                                  : 9.sp,
                                           color: CentralizedCubit.isDarkMode
                                               ? KColors.circularPercentBg
                                               : KColors.greyColor,
                                           fontWeight: FontWeight.w500,
                                           title: value.categoriesModal?[index]
-                                              .hadeethsCount
-                                              .toString() ??
+                                                  .hadeethsCount
+                                                  .toString() ??
                                               "",
                                         ),
                                       ],
@@ -296,7 +304,8 @@ class HadithViewItemBuilder extends StatelessWidget {
                         );
                       });
                 },
-                loading: (value) => KLoading.progressIOSIndicator(context: context),
+                loading: (value) =>
+                    KLoading.progressIOSIndicator(context: context),
                 error: (value) => TextWidget(title: value.failure),
               );
             }
@@ -356,38 +365,38 @@ class CardPackagesExamBuilderWidget extends StatelessWidget {
                       child: cardImgUrl != null
                           ? KImageWidget(imageUrl: cardImgUrl.toString())
                           : Image.asset(
-                        width: double.infinity,
-                        cardImg.toString(),
-                        fit: BoxFit.cover,
-                      ),
+                              width: double.infinity,
+                              cardImg.toString(),
+                              fit: BoxFit.cover,
+                            ),
                     ),
                     Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextWidget(
-                                    title: cardTitle,
-                                    color: titleColor,
-                                    textAlign: textAlign,
-                                    fontSize: titleSize,
-                                    maxLines: 3,
-                                    fontWeight: FontWeight.w700),
-                                TextWidget(
-                                    title: description.toString(),
-                                    textAlign: textAlign,
-                                    fontSize: desSize,
-                                    maxLines: 2,
-                                    color: descColor,
-                                    fontWeight: FontWeight.w400),
-                                customDividerWidget(
-                                    color: KColors.greyColor.withOpacity(0.2),
-                                    thickness: 1.5)
-                              ]),
-                        ))
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextWidget(
+                                title: cardTitle,
+                                color: titleColor,
+                                textAlign: textAlign,
+                                fontSize: titleSize,
+                                maxLines: 3,
+                                fontWeight: FontWeight.w700),
+                            TextWidget(
+                                title: description.toString(),
+                                textAlign: textAlign,
+                                fontSize: desSize,
+                                maxLines: 2,
+                                color: descColor,
+                                fontWeight: FontWeight.w400),
+                            customDividerWidget(
+                                color: KColors.greyColor.withOpacity(0.2),
+                                thickness: 1.5)
+                          ]),
+                    ))
                   ])));
     });
   }

@@ -45,7 +45,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
       TextEditingController(text: "1");
   ExpiationType _selectedType =
       ExpiationType.fasting; // Default to Fidya as per image
-  Currency _selectedCurrency = currencies[1]; // Default to SAR as per image
+  Currency _selectedCurrency = currencies[0]; // Default to SAR as per image
 
   double _total = 0;
   int _mealsCount = 0;
@@ -273,6 +273,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                 color: isDark ? Colors.white70 : Colors.black54)),
         const SizedBox(height: 8),
         TextField(
+
           controller: controller,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.right,
@@ -375,130 +376,133 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildCalculatorCard(bool isDark) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF065F46),
-              borderRadius: BorderRadius.circular(20),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            child: Text(
-              _selectedType == ExpiationType.fasting
-                  ? "حاسبة الفدية"
-                  : "حاسبة الكفارة",
-              style: GoogleFonts.cairo(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 12.sp,
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFF065F46),
+                borderRadius: BorderRadius.circular(20),
               ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: _buildInputRow(
-                  label: "عدد الأيام",
-                  controller: _quantityController,
-                  isDark: isDark,
-                  onChanged: (_) => _calculate(),
+              child: Text(
+                _selectedType == ExpiationType.fasting
+                    ? "حاسبة الفدية"
+                    : "حاسبة الكفارة",
+                style: GoogleFonts.cairo(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12.sp,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 3,
-                child: _buildInputRow(
-                  label: "سعر الفدية لليوم",
-                  controller: _mealPriceController,
-                  isDark: isDark,
-                  suffix: _selectedCurrency.symbol,
-                  onChanged: (_) => _calculate(),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: isDark ? Colors.black26 : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(12),
             ),
-            child: Column(
+            const SizedBox(height: 20),
+            Row(
               children: [
-                Text(
-                  _selectedType == ExpiationType.fasting
-                      ? "مبلغ الفدية الإجمالي"
-                      : "مبلغ الكفارة الإجمالي",
-                  style: GoogleFonts.cairo(
-                    fontSize: 12.sp,
-                    color: Colors.grey,
+                Expanded(
+                  flex: 2,
+                  child: _buildInputRow(
+                    label: "عدد الأيام",
+                    controller: _quantityController,
+                    isDark: isDark,
+                    onChanged: (_) => _calculate(),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      _selectedCurrency.symbol,
-                      style: GoogleFonts.cairo(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF0F766E),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      intl.NumberFormat("#,##0").format(_total),
-                      style: GoogleFonts.cairo(
-                        fontSize: 32.sp,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF0F766E),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF064E3B),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    "$_mealsCount وجبة بإطعام المساكين",
-                    style: GoogleFonts.cairo(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11.sp,
-                    ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 3,
+                  child: _buildInputRow(
+                    label: "سعر الفدية لليوم",
+                    controller: _mealPriceController,
+                    isDark: isDark,
+                    suffix: _selectedCurrency.symbol,
+                    onChanged: (_) => _calculate(),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.black26 : const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    _selectedType == ExpiationType.fasting
+                        ? "مبلغ الفدية الإجمالي"
+                        : "مبلغ الكفارة الإجمالي",
+                    style: GoogleFonts.cairo(
+                      fontSize: 12.sp,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        _selectedCurrency.symbol,
+                        style: GoogleFonts.cairo(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF0F766E),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        intl.NumberFormat("#,##0").format(_total),
+                        style: GoogleFonts.cairo(
+                          fontSize: 32.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF0F766E),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF064E3B),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      "$_mealsCount وجبة بإطعام المساكين",
+                      style: GoogleFonts.cairo(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -577,6 +581,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<Currency>(
+          alignment: AlignmentGeometry.centerRight,
           value: _selectedCurrency,
           icon: const Icon(Icons.arrow_drop_down, color: Colors.green),
           onChanged: (Currency? newValue) {
@@ -589,9 +594,11 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           },
           items: currencies.map<DropdownMenuItem<Currency>>((Currency value) {
             return DropdownMenuItem<Currency>(
+              alignment: AlignmentGeometry.centerRight,
               value: value,
               child: Text(
-                value.code,
+                textAlign: TextAlign.right,
+                value.name,
                 style: GoogleFonts.cairo(
                     fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
@@ -719,8 +726,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: const BoxDecoration(
-            color: Color(0xFF1E40AF), // Dark Blue
+          decoration:  BoxDecoration(
+            color:isDark ?KColors.primaryColor.withOpacity(0.2) :const Color(0xFF1E40AF), // Dark Blue
             borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
           ),
           child: Text(
@@ -753,7 +760,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                     style: GoogleFonts.cairo(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1E40AF),
+                      color:isDark ?Colors.white: const Color(0xFF1E40AF),
                     ),
                   ),
                   children: [
