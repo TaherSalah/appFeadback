@@ -502,7 +502,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                 );
                               }),
                             ),
-                          
+
                           // 🔥 نشاطات اليوم (تابع القراءة، الأوراد، الختمة)
                           FadeInUp(
                             duration: const Duration(milliseconds: 700),
@@ -588,13 +588,15 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                     // ⚡ Performance Optimized SliverGrid ⚡
                     SliverPadding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: isTab ? 10.w : 5.0, vertical: 8),
+                          horizontal: isTab ? 10.w : 5.0, vertical:9),
                       sliver: SliverToBoxAdapter(
+
                         child: Showcase(
                           key: _featuresGridKey,
                           description:
                               'هنا تجد كافة ميزات التطبيق: القرآن الكريم، الأذكار، والمزيد',
                           child: GridView.builder(
+                            padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate:
