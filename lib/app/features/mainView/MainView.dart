@@ -10,6 +10,7 @@ import 'package:muslimdaily/app/core/widgets/CustomGradientDialog.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 
 import 'package:showcaseview/showcaseview.dart';
+import 'package:muslimdaily/app/features/azanView/adhan_callback.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainView extends StatelessWidget {
@@ -47,6 +48,10 @@ class _MainViewContentState extends State<MainViewContent> {
   void initState() {
     super.initState();
     _checkFirstLaunch();
+    // 🔋 Check for battery optimization (Professional System Requirement)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BatteryOptimizationHelper.showBatteryOptimizationDialog(context);
+    });
   }
 
   Future<void> _checkFirstLaunch() async {

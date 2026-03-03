@@ -391,6 +391,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                 child: Row(
                   children: [
                     Container(
+
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
                         color: isDark

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../quran/quranView.dart';
 
 import '../../shareCard/PremiumShareCard.dart';
 
@@ -28,40 +29,44 @@ class FridayCompanionWidget extends StatefulWidget {
 
 class _FridayCompanionWidgetState extends State<FridayCompanionWidget>
     with SingleTickerProviderStateMixin {
-
   // ─── Visibility ─────────────────────────────
   bool _isVisible = false;
 
   // ─── Animation ──────────────────────────────
   late final AnimationController _fadeCtrl;
-  late final Animation<double>    _fadeAnim;
-  late final Animation<Offset>    _slideAnim;
+  late final Animation<double> _fadeAnim;
+  late final Animation<Offset> _slideAnim;
 
   // ─── Palette ────────────────────────────────
-  static const _gold      = Color(0xFFC9A84C);
-  static const _goldDark  = Color(0xFF9A7225);
+  static const _gold = Color(0xFFC9A84C);
+  static const _goldDark = Color(0xFF9A7225);
   static const _goldLight = Color(0xFFF0DFA0);
-  static const _emerald   = Color(0xFF1E5C45);
-  static const _emeraldMid= Color(0xFF2D7A5C);
+  static const _emerald = Color(0xFF1E5C45);
+  static const _emeraldMid = Color(0xFF2D7A5C);
   static const _emeraldLt = Color(0xFF4BAE85);
-  static const _darkBg    = Color(0xFF0B1520);
-  static const _darkCard  = Color(0xFF132030);
+  static const _darkBg = Color(0xFF0B1520);
+  static const _darkCard = Color(0xFF132030);
   static const _lightCard = Color(0xFFFAF7F0);
-  static const _lightBg   = Color(0xFFF4EDD8);
+  static const _lightBg = Color(0xFFF4EDD8);
 
   // ─── Sunnah data ────────────────────────────
   final List<Map<String, dynamic>> _sunnahs = [
-    {"id": "ghusl",   "title": "غسل الجمعة",        "emoji": "", "done": false},
-    {"id": "perfume", "title": "التطيب والسواك",      "emoji": "", "done": false},
-    {"id": "kahf",    "title": "سورة الكهف",          "emoji": "", "done": false},
-    {"id": "mosque",  "title": "التبكير للمسجد",      "emoji": "", "done": false},
-    {"id": "salawat", "title": "الصلاة على النبي ﷺ", "emoji": "",  "done": false},
-    {"id": "dua",     "title": "ساعة الاستجابة",     "emoji": "", "done": false},
+    {"id": "ghusl", "title": "غسل الجمعة", "emoji": "", "done": false},
+    {"id": "perfume", "title": "التطيب والسواك", "emoji": "", "done": false},
+    {"id": "kahf", "title": "سورة الكهف", "emoji": "", "done": false},
+    {"id": "mosque", "title": "التبكير للمسجد", "emoji": "", "done": false},
+    {
+      "id": "salawat",
+      "title": "الصلاة على النبي ﷺ",
+      "emoji": "",
+      "done": false
+    },
+    {"id": "dua", "title": "ساعة الاستجابة", "emoji": "", "done": false},
   ];
 
   // ─── Computed ───────────────────────────────
   int get _completedCount => _sunnahs.where((s) => s['done'] == true).length;
-  bool get _allDone       => _completedCount == _sunnahs.length;
+  bool get _allDone => _completedCount == _sunnahs.length;
 
   // ════════════════════════════════════════════
   @override
@@ -75,7 +80,7 @@ class _FridayCompanionWidgetState extends State<FridayCompanionWidget>
     _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
     _slideAnim = Tween<Offset>(
       begin: const Offset(0, 0.08),
-      end:   Offset.zero,
+      end: Offset.zero,
     ).animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut));
 
     _checkFridayAndLoad();
@@ -98,9 +103,9 @@ class _FridayCompanionWidgetState extends State<FridayCompanionWidget>
       return;
     }
 
-    final prefs    = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     final todayKey = DateFormat('yyyy-MM-dd').format(now);
-    final savedDate= prefs.getString('friday_last_date');
+    final savedDate = prefs.getString('friday_last_date');
 
     if (savedDate == todayKey) {
       final raw = prefs.getString('friday_tasks_state');
@@ -154,13 +159,13 @@ class _FridayCompanionWidgetState extends State<FridayCompanionWidget>
               _Header(isDark: isDark),
               const SizedBox(height: 14),
               _MainCard(
-                isDark:    isDark,
-                sunnahs:   _sunnahs,
+                isDark: isDark,
+                sunnahs: _sunnahs,
                 completed: _completedCount,
-                total:     _sunnahs.length,
-                allDone:   _allDone,
-                onToggle:  _toggle,
-                onKahf:    _openKahf,
+                total: _sunnahs.length,
+                allDone: _allDone,
+                onToggle: _toggle,
+                onKahf: _openKahf,
               ),
             ],
           ),
@@ -177,7 +182,14 @@ class _FridayCompanionWidgetState extends State<FridayCompanionWidget>
     final idx = _sunnahs.indexWhere((s) => s['id'] == 'kahf');
     if (idx != -1 && !_sunnahs[idx]['done']) _toggle(idx);
 
-    if (mounted) Navigator.pushNamed(context, "/surahListScreen");
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const QuranView(initialPage: 292),
+        ),
+      );
+    }
   }
 }
 
@@ -196,21 +208,28 @@ class _Header extends StatelessWidget {
       children: [
         // Icon badge
         Container(
-          width: 46, height: 46,
+          width: 46,
+          height: 46,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: const LinearGradient(
-              colors: [_FridayCompanionWidgetState._gold, _FridayCompanionWidgetState._goldDark],
+              colors: [
+                _FridayCompanionWidgetState._gold,
+                _FridayCompanionWidgetState._goldDark
+              ],
               begin: Alignment.topLeft,
-              end:   Alignment.bottomRight,
+              end: Alignment.bottomRight,
             ),
-            boxShadow: [BoxShadow(
-              color: _FridayCompanionWidgetState._gold.withOpacity(0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            )],
+            boxShadow: [
+              BoxShadow(
+                color: _FridayCompanionWidgetState._gold.withOpacity(0.4),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              )
+            ],
           ),
-          child: const Center(child: Text("🕌", style: TextStyle(fontSize: 22))),
+          child:
+              const Center(child: Text("🕌", style: TextStyle(fontSize: 22))),
         ),
         const SizedBox(width: 12),
         Column(
@@ -221,7 +240,8 @@ class _Header extends StatelessWidget {
               style: GoogleFonts.amiri(
                 fontSize: 21.sp,
                 fontWeight: FontWeight.bold,
-                color: isDark ? _FridayCompanionWidgetState._goldLight
+                color: isDark
+                    ? _FridayCompanionWidgetState._goldLight
                     : _FridayCompanionWidgetState._goldDark,
               ),
             ),
@@ -235,10 +255,11 @@ class _Header extends StatelessWidget {
           ],
         ),
         const Spacer(),
-        Text("✦", style: TextStyle(
-          fontSize: 24,
-          color: _FridayCompanionWidgetState._gold.withOpacity(0.45),
-        )),
+        Text("✦",
+            style: TextStyle(
+              fontSize: 24,
+              color: _FridayCompanionWidgetState._gold.withOpacity(0.45),
+            )),
       ],
     );
   }
@@ -246,11 +267,11 @@ class _Header extends StatelessWidget {
 
 // ─── Main Unified Card ───────────────────────────────────
 class _MainCard extends StatelessWidget {
-  final bool     isDark;
-  final List<Map<String,dynamic>> sunnahs;
-  final int      completed;
-  final int      total;
-  final bool     allDone;
+  final bool isDark;
+  final List<Map<String, dynamic>> sunnahs;
+  final int completed;
+  final int total;
+  final bool allDone;
   final void Function(int) onToggle;
   final VoidCallback onKahf;
 
@@ -264,7 +285,8 @@ class _MainCard extends StatelessWidget {
     required this.onKahf,
   });
 
-  Color get _cardColor  => isDark ? _FridayCompanionWidgetState._darkCard
+  Color get _cardColor => isDark
+      ? _FridayCompanionWidgetState._darkCard
       : _FridayCompanionWidgetState._lightCard;
 
   @override
@@ -302,7 +324,9 @@ class _MainCard extends StatelessWidget {
 
             // Gold top stripe
             Positioned(
-              top: 0, left: 0, right: 0,
+              top: 0,
+              left: 0,
+              right: 0,
               child: Container(
                 height: 3,
                 decoration: BoxDecoration(
@@ -320,16 +344,20 @@ class _MainCard extends StatelessWidget {
             Column(
               children: [
                 const SizedBox(height: 3), // space for stripe
-                _ProgressSection(isDark: isDark, completed: completed, total: total, allDone: allDone),
+                _ProgressSection(
+                    isDark: isDark,
+                    completed: completed,
+                    total: total,
+                    allDone: allDone),
                 _Divider(),
                 _SalawatSection(isDark: isDark),
                 _Divider(),
                 _SunnahsSection(
-                  isDark:    isDark,
-                  sunnahs:   sunnahs,
-                  allDone:   allDone,
-                  onToggle:  onToggle,
-                  onKahf:    onKahf,
+                  isDark: isDark,
+                  sunnahs: sunnahs,
+                  allDone: allDone,
+                  onToggle: onToggle,
+                  onKahf: onKahf,
                 ),
               ],
             ),
@@ -346,8 +374,10 @@ class _ProgressSection extends StatelessWidget {
   final int completed, total;
   final bool allDone;
   const _ProgressSection({
-    required this.isDark, required this.completed,
-    required this.total,  required this.allDone,
+    required this.isDark,
+    required this.completed,
+    required this.total,
+    required this.allDone,
   });
 
   @override
@@ -369,10 +399,13 @@ class _ProgressSection extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 3),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 11, vertical: 3),
                 decoration: BoxDecoration(
                   color: _FridayCompanionWidgetState._gold.withOpacity(0.12),
-                  border: Border.all(color: _FridayCompanionWidgetState._gold.withOpacity(0.35)),
+                  border: Border.all(
+                      color:
+                          _FridayCompanionWidgetState._gold.withOpacity(0.35)),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -398,7 +431,8 @@ class _ProgressSection extends StatelessWidget {
                 minHeight: 7,
                 backgroundColor: isDark ? Colors.white10 : Colors.black38,
                 valueColor: AlwaysStoppedAnimation(
-                  allDone ? _FridayCompanionWidgetState._emeraldLt
+                  allDone
+                      ? _FridayCompanionWidgetState._emeraldLt
                       : _FridayCompanionWidgetState._gold,
                 ),
               ),
@@ -424,14 +458,14 @@ class _SalawatSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        // gradient: LinearGradient(
-        //   colors: isDark
-        //       ? [const Color(0xFF0F2B1C), const Color(0xFF0B1B12)]
-        //       : [const Color(0xFFEDF7F1), const Color(0xFFD6EEE3)],
-        //   begin: Alignment.topRight,
-        //   end:   Alignment.bottomLeft,
-        // ),
-      ),
+          // gradient: LinearGradient(
+          //   colors: isDark
+          //       ? [const Color(0xFF0F2B1C), const Color(0xFF0B1B12)]
+          //       : [const Color(0xFFEDF7F1), const Color(0xFFD6EEE3)],
+          //   begin: Alignment.topRight,
+          //   end:   Alignment.bottomLeft,
+          // ),
+          ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
         child: Column(
@@ -459,13 +493,17 @@ class _SalawatSection extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  width: 4, height: 22,
+                  width: 4,
+                  height: 22,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
                     gradient: const LinearGradient(
-                      colors: [_FridayCompanionWidgetState._gold, _FridayCompanionWidgetState._goldDark],
+                      colors: [
+                        _FridayCompanionWidgetState._gold,
+                        _FridayCompanionWidgetState._goldDark
+                      ],
                       begin: Alignment.topCenter,
-                      end:   Alignment.bottomCenter,
+                      end: Alignment.bottomCenter,
                     ),
                   ),
                 ),
@@ -473,8 +511,10 @@ class _SalawatSection extends StatelessWidget {
                 Text(
                   "الصلاة على النبي ﷺ",
                   style: GoogleFonts.amiri(
-                    fontSize: 17.sp, fontWeight: FontWeight.bold,
-                    color: isDark ? _FridayCompanionWidgetState._goldLight
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDark
+                        ? _FridayCompanionWidgetState._goldLight
                         : _FridayCompanionWidgetState._goldDark,
                   ),
                 ),
@@ -498,7 +538,8 @@ class _SalawatSection extends StatelessWidget {
                 fontSize: 18.sp,
                 height: 1.95,
                 fontWeight: FontWeight.bold,
-                color: isDark ? const Color(0xFFF0EAD6) : const Color(0xFF0F2B1C),
+                color:
+                    isDark ? const Color(0xFFF0EAD6) : const Color(0xFF0F2B1C),
               ),
             ),
             // const SizedBox(height: 6),
@@ -521,13 +562,16 @@ class _SalawatSection extends StatelessWidget {
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(vertical: 9),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  shadowColor: _FridayCompanionWidgetState._emerald.withOpacity(0.4),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                  shadowColor:
+                      _FridayCompanionWidgetState._emerald.withOpacity(0.4),
                 ),
                 icon: const Icon(Icons.share_outlined, size: 17),
                 label: Text(
                   "شارك كصورة",
-                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 12.sp),
+                  style: GoogleFonts.cairo(
+                      fontWeight: FontWeight.bold, fontSize: 12.sp),
                 ),
               ),
             ),
@@ -551,7 +595,7 @@ class _SalawatSection extends StatelessWidget {
 // ─── Sunnahs ─────────────────────────────────────────────
 class _SunnahsSection extends StatelessWidget {
   final bool isDark;
-  final List<Map<String,dynamic>> sunnahs;
+  final List<Map<String, dynamic>> sunnahs;
   final bool allDone;
   final void Function(int) onToggle;
   final VoidCallback onKahf;
@@ -575,13 +619,17 @@ class _SunnahsSection extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 4, height: 22,
+                width: 4,
+                height: 22,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
                   gradient: const LinearGradient(
-                    colors: [_FridayCompanionWidgetState._gold, _FridayCompanionWidgetState._goldDark],
+                    colors: [
+                      _FridayCompanionWidgetState._gold,
+                      _FridayCompanionWidgetState._goldDark
+                    ],
                     begin: Alignment.topCenter,
-                    end:   Alignment.bottomCenter,
+                    end: Alignment.bottomCenter,
                   ),
                 ),
               ),
@@ -589,8 +637,10 @@ class _SunnahsSection extends StatelessWidget {
               Text(
                 "سنن الجمعة",
                 style: GoogleFonts.amiri(
-                  fontSize: 17.sp, fontWeight: FontWeight.bold,
-                  color: isDark ? _FridayCompanionWidgetState._goldLight
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.bold,
+                  color: isDark
+                      ? _FridayCompanionWidgetState._goldLight
                       : _FridayCompanionWidgetState._goldDark,
                 ),
               ),
@@ -608,7 +658,8 @@ class _SunnahsSection extends StatelessWidget {
                   _FridayCompanionWidgetState._emeraldLt.withOpacity(0.1),
                 ]),
                 border: Border.all(
-                  color: _FridayCompanionWidgetState._emeraldLt.withOpacity(0.35),
+                  color:
+                      _FridayCompanionWidgetState._emeraldLt.withOpacity(0.35),
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -620,8 +671,10 @@ class _SunnahsSection extends StatelessWidget {
                   Text(
                     "أتممت سنن الجمعة — بارك الله فيك",
                     style: GoogleFonts.cairo(
-                      fontSize: 12.sp, fontWeight: FontWeight.bold,
-                      color: isDark ? _FridayCompanionWidgetState._emeraldLt
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isDark
+                          ? _FridayCompanionWidgetState._emeraldLt
                           : _FridayCompanionWidgetState._emerald,
                     ),
                   ),
@@ -634,18 +687,23 @@ class _SunnahsSection extends StatelessWidget {
 
           // Chips
           Wrap(
-            spacing: 8, runSpacing: 10,
-            children: List.generate(sunnahs.length, (i) => _SunnahChip(
-              sunnah: sunnahs[i],
-              isDark: isDark,
-              onTap:  () => onToggle(i),
-            )),
+            spacing: 8,
+            runSpacing: 10,
+            children: List.generate(
+                sunnahs.length,
+                (i) => _SunnahChip(
+                      sunnah: sunnahs[i],
+                      isDark: isDark,
+                      onTap: () => onToggle(i),
+                    )),
           ),
 
           const SizedBox(height: 18),
 
           // Divider
-          Divider(color: _FridayCompanionWidgetState._gold.withOpacity(0.2), thickness: 1),
+          Divider(
+              color: _FridayCompanionWidgetState._gold.withOpacity(0.2),
+              thickness: 1),
           // const SizedBox(height: 14),
 
           // Kahf button
@@ -692,23 +750,25 @@ class _SunnahsSection extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () => onKahf,
+              onPressed: onKahf,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _FridayCompanionWidgetState._emeraldMid,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 9),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                shadowColor: _FridayCompanionWidgetState._emerald.withOpacity(0.4),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+                shadowColor:
+                    _FridayCompanionWidgetState._emerald.withOpacity(0.4),
               ),
               icon: const Icon(Icons.chrome_reader_mode, size: 17),
               label: Text(
-                            "اقرأ سورة الكهف الآن",
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 12.sp),
+                "اقرأ سورة الكهف الآن",
+                style: GoogleFonts.cairo(
+                    fontWeight: FontWeight.bold, fontSize: 12.sp),
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -717,7 +777,7 @@ class _SunnahsSection extends StatelessWidget {
 
 // ─── Sunnah Chip ─────────────────────────────────────────
 class _SunnahChip extends StatelessWidget {
-  final Map<String,dynamic> sunnah;
+  final Map<String, dynamic> sunnah;
   final bool isDark;
   final VoidCallback onTap;
 
@@ -740,12 +800,16 @@ class _SunnahChip extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: _isDone
               ? const LinearGradient(
-            colors: [_FridayCompanionWidgetState._emerald, _FridayCompanionWidgetState._emeraldLt],
-            begin: Alignment.topLeft,
-            end:   Alignment.bottomRight,
-          )
+                  colors: [
+                    _FridayCompanionWidgetState._emerald,
+                    _FridayCompanionWidgetState._emeraldLt
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
               : null,
-          color: _isDone ? null
+          color: _isDone
+              ? null
               : (isDark ? Colors.white10 : const Color(0xFFF5F0E4)),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
@@ -754,10 +818,14 @@ class _SunnahChip extends StatelessWidget {
                 : _FridayCompanionWidgetState._gold.withOpacity(0.25),
           ),
           boxShadow: _isDone
-              ? [BoxShadow(
-            color: _FridayCompanionWidgetState._emerald.withOpacity(0.35),
-            blurRadius: 8, offset: const Offset(0, 3),
-          )]
+              ? [
+                  BoxShadow(
+                    color:
+                        _FridayCompanionWidgetState._emerald.withOpacity(0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  )
+                ]
               : [],
         ),
         child: Row(
@@ -779,9 +847,10 @@ class _SunnahChip extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               child: _isDone
                   ? const Padding(
-                padding: EdgeInsets.only(right: 5),
-                child: Icon(Icons.check_circle, color: Colors.white, size: 14),
-              )
+                      padding: EdgeInsets.only(right: 5),
+                      child: Icon(Icons.check_circle,
+                          color: Colors.white, size: 14),
+                    )
                   : const SizedBox.shrink(),
             ),
           ],
