@@ -46,8 +46,8 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    // 🛑 Stop system notification adhan sound immediately before playing our own
-    NotificationManager.stopAdhan();
+    // 🛑 Removing the premature stop because it kills the system sound before our AudioPlayer starts.
+    // NotificationManager.stopAdhan();
 
     // Start playing the selected Adhan sound with a small delay
     Future.delayed(const Duration(milliseconds: 500), () {

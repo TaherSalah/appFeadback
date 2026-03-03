@@ -5,6 +5,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import '../../core/shard/widgets/ui_animations.dart';
+import '../../core/utils/style/responsive_util.dart';
 import 'logic/inheritance_logic.dart';
 import 'services/inheritance_pdf_service.dart';
 
@@ -162,6 +163,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isTap = ResponsiveUtil.isTablet(context);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -227,7 +229,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                     Text("الوصايا والمنح",
                         style: GoogleFonts.cairo(
                             fontWeight: FontWeight.bold,
-                            fontSize: 15.sp,
+                            fontSize:isTap?8.sp: 15.sp,
+
                             color: KColors.primaryColor)),
                     SizedBox(height: 12.h),
                     _buildWillDropdown("هل توجد وصية؟", 0),
@@ -261,7 +264,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                                   child: ChoiceChip(
                                     label: Text(m,
                                         style:
-                                            GoogleFonts.cairo(fontSize: 12.sp)),
+                                            GoogleFonts.cairo(fontSize:isTap?8.sp: 12.sp)),
                                     selected: _selectedMadhab == m,
                                     selectedColor:
                                         KColors.primaryColor.withOpacity(0.2),
@@ -337,7 +340,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                     ExpansionTile(
                       title: Text("الإخوة والأعمام",
                           style: GoogleFonts.cairo(
-                              fontSize: 14.sp, color: KColors.primaryColor)),
+                              fontSize:isTap? 10.sp:14.sp, color: KColors.primaryColor)),
                       tilePadding: EdgeInsets.zero,
                       children: [
                         Row(
@@ -476,7 +479,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                       label: Text("احسب التقسيم",
                           style: GoogleFonts.cairo(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
+                              fontSize: isTap? 10.sp :16.sp,
                               color: Colors.white)),
                     ),
                   ),
@@ -515,7 +518,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                           _results = [];
                         });
                       },
-                      icon: const Icon(Icons.refresh, size: 18),
+                      icon:  Icon(Icons.refresh, size: isTap?20:18),
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         side: BorderSide(color: Colors.red.withOpacity(0.5)),
@@ -524,7 +527,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                       ),
                       label: Text("مسح",
                           style: GoogleFonts.cairo(
-                              color: Colors.red.shade700, fontSize: 14.sp)),
+                              color: Colors.red.shade700, fontSize: isTap?9.5.sp:14.sp)),
                     ),
                   ),
                 ],
@@ -545,12 +548,15 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
 
   Widget _buildWillDropdown(String label, int index) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Row(
         children: [
           Expanded(
-              child: Text(label, style: GoogleFonts.cairo(fontSize: 14.sp))),
+              child: Text(label, style: GoogleFonts.cairo(fontSize:isTap?9.5.sp :14.sp))),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             decoration: BoxDecoration(
@@ -568,7 +574,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                         value: f,
                         child: Text(f,
                             style: GoogleFonts.cairo(
-                                fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                                fontSize:isTap? 8.sp:13.sp, fontWeight: FontWeight.bold)),
                       ))
                   .toList(),
               onChanged: (val) {
@@ -585,6 +591,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
       {required String title,
       required List<Widget> children,
       required bool isDark}) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -606,7 +614,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
           Text(title,
               style: GoogleFonts.cairo(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
+                  fontSize:isTap?9.5.sp: 16.sp,
+
                   color: KColors.primaryColor)),
           Divider(height: 20.h, color: KColors.primaryColor.withOpacity(0.05)),
           ...children,
@@ -616,9 +625,14 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   }
 
   Widget _buildGenderToggle(bool isDark) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Row(
       children: [
-        Text("جنس المتوفى:", style: GoogleFonts.cairo(fontSize: 14.sp)),
+        Text("جنس المتوفى:", style: GoogleFonts.cairo(
+          fontSize:isTap?8.8.sp: 14.sp,
+
+        )),
         const Spacer(),
         GestureDetector(
           onTap: () => setState(() => _deceasedGender = Gender.male),
@@ -656,12 +670,15 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   Widget _buildInputField(
       String label, TextEditingController controller, bool isDark,
       {String? suffix}) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
             style: GoogleFonts.cairo(
-                fontSize: 13.sp,
+                fontSize:isTap?8.sp: 13.sp
+                ,
                 color: isDark ? Colors.white70 : Colors.black54)),
         SizedBox(height: 6.h),
         TextField(
@@ -687,12 +704,14 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   Widget _buildCounterField(
       String label, int value, Function(int) onValueChange,
       {int max = 100}) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
         children: [
           Expanded(
-              child: Text(label, style: GoogleFonts.cairo(fontSize: 13.sp))),
+              child: Text(label, style: GoogleFonts.cairo(fontSize:isTap? 9.sp:13.sp))),
           Row(
             children: [
               IconButton(
@@ -719,12 +738,14 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
 
   Widget _buildSwitchField(
       String label, bool value, Function(bool) onValueChange) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Row(
         children: [
           Expanded(
-              child: Text(label, style: GoogleFonts.cairo(fontSize: 13.sp))),
+              child: Text(label, style: GoogleFonts.cairo(fontSize:isTap?8.sp : 13.sp))),
           Transform.scale(
             scale: 0.8,
             child: Switch(
@@ -813,6 +834,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
 
   Widget _buildCheckboxField(
       String label, bool value, Function(bool?) onValueChange) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Row(
@@ -824,7 +847,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
             onChanged: onValueChange,
           ),
           Expanded(
-              child: Text(label, style: GoogleFonts.cairo(fontSize: 12.sp))),
+              child: Text(label, style: GoogleFonts.cairo(fontSize:isTap?8.5.sp :12.sp))),
         ],
       ),
     );
@@ -869,6 +892,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   }
 
   Widget _buildDisclaimerNote(bool isDark) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(12.w),
@@ -888,7 +913,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
               "هذه النتائج استرشادية فقط، ويرجى الرجوع لأهل العلم والاختصاص.",
               textAlign: TextAlign.justify,
               style: GoogleFonts.cairo(
-                fontSize: 12.sp,
+                fontSize:isTap?9.sp: 12.sp,
+
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white70 : Colors.black87,
                 height: 1.5,

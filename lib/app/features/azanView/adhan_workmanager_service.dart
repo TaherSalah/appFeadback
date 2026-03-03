@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
-import '../../core/services/adhan_logic/prayer_scheduler_service.dart';
+import '../../core/adhan_system/manager/adhan_manager.dart';
 import '../../core/services/adhan_logic/prayer_background_manager.dart';
 import '../../core/services/home_widget_service.dart';
 import 'package:muslimdaily/app/features/mainView/controllar/MainController.dart';
@@ -76,8 +76,7 @@ class AdhanWorkManagerService {
 
   Future<String?> scheduleTestAdhan({required int secondsFromNow}) async {
     try {
-      await PrayerSchedulerService()
-          .scheduleTest(secondsFromNow: secondsFromNow);
+      await AdhanManager.scheduleTestAlarm(seconds: secondsFromNow);
       return null;
     } catch (e) {
       return e.toString();
@@ -91,7 +90,7 @@ class AdhanWorkManagerService {
   }
 
   Future<void> reschedule({int days = 7}) async {
-    await PrayerSchedulerService().reschedule(days: days);
+    await AdhanManager.rescheduleAll();
   }
 
   Future<void> setSelectedAdhan(String type, String adhanId) async {

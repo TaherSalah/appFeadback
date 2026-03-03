@@ -31,6 +31,8 @@ import 'app/features/quran/pdf/data/pdf_book_model.dart';
 import 'app/core/services/adhan_logic/background_services.dart';
 import 'package:logger/logger.dart';
 
+import 'app/core/adhan_system/service/adhan_foreground_service.dart';
+
 final logger = Logger();
 
 Future<void> main() async {
@@ -39,6 +41,9 @@ Future<void> main() async {
   if (Platform.isAndroid) {
     await AndroidAlarmManager.initialize();
   }
+
+  // 🚀 Initialize robust Adhan System
+  AdhanForegroundService.init();
 
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 

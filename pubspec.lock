@@ -790,6 +790,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.2"
+  flutter_foreground_task:
+    dependency: "direct main"
+    description:
+      name: flutter_foreground_task
+      sha256: "6cf10a27f5e344cd2ecad0752d3a5f4ec32846d82fda8753b3fe2480ebb832a3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -2659,7 +2667,7 @@ packages:
     source: hosted
     version: "15.0.2"
   wakelock_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: wakelock_plus
       sha256: "9296d40c9adbedaba95d1e704f4e0b434be446e2792948d0e4aa977048104228"

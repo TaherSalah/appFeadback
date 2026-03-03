@@ -5,61 +5,112 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'adhan_controller.dart';
 import 'prayer_cache_manager.dart';
 import 'monthly_prayer_cache.dart';
-import 'prayer_scheduler_service.dart';
+import '../../adhan_system/manager/adhan_manager.dart';
 
 class PrayerBackgroundManager {
   static const String _tag = 'PrayerBackgroundManager';
 
+  // static Future<bool> checkAndUpdatePrayerTimes() async {
+  //   try {
+  //     log('Starting prayer times check...', name: _tag);
+  //
+  //     final currentLocation = await _getCurrentLocation();
+  //     if (currentLocation == null) {
+  //       log('Unable to get current location', name: _tag);
+  //       return false;
+  //     }
+  //
+  //     final isMonthlyValid = MonthlyPrayerCache.isMonthlyDataValid(
+  //         currentLocation: currentLocation);
+  //     final isDailyValid =
+  //         PrayerCacheManager.isCacheValid(currentLocation: currentLocation);
+  //
+  //     if (isMonthlyValid || isDailyValid) {
+  //       log('Prayer times cache is valid, no update needed', name: _tag);
+  //       return false;
+  //     }
+  //
+  //     log('Prayer times cache is invalid, updating...', name: _tag);
+  //
+  //     await AdhanController.instance.initializeStoredAdhan(
+  //       newLocation: currentLocation,
+  //       forceUpdate: true,
+  //     );
+  //
+  //     await PrayerSchedulerService().reschedule();
+  //
+  //     log('Prayer times updated successfully', name: _tag);
+  //     return true;
+  //   } catch (e) {
+  //     log('Error checking/updating prayer times: $e', name: _tag);
+  //     return false;
+  //   }
+  // }
   static Future<bool> checkAndUpdatePrayerTimes() async {
     try {
-      log('Starting prayer times check...', name: _tag);
-
       final currentLocation = await _getCurrentLocation();
-      if (currentLocation == null) {
-        log('Unable to get current location', name: _tag);
-        return false;
-      }
+      if (currentLocation == null) return false;
 
       final isMonthlyValid = MonthlyPrayerCache.isMonthlyDataValid(
           currentLocation: currentLocation);
       final isDailyValid =
           PrayerCacheManager.isCacheValid(currentLocation: currentLocation);
 
-      if (isMonthlyValid || isDailyValid) {
-        log('Prayer times cache is valid, no update needed', name: _tag);
-        return false;
-      }
-
-      log('Prayer times cache is invalid, updating...', name: _tag);
+      // ✅ كلاهما صالح = لا حاجة للتحديث
+      if (isMonthlyValid && isDailyValid) return false;
 
       await AdhanController.instance.initializeStoredAdhan(
         newLocation: currentLocation,
         forceUpdate: true,
       );
 
-      await PrayerSchedulerService().reschedule();
-
-      log('Prayer times updated successfully', name: _tag);
+      await AdhanManager.rescheduleAll();
       return true;
     } catch (e) {
-      log('Error checking/updating prayer times: $e', name: _tag);
+      log('Error: $e', name: _tag);
       return false;
     }
   }
 
-  static Future<LatLng?> _getCurrentLocation() async {
+  static Future<void> executePeriodicTasks() async {
     try {
-      final stored = PrayerCacheManager.getStoredLocation();
-      if (stored != null) {
-        return stored;
+      if (await _shouldExecuteDailyTasks()) {
+        // ✅ استدعاء واحد فقط يغطي كل شيء
+        await executeDailyTasks();
+      } else {
+        // فقط تحقق من الكاش دون مهام يومية
+        await checkAndUpdatePrayerTimes();
       }
-      // If we need to fetch location dynamically, we rely on the AdhanController
-      // which has `_detectCurrentLocation`. But usually stored is enough for background tasks.
     } catch (e) {
-      log('Error getting location: $e', name: _tag);
+      log('Error: $e', name: _tag);
     }
-    return null;
   }
+
+  static Future<LatLng?> _getCurrentLocation() async {
+    final stored = PrayerCacheManager.getStoredLocation();
+    if (stored != null) return stored;
+
+    // ✅ Fallback حقيقي
+    try {
+      return await AdhanController.instance.detectCurrentLocation();
+    } catch (e) {
+      log('Location fallback failed: $e', name: _tag);
+      return null;
+    }
+  }
+  // static Future<LatLng?> _getCurrentLocation() async {
+  //   try {
+  //     final stored = PrayerCacheManager.getStoredLocation();
+  //     if (stored != null) {
+  //       return stored;
+  //     }
+  //     // If we need to fetch location dynamically, we rely on the AdhanController
+  //     // which has `_detectCurrentLocation`. But usually stored is enough for background tasks.
+  //   } catch (e) {
+  //     log('Error getting location: $e', name: _tag);
+  //   }
+  //   return null;
+  // }
 
   static Future<void> executeDailyTasks() async {
     try {
@@ -80,22 +131,22 @@ class PrayerBackgroundManager {
     }
   }
 
-  static Future<void> executePeriodicTasks() async {
-    try {
-      log('Executing periodic tasks...', name: _tag);
-
-      final updated = await checkAndUpdatePrayerTimes();
-
-      if (await _shouldExecuteDailyTasks()) {
-        await executeDailyTasks();
-      }
-
-      log('Periodic tasks completed ${updated ? "(prayer times updated)" : ""}',
-          name: _tag);
-    } catch (e) {
-      log('Error executing periodic tasks: $e', name: _tag);
-    }
-  }
+  // static Future<void> executePeriodicTasks() async {
+  //   try {
+  //     log('Executing periodic tasks...', name: _tag);
+  //
+  //     final updated = await checkAndUpdatePrayerTimes();
+  //
+  //     if (await _shouldExecuteDailyTasks()) {
+  //       await executeDailyTasks();
+  //     }
+  //
+  //     log('Periodic tasks completed ${updated ? "(prayer times updated)" : ""}',
+  //         name: _tag);
+  //   } catch (e) {
+  //     log('Error executing periodic tasks: $e', name: _tag);
+  //   }
+  // }
 
   static Future<bool> _shouldExecuteDailyTasks() async {
     try {

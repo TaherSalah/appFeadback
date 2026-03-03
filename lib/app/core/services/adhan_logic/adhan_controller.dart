@@ -102,6 +102,26 @@ class AdhanController extends GetxController {
     }
   }
 
+// في AdhanController — غيّر اسمها من private لـ public
+  Future<LatLng?> detectCurrentLocation() async {
+    // ✅ أزل الشرطة
+    try {
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        return null;
+      }
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      final loc = LatLng(position.latitude, position.longitude);
+      PrayerCacheManager.savePrayerData({}, loc);
+      return loc;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Clears cache and forces a full recalculation.
   Future<void> clearCacheAndRecalculate() async {
     state.isLoadingPrayerData.value = true;
@@ -111,6 +131,7 @@ class AdhanController extends GetxController {
     await initializeStoredAdhan(forceUpdate: true);
   }
 
+  /// Returns prayer times for a specific date (uses monthly cache first).
   /// Returns prayer times for a specific date (uses monthly cache first).
   Future<Map<String, DateTime>> getPrayerTimesForDate(DateTime date) async {
     try {
@@ -132,7 +153,11 @@ class AdhanController extends GetxController {
     return _calculateForDate(date);
   }
 
-  /// Updates selected date and recalculates.
+  /// Returns a map of raw DateTime objects for a given date manually calculated.
+  Future<Map<String, DateTime>> getCalculatedTimesForDate(DateTime date) async {
+    return _calculateForDate(date);
+  }
+
   Future<void> updateSelectedDate(DateTime newDate) async {
     state.selectedDate = newDate;
     await _loadSelectedDateTimes(newDate);

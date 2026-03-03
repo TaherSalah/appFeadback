@@ -10,7 +10,7 @@ import 'package:muslimdaily/app/features/hadith/hadith_view.dart';
 import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
 import 'package:muslimdaily/app/features/charity/CharityDashboardScreen.dart';
-import 'package:muslimdaily/app/core/services/adhan_logic/prayer_scheduler_service.dart';
+import 'package:muslimdaily/app/core/adhan_system/manager/adhan_manager.dart';
 import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/GlobalKhatmahScreen.dart';
 import 'package:muslimdaily/app/features/charity/AchievementsScreen.dart';
@@ -77,7 +77,7 @@ class NotificationManager {
     await _requestBatteryExemptionIfNeeded();
 
     // 🚀 تهيئة خدمة الأذان عبر النظام الجديد
-    await PrayerSchedulerService().initialize();
+    await AdhanManager.rescheduleAll();
   }
 
   static Future<void> updateAllChannels() async {
@@ -335,11 +335,11 @@ class NotificationManager {
         enableLights: true,
       ),
 
-      // 🌅 قناة وقت الشروق
+      // 🌅 قناة وقت الشروق (تشغيل مرة واحدة)
       NotificationChannel(
-        channelKey: 'shruq_channel_v1',
+        channelKey: 'shruq_channel_once',
         channelName: 'تنبيه الشروق',
-        channelDescription: 'تنبيه بموعد الشروق',
+        channelDescription: 'تنبيه بموعد الشروق (يعمل لمرة واحدة)',
         importance: NotificationImportance.High,
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
@@ -347,79 +347,96 @@ class NotificationManager {
         soundSource: Platform.isAndroid ? 'resource://raw/shruq' : 'shruq.mp3',
         enableVibration: true,
         enableLights: true,
-        criticalAlerts: true,
+        criticalAlerts: false, // Explicitly false
+        locked: false,
+      ),
+
+      // 🌅 قناة وقت الشروق (مستمر/منبه)
+      NotificationChannel(
+        channelKey: 'shruq_channel_loop',
+        channelName: 'تنبيه الشروق (مستمر)',
+        channelDescription: 'تنبيه بموعد الشروق بشكل مستمر حتى يتم إيقافه',
+        importance: NotificationImportance.Max,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        soundSource: Platform.isAndroid ? 'resource://raw/shruq' : 'shruq.mp3',
+        enableVibration: true,
+        enableLights: true,
+        criticalAlerts: true, // Explicitly true
+        locked: true,
       ),
 
       // 🕌 Legacy Channels from NotifyHelper (Old Adhan Logic)
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak',
-        channelName: 'Prayer Times Notifications',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_saqqaf',
-        channelName: 'Prayer Times Notifications saqqaf',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_sarihi',
-        channelName: 'Prayer Times Notifications sarihi',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_baset',
-        channelName: 'Prayer Times Notifications baset',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_qatami',
-        channelName: 'Prayer Times Notifications qatami',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_salah',
-        channelName: 'Prayer Times Notifications salah',
-        channelDescription: 'Notification channel for Prayer Times',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
-      ),
-      NotificationChannel(
-        channelKey: 'prayers_notifications_channel_ak_notification',
-        channelName: 'App Notifications',
-        channelDescription: 'Notification channel for App Notifications',
-        ledColor: Colors.white,
-        importance: NotificationImportance.Max,
-        playSound: true,
-        soundSource: 'resource://raw/notification',
-      ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak',
+      //   channelName: 'Prayer Times Notifications',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_saqqaf',
+      //   channelName: 'Prayer Times Notifications saqqaf',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_sarihi',
+      //   channelName: 'Prayer Times Notifications sarihi',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_baset',
+      //   channelName: 'Prayer Times Notifications baset',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_qatami',
+      //   channelName: 'Prayer Times Notifications qatami',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_salah',
+      //   channelName: 'Prayer Times Notifications salah',
+      //   channelDescription: 'Notification channel for Prayer Times',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: normalPath ??
+      //       (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+      // ),
+      // NotificationChannel(
+      //   channelKey: 'prayers_notifications_channel_ak_notification',
+      //   channelName: 'App Notifications',
+      //   channelDescription: 'Notification channel for App Notifications',
+      //   ledColor: Colors.white,
+      //   importance: NotificationImportance.Max,
+      //   playSound: true,
+      //   soundSource: 'resource://raw/notification',
+      // ),
     ];
 
     try {
@@ -479,7 +496,8 @@ class NotificationManager {
     if (!Platform.isAndroid) return;
     try {
       final prefs = await _getPrefs();
-      final alreadyRequested = prefs.getBool('battery_exemption_requested') ?? false;
+      final alreadyRequested =
+          prefs.getBool('battery_exemption_requested') ?? false;
       if (alreadyRequested) return;
 
       // هذه الدالة تفتح صفحة "السماح بضبط التنبيهات والتذكيرات" على Android 12+
@@ -498,6 +516,58 @@ class NotificationManager {
     return _prefsInstance!;
   }
 
+  Future<void> scheduleShruqNotification(DateTime time, int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool isSunriseEnabled =
+        prefs.getBool('is_sunrise_reminder_enabled') ?? true;
+    final bool isContinuousShuruqEnabled =
+        prefs.getBool('is_continuous_shuruq_enabled') ?? false;
+
+    if (!isSunriseEnabled || time.isBefore(DateTime.now())) return;
+
+    // Use new explicit channels to bypass Android caching
+    final String channelKey =
+        isContinuousShuruqEnabled ? 'shruq_channel_loop' : 'shruq_channel_once';
+    final NotificationCategory category = isContinuousShuruqEnabled
+        ? NotificationCategory.Alarm
+        : NotificationCategory.Reminder;
+    final bool isCritical = isContinuousShuruqEnabled;
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: channelKey,
+        icon: Platform.isAndroid ? 'resource://drawable/ic_stat_logoapp' : null,
+        title: '\u200Fحان الآن وقت الشروق',
+        body: '\u200Fصلاة الضحى صلاة الأوابين وهي صدقة عن كل مفصل',
+        category: category,
+        wakeUpScreen: true,
+        fullScreenIntent:
+            isContinuousShuruqEnabled, // if looping, show head-up high priority
+        criticalAlert: isCritical,
+        autoDismissible: !isContinuousShuruqEnabled,
+        locked: isContinuousShuruqEnabled,
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar.fromDate(
+        date: time,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+      actionButtons: isContinuousShuruqEnabled
+          ? [
+              NotificationActionButton(
+                key: 'STOP_SHRUQ',
+                label: 'إيقاف التنبيه',
+                actionType: ActionType.DismissAction,
+                isDangerousOption: true,
+              ),
+            ]
+          : null,
+    );
+  }
+
   Future<void> scheduleInstantTestNotification() async {
     DateTime testTime = DateTime.now().add(const Duration(seconds: 10));
 
@@ -511,6 +581,7 @@ class NotificationManager {
         wakeUpScreen: true,
         fullScreenIntent: true,
         criticalAlert: true,
+        locked: true,
         largeIcon: 'resource://drawable/ic_stat_logoapp',
         notificationLayout: NotificationLayout.BigText,
         color: const Color(0xFF178B74),
@@ -548,6 +619,14 @@ class NotificationManager {
     await AwesomeNotifications().cancel(7);
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('salawat_channel'); // Cancel all salawat
+    await AwesomeNotifications().cancelSchedulesByChannelKey(
+        'shruq_channel_v1'); // Cancel old looping shruq
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('shruq_channel_v2');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('shruq_channel_loop');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('shruq_channel_once');
 
     // re-schedule if enabled
     await _setupDailyReminders();
@@ -555,7 +634,7 @@ class NotificationManager {
     // 🚀 إعادة جدولة الأذان
     // When calling rescheduleAll manually, we usually WANT to force an update (e.g. settings changed)
     // If called from main.dart on startup, force might be false (default)
-    await PrayerSchedulerService().reschedule();
+    await AdhanManager.rescheduleAll();
 
     // print('✅ Reschedule completed.');
   }
@@ -718,7 +797,7 @@ class NotificationManager {
           minute: 0,
           second: 0,
           millisecond: 0,
-          repeats: true,        // ✅ يتكرر كل يوم للأبد
+          repeats: true, // ✅ يتكرر كل يوم للأبد
           preciseAlarm: true,
           allowWhileIdle: true,
         ),

@@ -30,6 +30,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
   late bool isPrePrayerReminderEnabled;
   late bool isIqamahReminderEnabled;
   late bool isSunriseReminderEnabled;
+  late bool isContinuousShuruqEnabled;
   late bool isPostPrayerReminderEnabled;
   late int postReminderMinutes;
   late bool isAzkarSabahEnabled;
@@ -71,6 +72,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       isPrePrayerReminderEnabled = _settings.isPrePrayerReminderEnabled;
       isIqamahReminderEnabled = _settings.isIqamahReminderEnabled;
       isSunriseReminderEnabled = _settings.isSunriseReminderEnabled;
+      isContinuousShuruqEnabled = _settings.isContinuousShuruqEnabled;
       isPostPrayerReminderEnabled = _settings.isPostPrayerReminderEnabled;
       postReminderMinutes = _settings.postReminderMinutes;
       isAzkarSabahEnabled = _settings.isAzkarSabahEnabled;
@@ -110,6 +112,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
       await _settings.setPrePrayerReminderEnabled(isPrePrayerReminderEnabled);
       await _settings.setIqamahReminderEnabled(isIqamahReminderEnabled);
       await _settings.setSunriseReminderEnabled(isSunriseReminderEnabled);
+      await _settings.setContinuousShuruqEnabled(isContinuousShuruqEnabled);
       await _settings.setPostPrayerReminderEnabled(isPostPrayerReminderEnabled);
       await _settings.setPostReminderMinutes(postReminderMinutes);
       await _settings.setAzkarSabahEnabled(isAzkarSabahEnabled);
@@ -334,6 +337,23 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                               });
                             },
                           ),
+                          if (isSunriseReminderEnabled) ...[
+                            _buildDivider(isDark),
+                            _buildSwitchTile(
+                              context,
+                              title: 'صوت الشروق مستمر',
+                              subtitle: 'تكرار صوت الشروق حتى تقوم بإيقافه',
+                              icon: Icons.loop_outlined,
+                              iconColor: Colors.amber[800]!,
+                              value: isContinuousShuruqEnabled,
+                              onChanged: (val) {
+                                setState(() {
+                                  isContinuousShuruqEnabled = val;
+                                  _hasChanges = true;
+                                });
+                              },
+                            ),
+                          ],
                           _buildDivider(isDark),
                           _buildSwitchTile(
                             context,
@@ -839,40 +859,40 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                       // const SizedBox(height: 75),
 
                       // Test Button
-                      // Padding(
-                      //   padding: const EdgeInsets.only(bottom: 16),
-                      //   child: SizedBox(
-                      //     width: double.infinity,
-                      //     child: ElevatedButton.icon(
-                      //       style: ElevatedButton.styleFrom(
-                      //         backgroundColor:
-                      //             isDark ? Colors.grey[800] : Colors.grey[200],
-                      //         foregroundColor:
-                      //             isDark ? Colors.white : Colors.black87,
-                      //         padding: const EdgeInsets.symmetric(vertical: 12),
-                      //         shape: RoundedRectangleBorder(
-                      //           borderRadius: BorderRadius.circular(12),
-                      //         ),
-                      //         elevation: 0,
-                      //       ),
-                      //       onPressed: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //             builder: (context) =>
-                      //                 const NotificationTestView(),
-                      //           ),
-                      //         );
-                      //       },
-                      //       icon: const Icon(Icons.build_circle_outlined),
-                      //       label: Text(
-                      //         'اختبار التنبيهات (للمطورين)',
-                      //         style: GoogleFonts.cairo(
-                      //             fontWeight: FontWeight.bold),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  isDark ? Colors.grey[800] : Colors.grey[200],
+                              foregroundColor:
+                                  isDark ? Colors.white : Colors.black87,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationTestView(),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.build_circle_outlined),
+                            label: Text(
+                              'اختبار التنبيهات (للمطورين)',
+                              style: GoogleFonts.cairo(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
 
                       // Diagnostic Button
                       // Padding(

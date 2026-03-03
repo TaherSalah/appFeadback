@@ -17,18 +17,15 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-
     <!-- ⭐ أذونات التقويم -->
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    
     <!-- ⭐ أذونات الصوت (أضفهم) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
-
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
@@ -49,9 +46,9 @@
             android:launchMode="singleTop"
             android:taskAffinity=""
             android:theme="@style/LaunchTheme"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustResize">
             android:showWhenLocked="true"
-            android:turnScreenOn="true">
+            android:turnScreenOn="true"
 
             <meta-data
                 android:name="flutterEmbedding"
@@ -111,7 +108,14 @@
         <service android:name="me.carda.awesome_notifications.services.NotificationService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
+        <service
+            android:name="com.pravera.flutter_foreground_task.service.ForegroundService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="false" />
 
+        <receiver
+            android:name="dev.fluttercommunity.plus.androidalarmmanager.AlarmBroadcastReceiver"
+            android:exported="false"/>
         <!-- Awesome Notifications Action Receiver -->
         <receiver android:name="me.carda.awesome_notifications.DartNotificationActionReceiver"
             android:exported="true" />

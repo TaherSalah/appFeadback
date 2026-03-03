@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,6 +6,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import '../../core/shard/widgets/ui_animations.dart';
+import '../../core/utils/style/responsive_util.dart';
 import 'logic/expiation_logic.dart';
 
 class Currency {
@@ -77,35 +79,64 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isTap = ResponsiveUtil.isTablet(context);
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: SafeArea(
+
         bottom: true,
+        top: false,
         child: Scaffold(
           // backgroundColor:
           //     isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-          appBar: AppBar(
-            centerTitle: true,
-            actions: [
-              _buildCurrencyDropdown(isDark),
-            ],
-            leading: Navigator.canPop(context)
-                ? IconButton(
-                    icon: const Icon(Icons.arrow_back_ios),
-                    color: isDark ? Colors.white : Colors.black,
-                    onPressed: () => Navigator.of(context).pop(),
-                  )
-                : null,
-            title: Text(
-              "حاسبة الكفارات",
+          // appBar: AppBar(
+          //   centerTitle: true,
+          //   actions: [
+          //     _buildCurrencyDropdown(isDark),
+          //   ],
+          //   leading: Navigator.canPop(context)
+          //       ? IconButton(
+          //           icon: const Icon(Icons.arrow_back_ios),
+          //           color: isDark ? Colors.white : Colors.black,
+          //           onPressed: () => Navigator.of(context).pop(),
+          //         )
+          //       : null,
+          //   title: Text(
+          //     "حاسبة الكفارات",
+          //     style: GoogleFonts.cairo(
+          //       color: Colors.green,
+          //       fontWeight: FontWeight.bold,
+          //       fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+          //     ),
+          //   ),
+          // ),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(
+              MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+            ),
+            child: AppBar(
+              leading: CupertinoNavigationBarBackButton(
+                color: isDark ? Colors.white : Colors.black,
+              ),
+                actions: [
+                  _buildCurrencyDropdown(isDark),
+                ],
+
+              centerTitle: true,
+              title: Text(
+                     "حاسبة الكفارات",
+
               style: GoogleFonts.cairo(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                ),
               ),
             ),
           ),
+
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -115,7 +146,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                 Text(
                   "اختر نوع الحساب",
                   style: GoogleFonts.cairo(
-                    fontSize: 18.sp,
+                    fontSize:isTap?12.sp: 18.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
                   ),
@@ -269,12 +300,15 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
     String? suffix,
     Function(String)? onChanged,
   }) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
             style: GoogleFonts.cairo(
-                fontSize: 14.sp,
+                fontSize:isTap?10.sp: 14.sp,
+
                 color: isDark ? Colors.white70 : Colors.black54)),
         const SizedBox(height: 8),
         TextField(
@@ -305,6 +339,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
     required bool isSelected,
     required bool isDark,
   }) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return InkWell(
       onTap: () {
         setState(() => _selectedType = type);
@@ -356,7 +392,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             Text(
               title,
               style: GoogleFonts.cairo(
-                fontSize: 14.sp,
+                fontSize:isTap?10.sp: 14.sp,
+
                 fontWeight: FontWeight.bold,
                 color: isSelected
                     ? KColors.primaryColor
@@ -370,7 +407,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.cairo(
-                fontSize: 9.sp,
+                fontSize:isTap?8.sp: 14.sp,
+
                 color: isDark ? Colors.white38 : Colors.black45,
               ),
             ),
@@ -381,6 +419,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildCalculatorCard(bool isDark) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
@@ -413,7 +453,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                 style: GoogleFonts.cairo(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 12.sp,
+                  fontSize:isTap?10.sp: 14.sp,
+
                 ),
               ),
             ),
@@ -457,7 +498,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                         ? "مبلغ الفدية الإجمالي"
                         : "مبلغ الكفارة الإجمالي",
                     style: GoogleFonts.cairo(
-                      fontSize: 12.sp,
+                      fontSize:isTap?9.sp: 12.sp,
+
                       color: Colors.grey,
                     ),
                   ),
@@ -470,7 +512,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                       Text(
                         _selectedCurrency.symbol,
                         style: GoogleFonts.cairo(
-                          fontSize: 18.sp,
+                          fontSize:isTap?10.sp: 18.sp,
+
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF0F766E),
                         ),
@@ -479,7 +522,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                       Text(
                         intl.NumberFormat("#,##0").format(_total),
                         style: GoogleFonts.cairo(
-                          fontSize: 32.sp,
+                          fontSize:isTap?15.sp: 32.sp,
+
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF0F766E),
                         ),
@@ -499,7 +543,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                       style: GoogleFonts.cairo(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 11.sp,
+                        fontSize:isTap?8.sp: 11.sp,
+
                       ),
                     ),
                   ),
@@ -513,6 +558,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildInfoBox(bool isDark) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -530,7 +577,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             "ما هي الفدية؟",
             style: GoogleFonts.cairo(
               fontWeight: FontWeight.bold,
-              fontSize: 13.sp,
+              fontSize:isTap?9.sp: 13.sp,
+
               color: isDark ? const Color(0xFFFDE68A) : const Color(0xFF92400E),
             ),
           ),
@@ -538,7 +586,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           Text(
             "الفدية واجبة على من لا يستطيع الصيام بعذر دائم لا يُرجى زواله، مثل:",
             style: GoogleFonts.cairo(
-              fontSize: 11.sp,
+              fontSize:isTap?8.sp: 11.sp,
+
               color: isDark ? Colors.white70 : const Color(0xFF92400E),
             ),
           ),
@@ -554,6 +603,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildBulletItem(String text, bool isDark) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 2, right: 8),
       child: Row(
@@ -564,7 +615,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             child: Text(
               text,
               style: GoogleFonts.cairo(
-                fontSize: 10.sp,
+                fontSize:isTap?8.sp: 11.sp,
                 color: isDark ? Colors.white60 : Colors.black87,
               ),
             ),
@@ -575,6 +626,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildCurrencyDropdown(bool isDark) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -605,7 +657,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                 textAlign: TextAlign.right,
                 value.name,
                 style: GoogleFonts.cairo(
-                    fontSize: 12.sp, fontWeight: FontWeight.bold),
+                    fontSize:isTap? 8.sp :  12.sp, fontWeight: FontWeight.bold),
               ),
             );
           }).toList(),
@@ -620,6 +672,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
     final String priceStr = intl.NumberFormat("#,##0").format(price);
     final String kaffaraPriceStr =
         intl.NumberFormat("#,##0").format(price * 60);
+    final bool isTap = ResponsiveUtil.isTablet(context);
 
     return Column(
       children: [
@@ -636,7 +689,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             style: GoogleFonts.cairo(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 14.sp,
+              fontSize:isTap?10.sp: 14.sp,
+
             ),
           ),
         ),
@@ -690,7 +744,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             cell,
             textAlign: TextAlign.center,
             style: GoogleFonts.cairo(
-              fontSize: isHeader ? 11.sp : 10.sp,
+              fontSize: isHeader ? 9.sp : 10.sp,
               fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
               color: isHeader
                   ? Colors.white
@@ -725,6 +779,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             "اختلف العلماء: الجمهور يرى القضاء فقط، وبعضهم يرى الفدية مع القضاء إذا كان الإفطار خوفاً على الجنين. استشيري عالماً موثوقاً."
       },
     ];
+    final bool isTap = ResponsiveUtil.isTablet(context);
 
     return Column(
       children: [
@@ -741,7 +796,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             style: GoogleFonts.cairo(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 14.sp,
+              fontSize:isTap?10.sp: 14.sp,
+
             ),
           ),
         ),
@@ -763,7 +819,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                   title: Text(
                     faq["q"]!,
                     style: GoogleFonts.cairo(
-                      fontSize: 12.sp,
+                      fontSize:isTap?9.sp: 12.sp,
+
                       fontWeight: FontWeight.bold,
                       color:isDark ?Colors.white: const Color(0xFF1E40AF),
                     ),
@@ -774,7 +831,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                       child: Text(
                         faq["a"]!,
                         style: GoogleFonts.cairo(
-                          fontSize: 11.sp,
+                          fontSize:isTap?8.sp: 11.sp,
                           color: isDark ? Colors.white70 : Colors.black54,
                         ),
                       ),
@@ -790,6 +847,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildDisclaimerNote(bool isDark) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -808,7 +867,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
               "هذه النتائج استرشادية فقط، ويرجى الرجوع لأهل العلم والاختصاص.",
               textAlign: TextAlign.justify,
               style: GoogleFonts.cairo(
-                fontSize: 12.sp,
+                fontSize:isTap?9.sp :12.sp,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white70 : Colors.black87,
                 height: 1.5,

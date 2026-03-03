@@ -306,8 +306,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
           CarouselSlider(
             items: cards,
             options: CarouselOptions(
-              height: isTab ? 160.h : 145.h,
-              viewportFraction: isTab ? 0.6 : 0.88,
+              height: isTab ? 175.h : 145.h,
+              viewportFraction: isTab ? 0.9 : 0.88,
               enlargeCenterPage: true,
               enlargeStrategy: CenterPageEnlargeStrategy.zoom,
               enlargeFactor: 0.25,
@@ -408,6 +408,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min, // ✅ أضف هذا
                         children: [
                           Text(
                             title,
@@ -415,6 +416,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black87),
+                            maxLines: 1,                    // ✅ أضف هذا
+                            overflow: TextOverflow.ellipsis, // ✅ أضف هذا
                           ),
                           const Gap(2),
                           if (extra != null)
@@ -426,8 +429,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.cairo(
                                   fontSize: 13.sp,
-                                  color:
-                                      isDark ? Colors.white70 : Colors.black54),
+                                  color: isDark ? Colors.white70 : Colors.black54),
                             ),
                           if (extra == null) ...[
                             const Gap(2),

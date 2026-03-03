@@ -84,6 +84,14 @@ class SettingsService {
     await _prefs.setBool(_kIsSunriseReminderEnabled, value);
   }
 
+  static const String _kIsContinuousShuruqEnabled =
+      'is_continuous_shuruq_enabled';
+  bool get isContinuousShuruqEnabled =>
+      _prefs.getBool(_kIsContinuousShuruqEnabled) ?? false;
+  Future<void> setContinuousShuruqEnabled(bool value) async {
+    await _prefs.setBool(_kIsContinuousShuruqEnabled, value);
+  }
+
   static const String _kIsPostPrayerReminderEnabled =
       'post_prayer_reminder_enabled';
   bool get isPostPrayerReminderEnabled =>
@@ -232,7 +240,8 @@ class SettingsService {
   Future<void> setStopActionEnabled(bool value) async =>
       await _prefs.setBool(_kIsStopActionEnabled, value);
 
-  bool get isAutoSilentEnabled => _prefs.getBool(_kIsAutoSilentEnabled) ?? false;
+  bool get isAutoSilentEnabled =>
+      _prefs.getBool(_kIsAutoSilentEnabled) ?? false;
   Future<void> setAutoSilentEnabled(bool value) async =>
       await _prefs.setBool(_kIsAutoSilentEnabled, value);
 
