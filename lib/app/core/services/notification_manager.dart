@@ -11,7 +11,6 @@ import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
 import 'package:muslimdaily/app/features/charity/CharityDashboardScreen.dart';
 import 'package:muslimdaily/app/core/adhan_system/manager/adhan_manager.dart';
-import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/GlobalKhatmahScreen.dart';
 import 'package:muslimdaily/app/features/charity/AchievementsScreen.dart';
 import 'package:muslimdaily/app/features/calendar/presentation/screens/calendar_screen.dart';
@@ -125,6 +124,19 @@ class NotificationManager {
         enableVibration: SettingsService().isAdhanVibrationEnabled,
         enableLights: true,
         locked: false,
+        criticalAlerts: true,
+      ),
+
+      // 🔇 قناة إيقاظ الشاشة الصامتة للأذان
+      NotificationChannel(
+        channelKey: 'silent_adhan_channel',
+        channelName: 'إيقاظ الشاشة للأذان',
+        channelDescription: 'يستخدم لإيقاظ الشاشة بصمت أثناء الأذان',
+        importance: NotificationImportance.Max,
+        playSound: false,
+        enableVibration: false,
+        enableLights: true,
+        locked: true,
         criticalAlerts: true,
       ),
 
@@ -279,6 +291,21 @@ class NotificationManager {
         channelKey: 'achievement_unlocked_channel',
         channelName: 'إنجازات الصدقة',
         channelDescription: 'إشعارات عند فتح إنجاز جديد في قسم الصدقة',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        soundSource: Platform.isAndroid
+            ? 'resource://raw/notification'
+            : 'notification.wav',
+        enableLights: true,
+      ),
+      // 🤲 تذكيرات السنن والمناسبات (صوت قصير)
+      NotificationChannel(
+        channelKey: 'religious_reminders_channel',
+        channelName: 'تنبيهات السنن والمناسبات',
+        channelDescription:
+            'تذكيرات بصيام الاثنين والخميس وسنة اليوم والمناسبات الإسلامية',
         importance: NotificationImportance.High,
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
@@ -1004,8 +1031,7 @@ class NotificationManager {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 701,
-        channelKey:
-            'sabah_athkar_channel', // using existing channel for simplicity
+        channelKey: 'religious_reminders_channel',
         title: 'تذكير صيام الاثنين',
         body: 'غداً يوم الاثنين، تذكير بصيام يوم في سبيل الله',
         category: NotificationCategory.Reminder,
@@ -1029,7 +1055,7 @@ class NotificationManager {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 702,
-        channelKey: 'sabah_athkar_channel',
+        channelKey: 'religious_reminders_channel',
         title: 'تذكير صيام الخميس',
         body: 'غداً يوم الخميس، تذكير بصيام يوم في سبيل الله',
         category: NotificationCategory.Reminder,
@@ -1083,7 +1109,7 @@ class NotificationManager {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 802,
-        channelKey: 'sabah_athkar_channel',
+        channelKey: 'religious_reminders_channel',
         title: 'ساعة الاستجابة',
         body:
             'في يوم الجمعة ساعة لا يسأل الله أحد فيها شيئا وهو قائم يصلي إلا أعطاه الله إياه',
@@ -1229,7 +1255,7 @@ class NotificationManager {
           await AwesomeNotifications().createNotification(
             content: NotificationContent(
               id: notificationIdBase + count,
-              channelKey: 'sabah_athkar_channel',
+              channelKey: 'religious_reminders_channel',
               title: title,
               body: body,
               category: NotificationCategory.Reminder,
@@ -1320,7 +1346,7 @@ class NotificationManager {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 1102,
-        channelKey: 'sabah_athkar_channel',
+        channelKey: 'religious_reminders_channel',
         title: 'سنة اليوم',
         body: 'إحياء سنة من سنن المصطفى ﷺ، اضغط لتتعرف على سنة اليوم',
         category: NotificationCategory.Reminder,
@@ -1554,20 +1580,20 @@ class NotificationManager {
     final route = receivedNotification.payload?['route'];
     if (route == 'adhan_screen') {
       // Small delay to ensure Flutter's navigator is ready
-      await Future.delayed(const Duration(milliseconds: 300));
+      // await Future.delayed(const Duration(milliseconds: 300));
 
-      final navigator = CentralizedCubit.navigatorKey.currentState;
-      if (navigator != null) {
-        // Show the adhan overlay screen whenever notification fires
-        // (whether app is in foreground, background, or locked screen)
-        navigator.push(MaterialPageRoute(
-          builder: (_) => AdhanOverlayScreen(
-            prayerName: receivedNotification.payload?['prayerName'],
-            cityName: receivedNotification.payload?['cityName'],
-            prayerTime: receivedNotification.payload?['prayer_time'],
-          ),
-        ));
-      }
+      // final navigator = CentralizedCubit.navigatorKey.currentState;
+      // if (navigator != null) {
+      //   // Show the adhan overlay screen whenever notification fires
+      //   // (whether app is in foreground, background, or locked screen)
+      //   navigator.push(MaterialPageRoute(
+      //     builder: (_) => AdhanOverlayScreen(
+      //       prayerName: receivedNotification.payload?['prayerName'],
+      //       cityName: receivedNotification.payload?['cityName'],
+      //       prayerTime: receivedNotification.payload?['prayer_time'],
+      //     ),
+      //   ));
+      // }
     }
   }
 
@@ -1615,17 +1641,17 @@ class NotificationManager {
         break;
       case 'adhan_screen':
         // Check if overlay is enabled in settings
-        final settings = SettingsService();
-        await settings.init();
-        if (settings.isAdhanOverlayEnabled) {
-          navigator.push(MaterialPageRoute(
-            builder: (_) => AdhanOverlayScreen(
-              prayerName: receivedAction.payload?['prayerName'],
-              cityName: receivedAction.payload?['cityName'],
-              prayerTime: receivedAction.payload?['prayer_time'],
-            ),
-          ));
-        }
+        // final settings = SettingsService();
+        // await settings.init();
+        // if (settings.isAdhanOverlayEnabled) {
+        //   navigator.push(MaterialPageRoute(
+        //     builder: (_) => AdhanOverlayScreen(
+        //       prayerName: receivedAction.payload?['prayerName'],
+        //       cityName: receivedAction.payload?['cityName'],
+        //       prayerTime: receivedAction.payload?['prayer_time'],
+        //     ),
+        //   ));
+        // }
         break;
       case 'global_khatmah':
         navigator.push(

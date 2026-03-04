@@ -72,6 +72,7 @@ class AdhanWorkManagerService {
     if (enableNormalAdhan != null) {
       await prefs.setBool('enableNormalAdhan', enableNormalAdhan);
     }
+    await reschedule();
   }
 
   Future<String?> scheduleTestAdhan({required int secondsFromNow}) async {

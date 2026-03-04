@@ -321,14 +321,14 @@ class PrayerHeaderSection extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             HalalGreeting(),
                             AdhkarReminder(),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -418,24 +418,7 @@ class PrayerHeaderSection extends StatelessWidget {
                             ),
                           ],
                         ),
-
-                        const SizedBox(height: 12),
-                        // خط فاصل جمالي
-                        Container(
-                          height: 1,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.transparent,
-                                isDark
-                                    ? const Color(0xFFD4AF37).withOpacity(0.3)
-                                    : const Color(0xFFD4AF37).withOpacity(0.2),
-                                Colors.transparent,
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         // العنوان + اسم الصلاة
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -553,7 +536,7 @@ class PrayerHeaderSection extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         // الوقت المتبقي + شريط بسيط
                         Row(
                           children: [
@@ -598,49 +581,19 @@ class PrayerHeaderSection extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             TextDefaultWidget(
-                              title: "الوقت المتبقي",
-                              fontFamily: "cairo",
-                              fontSize: isTab ? 8.sp : 11.sp,
-                              fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.9)
-                                  : const Color(0xFF2C3E50),
-                            ),
-                            const Spacer(),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                gradient: isDark
-                                    ? LinearGradient(
-                                        colors: [
-                                          const Color(0xFFD4AF37)
-                                              .withOpacity(0.2),
-                                          const Color(0xFFD4AF37)
-                                              .withOpacity(0.1),
-                                        ],
-                                      )
-                                    : const LinearGradient(
-                                        colors: [
-                                          Color(0xFFFFF8E7),
-                                          Color(0xFFFFFBF0),
-                                        ],
-                                      ),
-                              ),
-                              child: TextDefaultWidget(
-                                title: remainingTime,
+                                title: "الوقت المتبقي",
                                 fontFamily: "cairo",
-                                fontWeight: FontWeight.bold,
-                                fontSize: isTab ? 10.sp : 13.sp,
+                                fontSize: isTab ? 8.sp : 11.sp,
+                                fontWeight: FontWeight.w600,
                                 color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF1B5E20),
-                              ),
-                            ),
+                                    ? Colors.white.withOpacity(0.9)
+                                    : const Color(0xFF2C3E50)),
+                            const Spacer(),
+                            _buildPremiumCountdown(
+                                context, remainingTime, isDark, isTab),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                         // شريط التقدم بتصميم جذاب
                         Container(
                           decoration: BoxDecoration(
@@ -950,6 +903,125 @@ class PrayerHeaderSection extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPremiumCountdown(
+      BuildContext context, String time, bool isDark, bool isTab) {
+    // Expected format "HH:mm:ss"
+    final parts = time.split(':');
+    if (parts.length < 3) return const SizedBox();
+
+    final hours = parts[0];
+    final minutes = parts[1];
+    final seconds = parts[2];
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildCountdownUnit(hours, "ساعة", isDark, isTab),
+        _buildSeparator(isDark),
+        _buildCountdownUnit(minutes, "دقيقة", isDark, isTab),
+        _buildSeparator(isDark),
+        _buildCountdownUnit(seconds, "ثانية", isDark, isTab),
+      ],
+    );
+  }
+
+  Widget _buildCountdownUnit(
+      String value, String label, bool isDark, bool isTab) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: isTab ? 10 : 6, vertical: isTab ? 6 : 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            gradient: isDark
+                ? LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color(0xFFD4AF37).withOpacity(0.3),
+                      const Color(0xFFD4AF37).withOpacity(0.1),
+                    ],
+                  )
+                : LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color(0xFF1B5E20).withOpacity(0.15),
+                      const Color(0xFF1B5E20).withOpacity(0.05),
+                    ],
+                  ),
+            border: Border.all(
+              color: isDark
+                  ? const Color(0xFFD4AF37).withOpacity(0.4)
+                  : const Color(0xFF1B5E20).withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              final offsetAnimation = Tween<Offset>(
+                begin: const Offset(0.0, 0.3),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              ));
+
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: offsetAnimation,
+                  child: child,
+                ),
+              );
+            },
+            child: TextDefaultWidget(
+              key: ValueKey<String>(value),
+              title: value,
+              fontFamily: "cairo",
+              fontWeight: FontWeight.bold,
+              fontSize: isTab ? 11.sp : 14.sp,
+              color: isDark ? Colors.amberAccent : const Color(0xFF1B5E20),
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: GoogleFonts.cairo(
+            fontSize: isTab ? 6.sp : 9.sp,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white70 : Colors.black54,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSeparator(bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10, left: 4, right: 4),
+      child: Text(
+        ":",
+        style: TextStyle(
+          color: isDark ? Colors.amberAccent : const Color(0xFF1B5E20),
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
       ),
     );
   }

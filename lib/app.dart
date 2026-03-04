@@ -1,7 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/core/cache/storage.dart';
-import 'package:muslimdaily/app/features/azanView/view/adhan_overlay_screen.dart';
 import 'package:provider/single_child_widget.dart';
 
 import 'app/core/cubit/centralized_cubit.dart';
@@ -58,8 +57,9 @@ class _MashkahAppState extends State<MashkahApp> {
           (receivedAction.channelKey == 'adhan_channel_v4' ||
               receivedAction.channelKey == 'fajr_adhan_channel_v4')) {
         print("🚀 App launched by Adhan Notification!");
-        
-        // Navigate to AdhanOverlayScreen
+
+        // Navigate to AdhanOverlayScreen (Disabled as per user request to stick to notifications)
+        /*
         CentralizedCubit.navigatorKey.currentState?.push(
           MaterialPageRoute(
             builder: (_) => AdhanOverlayScreen(
@@ -69,6 +69,7 @@ class _MashkahAppState extends State<MashkahApp> {
             ),
           ),
         );
+        */
       }
     } catch (e) {
       logger.e("❌ Error checking launch notification: $e");
@@ -134,14 +135,19 @@ class _MashkahAppState extends State<MashkahApp> {
                   //     );
                   //   },
                   // );
-                return  MaterialApp(
+                  return MaterialApp(
                     navigatorKey: CentralizedCubit.navigatorKey,
                     title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
                     debugShowCheckedModeBanner: false,
-                    onGenerateRoute: (settings) => RouteGenerator.getRoute(settings, context),
+                    onGenerateRoute: (settings) =>
+                        RouteGenerator.getRoute(settings, context),
                     initialRoute: Routes.splashRoute,
-                    theme: AppTheme.light(primaryColor: _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
-                    darkTheme: AppTheme.dark(primaryColor: _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
+                    theme: AppTheme.light(
+                        primaryColor:
+                            _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
+                    darkTheme: AppTheme.dark(
+                        primaryColor:
+                            _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
                     themeMode: cubit.themeMode(),
 
                     // ✅ builder واحد بس

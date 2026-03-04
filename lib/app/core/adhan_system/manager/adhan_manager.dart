@@ -1,10 +1,9 @@
 import 'dart:developer' show log;
-import 'package:latlong2/latlong.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/adhan_logic/adhan_controller.dart';
 import '../../services/notification_manager.dart';
 import '../core/alarm_scheduler.dart';
-import '../service/adhan_foreground_service.dart';
 
 class AdhanManager {
   static const String _tag = 'AdhanManager';
@@ -37,6 +36,11 @@ class AdhanManager {
     final now = DateTime.now();
     int scheduledCount = 0;
 
+    // Read user preferences for adhan
+    final prefs = await SharedPreferences.getInstance();
+    final enableFajr = prefs.getBool('enableFajrAdhan') ?? true;
+    final enableNormal = prefs.getBool('enableNormalAdhan') ?? true;
+
     // Reschedule for next 7 days
     for (int day = 0; day < 7; day++) {
       final date = now.add(Duration(days: day));
@@ -46,8 +50,25 @@ class AdhanManager {
 
       int prayerIndex = 0;
       for (final entry in times.entries) {
-        final prayerName = entry.key;
+        final prayerKey = entry.key;
         final prayerTime = entry.value;
+
+        // Skip non-prayers or Shuruq handled separately
+        if (prayerKey == 'midnight' || prayerKey == 'lastThird') {
+          prayerIndex++;
+          continue;
+        }
+
+        // Check if user disabled adhan types
+        if (!enableFajr && prayerKey == 'fajr') {
+          prayerIndex++;
+          continue;
+        }
+        if (!enableNormal &&
+            ['dhuhr', 'asr', 'maghrib', 'isha'].contains(prayerKey)) {
+          prayerIndex++;
+          continue;
+        }
 
         // Skip past prayers
         if (prayerTime.isBefore(now)) {
@@ -58,18 +79,37 @@ class AdhanManager {
         final uniqueId = 1000 + (day * 10) + prayerIndex;
 
         // Schedule Shuruq using the regular, non-repeating notification
-        if (prayerName.contains('الشروق')) {
+        if (prayerKey == 'sunrise' || prayerKey == 'الشروق') {
           await NotificationManager()
               .scheduleShruqNotification(prayerTime, uniqueId);
           prayerIndex++;
           continue;
         }
 
+        String arabicPrayerName = prayerKey;
+        switch (prayerKey) {
+          case 'fajr':
+            arabicPrayerName = 'الفجر';
+            break;
+          case 'dhuhr':
+            arabicPrayerName = 'الظهر';
+            break;
+          case 'asr':
+            arabicPrayerName = 'العصر';
+            break;
+          case 'maghrib':
+            arabicPrayerName = 'المغرب';
+            break;
+          case 'isha':
+            arabicPrayerName = 'العشاء';
+            break;
+        }
+
         await AlarmScheduler.scheduleExactAlarm(
           id: uniqueId,
           time: prayerTime,
           payload: {
-            'prayerName': prayerName,
+            'prayerName': arabicPrayerName,
             'cityName': ctrl.state.location.isEmpty
                 ? 'مدينة غير محددة'
                 : ctrl.state.location,
@@ -92,7 +132,7 @@ class AdhanManager {
   }
 
   /// Test alarm scheduler
-  static Future<void> scheduleTestAlarm({int seconds = 15}) async {
+  static Future<void> scheduleTestAlarm({int seconds = 10}) async {
     final time = DateTime.now().add(Duration(seconds: seconds));
     log('Scheduling exact test alarm for $time', name: _tag);
     await AlarmScheduler.scheduleExactAlarm(

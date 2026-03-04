@@ -36,7 +36,7 @@ class NotificationTestView extends StatelessWidget {
             title: 'حان وقت صلاة الفجر',
             body: 'الصلاة خير من النوم',
             category: NotificationCategory.Alarm,
-            payload: {'route': 'adhan_screen', 'prayerName': 'الفجر'},
+            payload: {'prayerName': 'الفجر'},
           ),
           _buildTestButton(
             context,
@@ -45,7 +45,7 @@ class NotificationTestView extends StatelessWidget {
             title: 'حان وقت الصلاة',
             body: 'لاتنسي أذكار بعد الصلاة المفروضة',
             category: NotificationCategory.Alarm,
-            payload: {'route': 'adhan_screen', 'prayerName': 'الظهر'},
+            payload: {'prayerName': 'الظهر'},
           ),
           _buildTestButton(
             context,
@@ -68,7 +68,7 @@ class NotificationTestView extends StatelessWidget {
             title: 'وقت الشروق',
             body: 'حان موعد شروق الشمس',
             category: NotificationCategory.Alarm,
-            payload: {'route': 'adhan_screen', 'prayerName': 'الشروق'},
+            payload: {'prayerName': 'الشروق'},
           ),
           const SizedBox(height: 20),
           _buildSectionHeader(context, 'الأذكار اليومية'),
@@ -124,7 +124,7 @@ class NotificationTestView extends StatelessWidget {
           _buildTestButton(
             context,
             label: 'تذكير صيام الاثنين',
-            channelKey: 'sabah_athkar_channel',
+            channelKey: 'religious_reminders_channel',
             title: 'تذكير صيام الاثنين',
             body: 'غداً يوم الاثنين، تذكير بصيام يوم في سبيل الله',
             payload: {'route': 'fasting_reminder'},
@@ -141,7 +141,7 @@ class NotificationTestView extends StatelessWidget {
           _buildTestButton(
             context,
             label: 'ساعة الاستجابة (الجمعة)',
-            channelKey: 'sabah_athkar_channel',
+            channelKey: 'religious_reminders_channel',
             title: 'ساعة الاستجابة',
             body:
                 'في يوم الجمعة ساعة لا يسأل الله أحد فيها شيئا وهو قائم يصلي إلا أعطاه الله إياه',
@@ -150,7 +150,7 @@ class NotificationTestView extends StatelessWidget {
           _buildTestButton(
             context,
             label: 'تذكير الأيام البيض',
-            channelKey: 'sabah_athkar_channel',
+            channelKey: 'religious_reminders_channel',
             title: 'صيام الأيام البيض',
             body: 'غداً يوم 13 رجب، نذكركم بصيام الأيام البيض',
             payload: {'route': 'white_days_reminder'},
@@ -203,7 +203,7 @@ class NotificationTestView extends StatelessWidget {
           _buildTestButton(
             context,
             label: 'المناسبات الإسلامية',
-            channelKey: 'sabah_athkar_channel',
+            channelKey: 'religious_reminders_channel',
             title: 'يوم عرفة',
             body:
                 'قال ﷺ: صيام يوم عرفة أحتسب على الله أن يكفر السنة التي قبله والسنة التي بعده',
@@ -225,7 +225,7 @@ class NotificationTestView extends StatelessWidget {
           _buildTestButton(
             context,
             label: 'صلاة الضحى',
-            channelKey: 'sabah_athkar_channel',
+            channelKey: 'religious_reminders_channel',
             title: 'صلاة الضحى',
             body:
                 'يصبح على كل سلامى من أحدكم صدقة.. ويجزئ من ذلك ركعتان يركعهما من الضحى',
@@ -234,7 +234,7 @@ class NotificationTestView extends StatelessWidget {
           _buildTestButton(
             context,
             label: 'سنة اليوم',
-            channelKey: 'sabah_athkar_channel',
+            channelKey: 'religious_reminders_channel',
             title: 'سنة اليوم',
             body: 'إحياء سنة من سنن المصطفى ﷺ، اضغط لتتعرف على سنة اليوم',
             payload: {'route': 'sunnah_reminder'},
@@ -242,7 +242,7 @@ class NotificationTestView extends StatelessWidget {
           _buildTestButton(
             context,
             label: 'الدعاء بين الأذان والإقامة',
-            channelKey: 'sabah_athkar_channel',
+            channelKey: 'religious_reminders_channel',
             title: 'الدعاء بين الأذان والإقامة',
             body: 'قال ﷺ: لا يُرد الدعاء بين الأذان والإقامة؛ فادعوا',
             payload: {'route': 'adhan_iqamah_reminder'},
@@ -309,6 +309,11 @@ class NotificationTestView extends StatelessWidget {
               fullScreenIntent: category == NotificationCategory.Alarm,
               criticalAlert: category == NotificationCategory.Alarm,
               payload: payload,
+            ),
+            schedule: NotificationCalendar.fromDate(
+              date: DateTime.now().add(const Duration(seconds: 5)),
+              preciseAlarm: true,
+              allowWhileIdle: true,
             ),
             actionButtons: category == NotificationCategory.Alarm
                 ? [

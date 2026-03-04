@@ -71,14 +71,12 @@ void alarmCallback(int id) async {
           'cityName': cityName,
           'prayer_time': prayerTime,
           'id': id.toString(),
-          'route': 'adhan_screen',
         },
       ),
       actionButtons: (prefs.getBool('is_stop_action_enabled') ?? true)
           ? [
               NotificationActionButton(
                 color: KColors.primaryColor,
-
                 key: 'STOP_ADHAN',
                 label: 'إيقاف الأذان',
                 actionType: ActionType.DismissAction,

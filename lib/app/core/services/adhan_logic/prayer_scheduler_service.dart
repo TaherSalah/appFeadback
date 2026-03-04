@@ -317,7 +317,6 @@ class PrayerSchedulerService {
               'prayerName': effectivePrayerName,
               'prayer_time': _formatTime(prayerTime),
               'cityName': cityName,
-              'route': 'adhan_screen',
               'type': 'adhan',
             },
           ),
@@ -436,7 +435,6 @@ class PrayerSchedulerService {
           'prayerName': 'اختبار',
           'prayer_time': _formatTime(scheduledTime),
           'cityName': cityName,
-          'route': 'adhan_screen',
           'type': 'test',
           'sound_type': 'sound', // MANDATORY for NotifyHelper to play sound
         },

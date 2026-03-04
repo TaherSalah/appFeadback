@@ -1,6 +1,7 @@
 import 'dart:developer' show log;
 import 'dart:isolate';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -31,9 +32,31 @@ class AdhanTaskHandler extends TaskHandler {
       payload: params,
     );
 
-    // 3. Launch the full-screen activity (the app itself)
-    // We send payload so the main UI knows it was opened by the alarm
-    FlutterForegroundTask.launchApp('/');
+    // 3. We no longer launch the app automatically to respect user's request to rely only on notifications.
+    // Instead, we ensure the notification is high-priority and shows the prayer time.
+
+    // 4. Force wake up using a high-priority notification on the silent channel
+    // (We keep it silent to avoid double audio from foreground service audio player)
+    try {
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: alarmId + 10000,
+          channelKey: 'silent_adhan_channel',
+          title: title,
+          body: body,
+          category: NotificationCategory.Alarm,
+          wakeUpScreen: true,
+          fullScreenIntent:
+              true, // This makes it show on lock screen even without launching app
+          criticalAlert: true,
+          locked: true,
+          displayOnForeground: true,
+          displayOnBackground: true,
+        ),
+      );
+    } catch (e) {
+      log('Failed to create notification: $e', name: _tag);
+    }
   }
 
   @override

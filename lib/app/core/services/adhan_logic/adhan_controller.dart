@@ -11,6 +11,8 @@ import 'package:latlong2/latlong.dart';
 import 'adhan_state.dart';
 import 'prayer_cache_manager.dart';
 import 'monthly_prayer_cache.dart';
+import 'prayer_background_manager.dart';
+import '../../services/settings_service.dart';
 
 /// AdhanController – lifted from almasjid-main, adapted for rafuiqElmuslim.
 /// This controller is UI-agnostic: it calculates prayer times, caches them,
@@ -356,6 +358,17 @@ class AdhanController extends GetxController {
     await _loadSelectedDateTimes(state.selectedDate);
     update(['init_athan', 'update_progress']);
     updateCurrentPrayer();
+    unawaited(_updateHomeWidgetIfEnabled());
+  }
+
+  Future<void> _updateHomeWidgetIfEnabled() async {
+    try {
+      final settings = SettingsService();
+      await settings.init();
+      if (settings.isHomeWidgetEnabled) {
+        await PrayerBackgroundManager.updateHomeWidget();
+      }
+    } catch (_) {}
   }
 
   Future<void> _initTimeStrings() async {
@@ -497,6 +510,7 @@ class AdhanController extends GetxController {
       _lastCurrentPrayerIndex = currentIndex;
       if (changed) {
         update(['init_athan', 'selected_date_prayers', 'update_progress']);
+        unawaited(_updateHomeWidgetIfEnabled());
       } else {
         update(['update_progress']);
       }

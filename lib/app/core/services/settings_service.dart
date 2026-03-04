@@ -43,6 +43,8 @@ class SettingsService {
   static const String _kIsStopActionEnabled = 'is_stop_action_enabled';
   static const String _kIsAutoSilentEnabled = 'is_auto_silent_enabled';
   static const String _kAutoSilentDuration = 'auto_silent_duration';
+  static const String _kIsAutoLocationEnabled = 'is_auto_location_enabled';
+  static const String _kIsHomeWidgetEnabled = 'is_home_widget_enabled';
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -137,7 +139,7 @@ class SettingsService {
   // --- Adhan Overlay ---
   static const String _kIsAdhanOverlayEnabled = 'is_adhan_overlay_enabled';
   bool get isAdhanOverlayEnabled =>
-      _prefs.getBool(_kIsAdhanOverlayEnabled) ?? true;
+      _prefs.getBool(_kIsAdhanOverlayEnabled) ?? false;
   Future<void> setAdhanOverlayEnabled(bool value) async {
     await _prefs.setBool(_kIsAdhanOverlayEnabled, value);
   }
@@ -248,4 +250,14 @@ class SettingsService {
   int get autoSilentDuration => _prefs.getInt(_kAutoSilentDuration) ?? 20;
   Future<void> setAutoSilentDuration(int value) async =>
       await _prefs.setInt(_kAutoSilentDuration, value);
+
+  // --- Location & Widget ---
+  bool get isAutoLocationEnabled =>
+      _prefs.getBool(_kIsAutoLocationEnabled) ?? true;
+  Future<void> setAutoLocationEnabled(bool value) async =>
+      await _prefs.setBool(_kIsAutoLocationEnabled, value);
+
+  bool get isHomeWidgetEnabled => _prefs.getBool(_kIsHomeWidgetEnabled) ?? true;
+  Future<void> setHomeWidgetEnabled(bool value) async =>
+      await _prefs.setBool(_kIsHomeWidgetEnabled, value);
 }
