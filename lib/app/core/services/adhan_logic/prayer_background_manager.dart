@@ -149,6 +149,10 @@ class PrayerBackgroundManager {
       if (prayerTimes != null) {
         final next = prayerTimes.nextPrayer();
         final nextTime = prayerTimes.timeForPrayer(next) ?? DateTime.now();
+        final city = ctrl.state.location.isEmpty
+            ? 'مدينة غير محددة'
+            : ctrl.state.location;
+        final nextPrayerName = _getPrayerNameArabic(next);
 
         await HomeWidgetService.updateFullPrayerWidget(
           fajrTime: DateFormat('hh:mm a').format(prayerTimes.fajr),
@@ -157,11 +161,16 @@ class PrayerBackgroundManager {
           asrTime: DateFormat('hh:mm a').format(prayerTimes.asr),
           maghribTime: DateFormat('hh:mm a').format(prayerTimes.maghrib),
           ishaTime: DateFormat('hh:mm a').format(prayerTimes.isha),
-          nextPrayer: _getPrayerNameArabic(next),
+          nextPrayer: nextPrayerName,
           nextPrayerTime: nextTime,
-          city: ctrl.state.location.isEmpty
-              ? 'مدينة غير محددة'
-              : ctrl.state.location,
+          city: city,
+        );
+
+        await HomeWidgetService.updatePrayerTimesWidget(
+          prayerName: nextPrayerName,
+          prayerTime: DateFormat('hh:mm a').format(nextTime),
+          city: city,
+          nextPrayerTime: nextTime,
         );
       }
     } catch (e) {

@@ -245,7 +245,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                               duration: const Duration(milliseconds: 200),
                               decoration: BoxDecoration(
                                 color: selected
-                                    ? const Color(0xFF0EA5E9).withOpacity(0.2)
+                                    ? KColors.primaryColor
                                     : Colors.grey.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(

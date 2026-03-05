@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -1204,9 +1206,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
       final type = _campaigns[_selectedCampaignIndex]['target_type'] ?? 'juz';
       String label = '';
-      if (type == 'juz')
+      if (type == 'juz') {
         label = 'جزء $index';
-      else if (type == 'surah')
+      } else if (type == 'surah')
         label = _surahs.isNotEmpty && index <= _surahs.length
             ? _surahs[index - 1].name
             : 'سورة $index';
@@ -1889,9 +1891,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
       final type = campaign['target_type'] ?? 'juz';
       String label = '';
-      if (type == 'juz')
+      if (type == 'juz') {
         label = 'جزء $itemIndex';
-      else if (type == 'surah')
+      } else if (type == 'surah')
         label = _surahs.isNotEmpty && itemIndex <= _surahs.length
             ? _surahs[itemIndex - 1].name
             : 'سورة $itemIndex';
@@ -1958,9 +1960,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     final readerName = statusData['user_name'];
 
     final type = campaign['target_type'] ?? 'juz';
-    if (type == 'juz')
+    if (type == 'juz') {
       label = 'جزء $index';
-    else if (type == 'surah')
+    } else if (type == 'surah')
       label = _surahs.isNotEmpty && index <= _surahs.length
           ? _surahs[index - 1].name
           : 'سورة $index';
@@ -2291,9 +2293,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         String label = 'الورد رقم $index';
 
         final type = campaign['target_type'] ?? 'juz';
-        if (type == 'juz')
+        if (type == 'juz') {
           label = 'الجزء $index';
-        else if (type == 'surah')
+        } else if (type == 'surah')
           label = _surahs.isNotEmpty && index <= _surahs.length
               ? 'سورة ${_surahs[index - 1].name}'
               : 'السورة رقم $index';
@@ -2614,9 +2616,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   Widget _buildSearchBar(bool isDark, Map<String, dynamic> campaign) {
     final type = campaign['target_type'] ?? 'juz';
     String hint = 'البحث عن رقم الجزء...';
-    if (type == 'surah')
+    if (type == 'surah') {
       hint = 'البحث عن اسم السورة...';
-    else if (type == 'page') hint = 'البحث عن رقم الصفحة...';
+    } else if (type == 'page') hint = 'البحث عن رقم الصفحة...';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

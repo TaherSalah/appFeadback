@@ -43,20 +43,20 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "icon": Icons.water_drop,
       "color": const Color(0xFF4DB6AC),
       "tasks": [
-        {"id": "t1_1", "title": "غسلت أسناني 🦷", "points": 5, "done": false},
+        {"id": "t1_1", "title": "غسلت أسناني", "points": 5, "done": false},
         {
           "id": "t1_2",
-          "title": "قلت بسم الله قبل الأكل 🍎",
+          "title": "قلت بسم الله قبل الأكل",
           "points": 5,
           "done": false
         },
         {
           "id": "t1_3",
-          "title": "قلت الحمد لله بعد الأكل 🤲",
+          "title": "قلت الحمد لله بعد الأكل",
           "points": 5,
           "done": false
         },
-        {"id": "t1_4", "title": "نمت مبكراً 🛌", "points": 10, "done": false},
+        {"id": "t1_4", "title": "نمت مبكراً", "points": 10, "done": false},
       ]
     },
     {
@@ -67,25 +67,25 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       "tasks": [
         {
           "id": "t2_1",
-          "title": "توضأت بشكل صحيح 💧",
+          "title": "توضأت بشكل صحيح",
           "points": 10,
           "done": false
         },
         {
           "id": "t2_2",
-          "title": "صليت الصلاة في وقتها 🕌",
+          "title": "صليت الصلاة في وقتها",
           "points": 15,
           "done": false
         },
         {
           "id": "t2_3",
-          "title": "دعوت لوالدي بعد الصلاة ❤️",
+          "title": "دعوت لوالدي بعد الصلاة ",
           "points": 10,
           "done": false
         },
         {
           "id": "t2_4",
-          "title": "رتبت سجادة الصلاة 🛏️",
+          "title": "رتبت سجادة الصلاة ",
           "points": 10,
           "done": false
         },

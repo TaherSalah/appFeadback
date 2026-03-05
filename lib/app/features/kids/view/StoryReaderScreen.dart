@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:confetti/confetti.dart';
+import '../../../core/utils/style/k_color.dart';
 import '../../../core/utils/style/k_dialog_helper.dart';
 import '../../achievements/services/achievement_service.dart';
 import 'package:get_it/get_it.dart';
@@ -211,15 +212,16 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
             SliverAppBar(
               expandedHeight: 200.h,
               pinned: true,
-              backgroundColor: const Color(0xFF0EA5E9),
+              backgroundColor: KColors.primaryColor,
               flexibleSpace: FlexibleSpaceBar(
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
                     Container(
-                      decoration: const BoxDecoration(
+                      decoration:  BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
+                          // colors: [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
+                          colors: [KColors.primaryColor, KColors.primary2Color],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),

@@ -66,7 +66,9 @@ class HomeWidgetService {
     required String prayerName,
     required String prayerTime,
     required String city,
-    String? timeLeft,
+    required DateTime nextPrayerTime, // Added for Chronometer
+    String?
+        timeLeft, // Keeping this for backward compatibility if needed on iOS
     String? hijriDate,
   }) async {
     try {
@@ -74,6 +76,9 @@ class HomeWidgetService {
       await HomeWidget.saveWidgetData<String>('prayer_name', prayerName);
       await HomeWidget.saveWidgetData<String>('prayer_time', prayerTime);
       await HomeWidget.saveWidgetData<String>('city', city);
+      await HomeWidget.saveWidgetData<int>(
+          'next_prayer_time_millis', nextPrayerTime.millisecondsSinceEpoch);
+
       if (timeLeft != null) {
         await HomeWidget.saveWidgetData<String>('time_left', timeLeft);
       }
@@ -106,7 +111,8 @@ class HomeWidgetService {
     required String city,
   }) async {
     try {
-      await HomeWidget.saveWidgetData<int>('next_prayer_time_millis', nextPrayerTime.millisecondsSinceEpoch);
+      await HomeWidget.saveWidgetData<int>(
+          'next_prayer_time_millis', nextPrayerTime.millisecondsSinceEpoch);
       await HomeWidget.saveWidgetData<String>('fajr_time', fajrTime);
       await HomeWidget.saveWidgetData<String>('sunrise_time', sunriseTime);
       await HomeWidget.saveWidgetData<String>('dhuhr_time', dhuhrTime);
@@ -135,7 +141,8 @@ class HomeWidgetService {
   }) async {
     try {
       await HomeWidget.saveWidgetData<String>('azkar_text', azkarText);
-      await HomeWidget.saveWidgetData<String>('azkar_count', repetitions.toString());
+      await HomeWidget.saveWidgetData<String>(
+          'azkar_count', repetitions.toString());
       await HomeWidget.saveWidgetData<String>('azkar_title', title);
 
       await HomeWidget.updateWidget(
@@ -159,10 +166,12 @@ class HomeWidgetService {
     try {
       // Format amount with thousands separator
       final formattedAmount = _formatNumber(monthlyTotal);
-      
-      await HomeWidget.saveWidgetData<String>('charity_amount', formattedAmount);
+
+      await HomeWidget.saveWidgetData<String>(
+          'charity_amount', formattedAmount);
       await HomeWidget.saveWidgetData<String>('charity_currency', currency);
-      await HomeWidget.saveWidgetData<String>('charity_streak', streakDays.toString());
+      await HomeWidget.saveWidgetData<String>(
+          'charity_streak', streakDays.toString());
       await HomeWidget.saveWidgetData<String>('charity_title', title);
 
       await HomeWidget.updateWidget(
@@ -170,7 +179,8 @@ class HomeWidgetService {
         iOSName: iosCharityWidget,
       );
 
-      debugPrint("✅ Charity Widget Updated: $formattedAmount$currency, $streakDays days streak");
+      debugPrint(
+          "✅ Charity Widget Updated: $formattedAmount$currency, $streakDays days streak");
     } catch (e) {
       debugPrint("❌ Error Updating Charity Widget: $e");
     }
@@ -187,6 +197,8 @@ class HomeWidgetService {
         prayerName: prayerData.prayerName,
         prayerTime: prayerData.prayerTime,
         city: prayerData.city,
+        nextPrayerTime:
+            DateTime.now().add(const Duration(minutes: 60)), // Fallback
       );
     }
 
@@ -211,9 +223,9 @@ class HomeWidgetService {
   static String _formatNumber(double number) {
     if (number >= 1000) {
       return number.toStringAsFixed(0).replaceAllMapped(
-        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-        (Match m) => '${m[1]},',
-      );
+            RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+            (Match m) => '${m[1]},',
+          );
     }
     return number.toStringAsFixed(0);
   }
@@ -228,6 +240,8 @@ class HomeWidgetService {
       prayerName: prayerName,
       prayerTime: prayerTime,
       city: city,
+      nextPrayerTime:
+          DateTime.now().add(const Duration(minutes: 60)), // Fallback
     );
   }
 }

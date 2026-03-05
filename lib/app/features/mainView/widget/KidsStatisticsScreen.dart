@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:animate_do/animate_do.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../../core/utils/style/k_color.dart';
 import '../../../core/utils/style/responsive_util.dart';
 
 class KidsStatisticsScreen extends StatefulWidget {
@@ -158,16 +159,15 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+
         body: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
             // Header
             SliverAppBar(
-              expandedHeight: 200.h,
+              expandedHeight: 150.h,
               pinned: true,
-              backgroundColor: primaryColor,
+              backgroundColor: KColors.primaryColor,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new_rounded,
                     color: Colors.white),
@@ -175,9 +175,10 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
               ),
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
-                  decoration: const BoxDecoration(
+                  decoration:  BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF0EA5E9), Color(0xFF6366F1)],
+                      colors: [KColors.primaryColor, KColors.primaryColor],
+                      // colors: [Color(0xFF0EA5E9), Color(0xFF6366F1)],
                       begin: Alignment.topRight,
                       end: Alignment.bottomLeft,
                     ),
@@ -197,8 +198,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('📊', style: TextStyle(fontSize: 50.sp)),
-                            SizedBox(height: 10.h),
+                            // Text('📊', style: TextStyle(fontSize: 50.sp)),
+                            // SizedBox(height: 10.h),
                             Text(
                               'إحصائياتي',
                               style: GoogleFonts.cairo(
@@ -272,7 +273,7 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
                   SizedBox(height: 12.h),
                   FadeInUp(
                     delay: const Duration(milliseconds: 350),
-                    child: _buildBadgesSection(isDark),
+                    child: _buildBadgesSection(isDark)
                   ),
                   SizedBox(height: 40.h),
                 ]),
@@ -497,8 +498,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(stat['icon']!, style: TextStyle(fontSize: 24.sp)),
-              SizedBox(height: 4.h),
+              // Text(stat['icon']!, style: TextStyle(fontSize: 24.sp)),
+              // SizedBox(height: 4.h),
               Text(
                 stat['value']!,
                 style: GoogleFonts.barlow(
@@ -637,56 +638,56 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
     final allBadges = [
       {
         'id': 'first_star',
-        'icon': '⭐',
+        'icon': '',
         'title': 'أول نجمة',
         'desc': 'اجمع أول نجمة',
         'required': 1
       },
       {
         'id': 'starter',
-        'icon': '🌱',
+        'icon': '',
         'title': 'البداية',
         'desc': 'اجمع 50 نجمة',
         'required': 50
       },
       {
         'id': 'rising',
-        'icon': '🚀',
+        'icon': '',
         'title': 'صاعد',
         'desc': 'اجمع 150 نجمة',
         'required': 150
       },
       {
         'id': 'champion',
-        'icon': '🏆',
+        'icon': '',
         'title': 'بطل',
         'desc': 'اجمع 300 نجمة',
         'required': 300
       },
       {
         'id': 'master',
-        'icon': '👑',
+        'icon': '',
         'title': 'خبير',
         'desc': 'اجمع 500 نجمة',
         'required': 500
       },
       {
         'id': 'legend',
-        'icon': '🌟',
+        'icon': '',
         'title': 'أسطورة',
         'desc': 'اجمع 1000 نجمة',
         'required': 1000
       },
       {
         'id': 'streak_3',
-        'icon': '🔥',
+        'icon': '',
         'title': '3 أيام',
         'desc': 'سلسلة 3 أيام',
         'required_streak': 3
       },
       {
         'id': 'streak_7',
-        'icon': '💎',
+        'icon': '',
         'title': 'أسبوع',
         'desc': 'سلسلة 7 أيام',
         'required_streak': 7

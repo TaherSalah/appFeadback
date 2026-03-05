@@ -6,6 +6,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:just_audio/just_audio.dart';
 
 import 'adhan_foreground_service.dart';
+import '../../services/adhan_logic/prayer_background_manager.dart';
 
 class AdhanTaskHandler extends TaskHandler {
   static const String _tag = 'AdhanTaskHandler';
@@ -56,6 +57,14 @@ class AdhanTaskHandler extends TaskHandler {
       );
     } catch (e) {
       log('Failed to create notification: $e', name: _tag);
+    }
+
+    // 5. Instantly force update home widgets to jump to the *next* prayer
+    try {
+      // Need to import background manager if not imported
+      await PrayerBackgroundManager.updateHomeWidget();
+    } catch (e) {
+      log('Failed to update home widgets on alarm: $e', name: _tag);
     }
   }
 

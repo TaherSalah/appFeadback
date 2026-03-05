@@ -403,7 +403,6 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     final int ayahNum = ayah.ayahNumber ?? 1;
     final int ayahUQ = ayah.ayahUQNumber ?? 0; // ✅ بدل ayahUQNumber
     final String text = ayah.text ?? ''; // ✅ بدل text
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     await QuranLibrary().showTafsir(
       isDark: true,
@@ -425,6 +424,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
           body: Center(child: KLoading.progressIOSIndicator(context: context)));
     }
 
+    // ignore: unused_local_variable
     final names = _ql.tafsirAndTraslationsCollection; // List<TafsirNameModel>
     final isDownloaded = _ql.getTafsirDownloaded(_selectedTafsirIndex);
 

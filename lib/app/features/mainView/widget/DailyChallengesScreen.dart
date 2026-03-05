@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import '../../../core/utils/style/k_dialog_helper.dart';
@@ -144,15 +146,15 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
       context: context,
       type: KDialogType.success,
       icon: Icons.stars_rounded,
-      title: 'عمل رائع! 🎉',
+      title: 'عمل رائع!',
       description: 'لقد حصلت على مكافأة المهمة بنجاح.',
       additionalContent: Column(
         children: [
-          Text(
-            challenge['emoji'],
-            style: const TextStyle(fontSize: 60),
-          ),
-          const SizedBox(height: 12),
+          // Text(
+          //   challenge['emoji'],
+          //   style: const TextStyle(fontSize: 60),
+          // ),
+          // const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -194,34 +196,58 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'التحديات ⚡',
-            style: GoogleFonts.cairo(
-              fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        // appBar: AppBar(
+        //   title: Text(
+        //     'التحديات ⚡',
+        //     style: GoogleFonts.cairo(
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        // ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(
+            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+          ),
+          child: AppBar(
+            leading: CupertinoNavigationBarBackButton(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+
+            centerTitle: true,
+            title: Text(
+              "التحديات",
+              style: GoogleFonts.cairo(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                fontSize:
+                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              ),
             ),
           ),
-          centerTitle: true,
         ),
+
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [
             // Daily Challenges
-            _buildSectionHeader('التحديات اليومية 🌅', dailyCompleted,
-                _todayChallenges.length, isDark, Colors.orange),
+            _buildSectionHeader('التحديات اليومية', dailyCompleted,
+                _todayChallenges.length, isDark, KColors.primaryColor),
             const SizedBox(height: 12),
             ..._todayChallenges
-                .map((c) => _buildChallengeCard(c, isDark, Colors.orange)),
+                .map((c) => _buildChallengeCard(c, isDark, KColors.primary)),
 
             const SizedBox(height: 24),
 
             // Weekly Challenges
-            _buildSectionHeader('التحديات الأسبوعية 📅', weeklyCompleted,
-                _weeklyChallenges.length, isDark, Colors.purple),
+            _buildSectionHeader('التحديات الأسبوعية', weeklyCompleted,
+                _weeklyChallenges.length, isDark, KColors.primaryColor),
             const SizedBox(height: 12),
             ..._weeklyChallenges
-                .map((c) => _buildChallengeCard(c, isDark, Colors.purple)),
+                .map((c) => _buildChallengeCard(c, isDark, KColors.primary)),
           ],
         ),
       ),
@@ -292,20 +318,20 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
-        leading: Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: (isCompleted ? Colors.green : color).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Center(
-            child: Text(
-              challenge['emoji'],
-              style: const TextStyle(fontSize: 30),
-            ),
-          ),
-        ),
+        // leading: Container(
+        //   width: 60,
+        //   height: 60,
+        //   decoration: BoxDecoration(
+        //     color: (isCompleted ? Colors.green : color).withOpacity(0.1),
+        //     borderRadius: BorderRadius.circular(12),
+        //   ),
+        //   child: Center(
+        //     child: Text(
+        //       challenge['emoji'],
+        //       style: const TextStyle(fontSize: 30),
+        //     ),
+        //   ),
+        // ),
         title: Text(
           challenge['title'],
           style: GoogleFonts.cairo(
