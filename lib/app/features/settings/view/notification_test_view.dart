@@ -306,9 +306,9 @@ class NotificationTestView extends StatelessWidget {
               color: const Color(0xFF178B74),
               category: category,
               wakeUpScreen: true,
-              fullScreenIntent: true,
-              criticalAlert:
-                  false, // Changed to false to avoid permission issues
+              // 🛠️ fullScreenIntent = false: السبب في عدم ظهور الإشعار على شاشة القفل
+              fullScreenIntent: false,
+              criticalAlert: false,
               payload: payload,
             ),
             schedule: NotificationCalendar.fromDate(

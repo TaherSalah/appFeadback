@@ -126,10 +126,11 @@ class AdhanManager {
                 '\u200Fفي مدينتك (${ctrl.state.location.isEmpty ? 'غير محددة' : ctrl.state.location})',
             category: NotificationCategory.Reminder,
             wakeUpScreen: true,
-            fullScreenIntent:
-                true, // Try enabling this for better lock screen visibility
-            criticalAlert:
-                false, // Match Salawat (don't use if not explicitly permitted)
+            // 🛠️ fullScreenIntent = false: هام جداً!
+            // لو كان true فإن النظام يفتح واجهة التطبيق على شاشة القفل بدلاً من عرض الإشعار.
+            // هذا كان سبب عدم ظهور الصوت والإشعار على شاشة القفل.
+            fullScreenIntent: false,
+            criticalAlert: false,
             icon: 'resource://drawable/ic_stat_logoapp',
             largeIcon: 'resource://drawable/ic_stat_logoapp',
             notificationLayout: NotificationLayout.BigText,

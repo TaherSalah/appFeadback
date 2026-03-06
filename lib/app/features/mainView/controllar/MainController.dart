@@ -84,12 +84,12 @@ class MainController extends ControllerMVC {
   final List<Map<String, String>> iconsApp = [
     {
       // "title": "الْمُصْحَفُ الشَّرِيفُ",
-      "title": "الْمُصْحَفُ (الاصدار الحديث)",
+      "title": "الْمُصْحَفُ (اصدار حديث)",
       "icon": "assets/images/koran.png",
       "navigate": "/surahListScreen"
     },
     {
-      "title": "الْمُصْحَفُ (الاصدار القديم)",
+      "title": "الْمُصْحَفُ (اصدار قديم)",
 
       "icon": "assets/images/koran.png",
       "navigate": "/surahListScreenOld"
