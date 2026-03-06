@@ -1,6 +1,7 @@
 import 'dart:developer' show log;
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 import '../../services/adhan_logic/adhan_controller.dart';
 import '../../services/notification_manager.dart';
 import '../core/alarm_scheduler.dart';
@@ -14,16 +15,21 @@ class AdhanManager {
 
     // Using the existing AdhanController to calculate times
     final ctrl = AdhanController.instance;
+    // Check if initialized, if not wait a bit
     if (!ctrl.state.isPrayerTimesInitialized.value) {
-      log('Prayer times not initialized. Cannot reschedule.', name: _tag);
-      return;
+      log('Prayer times not initialized. Waiting...', name: _tag);
+      await Future.delayed(const Duration(seconds: 2));
+      if (!ctrl.state.isPrayerTimesInitialized.value) {
+        log('Still not initialized. Attempting manual init...', name: _tag);
+        await ctrl.initializeStoredAdhan();
+      }
     }
 
-    // Cancel all previously scheduled precise alarms
-    // (Assuming IDs 1000 - 9999 are reserved for our adhan alarms)
-    for (int i = 1000; i < 9999; i++) {
-      await AlarmScheduler.cancelAlarm(i);
-    }
+    // Cancel all previously scheduled adhan and shruq notifications efficiently
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('adhan_channel_v4');
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('shruq_channel_v1');
     await AwesomeNotifications()
@@ -105,15 +111,48 @@ class AdhanManager {
             break;
         }
 
-        await AlarmScheduler.scheduleExactAlarm(
-          id: uniqueId,
-          time: prayerTime,
-          payload: {
-            'prayerName': arabicPrayerName,
-            'cityName': ctrl.state.location.isEmpty
-                ? 'مدينة غير محددة'
-                : ctrl.state.location,
-          },
+        // ⭐ Native AwesomeNotifications Scheduling (Mirrors Salawat/Azkar)
+        // 🛠️ [تعديل تقني]: تم استبدال AlarmManager بنظام جدولة النظام الأصلي (Native)
+        // هذا يضمن أن الأذان سيعمل حتى لو كان التطبيق مغلقاً تماماً والهاتف في وضع القفل (Lock Screen).
+        // تم استلهام هذا الحل من إشعار "الصلاة على النبي" الذي أثبت كفاءته.
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: uniqueId,
+            channelKey: prayerKey == 'fajr'
+                ? 'fajr_adhan_channel_v4'
+                : 'adhan_channel_v4',
+            title: '\u200Fحان الآن وقت صلاة $arabicPrayerName',
+            body:
+                '\u200Fفي مدينتك (${ctrl.state.location.isEmpty ? 'غير محددة' : ctrl.state.location})',
+            category: NotificationCategory.Reminder,
+            wakeUpScreen: true,
+            fullScreenIntent:
+                true, // Try enabling this for better lock screen visibility
+            criticalAlert:
+                false, // Match Salawat (don't use if not explicitly permitted)
+            icon: 'resource://drawable/ic_stat_logoapp',
+            largeIcon: 'resource://drawable/ic_stat_logoapp',
+            notificationLayout: NotificationLayout.BigText,
+            color: const Color(0xFF178B74),
+            payload: {
+              'prayerName': arabicPrayerName,
+              'cityName': ctrl.state.location,
+              'type': 'adhan'
+            },
+          ),
+          schedule: NotificationCalendar.fromDate(
+            date: prayerTime,
+            preciseAlarm: true,
+            allowWhileIdle: true,
+          ),
+          actionButtons: [
+            NotificationActionButton(
+              key: 'STOP_ADHAN',
+              label: 'إيقاف الصوت',
+              actionType: ActionType.DismissAction,
+              isDangerousOption: true,
+            ),
+          ],
         );
         scheduledCount++;
         prayerIndex++;

@@ -191,6 +191,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const QuranView());
       case '/ListScreen':
         return MaterialPageRoute(builder: (_) => const SurahListScreen());
+      case '/surahListScreenOld':
+        return MaterialPageRoute(
+            builder: (_) => const SurahListScreen(useOldMushaf: true));
       case '/RadioSearchScreen':
         return MaterialPageRoute(builder: (_) => const RadioSearchScreen());
       case '/ayaSearchScreen':

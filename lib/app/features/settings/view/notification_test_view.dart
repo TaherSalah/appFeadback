@@ -35,7 +35,7 @@ class NotificationTestView extends StatelessWidget {
             channelKey: 'fajr_adhan_channel_v4',
             title: 'حان وقت صلاة الفجر',
             body: 'الصلاة خير من النوم',
-            category: NotificationCategory.Alarm,
+            category: NotificationCategory.Reminder,
             payload: {'prayerName': 'الفجر'},
           ),
           _buildTestButton(
@@ -44,7 +44,7 @@ class NotificationTestView extends StatelessWidget {
             channelKey: 'adhan_channel_v4',
             title: 'حان وقت الصلاة',
             body: 'لاتنسي أذكار بعد الصلاة المفروضة',
-            category: NotificationCategory.Alarm,
+            category: NotificationCategory.Reminder,
             payload: {'prayerName': 'الظهر'},
           ),
           _buildTestButton(
@@ -306,12 +306,13 @@ class NotificationTestView extends StatelessWidget {
               color: const Color(0xFF178B74),
               category: category,
               wakeUpScreen: true,
-              fullScreenIntent: category == NotificationCategory.Alarm,
-              criticalAlert: category == NotificationCategory.Alarm,
+              fullScreenIntent: true,
+              criticalAlert:
+                  false, // Changed to false to avoid permission issues
               payload: payload,
             ),
             schedule: NotificationCalendar.fromDate(
-              date: DateTime.now().add(const Duration(seconds: 5)),
+              date: DateTime.now().add(const Duration(seconds: 15)),
               preciseAlarm: true,
               allowWhileIdle: true,
             ),

@@ -83,9 +83,16 @@ class MainController extends ControllerMVC {
   String upcomingPrayerName = "";
   final List<Map<String, String>> iconsApp = [
     {
-      "title": "الْمُصْحَفُ الشَّرِيفُ",
+      // "title": "الْمُصْحَفُ الشَّرِيفُ",
+      "title": "الْمُصْحَفُ (الاصدار الحديث)",
       "icon": "assets/images/koran.png",
       "navigate": "/surahListScreen"
+    },
+    {
+      "title": "الْمُصْحَفُ (الاصدار القديم)",
+
+      "icon": "assets/images/koran.png",
+      "navigate": "/surahListScreenOld"
     },
     {
       "title": "أَذْكَارُ الْمُسْلِمِ",

@@ -427,9 +427,14 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                               detail,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cairo(
-                                  fontSize: 13.sp,
-                                  color: isDark ? Colors.white70 : Colors.black54),
+                              style: TextStyle(
+                                fontFamily: "me",
+                                fontSize: 13.sp,
+                                  color: isDark ? Colors.white70 : Colors.black54
+                              ),
+                              // style: GoogleFonts.cairo(
+                              //     fontSize: 13.sp,
+                              //     color: isDark ? Colors.white70 : Colors.black54),
                             ),
                           if (extra == null) ...[
                             const Gap(2),
@@ -437,10 +442,17 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                               subtitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cairo(
-                                  fontSize: 11.sp,
+                              style: TextStyle(
+                                  fontFamily: "me",
+                                  fontSize: 13.sp,
                                   color: color,
-                                  fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold
+                              ),
+
+                              // style: GoogleFonts.cairo(
+                              //     fontSize: 11.sp,
+                              //     color: color,
+                              //     fontWeight: FontWeight.bold),
                             ),
                           ],
                         ],

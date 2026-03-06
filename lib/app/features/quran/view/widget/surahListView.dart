@@ -13,9 +13,16 @@ import 'package:quran_library/quran.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:muslimdaily/app/features/quran/view/SurahDetailScreen.dart';
 
 class SurahListScreen extends StatefulWidget {
-  const SurahListScreen({super.key});
+  final bool useOldMushaf;
+  final bool autoResume;
+  const SurahListScreen({
+    super.key,
+    this.useOldMushaf = false,
+    this.autoResume = true,
+  });
 
   @override
   State<SurahListScreen> createState() => _SurahListScreenState();
@@ -87,16 +94,6 @@ class _SurahListScreenState extends State<SurahListScreen> {
               message:
                   "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز (قد تحتاج لتثبيت خدمات جوجل الصوتية)",
             );
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   const SnackBar(
-            //     content: Text(
-            //       "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز (قد تحتاج لتثبيت خدمات جوجل الصوتية)",
-            //       textAlign: TextAlign.right,
-            //       style: TextStyle(fontFamily: "cairo"),
-            //     ),
-            //     backgroundColor: Colors.redAccent,
-            //   ),
-            // );
           }
         }
       } catch (e) {
@@ -105,16 +102,6 @@ class _SurahListScreenState extends State<SurahListScreen> {
           KHelper.showError(
             message: "حدث خطأ أثناء تشغيل البحث الصوتي",
           );
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(
-          //     content: Text(
-          //       "حدث خطأ أثناء تشغيل البحث الصوتي",
-          //       textAlign: TextAlign.right,
-          //       style: TextStyle(fontFamily: "cairo"),
-          //     ),
-          //     backgroundColor: Colors.redAccent,
-          //   ),
-          // );
         }
       }
     } else {
@@ -172,9 +159,6 @@ class _SurahListScreenState extends State<SurahListScreen> {
     // Prepare searchable items
     _allSurahItems = [];
     for (int i = 0; i < surahInfoList.length; i++) {
-      // QuranLibrary.getAllSurahs() usually returns Arabic names.
-      // If you need transliteration, ensure it's available in surahModel or surahs list.
-      // Assuming surahModel has accurate data as well.
       _allSurahItems.add(SurahItem(
         index: i,
         arabicName: surahs.length > i ? surahs[i] : surahInfoList[i].name,
@@ -187,6 +171,46 @@ class _SurahListScreenState extends State<SurahListScreen> {
 
     isLoading = false;
     setState(() {});
+
+    // ميزة الاستكمال التلقائي: التحقق من آخر سورة تم فتحها عند الدخول للمصحف القديم
+    if (widget.useOldMushaf && widget.autoResume) {
+      _checkResume();
+    }
+  }
+
+  // دالة المسؤولة عن "القفز" لآخر مكان توقف فيه المستخدم
+  Future<void> _checkResume() async {
+    final prefs = await SharedPreferences.getInstance();
+    // البحث عن علامة "تم الفتح مسبقاً" لضمان عدم حدوث الاستكمال في أول مرة تشغيل فقط
+    final bool openedOnce = prefs.getBool('old_mushaf_opened_once') ?? false;
+    if (!openedOnce) return;
+
+    final int? lastSurahId =
+        prefs.getInt('old_mushaf_last_surah_id'); // رقم آخر سورة
+    final double? lastOffset =
+        prefs.getDouble('old_mushaf_last_scroll_offset'); // آخر مكان تمرير
+
+    if (lastSurahId != null && mounted) {
+      // إيجاد بيانات السورة من القائمة
+      final surah = surahInfoList.firstWhere(
+        (s) => s.id == lastSurahId,
+        orElse: () => surahInfoList.first,
+      );
+
+      // الانتقال التلقائي لشاشة السورة مع استبدال الفهرس لضمان رجوع سلس للرئيسية
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SurahDetailScreen(
+            surah: surah,
+            allSurahs: surahInfoList,
+            verseId: 0,
+            isDark: Theme.of(context).brightness == Brightness.dark,
+            initialScrollOffset: lastOffset,
+          ),
+        ),
+      );
+    }
   }
 
   String _normalizeArabic(String text) {
@@ -272,57 +296,46 @@ class _SurahListScreenState extends State<SurahListScreen> {
               ),
               centerTitle: true,
               title: Text(
-                "فِهْرِسُ القُرْآنِ الكَرِيم",
+                widget.useOldMushaf
+                    ? "فِهْرِسُ القُرْآنِ الكَرِيم (الاصدار القديم)"
+                    : "فِهْرِسُ القُرْآنِ الكَرِيم (الاصدار الحديث)",
                 style: GoogleFonts.cairo(
                     color: Colors.green,
                     fontWeight: FontWeight.w900,
                     fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp),
               ),
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(48),
-                child: Showcase(
-                  key: _tabKey,
-                  description: 'يمكنك التنقل بين فهرس السور، الأجزاء، والأحزاب',
-                  child: TabBar(
-                    indicatorColor: KColors.primaryColor,
-                    indicatorWeight: 3,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    labelColor: KColors.primaryColor,
-                    unselectedLabelColor:
-                        isDark ? Colors.white38 : Colors.black38,
-                    labelStyle: GoogleFonts.cairo(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 16.sp,
+              bottom: widget.useOldMushaf
+                  ? null
+                  : PreferredSize(
+                      preferredSize: const Size.fromHeight(48),
+                      child: Showcase(
+                        key: _tabKey,
+                        description:
+                            'يمكنك التنقل بين فهرس السور، الأجزاء، والأحزاب',
+                        child: TabBar(
+                          indicatorColor: KColors.primaryColor,
+                          indicatorWeight: 3,
+                          indicatorSize: TabBarIndicatorSize.label,
+                          labelColor: KColors.primaryColor,
+                          unselectedLabelColor:
+                              isDark ? Colors.white38 : Colors.black38,
+                          labelStyle: GoogleFonts.cairo(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 16.sp,
+                          ),
+                          unselectedLabelStyle: GoogleFonts.cairo(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
+                          tabs: const [
+                            Tab(text: "سورة"),
+                            Tab(text: "جزء"),
+                            Tab(text: "أحزاب"),
+                          ],
+                        ),
+                      ),
                     ),
-                    unselectedLabelStyle: GoogleFonts.cairo(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.sp,
-                    ),
-                    tabs: const [
-                      Tab(text: "سورة"),
-                      Tab(text: "جزء"),
-                      Tab(text: "أحزاب"),
-                    ],
-                  ),
-                ),
-              ),
             ),
-            // actions: [
-            //   IconButton(
-            //     onPressed: () {
-            //       Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //           builder: (context) => const QuranPdfScreen(),
-            //         ),
-            //       );
-            //     },
-            //     icon:
-            //         const Icon(Icons.picture_as_pdf_rounded, color: Colors.red),
-            //     tooltip: "القراءة من PDF",
-            //   ),
-            //   const SizedBox(width: 8),
-            // ],
             body: isLoading == true
                 ? Center(
                     child: KLoading.progressIOSIndicator(
@@ -334,14 +347,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: isDark
-                            ? const [
-                                Color(0xff05060a),
-                                Color(0xff0d1514),
-                              ]
-                            : const [
-                                Color(0xfff4f6f8),
-                                Color(0xfffdfcf9),
-                              ],
+                            ? const [Color(0xff05060a), Color(0xff0d1514)]
+                            : const [Color(0xfff4f6f8), Color(0xfffdfcf9)],
                       ),
                     ),
                     child: Column(
@@ -426,13 +433,15 @@ class _SurahListScreenState extends State<SurahListScreen> {
                           ),
                         ),
                         Expanded(
-                          child: TabBarView(
-                            children: [
-                              _buildSurahTab(),
-                              _buildJozTab(),
-                              _buildHizbTab(),
-                            ],
-                          ),
+                          child: widget.useOldMushaf
+                              ? _buildSurahTab()
+                              : TabBarView(
+                                  children: [
+                                    _buildSurahTab(),
+                                    _buildJozTab(),
+                                    _buildHizbTab(),
+                                  ],
+                                ),
                         ),
                       ],
                     ),
@@ -454,12 +463,10 @@ class _SurahListScreenState extends State<SurahListScreen> {
       physics: const BouncingScrollPhysics(),
       itemCount: _filteredSurahItems.length,
       itemBuilder: (ctx, index) {
-
         final item = _filteredSurahItems[index];
         final surah = item.model;
         final realIndex = item.index;
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        logger.t("item.arabicName ${item.arabicName}");
 
         final types = surah.type == "medinan"
             ? "assets/images/madina.png"
@@ -487,8 +494,22 @@ class _SurahListScreenState extends State<SurahListScreen> {
             child: InkWell(
               borderRadius: BorderRadius.circular(20.r),
               onTap: () {
-                QuranLibrary().jumpToSurah(realIndex + 1);
-                Navigator.pop(context);
+                if (widget.useOldMushaf) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SurahDetailScreen(
+                        surah: surah,
+                        allSurahs: surahInfoList,
+                        verseId: 0,
+                        isDark: isDark,
+                      ),
+                    ),
+                  );
+                } else {
+                  QuranLibrary().jumpToSurah(realIndex + 1);
+                  Navigator.pop(context);
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(16),

@@ -19,6 +19,7 @@ import 'package:muslimdaily/app/features/quran/data/reading_analytics_service.da
 import 'package:muslimdaily/app/features/quran/data/reflections_service.dart';
 import 'package:muslimdaily/app/features/quran/view/ReadingAnalyticsScreen.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/page_reflections_screen.dart';
+import 'package:muslimdaily/app/features/quran/view/widget/surahListView.dart';
 
 enum _QuranMenuAction {
   audio,
@@ -169,6 +170,18 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
           icon: Icons.list,
           title: "فِهْرِسُ القُرْآنِ الكَرِيمِ",
           route: "/ListScreen",
+        ),
+        DrawerModle(
+          icon: Icons.history_edu_outlined,
+          title: "المُصْحَفُ القَدِيمُ (نَصِّي)",
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SurahListScreen(useOldMushaf: true),
+              ),
+            );
+          },
         ),
         // DrawerModle(
         //   icon: Icons.dashboard_customize_outlined,
@@ -501,7 +514,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         QuranLibrary().jumpToPage(_currentPage! + 1);
         // Eagerly save the current page to ensure it's in SharedPreferences even if no scrolling happens
         final prefs = await SharedPreferences.getInstance();
-        final key = widget.campaignId != null ? 'last_page_${widget.campaignId}' : 'last_page';
+        final key = widget.campaignId != null
+            ? 'last_page_${widget.campaignId}'
+            : 'last_page';
         await prefs.setInt(key, _currentPage!);
       }
     });
@@ -944,8 +959,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             //     },
             //   ),
             // ),
-            iconTheme:
-                IconThemeData(color: isDark ? Colors.white : KColors.primaryColor),
+            iconTheme: IconThemeData(
+                color: isDark ? Colors.white : KColors.primaryColor),
             actions: [
               if (_isSharing)
                 const Center(
@@ -960,7 +975,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   ),
                 ),
               IconButton(
-                icon: const Icon(Icons.info_outline_rounded),
+                  icon: const Icon(Icons.info_outline_rounded),
                   onPressed: () {
                     QuranCtrl.instance.isShowControl.value = true;
                     QuranCtrl.instance.update(['isShowControl']);
@@ -976,7 +991,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: TajweedMenuWidget(
-                          
                               languageCode: "ar",
                               isDark: isDark,
                             ),
@@ -984,9 +998,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                         );
                       },
                     );
-                  }
-
-              ),
+                  }),
               FontsDownloadDialog(
                 topBarStyle: QuranTopBarStyle(
                   iconColor: isDark ? Colors.white : KColors.primaryColor,
@@ -1306,7 +1318,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                           child: Padding(
                             padding: EdgeInsets.zero,
                             child: _currentPage == null
-                                ? Center(   
+                                ? Center(
                                     child: KLoading.progressIOSIndicator(
                                         context: context),
                                   )
@@ -1332,7 +1344,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                                             indexTabStyle: indexTabStyle,
                                             useDefaultAppBar: false,
                                             parentContext: context,
-
                                           );
                                         },
                                       )

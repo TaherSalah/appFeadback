@@ -97,7 +97,9 @@ class NotificationManager {
         channelKey: currentChannels['fajr']!,
         channelName: 'أذان الفجر',
         channelDescription: 'تشغيل أذان الفجر',
-        importance: NotificationImportance.Max,
+        // 🛠️ [تحسين الموثوقية]: استخدام أهمية عالية (High) وتنبيهات حرجة (Critical)
+        // يضمن تشغيل الصوت بالكامل في iOS وAndroid حتى في وضع الصامت.
+        importance: NotificationImportance.High,
         playSound: true,
         soundSource: fajrPath ??
             (Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3'),
@@ -115,7 +117,9 @@ class NotificationManager {
         channelKey: currentChannels['normal']!,
         channelName: 'أذان الصلاة',
         channelDescription: 'تشغيل صوت الأذان',
-        importance: NotificationImportance.Max,
+        // 🛠️ [تحسين الموثوقية]: يضمن ظهور الإشعار كـ Reminder وليس Alarm
+        // لتجنب حظر النظام للشاشات الكاملة (Full Screen Intent) على شاشة القفل.
+        importance: NotificationImportance.High,
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
@@ -123,6 +127,7 @@ class NotificationManager {
             (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
         enableVibration: SettingsService().isAdhanVibrationEnabled,
         enableLights: true,
+        defaultPrivacy: NotificationPrivacy.Public,
         locked: false,
         criticalAlerts: true,
       ),
