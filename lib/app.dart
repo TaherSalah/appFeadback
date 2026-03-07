@@ -2,6 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/core/cache/storage.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/shard/exports/all_exports.dart';
@@ -135,33 +136,33 @@ class _MashkahAppState extends State<MashkahApp> {
                   //     );
                   //   },
                   // );
-                  return MaterialApp(
-                    navigatorKey: CentralizedCubit.navigatorKey,
-                    title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
-                    debugShowCheckedModeBanner: false,
-                    onGenerateRoute: (settings) =>
-                        RouteGenerator.getRoute(settings, context),
-                    initialRoute: Routes.splashRoute,
-                    theme: AppTheme.light(
-                        primaryColor:
-                            _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
-                    darkTheme: AppTheme.dark(
-                        primaryColor:
-                            _hexToColor(CentralizedCubit.dynamicPrimaryColor)),
-                    themeMode: cubit.themeMode(),
-
-                    // ✅ builder واحد بس
-                    builder: (context, child) {
-                      return MediaQuery(
-                        data: MediaQuery.of(context).copyWith(
-                          textScaler: MediaQuery.textScalerOf(context).clamp(
-                            minScaleFactor: 0.8,
-                            maxScaleFactor: 1.2,
+                  return ShowCaseWidget(
+                    builder: (context) => MaterialApp(
+                      navigatorKey: CentralizedCubit.navigatorKey,
+                      title: 'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
+                      debugShowCheckedModeBanner: false,
+                      onGenerateRoute: (settings) =>
+                          RouteGenerator.getRoute(settings, context),
+                      initialRoute: Routes.splashRoute,
+                      theme: AppTheme.light(
+                          primaryColor: _hexToColor(
+                              CentralizedCubit.dynamicPrimaryColor)),
+                      darkTheme: AppTheme.dark(
+                          primaryColor: _hexToColor(
+                              CentralizedCubit.dynamicPrimaryColor)),
+                      themeMode: cubit.themeMode(),
+                      builder: (context, child) {
+                        return MediaQuery(
+                          data: MediaQuery.of(context).copyWith(
+                            textScaler: MediaQuery.textScalerOf(context).clamp(
+                              minScaleFactor: 0.8,
+                              maxScaleFactor: 1.2,
+                            ),
                           ),
-                        ),
-                        child: child!,
-                      );
-                    },
+                          child: child!,
+                        );
+                      },
+                    ),
                   );
                 }));
           }),

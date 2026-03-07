@@ -27,7 +27,8 @@ class SystemControlService {
           .from('app_settings')
           .select('value')
           .eq('key', 'maintenance_mode')
-          .maybeSingle();
+          .maybeSingle()
+          .timeout(const Duration(seconds: 5));
 
       return response != null && response['value'] == 'true';
     } catch (e) {
@@ -49,6 +50,31 @@ class SystemControlService {
         cachedMap =
             decoded.map((key, value) => MapEntry(key, value.toString()));
       } catch (_) {}
+    }
+
+    // 🛡️ Provide default statuses if no cache is available (e.g., first run offline)
+    if (cachedMap.isEmpty) {
+      cachedMap = {
+        'quran': 'active',
+        'azkar': 'active',
+        'sebha': 'active',
+        'khatmah': 'active',
+        'zakat': 'active',
+        'inheritance': 'active',
+        'expiation': 'active',
+        'wird': 'active',
+        'radio': 'active',
+        'hadith': 'active',
+        'mosques': 'active',
+        'kids': 'active',
+        'timing': 'active',
+        'qibla': 'active',
+        'fajr_alarm': 'active',
+        'calendar': 'active',
+        'settings': 'active',
+        'news': 'hidden', // Default news to hidden if no data
+        'banners': 'hidden',
+      };
     }
 
     // 🛰️ Fetch in background and update cache

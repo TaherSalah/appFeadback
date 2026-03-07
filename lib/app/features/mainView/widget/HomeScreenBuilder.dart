@@ -507,7 +507,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                           FadeInUp(
                             duration: const Duration(milliseconds: 700),
                             delay: const Duration(milliseconds: 250),
-                            child: LastActivityWidget(key: ValueKey('last_activity_$_refreshCounter')),
+                            child: LastActivityWidget(
+                                key:
+                                    ValueKey('last_activity_$_refreshCounter')),
                           ),
 
                           // const SizedBox(height: 10),
@@ -588,9 +590,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                     // ⚡ Performance Optimized SliverGrid ⚡
                     SliverPadding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: isTab ? 10.w : 5.0, vertical:9),
+                          horizontal: isTab ? 10.w : 5.0, vertical: 9),
                       sliver: SliverToBoxAdapter(
-
                         child: Showcase(
                           key: _featuresGridKey,
                           description:
@@ -615,13 +616,16 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                     onTap: () async {
                                       bool needsInternet = item["navigate"] ==
                                               Routes.categoriesRoute ||
-                                          item["navigate"] == "/QuranRadioView";
+                                          item["navigate"] ==
+                                              "/QuranRadioView" ||
+                                          item["navigate"] == "/globalKhatmah";
 
-                                      if (((state is ConnectivityState &&
-                                                  state.status ==
-                                                      ConnectivityStatus
-                                                          .disconnected) ==
-                                              true) &&
+                                      final connectivityStatus =
+                                          CentralizedCubit.get(context)
+                                              .currentConnectivityStatus;
+
+                                      if (connectivityStatus ==
+                                              ConnectivityStatus.disconnected &&
                                           needsInternet) {
                                         KHelper.showError(
                                             message:

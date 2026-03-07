@@ -16,32 +16,45 @@ class _SplashItemBuilderState extends State<SplashItemBuilder> {
       width: double.infinity,
       height: double.infinity,
       // color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
+          // 🏠 Main App Logo
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
                 "assets/images/logoApp.png",
-                height: 400.0.h,
-                width: 300.0.w,
+                height: 250.0.h,
+                width: 250.0.w,
               ),
+              SizedBox(height: 20.h),
+              KLoading.progressIOSIndicator(context: context),
             ],
           ),
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: Directionality(
-          //     textDirection: TextDirection.rtl,
-          //     child: Text(
-          //       textAlign: TextAlign.center,
-          //       AppString.KSplashHadith,
-          //       style: GoogleFonts.cairo(
-          //           fontSize: 15.sp, fontWeight: FontWeight.bold),
-          //     ),
-          //   ),
-          // ),
-          SizedBox(child: KLoading.progressIOSIndicator(context: context)),
+
+          // 👨‍💻 Developer Branding (Bottom)
+          Positioned(
+            bottom: 40.h,
+            child: Column(
+              children: [
+                Text(
+                  "تطوير بواسطة",
+                  style: GoogleFonts.cairo(
+                    fontSize: 12.sp,
+                    color: Colors.grey.withOpacity(0.7),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Image.asset(
+                  "assets/images/perLogo.png",
+                  height: 45.h,
+                  fit: BoxFit.contain,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -75,8 +75,10 @@ class NotificationManager {
     // ⭐ طلب إعفاء تحسين البطارية (مطلوب لـ Infinix وRealme لتشغيل الأذان على الشاشة المقفولة)
     await _requestBatteryExemptionIfNeeded();
 
-    // 🚀 تهيئة خدمة الأذان عبر النظام الجديد
-    await AdhanManager.rescheduleAll();
+    // 🚀 تهيئة خدمة الأذان عبر النظام الجديد (في الخلفية لعدم تعطيل الفتح)
+    Future.delayed(const Duration(seconds: 3), () {
+      AdhanManager.rescheduleAll();
+    });
   }
 
   static Future<void> updateAllChannels() async {

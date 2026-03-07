@@ -24,6 +24,8 @@ class CentralizedCubit extends Cubit<CentralizedState> {
   CentralizedCubit({required this.sharedPreferences})
       : super(CentralizedInitial());
 
+  ConnectivityStatus currentConnectivityStatus = ConnectivityStatus.connected;
+
   static bool isDarkMode = false;
 // داخل CentralizedCubit
 
@@ -169,10 +171,12 @@ class CentralizedCubit extends Cubit<CentralizedState> {
     try {
       final result = await Connectivity().checkConnectivity();
 
-      if (result == ConnectivityResult.none) {
+      if (result.contains(ConnectivityResult.none)) {
+        currentConnectivityStatus = ConnectivityStatus.disconnected;
         emit(ConnectivityState(status: ConnectivityStatus.disconnected));
         log('ConnectivityState: disconnected');
       } else {
+        currentConnectivityStatus = ConnectivityStatus.connected;
         emit(ConnectivityState(status: ConnectivityStatus.connected));
         log('ConnectivityState: connected');
       }
@@ -192,8 +196,10 @@ class CentralizedCubit extends Cubit<CentralizedState> {
       final result = results.first;
 
       if (result == ConnectivityResult.none) {
+        currentConnectivityStatus = ConnectivityStatus.disconnected;
         emit(ConnectivityState(status: ConnectivityStatus.disconnected));
       } else {
+        currentConnectivityStatus = ConnectivityStatus.connected;
         emit(ConnectivityState(status: ConnectivityStatus.connected));
       }
 

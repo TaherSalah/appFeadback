@@ -296,9 +296,9 @@ class _SurahListScreenState extends State<SurahListScreen> {
               ),
               centerTitle: true,
               title: Text(
-                widget.useOldMushaf
-                    ? "فِهْرِسُ القُرْآنِ الكَرِيم (الاصدار القديم)"
-                    : "فِهْرِسُ القُرْآنِ الكَرِيم (الاصدار الحديث)",
+                // widget.useOldMushaf
+                //     ? "فِهْرِسُ القُرْآنِ الكَرِيم (الاصدار القديم)"
+                    "فِهْرِسُ القُرْآنِ الكَرِيم",
                 style: GoogleFonts.cairo(
                     color: Colors.green,
                     fontWeight: FontWeight.w900,

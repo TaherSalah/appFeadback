@@ -38,18 +38,31 @@ abstract class Di {
 
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await GetStorage.init();
-    await SharedObj().init();
+
+    // ✅ Parallelize non-dependent initializations
+    await Future.wait<dynamic>([
+      GetStorage.init(),
+      SharedObj().init(),
+    ]);
+
     Bloc.observer = MyBlocObserver();
     _i.registerSingleton<ApiServicess>(ApiServicess());
+
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
     _i.registerLazySingleton(() => sharedPreferences);
     _i.registerLazySingleton(() => DioClientImpl(apiClientBloc: _i()));
     _i.registerLazySingleton(() => ApiClientBloc());
 
-    // ObjectBox for Hadith Books
-    final objBox = await ObjBox.create();
+    // ObjectBox, AchievementService, ContentService can be initialized in parallel
+    final results = await Future.wait<dynamic>([
+      ObjBox.create(),
+      AchievementService().init(),
+    ]);
+
+    final objBox = results[0] as ObjBox;
+    final achievementService = results[1] as AchievementService;
+
     _i.registerSingleton<ObjBox>(objBox);
     Get.put<ObjBox>(objBox);
 
@@ -57,9 +70,6 @@ abstract class Di {
       Get.find<BooksController>().setStore(objBox.store);
     }
 
-    // Achievements Service
-    final achievementService = AchievementService();
-    await achievementService.init();
     _i.registerSingleton<AchievementService>(achievementService);
 
     // Content Service
