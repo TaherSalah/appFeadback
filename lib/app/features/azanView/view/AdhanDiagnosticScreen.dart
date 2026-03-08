@@ -322,18 +322,18 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
           const SizedBox(height: 16),
 
           // الإعدادات
-          _buildSettingsCard(isDark, settings),
-          const SizedBox(height: 16),
+          // _buildSettingsCard(isDark, settings),
+          // const SizedBox(height: 16),
 
           // الأذونات
           _buildPermissionsCard(isDark, permissions, batteryOptDisabled),
           const SizedBox(height: 16),
 
           // القنوات (جديد)
-          if (channels != null) ...[
-            _buildChannelsCard(isDark, channels),
-            const SizedBox(height: 16),
-          ],
+          // if (channels != null) ...[
+          //   _buildChannelsCard(isDark, channels),
+          //   const SizedBox(height: 16),
+          // ],
 
           // معلومات الجدولة
           // _buildScheduleCard(isDark, scheduledCount),

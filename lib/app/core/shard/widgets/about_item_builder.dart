@@ -235,6 +235,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                 
                 _buildActionButton(
                   context,
+
                   title: "قيّم التطبيق على المتجر",
                   icon: Icons.star_rounded,
                   // color: Colors.amber.shade700,
@@ -264,18 +265,20 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                 // SizedBox(height: 10.h),
                 _buildSectionTitle(
                     AppString.KDevlop, Icons.developer_mode_outlined, Colors.red),
-                SizedBox(height: 12.h),
+
+                SizedBox(height: 8.h),
+                Image.asset("assets/images/perLogo.png",height: 80,),
+                SizedBox(height: 8.h),
                 Text(
                   AppString.KAppRights,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.cairo(
-                    fontSize: 10.sp,
+                    fontSize:isTablate?8.5.sp : 10.sp,
+
                     color: Colors.grey,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 8.h),
-                Image.asset("assets/images/perLogo.png",height: 80,)
               ],
             ),
           ),
@@ -285,6 +288,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
   }
 
   Widget _buildSectionTitle(String title, IconData icon, Color color) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
     return Row(
       children: [
         Icon(icon, size: 20.sp, color: color),
@@ -293,7 +297,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
           title,
           style: GoogleFonts.cairo(
             fontWeight: FontWeight.bold,
-            fontSize: 14.sp,
+            fontSize:isTap?10.sp : 14.sp,
           ),
         ),
       ],
@@ -337,7 +341,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                 title,
                 style: GoogleFonts.cairo(
                   fontWeight: FontWeight.bold,
-                  fontSize: 15.sp,
+                  fontSize:isTablate?10.sp :15.sp,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
@@ -348,7 +352,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
             content,
             textAlign: TextAlign.justify,
             style: GoogleFonts.cairo(
-              fontSize: 13.sp,
+              fontSize: isTablate?9.sp :13.sp,
               height: 1.6,
               color: isDark ? Colors.white70 : Colors.black54,
             ),
@@ -365,6 +369,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
     required Color color,
     required VoidCallback onTap,
   }) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -385,14 +390,15 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 22),
-            SizedBox(width: 12.w),
+            // Icon(icon, color: Colors.white, size: 22),
+            // SizedBox(width: 12.w),
             Text(
               title,
               style: GoogleFonts.cairo(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
+                fontSize:isTap?10.sp : 14.sp,
+
               ),
             ),
           ],
@@ -409,6 +415,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
     required Color color,
     required VoidCallback onTap,
   }) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -431,7 +438,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
               style: GoogleFonts.cairo(
                 color: color,
                 fontWeight: FontWeight.bold,
-                fontSize: 12.sp,
+                fontSize:isTap?9.sp : 12.sp,
+
               ),
             ),
           ],

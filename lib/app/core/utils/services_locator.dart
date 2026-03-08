@@ -55,13 +55,13 @@ abstract class Di {
     _i.registerLazySingleton(() => ApiClientBloc());
 
     // ObjectBox, AchievementService, ContentService can be initialized in parallel
+    final achievementService = AchievementService();
     final results = await Future.wait<dynamic>([
       ObjBox.create(),
-      AchievementService().init(),
+      achievementService.init(),
     ]);
 
     final objBox = results[0] as ObjBox;
-    final achievementService = results[1] as AchievementService;
 
     _i.registerSingleton<ObjBox>(objBox);
     Get.put<ObjBox>(objBox);

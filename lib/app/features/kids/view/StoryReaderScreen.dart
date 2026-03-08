@@ -66,37 +66,38 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
 
     final List<Map<String, dynamic>> interactionOptions = [
       {
-        'label': 'أحببتها جداً! ❤️',
-        'color': Colors.pinkAccent,
+        'label': 'أحببتها جداً! ',
+        'color': Colors.black,
         'icon': Icons.favorite_rounded,
       },
-      {
-        'label': 'أصبحت أذكى! 🧠',
-        'color': const Color(0xFF0EA5E9),
-        'icon': Icons.lightbulb_rounded,
-      },
-      {
-        'label': 'عمل رائع! 🌟',
-        'color': Colors.amber,
-        'icon': Icons.stars_rounded,
-      },
+      // {
+      //   'label': 'أصبحت أذكى! ',
+      //   'color': const Color(0xFF0EA5E9),
+      //   'icon': Icons.lightbulb_rounded,
+      // },
+      // {
+      //   'label': 'عمل رائع! ',
+      //   'color': KColors.blackColor,
+      //   'icon': Icons.stars_rounded,
+      // },
     ];
 
     KDialogHelper.showCustomDialog(
       context: context,
       type: KDialogType.info,
       icon: Icons.auto_awesome_rounded,
-      title: 'أنت بطل القراءة! 🏆',
+      title: 'أنت بطل القراءة!',
       description: 'كيف شعرت بعد قراءة قصة "${widget.story['title']}"؟',
       additionalContent: Column(
         children: interactionOptions.map((opt) {
           return Padding(
             padding: EdgeInsets.only(bottom: 10.h),
             child: KDialogHelper.buildButton(
+
               context: context,
               label: opt['label'],
               color: opt['color'],
-              icon: opt['icon'],
+              // icon: opt['icon'],
               onPressed: () {
                 Navigator.pop(context);
                 _handleCompletion();

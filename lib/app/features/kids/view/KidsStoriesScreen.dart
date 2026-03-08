@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../../core/services/content_service.dart';
@@ -740,7 +741,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
     ];
     final random = (story['id']?.toString().hashCode ?? 0) % covers.length;
     final gradient = covers[random];
-
+    final bool isTap = ResponsiveUtil.isTablet(context);
     return GestureDetector(
       onTap: () async {
         final result = await Navigator.push(
@@ -800,7 +801,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                         child: ZoomIn(
                           child: Text(
                             story['emoji'] ?? '📖',
-                            style: TextStyle(fontSize: 60.sp),
+                            style: TextStyle(fontSize:isTap?35.sp : 60.sp),
                           ),
                         ),
                       ),

@@ -12,6 +12,7 @@ import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart
 
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
+import '../../../core/utils/style/responsive_util.dart';
 
 class AdvancedFajrAlarmWidget extends StatefulWidget {
   const AdvancedFajrAlarmWidget({super.key});
@@ -521,7 +522,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                   Text(
                                     "أيام التنبيه",
                                     style: GoogleFonts.cairo(
-                                      fontSize: 16.sp,
+                                      fontSize:ResponsiveUtil.isTablet(context)?10.sp : 14.sp,
+
                                       fontWeight: FontWeight.bold,
                                       color: textColor,
                                     ),
@@ -540,7 +542,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                           ? "إلغاء الكل"
                                           : "تحديد الكل",
                                       style: GoogleFonts.cairo(
-                                        fontSize: 12.sp,
+                                        fontSize:ResponsiveUtil.isTablet(context)?10.sp : 12.sp,
+
                                         color: goldColor,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -620,7 +623,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                               child: Text(
                                                 _getDayAbbr(day),
                                                 style: GoogleFonts.cairo(
-                                                  fontSize: 14.sp,
+                                                  fontSize:ResponsiveUtil.isTablet(context)?9.sp : 14.sp,
+
                                                   fontWeight: FontWeight.bold,
                                                   color: isSelected
                                                       ? Colors.white
@@ -867,7 +871,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                       : Text(
                           "حفظ التغييرات",
                           style: GoogleFonts.cairo(
-                            fontSize: 16.sp,
+                            fontSize:ResponsiveUtil.isTablet(context)?10.sp : 16.sp,
+
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -887,6 +892,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
     required Widget dragging,
     required Color textColor,
   }) {
+    final bool isTap = ResponsiveUtil.isTablet(context);
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       leading: Container(
@@ -900,7 +906,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
       title: Text(
         title,
         style: GoogleFonts.cairo(
-          fontSize: 14.sp,
+          fontSize:isTap?10.sp : 14.sp,
+
           fontWeight: FontWeight.w600,
           color: textColor,
         ),
@@ -908,7 +915,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
       subtitle: Text(
         subtitle,
         style: GoogleFonts.cairo(
-          fontSize: 11.sp,
+          fontSize:isTap?8.sp : 11.sp,
           color: textColor.withOpacity(0.6),
         ),
       ),

@@ -1125,8 +1125,8 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
           width: 75,
           decoration: BoxDecoration(
             gradient: isSelected
-                ? const LinearGradient(
-                    colors: [Color(0xFFD4AF37), Color(0xFFFFD700)],
+                ?  LinearGradient(
+                    colors: [KColors.primary2Color, KColors.primary2Color],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )
@@ -1143,7 +1143,7 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: const Color(0xFFD4AF37).withOpacity(0.3),
+                      color:  KColors.primary2Color.withOpacity(0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),

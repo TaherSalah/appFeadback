@@ -171,18 +171,18 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
           title: "فِهْرِسُ القُرْآنِ الكَرِيمِ",
           route: "/ListScreen",
         ),
-        DrawerModle(
-          icon: Icons.history_edu_outlined,
-          title: "المُصْحَفُ القَدِيمُ (نَصِّي)",
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SurahListScreen(useOldMushaf: true),
-              ),
-            );
-          },
-        ),
+        // DrawerModle(
+        //   icon: Icons.history_edu_outlined,
+        //   title: "المُصْحَفُ القَدِيمُ (نَصِّي)",
+        //   onTap: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => const SurahListScreen(useOldMushaf: true),
+        //       ),
+        //     );
+        //   },
+        // ),
         // DrawerModle(
         //   icon: Icons.dashboard_customize_outlined,
         //   title: "الأَجْزَاءُ",
