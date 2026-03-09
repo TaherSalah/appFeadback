@@ -197,8 +197,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
         orElse: () => surahInfoList.first,
       );
 
-      // الانتقال التلقائي لشاشة السورة مع استبدال الفهرس لضمان رجوع سلس للرئيسية
-      Navigator.pushReplacement(
+      // الانتقال التلقائي لشاشة السورة مع الحفاظ علي الفهرس في الخلفية
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => SurahDetailScreen(
@@ -298,7 +298,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
               title: Text(
                 // widget.useOldMushaf
                 //     ? "فِهْرِسُ القُرْآنِ الكَرِيم (الاصدار القديم)"
-                    "فِهْرِسُ القُرْآنِ الكَرِيم",
+                "فِهْرِسُ القُرْآنِ الكَرِيم",
                 style: GoogleFonts.cairo(
                     color: Colors.green,
                     fontWeight: FontWeight.w900,

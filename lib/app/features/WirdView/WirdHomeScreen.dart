@@ -20,7 +20,8 @@ class WirdHomeScreen extends StatefulWidget {
   _WirdHomeScreenState createState() => _WirdHomeScreenState();
 }
 
-class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObserver {
+class _WirdHomeScreenState extends State<WirdHomeScreen>
+    with WidgetsBindingObserver {
   List<Wird> awrad = [];
   List<Wird> completedAwrad = [];
   UserStats stats = UserStats();
@@ -76,12 +77,13 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     bool isTab = ResponsiveUtil.isTablet(context);
-    final primaryColor = isDark ? KColors.primaryColor : const Color(0xFF00897B);
+    final primaryColor =
+        isDark ? KColors.primaryColor : const Color(0xFF00897B);
 
     return Scaffold(
       appBar: PreferredSize(
         preferredSize:
-        Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+            Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
         child: AppBar(
           leading: CupertinoNavigationBarBackButton(
             color: isDark ? Colors.white : Colors.black,
@@ -96,24 +98,22 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
             ),
           ),
           actions: [
-
-                IconButton(
-                  onPressed: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => StatisticsScreen(stats: stats),
-                      ),
-                    );
-                    final updatedStats = await manager.loadStats();
-                    setState(() => stats = updatedStats);
-                  },
-                  icon: const Icon(Icons.insights_rounded, color: Colors.white),
-                )
+            IconButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsScreen(stats: stats),
+                  ),
+                );
+                final updatedStats = await manager.loadStats();
+                setState(() => stats = updatedStats);
+              },
+              icon: const Icon(Icons.insights_rounded, color: Colors.white),
+            )
           ],
         ),
       ),
-
       body: isLoading
           ? Center(child: KLoading.progressIOSIndicator(context: context))
           : Directionality(
@@ -163,12 +163,14 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                                 style: GoogleFonts.cairo(
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.bold,
-                                  color: isDark ? Colors.white70 : Colors.black87,
+                                  color:
+                                      isDark ? Colors.white70 : Colors.black87,
                                 ),
                               ),
                               const Spacer(),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: primaryColor.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(10),
@@ -197,7 +199,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                               (context, index) => FadeInUp(
                                 duration: const Duration(milliseconds: 500),
                                 delay: Duration(milliseconds: index * 40),
-                                child: _buildWirdCard(filteredAwrad[index], isDark: isDark),
+                                child: _buildWirdCard(filteredAwrad[index],
+                                    isDark: isDark),
                               ),
                               childCount: filteredAwrad.length,
                             ),
@@ -208,7 +211,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                       if (completedAwrad.isNotEmpty) ...[
                         SliverToBoxAdapter(
                           child: Padding(
-                            padding: EdgeInsets.fromLTRB(20.w, 30.h, 20.w, 10.h),
+                            padding:
+                                EdgeInsets.fromLTRB(20.w, 30.h, 20.w, 10.h),
                             child: Text(
                               "الأوراد المنجزة",
                               style: GoogleFonts.cairo(
@@ -223,7 +227,10 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
-                              (context, index) => _buildWirdCard(completedAwrad[index], isDark: isDark, completed: true),
+                              (context, index) => _buildWirdCard(
+                                  completedAwrad[index],
+                                  isDark: isDark,
+                                  completed: true),
                               childCount: completedAwrad.length,
                             ),
                           ),
@@ -258,7 +265,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
           backgroundColor: KColors.primaryColor,
           foregroundColor: Colors.white,
           elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),
       ),
     );
@@ -325,7 +333,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
         SizedBox(height: 60.h),
         Opacity(
           opacity: 0.3,
-          child: Icon(Icons.auto_stories_rounded, size: 80.sp, color: Colors.grey),
+          child:
+              Icon(Icons.auto_stories_rounded, size: 80.sp, color: Colors.grey),
         ),
         SizedBox(height: 16.h),
         Text(
@@ -370,7 +379,9 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                     : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? Colors.transparent : Colors.grey.withOpacity(0.2),
+                  color: isSelected
+                      ? Colors.transparent
+                      : Colors.grey.withOpacity(0.2),
                 ),
               ),
               child: Center(
@@ -380,7 +391,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                     color: isSelected
                         ? (isDark ? Colors.black : Colors.white)
                         : (isDark ? Colors.white70 : Colors.black87),
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                     fontSize: 11.sp,
                   ),
                 ),
@@ -392,23 +404,29 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
     );
   }
 
-  Widget _buildWirdCard(Wird wird, {required bool isDark, bool completed = false}) {
-    final totalCount = wird.adhkar.fold<int>(0, (sum, dhikr) => sum + dhikr.targetCount);
+  Widget _buildWirdCard(Wird wird,
+      {required bool isDark, bool completed = false}) {
+    final totalCount =
+        wird.adhkar.fold<int>(0, (sum, dhikr) => sum + dhikr.targetCount);
     // ✅ استخدام لون الورد المخصص، أو اللون الافتراضي
-    final cardColor = wird.color != 0 ? Color(wird.color) : (isDark ? KColors.primaryColor : const Color(0xFF00897B));
+    final cardColor = wird.color != 0
+        ? Color(wird.color)
+        : (isDark ? KColors.primaryColor : const Color(0xFF00897B));
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: isDark ? [] : [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          )
-        ],
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                )
+              ],
         // ✅ إضافة حدود ملونة خفيفة لتمييز الورد
         border: Border.all(color: cardColor.withOpacity(0.3), width: 1.5),
       ),
@@ -417,49 +435,24 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-          child: InkWell(
             onTap: () async {
               if (completed) {
-                // ✅ إعادة تفعيل الورد المكتمل
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: AlertDialog(
-                      title: const Text("إعادة تفعيل الورد"),
-                      content: const Text("هل تريد إلغاء إكمال هذا الورد وإعادته للقائمة الحالية؟"),
-                      actions: [
-                        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("إلغاء")),
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, true), 
-                          child: const Text("نعم، إعادة تفعيل")
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-                
-                if (confirm == true) {
-                  setState(() {
-                    wird.isCompleted = false;
-                    completedAwrad.remove(wird);
-                    awrad.add(wird);
-                  });
-                  await manager.saveAwrad([...awrad, ...completedAwrad]);
-                }
+                showReactivateWirdDialog(wird);
                 return;
               }
 
               final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TasbihScreen(wird: wird, isDark: isDark),
+                  builder: (context) =>
+                      TasbihScreen(wird: wird, isDark: isDark),
                 ),
               );
               if (result == 'completed') {
                 setState(() {
                   wird.isCompleted = true;
-                  wird.lastCompletedDate = DateTime.now(); // ✅ تسجيل تاريخ الإكمال
+                  wird.lastCompletedDate =
+                      DateTime.now(); // ✅ تسجيل تاريخ الإكمال
                   awrad.remove(wird);
                   completedAwrad.add(wird);
                 });
@@ -480,7 +473,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                     width: 50.w,
                     height: 50.w,
                     decoration: BoxDecoration(
-                      color: cardColor.withOpacity(0.1), // ✅ خلفية الأيقونة بنفس لون الورد
+                      color: cardColor
+                          .withOpacity(0.1), // ✅ خلفية الأيقونة بنفس لون الورد
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Center(
@@ -501,7 +495,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white : Colors.black87,
-                            decoration: completed ? TextDecoration.lineThrough : null,
+                            decoration:
+                                completed ? TextDecoration.lineThrough : null,
                           ),
                         ),
                         SizedBox(height: 2.h),
@@ -516,7 +511,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                           SizedBox(height: 4.h),
                           Row(
                             children: [
-                              Icon(Icons.check_circle_rounded, size: 12.sp, color: Colors.green),
+                              Icon(Icons.check_circle_rounded,
+                                  size: 12.sp, color: Colors.green),
                               SizedBox(width: 4.w),
                               Text(
                                 'أكملته ${wird.completedCount} مرة',
@@ -534,224 +530,416 @@ class _WirdHomeScreenState extends State<WirdHomeScreen> with WidgetsBindingObse
                   ),
                   if (!completed)
                     IconButton(
-                      icon: Icon(Icons.delete_outline_rounded, color: Colors.redAccent.withOpacity(0.7), size: 20.sp),
-                      onPressed: () => showDeleteWirdDialog(wird, completed: completed),
+                      icon: Icon(Icons.delete_outline_rounded,
+                          color: Colors.redAccent.withOpacity(0.7),
+                          size: 20.sp),
+                      onPressed: () =>
+                          showDeleteWirdDialog(wird, completed: completed),
                     )
                   else
-                    Icon(Icons.check_circle_rounded, color: Colors.green.withOpacity(0.5), size: 22.sp),
+                    Icon(Icons.check_circle_rounded,
+                        color: Colors.green.withOpacity(0.5), size: 22.sp),
                 ],
               ),
             ),
           ),
         ),
       ),
-    )   );
+    );
   }
 
-    void showDeleteWirdDialog(Wird wird, {required bool completed}) {
-      final bool isDark = Theme.of(context).brightness == Brightness.dark;
-  
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (dialogContext) => Directionality(
-          textDirection: TextDirection.rtl,
-          child: Dialog(
-            insetPadding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            backgroundColor: Colors.transparent,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                // جسم الديالوج
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: isDark
-                          ? [const Color(0xFF2B0B0B), const Color(0xFF200505)]
-                          : [const Color(0xFFFFF2F2), const Color(0xFFFFE1E1)],
+  void showDeleteWirdDialog(Wird wird, {required bool completed}) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // جسم الديالوج
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: isDark
+                        ? [const Color(0xFF2B0B0B), const Color(0xFF200505)]
+                        : [const Color(0xFFFFF2F2), const Color(0xFFFFE1E1)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // العنوان
-                      Text(
-                        'حذف الورد؟',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-  
-                      // النص التحذيري
-                      Text(
-                        'هل أنت متأكد من رغبتك في حذف هذا الورد؟\n'
-                        'سيتم حذف جميع التقدّم المرتبط به ولا يمكن التراجع عن هذه العملية.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          height: 1.4,
-                          color: isDark ? Colors.white70 : Colors.black87,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-  
-                      // كارت توضيحي صغير
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.red.withOpacity(0.06),
-                          border: Border.all(
-                            color: Colors.red.withOpacity(0.5),
-                            width: 1.2,
-                          ),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.info_outline, size: 18, color: Colors.red),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'لن يتم احتساب هذا الورد كمكتمل بعد حذفه.',
-                                style: TextStyle(
-                                  fontSize: 12.5,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-  
-                      const SizedBox(height: 20),
-  
-                      // الأزرار
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () {
-                                Navigator.of(dialogContext)
-                                    .pop(); // إغلاق الديالوج فقط
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  color: isDark
-                                      ? Colors.grey.shade400
-                                      : Colors.grey.shade600,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 11),
-                              ),
-                              child: Text(
-                                'تراجع',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: isDark
-                                      ? Colors.white
-                                      : Colors.grey.shade800,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () async {
-                                // منطق الحذف الفعلي
-                                setState(() {
-                                  if (completed) {
-                                    completedAwrad.remove(wird);
-                                  } else {
-                                    awrad.remove(wird);
-                                  }
-                                });
-  
-                                await manager
-                                    .saveAwrad([...awrad, ...completedAwrad]);
-  
-                                Navigator.of(dialogContext)
-                                    .pop(); // إغلاق الديالوج
-                                KHelper.showSuccess(
-                                  message: "تم حذف الورد بنجاح",
-                                );
-                              },
-                              icon: const Icon(Icons.delete_outline),
-                              label: const Text('حذف'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 11),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
-  
-                // الأيقونة الدائرية أعلى الديالوج
-                Positioned(
-                  top: -30,
-                  left: 0,
-                  right: 0,
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      width: 60,
-                      height: 60,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // العنوان
+                    Text(
+                      'حذف الورد؟',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // النص التحذيري
+                    Text(
+                      'هل أنت متأكد من رغبتك في حذف هذا الورد؟\n'
+                      'سيتم حذف جميع التقدّم المرتبط به ولا يمكن التراجع عن هذه العملية.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.4,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // كارت توضيحي صغير
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          colors: [Colors.red, Colors.deepOrange],
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.red.withOpacity(0.06),
+                        border: Border.all(
+                          color: Colors.red.withOpacity(0.5),
+                          width: 1.2,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.red.withOpacity(0.6),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.info_outline, size: 18, color: Colors.red),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'لن يتم احتساب هذا الورد كمكتمل بعد حذفه.',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: Colors.red,
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.delete_forever_rounded,
-                          size: 34,
-                          color: Colors.white,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // الأزرار
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext)
+                                  .pop(); // إغلاق الديالوج فقط
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                color: isDark
+                                    ? Colors.grey.shade400
+                                    : Colors.grey.shade600,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                            child: Text(
+                              'تراجع',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isDark
+                                    ? Colors.white
+                                    : Colors.grey.shade800,
+                              ),
+                            ),
+                          ),
                         ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              // منطق الحذف الفعلي
+                              setState(() {
+                                if (completed) {
+                                  completedAwrad.remove(wird);
+                                } else {
+                                  awrad.remove(wird);
+                                }
+                              });
+
+                              await manager
+                                  .saveAwrad([...awrad, ...completedAwrad]);
+
+                              Navigator.of(dialogContext)
+                                  .pop(); // إغلاق الديالوج
+                              KHelper.showSuccess(
+                                message: "تم حذف الورد بنجاح",
+                              );
+                            },
+                            icon: const Icon(Icons.delete_outline),
+                            label: const Text('حذف'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // الأيقونة الدائرية أعلى الديالوج
+              Positioned(
+                top: -30,
+                left: 0,
+                right: 0,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Colors.red, Colors.deepOrange],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.red.withOpacity(0.6),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.delete_forever_rounded,
+                        size: 34,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
-    }
+      ),
+    );
+  }
+
+  void showReactivateWirdDialog(Wird wird) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color primaryColor =
+        isDark ? KColors.primaryColor : const Color(0xFF00897B);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: isDark
+                        ? [const Color(0xFF0E2B1A), const Color(0xFF071A10)]
+                        : [const Color(0xFFF2FFF7), const Color(0xFFE1FFE9)],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'إعادة تفعيل الورد؟',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'هل تريد إلغاء إكمال هذا الورد وإعادته للقائمة الحالية؟\n'
+                      'سيتم نقله إلى الأوراد الجارية لتتمكن من القيام به مرة أخرى.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.4,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: primaryColor.withOpacity(0.06),
+                        border: Border.all(
+                          color: primaryColor.withOpacity(0.5),
+                          width: 1.2,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.info_outline,
+                              size: 18, color: primaryColor),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'يمكنك تتبّع تقدّمك فيه مجدداً من القائمة الرئيسية.',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                color: isDark
+                                    ? Colors.grey.shade400
+                                    : Colors.grey.shade600,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                            child: Text(
+                              'تراجع',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isDark
+                                    ? Colors.white
+                                    : Colors.grey.shade800,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              setState(() {
+                                wird.isCompleted = false;
+                                completedAwrad.remove(wird);
+                                awrad.add(wird);
+                              });
+                              await manager
+                                  .saveAwrad([...awrad, ...completedAwrad]);
+                              Navigator.of(dialogContext).pop();
+                              KHelper.showSuccess(
+                                  message: "تم إعادة تفعيل الورد بنجاح");
+                            },
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: const Text('تفعيل'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              foregroundColor:
+                                  isDark ? Colors.black : Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: -30,
+                left: 0,
+                right: 0,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [primaryColor, primaryColor.withOpacity(0.8)],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: primaryColor.withOpacity(0.6),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.restore_rounded,
+                        size: 34,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

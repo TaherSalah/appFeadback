@@ -17,6 +17,7 @@ import '../../../core/shard/widgets/ui_animations.dart';
 import '../../../core/utils/style/k_color.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import '../SurahModel.dart';
+import 'widget/surahListView.dart';
 
 // ----------------------- Surah Detail Screen -----------------------
 class SurahDetailScreen extends StatefulWidget {
@@ -69,8 +70,9 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
     showBottom = widget.showBottomOnStart;
 
     // المظهر: الأولوية للقيمة الممررة، ثم الإعدادات المحفوظة، ثم مظهر النظام
-    isDark =
-        widget.isDark ?? (ui.window.platformBrightness == ui.Brightness.dark);
+    isDark = widget.isDark ??
+        (View.of(context).platformDispatcher.platformBrightness ==
+            ui.Brightness.dark);
 
     loadBookmark();
     loadSavedSettings(); // تحميل المظهر وحجم الخط المحفوظين
@@ -704,7 +706,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                               ),
 
                               // زر المظهر (Theme)
-                              _buildThemeSwitcher(),
+                              // _buildThemeSwitcher(),
 
                               // زر الفهرس (Index)
                               _buildIndexButton(),
@@ -767,7 +769,16 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
   Widget _buildIndexButton() {
     return GestureDetector(
       onTap: () {
-        Navigator.pop(context);
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>  const SurahListScreen(useOldMushaf: true),
+            ),
+          );
+        }
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),

@@ -38,16 +38,20 @@ final logger = Logger();
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
-  if (Platform.isAndroid) {
-    await AndroidAlarmManager.initialize();
-  }
-
-  // 🚀 Initialize robust Adhan System
-  AdhanForegroundService.init();
-
+  // 🚀 Start Native Splash
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // 🛡️ Global Error Handling (Dashboard Logging)
+  // 🚀 Initialize synchronous services early
+  AdhanForegroundService.init();
+
+  // 🚀 Parallelize critical Async Core Initializations
+  await Future.wait<dynamic>([
+    if (Platform.isAndroid) AndroidAlarmManager.initialize(),
+    QuranLibrary.init(),
+    _initAppServices(),
+  ]);
+
+  // 🛡️ Global Error Handling
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
     SystemControlService()
@@ -58,13 +62,6 @@ Future<void> main() async {
     SystemControlService().logError(error.toString(), stack.toString());
     return true;
   };
-
-  await QuranLibrary.init();
-  try {
-    await _initAppServices();
-  } catch (e, s) {
-    logger.e('❌ خطأ في تهيئة التطبيق: $e', error: e, stackTrace: s);
-  }
 
   runApp(
     BlocProvider<CentralizedCubit>(
@@ -79,107 +76,94 @@ Future<void> main() async {
 }
 
 Future<void> _initAppServices() async {
-  // ✅ 1) Initialize Supabase
-  await Supabase.initialize(
-    url: 'https://kghwboxevphvxtsagrer.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaHdib3hldnBodnh0c2FncmVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxMjcwNzUsImV4cCI6MjA4MTcwMzA3NX0.PPh6rwxDbHGHHyHBUjdEz1WWdF_psdygbtF0nY5hNR4',
-  );
+  try {
+    // Stage 1: Critical Infrastructure (Parallel)
+    await Future.wait([
+      Supabase.initialize(
+        url: 'https://kghwboxevphvxtsagrer.supabase.co',
+        anonKey:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaHdib3hldnBodnh0c2FncmVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxMjcwNzUsImV4cCI6MjA4MTcwMzA3NX0.PPh6rwxDbHGHHyHBUjdEz1WWdF_psdygbtF0nY5hNR4',
+      ),
+      Hive.initFlutter(),
+    ]);
 
-  // ✅ 2) تخصيصات النظام
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.transparent,
-  ));
+    // Stage 2: Data Adapters & UI Style
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+    ));
 
-  // ✅ 3) Hive & Data Initialization
-  await Hive.initFlutter();
-  tz_data.initializeTimeZones();
+    _registerHiveAdapters();
+    tz_data.initializeTimeZones();
+
+    // Stage 3: Services & Boxes (Parallel where possible)
+    await Future.wait<dynamic>([
+      _openHiveBoxes(),
+      Di.init(),
+      _initTimezone(),
+    ]);
+
+    // Stage 4: Localization & Notifications
+    HijriCalendar.setLocal('ar_SA');
+    await Future.wait<dynamic>([
+      initializeDateFormatting(),
+      initializeDateFormatting('ar', null),
+      initializeDateFormatting('en', null),
+      SharedObj().init(),
+      NotificationManager().initialize(),
+    ]);
+
+    // Stage 5: Background Tasks & Analytics (Non-blocking)
+    BGServices()
+        .registerTask()
+        .catchError((e) => debugPrint('⚠️ BGServices fail: $e'));
+    AnalyticsService().logAppLaunch();
+  } catch (e, s) {
+    logger.e('❌ Error in _initAppServices: $e', error: e, stackTrace: s);
+  }
+}
+
+void _registerHiveAdapters() {
+  if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(KhatmahModelAdapter());
+  if (!Hive.isAdapterRegistered(22)) Hive.registerAdapter(MonthlyGoalAdapter());
+  if (!Hive.isAdapterRegistered(23))
+    Hive.registerAdapter(CharityAchievementAdapter());
+  if (!Hive.isAdapterRegistered(10))
+    Hive.registerAdapter(CharityDonationAdapter());
+  if (!Hive.isAdapterRegistered(11)) Hive.registerAdapter(AchievementAdapter());
+  if (!Hive.isAdapterRegistered(12))
+    Hive.registerAdapter(UserProgressAdapter());
+  if (!Hive.isAdapterRegistered(13)) Hive.registerAdapter(ChallengeAdapter());
+  if (!Hive.isAdapterRegistered(14)) Hive.registerAdapter(CustomDuaAdapter());
+  if (!Hive.isAdapterRegistered(15)) Hive.registerAdapter(DuaReminderAdapter());
+  if (!Hive.isAdapterRegistered(21))
+    Hive.registerAdapter(RecurringCharityAdapter());
+  if (!Hive.isAdapterRegistered(16))
+    Hive.registerAdapter(AchievementTypeAdapter());
+  if (!Hive.isAdapterRegistered(17))
+    Hive.registerAdapter(AchievementRarityAdapter());
+  if (!Hive.isAdapterRegistered(18))
+    Hive.registerAdapter(ChallengeTypeAdapter());
+  if (!Hive.isAdapterRegistered(25))
+    Hive.registerAdapter(CalendarEventAdapter());
+  if (!Hive.isAdapterRegistered(30))
+    Hive.registerAdapter(PdfBookModelAdapter());
+}
+
+Future<void> _openHiveBoxes() async {
+  await Future.wait([
+    Hive.openBox<KhatmahModel>('khatmahBox'),
+    if (!Hive.isBoxOpen('khatmahPlans')) Hive.openBox('khatmahPlans'),
+    Hive.openBox<PdfBookModel>('pdfBooksBox'),
+  ]);
+}
+
+Future<void> _initTimezone() async {
   try {
     final String timeZoneName = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZoneName));
   } catch (e) {
     debugPrint('Could not set local location: $e');
   }
-
-  // Register all adapters before Di.init() because services might open boxes
-  if (!Hive.isAdapterRegistered(0)) {
-    Hive.registerAdapter(KhatmahModelAdapter());
-  }
-  if (!Hive.isAdapterRegistered(22)) {
-    Hive.registerAdapter(MonthlyGoalAdapter());
-  }
-  if (!Hive.isAdapterRegistered(23)) {
-    Hive.registerAdapter(CharityAchievementAdapter());
-  }
-  if (!Hive.isAdapterRegistered(10)) {
-    Hive.registerAdapter(CharityDonationAdapter());
-  }
-  if (!Hive.isAdapterRegistered(11)) {
-    Hive.registerAdapter(AchievementAdapter());
-  }
-  if (!Hive.isAdapterRegistered(12)) {
-    Hive.registerAdapter(UserProgressAdapter());
-  }
-  if (!Hive.isAdapterRegistered(13)) {
-    Hive.registerAdapter(ChallengeAdapter());
-  }
-  if (!Hive.isAdapterRegistered(14)) {
-    Hive.registerAdapter(CustomDuaAdapter());
-  }
-  if (!Hive.isAdapterRegistered(15)) {
-    Hive.registerAdapter(DuaReminderAdapter());
-  }
-  if (!Hive.isAdapterRegistered(21)) {
-    Hive.registerAdapter(RecurringCharityAdapter());
-  }
-  if (!Hive.isAdapterRegistered(16)) {
-    Hive.registerAdapter(AchievementTypeAdapter());
-  }
-  if (!Hive.isAdapterRegistered(17)) {
-    Hive.registerAdapter(AchievementRarityAdapter());
-  }
-  if (!Hive.isAdapterRegistered(18)) {
-    Hive.registerAdapter(ChallengeTypeAdapter());
-  }
-  if (!Hive.isAdapterRegistered(25)) {
-    Hive.registerAdapter(CalendarEventAdapter());
-  }
-  if (!Hive.isAdapterRegistered(30)) {
-    Hive.registerAdapter(PdfBookModelAdapter());
-  }
-
-  // ✅ 4) Open Core Boxes
-  await Hive.openBox<KhatmahModel>('khatmahBox');
-  if (!Hive.isBoxOpen('khatmahPlans')) {
-    await Hive.openBox('khatmahPlans');
-  }
-  await Hive.openBox<PdfBookModel>('pdfBooksBox');
-
-  // ✅ 5) Services Locator
-  await Di.init();
-
-  // ✅ 6) تهيئة البيانات التكميلية
-  HijriCalendar.setLocal('ar_SA');
-  await initializeDateFormatting();
-  await initializeDateFormatting('ar', null);
-  await initializeDateFormatting('en', null);
-  await SharedObj().init();
-
-  // ✅ Note: Charity, Achievements, and Duas boxes are opened by their respective services
-
-  // NotificationManager replaces all local notification logic
-  final notificationManager = NotificationManager();
-  await notificationManager.initialize();
-
-  // ✅ 7) Initialize Background Services for Adhan and Widgets
-  try {
-    await BGServices().registerTask();
-  } catch (e) {
-    debugPrint('⚠️ BGServices init failed: $e');
-  }
-
-  // 🚀 Log App Launch Analytics
-  AnalyticsService().logAppLaunch();
 }

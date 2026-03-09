@@ -16,9 +16,6 @@ import '../azanView/widget/AdhanStatusBanner.dart';
 
 import '../../core/utils/style/app_theme_colors.dart';
 
-import 'package:showcaseview/showcaseview.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
 
@@ -27,26 +24,6 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  final GlobalKey _userGuideKey = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkFirstLaunch();
-  }
-
-  Future<void> _checkFirstLaunch() async {
-    final prefs = await SharedPreferences.getInstance();
-    final bool hasShownShowcase = prefs.getBool('showcase_settings') ?? false;
-
-    if (!hasShownShowcase) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ShowCaseWidget.of(context).startShowCase([_userGuideKey]);
-        prefs.setBool('showcase_settings', true);
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -466,26 +443,21 @@ class _SettingsViewState extends State<SettingsView> {
                     _buildSettingsCard(
                       context,
                       children: [
-                        Showcase(
-                          key: _userGuideKey,
-                          description:
-                              'هل تحتاج لمساعدة؟ دليل المستخدم يشرح لك كل ميزة بالتفصيل',
-                          child: _buildListTile(
-                            context,
-                            icon: Icons.help_outline_rounded,
-                            title: 'دليل المستخدم',
-                            subtitle: 'شرح كل ميزة وكيفية استخدامها',
-                            iconColor: Colors.deepPurple[400]!,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const UserGuideListScreen(),
-                                ),
-                              );
-                            },
-                          ),
+                        _buildListTile(
+                          context,
+                          icon: Icons.help_outline_rounded,
+                          title: 'دليل المستخدم',
+                          subtitle: 'شرح كل ميزة وكيفية استخدامها',
+                          iconColor: Colors.deepPurple[400]!,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const UserGuideListScreen(),
+                              ),
+                            );
+                          },
                         ),
                         _buildDivider(isDark),
                         _buildListTile(
@@ -771,14 +743,8 @@ class _SettingsViewState extends State<SettingsView> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Column(
-            children: children,
-          ),
-        ),
+      child: Column(
+        children: children,
       ),
     );
   }

@@ -41,10 +41,13 @@
 	    <string>يحتاج رفيق المسلم اليومي للوصول لمكتبة الصور لاختيار صورة.</string>
 	    <key>NSPhotoLibraryAddUsageDescription</key>
 	    <string>يحتاج رفيق المسلم اليومي لحفظ الصور التي تقوم بإنشائها داخل التطبيق.</string>
+ 
+ <!-- الميكروفون (لو فيه تسجيل صوت) -->
+ 	    <key>NSMicrophoneUsageDescription</key>
+ 	    <string>يحتاج رفيق المسلم اليومي لاستخدام الميكروفون للتسجيل الصوتي.</string>
+ 	    <key>NSSpeechRecognitionUsageDescription</key>
+ 	    <string>يحتاج رفيق المسلم اليومي للوصول لخدمة تعرف الكلام للبحث الصوتي عن السور.</string>
 
-<!-- الميكروفون (لو فيه تسجيل صوت) -->
-	    <key>NSMicrophoneUsageDescription</key>
-	    <string>يحتاج رفيق المسلم اليومي لاستخدام الميكروفون للتسجيل الصوتي.</string>
 
 	<!-- فتح الروابط - url_launcher -->
 	<key>LSApplicationQueriesSchemes</key>

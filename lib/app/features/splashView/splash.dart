@@ -228,18 +228,22 @@ class _SplashViewState extends State<SplashView> {
 // التحقق من حالة التطبيق والانتقال للشاشة المناسبة
   Future<void> _checkAppStateAndNavigate() async {
     try {
-      // ✅ انتظار 1 ثانية (شاشة السبلاش)
-      // تم تقليل المدة من 2 ثانية إلى 1 ثانية لتحسين سرعة فتح التطبيق
-      // يمكن تعديل المدة حسب الحاجة (مثلاً: Duration(milliseconds: 500) لنصف ثانية)
-      await Future.delayed(const Duration(seconds: 1));
+      // ✅ Parallelize all initial checks and a short delay
+      // Reduced delay to 500ms for faster feel
+      final results = await Future.wait([
+        SystemControlService()
+            .isMaintenanceModeActive()
+            .timeout(const Duration(seconds: 2), onTimeout: () => false),
+        VersionService.checkAppState(),
+        Future.delayed(const Duration(milliseconds: 500)),
+      ]);
 
-      // ✅ التحقق من حالة التطبيق (مع مهلة زمنية قصيرة لتجنب التعليق)
-      final isMaintenance = await SystemControlService()
-          .isMaintenanceModeActive()
-          .timeout(const Duration(seconds: 3), onTimeout: () => false);
+      final bool isMaintenance = results[0] as bool;
+      final AppState appState = results[1] as AppState;
+
+      if (!mounted) return;
 
       if (isMaintenance) {
-        if (!mounted) return;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const MaintenanceScreen()),
@@ -247,38 +251,26 @@ class _SplashViewState extends State<SplashView> {
         return;
       }
 
-      final appState = await VersionService.checkAppState();
-
-      if (!mounted) return;
-
       switch (appState) {
         case AppState.firstTime:
-          // ✅ أول مرة - عرض جميع الميزات
           _navigateToWhatsNew(
             isFirstTime: true,
             features: AppUpdates.firstTimeFeatures,
           );
           break;
-
         case AppState.updated:
-          // ✅ تحديث - عرض الميزات الجديدة فقط
           _navigateToWhatsNew(
             isFirstTime: false,
             features: AppUpdates.updateFeatures,
           );
           break;
-
         case AppState.normal:
-          // ✅ استخدام عادي - الذهاب مباشرة للشاشة الرئيسية
           _navigateToMain();
           break;
       }
     } catch (e) {
-      print('❌ خطأ في التحقق من حالة التطبيق: $e');
-      // في حالة الخطأ، الذهاب للشاشة الرئيسية
-      if (mounted) {
-        _navigateToMain();
-      }
+      debugPrint('❌ Error in Splash: $e');
+      if (mounted) _navigateToMain();
     }
   }
 
