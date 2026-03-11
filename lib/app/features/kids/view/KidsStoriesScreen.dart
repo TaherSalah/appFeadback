@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:animate_do/animate_do.dart';
@@ -174,7 +175,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
   void _showAvatarSelectionDialog() {
     final List<String> avatars = ['😀', '😇', '😎', '🤩', '🥳', '🚀', '🌟', '💡', '📖', '🕌', '🧸', '👑', '🦸', '🦹'];
 
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     showDialog(
       context: context,
@@ -349,17 +350,17 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
-              MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              context.isTablet ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: context.isDark
                   ? Colors.white
                   : Colors.black,
             ),
@@ -370,7 +371,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
-                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+                  context.isTablet ? 12.sp : 18.sp),
             ),
           ),
         ),
@@ -741,7 +742,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
     ];
     final random = (story['id']?.toString().hashCode ?? 0) % covers.length;
     final gradient = covers[random];
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTablet;
     return GestureDetector(
       onTap: () async {
         final result = await Navigator.push(

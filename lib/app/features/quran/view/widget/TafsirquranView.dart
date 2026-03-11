@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-import 'package:muslimdaily/app/core/widgets/KLoading.dart';
-import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/features/quran/view/TafsirViewerDetailsScreen.dart';
 import 'package:quran_library/quran.dart';
 
-import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/utils/style/k_color.dart';
 import '../../../../core/utils/style/k_helper.dart';
 
@@ -22,7 +17,7 @@ class TafsirQuranView extends StatefulWidget {
 
 class _TafsirQuranViewState extends State<TafsirQuranView> {
   final _ql = QuranLibrary();
-  final Set<int> _downloading = {}; // بتتبع الفهارس اللي بتتنزل حاليًا
+  final Set<int> _downloading = {};
   bool _inited = false;
 
   @override
@@ -32,165 +27,184 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
   }
 
   Future<void> _initTafsirOnce() async {
-    // await _ql.initTafsir();
     if (mounted) setState(() => _inited = true);
   }
 
-  // Future<void> _handleDownloadOrOpen(int index) async {
-  //   if (_downloading.contains(index)) return;
-  //
-  //   final isDownloaded = _ql.getTafsirDownloaded(index);
-  //
-  //   if (isDownloaded) {
-  //     // ✅ افتح شاشة العرض هنا
-  //     Navigator.of(context).push(
-  //       MaterialPageRoute(
-  //         builder: (_) =>  TafsirViewerScreen(initialPage: _ql.currentPageNumber),
-  //       ),
-  //     );
-  //     return;
-  //   }
-  //
-  //   // ⬇️ تحميل ثم فتح
-  //   setState(() => _downloading.add(index));
-  //   try {
-  //     await _ql.tafsirDownload(index);
-  //     _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
-  //
-  //     if (!mounted) return;
-  //     // ✅ افتح شاشة العرض بعد التحميل مباشرة
-  //     Navigator.of(context).push(
-  //       MaterialPageRoute(
-  //         builder: (_) => TafsirViewerScreen(
-  //           // افتح على الصفحة الحالية من المكتبة بدل رقم ثابت لو تحب
-  //           initialPage: _ql.currentPageNumber,
-  //         ),
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     if (!mounted) return;
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('تعذّر تنزيل التفسير: $e')),
-  //     );
-  //   } finally {
-  //     if (mounted) setState(() => _downloading.remove(index));
-  //   }
-  // }
-  //////***
-  // Future<void> _handleDownloadOrOpen(int index) async {
-  //   if (_downloading.contains(index)) return;
-  //
-  //   final isDownloaded = _ql.getTafsirDownloaded(index);
-  //
-  //   if (isDownloaded) {
-  //      _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
-  //     if (!mounted) return;
-  //     await Navigator.of(context).push(
-  //       MaterialPageRoute(
-  //         builder: (_) => TafsirViewerDetailsScreen(initialPage: _ql.currentPageNumber),
-  //       ),
-  //     );
-  //     return;
-  //   }
-  //
-  //   setState(() => _downloading.add(index));
-  //   try {
-  //     await _ql.tafsirDownload(index);
-  //      _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
-  //     if (mounted) {
-  //       setState(() {}); // (اختياري لتحديث أيقونة التحميل/الفتح)
-  //       await Navigator.of(context).push(
-  //         MaterialPageRoute(
-  //           builder: (_) => TafsirViewerDetailsScreen(initialPage: _ql.currentPageNumber),
-  //         ),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     if (!mounted) return;
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('تعذّر تنزيل التفسير: $e')),
-  //     );
-  //   } finally {
-  //     if (mounted) setState(() => _downloading.remove(index));
-  //   }
-  // }
-  Future<void> _handleDownloadOrOpen(int index) async {
-    if (_downloading.contains(index)) return;
-
-    final isDownloaded = _ql.getTafsirDownloaded(index);
-
-    if (isDownloaded) {
-      _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
-      if (!mounted) return;
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) =>
-              TafsirViewerDetailsScreen(initialPage: _ql.currentPageNumber),
-        ),
-      );
-      return;
-    }
-
-    setState(() => _downloading.add(index));
-
-    // ✅ Dialog تحميل
+  // ─── Download dialog styled like delete-wird ───────────────────────────────
+  void _showDownloadDialog(String tafsirName) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => WillPopScope(
+      builder: (dialogContext) => WillPopScope(
         onWillPop: () async => false,
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: AlertDialog(
-            title: Center(
-                child: TextWidget(
-              title: "جاري التحميل",
-              fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
-            )),
-            content: Directionality(
-              textDirection: TextDirection.rtl,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextWidget(
-                    title: "برجاء الانتظار حتى يكتمل تنزيل التفسير",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+          child: Dialog(
+            insetPadding:
+                const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            backgroundColor: Colors.transparent,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Body
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 48, 20, 24),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: isDark
+                          ? [const Color(0xFF0A1F12), const Color(0xFF061209)]
+                          : [const Color(0xFFF2FFF6), const Color(0xFFE1FFE9)],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.35),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  KLoading.progressIOSIndicator(context: context),
-                ],
-              ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'جاري تحميل التفسير',
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        tafsirName,
+                        style: GoogleFonts.cairo(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF43A047),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'يتم الآن تنزيل ملف التفسير.\nيُرجى الانتظار حتى اكتمال التحميل.',
+                        style: GoogleFonts.cairo(
+                          fontSize: 13,
+                          height: 1.6,
+                          color: isDark ? Colors.white70 : Colors.black54,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      const CircularProgressIndicator(
+                        color: Color(0xFF4CAF50),
+                        strokeWidth: 3,
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.green.withOpacity(0.07),
+                          border: Border.all(
+                              color: Colors.green.withOpacity(0.4), width: 1.2),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.info_outline,
+                                size: 18, color: Colors.green),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'لن تحتاج إلى تنزيله مجدداً — سيُحفظ على جهازك.',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 12,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Floating circle icon
+                Positioned(
+                  top: -30,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF43A047), Color(0xFF1B5E20)],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.green.withOpacity(0.6),
+                            blurRadius: 14,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.cloud_download_rounded,
+                          size: 30,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _handleDownloadOrOpen(int index, String tafsirName) async {
+    if (_downloading.contains(index)) return;
+
+    final isDownloaded = _ql.getTafsirDownloaded(index);
+    if (isDownloaded) {
+      _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
+      if (!mounted) return;
+      await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) =>
+            TafsirViewerDetailsScreen(initialPage: _ql.currentPageNumber),
+      ));
+      return;
+    }
+
+    setState(() => _downloading.add(index));
+    _showDownloadDialog(tafsirName);
 
     try {
       await _ql.tafsirDownload(index);
       _ql.changeTafsirSwitch(index, pageNumber: _ql.currentPageNumber);
-
       if (mounted) {
-        Navigator.of(context).pop(); // يقفل Dialog
-        // رسالة نجاح صغيرة
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(content: Text("تم تنزيل التفسير بنجاح")),
-        // );
-        KHelper.showSuccess(message: "تم تنزيل التفسير بنجاح");
-
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) =>
-                TafsirViewerDetailsScreen(initialPage: _ql.currentPageNumber),
-          ),
-        );
+        Navigator.of(context).pop(); // close dialog
+        KHelper.showSuccess(message: 'تم تنزيل التفسير بنجاح ✅');
+        await Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) =>
+              TafsirViewerDetailsScreen(initialPage: _ql.currentPageNumber),
+        ));
       }
     } catch (e) {
       if (mounted) {
-        Navigator.of(context).pop(); // يقفل Dialog
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text('تعذّر تنزيل التفسير: $e')),
-        // );
+        Navigator.of(context).pop();
         KHelper.showError(message: 'تعذّر تنزيل التفسير: $e');
       }
     } finally {
@@ -198,190 +212,330 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
     }
   }
 
+  // ─── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     if (!_inited) {
-      return Scaffold(
-        body: Center(
-          child: KLoading.progressIOSIndicator(context: context),
-        ),
+      return const Scaffold(
+        body:
+            Center(child: CircularProgressIndicator(color: Color(0xFF4CAF50))),
       );
     }
-    String imagePath = "assets/images";
-    // مفضّل ناخد الريفرانس مرة
-    final ayah = _ql.tafsirAndTraslationsCollection;
-    List<String> tafsirImage = [
-      "$imagePath/1.jpg",
-      "$imagePath/2.jpg",
-      "$imagePath/3.jpg",
-      "$imagePath/4.jpg",
-      "$imagePath/5.jpg",
-      "$imagePath/6.jpg",
-      // "$imagePath/7.jpg",
-      // "$imagePath/8.jpg",
-      // "$imagePath/9.jpg",
-      // "$imagePath/10.jpg",
-      // "$imagePath/11.jpg",
-      // "$imagePath/12.jpg",
-      // "$imagePath/13.jpg",
-    ];
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final books = _ql.tafsirAndTraslationsCollection;
+    const imagePath = 'assets/images';
+    final tafsirImages = List.generate(6, (i) => '$imagePath/${i + 1}.jpg');
+
+    final bgColor = isDark ? const Color(0xFF0D1117) : const Color(0xFFF5F7F5);
+    final cardColor = isDark ? const Color(0xFF161D1B) : Colors.white;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        // backgroundColor: AppStyle.bgColors,
+        backgroundColor: bgColor,
         appBar: PreferredSize(
-          preferredSize:
-              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          preferredSize: Size.fromHeight(isTablet ? 70 : 56),
           child: AppBar(
+            backgroundColor: bgColor,
+            elevation: 0,
             leading: CupertinoNavigationBarBackButton(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black),
+              color: isDark ? Colors.white : Colors.black87,
+            ),
             centerTitle: true,
-            title: Text(
-              "كتب تفسير القرآن الكريم",
-              style: GoogleFonts.cairo(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
-              ),
+            title: Column(
+              children: [
+                Text(
+                  'كتب تفسير القرآن الكريم',
+                  style: GoogleFonts.cairo(
+                    color: const Color(0xFF43A047),
+                    fontWeight: FontWeight.bold,
+                    fontSize: isTablet ? 14.sp : 17.sp,
+                  ),
+                ),
+                Container(
+                  width: 40,
+                  height: 2,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF43A047), Color(0xFFD4AF37)],
+                    ),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
-          child: Column(
-            children: [
-              Expanded(
-                child: GridView.builder(
-                  padding: EdgeInsets.zero,
-                  itemCount: 6,
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 5,
-                    mainAxisSpacing: 10,
-                    childAspectRatio:
-                        ResponsiveUtil.isTablet(context) ? 1 / 1.3 : 1 / 1.8,
-                  ),
-                  itemBuilder: (context, index) {
-                    final isDark = CentralizedCubit.isDarkMode;
-                    final isDownloaded = _ql.getTafsirDownloaded(index);
-                    final isBusy = _downloading.contains(index);
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          child: GridView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: tafsirImages.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 20,
+              childAspectRatio: isTablet ? 1 / 1.3 : 1 / 1.75,
+            ),
+            itemBuilder: (context, index) {
+              final isDownloaded = _ql.getTafsirDownloaded(index);
+              final isBusy = _downloading.contains(index);
+              final name = books[index].name ?? 'تفسير ${index + 1}';
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 2, horizontal: 2),
-                      child: InkWell(
-                        onTap: () {
-                          // لو حابب لما تدوس على الكارت نفسه تعمل حاجة (اختياري)
-                        },
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            SizedBox(
-                              width: double.infinity,
-                              child: Card(
-                                // color: const Color(0xFFFFFFFF),
-                                shadowColor:
-                                    KColors.whiteColor.withOpacity(0.6),
-                                elevation: 2,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 10),
-                                  child: Column(
-                                    spacing: 15,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Image.asset(
-                                        tafsirImage[index],
-                                        fit: BoxFit.fill,
-                                        width: MediaQuery.sizeOf(context).width,
-                                        height: ResponsiveUtil.isTablet(context)
-                                            ? 360
-                                            : 210,
-                                      ),
-                                      TextWidget(
-                                        title: ayah[index].name,
-                                        // color: isDark
-                                        //     ? KColors.scoColor
-                                        //     : KColors.primary2Color,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize:
-                                            ResponsiveUtil.isTablet(context)
-                                                ? 9.sp
-                                                : 13.sp,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            // زر التحميل/الفتح مع الحالات الثلاثة
-                            Positioned(
-                              right: 0,
-                              left: 0,
-                              bottom: -15,
-                              child: InkWell(
-                                onTap: () => _handleDownloadOrOpen(index),
-                                child: CircleAvatar(
-                                  // backgroundColor: Colors.white,
-                                  radius: ResponsiveUtil.isTablet(context)
-                                      ? 25
-                                      : 21,
-                                  child: Builder(
-                                    builder: (_) {
-                                      if (isBusy) {
-                                        // ⏳ جاري التنزيل
-                                        return const SizedBox(
-                                          width: 22,
-                                          height: 22,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2.4,
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                    Colors.white),
-                                          ),
-                                        );
-                                      }
-                                      if (isDownloaded) {
-                                        // ✅ تم التنزيل — أيقونة فتح
-                                        return Icon(
-                                          Icons.open_in_new,
-                                          size: ResponsiveUtil.isTablet(context)
-                                              ? 28
-                                              : 22,
-                                          // color: Colors.black,
-                                        );
-                                      }
-                                      // ⬇️ لم يُنزّل بعد — أيقونة تنزيل
-                                      return Icon(
-                                        Icons.download,
-                                        size: ResponsiveUtil.isTablet(context)
-                                            ? 28
-                                            : 22,
-                                        // color: Colors.green,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+              return _BookCard(
+                imagePath: tafsirImages[index],
+                name: name,
+                isDownloaded: isDownloaded,
+                isBusy: isBusy,
+                isDark: isDark,
+                isTablet: isTablet,
+                cardColor: cardColor,
+                onTap: () => _handleDownloadOrOpen(index, name),
+              );
+            },
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ─── Book Card Widget ──────────────────────────────────────────────────────────
+class _BookCard extends StatelessWidget {
+  final String imagePath;
+  final String name;
+  final bool isDownloaded;
+  final bool isBusy;
+  final bool isDark;
+  final bool isTablet;
+  final Color cardColor;
+  final VoidCallback onTap;
+
+  const _BookCard({
+    required this.imagePath,
+    required this.name,
+    required this.isDownloaded,
+    required this.isBusy,
+    required this.isDark,
+    required this.isTablet,
+    required this.cardColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Card body
+          Container(
+            decoration: BoxDecoration(
+              color: cardColor,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark
+                      ? Colors.black.withOpacity(0.4)
+                      : Colors.black.withOpacity(0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+              border: Border.all(
+                color: isDownloaded
+                    ? const Color(0xFF43A047).withOpacity(0.4)
+                    : Colors.transparent,
+                width: 1.5,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Book Cover
+                  Expanded(
+                    flex: 7,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.asset(
+                          imagePath,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            color: isDark
+                                ? const Color(0xFF1A2A1E)
+                                : const Color(0xFFE8F5E9),
+                            child: const Icon(Icons.menu_book_rounded,
+                                size: 40, color: Color(0xFF43A047)),
+                          ),
+                        ),
+                        // Gradient overlay at bottom
+                        Positioned.fill(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                stops: const [0.6, 1.0],
+                                colors: [
+                                  Colors.transparent,
+                                  cardColor.withOpacity(0.95),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Downloaded badge
+                        if (isDownloaded)
+                          Positioned(
+                            top: 8,
+                            left: 8,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF43A047),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.check_circle,
+                                      size: 10, color: Colors.white),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    'محمّل',
+                                    style: GoogleFonts.cairo(
+                                        fontSize: 9,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  // Book Name + action row
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            name,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.cairo(
+                              fontSize: isTablet ? 9.sp : 11.sp,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          // Action button
+                          _ActionButton(
+                            isBusy: isBusy,
+                            isDownloaded: isDownloaded,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  final bool isBusy;
+  final bool isDownloaded;
+
+  const _ActionButton({required this.isBusy, required this.isDownloaded});
+
+  @override
+  Widget build(BuildContext context) {
+    if (isBusy) {
+      return const SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: Color(0xFF4CAF50),
+        ),
+      );
+    }
+
+    if (isDownloaded) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF43A047), Color(0xFF2E7D32)],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.green.withOpacity(0.4),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.auto_stories_rounded,
+                size: 14, color: Colors.white),
+            const SizedBox(width: 4),
+            Text(
+              'اقرأ',
+              style: GoogleFonts.cairo(
+                  fontSize: 11,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Not downloaded
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFF43A047), width: 1.2),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.cloud_download_outlined,
+              size: 14, color: Color(0xFF43A047)),
+          const SizedBox(width: 4),
+          Text(
+            'تحميل',
+            style: GoogleFonts.cairo(
+                fontSize: 11,
+                color: const Color(0xFF43A047),
+                fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
     );
   }

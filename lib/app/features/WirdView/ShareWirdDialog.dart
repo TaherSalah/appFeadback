@@ -9,16 +9,15 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:muslimdaily/app/core/services/image_share_service.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ShareWirdDialog extends StatefulWidget {
   final String dhikrText;
-  final bool isDark;
 
   const ShareWirdDialog({
     super.key,
     required this.dhikrText,
-    required this.isDark,
   });
 
   @override
@@ -96,8 +95,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = isDark ? Colors.tealAccent : const Color(0xFF00897B);
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = context.isDark ? Colors.tealAccent : const Color(0xFF00897B);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -105,7 +104,7 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
       child: Container(
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: context.isDark ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(28),
           boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 24, offset: const Offset(0, 12))],
         ),
@@ -116,7 +115,7 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("مشاركة الذكر", style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp, color: isDark ? Colors.white : Colors.black87)),
+                  Text("مشاركة الذكر", style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp, color: context.isDark ? Colors.white : Colors.black87)),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
                     child: Icon(CupertinoIcons.xmark_circle_fill, color: Colors.grey.withOpacity(0.5)),
@@ -169,7 +168,7 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
                 ),
               ),
               SizedBox(height: 20.h),
-              _buildControlSection(isDark, primaryColor),
+              _buildControlSection(context.isDark, primaryColor),
               SizedBox(height: 24.h),
               _buildShareButton(primaryColor),
             ],
@@ -214,8 +213,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
                 selected: _selectedFont == f,
                 onSelected: (val) => setState(() => _selectedFont = f),
                 selectedColor: primaryColor,
-                labelStyle: TextStyle(color: _selectedFont == f ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black87)),
-                backgroundColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.1),
+                labelStyle: TextStyle(color: _selectedFont == f ? (context.isDark ? Colors.black : Colors.white) : (context.isDark ? Colors.white70 : Colors.black87)),
+                backgroundColor: context.isDark ? Colors.white.withOpacity(0.05) : Colors.grey.withOpacity(0.1),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 side: BorderSide.none,
               ),

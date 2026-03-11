@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import 'MemoryGameScreen.dart';
@@ -13,6 +14,7 @@ import 'flame_games/fruit_collector_game.dart';
 import 'flame_games/sunnah_hero_runner.dart';
 import 'flame_games/kaaba_protector_game.dart';
 import 'flame_games/quran_word_connector.dart';
+import 'IslamicColoringScreen.dart';
 
 class GamesMenuScreen extends StatelessWidget {
   final VoidCallback? onRefresh;
@@ -20,8 +22,8 @@ class GamesMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
+    final isDark = context.isDark;
+ final isTablet=   context.isTablet;
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -37,7 +39,7 @@ class GamesMenuScreen extends StatelessWidget {
         // ),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
-            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+            isTablet ? 70 : 50,
           ),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
@@ -50,7 +52,7 @@ class GamesMenuScreen extends StatelessWidget {
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                isTablet ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -187,28 +189,28 @@ class GamesMenuScreen extends StatelessWidget {
               },
               isDark: isDark,
             ),
-            const SizedBox(height: 16),
-            _buildGameCard(
-              context,
-              title: 'حامي الكعبة',
-              emoji: '🕋',
-              description: 'احمِ الكعبة من الفيلة',
-              color: Colors.black87,
-              reward: 120,
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => FlameGameWrapper(
-                      game: KaabaProtectorGame(),
-                      title: 'حامي الكعبة',
-                    ),
-                  ),
-                );
-                onRefresh?.call();
-              },
-              isDark: isDark,
-            ),
+            // const SizedBox(height: 16),
+            // _buildGameCard(
+            //   context,
+            //   title: 'حامي الكعبة',
+            //   emoji: '🕋',
+            //   description: 'احمِ الكعبة من الفيلة',
+            //   color: Colors.black87,
+            //   reward: 120,
+            //   onTap: () async {
+            //     await Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (_) => FlameGameWrapper(
+            //           game: KaabaProtectorGame(),
+            //           title: 'حامي الكعبة',
+            //         ),
+            //       ),
+            //     );
+            //     onRefresh?.call();
+            //   },
+            //   isDark: isDark,
+            // ),
             const SizedBox(height: 16),
             // _buildGameCard(
             //   context,
@@ -253,6 +255,20 @@ class GamesMenuScreen extends StatelessWidget {
               },
               isDark: isDark,
             ),
+            const SizedBox(height: 16),
+            // _buildGameCard(
+            //   context,
+            //   title: 'تلوين الأحاديث',
+            //   emoji: '🎨',
+            //   description: 'لوّن أحاديث نبينا واحصل على نجوم',
+            //   color: Colors.pinkAccent,
+            //   reward: 40,
+            //   onTap: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(builder: (_) => const IslamicColoringScreen()),
+            //   ),
+            //   isDark: isDark,
+            // ),
             // const SizedBox(height: 16),
             // _buildGameCard(
             //   context,

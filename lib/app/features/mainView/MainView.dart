@@ -93,8 +93,8 @@ class _MainViewContentState extends State<MainViewContent> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).primaryColor;
+    final isDark = context.isDark;
+    final primaryColor = context.theme.primaryColor;
     final navBarColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final selectedItemColor = const Color(0xFFD4AF37); // Gold color
     final unselectedItemColor =
@@ -119,11 +119,11 @@ class _MainViewContentState extends State<MainViewContent> {
                     ? [const Color(0xFF991B1B), const Color(0xFF7F1D1D)]
                     : [const Color(0xFFEF4444), const Color(0xFFDC2626)],
                 isDark: isDark,
-                onPrimaryPressed: () => Navigator.of(context).pop(true),
+                onPrimaryPressed: () => context.pop(true),
                 primaryButtonText: "خروج",
                 primaryButtonColor:
                     isDark ? const Color(0xFF7F1D1D) : const Color(0xFFDC2626),
-                onSecondaryPressed: () => Navigator.of(context).pop(false),
+                onSecondaryPressed: () => context.pop(false),
                 secondaryButtonText: "إلغاء",
               );
             },

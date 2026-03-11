@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -270,7 +271,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
   }
 
   Future<void> _pickTime() async {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -312,7 +313,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final goldColor = KColors.primaryColor;
     final bgColor = isDark ? const Color(0xFF0F0F1E) : const Color(0xFFFAFAFA);
     // final cardColor = isDark ? const Color(0xFF1A1A2E) : Colors.white;
@@ -320,16 +321,16 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
     final textColor = isDark ? Colors.white : const Color(0xFF2C3E50);
 
     return Directionality(
-
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(
-              MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          preferredSize: Size.fromHeight(context.isTablet ? 80 : 50),
           child: AppBar(
-      leading:  Navigator.canPop(context) ? CupertinoNavigationBarBackButton(
-              color: isDark?Colors.white : Colors.black,
-            ) : null,
+            leading: Navigator.canPop(context)
+                ? CupertinoNavigationBarBackButton(
+                    color: isDark ? Colors.white : Colors.black,
+                  )
+                : null,
             // actions: [
             //   IconButton(
             //     onPressed: () => Navigator.push(
@@ -347,9 +348,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600
-                    ? 12.sp
-                    : 18.sp,
+                fontSize: context.isTablet ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -371,62 +370,61 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
 
             CustomScrollView(
               slivers: [
-
-      SliverToBoxAdapter(
-        child: FadeAnimation(
-          child: Center(
-            child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(height: 15.h),
-        // Time Display
-        GestureDetector(
-          onTap: _pickTime,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                _formatTime12h(_time),
-                style: GoogleFonts.barlow(
-                  fontSize: 50.sp,
-                  fontWeight: FontWeight.w500,
-                  color: goldColor,
-                  height: 1,
-                ),
-              ),
-              const SizedBox(height: 15),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 6),
-                decoration: BoxDecoration(
-                  color: goldColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.edit,
-                        color: goldColor, size: 14),
-                    const SizedBox(width: 6),
-                    Text(
-                      "اضغط لتعديل الوقت",
-                      style: GoogleFonts.cairo(
-                        fontSize: 12.sp,
-                        color: goldColor,
+                SliverToBoxAdapter(
+                  child: FadeAnimation(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 15.h),
+                          // Time Display
+                          GestureDetector(
+                            onTap: _pickTime,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  _formatTime12h(_time),
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 50.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: goldColor,
+                                    height: 1,
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: goldColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.edit,
+                                          color: goldColor, size: 14),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        "اضغط لتعديل الوقت",
+                                        style: GoogleFonts.cairo(
+                                          fontSize: 12.sp,
+                                          color: goldColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 15)
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 15)
-      ],
-            ),
-          ),
-        ),
-      ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -444,7 +442,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                 color: cardColor,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                    color: goldColor.withOpacity(0.2), width: 1),
+                                    color: goldColor.withOpacity(0.2),
+                                    width: 1),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.05),
@@ -517,13 +516,14 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "أيام التنبيه",
                                     style: GoogleFonts.cairo(
-                                      fontSize:ResponsiveUtil.isTablet(context)?10.sp : 14.sp,
-
+                                      fontSize:
+                                          context.isTablet ? 10.sp : 14.sp,
                                       fontWeight: FontWeight.bold,
                                       color: textColor,
                                     ),
@@ -542,8 +542,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                           ? "إلغاء الكل"
                                           : "تحديد الكل",
                                       style: GoogleFonts.cairo(
-                                        fontSize:ResponsiveUtil.isTablet(context)?10.sp : 12.sp,
-
+                                        fontSize:
+                                            context.isTablet ? 10.sp : 12.sp,
                                         color: goldColor,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -554,7 +554,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                               const SizedBox(height: 16),
                               // Days Selector (Modern Circular Design)
                               Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                                 decoration: BoxDecoration(
                                   color: cardColor,
                                   borderRadius: BorderRadius.circular(20),
@@ -567,20 +568,23 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                   ],
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: List.generate(7, (index) {
                                     final actualDays = [6, 7, 1, 2, 3, 4, 5];
                                     int day = actualDays[index];
-                                    bool isSelected = _selectedDays.contains(day);
+                                    bool isSelected =
+                                        _selectedDays.contains(day);
                                     return Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         InkWell(
                                           onTap: () => _toggleDay(day),
-                                          borderRadius: BorderRadius.circular(50),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
                                           child: AnimatedContainer(
-                                            duration:
-                                                const Duration(milliseconds: 300),
+                                            duration: const Duration(
+                                                milliseconds: 300),
                                             width: 42.w,
                                             height: 42.w,
                                             decoration: BoxDecoration(
@@ -589,24 +593,29 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                                   ? LinearGradient(
                                                       colors: [
                                                         goldColor,
-                                                        goldColor.withOpacity(0.8),
+                                                        goldColor
+                                                            .withOpacity(0.8),
                                                       ],
                                                       begin: Alignment.topLeft,
-                                                      end: Alignment.bottomRight,
+                                                      end:
+                                                          Alignment.bottomRight,
                                                     )
                                                   : null,
                                               color: isSelected
                                                   ? null
                                                   : (isDark
-                                                      ? Colors.white.withOpacity(0.05)
-                                                      : Colors.grey.withOpacity(0.1)),
+                                                      ? Colors.white
+                                                          .withOpacity(0.05)
+                                                      : Colors.grey
+                                                          .withOpacity(0.1)),
                                               boxShadow: isSelected
                                                   ? [
                                                       BoxShadow(
                                                         color: goldColor
                                                             .withOpacity(0.3),
                                                         blurRadius: 8,
-                                                        offset: const Offset(0, 4),
+                                                        offset:
+                                                            const Offset(0, 4),
                                                       ),
                                                     ]
                                                   : [],
@@ -623,8 +632,9 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                               child: Text(
                                                 _getDayAbbr(day),
                                                 style: GoogleFonts.cairo(
-                                                  fontSize:ResponsiveUtil.isTablet(context)?9.sp : 14.sp,
-
+                                                  fontSize: context.isTablet
+                                                      ? 9.sp
+                                                      : 14.sp,
                                                   fontWeight: FontWeight.bold,
                                                   color: isSelected
                                                       ? Colors.white
@@ -716,7 +726,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                   leading: Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFD4AF37).withOpacity(0.1),
+                                      color: const Color(0xFFD4AF37)
+                                          .withOpacity(0.1),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(Icons.snooze,
@@ -858,21 +869,23 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                     shadowColor: goldColor.withOpacity(0.4),
                   ),
                   child: _isCheckingPermissions
-                      ?  SizedBox(
+                      ? SizedBox(
                           width: 24,
                           height: 24,
                           child:
-                          // CircularProgressIndicator(
-                          //   color: Colors.white,
-                          //   strokeWidth: 2.5,
-                          // ),
-                    KLoading.progressIOSIndicator(context: context,progressColor: Colors.white)
-                        )
+                              // CircularProgressIndicator(
+                              //   color: Colors.white,
+                              //   strokeWidth: 2.5,
+                              // ),
+                              KLoading.progressIOSIndicator(
+                                  context: context,
+                                  progressColor: Colors.white))
                       : Text(
                           "حفظ التغييرات",
                           style: GoogleFonts.cairo(
-                            fontSize:ResponsiveUtil.isTablet(context)?10.sp : 16.sp,
-
+                            fontSize: ResponsiveUtil.isTablet(context)
+                                ? 10.sp
+                                : 16.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -906,8 +919,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
       title: Text(
         title,
         style: GoogleFonts.cairo(
-          fontSize:isTap?10.sp : 14.sp,
-
+          fontSize: isTap ? 10.sp : 14.sp,
           fontWeight: FontWeight.w600,
           color: textColor,
         ),
@@ -915,7 +927,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
       subtitle: Text(
         subtitle,
         style: GoogleFonts.cairo(
-          fontSize:isTap?8.sp : 11.sp,
+          fontSize: isTap ? 8.sp : 11.sp,
           color: textColor.withOpacity(0.6),
         ),
       ),

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,6 +6,7 @@ import 'package:muslimdaily/app/features/quran/pdf/data/pdf_book_model.dart';
 import 'package:muslimdaily/app/features/quran/pdf/data/pdf_service.dart';
 import 'package:muslimdaily/app/features/quran/pdf/view/quran_pdf_screen.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../../core/services/feature_guard_service.dart';
 import '../../../../core/utils/style/k_helper.dart';
@@ -21,6 +23,7 @@ class _PdfListScreenState extends State<PdfListScreen> {
   List<PdfBookModel> _books = [];
   bool _isLoading = true;
   final Map<String, double> _downloadProgress = {};
+  final _storage = GetStorage();
 
   @override
   void initState() {
@@ -52,6 +55,7 @@ class _PdfListScreenState extends State<PdfListScreen> {
           _books = books;
           _isLoading = false;
         });
+        _checkAutoResume();
       }
     } catch (e) {
       if (mounted) {
@@ -61,10 +65,29 @@ class _PdfListScreenState extends State<PdfListScreen> {
     }
   }
 
+  Future<void> _checkAutoResume() async {
+    final String? lastPath = _storage.read<String>('last_pdf_path');
+    if (lastPath != null && mounted) {
+      // Check if file still exists
+      if (await File(lastPath).exists()) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => QuranPdfScreen(
+              pdfPath: lastPath,
+              isAsset: false,
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _handleBookAction(PdfBookModel book) async {
     if (book.isDownloaded) {
       final path = await _pdfService.getFilePath(book.fileName);
       if (mounted) {
+        _storage.write('last_pdf_path', path);
         Navigator.push(
           context,
           MaterialPageRoute(

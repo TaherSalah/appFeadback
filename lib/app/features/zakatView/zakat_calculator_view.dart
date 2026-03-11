@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
@@ -731,11 +732,11 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
-        bool isDark = Theme.of(context).brightness == Brightness.dark;
+        bool isDark = context.isDark;
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.7,
+            height: context.screenHeight * 0.7,
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius:
@@ -761,9 +762,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                       Text(
                         "مصارف الزكاة الشرعية",
                         style: GoogleFonts.cairo(
-                            fontSize: ResponsiveUtil.isTablet(context)
-                                ? 10.sp
-                                : 18.sp,
+                            fontSize: context.isTablet ? 10.sp : 18.sp,
                             fontWeight: FontWeight.bold,
                             color: const Color(AppStyle.primaryColor)),
                         textAlign: TextAlign.center,
@@ -779,9 +778,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         child: Text(
                           "۞ إِنَّمَا الصَّدَقَاتُ لِلْفُقَرَاءِ وَالْمَسَاكِينِ وَالْعَامِلِينَ عَلَيْهَا وَالْمُؤَلَّفَةِ قُلُوبُهُمْ وَفِي الرِّقَابِ وَالْغَارِمِينَ وَفِي سَبِيلِ اللَّهِ وَابْنِ السَّبِيلِ ۖ فَرِيضَةً مِّنَ اللَّهِ ۗ وَاللَّهُ عَلِيمٌ حَكِيمٌ ۞",
                           style: GoogleFonts.amiri(
-                              fontSize: ResponsiveUtil.isTablet(context)
-                                  ? 12.sp
-                                  : 16.sp,
+                              fontSize: context.isTablet ? 12.sp : 16.sp,
                               height: 1.8),
                           textAlign: TextAlign.center,
                         ),
@@ -2177,9 +2174,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                     Text(
                         "${formatter(_nisabValue)} ${_selectedCurrency.symbol}",
                         style: GoogleFonts.cairo(
-                            fontSize: ResponsiveUtil.isTablet(context)
-                                ? 10.sp
-                                : 18.sp,
+                            fontSize: context.isTablet ? 10.sp : 18.sp,
                             fontWeight: FontWeight.bold,
                             color: isDark ? KColors.whiteColor : Colors.black)),
                   ],

@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import '../../Khatmah/data/khatmah_model.dart';
 import '../../Khatmah/view/KhatmahDashboard.dart';
 import '../../WirdView/TasbihScreen.dart';
@@ -119,7 +119,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTablet;
 
     if (_bookmarkVerseId == null &&
         _lastReadPage == null &&
@@ -204,7 +204,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    TasbihScreen(wird: _lastWird!, isDark: isDark),
+                    TasbihScreen(wird: _lastWird!),
               ),
             ).then((_) => _loadData());
           },
@@ -217,18 +217,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
           detail: "${_activeKhatmah!.title}",
           extra: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4,
             children: [
-              Text(
-                "${_activeKhatmah!.title}",
-                style: GoogleFonts.cairo(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const Gap(4),
               Row(
                 children: [
                   Expanded(
@@ -259,7 +249,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                 children: [
                   Text(
                     _activeKhatmah!.isBehind
-                        ? "متأخر بـ ${_activeKhatmah!.daysBehind} يوم (${_activeKhatmah!.pagesBehind} ص)"
+                        ? "متأخر بـ ${_activeKhatmah!.daysBehind} يوم"
                         : "اليوم ${_activeKhatmah!.currentDay}",
                     style: GoogleFonts.cairo(
                       fontSize: 10.sp,
@@ -271,10 +261,10 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                   ),
                   Text(
                     _activeKhatmah!.isBehind
-                        ? "أنت متأخر في الختمة"
+                        ? "أنت متأخر"
                         : _activeKhatmah!.daysAhead > 0
                             ? "متقدم بـ ${_activeKhatmah!.daysAhead} يوم"
-                            : "أنت في الموعد",
+                            : "في الموعد",
                     style: GoogleFonts.cairo(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.bold,
@@ -306,7 +296,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
           CarouselSlider(
             items: cards,
             options: CarouselOptions(
-              height: isTab ? 175.h : 145.h,
+              height: isTab ? 180.h : 155.h,
               viewportFraction: isTab ? 0.9 : 0.88,
               enlargeCenterPage: true,
               enlargeStrategy: CenterPageEnlargeStrategy.zoom,

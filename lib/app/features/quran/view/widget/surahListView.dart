@@ -197,8 +197,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
         orElse: () => surahInfoList.first,
       );
 
-      // الانتقال التلقائي لشاشة السورة مع الحفاظ علي الفهرس في الخلفية
-      Navigator.push(
+      // الانتقال التلقائي لشاشة السورة واستبدال الفهرس ليعود للخارج مباشرة
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => SurahDetailScreen(

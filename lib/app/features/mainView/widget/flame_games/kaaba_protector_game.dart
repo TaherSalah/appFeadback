@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'base_flame_game.dart';
 
 class KaabaProtectorGame extends BaseEducationalGame with TapCallbacks, DragCallbacks {
+  @override
+  String get storageKey => 'kaaba_protector';
   Bird? bird;
   Kaaba? kaaba;
   double spawnTimer = 0;
@@ -148,8 +150,8 @@ class BackgroundGradient extends Component with HasGameRef {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: colors,
-      ).createShader(gameRef.size.toRect());
-    canvas.drawRect(gameRef.size.toRect(), paint);
+      ).createShader(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y));
+    canvas.drawRect(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y), paint);
     
     // Drwaing nicer animated-looking dunes
     _drawDunes(canvas, const Color(0xffDEB887).withOpacity(0.3), 1.2, 0.5);
@@ -180,7 +182,7 @@ class Kaaba extends PositionComponent with HasGameRef<KaabaProtectorGame> {
     final paint = Paint()..color = Colors.black;
     // Add subtle shadow
     canvas.drawRRect(
-      RRect.fromRectAndRadius(size.toRect(), const Radius.circular(4)), 
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.x, size.y), const Radius.circular(4)), 
       paint
     );
     
@@ -353,7 +355,7 @@ class Stone extends PositionComponent with HasGameRef<KaabaProtectorGame> {
     position.y += fallSpeed * dt;
 
     for (final elephant in gameRef.children.whereType<Elephant>()) {
-      if (toRect().overlaps(elephant.toRect())) {
+      if (Rect.fromLTWH(position.x, position.y, size.x, size.y).overlaps(Rect.fromLTWH(elephant.position.x, elephant.position.y, elephant.size.x, elephant.size.y))) {
         gameRef.updateScore(10);
         gameRef.createExplosion(elephant.position + elephant.size / 2);
         elephant.removeFromParent();

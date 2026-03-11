@@ -1,8 +1,8 @@
 // =============== الشاشة الرئيسية ===============
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/utils/style/k_color.dart';
 import '../../core/widgets/KLoading.dart';
@@ -75,18 +75,15 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
-    bool isTab = ResponsiveUtil.isTablet(context);
     final primaryColor =
-        isDark ? KColors.primaryColor : const Color(0xFF00897B);
+        context.isDark ? KColors.primaryColor : const Color(0xFF00897B);
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+        preferredSize: Size.fromHeight(context.isTablet ? 70 : 50),
         child: AppBar(
           leading: CupertinoNavigationBarBackButton(
-            color: isDark ? Colors.white : Colors.black,
+            color: context.isDark ? Colors.white : Colors.black,
           ),
           centerTitle: true,
           title: Text(
@@ -94,18 +91,13 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
             style: GoogleFonts.cairo(
               color: Colors.green,
               fontWeight: FontWeight.bold,
-              fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              fontSize: context.isTablet ? 12.sp : 18.sp,
             ),
           ),
           actions: [
             IconButton(
               onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StatisticsScreen(stats: stats),
-                  ),
-                );
+                await context.push(StatisticsScreen(stats: stats));
                 final updatedStats = await manager.loadStats();
                 setState(() => stats = updatedStats);
               },
@@ -123,7 +115,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                   // Background Pattern
                   Positioned.fill(
                     child: Opacity(
-                      opacity: isDark ? 0.05 : 0.03,
+                      opacity: context.isDark ? 0.05 : 0.03,
                       child: Image.asset(
                         "assets/images/pattern.webp",
                         repeat: ImageRepeat.repeat,
@@ -137,7 +129,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                           duration: const Duration(milliseconds: 600),
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
-                            child: _buildStatsRow(isDark),
+                            child: _buildStatsRow(),
                           ),
                         ),
                       ),
@@ -148,7 +140,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                           child: FadeIn(
                             duration: const Duration(milliseconds: 500),
                             delay: const Duration(milliseconds: 200),
-                            child: _buildCategoryFilter(isDark),
+                            child: _buildCategoryFilter(),
                           ),
                         ),
 
@@ -163,8 +155,9 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                                 style: GoogleFonts.cairo(
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.bold,
-                                  color:
-                                      isDark ? Colors.white70 : Colors.black87,
+                                  color: context.isDark
+                                      ? Colors.white70
+                                      : Colors.black87,
                                 ),
                               ),
                               const Spacer(),
@@ -190,7 +183,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
 
                       // Active Awrad List
                       if (filteredAwrad.isEmpty)
-                        SliverToBoxAdapter(child: _buildEmptyState(isDark))
+                        SliverToBoxAdapter(child: _buildEmptyState())
                       else
                         SliverPadding(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -199,8 +192,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                               (context, index) => FadeInUp(
                                 duration: const Duration(milliseconds: 500),
                                 delay: Duration(milliseconds: index * 40),
-                                child: _buildWirdCard(filteredAwrad[index],
-                                    isDark: isDark),
+                                child: _buildWirdCard(filteredAwrad[index]),
                               ),
                               childCount: filteredAwrad.length,
                             ),
@@ -229,7 +221,6 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                             delegate: SliverChildBuilderDelegate(
                               (context, index) => _buildWirdCard(
                                   completedAwrad[index],
-                                  isDark: isDark,
                                   completed: true),
                               childCount: completedAwrad.length,
                             ),
@@ -249,7 +240,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
             final newWird = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddWirdScreen(isDark: isDark),
+                builder: (context) => const AddWirdScreen(),
               ),
             );
             if (newWird != null) {
@@ -272,13 +263,13 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
     );
   }
 
-  Widget _buildStatsRow(bool isDark) {
+  Widget _buildStatsRow() {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+        color: context.isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: isDark
+        boxShadow: context.isDark
             ? []
             : [
                 BoxShadow(
@@ -291,19 +282,19 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildHeroStat('🔥', '${stats.currentStreak}', 'أيام', isDark),
+          _buildHeroStat('🔥', '${stats.currentStreak}', 'أيام'),
           Container(width: 1, height: 30, color: Colors.grey.withOpacity(0.2)),
-          _buildHeroStat('✨', '${stats.totalTasbihat}', 'تسبيحة', isDark),
+          _buildHeroStat('✨', '${stats.totalTasbihat}', 'تسبيحة'),
           Container(width: 1, height: 30, color: Colors.grey.withOpacity(0.2)),
-          _buildHeroStat('🏅', '${stats.level}', 'مستوى', isDark),
+          _buildHeroStat('🏅', '${stats.level}', 'مستوى'),
         ],
       ),
     );
   }
 
-  Widget _buildHeroStat(String emoji, String value, String label, bool isDark) {
+  Widget _buildHeroStat(String emoji, String value, String label) {
     return Column(
-      spacing: 8,
+      mainAxisSize: MainAxisSize.min, // Added to prevent infinite height
       children: [
         // Text(emoji, style: TextStyle(fontSize: 18.sp)),
         // SizedBox(height: 4.h),
@@ -312,7 +303,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
           style: GoogleFonts.barlow(
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.isDark ? Colors.white : Colors.black87,
           ),
         ),
         Text(
@@ -326,7 +317,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
     );
   }
 
-  Widget _buildEmptyState(bool isDark) {
+  Widget _buildEmptyState() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -356,7 +347,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
     );
   }
 
-  Widget _buildCategoryFilter(bool isDark) {
+  Widget _buildCategoryFilter() {
     return Container(
       height: 45.h,
       margin: EdgeInsets.only(top: 20.h),
@@ -375,8 +366,12 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? (isDark ? KColors.primaryColor : const Color(0xFF00897B))
-                    : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
+                    ? (context.isDark
+                        ? KColors.primaryColor
+                        : const Color(0xFF00897B))
+                    : (context.isDark
+                        ? Colors.white.withOpacity(0.05)
+                        : Colors.white),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSelected
@@ -389,8 +384,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                   cat,
                   style: GoogleFonts.cairo(
                     color: isSelected
-                        ? (isDark ? Colors.black : Colors.white)
-                        : (isDark ? Colors.white70 : Colors.black87),
+                        ? (context.isDark ? Colors.black : Colors.white)
+                        : (context.isDark ? Colors.white70 : Colors.black87),
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal,
                     fontSize: 11.sp,
@@ -404,21 +399,20 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
     );
   }
 
-  Widget _buildWirdCard(Wird wird,
-      {required bool isDark, bool completed = false}) {
+  Widget _buildWirdCard(Wird wird, {bool completed = false}) {
     final totalCount =
         wird.adhkar.fold<int>(0, (sum, dhikr) => sum + dhikr.targetCount);
     // ✅ استخدام لون الورد المخصص، أو اللون الافتراضي
     final cardColor = wird.color != 0
         ? Color(wird.color)
-        : (isDark ? KColors.primaryColor : const Color(0xFF00897B));
+        : (context.isDark ? KColors.primaryColor : const Color(0xFF00897B));
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+        color: context.isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: isDark
+        boxShadow: context.isDark
             ? []
             : [
                 BoxShadow(
@@ -441,13 +435,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                 return;
               }
 
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      TasbihScreen(wird: wird, isDark: isDark),
-                ),
-              );
+              final result = await context.push(TasbihScreen(wird: wird));
               if (result == 'completed') {
                 setState(() {
                   wird.isCompleted = true;
@@ -494,7 +482,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                           style: GoogleFonts.cairo(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black87,
+                            color:
+                                context.isDark ? Colors.white : Colors.black87,
                             decoration:
                                 completed ? TextDecoration.lineThrough : null,
                           ),
@@ -549,8 +538,6 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
   }
 
   void showDeleteWirdDialog(Wird wird, {required bool completed}) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -571,7 +558,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                   gradient: LinearGradient(
                     begin: Alignment.topRight,
                     end: Alignment.bottomLeft,
-                    colors: isDark
+                    colors: context.isDark
                         ? [const Color(0xFF2B0B0B), const Color(0xFF200505)]
                         : [const Color(0xFFFFF2F2), const Color(0xFFFFE1E1)],
                   ),
@@ -592,7 +579,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
+                        color: context.isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -604,7 +591,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.4,
-                        color: isDark ? Colors.white70 : Colors.black87,
+                        color: context.isDark ? Colors.white70 : Colors.black87,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -655,7 +642,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                             },
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(
-                                color: isDark
+                                color: context.isDark
                                     ? Colors.grey.shade400
                                     : Colors.grey.shade600,
                               ),
@@ -668,7 +655,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                               'تراجع',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isDark
+                                color: context.isDark
                                     ? Colors.white
                                     : Colors.grey.shade800,
                               ),
@@ -756,9 +743,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
   }
 
   void showReactivateWirdDialog(Wird wird) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final Color primaryColor =
-        isDark ? KColors.primaryColor : const Color(0xFF00897B);
+        context.isDark ? KColors.primaryColor : const Color(0xFF00897B);
 
     showDialog(
       context: context,
@@ -779,7 +765,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                   gradient: LinearGradient(
                     begin: Alignment.topRight,
                     end: Alignment.bottomLeft,
-                    colors: isDark
+                    colors: context.isDark
                         ? [const Color(0xFF0E2B1A), const Color(0xFF071A10)]
                         : [const Color(0xFFF2FFF7), const Color(0xFFE1FFE9)],
                   ),
@@ -799,49 +785,18 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
+                        color: context.isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'هل تريد إلغاء إكمال هذا الورد وإعادته للقائمة الحالية؟\n'
-                      'سيتم نقله إلى الأوراد الجارية لتتمكن من القيام به مرة أخرى.',
+                      'هل تود إعادة تفعيل هذا الورد ليظهر في قائمة الأوراد الجارية؟',
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.4,
-                        color: isDark ? Colors.white70 : Colors.black87,
+                        color: context.isDark ? Colors.white70 : Colors.black87,
                       ),
                       textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: primaryColor.withOpacity(0.06),
-                        border: Border.all(
-                          color: primaryColor.withOpacity(0.5),
-                          width: 1.2,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.info_outline,
-                              size: 18, color: primaryColor),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'يمكنك تتبّع تقدّمك فيه مجدداً من القائمة الرئيسية.',
-                              style: TextStyle(
-                                fontSize: 12.5,
-                                color: primaryColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -851,7 +806,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                             onPressed: () => Navigator.of(dialogContext).pop(),
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(
-                                color: isDark
+                                color: context.isDark
                                     ? Colors.grey.shade400
                                     : Colors.grey.shade600,
                               ),
@@ -864,7 +819,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                               'تراجع',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isDark
+                                color: context.isDark
                                     ? Colors.white
                                     : Colors.grey.shade800,
                               ),
@@ -873,7 +828,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: ElevatedButton.icon(
+                          child: ElevatedButton(
                             onPressed: () async {
                               setState(() {
                                 wird.isCompleted = false;
@@ -884,19 +839,19 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                                   .saveAwrad([...awrad, ...completedAwrad]);
                               Navigator.of(dialogContext).pop();
                               KHelper.showSuccess(
-                                  message: "تم إعادة تفعيل الورد بنجاح");
+                                message: "تمت إعادة تفعيل الورد",
+                              );
                             },
-                            icon: const Icon(Icons.refresh_rounded),
-                            label: const Text('تفعيل'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: primaryColor,
                               foregroundColor:
-                                  isDark ? Colors.black : Colors.white,
+                                  context.isDark ? Colors.black : Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 11),
                             ),
+                            child: const Text('تفعيل'),
                           ),
                         ),
                       ],

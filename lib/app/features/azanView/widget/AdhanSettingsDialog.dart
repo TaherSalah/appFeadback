@@ -86,7 +86,7 @@ class _AdhanSettingsDialogState extends State<AdhanSettingsDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
           child: const Text('إغلاق'),
         ),
       ],

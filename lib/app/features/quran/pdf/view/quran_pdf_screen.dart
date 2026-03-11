@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/features/quran/pdf/view/widgets/pdf_navigation_dialog.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:get_storage/get_storage.dart';
 
 class QuranPdfScreen extends StatefulWidget {
   final String? pdfPath;
@@ -22,14 +24,24 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
   late final String _path;
   int _totalPages = 0;
   int _currentPage = 0;
-  final int _pageOffset =
-      2; // Adjusted based on user feedback (Cover + 2 Intro)
+  final int _pageOffset = 2; // Adjusted based on user feedback (Cover + 2 Intro)
   bool _isFullScreen = false;
+  final _storage = GetStorage();
+  
+  String get _storageKey => 'pdf_page_${widget.pdfPath.hashCode}';
 
   @override
   void initState() {
     super.initState();
     _path = widget.pdfPath ?? '';
+    _currentPage = _storage.read<int>(_storageKey) ?? 0;
+    WakelockPlus.enable();
+  }
+
+  @override
+  void dispose() {
+    WakelockPlus.disable();
+    super.dispose();
   }
 
   @override
@@ -87,23 +99,22 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
                       autoSpacing: false,
                       pageFling: false,
                       pageSnap: true,
-                      defaultPage: 0,
+                      defaultPage: _currentPage,
                       fitPolicy: FitPolicy.WIDTH,
                       onPageChanged: (int? page, int? total) {
-                        if (mounted) {
+                        if (mounted && page != null) {
                           setState(() {
-                            _currentPage = page ?? 0;
+                            _currentPage = page;
                             _totalPages = total ?? 0;
                           });
+                          _storage.write(_storageKey, page);
                         }
                       },
                       onViewCreated: (PDFViewController pdfViewController) {
                         _pdfController = pdfViewController;
                       },
-                onError:  (dynamic error) =>
-                    Center(child: Text(error.toString())),
-                      // errorWidget: (dynamic error) =>
-                      //     Center(child: Text(error.toString())),
+                      onError: (dynamic error) =>
+                          Center(child: Text(error.toString())),
                     ).fromAsset(
                       _path,
                     )
@@ -113,21 +124,22 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
                       autoSpacing: false,
                       pageFling: false,
                       pageSnap: true,
-                      defaultPage: 0,
+                      defaultPage: _currentPage,
                       fitPolicy: FitPolicy.WIDTH,
                       onPageChanged: (int? page, int? total) {
-                        if (mounted) {
+                        if (mounted && page != null) {
                           setState(() {
-                            _currentPage = page ?? 0;
+                            _currentPage = page;
                             _totalPages = total ?? 0;
                           });
+                          _storage.write(_storageKey, page);
                         }
                       },
                       onViewCreated: (PDFViewController pdfViewController) {
                         _pdfController = pdfViewController;
                       },
-                     onError: (dynamic error) =>
-                         Center(child: Text(error.toString())),
+                      onError: (dynamic error) =>
+                          Center(child: Text(error.toString())),
                     ).fromPath(
                       _path,
                     ),

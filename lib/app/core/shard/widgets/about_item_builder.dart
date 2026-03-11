@@ -93,8 +93,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
     }
 
     final con = Provider.of<AzkarProvider>(context);
-    final bool isTablate = ResponsiveUtil.isTablet(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isTablate = context.isTablet;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -232,7 +232,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                 _buildSectionTitle(
                     "قيم التطبيق", Icons.star_rate_outlined, Colors.green),
                 SizedBox(height: 24.h),
-                
+
                 _buildActionButton(
                   context,
 
@@ -263,18 +263,20 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                 // Rights Section
                 Divider(color: isDark ? Colors.white10 : Colors.grey.shade300),
                 // SizedBox(height: 10.h),
-                _buildSectionTitle(
-                    AppString.KDevlop, Icons.developer_mode_outlined, Colors.red),
+                _buildSectionTitle(AppString.KDevlop,
+                    Icons.developer_mode_outlined, Colors.red),
 
                 SizedBox(height: 8.h),
-                Image.asset("assets/images/perLogo.png",height: 80,),
+                Image.asset(
+                  "assets/images/perLogo.png",
+                  height: 80,
+                ),
                 SizedBox(height: 8.h),
                 Text(
                   AppString.KAppRights,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.cairo(
-                    fontSize:isTablate?8.5.sp : 10.sp,
-
+                    fontSize: isTablate ? 8.5.sp : 10.sp,
                     color: Colors.grey,
                     fontWeight: FontWeight.w500,
                   ),
@@ -288,7 +290,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
   }
 
   Widget _buildSectionTitle(String title, IconData icon, Color color) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTablet;
     return Row(
       children: [
         Icon(icon, size: 20.sp, color: color),
@@ -297,7 +299,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
           title,
           style: GoogleFonts.cairo(
             fontWeight: FontWeight.bold,
-            fontSize:isTap?10.sp : 14.sp,
+            fontSize: isTap ? 10.sp : 14.sp,
           ),
         ),
       ],
@@ -341,7 +343,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                 title,
                 style: GoogleFonts.cairo(
                   fontWeight: FontWeight.bold,
-                  fontSize:isTablate?10.sp :15.sp,
+                  fontSize: isTablate ? 10.sp : 15.sp,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
@@ -352,7 +354,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
             content,
             textAlign: TextAlign.justify,
             style: GoogleFonts.cairo(
-              fontSize: isTablate?9.sp :13.sp,
+              fontSize: isTablate ? 9.sp : 13.sp,
               height: 1.6,
               color: isDark ? Colors.white70 : Colors.black54,
             ),
@@ -369,7 +371,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTablet;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -397,8 +399,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
               style: GoogleFonts.cairo(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize:isTap?10.sp : 14.sp,
-
+                fontSize: isTap ? 10.sp : 14.sp,
               ),
             ),
           ],
@@ -438,8 +439,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
               style: GoogleFonts.cairo(
                 color: color,
                 fontWeight: FontWeight.bold,
-                fontSize:isTap?9.sp : 12.sp,
-
+                fontSize: isTap ? 9.sp : 12.sp,
               ),
             ),
           ],

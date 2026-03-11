@@ -6,7 +6,7 @@ import '../exports/all_exports.dart';
 
 PreferredSizeWidget mainAppBarWidget(
     context, selectedFontSize, void Function(String?)? onChanged) {
-  final bool isTablate = MediaQuery.sizeOf(context).width > 600;
+  final bool isTablate = context.isTablet;
 
   List<String> sizes = <String>[
     "10",
@@ -20,7 +20,7 @@ PreferredSizeWidget mainAppBarWidget(
     "90",
     "100",
   ];
-  final isDark = Theme.of(context).brightness == Brightness.dark;
+  final isDark = context.isDark;
   return AppBar(
     systemOverlayStyle: const SystemUiOverlayStyle(
       // statusBarColor: Color(0xffE1ECC8),
@@ -75,7 +75,7 @@ PreferredSizeWidget mainAppBarWidget(
                             borderRadius: BorderRadius.circular(10.0)),
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         height: 50,
-                        width: MediaQuery.of(context).size.width / 1.2,
+                        width: context.screenWidth / 1.2,
                       ),
                       menuItemStyleData: MenuItemStyleData(
                         overlayColor: MaterialStateProperty.all(

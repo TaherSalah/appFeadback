@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'base_flame_game.dart';
 
 class HajjJourneyGame extends BaseEducationalGame with TapCallbacks {
+  @override
+  String get storageKey => 'hajj_journey';
   Pilgrim? pilgrim;
   final List<Platform> platforms = [];
   final Random random = Random();
@@ -153,8 +155,8 @@ class BackgroundGradient extends Component with HasGameRef {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: colors,
-      ).createShader(gameRef.size.toRect());
-    canvas.drawRect(gameRef.size.toRect(), paint);
+      ).createShader(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y));
+    canvas.drawRect(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y), paint);
     
     // Mountains in distance
     final mtPaint = Paint()..color = Colors.brown[300]!.withOpacity(0.3);
@@ -192,8 +194,8 @@ class Pilgrim extends PositionComponent with HasGameRef<HajjJourneyGame> {
     isJumping = true; // Assume jumping/falling until collision found
     for (final platform in gameRef.platforms) {
       // Simple AABB collision detection adjusted for landing on top
-      final pRect = platform.toRect();
-      final myRect = toRect();
+      final pRect = Rect.fromLTWH(platform.position.x - platform.size.x / 2, platform.position.y - platform.size.y / 2, platform.size.x, platform.size.y);
+      final myRect = Rect.fromLTWH(position.x - size.x / 2, position.y - size.y / 2, size.x, size.y);
       
       // Check if vertically overlapping top of platform while falling
       if (velocityY > 0 && 
@@ -213,7 +215,7 @@ class Pilgrim extends PositionComponent with HasGameRef<HajjJourneyGame> {
   @override
   void render(Canvas canvas) {
     final paint = Paint()..color = Colors.white;
-    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(10)), paint);
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.x, size.y), const Radius.circular(10)), paint);
     
     // Ihram texture (Two pieces)
     final ihramPaint = Paint()..color = Colors.grey[300]!..style = PaintingStyle.stroke..strokeWidth = 2;
@@ -246,7 +248,7 @@ class Platform extends PositionComponent with HasGameRef<HajjJourneyGame> {
   void render(Canvas canvas) {
     // Marble/Stone platform
     final paint = Paint()..color = const Color(0xFFEEEEEE); // Grey 200
-    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(8)), paint);
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.x, size.y), const Radius.circular(8)), paint);
     
     // 3D effect border at bottom
     final borderPaint = Paint()..color = Colors.grey[400]!;

@@ -1,12 +1,34 @@
 import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/parallax.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'base_flame_game.dart';
 
 class SunnahHeroRunner extends BaseEducationalGame with TapCallbacks {
+  @override
+  String get storageKey => 'sunnah_hero';
+  
+  static const List<Map<String, String>> hasanat = [
+    {'text': 'بر الوالدين', 'emoji': '🤲'},
+    {'text': 'الصلاة', 'emoji': '🕌'},
+    {'text': 'الصدقة', 'emoji': '🪙'},
+    {'text': 'الصدق', 'emoji': '🤝'},
+    {'text': 'صلة الرحم', 'emoji': '👨‍👩‍👧‍👦'},
+    {'text': 'مساعدة المحتاج', 'emoji': '🖐️'},
+    {'text': 'الذكر', 'emoji': '📿'},
+  ];
+
+  static const List<Map<String, String>> sayyiat = [
+    {'text': 'عقوق الوالدين', 'emoji': '🚫'},
+    {'text': 'شرب الخمر', 'emoji': '🍷'},
+    {'text': 'الكذب', 'emoji': '🤥'},
+    {'text': 'الغيبة', 'emoji': '🤫'},
+    {'text': 'السرقة', 'emoji': '🧤'},
+    {'text': 'أذى الجار', 'emoji': '🥀'},
+  ];
+
   HeroPlayer? hero;
   double spawnTimer = 0;
   final Random random = Random();
@@ -49,7 +71,7 @@ class SunnahHeroRunner extends BaseEducationalGame with TapCallbacks {
       final double baseUnit = min(size.x, size.y);
       hero!.size = Vector2(baseUnit * 0.15, baseUnit * 0.20);
       hero!.groundY = groundY;
-      hero!.position = Vector2(size.x * 0.15, groundY - hero!.size.y);
+      hero!.position = Vector2(size.x * 0.15, groundY);
       // Update physics constants based on size
       hero!.gravity = size.y * 2.5;
       hero!.jumpForce = -size.y * 0.95;
@@ -84,8 +106,14 @@ class SunnahHeroRunner extends BaseEducationalGame with TapCallbacks {
     final itemSize = Vector2.all(baseUnit * 0.12);
     
     final isGoodDeed = random.nextDouble() > 0.3;
+    final deed = isGoodDeed 
+        ? hasanat[random.nextInt(hasanat.length)]
+        : sayyiat[random.nextInt(sayyiat.length)];
+
     final item = RunnerItem(
       isGoodDeed: isGoodDeed,
+      labelText: deed['text']!,
+      emoji: deed['emoji']!,
       position: Vector2(size.x + itemSize.x, groundY - itemSize.y - (isGoodDeed && random.nextBool() ? itemSize.y * 1.5 : 0)), // Flying deeds
       size: itemSize,
       speed: gameSpeed,
@@ -139,8 +167,8 @@ class BackgroundGradient extends Component with HasGameRef {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: colors,
-      ).createShader(gameRef.size.toRect());
-    canvas.drawRect(gameRef.size.toRect(), paint);
+      ).createShader(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y));
+    canvas.drawRect(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y), paint);
     
     // Add some stars
     final starPaint = Paint()..color = Colors.white.withOpacity(0.5);
@@ -196,8 +224,17 @@ class HeroPlayer extends PositionComponent with HasGameRef<SunnahHeroRunner> {
   double jumpForce = 0; // Set in onResize
   bool isJumping = false;
   double groundY = 0; // Set in onResize
+  double _animationTime = 0;
+  
+  // Caching paints
+  final Paint _bodyPaint = Paint()..color = Colors.white;
+  final Paint _capePaint = Paint()..color = const Color(0xFF2E7D32); // Green 800
+  final Paint _skinPaint = Paint()..color = const Color(0xFFFFE0B2); // Skin tone
+  final Paint _kufiPaint = Paint()..color = Colors.white;
+  final Paint _eyePaint = Paint()..color = Colors.black;
+  final Paint _shadowPaint = Paint()..color = Colors.black26;
 
-  HeroPlayer() : super(size: Vector2(60, 80));
+  HeroPlayer() : super(size: Vector2(60, 80), anchor: Anchor.bottomCenter);
 
   void jump() {
     if (!isJumping) {
@@ -211,11 +248,12 @@ class HeroPlayer extends PositionComponent with HasGameRef<SunnahHeroRunner> {
     super.update(dt);
     if (gameRef.isGameOver) return;
 
+    _animationTime += dt;
     velocityY += gravity * dt;
     position.y += velocityY * dt;
 
-    if (position.y > groundY - size.y) {
-      position.y = groundY - size.y;
+    if (position.y > groundY) {
+      position.y = groundY;
       velocityY = 0;
       isJumping = false;
     }
@@ -223,35 +261,99 @@ class HeroPlayer extends PositionComponent with HasGameRef<SunnahHeroRunner> {
 
   @override
   void render(Canvas canvas) {
-    // Hero with a cape!
-    final paint = Paint()..color = Colors.green[500]!;
-    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(8)), paint);
+    final double w = size.x;
+    final double h = size.y;
     
-    // Cape animation based on velocity
-    final capePath = Path();
-    capePath.moveTo(0, size.y * 0.2);
-    capePath.quadraticBezierTo(-size.x * 0.5, size.y * 0.3 + (velocityY * 0.02), -size.x * 0.2, size.y * 0.8);
-    capePath.lineTo(0, size.y * 0.3);
-    canvas.drawPath(capePath, Paint()..color = Colors.green[700]!);
-    
-    // Face
-    canvas.drawRect(Rect.fromLTWH(size.x * 0.6, size.y * 0.2, size.x * 0.3, size.y * 0.2), Paint()..color = const Color(0xFFFFCCBC));
+    // Draw Shadow on ground (fixed at ground level relative to player)
+    final shadowWidth = w * (isJumping ? 0.6 : 0.8);
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(w/2, h + 5 - (position.y - groundY)), width: shadowWidth, height: 10),
+      _shadowPaint
+    );
 
-    const textStyle = TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold);
-    final textPainter = TextPainter(
-      text: const TextSpan(text: 'بطل السنة', style: textStyle),
-      textDirection: TextDirection.rtl,
-    )..layout();
-    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, size.y * 0.5));
+    // Bounce/Stretch effect
+    canvas.save();
+    if (isJumping) {
+      final stretch = (velocityY.abs() / 1000).clamp(0.0, 0.2);
+      canvas.scale(1.0 - stretch, 1.0 + stretch);
+      canvas.translate(w * stretch / 2, -h * stretch);
+    }
+
+    // Legs - Running animation
+    final legCycle = sin(_animationTime * 15);
+    final legY = h * 0.85;
+    if (!isJumping) {
+      // Left leg
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(Rect.fromLTWH(w * 0.3 + legCycle * 5, legY, w * 0.15, h * 0.15), const Radius.circular(5)),
+        _skinPaint
+      );
+      // Right leg
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(Rect.fromLTWH(w * 0.55 - legCycle * 5, legY, w * 0.15, h * 0.15), const Radius.circular(5)),
+        _skinPaint
+      );
+    } else {
+      // Tucked legs when jumping
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(w * 0.3, legY - 5, w * 0.15, h * 0.1), const Radius.circular(5)), _skinPaint);
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(w * 0.55, legY - 5, w * 0.15, h * 0.1), const Radius.circular(5)), _skinPaint);
+    }
+
+    // Cape - Dynamic Billowing
+    final capePath = Path();
+    final billow = isJumping ? (velocityY * 0.05) : (sin(_animationTime * 10) * 10);
+    capePath.moveTo(w * 0.2, h * 0.3);
+    capePath.cubicTo(
+      -w * 0.4, h * 0.4 + billow, 
+      -w * 0.2, h * 0.9 + billow, 
+      w * 0.1, h * 0.85
+    );
+    capePath.lineTo(w * 0.3, h * 0.3);
+    canvas.drawPath(capePath, _capePaint);
+
+    // Body (Thobe)
+    final bodyPath = Path()
+      ..moveTo(w * 0.2, h * 0.3)
+      ..lineTo(w * 0.8, h * 0.3)
+      ..lineTo(w * 0.9, h * 0.85)
+      ..lineTo(w * 0.1, h * 0.85)
+      ..close();
+    canvas.drawPath(bodyPath, _bodyPaint);
+    
+    // Head
+    final headCenter = Offset(w / 2, h * 0.2);
+    final headRadius = w * 0.25;
+    canvas.drawCircle(headCenter, headRadius, _skinPaint);
+    
+    // Kufi (Cap)
+    final kufiPath = Path()
+      ..addArc(Rect.fromCircle(center: headCenter, radius: headRadius), -pi, pi);
+    canvas.drawPath(kufiPath, _kufiPaint);
+
+    // Eyes
+    final eyeY = h * 0.18;
+    final blink = sin(_animationTime * 2).abs() < 0.05 ? 0.1 : 1.0;
+    canvas.drawCircle(Offset(w * 0.6, eyeY), 3 * blink, _eyePaint);
+    canvas.drawCircle(Offset(w * 0.75, eyeY), 3 * blink, _eyePaint);
+
+    canvas.restore();
   }
 }
 
 class RunnerItem extends PositionComponent with HasGameRef<SunnahHeroRunner> {
   final bool isGoodDeed;
+  final String labelText;
+  final String emoji;
   final double speed;
 
-  RunnerItem({required this.isGoodDeed, required Vector2 position, required Vector2 size, required this.speed}) 
-      : super(position: position, size: size);
+  RunnerItem({
+    required this.isGoodDeed, 
+    required this.labelText,
+    required this.emoji,
+    required Vector2 position, 
+    required Vector2 size, 
+    required this.speed
+  }) : super(position: position, size: size);
 
   @override
   void update(double dt) {
@@ -260,15 +362,28 @@ class RunnerItem extends PositionComponent with HasGameRef<SunnahHeroRunner> {
 
     position.x -= speed * dt;
 
-    if (gameRef.hero != null && position.distanceTo(gameRef.hero!.position + gameRef.hero!.size/2) < (size.x + gameRef.hero!.size.x)/2.5) {
-      if (isGoodDeed) {
-        gameRef.updateScore(5);
-        gameRef.createHitParticles(position + size/2, Colors.amberAccent);
-      } else {
-        gameRef.createHitParticles(position + size/2, Colors.redAccent);
-        gameRef.gameOver();
+    if (gameRef.hero != null) {
+      final hero = gameRef.hero!;
+      // Account for bottomCenter anchor of hero
+      final heroRect = Rect.fromLTWH(
+        hero.position.x - hero.size.x * 0.4, 
+        hero.position.y - hero.size.y * 0.9, 
+        hero.size.x * 0.8, 
+        hero.size.y * 0.8
+      );
+      
+      final itemRect = Rect.fromLTWH(position.x, position.y, size.x, size.y);
+
+      if (heroRect.overlaps(itemRect)) {
+        if (isGoodDeed) {
+          gameRef.updateScore(5);
+          gameRef.createHitParticles(position + size/2, Colors.amberAccent);
+        } else {
+          gameRef.createHitParticles(position + size/2, Colors.redAccent);
+          gameRef.gameOver();
+        }
+        removeFromParent();
       }
-      removeFromParent();
     }
 
     if (position.x < -size.x * 2) {
@@ -278,41 +393,62 @@ class RunnerItem extends PositionComponent with HasGameRef<SunnahHeroRunner> {
 
   @override
   void render(Canvas canvas) {
-    final color = isGoodDeed ? Colors.amberAccent : Colors.purpleAccent;
+    final color = isGoodDeed ? Colors.amberAccent : Colors.deepPurple;
+    final double w = size.x;
+    final double h = size.y;
     
-    // Glow
-    final glowPaint = Paint()..color = color.withOpacity(0.4)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-    canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x / 2 + 5, glowPaint);
+    // Smooth floating animation
+    final floatY = sin(gameRef.elapsedTime * 5) * 5;
+    canvas.translate(0, floatY);
 
-    final paint = Paint()..color = color;
-    if (isGoodDeed) {
-      canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x / 2, paint);
-      // Star Icon
-      const textStyle = TextStyle(fontSize: 20); // Emoji size relative?
-      final textPainter = TextPainter(
-        text: const TextSpan(text: '⭐', style: textStyle),
-        textDirection: TextDirection.ltr,
-      )..layout();
-       textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
-    } else {
-      canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(5)), paint);
-       // Warning Icon
-      const textStyle = TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold);
-      final textPainter = TextPainter(
-        text: const TextSpan(text: '!', style: textStyle),
-        textDirection: TextDirection.ltr,
-      )..layout();
-       textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, (size.y - textPainter.height) / 2));
-    }
+    // Glow effect
+    final glowPaint = Paint()
+      ..color = color.withOpacity(0.3)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
+    canvas.drawCircle(Offset(w / 2, h / 2), w * 0.5, glowPaint);
+
+    // Main shape with gradient
+    final shapePaint = Paint()
+      ..shader = RadialGradient(
+        colors: [color, color.withRed((color.red - 50).clamp(0, 255))],
+      ).createShader(Rect.fromLTWH(0, 0, w, h));
     
-    // Label text
-    final fontSize = size.x * 0.25;
-    const textStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold, shadows: [Shadow(blurRadius: 2)]);
+    if (isGoodDeed) {
+      canvas.drawCircle(Offset(w / 2, h / 2), w * 0.45, shapePaint);
+    } else {
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(w * 0.05, h * 0.05, w * 0.9, h * 0.9), Radius.circular(w * 0.2)), shapePaint);
+    }
+
+    // Emoji icon
     final textPainter = TextPainter(
-      text: TextSpan(text: isGoodDeed ? 'حسنة' : 'عقبة', style: textStyle.copyWith(fontSize: fontSize)),
+      text: TextSpan(text: emoji, style: TextStyle(fontSize: w * 0.55)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    textPainter.paint(canvas, Offset((w - textPainter.width) / 2, (h - textPainter.height) / 2));
+    
+    // Tag banner for the text
+    final labelFontSize = w * 0.25;
+    final labelStyle = GoogleFonts.cairo(
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+      fontSize: labelFontSize,
+      shadows: const [Shadow(blurRadius: 4, color: Colors.black54)]
+    );
+    
+    final labelPainter = TextPainter(
+      text: TextSpan(text: labelText, style: labelStyle),
       textDirection: TextDirection.rtl,
     )..layout();
-    textPainter.paint(canvas, Offset((size.x - textPainter.width) / 2, size.y + 2));
+
+    // Banner Background
+    final bannerW = labelPainter.width + 12;
+    final bannerH = labelPainter.height + 4;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH((w - bannerW) / 2, h + 5, bannerW, bannerH), const Radius.circular(4)),
+      Paint()..color = Colors.black45
+    );
+    
+    labelPainter.paint(canvas, Offset((w - labelPainter.width) / 2, h + 7));
   }
 }
 

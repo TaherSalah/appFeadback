@@ -1,5 +1,6 @@
 /////****** flutter packages  export *******//////
 library;
+
 export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:google_fonts/google_fonts.dart';
 export 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -33,3 +34,4 @@ export 'package:muslimdaily/app/core/shard/widgets/done_widget.dart';
 export 'package:muslimdaily/app/core/shard/widgets/custom_app_bar.dart';
 export 'package:muslimdaily/app/core/shard/widgets/main_app_bar.dart';
 export 'package:muslimdaily/app/core/shard/constanc/app_string.dart';
+export 'package:muslimdaily/app/core/extensions/extensions.dart';

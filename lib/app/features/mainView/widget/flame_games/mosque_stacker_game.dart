@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'base_flame_game.dart';
 
 class MosqueStackerGame extends BaseEducationalGame with TapCallbacks {
+  @override
+  String get storageKey => 'mosque_stacker';
   MosquePiece? currentPiece;
   double gameSpeed = 0; // Set in onResize
   final List<MosquePiece> stackedPieces = [];
@@ -160,8 +162,8 @@ class BackgroundGradient extends Component with HasGameRef {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: colors,
-      ).createShader(gameRef.size.toRect());
-    canvas.drawRect(gameRef.size.toRect(), paint);
+      ).createShader(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y));
+    canvas.drawRect(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y), paint);
     
     // Arches silhouettes
     final archPaint = Paint()..color = Colors.white.withOpacity(0.05)..style = PaintingStyle.stroke..strokeWidth = gameRef.size.x * 0.02;
@@ -249,7 +251,7 @@ class MosquePiece extends PositionComponent with HasGameRef<MosqueStackerGame> {
     final paint = Paint()..color = colors[type];
     
     // Marble feel with slight shine
-    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), const Radius.circular(4)), paint);
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.x, size.y), const Radius.circular(4)), paint);
     
     // Texture logic
     if (type == 0 || type == 1) { // Base or Walls

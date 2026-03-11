@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import '../../core/shard/exports/all_exports.dart';
 import 'data/UserStats.dart';
 
@@ -35,8 +34,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = isDark ? Colors.tealAccent : const Color(0xFF00897B);
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor =
+        context.isDark ? Colors.tealAccent : const Color(0xFF00897B);
 
     final last7Days = List.generate(7, (i) {
       final date = DateTime.now().subtract(Duration(days: 6 - i));
@@ -51,11 +51,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+          preferredSize: Size.fromHeight(context.isTablet ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
-              color: isDark ? Colors.white : Colors.black,
+              color: context.isDark ? Colors.white : Colors.black,
             ),
             centerTitle: true,
             title: Text(
@@ -63,7 +62,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               style: GoogleFonts.cairo(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize: context.isTablet ? 12.sp : 18.sp,
               ),
             ),
             actions: const [
@@ -150,7 +149,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               //     }
               //   },
               // ),
-
             ],
             // actions: [
             //   if (Platform.isAndroid)
@@ -181,13 +179,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             // ],
           ),
         ),
-
         body: Stack(
           children: [
             Positioned.fill(
               child: Opacity(
-                opacity: isDark ? 0.05 : 0.02,
-                child: Image.asset("assets/images/pattern.webp", repeat: ImageRepeat.repeat),
+                opacity: context.isDark ? 0.05 : 0.02,
+                child: Image.asset("assets/images/pattern.webp",
+                    repeat: ImageRepeat.repeat),
               ),
             ),
             CustomScrollView(
@@ -196,7 +194,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 // SliverAppBar(
                 //   expandedHeight: 120.h,
                 //   pinned: true,
-                //   backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFF00897B),
+                //   backgroundColor: context.isDark ? const Color(0xFF1A1A1A) : const Color(0xFF00897B),
                 //   leading: const CupertinoNavigationBarBackButton(color: Colors.white),
                 //   flexibleSpace: FlexibleSpaceBar(
                 //     centerTitle: true,
@@ -206,7 +204,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 //         gradient: LinearGradient(
                 //           begin: Alignment.topCenter,
                 //           end: Alignment.bottomCenter,
-                //           colors: isDark
+                //           colors: context.isDark
                 //               ? [const Color(0xFF2C2C2C), const Color(0xFF1A1A1A)]
                 //               : [const Color(0xFF00BFA5), const Color(0xFF00897B)],
                 //         ),
@@ -218,23 +216,47 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   padding: EdgeInsets.all(20.w),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      _buildMainStatCard(widget.stats.totalTasbihat, isDark, primaryColor),
+                      _buildMainStatCard(widget.stats.totalTasbihat,
+                          context.isDark, primaryColor),
                       SizedBox(height: 16.h),
                       Row(
                         children: [
-                          Expanded(child: _buildInfoCard("السلسلة الحالية", "${widget.stats.currentStreak}", "يوم", Icons.local_fire_department, Colors.orange, isDark)),
+                          Expanded(
+                              child: _buildInfoCard(
+                                  "السلسلة الحالية",
+                                  "${widget.stats.currentStreak}",
+                                  "يوم",
+                                  Icons.local_fire_department,
+                                  Colors.orange,
+                                  context.isDark)),
                           SizedBox(width: 12.w),
-                          Expanded(child: _buildInfoCard("أطول سلسلة", "${widget.stats.longestStreak}", "يوم", Icons.emoji_events, Colors.amber, isDark)),
+                          Expanded(
+                              child: _buildInfoCard(
+                                  "أطول سلسلة",
+                                  "${widget.stats.longestStreak}",
+                                  "يوم",
+                                  Icons.emoji_events,
+                                  Colors.amber,
+                                  context.isDark)),
                         ],
                       ),
                       SizedBox(height: 32.h),
-                      _buildSectionHeader("نشاط آخر 7 أيام", Icons.bar_chart_rounded, isDark, primaryColor),
+                      _buildSectionHeader(
+                          "نشاط آخر 7 أيام",
+                          Icons.bar_chart_rounded,
+                          context.isDark,
+                          primaryColor),
                       SizedBox(height: 16.h),
-                      _buildActivityChart(last7Days, isDark, primaryColor),
+                      _buildActivityChart(
+                          last7Days, context.isDark, primaryColor),
                       SizedBox(height: 32.h),
-                      _buildSectionHeader("الإنجازات (${widget.stats.achievements.length})", Icons.stars_rounded, isDark, primaryColor),
+                      _buildSectionHeader(
+                          "الإنجازات (${widget.stats.achievements.length})",
+                          Icons.stars_rounded,
+                          context.isDark,
+                          primaryColor),
                       SizedBox(height: 16.h),
-                      _buildAchievementsGrid(widget.stats, isDark),
+                      _buildAchievementsGrid(widget.stats, context.isDark),
                       SizedBox(height: 40.h),
                     ]),
                   ),
@@ -251,72 +273,104 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     return Container(
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: context.isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          BoxShadow(color: primaryColor.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))
+          BoxShadow(
+              color: primaryColor.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10))
         ],
         border: Border.all(color: primaryColor.withOpacity(0.1), width: 1),
       ),
       child: Column(
         children: [
-          Text("إجمالي التسبيحات", style: GoogleFonts.cairo(fontSize: 14.sp, color: Colors.grey, fontWeight: FontWeight.w600)),
+          Text("إجمالي التسبيحات",
+              style: GoogleFonts.cairo(
+                  fontSize: 14.sp,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600)),
           SizedBox(height: 8.h),
           Text(
             "$total",
-            style: GoogleFonts.barlow(fontSize: 45.sp, fontWeight: FontWeight.bold, color: primaryColor),
+            style: GoogleFonts.barlow(
+                fontSize: context.isTablet ? 30.sp : 45.sp,
+                fontWeight: FontWeight.bold,
+                color: primaryColor),
           ),
           Container(
             height: 4.h,
             width: 40.w,
-            decoration: BoxDecoration(color: primaryColor.withOpacity(0.3), borderRadius: BorderRadius.circular(2)),
+            decoration: BoxDecoration(
+                color: primaryColor.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(2)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInfoCard(String title, String value, String unit, IconData icon, Color iconColor, bool isDark) {
+  Widget _buildInfoCard(String title, String value, String unit, IconData icon,
+      Color iconColor, bool isDark) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: context.isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white12 : Colors.grey.withOpacity(0.1)),
+        border: Border.all(
+            color:
+                context.isDark ? Colors.white12 : Colors.grey.withOpacity(0.1)),
       ),
       child: Column(
         spacing: 5,
         children: [
           // Icon(icon, color: iconColor, size: 28.sp),
           // SizedBox(height: 8.h),
-          Text(value, style: GoogleFonts.barlow(fontSize: 24.sp, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
-          Text("$title ($unit)", style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey), textAlign: TextAlign.center),
+          Text(value,
+              style: GoogleFonts.barlow(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                  color: context.isDark ? Colors.white : Colors.black87)),
+          Text("$title ($unit)",
+              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey),
+              textAlign: TextAlign.center),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title, IconData icon, bool isDark, Color primaryColor) {
+  Widget _buildSectionHeader(
+      String title, IconData icon, bool isDark, Color primaryColor) {
     return Row(
       children: [
-        Icon(icon, size: 20.sp, color: primaryColor),
+        Icon(icon, size: context.isTablet ? 15.sp : 20.sp, color: primaryColor),
         SizedBox(width: 8.w),
-        Text(title, style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : Colors.black87)),
+        Text(title,
+            style: GoogleFonts.cairo(
+                fontSize: context.isTablet ? 10.sp : 14.sp,
+                fontWeight: FontWeight.bold,
+                color: context.isDark ? Colors.white70 : Colors.black87)),
       ],
     );
   }
 
-  Widget _buildActivityChart(List<Map<String, dynamic>> data, bool isDark, Color primaryColor) {
-    final maxCount = data.map((d) => d['count'] as int).reduce((a, b) => a > b ? a : b).toDouble();
+  Widget _buildActivityChart(
+      List<Map<String, dynamic>> data, bool isDark, Color primaryColor) {
+    final maxCount = data
+        .map((d) => d['count'] as int)
+        .reduce((a, b) => a > b ? a : b)
+        .toDouble();
     final yMax = maxCount < 5 ? 5.0 : maxCount + 2;
 
     return Container(
       height: 200.h,
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: context.isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white12 : Colors.grey.withOpacity(0.1)),
+        border: Border.all(
+            color:
+                context.isDark ? Colors.white12 : Colors.grey.withOpacity(0.1)),
       ),
       child: BarChart(
         BarChartData(
@@ -324,11 +378,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           maxY: yMax,
           barTouchData: BarTouchData(
             touchTooltipData: BarTouchTooltipData(
-              getTooltipColor: (_) => isDark ? Colors.grey[800]! : Colors.teal[50]!,
+              getTooltipColor: (_) =>
+                  context.isDark ? Colors.grey[800]! : Colors.teal[50]!,
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                 return BarTooltipItem(
                   "${rod.toY.toInt()} ورد",
-                  GoogleFonts.cairo(color: primaryColor, fontWeight: FontWeight.bold),
+                  GoogleFonts.cairo(
+                      color: primaryColor, fontWeight: FontWeight.bold),
                 );
               },
             ),
@@ -342,16 +398,21 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   if (value.toInt() >= 0 && value.toInt() < data.length) {
                     return Padding(
                       padding: EdgeInsets.only(top: 8.h),
-                      child: Text(data[value.toInt()]['date'] as String, style: GoogleFonts.cairo(fontSize: 9.sp, color: Colors.grey)),
+                      child: Text(data[value.toInt()]['date'] as String,
+                          style: GoogleFonts.cairo(
+                              fontSize: 9.sp, color: Colors.grey)),
                     );
                   }
                   return const Text('');
                 },
               ),
             ),
-            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            leftTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
           gridData: const FlGridData(show: false),
           borderData: FlBorderData(show: false),
@@ -367,7 +428,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   backDrawRodData: BackgroundBarChartRodData(
                     show: true,
                     toY: yMax,
-                    color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.02),
+                    color: context.isDark
+                        ? Colors.white.withOpacity(0.03)
+                        : Colors.black.withOpacity(0.02),
                   ),
                 ),
               ],
@@ -380,24 +443,59 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   Widget _buildAchievementsGrid(UserStats stats, bool isDark) {
     final allAchievements = [
-      {'id': 'beginner', 'icon': '🌱', 'title': 'البداية', 'desc': '100 تسبيحة'},
-      {'id': 'dedicated', 'icon': '⭐', 'title': 'المواظب', 'desc': '1000 تسبيحة'},
+      {
+        'id': 'beginner',
+        'icon': '🌱',
+        'title': 'البداية',
+        'desc': '100 تسبيحة'
+      },
+      {
+        'id': 'dedicated',
+        'icon': '⭐',
+        'title': 'المواظب',
+        'desc': '1000 تسبيحة'
+      },
       {'id': 'master', 'icon': '👑', 'title': 'الخبير', 'desc': '10000 تسبيحة'},
-      {'id': 'week_streak', 'icon': '🔥', 'title': 'أسبوع', 'desc': '7 أيام متتالية'},
-      {'id': 'month_streak', 'icon': '💎', 'title': 'شهر', 'desc': '30 يوم متتالي'},
-      {'id': 'first_day', 'icon': '🎉', 'title': 'أول يوم', 'desc': 'أكملت أول ورد لك'},
-      {'id': 'fifty', 'icon': '💠', 'title': 'نصف الطريق', 'desc': '5000 تسبيحة'},
-      {'id': 'millions', 'icon': '💯', 'title': 'الملهم', 'desc': '100,000 تسبيحة'},
+      {
+        'id': 'week_streak',
+        'icon': '🔥',
+        'title': 'أسبوع',
+        'desc': '7 أيام متتالية'
+      },
+      {
+        'id': 'month_streak',
+        'icon': '💎',
+        'title': 'شهر',
+        'desc': '30 يوم متتالي'
+      },
+      {
+        'id': 'first_day',
+        'icon': '🎉',
+        'title': 'أول يوم',
+        'desc': 'أكملت أول ورد لك'
+      },
+      {
+        'id': 'fifty',
+        'icon': '💠',
+        'title': 'نصف الطريق',
+        'desc': '5000 تسبيحة'
+      },
+      {
+        'id': 'millions',
+        'icon': '💯',
+        'title': 'الملهم',
+        'desc': '100,000 تسبيحة'
+      },
     ];
 
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: ResponsiveUtil.isTablet(context) ? 4 : 2,
+        crossAxisCount: context.isTablet ? 4 : 2,
         crossAxisSpacing: 12.w,
         mainAxisSpacing: 12.w,
-        childAspectRatio: 0.85,
+        childAspectRatio: 0.75,
       ),
       itemCount: allAchievements.length,
       itemBuilder: (context, index) {
@@ -405,24 +503,54 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         final isUnlocked = stats.achievements.contains(ach['id']);
         return Container(
           decoration: BoxDecoration(
-            color: isUnlocked ? (isDark ? Colors.tealAccent.withOpacity(0.1) : const Color(0xFF00897B).withOpacity(0.05)) : (isDark ? Colors.white.withOpacity(0.02) : Colors.grey.withOpacity(0.03)),
+            color: isUnlocked
+                ? (context.isDark
+                    ? Colors.tealAccent.withOpacity(0.1)
+                    : const Color(0xFF00897B).withOpacity(0.05))
+                : (context.isDark
+                    ? Colors.white.withOpacity(0.02)
+                    : Colors.grey.withOpacity(0.03)),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: isUnlocked ? (isDark ? Colors.tealAccent.withOpacity(0.5) : const Color(0xFF00897B).withOpacity(0.3)) : Colors.grey.withOpacity(0.1)),
+            border: Border.all(
+                color: isUnlocked
+                    ? (context.isDark
+                        ? Colors.tealAccent.withOpacity(0.5)
+                        : const Color(0xFF00897B).withOpacity(0.3))
+                    : Colors.grey.withOpacity(0.1)),
           ),
           child: Column(
+            spacing: 15,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Opacity(
-                opacity: isUnlocked ? 1.0 : 0.3,
-                child: Text(ach['icon']!, style: TextStyle(fontSize: 32.sp)),
-              ),
-              SizedBox(height: 8.h),
-              Text(ach['title']!, style: GoogleFonts.cairo(fontSize: 12.sp, fontWeight: FontWeight.bold, color: isUnlocked ? (isDark ? Colors.tealAccent : const Color(0xFF00897B)) : Colors.grey)),
+              // Opacity(
+              //   opacity: isUnlocked ? 1.0 : 0.3,
+              //   child: Text(ach['icon']!, style: TextStyle(fontSize:context.isTablet?20.sp: 32.sp)),
+              // ),
+              // SizedBox(height: 8.h),
+              Text(ach['title']!,
+                  style: GoogleFonts.cairo(
+                      fontSize: context.isTablet ? 9.sp : 12.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isUnlocked
+                          ? (context.isDark
+                              ? Colors.tealAccent
+                              : const Color(0xFF00897B))
+                          : Colors.grey)),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
-                child: Text(ach['desc']!, style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey), textAlign: TextAlign.center),
+                child: Text(
+                  ach['desc']!,
+                  style: GoogleFonts.cairo(
+                      fontSize: context.isTablet ? 7.sp : 10.sp,
+                      color: Colors.grey),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              if (!isUnlocked) Icon(Icons.lock_outline_rounded, size: 14.sp, color: Colors.grey.withOpacity(0.5)),
+              if (!isUnlocked)
+                Icon(Icons.lock_outline_rounded,
+                    size: 14.sp, color: Colors.grey.withOpacity(0.5)),
             ],
           ),
         );

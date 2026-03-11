@@ -11,6 +11,7 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 // import 'package:muslimdaily/app/features/shareCard/PremiumShareCard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/shard/widgets/ui_animations.dart';
@@ -97,6 +98,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
 
     // وسم الدخول الأول للمصحف لتفعيل ميزة الاستكمال في المرات القادمة
     _initialMarkEntry();
+    WakelockPlus.enable();
   }
 
   // تحميل الإعدادات المحفوظة (المظهر وحجم الخط)
@@ -162,6 +164,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
 
   @override
   void dispose() {
+    WakelockPlus.disable();
     _saveCurrentState(); // Final save
     _scrollSaveTimer?.cancel();
     _autoScrollTimer?.cancel();
@@ -770,12 +773,17 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
     return GestureDetector(
       onTap: () {
         if (Navigator.canPop(context)) {
-          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SurahListScreen(useOldMushaf: true, autoResume: false),
+            ),
+          );
         } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) =>  const SurahListScreen(useOldMushaf: true),
+              builder: (context) => const SurahListScreen(useOldMushaf: true, autoResume: false),
             ),
           );
         }
