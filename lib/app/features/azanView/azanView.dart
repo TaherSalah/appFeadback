@@ -213,66 +213,107 @@ class _AzanViewState extends StateMVC<AzanView> {
                           ),
                         ),
                         const SizedBox(height: 8),
+                        const SizedBox(height: 16),
                         _buildMadhabDropdown(isDark, setStateSheet),
 
                         const SizedBox(height: 16),
 
+                        // التوقيت الصيفي
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '🌞 تفعيل التوقيت الصيفي (+ساعة)',
+                              style: GoogleFonts.cairo(
+                                fontSize: ResponsiveUtil.isTablet(context)
+                                    ? 9.sp
+                                    : 14.sp,
+                                color: isDark ? Colors.white : Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Switch(
+                              value: con.isDSTEnabled,
+                              onChanged: (value) {
+                                setStateSheet(() {
+                                  con.toggleDST(value);
+                                });
+                              },
+                              activeColor: KColors.primaryColor,
+                            ),
+                          ],
+                        ),
+
                         const SizedBox(height: 16),
 
                         // تعديل الساعات (فارق التوقيت)
-                        // Text(
-                        //   'تعديل الساعات (فارق التوقيت)',
-                        //   style: GoogleFonts.cairo(
-                        //     fontSize: 14.sp,
-                        //     color: Colors.grey,
-                        //     fontWeight: FontWeight.bold,
-                        //   ),
-                        // ),
-                        // const SizedBox(height: 8),
-                        // Container(
-                        //   padding: const EdgeInsets.symmetric(
-                        //       horizontal: 12, vertical: 8),
-                        //   decoration: BoxDecoration(
-                        //     color: isDark
-                        //         ? Colors.black.withOpacity(0.2)
-                        //         : Colors.grey.shade100,
-                        //     borderRadius: BorderRadius.circular(12),
-                        //     border: Border.all(
-                        //         color:
-                        //             isDark ? Colors.white10 : Colors.grey.shade300),
-                        //   ),
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //     children: [
-                        //       IconButton(
-                        //         icon: const Icon(Icons.remove_circle_outline,
-                        //             color: Colors.red),
-                        //         onPressed: () {
-                        //           setStateSheet(() {
-                        //             con.manualOffset--;
-                        //           });
-                        //         },
-                        //       ),
-                        //       Text(
-                        //         "${con.manualOffset > 0 ? '+' : ''}${con.manualOffset} ساعة",
-                        //         style: GoogleFonts.cairo(
-                        //           fontSize: 16.sp,
-                        //           fontWeight: FontWeight.bold,
-                        //           color: isDark ? Colors.white : Colors.black87,
-                        //         ),
-                        //       ),
-                        //       IconButton(
-                        //         icon: const Icon(Icons.add_circle_outline,
-                        //             color: Colors.green),
-                        //         onPressed: () {
-                        //           setStateSheet(() {
-                        //             con.manualOffset++;
-                        //           });
-                        //         },
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        Text(
+                          'تعديل الساعات يدوياً',
+                          style: GoogleFonts.cairo(
+                            fontSize:
+                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.black.withOpacity(0.2)
+                                : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: isDark
+                                    ? Colors.white10
+                                    : Colors.grey.shade300),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove_circle_outline,
+                                    color: Colors.red),
+                                onPressed: () {
+                                  setStateSheet(() {
+                                    con.manualOffset--;
+                                    con.updateCalcSettings(
+                                      method: con.selectedMethod,
+                                      madhab: con.selectedMadhab,
+                                      offset: con.manualOffset,
+                                      dstEnabled: con.isDSTEnabled,
+                                    );
+                                  });
+                                },
+                              ),
+                              Text(
+                                "${con.manualOffset > 0 ? '+' : ''}${con.manualOffset} ساعة",
+                                style: GoogleFonts.cairo(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? Colors.white : Colors.black87,
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add_circle_outline,
+                                    color: Colors.green),
+                                onPressed: () {
+                                  setStateSheet(() {
+                                    con.manualOffset++;
+                                    con.updateCalcSettings(
+                                      method: con.selectedMethod,
+                                      madhab: con.selectedMadhab,
+                                      offset: con.manualOffset,
+                                      dstEnabled: con.isDSTEnabled,
+                                    );
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
 
                         const SizedBox(height: 16),
 
@@ -1195,18 +1236,19 @@ class _AzanViewState extends StateMVC<AzanView> {
     String remainingTimeText,
     dynamic prayerTimes,
   ) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [KColors.primaryColor, Colors.teal.shade500],
+          colors: con.getNextPrayerGradient(),
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: KColors.primaryColor.withOpacity(0.4),
+            color: con.getNextPrayerGradient().first.withOpacity(0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -1216,17 +1258,25 @@ class _AzanViewState extends StateMVC<AzanView> {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.access_time_rounded,
-                  color: Colors.white,
-                  size: 28,
-                ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: CircularProgressIndicator(
+                      value: con.progressValue,
+                      strokeWidth: 3,
+                      backgroundColor: Colors.white24,
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                  const Icon(
+                    Icons.access_time_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ],
               ),
               const SizedBox(width: 12),
               Column(
@@ -1288,26 +1338,76 @@ class _AzanViewState extends StateMVC<AzanView> {
     String nextPrayer,
   ) {
     // ... (logic remains same, just ensuring it's a class member)
-    final prayerData = [
-      {"name": "الفجر", "time": prayerTimes.fajr, "icon": Icons.wb_twilight},
-      {"name": "الشروق", "time": prayerTimes.sunrise, "icon": Icons.wb_sunny},
-      {"name": "الظهر", "time": prayerTimes.dhuhr, "icon": Icons.light_mode},
+    final adj = con.adjustedPrayersForUI;
+    final isRamadan = con.isRamadan;
+
+    final allPrayerData = [
+      {
+        "name": "الإمساك",
+        "time": adj["الإمساك"],
+        "icon": Icons.timer_outlined,
+        "isRamadan": true
+      },
+      {
+        "name": "السحور",
+        "time": adj["السحور"],
+        "icon": Icons.restaurant_menu_outlined,
+        "isRamadan": true
+      },
+      {
+        "name": "الفجر",
+        "time": adj["الفجر"] ?? prayerTimes.fajr,
+        "icon": Icons.wb_twilight
+      },
+      {
+        "name": "الشروق",
+        "time": adj["الشروق"] ?? prayerTimes.sunrise,
+        "icon": Icons.wb_sunny
+      },
+      {
+        "name": "الظهر",
+        "time": adj["الظهر"] ?? prayerTimes.dhuhr,
+        "icon": Icons.light_mode
+      },
       {
         "name": "العصر",
-        "time": prayerTimes.asr,
+        "time": adj["العصر"] ?? prayerTimes.asr,
         "icon": Icons.wb_sunny_outlined
       },
       {
         "name": "المغرب",
-        "time": prayerTimes.maghrib,
+        "time": adj["المغرب"] ?? prayerTimes.maghrib,
         "icon": Icons.wb_twilight
       },
       {
         "name": "العشاء",
-        "time": prayerTimes.isha,
+        "time": adj["العشاء"] ?? prayerTimes.isha,
         "icon": Icons.nightlight_round
       },
+      {
+        "name": "التراويح",
+        "time": (adj["العشاء"] ?? prayerTimes.isha).add(const Duration(minutes: 20)),
+        "icon": Icons.mosque_outlined,
+        "isRamadan": true
+      },
+      {
+        "name": "منتصف الليل",
+        "time": adj["منتصف الليل"],
+        "icon": Icons.bedtime_outlined,
+        "isSunnah": true
+      },
+      {
+        "name": "الثلث الأخير",
+        "time": adj["الثلث الأخير"],
+        "icon": Icons.auto_awesome_rounded,
+        "isSunnah": true
+      },
     ];
+
+    final prayerData = allPrayerData.where((p) {
+      if (p["isRamadan"] == true && !isRamadan) return false;
+      return true;
+    }).toList();
 
     return ListView.separated(
       physics: const BouncingScrollPhysics(),
@@ -1375,15 +1475,28 @@ class _AzanViewState extends StateMVC<AzanView> {
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: Text(
-                      prayer["name"] as String,
-                      style: GoogleFonts.cairo(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isNext
-                            ? Colors.green
-                            : (isDark ? Colors.white : Colors.black87),
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          prayer["name"] as String,
+                          style: GoogleFonts.cairo(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: isNext
+                                ? Colors.green
+                                : (isDark ? Colors.white : Colors.black87),
+                          ),
+                        ),
+                        if (con.getIqamaTextForPrayer(prayer["name"] as String).isNotEmpty)
+                          Text(
+                            con.getIqamaTextForPrayer(prayer["name"] as String),
+                            style: GoogleFonts.cairo(
+                              fontSize: 10.sp,
+                              color: isNext ? Colors.green.withOpacity(0.7) : Colors.grey,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   Container(

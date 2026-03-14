@@ -406,6 +406,9 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                             nextPrayer: con.nextPrayer,
                             remainingTime: con.remainingTimeText,
                             location: _locationText ?? 'لم يتم تحديد الموقع',
+                            adjustedPrayers: con.adjustedPrayersForUI,
+                            backgroundGradient: con.getNextPrayerGradient(),
+                            iqamaTimeText: con.getIqamaTextForPrayer(con.upcomingPrayerName),
                             onSettingsTap: () async {
                               await Navigator.push(
                                 context,

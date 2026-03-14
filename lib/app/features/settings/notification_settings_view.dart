@@ -890,6 +890,10 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                               style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.bold),
                             ),
+
+
+
+
                           ),
                         ),
                       ),

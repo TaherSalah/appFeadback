@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart' as initl;
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:muslimdaily/app/core/utils/log.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
@@ -42,6 +43,7 @@ class MainController extends ControllerMVC {
   bool isUsingGPS = false;
   bool isLoadingLocation = false; // حالة تحميل الموقع التلقائي
   int hijriAdjustment = 0; // تعديل التاريخ الهجري يدوياً
+  bool isDSTEnabled = false; // تفعيل التوقيت الصيفي
 
   // إعدادات الحساب
   CalculationMethod selectedMethod = CalculationMethod.egyptian;
@@ -76,6 +78,8 @@ class MainController extends ControllerMVC {
   bool isIqamaCountdown = false;
   DateTime? previousTime;
   DateTime? targetTime;
+
+  Duration get timeLeft => targetTime?.difference(DateTime.now()) ?? Duration.zero;
 
   late DateTime now;
   String? gregorian;
@@ -261,6 +265,7 @@ class MainController extends ControllerMVC {
     }
 
     hijriAdjustment = prefs.getInt(_kHijriAdjustmentKey) ?? 0;
+    isDSTEnabled = prefs.getBool('is_dst_enabled') ?? false;
     _updateHijriDate();
 
     // تحميل التعديلات العامة من السيرفر (والكاش)
@@ -374,6 +379,7 @@ class MainController extends ControllerMVC {
     required CalculationMethod method,
     required Madhab madhab,
     required int offset,
+    bool? dstEnabled,
     bool? postReminderEnabled,
     int? postRemMinutes,
   }) async {
@@ -381,6 +387,10 @@ class MainController extends ControllerMVC {
     selectedMethod = method;
     selectedMadhab = madhab;
     manualOffset = offset;
+    if (dstEnabled != null) {
+      isDSTEnabled = dstEnabled;
+      await prefs.setBool('is_dst_enabled', isDSTEnabled);
+    }
     if (postReminderEnabled != null) {
       postPrayerReminderEnabled = postReminderEnabled;
     }
@@ -444,6 +454,18 @@ class MainController extends ControllerMVC {
       method: selectedMethod,
       madhab: selectedMadhab,
       offset: manualOffset,
+      dstEnabled: isDSTEnabled,
+    );
+  }
+
+  // تبديل التوقيت الصيفي
+  Future<void> toggleDST(bool value) async {
+    isDSTEnabled = value;
+    await updateCalcSettings(
+      method: selectedMethod,
+      madhab: selectedMadhab,
+      offset: manualOffset,
+      dstEnabled: isDSTEnabled,
     );
   }
 
@@ -452,6 +474,8 @@ class MainController extends ControllerMVC {
       : toArabicDigits(
           '${hijri!.hDay} ${hijri!.getLongMonthName()} ${hijri!.hYear} هـ',
         );
+
+  bool get isRamadan => hijri?.hMonth == 9;
 
   // تحميل الدول + قراءة الموقع المخزون (إن وجد)
   Future<void> _loadCountriesAndLocation() async {
@@ -590,9 +614,17 @@ class MainController extends ControllerMVC {
     final times = PrayerTimes(coordinates, date, params);
 
     final nowLocal = DateTime.now();
-    final hourOffset = Duration(hours: manualOffset);
+    final hourOffset = Duration(hours: manualOffset + (isDSTEnabled ? 1 : 0));
+
+    // حساب أوقات الإمساك والسحور والسنن (للعرض فقط)
+    final sunnah = SunnahTimes(times);
+    final imsak = times.fajr.subtract(const Duration(minutes: 10)); // الإمساك قبل الفجر بـ 10 دقائق
+    final midnight = sunnah.middleOfTheNight;
+    final lastThird = sunnah.lastThirdOfTheNight;
 
     final prayers = {
+      "الإمساك": imsak.add(hourOffset),
+      "السحور": lastThird.add(hourOffset), // السحور غالباً يبدأ مع الثلث الأخير
       "الفجر": times.fajr
           .add(hourOffset)
           .add(Duration(minutes: fajrOffset + globalFajrOffset)),
@@ -611,12 +643,17 @@ class MainController extends ControllerMVC {
       "العشاء": times.isha
           .add(hourOffset)
           .add(Duration(minutes: ishaOffset + globalIshaOffset)),
+      "منتصف الليل": midnight.add(hourOffset),
+      "الثلث الأخير": lastThird.add(hourOffset),
     };
 
     DateTime? next;
     String? upcoming;
+    // قائمة الصلوات الرسمية فقط التي تظهر كـ "صلاة قادمة"
+    final officialPrayers = ["الفجر", "الشروق", "الظهر", "العصر", "المغرب", "العشاء"];
+
     for (var entry in prayers.entries) {
-      if (nowLocal.isBefore(entry.value)) {
+      if (officialPrayers.contains(entry.key) && nowLocal.isBefore(entry.value)) {
         next = entry.value;
         upcoming = entry.key;
         break;
@@ -659,9 +696,52 @@ class MainController extends ControllerMVC {
     );
 
     log('PrayerTimes computed: $times');
+    
+    // حفظ نسخة معدلة للاستخدام في الواجهة
+    _adjustedPrayersForUI = prayers;
+
     setState(() {
       prayerTimes = times;
     });
+  }
+
+  // خريطة لتخزين المواعيد المعدلة للواجهة
+  Map<String, DateTime> _adjustedPrayersForUI = {};
+  Map<String, DateTime> get adjustedPrayersForUI => _adjustedPrayersForUI;
+
+  // جلب الألوان الديناميكية بناءً على الصلاة القادمة
+  List<Color> getNextPrayerGradient() {
+    switch (upcomingPrayerName) {
+      case "الفجر":
+      case "الإمساك":
+      case "السحور":
+        return [const Color(0xFF1E293B), const Color(0xFF334155)]; // ألوان الفجر الهادئة
+      case "الشروق":
+        return [Colors.orange.shade400, Colors.orange.shade700]; // ألوان الشروق المشمسة
+      case "الظهر":
+        return [Colors.blue.shade500, Colors.blue.shade700]; // السماء الصافية للظهر
+      case "العصر":
+        return [Colors.amber.shade600, Colors.orange.shade800]; // ألوان العصر الذهبية
+      case "المغرب":
+        return [Colors.deepOrange.shade700, const Color(0xFF4A148C)]; // ألوان الغروب
+      case "العشاء":
+      case "منتصف الليل":
+      case "الثلث الأخير":
+        return [const Color(0xFF0F172A), const Color(0xFF1E293B)]; // ألوان الليل الداكنة
+      default:
+        return [const Color(0xFF178B74), const Color(0xFF0F4C3E)];
+    }
+  }
+
+  // جلب نص الإقامة للصلاة
+  String getIqamaTextForPrayer(String prayerName) {
+    if (["الشروق", "الإمساك", "منتصف الليل", "الثلث الأخير", "السحور", "التراويح"].contains(prayerName)) return "";
+    
+    DateTime adhanTime = _adjustedPrayersForUI[prayerName] ?? DateTime.now();
+    DateTime iqamaTime = getIqamaTime(prayerName, adhanTime);
+    
+    int diff = iqamaTime.difference(adhanTime).inMinutes;
+    return "الإقامة خلال $diff دقيقة";
   }
 
   void startCountdown({
@@ -693,8 +773,13 @@ class MainController extends ControllerMVC {
         progressValue = progress.clamp(0.0, 1.0);
         remainingTimeText =
             "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
-        nextPrayer =
-            isIqama ? " الإقامة لصلاة $upcomingPrayerName" : upcomingPrayerName;
+        if (isIqama) {
+          nextPrayer = "إقامة صلاة $upcomingPrayerName بعد";
+        } else {
+          nextPrayer = (upcomingPrayerName == "الشروق")
+              ? "الشروق بعد"
+              : "صلاة $upcomingPrayerName بعد";
+        }
       });
     });
   }
@@ -709,7 +794,8 @@ class MainController extends ControllerMVC {
       case "المغرب":
         return adhanTime.add(const Duration(minutes: 5));
       case "الشروق":
-        return DateTime(0); // لا إقامة للشروق
+      case "التراويح":
+        return DateTime(0); // لا إقامة للشروق أو التراويح
       default:
         return adhanTime.add(const Duration(minutes: 10));
     }

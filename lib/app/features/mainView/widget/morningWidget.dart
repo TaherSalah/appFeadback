@@ -30,9 +30,9 @@ class _HalalGreetingState extends State<HalalGreeting> {
 
     switch (weekday) {
       case DateTime.sunday: // الأحد
-        return '🌙 لا تَنْسَ صِيام غدًا الإثنين';
+        return 'لا تَنْسَ صِيام غدًا الإثنين';
       case DateTime.wednesday: // الأربعاء
-        return '🌙 لا تَنْسَ صِيام غدًا الخميس';
+        return 'لا تَنْسَ صِيام غدًا الخميس';
       case DateTime.friday: // الجمعة
         return 'لا تَنْسَ قراءة سورة الكهف';
       default:
@@ -46,7 +46,7 @@ class _HalalGreetingState extends State<HalalGreeting> {
   String? _getWhiteDaysReminder() {
     final dayHijri = hijri.hDay; // اليوم الهجري الحقيقي
     if ([13, 14, 15].contains(dayHijri)) {
-      return '🌙 لا تَنْسَ صِيام الأيام البيض';
+      return 'لا تَنْسَ صِيام الأيام البيض';
     }
     return null;
   }
@@ -55,7 +55,7 @@ class _HalalGreetingState extends State<HalalGreeting> {
   String? _getQiyamReminder() {
     final hour = DateTime.now().hour;
     if (hour >= 23 || hour < 3) {
-      return '🤲 وقت قيام الليل';
+      return 'وقت قيام الليل';
     }
     return null;
   }
@@ -65,11 +65,11 @@ class _HalalGreetingState extends State<HalalGreeting> {
     final hour = DateTime.now().hour;
 
     if (hour >= 5 && hour < 13) {
-      return '🌤️ صَباحُ الطَّاعَةِ';
+      return 'صَباحُ الطَّاعَةِ';
     } else if (hour >= 13 && hour < 23) {
-      return '🌙 مَساءُ الرَّحْمَةِ';
+      return 'مَساءُ الرَّحْمَةِ';
     } else {
-      return '🌌 لَيْلَةٌ مُبارَكَة';
+      return ' لَيْلَةٌ مُبارَكَة';
     }
   }
 
