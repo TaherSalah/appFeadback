@@ -1346,7 +1346,8 @@ class _AzanViewState extends StateMVC<AzanView> {
         "name": "الإمساك",
         "time": adj["الإمساك"],
         "icon": Icons.timer_outlined,
-        "isRamadan": true
+        "isRamadan": true,
+        
       },
       {
         "name": "السحور",
@@ -1357,32 +1358,32 @@ class _AzanViewState extends StateMVC<AzanView> {
       {
         "name": "الفجر",
         "time": adj["الفجر"] ?? prayerTimes.fajr,
-        "icon": Icons.wb_twilight
+        "icon": "assets/icons/widget_fajr_on.png"
       },
       {
         "name": "الشروق",
         "time": adj["الشروق"] ?? prayerTimes.sunrise,
-        "icon": Icons.wb_sunny
+        "icon": "assets/icons/widget_shrouq_on.png"
       },
       {
         "name": "الظهر",
         "time": adj["الظهر"] ?? prayerTimes.dhuhr,
-        "icon": Icons.light_mode
+        "icon": "assets/icons/widget_zohr_large.png"
       },
       {
         "name": "العصر",
         "time": adj["العصر"] ?? prayerTimes.asr,
-        "icon": Icons.wb_sunny_outlined
+        "icon": "assets/icons/widget_asr_on.png"
       },
       {
         "name": "المغرب",
         "time": adj["المغرب"] ?? prayerTimes.maghrib,
-        "icon": Icons.wb_twilight
+        "icon": "assets/icons/widget_maghreb_on.png"
       },
       {
         "name": "العشاء",
         "time": adj["العشاء"] ?? prayerTimes.isha,
-        "icon": Icons.nightlight_round
+        "icon": "assets/icons/widget_esha_on.png"
       },
       {
         "name": "التراويح",
@@ -1465,13 +1466,22 @@ class _AzanViewState extends StateMVC<AzanView> {
                               : Colors.blue.shade50),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      prayer["icon"] as IconData,
-                      color: isNext
-                          ? Colors.green
-                          : (isDark ? Colors.white : Colors.blue.shade700),
-                      size: 24,
-                    ),
+                    child: prayer["icon"] is IconData
+                        ? Icon(
+                            prayer["icon"] as IconData,
+                            color: isNext
+                                ? Colors.green
+                                : (isDark ? Colors.white : Colors.blue.shade700),
+                            size: 24,
+                          )
+                        : Image.asset(
+                            prayer["icon"] as String,
+                            width: 24,
+                            height: 24,
+                            color: isNext
+                                ? Colors.green
+                                : (isDark ? Colors.white : Colors.blue.shade700),
+                          ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(

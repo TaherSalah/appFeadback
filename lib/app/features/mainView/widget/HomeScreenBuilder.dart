@@ -422,8 +422,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                         ),
                       ),
                     ),
-                    SliverToBoxAdapter(
-                      child: const AdhanStatusBanner(),
+                    const SliverToBoxAdapter(
+                      child: AdhanStatusBanner(),
                     ),
 
                     SliverToBoxAdapter(
@@ -685,7 +685,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (_) =>
-                                              CharityDashboardScreen()),
+                                              const CharityDashboardScreen()),
                                     );
                                   }
                                 },
@@ -738,10 +738,10 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                             FadeInUp(
                               duration: const Duration(milliseconds: 700),
                               delay: const Duration(milliseconds: 900),
-                              child: Padding(
+                              child: const Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 15),
-                                child: const OtherAzkarWidget(),
+                                    EdgeInsets.symmetric(vertical: 15),
+                                child: OtherAzkarWidget(),
                               ),
                             ),
                         ],
