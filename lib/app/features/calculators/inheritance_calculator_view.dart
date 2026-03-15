@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:muslimdaily/app/core/extensions/extensions.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import '../../core/shard/widgets/ui_animations.dart';
@@ -704,7 +705,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   Widget _buildCounterField(
       String label, int value, Function(int) onValueChange,
       {int max = 100}) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTablet;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
@@ -719,7 +720,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                   icon: Icon(Icons.remove_circle_outline,
                       color: KColors.primaryColor, size: 20)),
               SizedBox(
-                  width: 25.w,
+                  width:isTap? 25.w:7.w,
                   child: Center(
                       child: Text("$value",
                           style: GoogleFonts.cairo(

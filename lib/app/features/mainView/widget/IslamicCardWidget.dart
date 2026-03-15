@@ -28,8 +28,8 @@ class IslamicCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = MediaQuery.sizeOf(context).width > 600;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isTablet = context.isTablet;
+    final isDark = context.isDark;
 
     return GestureDetector(
       onTap: onTap,
@@ -63,7 +63,7 @@ class IslamicCardWidget extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding:  EdgeInsets.all(isTablet?8:0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
