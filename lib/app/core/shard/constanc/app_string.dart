@@ -23,6 +23,7 @@ class AppString {
   static const String KPrayer = 'أذكار الصلاة';
   static const String KSleep = 'أذكار النوم';
   static const String KOtherZakar = 'أذكار مختارة';
+  static const String KHazbNawawi = "حزب الإمام النووي";
   static const String KRokia = 'الرقية الشرعية';
   static const String KCounter = 'المسبحةُ الالكترونية';
   static const String KSabhText = 'سبٌح';

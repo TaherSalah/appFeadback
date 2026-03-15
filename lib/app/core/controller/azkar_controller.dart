@@ -24,6 +24,7 @@ class AzkarProvider extends ChangeNotifier {
     _initialOtherRepate = List<int>.from(Azkary.azkarRepate);
     _initialPrayerRepate = List<int>.from(Azkary.azkarPrayerRepate);
     _initialQuranRepate = List<int>.from(Azkary.rokiaQuranRepe);
+    _initialHazbNawawiRepate = List<int>.from(Azkary.azkarHazbNawawiRepate);
   }
 
   late List<int> _initialSleepRepate;
@@ -32,12 +33,14 @@ class AzkarProvider extends ChangeNotifier {
   late List<int> _initialOtherRepate;
   late List<int> _initialPrayerRepate;
   late List<int> _initialQuranRepate;
+  late List<int> _initialHazbNawawiRepate;
   bool get isSleepDone => Azkary.azkarSleepRepate.every((c) => c <= 0);
   bool get isSabahDone => Azkary.azkarSabahRepate.every((c) => c <= 0);
   bool get isMessaDone => Azkary.azkarMassaRepate.every((c) => c <= 0);
   bool get isOtherDone => Azkary.azkarRepate.every((c) => c <= 0);
   bool get isPrayerDone => Azkary.azkarPrayerRepate.every((c) => c <= 0);
   bool get isQuranDone => Azkary.rokiaQuranRepe.every((c) => c <= 0);
+  bool get isHazbNawawiDone => Azkary.azkarHazbNawawiRepate.every((c) => c <= 0);
 
   AzkarRemoteServices azkarRemoteServices = AzkarRemoteServices();
   int counter = 0;
@@ -100,6 +103,7 @@ class AzkarProvider extends ChangeNotifier {
   int zSleepIndex = 0;
   int zOtherIndex = 0;
   int zPrayerIndex = 0;
+  int zHazbNawawiIndex = 0;
 
   // decrementQuran(quranCurrentIndex) {
   //   if (quranCurrentIndex >= 0 &&
@@ -184,6 +188,14 @@ class AzkarProvider extends ChangeNotifier {
     }
   }
 
+  void decrementHazbNawawi(int index) {
+    if (index < 0 || index >= Azkary.azkarHazbNawawiRepate.length) return;
+    if (Azkary.azkarHazbNawawiRepate[index] > 0) {
+      Azkary.azkarHazbNawawiRepate[index]--;
+      notifyListeners();
+    }
+  }
+
   void resetSleep() {
     Azkary.azkarSleepRepate = List<int>.from(_initialSleepRepate);
     KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
@@ -221,6 +233,13 @@ class AzkarProvider extends ChangeNotifier {
   void resetQuran() {
     Azkary.rokiaQuranRepe = List<int>.from(_initialQuranRepate);
     KHelper.showSuccess(message: "تم إعادة تعيين الرقية إلى الصفر بنجاح.");
+
+    notifyListeners();
+  }
+
+  void resetHazbNawawi() {
+    Azkary.azkarHazbNawawiRepate = List<int>.from(_initialHazbNawawiRepate);
+    KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
 
     notifyListeners();
   }

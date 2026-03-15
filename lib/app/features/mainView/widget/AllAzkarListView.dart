@@ -41,6 +41,11 @@ class Allazkarlistview extends StatelessWidget {
         "icon": "assets/images/praying.png",
         "navigate": "/azkarOthers",
       },
+      {
+        "title": AppString.KHazbNawawi,
+        "icon": "assets/images/pray.png",
+        "navigate": "/hazbNawawi",
+      },
     ];
     bool isTab = ResponsiveUtil.isTablet(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
