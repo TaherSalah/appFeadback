@@ -43,7 +43,7 @@ class Allazkarlistview extends StatelessWidget {
       },
       {
         "title": AppString.KHazbNawawi,
-        "icon": "assets/images/pray.png",
+        "icon": "assets/images/rub-el-hizb.png",
         "navigate": "/hazbNawawi",
       },
     ];

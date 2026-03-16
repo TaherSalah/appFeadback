@@ -46,6 +46,10 @@ class AdhanManager {
     final prefs = await SharedPreferences.getInstance();
     final enableFajr = prefs.getBool('enableFajrAdhan') ?? true;
     final enableNormal = prefs.getBool('enableNormalAdhan') ?? true;
+    
+    // ⭐ Sync city name for notifications
+    final cityName = prefs.getString('selected_city') ?? '';
+    ctrl.state.location = cityName;
 
     // Reschedule for next 7 days
     for (int day = 0; day < 7; day++) {

@@ -6,7 +6,6 @@ import 'package:muslimdaily/app/features/mainView/MainView.dart';
 import 'package:muslimdaily/app/features/mainView/view/FajrAlarmScreen.dart';
 import 'package:muslimdaily/app/features/mainView/widget/AllAzkarListView.dart';
 import 'package:muslimdaily/app/features/otherView/azkar_other.dart';
-import 'package:muslimdaily/app/features/prayerView/post_prayer_azkar.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/AyaBookmarkScreen.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/JozzsListView.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/hezbListView.dart';
@@ -15,7 +14,7 @@ import 'package:muslimdaily/app/features/quran/view/widget/surahListView.dart';
 import 'package:muslimdaily/app/features/radio/QuranRadioView.dart';
 import 'package:muslimdaily/app/features/radio/view/QuranRadioPlayerView.dart';
 import 'package:muslimdaily/app/features/radio/view/widget/RadioSearchScreen.dart';
-import 'package:muslimdaily/app/features/rokiaView/rokia.dart';
+import 'package:muslimdaily/app/features/rokiaView/rokiaView.dart';
 import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
 import 'package:muslimdaily/app/features/splashView/splash.dart';
 import 'package:muslimdaily/app/features/zakatView/zakat_calculator_view.dart';
@@ -37,6 +36,7 @@ import '../../../features/hadithDetails/hadith_details_view.dart';
 import '../../../features/QiblaView/QiblaDirection.dart';
 import '../../../features/mainView/widget/KidsCornerScreen.dart';
 import '../../../features/messaView/azkar_massa.dart';
+import '../../../features/postPrayerAzkarView/post_prayer_azkar.dart';
 import '../../../features/quran/quranView.dart';
 import '../../../features/hadith_books/presentation/nine_books_screen.dart';
 import '../../../features/hadith_books/presentation/details/collection_details_screen.dart';
@@ -191,7 +191,7 @@ class RouteGenerator {
       case '/azkarMassa':
         return MaterialPageRoute(builder: (_) => const AzkarMassa());
       case '/prayerAzkar':
-        return MaterialPageRoute(builder: (_) => const PrayerAzkar());
+        return MaterialPageRoute(builder: (_) => const PostPrayerAzkarView());
       case '/surahListScreen':
         return MaterialPageRoute(builder: (_) => const QuranView());
       case '/ListScreen':

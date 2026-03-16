@@ -3,12 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import '../../core/services/feedback_service.dart';
 
-/// شاشة عرض سجل الشكاوى الخاص بالمستخدم
 class FeedbackHistoryView extends StatefulWidget {
   final String userEmail;
 
-  const FeedbackHistoryView({Key? key, required this.userEmail})
-      : super(key: key);
+  const FeedbackHistoryView({super.key, required this.userEmail});
 
   @override
   State<FeedbackHistoryView> createState() => _FeedbackHistoryViewState();

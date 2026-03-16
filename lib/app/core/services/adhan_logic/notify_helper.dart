@@ -1,7 +1,6 @@
 import 'dart:developer' show log;
 
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter/material.dart' show Colors;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'prayers_notifications_controller.dart';

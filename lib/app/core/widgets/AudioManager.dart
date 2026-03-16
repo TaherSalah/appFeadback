@@ -274,7 +274,10 @@ class AudioManager {
       if (localPath != null && File(localPath).existsSync()) {
         await _player.setFilePath(localPath);
       } else {
-        await _player.setUrl(url);
+        await _player.setUrl(
+          url,
+          headers: {'User-Agent': 'MuslimDaily/1.0.0 (https://github.com/TaherSalah)'},
+        );
       }
 
       await _player.play();
@@ -291,7 +294,10 @@ class AudioManager {
   }) async {
     try {
       final uri = Uri.parse(url);
-      final response = await http.get(uri).timeout(const Duration(seconds: 40));
+      final response = await http.get(
+        uri,
+        headers: {'User-Agent': 'MuslimDaily/1.0.0 (https://github.com/TaherSalah)'},
+      ).timeout(const Duration(seconds: 40));
 
       if (response.statusCode != 200) {
         throw Exception('فشل تحميل الملف الصوتي (كود ${response.statusCode})');

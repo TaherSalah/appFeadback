@@ -3,6 +3,7 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:muslimdaily/app/features/mainView/widget/IslamicCardWidget.dart';
 import 'package:muslimdaily/app/features/mainView/widget/LastActivityWidget.dart';
 import 'package:muslimdaily/app/features/settings/settings_view.dart';
+import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 import 'package:hive/hive.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
@@ -408,7 +409,18 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                             location: _locationText ?? 'لم يتم تحديد الموقع',
                             adjustedPrayers: con.adjustedPrayersForUI,
                             backgroundGradient: con.getNextPrayerGradient(),
-                            iqamaTimeText: con.getIqamaTextForPrayer(con.upcomingPrayerName),
+                            iqamaTimeText: con
+                                .getIqamaTextForPrayer(con.upcomingPrayerName),
+                            onLocationTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const LocationSettingsView(),
+                                ),
+                              );
+                              _onLocationChanged();
+                            },
                             onSettingsTap: () async {
                               await Navigator.push(
                                 context,
@@ -739,8 +751,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                               duration: const Duration(milliseconds: 700),
                               delay: const Duration(milliseconds: 900),
                               child: const Padding(
-                                padding:
-                                    EdgeInsets.symmetric(vertical: 15),
+                                padding: EdgeInsets.symmetric(vertical: 15),
                                 child: OtherAzkarWidget(),
                               ),
                             ),

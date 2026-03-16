@@ -12,6 +12,7 @@ class PrayerHeaderSection extends StatelessWidget {
   final String nextPrayer;
   final String remainingTime;
   final VoidCallback onSettingsTap;
+  final VoidCallback? onLocationTap;
   final double? progressValue;
   final Map<String, DateTime> adjustedPrayers;
   final List<Color>? backgroundGradient;
@@ -29,6 +30,7 @@ class PrayerHeaderSection extends StatelessWidget {
     this.progressValue,
     this.backgroundGradient,
     this.iqamaTimeText,
+    this.onLocationTap,
   });
 
   @override
@@ -90,44 +92,53 @@ class PrayerHeaderSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
 
-                // Glass Location Chip
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: isDark
-                        ? Colors.black.withOpacity(0.4)
-                        : Colors.white.withOpacity(0.85),
-                    border: Border.all(
+                // Glass Location Chip (tappable)
+                GestureDetector(
+                  onTap: onLocationTap,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
                       color: isDark
-                          ? const Color(0xFFD4AF37).withOpacity(0.2)
-                          : AppColors.primary.withOpacity(0.1),
+                          ? Colors.black.withOpacity(0.4)
+                          : Colors.white.withOpacity(0.85),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFFD4AF37).withOpacity(0.2)
+                            : AppColors.primary.withOpacity(0.1),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.location_on_rounded,
-                        size: 16,
-                        color: isDark ? const Color(0xFFD4AF37) : AppColors.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      TextDefaultWidget(
-                        title: location,
-                        fontSize: isTab ? 8.sp : 10.sp,
-                        fontFamily: "cairo",
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.location_on_rounded,
+                          size: 16,
+                          color: isDark ? const Color(0xFFD4AF37) : AppColors.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        TextDefaultWidget(
+                          title: location,
+                          fontSize: isTab ? 8.sp : 10.sp,
+                          fontFamily: "cairo",
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_drop_down_rounded,
+                          size: 16,
+                          color: isDark ? const Color(0xFFD4AF37).withOpacity(0.7) : AppColors.primary.withOpacity(0.7),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 // Notification/Reminder Bell instead of Settings Gear
@@ -268,31 +279,30 @@ class PrayerHeaderSection extends StatelessWidget {
                               const Color(0xFF16213e).withOpacity(0.75),
                             ],
                           )
-                        : LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Colors.white.withOpacity(0.98),
-                              const Color(0xFFFFF8E7)
-                                  .withOpacity(0.95), // لون كريمي ذهبي فاتح
-                              const Color(0xFFFFFBF0).withOpacity(0.92),
-                            ],
-                          ),
-                    // حد متدرج يعطي لمعة
+                    : LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white,
+                          const Color(0xFFFDFDFD),
+                          const Color(0xFFF5F5F5),
+                        ],
+                      ),
+                    // حد ناعم
                     border: Border.all(
                       color: isDark
                           ? const Color(0xFFD4AF37).withOpacity(0.6)
-                          : const Color(0xFFD4AF37).withOpacity(0.5),
-                      width: 2,
+                          : KColors.primaryColor.withOpacity(0.2),
+                      width: 1.5,
                     ),
                     boxShadow: [
                       // ظل خارجي للعمق
                       BoxShadow(
                         color: isDark
                             ? Colors.black.withOpacity(0.4)
-                            : const Color(0xFFD4AF37).withOpacity(0.2),
-                        blurRadius: 20,
-                        spreadRadius: isDark ? 1 : 3,
+                            : Colors.black.withOpacity(0.05),
+                        blurRadius: 15,
+                        spreadRadius: 1,
                         offset: const Offset(0, 8),
                       ),
                       // ظل داخلي للإضاءة
@@ -307,7 +317,7 @@ class PrayerHeaderSection extends StatelessWidget {
                       BoxShadow(
                         color: isDark
                             ? const Color(0xFFD4AF37).withOpacity(0.1)
-                            : const Color(0xFFD4AF37).withOpacity(0.15),
+                            : KColors.primaryColor.withOpacity(0.05),
                         blurRadius: 15,
                         spreadRadius: 0,
                         offset: const Offset(0, 4),
@@ -579,20 +589,20 @@ class PrayerHeaderSection extends StatelessWidget {
                   style: GoogleFonts.cairo(
                     fontSize: 10.sp,
                     fontWeight: isUpcoming ? FontWeight.bold : FontWeight.normal,
-                    color: isUpcoming ? (isDark ? Colors.white : Colors.blue.shade900) : (isDark ? Colors.white70 : Colors.black54),
+                    color: isUpcoming ? (isDark ? Colors.white : KColors.primaryColor) : (isDark ? Colors.white70 : Colors.black54),
                   ),
                 ),
                 Icon(
                   icons[name],
                   size: 18,
-                  color: isUpcoming ? KColors.primaryColor : (isDark ? Colors.white38 : Colors.grey),
+                  color: isUpcoming ? KColors.primaryColor : (isDark ? Colors.white38 : Colors.grey.shade400),
                 ),
                 Text(
                   intl.DateFormat('h:mm a').format(time.toLocal()),
                   style: GoogleFonts.cairo(
                     fontSize: 9.sp,
                     fontWeight: isUpcoming ? FontWeight.bold : FontWeight.normal,
-                    color: isUpcoming ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white60 : Colors.black45),
+                    color: isUpcoming ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white60 : Colors.black38),
                   ),
                 ),
               ],
@@ -651,7 +661,7 @@ class PrayerHeaderSection extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 10.sp,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
+              color: isDark ? Colors.blue.shade300 : KColors.primaryColor,
             ),
           ),
         ],

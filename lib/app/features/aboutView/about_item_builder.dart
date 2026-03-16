@@ -4,9 +4,9 @@ import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../features/aboutView/RateService.dart';
-import '../../services/system_control_service.dart';
-import '../exports/all_exports.dart';
+import '../../core/services/system_control_service.dart';
+import '../../core/shard/exports/all_exports.dart';
+import 'RateService.dart';
 
 class AboutItemBuilder extends StatefulWidget {
   const AboutItemBuilder({super.key});

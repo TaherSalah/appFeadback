@@ -7,10 +7,10 @@ import 'package:just_audio/just_audio.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/QiblaView/QiblaDirection.dart';
 import 'package:muslimdaily/app/features/mainView/MainView.dart';
-import 'package:muslimdaily/app/features/prayerView/post_prayer_azkar.dart';
 import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/services/notification_manager.dart';
+import '../../postPrayerAzkarView/post_prayer_azkar.dart';
 
 class AdhanOverlayScreen extends StatefulWidget {
   final String? prayerName;
@@ -302,11 +302,11 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                     onTap: () async {
                       await _stopAndClose();
                       if (mounted) {
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (_) => const PrayerAzkar()),
-                          (r) => false,
-                        );
+                        // Navigator.of(context).pushAndRemoveUntil(
+                        //   MaterialPageRoute(
+                        //       builder: (_) => const PostPrayerAzkarView()),
+                        //   (r) => false,
+                        // );
                       }
                     },
                   ),

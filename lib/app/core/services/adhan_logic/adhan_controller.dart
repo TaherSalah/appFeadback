@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer' show log;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:adhan/adhan.dart';
 import 'package:flutter/services.dart';
@@ -260,6 +261,10 @@ class AdhanController extends GetxController {
     state.highLatitudeRuleIndex.value = state.box.read(HIGH_LATITUDE_RULE) ?? 0;
     state.autoCalculationMethod.value =
         state.box.read(AUTO_CALCULATION) ?? true;
+
+    // Load city name from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    state.location = prefs.getString('selected_city') ?? '';
   }
 
   Future<void> _tryInitialize() async {

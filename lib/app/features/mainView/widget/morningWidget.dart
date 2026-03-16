@@ -5,8 +5,6 @@ import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 import '../../../core/shard/exports/all_exports.dart';
 
-
-
 class HalalGreeting extends StatefulWidget {
   const HalalGreeting({super.key});
 

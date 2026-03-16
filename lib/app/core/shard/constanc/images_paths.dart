@@ -6,6 +6,7 @@ const String leftArrow = 'assets/images/left-arrow.png';
 const String arrow = 'assets/images/arrows.png';
 // const String click = 'assets/images/clickAble.png';
 const String doneZakar = 'assets/images/doneZakar.gif';
+const String doneZakar2 = 'assets/json/done.json';
 const String bSabah = 'assets/images/saba7.png';
 const String bMessa = 'assets/images/mesaa.png';
 const String bPrayer = 'assets/images/prayer_time.png';

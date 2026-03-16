@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-import '../../core/shard/widgets/about_item_builder.dart';
-
+import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 class About extends StatelessWidget {
   const About({super.key});
 
@@ -22,7 +19,7 @@ class About extends StatelessWidget {
                 : Colors.black,
           ),
         ),
-        body: const SingleChildScrollView(
+        body:  SingleChildScrollView(
             physics: BouncingScrollPhysics(), child: AboutItemBuilder()),
       ),
     );

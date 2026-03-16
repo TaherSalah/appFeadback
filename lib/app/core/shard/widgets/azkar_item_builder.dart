@@ -1,4 +1,3 @@
-
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/features/shareCard/PremiumShareCard.dart';
 import 'package:share_plus/share_plus.dart';
@@ -142,12 +141,11 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                             widget.azkarTitle,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.amiri(
-                                fontSize: widget.fontSize ?? 18.sp,
-                                height: 2.0,
-                                
-                                fontWeight: FontWeight.w700,
-                                color: isDark ? Colors.white : Colors.black87,
-                                                ),                          // style: TextStyle(
+                              fontSize: widget.fontSize ?? 18.sp,
+                              height: 2.0,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ), // style: TextStyle(
                             //   fontFamily: "cairo",
                             //   fontSize: widget.fontSize ?? 18.sp,
                             //   height: 1.6,
@@ -163,14 +161,14 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                         ),
                       ],
                     ),
-            
+
                     // الفاصل الزخرفي تحت العنوان
                     _AzkarOrnamentDivider(
                       color: baseColor,
                     ),
-            
+
                     SizedBox(height: 6.h),
-            
+
                     // نص الذكر
                     Text(
                       widget.azkarDes,
@@ -182,9 +180,9 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                         color: isDark ? Colors.grey[200] : Colors.grey[900],
                       ),
                     ),
-            
+
                     SizedBox(height: 18.h),
-            
+
                     // شريط الأزرار
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -195,7 +193,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                           label: "نسخ",
                           onTap: () => copyText(shareFullTextFancy),
                         ),
-            
+
                         // زر مشاركة الصورة
                         _AzkarActionButton(
                           icon: Icons.image_outlined,
@@ -212,7 +210,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                             );
                           },
                         ),
-            
+
                         // زر المشاركة
                         _AzkarActionButton(
                           icon: Icons.share_rounded,
