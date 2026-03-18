@@ -1,3 +1,5 @@
+import 'package:muslimdaily/app/core/utils/app_theme/app_theme.dart';
+import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 
 import '../exports/all_exports.dart';
@@ -12,10 +14,9 @@ class SplashItemBuilder extends StatefulWidget {
 class _SplashItemBuilderState extends State<SplashItemBuilder> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
       height: double.infinity,
-      // color: Colors.white,
       child: Stack(
         alignment: Alignment.center,
         children: [

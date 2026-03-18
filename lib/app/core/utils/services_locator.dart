@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
@@ -37,8 +36,6 @@ abstract class Di {
   static final GetIt _i = GetIt.instance;
 
   static Future<void> init() async {
-    WidgetsFlutterBinding.ensureInitialized();
-
     // ✅ Parallelize non-dependent initializations
     await Future.wait<dynamic>([
       GetStorage.init(),

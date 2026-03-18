@@ -12,7 +12,6 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
-import 'app/core/cache/shard_pref/shardpref_obj.dart';
 import 'app/core/cubit/centralized_cubit.dart';
 import 'app/core/utils/services_locator.dart';
 import 'app/features/Khatmah/data/khatmah_model.dart';
@@ -110,7 +109,6 @@ Future<void> _initAppServices() async {
       initializeDateFormatting(),
       initializeDateFormatting('ar', null),
       initializeDateFormatting('en', null),
-      SharedObj().init(),
       NotificationManager().initialize(),
     ]);
 

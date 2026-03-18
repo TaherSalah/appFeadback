@@ -222,6 +222,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     final next = (_pageNumber + delta).clamp(1, 604);
     if (next == _pageNumber) return;
     setState(() => _pageNumber = next);
+    _ql.jumpToPage(next);
     await _loadPageAyahs();
   }
 
@@ -461,6 +462,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
 
     if (result != null && result != _pageNumber) {
       setState(() => _pageNumber = result);
+      _ql.jumpToPage(result);
       await _loadPageAyahs();
     }
   }
@@ -494,7 +496,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     );
   }
 
-  Future<void> _openAyahTafsir(AyahModel ayah) async {
+  Future<void> _openAyahTafsir(AyahModel ayah, int index) async {
     final int ayahNum = ayah.ayahNumber;
     final int ayahUQ = ayah.ayahUQNumber ?? 0;
     final String text = ayah.text ?? '';
@@ -502,8 +504,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
     await _ql.showTafsir(
       isDark: true,
       context: context,
-      ayahNum: ayahNum,
-      pageIndex: _pageNumber,
+      ayahNum: index,
+      pageIndex: _pageNumber - 1,
       ayahTextN: text,
       ayahUQNum: ayahUQ,
       ayahNumber: ayahNum,
@@ -689,7 +691,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 14),
                           child: GestureDetector(
-                            onTap: () => _openAyahTafsir(ayah),
+                            onTap: () => _openAyahTafsir(ayah, index),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: cardColor,

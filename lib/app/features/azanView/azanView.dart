@@ -223,12 +223,12 @@ class _AzanViewState extends StateMVC<AzanView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '🌞 تفعيل التوقيت الصيفي (+ساعة)',
+                              'تفعيل التوقيت الصيفي (+ساعة)',
                               style: GoogleFonts.cairo(
                                 fontSize: ResponsiveUtil.isTablet(context)
                                     ? 9.sp
                                     : 14.sp,
-                                color: isDark ? Colors.white : Colors.black87,
+                                color: Colors.grey,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -757,14 +757,15 @@ class _AzanViewState extends StateMVC<AzanView> {
         children: [
           Row(
             children: [
-              const Icon(Icons.location_city, color: Colors.green, size: 24),
-              const SizedBox(width: 8),
+              // const Icon(Icons.location_city, color: Colors.green, size: 24),
+              // const SizedBox(width: 8),
               Text(
                 'اختر موقعك',
                 style: GoogleFonts.cairo(
                   fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 13.sp,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: Colors.grey,
+
                 ),
               ),
             ],
