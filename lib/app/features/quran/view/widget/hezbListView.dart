@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:quran_library/quran.dart';
 
@@ -25,7 +23,7 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -77,7 +75,7 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
                         TextWidget(
                           title: "${index + 1}",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                              context.isTab ? 9.sp : 14.sp,
                         ),
                       ],
                     ),
@@ -88,7 +86,7 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
                         TextWidget(
                             fontFamily: "me",
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                                context.isTab ? 9.sp : 14.sp,
                             fontWeight: FontWeight.bold,
                             title: hizb[index]),
                       ],

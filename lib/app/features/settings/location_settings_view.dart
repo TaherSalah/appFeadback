@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/services/location_service.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
@@ -13,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/utils/style/app_theme_colors.dart';
 import '../../core/widgets/KLoading.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 class LocationSettingsView extends StatefulWidget {
   const LocationSettingsView({super.key});
@@ -180,7 +180,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -456,7 +456,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
   }
 
   Widget _buildSectionHeader(BuildContext context, String title) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0, right: 8.0),
       child: Text(
@@ -473,7 +473,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
 
   Widget _buildSettingsCard(BuildContext context,
       {required List<Widget> children}) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return Container(
       decoration: BoxDecoration(
         // color: isDark ? const Color(0xFF1E293B).withOpacity(0.6) : Colors.white,
@@ -509,7 +509,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

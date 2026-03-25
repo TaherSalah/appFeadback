@@ -1,19 +1,19 @@
 import 'dart:async';
-import 'package:muslimdaily/app/core/extensions/context_extension.dart';
-import 'package:muslimdaily/app/core/widgets/KLoading.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:muslimdaily/app/core/services/settings_service.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
+import 'package:muslimdaily/app/core/services/settings_service.dart';
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
 
-import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
-import '../../../core/utils/style/responsive_util.dart';
 
 class AdvancedFajrAlarmWidget extends StatefulWidget {
   const AdvancedFajrAlarmWidget({super.key});
@@ -322,7 +322,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(context.isTablet ? 80 : 50),
+          preferredSize: Size.fromHeight(context.isTab ? 80 : 50),
           child: AppBar(
             leading: Navigator.canPop(context)
                 ? CupertinoNavigationBarBackButton(
@@ -347,7 +347,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                           fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: context.isTablet ? 12.sp : 18.sp,
+                fontSize: context.isTab ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -526,7 +526,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                        style: TextStyle(
                           fontFamily: "cairo",
                                       fontSize:
-                                          context.isTablet ? 10.sp : 14.sp,
+                                          context.isTab ? 10.sp : 14.sp,
                                       fontWeight: FontWeight.bold,
                                       color: textColor,
                                     ),
@@ -547,7 +547,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                          style: TextStyle(
                           fontFamily: "cairo",
                                         fontSize:
-                                            context.isTablet ? 10.sp : 12.sp,
+                                            context.isTab ? 10.sp : 12.sp,
                                         color: goldColor,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -637,7 +637,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                                 _getDayAbbr(day),
                                                    style: TextStyle(
                           fontFamily: "cairo",
-                                                  fontSize: context.isTablet
+                                                  fontSize: context.isTab
                                                       ? 9.sp
                                                       : 14.sp,
                                                   fontWeight: FontWeight.bold,
@@ -891,7 +891,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                           "حفظ التغييرات",
                              style: TextStyle(
                           fontFamily: "cairo",
-                            fontSize: ResponsiveUtil.isTablet(context)
+                            fontSize: context.isTab
                                 ? 10.sp
                                 : 16.sp,
                             fontWeight: FontWeight.bold,
@@ -913,7 +913,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
     required Widget dragging,
     required Color textColor,
   }) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       leading: Container(

@@ -1,9 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
+
 import '../../core/shard/exports/all_exports.dart';
 
 class AzkarCounter extends StatefulWidget {
@@ -24,7 +23,7 @@ class _AzkarCounterState extends State<AzkarCounter> {
                 MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
             child: AppBar(
               leading: CupertinoNavigationBarBackButton(
-                color: Theme.of(context).brightness == Brightness.dark
+                color: context.isDark
                     ? Colors.white
                     : Colors.black,
               ),
@@ -341,7 +340,7 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
 Widget buildCounterDisplay({dynamic counter}) {
   return Consumer<AzkarProvider>(
     builder: (context, controller, child) {
-      bool isTablet = ResponsiveUtil.isTablet(context);
+      bool isTablet = context.isTab;
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1406,7 +1405,7 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
                             '${currentBead + 1}',
                                style: TextStyle(
                           fontFamily: "cairo",
-                              fontSize: ResponsiveUtil.isTablet(context)
+                              fontSize: context.isTab
                                   ? 18.sp
                                   : 11.sp,
                               color: const Color(0xFFF59E0B),

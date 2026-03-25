@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/quran/pdf/view/widgets/pdf_navigation_dialog.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-import 'package:get_storage/get_storage.dart';
 
 class QuranPdfScreen extends StatefulWidget {
   final String? pdfPath;
@@ -46,7 +46,7 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Scaffold(
       appBar: _isFullScreen

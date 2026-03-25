@@ -15,7 +15,7 @@ class HazbNawawiView extends StatelessWidget {
   Widget build(BuildContext context) {
     // نستخدم Get.put لتهيئة الـ Controller
     final controller = Get.put(HazbNawawiController());
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Stack(
       children: [

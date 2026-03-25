@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 
 import '../localization/localization_manager.dart';
-import '../utils/style/responsive_util.dart';
 
 
 
@@ -43,7 +43,7 @@ class NoConnectionScreen extends StatelessWidget {
               const SizedBox(height: 25),
               TextWidget(
                   fontWeight: FontWeight.w700,
-                  fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 8.sp,
+                  fontSize: context.isTab ? 10.sp : 8.sp,
                   textAlign: TextAlign.center,
                   title: LocalizationManager.call('no_connection'))
             ],

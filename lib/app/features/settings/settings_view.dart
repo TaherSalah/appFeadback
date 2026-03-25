@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
-import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/settings/feedback_view.dart';
-import '../user_guide/presentation/user_guide_list_screen.dart';
+import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
+import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
+
 import '../azanView/widget/AdhanStatusBanner.dart';
-import 'widgets/settings_widgets.dart';
-import 'widgets/settings_font_size_slider.dart';
-import 'widgets/settings_email_dialog.dart';
+import '../user_guide/presentation/user_guide_list_screen.dart';
 import 'settings_controller.dart';
+import 'widgets/settings_email_dialog.dart';
+import 'widgets/settings_font_size_slider.dart';
+import 'widgets/settings_widgets.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -18,7 +19,7 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(SettingsController(context));
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

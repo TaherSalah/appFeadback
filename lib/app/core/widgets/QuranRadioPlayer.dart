@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:audio_session/audio_session.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
+
+import 'package:audio_session/audio_session.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 class QuranRadioPlayer extends StatefulWidget {
   const QuranRadioPlayer({
@@ -123,7 +123,7 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final cardPadding = widget.compact ? 12.0 : 20.0;
     final iconSize = widget.compact ? 30.0 : 48.0;
 

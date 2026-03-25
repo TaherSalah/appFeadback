@@ -1,20 +1,21 @@
 import 'dart:convert';
+
+import 'package:animate_do/animate_do.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:confetti/confetti.dart';
-
-import '../../../core/utils/style/app_theme_colors.dart';
-import '../../../core/utils/style/responsive_util.dart';
-import 'DailyChallengesScreen.dart';
-import 'GamesMenuScreen.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/kids/view/KidsStoriesScreen.dart';
-import 'package:animate_do/animate_do.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../core/utils/style/app_theme_colors.dart';
+import '../../core/utils/style/k_dialog_helper.dart';
+import '../mainView/widget/DailyChallengesScreen.dart';
+import 'GamesMenuScreen.dart';
 import 'KidsStatisticsScreen.dart';
-import '../../../core/utils/style/k_dialog_helper.dart';
+
+
 
 enum KidsView { home, journey, activities, trophies }
 
@@ -583,7 +584,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final themeColor = _getThemeColor();
     final bgColor = isDark
         ? const Color(0xFF121212)
@@ -609,14 +610,14 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
             child: AppBar(
               leading: _currentView == KidsView.home
                   ? CupertinoNavigationBarBackButton(
-                      color: Theme.of(context).brightness == Brightness.dark
+                      color: context.isDark
                           ? Colors.white
                           : Colors.black,
                     )
                   : IconButton(
                       icon: Icon(
                         Icons.arrow_back_ios,
-                        color: Theme.of(context).brightness == Brightness.dark
+                        color: context.isDark
                             ? Colors.white
                             : Colors.black,
                       ),
@@ -916,7 +917,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
+          color: context.isDark
               ? const Color(0xFF1E293B)
               : Colors.white,
           borderRadius: BorderRadius.circular(28.r),
@@ -947,7 +948,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   fontFamily: "cairo",
                 fontWeight: FontWeight.bold,
                 fontSize: 14.sp,
-                color: Theme.of(context).brightness == Brightness.dark
+                color: context.isDark
                     ? Colors.white
                     : Colors.black87,
               ),
@@ -1536,7 +1537,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                         style: TextStyle(
                   fontFamily: "cairo",
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 14.sp : 18.sp,
+                                context.isTab ? 14.sp : 18.sp,
                             fontWeight: FontWeight.bold)),
                     const SizedBox(height: 20),
                     // Name Input

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:muslimdaily/app/core/extensions/extensions.dart';
-import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+
 import '../../core/shard/widgets/ui_animations.dart';
-import '../../core/utils/style/responsive_util.dart';
 import 'logic/inheritance_logic.dart';
 import 'services/inheritance_pdf_service.dart';
 
@@ -163,8 +162,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    bool isDark = context.isDark;
+    final bool isTap = context.isTab;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -273,8 +272,9 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                                     selectedColor:
                                         KColors.primaryColor.withOpacity(0.2),
                                     onSelected: (selected) {
-                                      if (selected)
+                                      if (selected) {
                                         setState(() => _selectedMadhab = m);
+                                      }
                                     },
                                   ),
                                 ))
@@ -554,8 +554,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   }
 
   Widget _buildWillDropdown(String label, int index) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    bool isDark = context.isDark;
+    final bool isTap = context.isTab;
 
 
     return Padding(
@@ -600,7 +600,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
       {required String title,
       required List<Widget> children,
       required bool isDark}) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Container(
       width: double.infinity,
@@ -635,7 +635,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   }
 
   Widget _buildGenderToggle(bool isDark) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Row(
       children: [
@@ -682,7 +682,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   Widget _buildInputField(
       String label, TextEditingController controller, bool isDark,
       {String? suffix}) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -697,7 +697,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-             style: TextStyle(
+             style: const TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold),
           decoration: InputDecoration(
             filled: true,
@@ -718,7 +718,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   Widget _buildCounterField(
       String label, int value, Function(int) onValueChange,
       {int max = 100}) {
-    final bool isTap = context.isTablet;
+    final bool isTap = context.isTab;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
@@ -754,10 +754,10 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
 
   Widget _buildSwitchField(
       String label, bool value, Function(bool) onValueChange) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 0),
+      padding: const EdgeInsets.symmetric(vertical: 0),
       child: Row(
         children: [
           Expanded(
@@ -853,10 +853,10 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
 
   Widget _buildCheckboxField(
       String label, bool value, Function(bool?) onValueChange) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 0),
+      padding: const EdgeInsets.symmetric(vertical: 0),
       child: Row(
         children: [
           Checkbox(
@@ -895,7 +895,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                      style: TextStyle(
                           fontFamily: "cairo",
                       fontWeight: FontWeight.bold, fontSize: 16.sp)),
-              Text(intl.NumberFormat("#,##0.##").format(share.amount) + " ج.م",
+              Text("${intl.NumberFormat("#,##0.##").format(share.amount)} ج.م",
                      style: TextStyle(
                           fontFamily: "cairo",
                       fontWeight: FontWeight.bold,
@@ -915,7 +915,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   }
 
   Widget _buildDisclaimerNote(bool isDark) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Container(
       width: double.infinity,

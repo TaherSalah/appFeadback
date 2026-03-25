@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../core/utils/style/responsive_util.dart';
 
 class SupportDeveloperScreen extends StatelessWidget {
   const SupportDeveloperScreen({super.key});
@@ -24,7 +22,7 @@ class SupportDeveloperScreen extends StatelessWidget {
         content: Text(
           'تم نسخ الرقم: $text',
           textAlign: TextAlign.center,
-             style: TextStyle(
+             style: const TextStyle(
                           fontFamily: "cairo",),
         ),
         behavior: SnackBarBehavior.floating,
@@ -35,8 +33,8 @@ class SupportDeveloperScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isTab = ResponsiveUtil.isTablet(context);
+    final isDark = context.isDark;
+    final isTab = context.isTab;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -46,7 +44,7 @@ class SupportDeveloperScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: const CupertinoNavigationBarBackButton(color: Colors.white),
-          title: Text(
+          title: const Text(
             'ادعم المشروع 🤍',
                style: TextStyle(
                           fontFamily: "cairo",
@@ -160,7 +158,7 @@ class SupportDeveloperScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 'فودافون كاش',
                                    style: TextStyle(
                           fontFamily: "cairo",
@@ -193,7 +191,7 @@ class SupportDeveloperScreen extends StatelessWidget {
                   const SizedBox(height: 40),
 
                   // Footer
-                  Center(
+                  const Center(
                     child: Text(
                       'جزاكم الله خيراً على دعمكم الدائم ❤️',
                          style: TextStyle(

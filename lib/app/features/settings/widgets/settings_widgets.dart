@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
@@ -15,7 +15,7 @@ class SettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -76,7 +76,7 @@ class SettingsListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -146,7 +146,7 @@ class SettingsDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return Divider(
       height: 1,
       thickness: 1,
@@ -179,7 +179,7 @@ class SettingsDropdownTile<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -271,7 +271,7 @@ class SettingsSwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -350,7 +350,7 @@ class SettingsSliderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Row(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import Clipboard functionality
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/hadithDetails/view/controller/hadith_details_bloc.dart';
 import 'package:muslimdaily/app/features/hadithDetails/view/controller/hadith_details_state.dart';
 import 'package:muslimdaily/app/features/hadithDetails/view/widget/details_view_item_builder.dart';
@@ -18,7 +19,6 @@ class HadithDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
     final key = GlobalKey<ExpandableFabState>();
@@ -52,7 +52,7 @@ class HadithDetailsView extends StatelessWidget {
                           //           ? KColors.blackColor
                           //           : KColors.whiteColor,
                           //       content: TextWidget(
-                          //           fontSize: ResponsiveUtil.isTablet(context)
+                          //           fontSize: context.isTab
                           //               ? 10.sp
                           //               : 12.sp,
                           //           textAlign: TextAlign.right,
@@ -71,7 +71,7 @@ class HadithDetailsView extends StatelessWidget {
                             foregroundColor:
                                     Colors.white,
                             backgroundColor:
-                                Theme.of(context).brightness == Brightness.dark
+                                context.isDark
                                     ? Colors.black
                                     : KColors.primaryColor,
                             shape: const CircleBorder(),
@@ -80,11 +80,11 @@ class HadithDetailsView extends StatelessWidget {
                             child: const Icon(Icons.close),
                             fabSize: ExpandableFabSize.regular,
                             foregroundColor:
-                                Theme.of(context).brightness == Brightness.dark
+                                context.isDark
                                     ? Colors.white
                                     : KColors.primaryColor,
                             backgroundColor:
-                                Theme.of(context).brightness == Brightness.dark
+                                context.isDark
                                     ? Colors.black
                                     : KColors.primaryColor,
                             shape: const CircleBorder(),

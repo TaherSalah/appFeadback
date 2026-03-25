@@ -62,7 +62,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       context: context,
       initialTime: selectedTime ?? TimeOfDay.now(),
       builder: (context, child) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: isDark
@@ -107,7 +107,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
 
         int repeatCount = 33;
 
-        final bool isDark = Theme.of(context).brightness == Brightness.dark;
+        final bool isDark = context.isDark;
 
         return Directionality(
           textDirection: TextDirection.rtl,
@@ -389,7 +389,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize:
-              Size.fromHeight(context.isTablet ? 70 : 50),
+              Size.fromHeight(context.isTab ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: context.isDark ? Colors.white : Colors.black,
@@ -402,7 +402,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                    context.isTablet ? 12.sp : 18.sp,
+                    context.isTab ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -543,7 +543,7 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                   message: "يرجى إدخال اسم الورد واختيار ذكر واحد على الأقل");
             }
           },
-          label: Text("حفظ الورد",
+          label: const Text("حفظ الورد",
                  style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
           icon: const Icon(Icons.check_circle_outline_rounded),

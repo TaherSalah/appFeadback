@@ -60,7 +60,7 @@ class DoneDialogWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDark = context.isDark;
-    bool isTap = context.isTablet;
+    bool isTap = context.isTab;
     return Stack(
       children: [
         // Subtle Background Decoration

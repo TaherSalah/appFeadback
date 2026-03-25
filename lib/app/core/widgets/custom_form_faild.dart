@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 import '../cubit/centralized_cubit.dart';
 import '../localization/localization_manager.dart';
 import '../utils/style/k_color.dart';
 import '../utils/style/k_style.dart';
-import '../utils/style/responsive_util.dart';
 
 
 class CustomTextFieldWidget extends StatelessWidget {
@@ -112,7 +112,7 @@ class CustomTextFieldWidget extends StatelessWidget {
               // ),
               labelText: label,
               floatingLabelStyle: TextStyle(
-                  fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
+                  fontSize: context.isTab ? 8.sp : 11.sp,
                   fontFamily: 'cairo',
                   color: CentralizedCubit.isDarkMode
                       ? KColors.whiteColor
@@ -158,7 +158,7 @@ class CustomTextFieldWidget extends StatelessWidget {
                   minWidth: suffixIcon == null ? 0 : 45.w, maxHeight: 40.h),
               contentPadding: insidePadding ??
                   EdgeInsets.symmetric(
-                      vertical: ResponsiveUtil.isTablet(context) ? 6.5.h : 9.h),
+                      vertical: context.isTab ? 6.5.h : 9.h),
               fillColor: backGroundColor,
               filled: backGroundColor != null,
               hintText: hint,
@@ -173,7 +173,7 @@ class CustomTextFieldWidget extends StatelessWidget {
                     ),
               hintStyle: hintStyle ??
                   TextStyle(
-                      fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
+                      fontSize: context.isTab ? 8.sp : 11.sp,
                       color: CentralizedCubit.isDarkMode
                           ? KColors.whiteColor
                           : const Color(0xFFA5A5A5),
@@ -181,7 +181,7 @@ class CustomTextFieldWidget extends StatelessWidget {
                       fontFamily: 'cairo',
                       fontWeight: FontWeight.w400),
               labelStyle: TextStyle(
-                  fontSize: ResponsiveUtil.isTablet(context) ? 7.sp : 11.sp,
+                  fontSize: context.isTab ? 7.sp : 11.sp,
                   color: CentralizedCubit.isDarkMode
                       ? KColors.whiteColor
                       : KColors.greyColor,
@@ -194,7 +194,7 @@ class CustomTextFieldWidget extends StatelessWidget {
           keyboardType: textInputType,
           style: style ??
               TextStyle(
-                fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 14.sp,
+                fontSize: context.isTab ? 8.sp : 14.sp,
                 fontWeight: FontWeight.w400,
                 // color: KColors.blackColor,
               ),

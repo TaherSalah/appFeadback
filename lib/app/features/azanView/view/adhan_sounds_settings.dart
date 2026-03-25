@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mvc_pattern/mvc_pattern.dart';
-import '../controllers/adhan_sounds_controller.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:mvc_pattern/mvc_pattern.dart';
+
+import '../controllers/adhan_sounds_controller.dart';
 
 class AdhanSoundsSettingsScreen extends StatefulWidget {
-  const AdhanSoundsSettingsScreen({Key? key}) : super(key: key);
+  const AdhanSoundsSettingsScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _AdhanSoundsSettingsScreenState();
@@ -22,7 +23,7 @@ class _AdhanSoundsSettingsScreenState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Scaffold(
       appBar: AppBar(

@@ -1,4 +1,3 @@
-import 'dart:developer' show log;
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,8 +8,6 @@ import 'package:muslimdaily/app/features/QiblaView/QiblaDirection.dart';
 import 'package:muslimdaily/app/features/mainView/MainView.dart';
 import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/services/notification_manager.dart';
-import '../../postPrayerAzkarView/post_prayer_azkar.dart';
 
 class AdhanOverlayScreen extends StatefulWidget {
   final String? prayerName;

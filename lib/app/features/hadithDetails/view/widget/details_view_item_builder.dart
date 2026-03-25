@@ -57,7 +57,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
             if (state is HadithDetailsStateSuccess ||
                 state is MoreHadithDetailsStateSuccess) {
               HadithDetailsBloc bloc = HadithDetailsBloc.get(context);
-              final isDark = Theme.of(context).brightness == Brightness.dark;
+              final isDark = context.isDark;
 
               return CustomScrollView(
                 slivers: [
@@ -74,7 +74,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                     //       children: [
                     //         Expanded(
                     //           child: TextWidget(
-                    //             fontSize: ResponsiveUtil.isTablet(context)
+                    //             fontSize: context.isTab
                     //                 ? 7.1.sp
                     //                 : 10.sp,
                     //             fontWeight: FontWeight.w500,
@@ -89,7 +89,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                     //         const Spacer(),
                     //         Expanded(
                     //           child: TextWidget(
-                    //             fontSize: ResponsiveUtil.isTablet(context)
+                    //             fontSize: context.isTab
                     //                 ? 7.1.sp
                     //                 : 10.sp,
                     //             fontWeight: FontWeight.w500,
@@ -105,7 +105,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                     //   ),
                     // ),
                     leading: CupertinoNavigationBarBackButton(
-                      color: Theme.of(context).brightness == Brightness.dark
+                      color: context.isDark
                           ? Colors.white
                           : Colors.black,
                     ),
@@ -138,7 +138,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                   //       children: [
                   //         Expanded(
                   //           child: TextWidget(
-                  //             fontSize: ResponsiveUtil.isTablet(context)
+                  //             fontSize: context.isTab
                   //                 ? 7.1.sp
                   //                 : 14.sp,
                   //             fontWeight: FontWeight.bold,
@@ -153,7 +153,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                   //         Spacer(),
                   //         Expanded(
                   //           child: TextWidget(
-                  //             fontSize: ResponsiveUtil.isTablet(context)
+                  //             fontSize: context.isTab
                   //                 ? 7.1.sp
                   //                 : 15.sp,
                   //             fontWeight: FontWeight.w500,
@@ -180,7 +180,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                               fontSize:
                                   CentralizedCubit.get(context).azkarFontSize(),
                               iconSize:
-                                  ResponsiveUtil.isTablet(context) ? 20 : 15,
+                                  context.isTab ? 20 : 15,
                               headTitle:
                                   LocalizationManager.call("hadith-text"),
                               lineColor: KColors.scoColor),
@@ -223,7 +223,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                               fontSize: CentralizedCubit.get(context)
                                   .hadithFontSize(),
                               iconSize:
-                                  ResponsiveUtil.isTablet(context) ? 20 : 15,
+                                  context.isTab ? 20 : 15,
                               headTitle: LocalizationManager.call("source"),
                               lineColor: KColors.scoColor),
                         ),
@@ -266,7 +266,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                               fontSize: CentralizedCubit.get(context)
                                   .hadithFontSize(),
                               iconSize:
-                                  ResponsiveUtil.isTablet(context) ? 20 : 15,
+                                  context.isTab ? 20 : 15,
                               headTitle:
                                   LocalizationManager.call("hadith-degree"),
                               lineColor: KColors.scoColor),
@@ -308,7 +308,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                               fontSize: CentralizedCubit.get(context)
                                   .hadithFontSize(),
                               iconSize:
-                                  ResponsiveUtil.isTablet(context) ? 20 : 15,
+                                  context.isTab ? 20 : 15,
                               headTitle: LocalizationManager.call(
                                   "hadith-explanation"),
                               lineColor: KColors.scoColor),
@@ -352,7 +352,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                 fontSize: CentralizedCubit.get(context)
                                     .hadithFontSize(),
                                 iconSize:
-                                    ResponsiveUtil.isTablet(context) ? 20 : 15,
+                                    context.isTab ? 20 : 15,
                                 headTitle: LocalizationManager.call(
                                     "hadith-vocabulary"),
                                 lineColor: KColors.scoColor)),
@@ -440,7 +440,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                 fontSize: CentralizedCubit.get(context)
                                     .hadithFontSize(),
                                 iconSize:
-                                    ResponsiveUtil.isTablet(context) ? 20 : 15,
+                                    context.isTab ? 20 : 15,
                                 headTitle:
                                     LocalizationManager.call("hadith-benefits"),
                                 lineColor: KColors.scoColor)),
@@ -483,7 +483,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                 fontSize: CentralizedCubit.get(context)
                                     .hadithFontSize(),
                                 iconSize:
-                                    ResponsiveUtil.isTablet(context) ? 20 : 15,
+                                    context.isTab ? 20 : 15,
                                 headTitle: LocalizationManager.call(
                                     "hadith-references"),
                                 lineColor: KColors.scoColor)),
@@ -536,7 +536,7 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                                 fontSize: CentralizedCubit.get(context)
                                     .hadithFontSize(),
                                 iconSize:
-                                    ResponsiveUtil.isTablet(context) ? 20 : 15,
+                                    context.isTab ? 20 : 15,
                                 headTitle: LocalizationManager.call("more"),
                                 lineColor: KColors.scoColor)),
                       ],

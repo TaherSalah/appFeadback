@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 
-import '../../../core/utils/style/responsive_util.dart';
 import 'IslamicCardWidget.dart';
 
 class Allazkarlistview extends StatelessWidget {
@@ -47,8 +46,8 @@ class Allazkarlistview extends StatelessWidget {
         "navigate": "/hazbNawawi",
       },
     ];
-    bool isTab = ResponsiveUtil.isTablet(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isTab = context.isTab;
+    final isDark = context.isDark;
 
     return Scaffold(
       appBar: PreferredSize(

@@ -15,7 +15,7 @@ extension ContextExtension on BuildContext {
 
   // Responsive helpers
   bool get isMobile => screenWidth < 600;
-  bool get isTablet => screenWidth >= 600;
+  bool get isTab => screenWidth >= 600;
 
   // Localization helpers (optional, depending on your setup)
   // String translate(String key) => AppLocalizations.of(this)!.translate(key);

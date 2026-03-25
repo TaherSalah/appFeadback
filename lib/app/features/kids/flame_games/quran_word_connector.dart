@@ -1,9 +1,10 @@
 import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'base_flame_game.dart';
 
 class QuranWordConnector extends BaseEducationalGame with TapCallbacks {
@@ -27,6 +28,7 @@ class QuranWordConnector extends BaseEducationalGame with TapCallbacks {
 
   @override
   Future<void> onLoad() async {
+    await super.onLoad();
     add(CosmicBackground());
   }
 

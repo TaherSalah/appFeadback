@@ -44,7 +44,7 @@ class _NineBooksScreenState extends State<NineBooksScreen> {
   Widget build(BuildContext context) {
     // Ensure controller is initialized
     Get.put(BooksController());
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(

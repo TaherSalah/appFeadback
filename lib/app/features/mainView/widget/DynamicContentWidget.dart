@@ -1,7 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
 import '../../../core/services/content_service.dart';
 
 class DynamicContentWidget extends StatefulWidget {
@@ -35,7 +36,7 @@ class _DynamicContentWidgetState extends State<DynamicContentWidget> {
   Widget build(BuildContext context) {
     if (_isLoading || _contentList.isEmpty) return const SizedBox.shrink();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // Use a page view if multiple, or just a single card if one
     // For simplicity, let's show the LATEST active item prominently

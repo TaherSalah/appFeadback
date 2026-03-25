@@ -1,9 +1,8 @@
+import 'package:intl/intl.dart' as intl;
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 import '../../../core/shard/exports/all_exports.dart';
 import 'morningWidget.dart';
-import 'package:intl/intl.dart' as intl;
 
 class PrayerHeaderSection extends StatelessWidget {
   final String hijriDate;
@@ -37,8 +36,8 @@ class PrayerHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isTab = ResponsiveUtil.isTablet(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isTab = context.isTab;
+    final isDark = context.isDark;
 
     final size = MediaQuery.sizeOf(context);
     final double headerHeight = isTab ? size.height / 2.0 : size.height / 1.8;
@@ -565,7 +564,7 @@ class PrayerHeaderSection extends StatelessWidget {
     final allPrayers = [
       "الإمساك",
       "الفجر",
-      "الشروق",
+      // "الشروق",
       "الظهر",
       "العصر",
       "المغرب",
@@ -595,6 +594,7 @@ class PrayerHeaderSection extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
+        spacing: context.isTab?20: 5,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: prayers.map((name) {
           final isUpcoming = nextPrayer.contains(name);
@@ -615,6 +615,7 @@ class PrayerHeaderSection extends StatelessWidget {
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+
               children: [
                 Text(
                   name,
@@ -630,7 +631,7 @@ class PrayerHeaderSection extends StatelessWidget {
                 ),
                 Icon(
                   icons[name],
-                  size: 18,
+                  size:context.isTab?25: 18,
                   color: isUpcoming
                       ? KColors.primaryColor
                       : (isDark ? Colors.white38 : Colors.grey.shade400),
@@ -656,26 +657,47 @@ class PrayerHeaderSection extends StatelessWidget {
   }
 
   Widget _buildSunnahTimes(BuildContext context, bool isDark, bool isTab) {
+    final sunrise = adjustedPrayers["الشروق"];
     final midnight = adjustedPrayers["منتصف الليل"];
     final lastThird = adjustedPrayers["الثلث الأخير"];
 
-    if (midnight == null || lastThird == null) return const SizedBox.shrink();
+    if (sunrise == null && midnight == null && lastThird == null) {
+      return const SizedBox.shrink();
+    }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildSunnahChip("منتصف الليل", midnight, isDark),
-        const SizedBox(width: 8),
-        Text("|",
-            style: TextStyle(
-                color: isDark ? Colors.white24 : Colors.grey.shade300)),
-        const SizedBox(width: 8),
-        _buildSunnahChip("الثلث الأخير", lastThird, isDark),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (sunrise != null) ...[
+            _buildSunnahChip("الشروق", sunrise, isDark,isTab),
+            if (midnight != null || lastThird != null) ...[
+              const SizedBox(width: 8),
+              Text("|",
+                  style: TextStyle(
+                      color: isDark ? Colors.white24 : Colors.grey.shade300)),
+              const SizedBox(width: 8),
+            ],
+          ],
+          if (midnight != null) ...[
+            _buildSunnahChip("منتصف الليل", midnight, isDark,isTab),
+            if (lastThird != null) ...[
+              const SizedBox(width: 8),
+              Text("|",
+                  style: TextStyle(
+                      color: isDark ? Colors.white24 : Colors.grey.shade300)),
+              const SizedBox(width: 8),
+            ],
+          ],
+          if (lastThird != null)
+            _buildSunnahChip("الثلث الأخير", lastThird, isDark,isTab),
+        ],
+      ),
     );
   }
 
-  Widget _buildSunnahChip(String label, DateTime time, bool isDark) {
+  Widget _buildSunnahChip(String label, DateTime time, bool isDark, bool isTap) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -697,7 +719,7 @@ class PrayerHeaderSection extends StatelessWidget {
             "$label: ",
             style: TextStyle(
               fontFamily: "cairo",
-              fontSize: 10.sp,
+              fontSize: isTap ? 7.sp : 10.sp,
               color: isDark ? Colors.white70 : Colors.black54,
             ),
           ),
@@ -705,7 +727,7 @@ class PrayerHeaderSection extends StatelessWidget {
             intl.DateFormat('h:mm').format(time.toLocal()),
             style: TextStyle(
               fontFamily: "cairo",
-              fontSize: 10.sp,
+              fontSize: isTap ? 7.sp : 10.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.blue.shade300 : KColors.primaryColor,
             ),

@@ -3,15 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/localization/localization_manager.dart';
 import '../../../../core/utils/constent/router.dart';
 import '../../../../core/utils/style/app_theme_colors.dart';
 import '../../../../core/utils/style/k_color.dart';
-import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/widgets/KLoading.dart';
 import '../../../../core/widgets/custom_divider_widget.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
@@ -64,7 +63,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                 },
                 child: SvgPicture.asset(
                   "assets/icons/arrow.svg",
-                  color: Theme.of(context).brightness == Brightness.dark
+                  color: context.isDark
                       ? Colors.white
                       : Colors.black,
                   height: 25,
@@ -75,7 +74,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
         // SliverToBoxAdapter(
         //     child: Container(
         //         padding: EdgeInsets.zero,
-        //         height: ResponsiveUtil.isTablet(context)
+        //         height: context.isTab
         //             ? MediaQuery.sizeOf(context).height / 5.5
         //             : MediaQuery.sizeOf(context).height / 8,
         //         decoration: BoxDecoration(
@@ -84,13 +83,13 @@ class CategoriesViewItemBuilder extends StatelessWidget {
         //                 : Theme.of(context).cardColor,
         //             borderRadius: BorderRadius.only(
         //                 bottomRight: Radius.circular(
-        //                     ResponsiveUtil.isTablet(context) ? 30.r : 20.r),
+        //                     context.isTab ? 30.r : 20.r),
         //                 bottomLeft: Radius.circular(
-        //                     ResponsiveUtil.isTablet(context) ? 30.r : 20.r))),
+        //                     context.isTab ? 30.r : 20.r))),
         //         child: Padding(
         //             padding: EdgeInsets.symmetric(
-        //                 vertical: ResponsiveUtil.isTablet(context) ? 20 : 12,
-        //                 horizontal: ResponsiveUtil.isTablet(context) ? 20 : 12),
+        //                 vertical: context.isTab ? 20 : 12,
+        //                 horizontal: context.isTab ? 20 : 12),
         //             child: Column(
         //                 crossAxisAlignment: CrossAxisAlignment.center,
         //                 mainAxisAlignment: MainAxisAlignment.center,
@@ -127,11 +126,11 @@ class CategoriesViewItemBuilder extends StatelessWidget {
         //                   //                           Radius.circular(5.r))),
         //                   //                   padding: EdgeInsets.symmetric(
         //                   //                       vertical:
-        //                   //                           ResponsiveUtil.isTablet(context)
+        //                   //                           context.isTab
         //                   //                               ? 10
         //                   //                               : 8,
         //                   //                       horizontal:
-        //                   //                           ResponsiveUtil.isTablet(context)
+        //                   //                           context.isTab
         //                   //                               ? 15
         //                   //                               : 7),
         //                   //                   onChanged: (value) {
@@ -145,7 +144,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
         //                   //                     );
         //                   //                   },
         //                   //                   itemSize:
-        //                   //                       ResponsiveUtil.isTablet(context)
+        //                   //                       context.isTab
         //                   //                           ? 15.sp
         //                   //                           : 17,
         //                   //                   prefixInsets: const EdgeInsets.symmetric(horizontal: 10),
@@ -154,7 +153,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
         //                   //                         wordKey: value);
         //                   //                   },
         //                   //                   placeholder: LocalizationManager.call('exams-search'),
-        //                   //                   style: TextStyle(fontFamily: 'cairo', color: CentralizedCubit.isDarkMode ? KColors.whiteColor : KColors.blackColor, fontSize: ResponsiveUtil.isTablet(context) ? 15 : 10))),
+        //                   //                   style: TextStyle(fontFamily: 'cairo', color: CentralizedCubit.isDarkMode ? KColors.whiteColor : KColors.blackColor, fontSize: context.isTab ? 15 : 10))),
         //                   //         ),
         //                   //         Card(
         //                   //             color: CentralizedCubit.isDarkMode
@@ -239,12 +238,12 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                               title:
                                   "${LocalizationManager.call("notSearchFound")} ",
                               fontSize:
-                                  ResponsiveUtil.isTablet(context) ? 8.sp : 10,
+                                  context.isTab ? 8.sp : 10,
                             ),
                             TextWidget(
                               fontWeight: FontWeight.w600,
                               fontSize:
-                                  ResponsiveUtil.isTablet(context) ? 8.sp : 10,
+                                  context.isTab ? 8.sp : 10,
                               color: CentralizedCubit.isDarkMode
                                   ? KColors.primary
                                   : KColors.primary2Color,
@@ -262,7 +261,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                         radius: 6.r,
                         title: LocalizationManager.call('goCatePage'),
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                            context.isTab ? 8.sp : 12.sp,
                         backgroundColor: CentralizedCubit.isDarkMode
                             ? KColors.blackColor
                             : KColors.primary2Color,
@@ -312,7 +311,7 @@ class CategoriesViewItemBuilder extends StatelessWidget {
                     KLoading.progressIOSIndicator(radius: 15, context: context),
                 success: (value) {
                   final isDark =
-                      Theme.of(context).brightness == Brightness.dark;
+                      context.isDark;
 
                   return GridView.builder(
                       padding: EdgeInsets.zero,

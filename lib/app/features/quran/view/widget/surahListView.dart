@@ -3,17 +3,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart' as surahModel;
-import 'package:muslimdaily/main.dart';
-import 'package:quran_library/quran.dart';
-
-import 'package:showcaseview/showcaseview.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:muslimdaily/app/features/quran/view/SurahDetailScreen.dart';
+import 'package:quran_library/quran.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class SurahListScreen extends StatefulWidget {
   final bool useOldMushaf;
@@ -205,7 +202,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
             surah: surah,
             allSurahs: surahInfoList,
             verseId: 0,
-            isDark: Theme.of(context).brightness == Brightness.dark,
+            isDark: context.isDark,
             initialScrollOffset: lastOffset,
           ),
         ),
@@ -280,7 +277,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     return Directionality(
       textDirection: TextDirection.rtl,
       child: ShowCaseWidget(
@@ -303,7 +300,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                           fontFamily: "cairo",
                     color: Colors.green,
                     fontWeight: FontWeight.w900,
-                    fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp),
+                    fontSize: context.isTab ? 14.sp : 20.sp),
               ),
               bottom: widget.useOldMushaf
                   ? null
@@ -470,7 +467,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
         final item = _filteredSurahItems[index];
         final surah = item.model;
         final realIndex = item.index;
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         final types = surah.type == "medinan"
             ? "assets/images/madina.png"
@@ -533,7 +530,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                         TextWidget(
                           title: "${realIndex + 1}",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                              context.isTab ? 10.sp : 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ],
@@ -546,7 +543,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                           TextWidget(
                             title: item.arabicName,
                             fontFamily: "me",
-                            fontSize: ResponsiveUtil.isTablet(context)
+                            fontSize: context.isTab
                                 ? 12.sp
                                 : 20.sp,
                             fontWeight: FontWeight.bold,
@@ -556,7 +553,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                             children: [
                               TextWidget(
                                 title: "${surah.totalVerses} آية",
-                                fontSize: ResponsiveUtil.isTablet(context)
+                                fontSize: context.isTab
                                     ? 8.sp
                                     : 12.sp,
                                 color: isDark ? Colors.white60 : Colors.black54,
@@ -574,7 +571,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                               TextWidget(
                                 title:
                                     surah.type == "medinan" ? "مدنية" : "مكية",
-                                fontSize: ResponsiveUtil.isTablet(context)
+                                fontSize: context.isTab
                                     ? 8.sp
                                     : 12.sp,
                                 color: isDark ? Colors.white60 : Colors.black54,
@@ -633,7 +630,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
       itemBuilder: (ctx, index) {
         final jozName = _filteredJozzs[index];
         final actualIndex = jozzs.indexOf(jozName);
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
@@ -678,7 +675,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                         TextWidget(
                           title: "${actualIndex + 1}",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                              context.isTab ? 10.sp : 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ],
@@ -689,7 +686,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                         title: jozName,
                         fontFamily: "me",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                            context.isTab ? 12.sp : 18.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -722,7 +719,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
       itemBuilder: (ctx, index) {
         final hizbName = _filteredHizbItems[index];
         final actualIndex = _allHizbItems.indexOf(hizbName);
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
@@ -766,7 +763,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                         TextWidget(
                           title: "${actualIndex + 1}",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                              context.isTab ? 10.sp : 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ],
@@ -777,7 +774,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                         title: hizbName,
                         fontFamily: "me",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                            context.isTab ? 12.sp : 18.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

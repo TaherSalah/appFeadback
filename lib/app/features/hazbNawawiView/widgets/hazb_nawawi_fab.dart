@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:muslimdaily/app/core/extensions/extensions.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+
 import '../hazb_nawawi_controller.dart';
 
 class HazbNawawiFAB extends GetView<HazbNawawiController> {
@@ -16,7 +16,7 @@ class HazbNawawiFAB extends GetView<HazbNawawiController> {
     final primaryColor =
         isDark ? KColors.primaryColor : theme.colorScheme.primary;
 
-    final bool isTab = ResponsiveUtil.isTablet(context);
+    final bool isTab = context.isTab;
 
     return Obx(() {
       final bool isPlayingNow = controller.isPlaying;

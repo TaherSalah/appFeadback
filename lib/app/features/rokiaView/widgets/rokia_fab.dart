@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/extensions/extensions.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+
 import '../rokia_controller.dart';
 
 class RokiaFAB extends GetView<RokiaController> {
@@ -14,7 +14,7 @@ class RokiaFAB extends GetView<RokiaController> {
     final isDark = context.isDark;
     final theme = Theme.of(context);
     final primaryColor = isDark ? KColors.primaryColor : theme.colorScheme.primary;
-    final bool isTab = ResponsiveUtil.isTablet(context);
+    final bool isTab = context.isTab;
 
     return Obx(() {
       if (controller.showMiniPlayer) return const SizedBox.shrink();

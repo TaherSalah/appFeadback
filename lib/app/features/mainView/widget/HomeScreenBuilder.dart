@@ -1,37 +1,36 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:showcaseview/showcaseview.dart';
-import 'package:muslimdaily/app/features/mainView/widget/IslamicCardWidget.dart';
-import 'package:muslimdaily/app/features/mainView/widget/LastActivityWidget.dart';
-import 'package:muslimdaily/app/features/settings/settings_view.dart';
-import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 import 'package:hive/hive.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/features/mainView/widget/IslamicCardWidget.dart';
+import 'package:muslimdaily/app/features/mainView/widget/LastActivityWidget.dart';
 import 'package:muslimdaily/app/features/quran/SurahModel.dart';
+import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
+import 'package:muslimdaily/app/features/settings/settings_view.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/services/system_control_service.dart';
+import '../../../core/services/version_check_service.dart';
+import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/style/k_helper.dart';
+import '../../../core/widgets/CustomGradientDialog.dart';
+import '../../../core/widgets/ScrollingText.dart';
 import '../../../core/widgets/SocialBannerWidget.dart';
 import '../../Khatmah/data/khatmah_model.dart';
+import '../../azanView/widget/AdhanStatusBanner.dart';
 import '../../charity/CharityDashboardScreen.dart';
+import '../controllar/MainController.dart';
+import 'AllahNameWidget.dart';
 import 'AzkarQuranWidget.dart';
 import 'CharityEntryWidget.dart';
-import 'OtherAzkarWidget.dart';
-import '../controllar/MainController.dart';
-import '../../../core/shard/exports/all_exports.dart';
-import 'PrayerHeaderSection.dart';
-import 'AllahNameWidget.dart';
 import 'FridayCompanionWidget.dart';
-import '../../../core/services/version_check_service.dart';
-import '../../../core/services/system_control_service.dart';
-import '../../../core/widgets/ScrollingText.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../../core/widgets/CustomGradientDialog.dart';
-import '../../azanView/widget/AdhanStatusBanner.dart';
+import 'OtherAzkarWidget.dart';
+import 'PrayerHeaderSection.dart';
 
 class MainViewBuilder extends StatefulWidget {
   const MainViewBuilder({super.key});
@@ -167,7 +166,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     showDialog(
       context: context,
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         return CustomGradientDialog(
           title: "عذراً، القسم قيد الصيانة",
           message:
@@ -217,7 +216,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         return CustomGradientDialog(
           title: "تنبيه هام",
           message: message,
@@ -364,8 +363,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
   @override
   Widget build(BuildContext context) {
     final completed = box.values.where((k) => k.isCompleted).toList();
-    bool isTab = ResponsiveUtil.isTablet(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isTab = context.isTab;
+    final isDark = context.isDark;
 
     // Filter icons once for efficiency
     final activeIcons = con.iconsApp.where((item) {
@@ -507,7 +506,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                       Expanded(
                                         child: ScrollingText(
                                           text: text,
-                                             style: TextStyle(
+                                             style: const TextStyle(
                           fontFamily: "cairo",
                                             color: Colors.white,
                                             fontSize: 13,
@@ -853,7 +852,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                               horizontal: 10, vertical: 8),
                                           child: Text(
                                             banner['title'],
-                                               style: TextStyle(
+                                               style: const TextStyle(
                           fontFamily: "cairo",
                                               color: Colors.white,
                                               fontSize: 11,

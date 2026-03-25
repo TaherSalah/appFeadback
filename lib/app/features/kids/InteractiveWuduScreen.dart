@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
+import '../../core/utils/style/k_dialog_helper.dart';
 import 'kids_data/sounds_helper.dart';
-import '../../../core/utils/style/k_dialog_helper.dart';
 
 class InteractiveWuduScreen extends StatefulWidget {
   const InteractiveWuduScreen({super.key});
@@ -144,7 +144,7 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final step = _wuduSteps[_currentStep];
 
     return Directionality(
@@ -156,7 +156,7 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
             style: TextStyle(
                   fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+              fontSize: context.isTab ? 14.sp : 20.sp,
             ),
           ),
           centerTitle: true,
@@ -176,7 +176,7 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                         style: TextStyle(
                   fontFamily: "cairo",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                              context.isTab ? 10.sp : 14.sp,
                           color: Colors.grey,
                         ),
                       ),
@@ -185,7 +185,7 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                         style: TextStyle(
                   fontFamily: "cairo",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                              context.isTab ? 10.sp : 14.sp,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF00BCD4),
                         ),
@@ -236,7 +236,7 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                       style: TextStyle(
                   fontFamily: "cairo",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 16.sp : 24.sp,
+                            context.isTab ? 16.sp : 24.sp,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
                       ),
@@ -260,7 +260,7 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                         style: TextStyle(
                   fontFamily: "cairo",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                              context.isTab ? 12.sp : 18.sp,
                           height: 1.8,
                           color: isDark ? Colors.white : Colors.black87,
                         ),
@@ -288,7 +288,7 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                               step['detail'],
                               style: TextStyle(
                   fontFamily: "cairo",
-                                fontSize: ResponsiveUtil.isTablet(context)
+                                fontSize: context.isTab
                                     ? 10.sp
                                     : 14.sp,
                                 color: Colors.grey.shade700,

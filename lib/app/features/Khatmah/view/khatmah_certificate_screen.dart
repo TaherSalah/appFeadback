@@ -43,7 +43,7 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: Text('شهادة الإنجاز',    style: TextStyle(
+        title: const Text('شهادة الإنجاز',    style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -70,7 +70,7 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                     ElevatedButton.icon(
                       onPressed: () => _captureAndShareImage(context),
                       icon: const Icon(Icons.share_rounded, color: Colors.white),
-                      label: Text('مشاركة صورة',    style: TextStyle(
+                      label: const Text('مشاركة صورة',    style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold, color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: KColors.primaryColor,
@@ -82,7 +82,7 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                     ElevatedButton.icon(
                       onPressed: () => _generateAndSharePdf(context),
                       icon: const Icon(Icons.picture_as_pdf_rounded, color: Colors.white),
-                      label: Text('حفظ كملف PDF',    style: TextStyle(
+                      label: const Text('حفظ كملف PDF',    style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold, color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.brown,
@@ -134,7 +134,7 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                     color: const Color(0xFFD4AF37), // Gold
                   ),
                 ),
-                Text(
+                const Text(
                   'CERTIFICATE OF APPRECIATION',
                      style: TextStyle(
                           fontFamily: "cairo",
@@ -182,7 +182,7 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                 Text(
                   'حيث ساهم بإتمام قراءة ${widget.contributionCount} ورد من كتاب الله',
                   textAlign: TextAlign.center,
-                     style: TextStyle(
+                     style: const TextStyle(
                           fontFamily: "cairo",fontSize: 14, color: Colors.black87),
                 ),
                 const SizedBox(height: 20),
@@ -201,9 +201,9 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                  Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('التاريخ',    style: TextStyle(
+                    const Text('التاريخ',    style: TextStyle(
                           fontFamily: "cairo",fontSize: 10, color: Colors.grey)),
-                    Text('${widget.date.year}/${widget.date.month}/${widget.date.day}',    style: TextStyle(
+                    Text('${widget.date.year}/${widget.date.month}/${widget.date.day}',    style: const TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
                   ],
                 ),
@@ -211,7 +211,7 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                  Column(
                   children: [
                     Image.asset('assets/images/logoApp.png', height: 40, errorBuilder: (_,__,___) => const Icon(Icons.mosque)),
-                    Text('تطبيق رفيق المسلم',    style: TextStyle(
+                    const Text('تطبيق رفيق المسلم',    style: TextStyle(
                           fontFamily: "cairo",fontSize: 8, fontWeight: FontWeight.bold)),
                   ],
                 ),

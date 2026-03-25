@@ -15,7 +15,7 @@ class AzkarMassa extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(AzkarMassaController());
     final con = Provider.of<AzkarProvider>(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final bool allDone = con.isMessaDone;
 
     return Stack(

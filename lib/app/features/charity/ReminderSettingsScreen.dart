@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
 import '../../core/widgets/KLoading.dart';
 import 'services/charity_service.dart';
 
@@ -75,7 +76,7 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

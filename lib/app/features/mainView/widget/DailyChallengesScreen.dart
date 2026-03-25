@@ -1,12 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/utils/style/responsive_util.dart';
+
 import '../../../core/utils/style/k_dialog_helper.dart';
-import 'dart:convert';
 
 class DailyChallengesScreen extends StatefulWidget {
   const DailyChallengesScreen({super.key});
@@ -184,7 +186,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     final dailyCompleted = _todayChallenges
         .where((c) => _completedChallenges[c['id']] == true)
@@ -201,7 +203,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
         //     'التحديات ⚡',
         //     style: GoogleFonts.cairo(
         //       fontWeight: FontWeight.bold,
-        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        //       fontSize: context.isTab ? 14.sp : 20.sp,
         //     ),
         //   ),
         //   centerTitle: true,
@@ -212,7 +214,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
           ),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: context.isDark
                   ? Colors.white
                   : Colors.black,
             ),
@@ -272,7 +274,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
             title,
             style: TextStyle(
                   fontFamily: "cairo",
-              fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+              fontSize: context.isTab ? 12.sp : 18.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -287,7 +289,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
               '$completed/$total',
               style: TextStyle(
                   fontFamily: "cairo",
-                fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                fontSize: context.isTab ? 10.sp : 14.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -339,7 +341,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
           challenge['title'],
           style: TextStyle(
                   fontFamily: "cairo",
-            fontSize: ResponsiveUtil.isTablet(context) ? 11.sp : 15.sp,
+            fontSize: context.isTab ? 11.sp : 15.sp,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black87,
           ),
@@ -352,7 +354,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
               challenge['description'],
               style: TextStyle(
                   fontFamily: "cairo",
-                fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
+                fontSize: context.isTab ? 8.sp : 11.sp,
                 color: Colors.grey,
               ),
             ),
@@ -365,7 +367,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
                   '+${challenge['reward']}',
                   style: TextStyle(
                   fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 13.sp,
+                    fontSize: context.isTab ? 9.sp : 13.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.amber,
                   ),

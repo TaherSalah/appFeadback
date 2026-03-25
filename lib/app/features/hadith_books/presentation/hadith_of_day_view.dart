@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/utils/style/k_color.dart';
 import '../../../core/widgets/KLoading.dart';
-import '../controllers/hadith_of_day_controller.dart';
 import '../controllers/books_controller.dart';
+import '../controllers/hadith_of_day_controller.dart';
 
 class HadithOfDayView extends StatelessWidget {
   const HadithOfDayView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final baseColor = KColors.primaryColor;
     final hadithCtrl = Get.find<HadithOfDayController>();
     Get.find<BooksController>();

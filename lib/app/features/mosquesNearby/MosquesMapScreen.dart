@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geocoding/geocoding.dart';
@@ -164,7 +165,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
   }
 
   void _showMosqueFormDialog({required bool isEditing, String? mosqueId}) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     showDialog(
       context: context,
@@ -377,7 +378,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
   }
 
   Future<void> _confirmDelete(Mosque mosque) async {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     showDialog(
       context: context,
@@ -603,7 +604,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
   }
 
   void _showOSMContributionOption() {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     showDialog(
       context: context,
@@ -655,7 +656,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

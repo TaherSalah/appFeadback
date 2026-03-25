@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/utils/style/responsive_util.dart';
+
 import '../../../core/utils/style/k_dialog_helper.dart';
 
 class VirtualPetWidget extends StatefulWidget {
@@ -200,7 +200,7 @@ class _VirtualPetWidgetState extends State<VirtualPetWidget> {
                     style: TextStyle(
                   fontFamily: "cairo",
                       fontSize:
-                          ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                          context.isTab ? 12.sp : 18.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -211,7 +211,7 @@ class _VirtualPetWidgetState extends State<VirtualPetWidget> {
                     style: TextStyle(
                   fontFamily: "cairo",
                       fontSize:
-                          ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                          context.isTab ? 10.sp : 14.sp,
                       color: Colors.white70,
                     ),
                   ),

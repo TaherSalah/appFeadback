@@ -1,20 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import '../../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/features/kids/flame_games/flame_game_wrapper.dart';
+
+import '../mainView/widget/AllahNamesGame.dart';
 import 'MemoryGameScreen.dart';
 import 'PuzzleGameScreen.dart';
 import 'QuizGameScreen.dart';
-import 'AllahNamesGame.dart';
-import 'flame_games/flame_game_wrapper.dart';
 import 'flame_games/fruit_collector_game.dart';
-import 'flame_games/sunnah_hero_runner.dart';
-import 'flame_games/kaaba_protector_game.dart';
 import 'flame_games/quran_word_connector.dart';
-import 'IslamicColoringScreen.dart';
+import 'flame_games/sunnah_hero_runner.dart';
 
 class GamesMenuScreen extends StatelessWidget {
   final VoidCallback? onRefresh;
@@ -23,7 +20,7 @@ class GamesMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
- final isTablet=   context.isTablet;
+ final isTablet=   context.isTab;
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -32,7 +29,7 @@ class GamesMenuScreen extends StatelessWidget {
         //     'الألعاب التعليمية 🎮',
         //     style: GoogleFonts.cairo(
         //       fontWeight: FontWeight.bold,
-        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        //       fontSize: context.isTab ? 14.sp : 20.sp,
         //     ),
         //   ),
         //   centerTitle: true,
@@ -354,7 +351,7 @@ class GamesMenuScreen extends StatelessWidget {
                     style: TextStyle(
                   fontFamily: "cairo",
                       fontSize:
-                          ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                          context.isTab ? 12.sp : 18.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -364,7 +361,7 @@ class GamesMenuScreen extends StatelessWidget {
                     description,
                     style: TextStyle(
                   fontFamily: "cairo",
-                      fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp,
+                      fontSize: context.isTab ? 9.sp : 12.sp,
                       color: Colors.white70,
                     ),
                   ),
@@ -378,7 +375,7 @@ class GamesMenuScreen extends StatelessWidget {
                         style: TextStyle(
                   fontFamily: "cairo",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
+                              context.isTab ? 8.sp : 11.sp,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),

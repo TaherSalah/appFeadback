@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/localization/localization_manager.dart';
@@ -66,7 +66,7 @@ class QuranAudioListViewItemBuilder extends StatelessWidget {
         SliverToBoxAdapter(
             child: Container(
                 padding: EdgeInsets.zero,
-                height: ResponsiveUtil.isTablet(context)
+                height: context.isTab
                     ? MediaQuery.sizeOf(context).height / 5.5
                     : MediaQuery.sizeOf(context).height / 8,
                 decoration: BoxDecoration(
@@ -75,13 +75,13 @@ class QuranAudioListViewItemBuilder extends StatelessWidget {
                         : Theme.of(context).cardColor,
                     borderRadius: BorderRadius.only(
                         bottomRight: Radius.circular(
-                            ResponsiveUtil.isTablet(context) ? 30.r : 20.r),
+                            context.isTab ? 30.r : 20.r),
                         bottomLeft: Radius.circular(
-                            ResponsiveUtil.isTablet(context) ? 30.r : 20.r))),
+                            context.isTab ? 30.r : 20.r))),
                 child: Padding(
                     padding: EdgeInsets.symmetric(
-                        vertical: ResponsiveUtil.isTablet(context) ? 20 : 12,
-                        horizontal: ResponsiveUtil.isTablet(context) ? 20 : 12),
+                        vertical: context.isTab ? 20 : 12,
+                        horizontal: context.isTab ? 20 : 12),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -118,11 +118,11 @@ class QuranAudioListViewItemBuilder extends StatelessWidget {
                                                     Radius.circular(5.r))),
                                             padding: EdgeInsets.symmetric(
                                                 vertical:
-                                                ResponsiveUtil.isTablet(context)
+                                                context.isTab
                                                     ? 10
                                                     : 8,
                                                 horizontal:
-                                                ResponsiveUtil.isTablet(context)
+                                                context.isTab
                                                     ? 15
                                                     : 7),
                                             onChanged: (value) {
@@ -135,7 +135,7 @@ class QuranAudioListViewItemBuilder extends StatelessWidget {
                                               );
                                             },
                                             itemSize:
-                                            ResponsiveUtil.isTablet(context)
+                                            context.isTab
                                                 ? 15.sp
                                                 : 17,
                                             prefixInsets: const EdgeInsets.symmetric(horizontal: 10),
@@ -144,7 +144,7 @@ class QuranAudioListViewItemBuilder extends StatelessWidget {
                                                   wordKey: value);
                                             },
                                             placeholder: LocalizationManager.call('exams-search'),
-                                            style: TextStyle(fontFamily: 'cairo', color: CentralizedCubit.isDarkMode ? KColors.whiteColor : KColors.blackColor, fontSize: ResponsiveUtil.isTablet(context) ? 15 : 10))),
+                                            style: TextStyle(fontFamily: 'cairo', color: CentralizedCubit.isDarkMode ? KColors.whiteColor : KColors.blackColor, fontSize: context.isTab ? 15 : 10))),
                                   ),
                                   Card(
                                       color: CentralizedCubit.isDarkMode

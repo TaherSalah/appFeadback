@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../quran/quranView.dart';
@@ -145,7 +146,7 @@ class _FridayCompanionWidgetState extends State<FridayCompanionWidget>
   Widget build(BuildContext context) {
     if (!_isVisible) return const SizedBox.shrink();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return FadeTransition(
       opacity: _fadeAnim,

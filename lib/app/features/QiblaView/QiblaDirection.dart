@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
-import 'package:geolocator/geolocator.dart'; // Added for openAppSettings
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:geolocator/geolocator.dart'; // Added for openAppSettings
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/services/location_service.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:vector_math/vector_math.dart' as vector;
 
@@ -199,9 +197,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final size = MediaQuery.of(context).size;
-    final isTablet = size.width > 600;
 
     double? angle;
     if (_heading != null && _qiblaDirection != null) {
@@ -260,7 +257,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
         // ),
         appBar: PreferredSize(
           preferredSize:
-          Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+          Size.fromHeight(context.isTab? 80 : 50),
           child: AppBar(
               actions: [
                 IconButton(
@@ -295,7 +292,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
-                  MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+                  context.isTab?12.sp : 18.sp),
             ),
           ),
         ),
@@ -495,7 +492,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                     ),
 
                   // مؤشر القبلة الثابت
-                  Positioned(
+                  const Positioned(
                     top: 12,
                     child: Text(
                       "\u{1F54B}",
@@ -612,7 +609,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                   _getDirectionMessage(angle),
                      style: TextStyle(
                           fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 16 : 14,
+                    fontSize: context.isTab ? 16 : 14,
                     fontWeight: FontWeight.bold,
                     color: (angle < 10 || angle > 350)
                         ? Colors.green

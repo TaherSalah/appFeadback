@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/controller/azkar_controller.dart';
+import 'package:muslimdaily/app/core/extensions/extensions.dart';
 import 'package:muslimdaily/app/core/model/azkary_model.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
-import 'package:muslimdaily/app/core/extensions/extensions.dart';
-import 'package:muslimdaily/app/core/controller/azkar_controller.dart';
+import 'package:provider/provider.dart';
+
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/constanc/app_style.dart';
 import '../../../core/shard/widgets/azkar_item_builder.dart';
@@ -19,7 +19,7 @@ class SleepList extends StatelessWidget {
 
     return ListView.separated(
       padding: EdgeInsets.only(
-        bottom: ResponsiveUtil.isTablet(context) ? 100 : 120,
+        bottom: context.isTab ? 100 : 120,
       ),
       shrinkWrap: true,
       physics: const BouncingScrollPhysics(),

@@ -1,11 +1,11 @@
-import '../../../../core/shard/exports/all_exports.dart' show StatefulWidget, ValueChanged, VoidCallback, State, TextEditingController, BuildContext, Widget, EdgeInsets, Color, Offset, SizedBox, Icon, Text, LinearGradient, Center, Theme, Brightness, TextDirection, Colors, Clip, BorderRadius, Alignment, BoxShadow, BoxDecoration, MainAxisSize, SizeExtension, FontWeight, TextStyle, TextAlign, OutlineInputBorder, InputDecoration, TextField, Icons, Navigator, IconButton, OutlinedButton, BorderSide, RoundedRectangleBorder, Expanded, ElevatedButton, Row, Column, Container, BoxShape, Align, Positioned, Stack, Dialog, Directionality;
+import '../../../../core/shard/exports/all_exports.dart' show StatefulWidget, ValueChanged, VoidCallback, State, TextEditingController, BuildContext, Widget, EdgeInsets, Color, Offset, SizedBox, Icon, Text, LinearGradient, Center, Theme, Brightness, TextDirection, Colors, Clip, BorderRadius, Alignment, BoxShadow, BoxDecoration, MainAxisSize, SizeExtension, FontWeight, TextStyle, TextAlign, OutlineInputBorder, InputDecoration, TextField, Icons, Navigator, IconButton, OutlinedButton, BorderSide, RoundedRectangleBorder, Expanded, ElevatedButton, Row, Column, Container, BoxShape, Align, Positioned, Stack, Dialog, Directionality, ContextExtension;
 
 class NoteDialogWidget extends StatefulWidget {
   final String? initialText;
   final ValueChanged<String> onSave;
   final VoidCallback onDelete;
 
-  const NoteDialogWidget({
+  const NoteDialogWidget({super.key,
     this.initialText,
     required this.onSave,
     required this.onDelete,
@@ -32,7 +32,7 @@ class _NoteDialogWidgetState extends State<NoteDialogWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

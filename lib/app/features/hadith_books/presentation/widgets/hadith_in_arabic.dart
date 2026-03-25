@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/utils/style/k_color.dart';
@@ -84,7 +85,7 @@ class HadithInArabic extends StatelessWidget {
     String? selectedCategory = await showDialog<String>(
       context: context,
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         final baseColor = KColors.primaryColor;
 
         return Dialog(
@@ -158,7 +159,7 @@ class HadithInArabic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final size = MediaQuery.sizeOf(context);
     final baseColor = KColors.primaryColor;
 
@@ -445,7 +446,7 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final primary = Theme.of(context).colorScheme.primary;
 
     return InkWell(
@@ -501,7 +502,7 @@ class _OrnamentDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 20.w),

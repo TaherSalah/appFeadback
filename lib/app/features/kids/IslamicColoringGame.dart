@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
+import '../../core/utils/style/k_dialog_helper.dart';
 import 'kids_data/sounds_helper.dart';
-import '../../../core/utils/style/k_dialog_helper.dart';
 
 class IslamicColoringGame extends StatefulWidget {
   const IslamicColoringGame({super.key});
@@ -115,7 +115,7 @@ class _IslamicColoringGameState extends State<IslamicColoringGame> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final currentPage = _coloringPages[_selectedPage];
     final partsCount = currentPage['parts'] as int;
 
@@ -128,7 +128,7 @@ class _IslamicColoringGameState extends State<IslamicColoringGame> {
             style: TextStyle(
                   fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+              fontSize: context.isTab ? 14.sp : 20.sp,
             ),
           ),
           centerTitle: true,

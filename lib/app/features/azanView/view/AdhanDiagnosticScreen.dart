@@ -1,6 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:muslimdaily/app/core/services/AdhanDiagnosticHelper.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
@@ -12,7 +10,7 @@ import 'dart:io';
 import '../../../core/shard/exports/all_exports.dart';
 
 class AdhanDiagnosticScreen extends StatefulWidget {
-  const AdhanDiagnosticScreen({Key? key}) : super(key: key);
+  const AdhanDiagnosticScreen({super.key});
 
   @override
   State<AdhanDiagnosticScreen> createState() => _AdhanDiagnosticScreenState();
@@ -206,7 +204,7 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -281,9 +279,9 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
           children: [
             const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'حدث خطأ',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -880,7 +878,7 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
     if (Platform.isAndroid) {
       try {
         // use android_intent_plus to open notification settings specifically
-        final intent = AndroidIntent(
+        const intent = AndroidIntent(
           action: 'android.settings.APP_NOTIFICATION_SETTINGS',
           arguments: <String, dynamic>{
             'android.provider.extra.APP_PACKAGE': 'com.rafiq.muslimdaily',

@@ -1,15 +1,15 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get_it/get_it.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
-import 'package:animate_do/animate_do.dart';
+import 'package:muslimdaily/app/features/achievements/services/achievement_service.dart';
+
+import '../../../core/cache/shard_pref/shardpref_obj.dart';
 import '../../../core/services/content_service.dart';
 import '../../../core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/features/achievements/services/achievement_service.dart';
-import 'package:get_it/get_it.dart';
-import '../../../core/cache/shard_pref/shardpref_obj.dart';
 import 'StoryReaderScreen.dart';
 
 class KidsStoriesScreen extends StatefulWidget {
@@ -356,7 +356,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
-              context.isTablet ? 70 : 50),
+              context.isTab ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: context.isDark
@@ -371,7 +371,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
-                  context.isTablet ? 12.sp : 18.sp),
+                  context.isTab ? 12.sp : 18.sp),
             ),
           ),
         ),
@@ -751,7 +751,7 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
     ];
     final random = (story['id']?.toString().hashCode ?? 0) % covers.length;
     final gradient = covers[random];
-    final bool isTap = context.isTablet;
+    final bool isTap = context.isTab;
     return GestureDetector(
       onTap: () async {
         final result = await Navigator.push(

@@ -1,9 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:muslimdaily/app/features/quran/data/reading_analytics_service.dart';
 
@@ -58,8 +55,8 @@ class _ReadingAnalyticsScreenState extends State<ReadingAnalyticsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isTablet = ResponsiveUtil.isTablet(context);
+    final isDark = context.isDark;
+    final isTablet = context.isTab;
 
     return Directionality(
       textDirection: TextDirection.rtl,

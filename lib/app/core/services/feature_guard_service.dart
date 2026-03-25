@@ -1,9 +1,9 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/services/system_control_service.dart';
-import 'package:animate_do/animate_do.dart';
 
 class FeatureGuardService {
   static final FeatureGuardService _instance = FeatureGuardService._internal();
@@ -65,7 +65,7 @@ class FeatureGuardService {
       barrierLabel: '',
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, anim1, anim2) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         return FadeInUp(
           duration: const Duration(milliseconds: 300),
           child: AlertDialog(

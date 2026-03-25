@@ -1,7 +1,3 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:get/get_utils/src/extensions/context_extensions.dart';
-import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
-
 import 'dart:async';
 import 'dart:ui' as ui;
 
@@ -10,11 +6,11 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/mainView/controllar/MainController.dart';
 import 'package:mvc_pattern/mvc_pattern.dart' hide StateSetter;
@@ -133,7 +129,7 @@ class _AzanViewState extends StateMVC<AzanView> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         return StatefulBuilder(
           builder: (context, setStateSheet) {
             return Directionality(
@@ -167,7 +163,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                           '⚙️ إعدادات الحساب',
                           style: TextStyle(
                             fontFamily: "cairo",
-                            fontSize: ResponsiveUtil.isTablet(context)
+                            fontSize: context.isTab
                                 ? 11.sp
                                 : 15.sp,
                             fontWeight: FontWeight.bold,
@@ -195,7 +191,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                           style: TextStyle(
                             fontFamily: "cairo",
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                                context.isTab ? 9.sp : 14.sp,
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
                           ),
@@ -211,7 +207,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                           style: TextStyle(
                             fontFamily: "cairo",
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                                context.isTab ? 9.sp : 14.sp,
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
                           ),
@@ -230,7 +226,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                               'تفعيل التوقيت الصيفي (+ساعة)',
                               style: TextStyle(
                                 fontFamily: "cairo",
-                                fontSize: ResponsiveUtil.isTablet(context)
+                                fontSize: context.isTab
                                     ? 9.sp
                                     : 14.sp,
                                 color: Colors.grey,
@@ -257,7 +253,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                              style: TextStyle(
                           fontFamily: "cairo",
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                                context.isTab ? 9.sp : 14.sp,
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
                           ),
@@ -330,7 +326,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                           style: TextStyle(
                             fontFamily: "cairo",
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                                context.isTab ? 9.sp : 14.sp,
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
                           ),
@@ -377,7 +373,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                               'حفظ التغييرات',
                               style: TextStyle(
                                 fontFamily: "cairo",
-                                fontSize: ResponsiveUtil.isTablet(context)
+                                fontSize: context.isTab
                                     ? 10.sp
                                     : 16.sp,
                                 fontWeight: FontWeight.bold,
@@ -406,7 +402,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                               'الغاء',
                               style: TextStyle(
                                 fontFamily: "cairo",
-                                fontSize: ResponsiveUtil.isTablet(context)
+                                fontSize: context.isTab
                                     ? 10.sp
                                     : 16.sp,
                                 fontWeight: FontWeight.bold,
@@ -568,7 +564,7 @@ class _AzanViewState extends StateMVC<AzanView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final selectedCountry = con.selectedCountry;
     final selectedCity = con.selectedCity;
     final prayerTimes = con.prayerTimes;
@@ -777,7 +773,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                 'اختر موقعك',
                 style: TextStyle(
                   fontFamily: "cairo",
-                  fontSize: context.isTablet ? 10.sp : 13.sp,
+                  fontSize: context.isTab ? 10.sp : 13.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey,
 
@@ -805,7 +801,9 @@ class _AzanViewState extends StateMVC<AzanView> {
                   onChanged: (value) async {
                     if (value == null ||
                         value == 'مخصص' ||
-                        value == 'تحديد تلقائي') return;
+                        value == 'تحديد تلقائي') {
+                      return;
+                    }
                     final Map<String, dynamic> cityMap = (countries[value]
                         as Map<String, dynamic>)
                       ..removeWhere((k, v) => v == null);
@@ -900,7 +898,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                                context.isTab ? 8.sp : 12.sp,
                           ),
                         ),
                       ],
@@ -940,7 +938,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                             color: isDark ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.bold,
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                                context.isTab ? 8.sp : 12.sp,
                           ),
                         ),
                       ],
@@ -1008,7 +1006,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                   color: isDark ? Colors.white : Colors.black),
               decoration: InputDecoration(
                 labelText: 'خط الطول (Longitude)',
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   fontFamily: "cairo",),
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -1087,7 +1085,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                   hint,
                      style: TextStyle(
                           fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 13.sp,
+                    fontSize: context.isTab ? 8.sp : 13.sp,
                     color: Colors.grey,
                   ),
                 ),
@@ -1100,7 +1098,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                   item,
                      style: TextStyle(
                           fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                    fontSize: context.isTab ? 8.sp : 12.sp,
                     color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
@@ -1156,7 +1154,7 @@ class _AzanViewState extends StateMVC<AzanView> {
                     hintStyle: TextStyle(
                         fontFamily: "cairo",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                            context.isTab ? 8.sp : 12.sp,
                         color: Colors.grey),
                     hintTextDirection: TextDirection.rtl,
                     border: OutlineInputBorder(
@@ -1590,7 +1588,7 @@ class _AzanViewState extends StateMVC<AzanView> {
             prayer,
                style: TextStyle(
                           fontFamily: "cairo",
-              fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+              fontSize: context.isTab ? 9.sp : 14.sp,
               color: isDark ? Colors.white70 : Colors.black87,
             ),
           ),
@@ -1606,13 +1604,13 @@ class _AzanViewState extends StateMVC<AzanView> {
                 },
               ),
               SizedBox(
-                width: ResponsiveUtil.isTablet(context) ? 30 : 45,
+                width: context.isTab ? 30 : 45,
                 child: Text(
                   "${currentOffset > 0 ? '+' : ''}$currentOffset",
                   textAlign: TextAlign.center,
                      style: TextStyle(
                           fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
+                    fontSize: context.isTab ? 9.sp : 14.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
                   ),

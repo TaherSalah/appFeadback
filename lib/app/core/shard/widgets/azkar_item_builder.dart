@@ -77,7 +77,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
 
 🌺✨🌿✨🌺✨🌿✨🌺✨🌿
 """;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final size = MediaQuery.sizeOf(context);
     final baseColor = widget.color ?? const Color(AppStyle.primaryColor);
 
@@ -289,7 +289,7 @@ class _AzkarActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final primary = Theme.of(context).colorScheme.primary;
 
     return InkWell(
@@ -334,7 +334,7 @@ class _AzkarOrnamentDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),

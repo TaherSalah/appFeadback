@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart' as intl;
@@ -34,7 +35,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    // final isDark = context.isDark;
     final primaryColor =
         context.isDark ? Colors.tealAccent : const Color(0xFF00897B);
 
@@ -51,7 +52,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(context.isTablet ? 70 : 50),
+          preferredSize: Size.fromHeight(context.isTab ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: context.isDark ? Colors.white : Colors.black,
@@ -63,7 +64,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: context.isTablet ? 12.sp : 18.sp,
+                fontSize: context.isTab ? 12.sp : 18.sp,
               ),
             ),
             actions: const [
@@ -296,7 +297,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           Text(
             "$total",
             style: GoogleFonts.barlow(
-                fontSize: context.isTablet ? 30.sp : 45.sp,
+                fontSize: context.isTab ? 30.sp : 45.sp,
                 fontWeight: FontWeight.bold,
                 color: primaryColor),
           ),
@@ -346,12 +347,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       String title, IconData icon, bool isDark, Color primaryColor) {
     return Row(
       children: [
-        Icon(icon, size: context.isTablet ? 15.sp : 20.sp, color: primaryColor),
+        Icon(icon, size: context.isTab ? 15.sp : 20.sp, color: primaryColor),
         SizedBox(width: 8.w),
         Text(title,
                style: TextStyle(
                           fontFamily: "cairo",
-                fontSize: context.isTablet ? 10.sp : 14.sp,
+                fontSize: context.isTab ? 10.sp : 14.sp,
                 fontWeight: FontWeight.bold,
                 color: context.isDark ? Colors.white70 : Colors.black87)),
       ],
@@ -497,7 +498,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: context.isTablet ? 4 : 2,
+        crossAxisCount: context.isTab ? 4 : 2,
         crossAxisSpacing: 12.w,
         mainAxisSpacing: 12.w,
         childAspectRatio: 0.75,
@@ -535,7 +536,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               Text(ach['title']!,
                      style: TextStyle(
                           fontFamily: "cairo",
-                      fontSize: context.isTablet ? 9.sp : 12.sp,
+                      fontSize: context.isTab ? 9.sp : 12.sp,
                       fontWeight: FontWeight.bold,
                       color: isUnlocked
                           ? (context.isDark
@@ -548,7 +549,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ach['desc']!,
                      style: TextStyle(
                           fontFamily: "cairo",
-                      fontSize: context.isTablet ? 7.sp : 10.sp,
+                      fontSize: context.isTab ? 7.sp : 10.sp,
                       color: Colors.grey),
                   textAlign: TextAlign.center,
                   maxLines: 1,

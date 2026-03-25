@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:muslimdaily/app/core/shard/widgets/done_widget.dart';
+import 'package:get/get.dart';
 import 'package:muslimdaily/app/core/controller/azkar_controller.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:muslimdaily/app/core/shard/widgets/done_widget.dart';
+import 'package:provider/provider.dart';
+
 import '../../core/shard/constanc/app_string.dart';
 import 'azkar_sabah_controller.dart';
 import 'widgets/azkar_sabah_fab.dart';
-import 'widgets/azkar_sabah_player_ui.dart';
 import 'widgets/azkar_sabah_list.dart';
+import 'widgets/azkar_sabah_player_ui.dart';
 
 class AzkarSabah extends StatelessWidget {
   const AzkarSabah({super.key});
@@ -19,7 +20,7 @@ class AzkarSabah extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(AzkarSabahController());
     final con = Provider.of<AzkarProvider>(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final bool allDone = con.isSabahDone;
 
     return Stack(

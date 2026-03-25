@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 import '../cubit/centralized_cubit.dart';
 import '../utils/style/k_color.dart';
-import '../utils/style/responsive_util.dart';
 import 'custom_text_widget.dart';
 
 class KButtons {
@@ -35,7 +35,7 @@ class KButtons {
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0.0),
           textStyle: TextStyle(
-            fontSize: ResponsiveUtil.isTablet(context) ? 13 : 8,
+            fontSize: context.isTab ? 13 : 8,
           ),
           backgroundColor: CentralizedCubit.isDarkMode
               ? KColors.cardBackgroundD

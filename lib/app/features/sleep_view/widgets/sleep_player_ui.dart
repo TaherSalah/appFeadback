@@ -1,11 +1,12 @@
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/extensions/extensions.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+
 import '../sleep_controller.dart';
 
 class SleepPlayerUI extends GetView<SleepController> {
@@ -145,7 +146,7 @@ class SleepPlayerUI extends GetView<SleepController> {
     final double sliderValue = durationMs > 0 ? positionMs.clamp(0, durationMs).toDouble() : 0.0;
 
     final double fullHeight = MediaQuery.sizeOf(context).height * 0.78;
-    final bool isTab = ResponsiveUtil.isTablet(context);
+    final bool isTab = context.isTab;
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 280),

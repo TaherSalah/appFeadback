@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/quran/view/TafsirViewerDetailsScreen.dart';
 import 'package:quran_library/quran.dart';
 
-import '../../../../core/utils/style/k_color.dart';
 import '../../../../core/utils/style/k_helper.dart';
 
 class TafsirQuranView extends StatefulWidget {
@@ -32,7 +31,7 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
 
   // ─── Download dialog styled like delete-wird ───────────────────────────────
   void _showDownloadDialog(String tafsirName) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -226,8 +225,8 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
       );
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final isDark = context.isDark;
+    final isTablet = context.isTab;
     final books = _ql.tafsirAndTraslationsCollection;
     const imagePath = 'assets/images';
     final tafsirImages = List.generate(6, (i) => '$imagePath/${i + 1}.jpg');

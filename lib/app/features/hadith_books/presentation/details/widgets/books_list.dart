@@ -1,6 +1,4 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/hadith_books/controllers/extensions/books_getters_extension.dart';
 
@@ -13,7 +11,7 @@ class BooksList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     const baseColor = AppColors.primary;
     const Color goldColor = Color(0xFFD4AF37);
 

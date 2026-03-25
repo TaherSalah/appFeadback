@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 enum KDialogType { success, warning, info, error }
 
@@ -14,7 +14,7 @@ class KDialogHelper {
     List<Widget>? actions,
     bool barrierDismissible = false,
   }) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     // Determine colors based on type
     List<Color> bodyGradient;
@@ -176,7 +176,7 @@ class KDialogHelper {
     Color? color,
     IconData? icon,
   }) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     if (isPrimary) {
       return ElevatedButton.icon(
@@ -184,7 +184,7 @@ class KDialogHelper {
         icon: icon != null ? Icon(icon, size: 18) : const SizedBox.shrink(),
         label: Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
                   fontFamily: "cairo",fontWeight: FontWeight.bold),
         ),
         style: ElevatedButton.styleFrom(

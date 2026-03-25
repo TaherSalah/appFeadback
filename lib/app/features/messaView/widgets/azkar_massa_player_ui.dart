@@ -1,10 +1,12 @@
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+
 import '../azkar_massa_controller.dart';
 
 class AzkarMassaPlayerUI extends StatelessWidget {
@@ -13,7 +15,7 @@ class AzkarMassaPlayerUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AzkarMassaController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Obx(() {
       return Stack(
@@ -122,7 +124,7 @@ class AzkarMassaPlayerUI extends StatelessWidget {
     final double sliderValue = durationMs > 0 ? positionMs.clamp(0, durationMs).toDouble() : 0.0;
 
     final double fullHeight = MediaQuery.sizeOf(context).height * 0.78;
-    final bool isTab = ResponsiveUtil.isTablet(context);
+    final bool isTab = context.isTab;
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 280),

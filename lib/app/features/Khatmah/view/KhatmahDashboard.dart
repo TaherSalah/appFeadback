@@ -566,7 +566,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
   @override
   Widget build(BuildContext context) {
     final currentList = box.values.where((k) => !k.isCompleted).toList();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import '../../../core/utils/style/k_dialog_helper.dart';
 
 class DailyGiftWidget extends StatefulWidget {
@@ -119,7 +120,7 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget>
             style: GoogleFonts.amiri(
               fontSize: 18.sp,
               height: 1.6,
-              color: Theme.of(context).brightness == Brightness.dark
+              color: context.isDark
                   ? Colors.grey[100]
                   : Colors.grey[900],
             ),
@@ -146,7 +147,7 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget>
   Widget build(BuildContext context) {
     if (_isOpened) return const SizedBox.shrink(); // تختفي بعد الفتح (اختياري)
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

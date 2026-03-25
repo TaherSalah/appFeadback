@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:lottie/lottie.dart';
-import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:quran_library/quran.dart';
 
@@ -146,7 +144,7 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                                       style: TextStyle(
                                         fontFamily: "me",
                                         fontSize:
-                                            ResponsiveUtil.isTablet(context)
+                                            context.isTab
                                                 ? 9.sp
                                                 : 14.sp,
                                       )),
@@ -173,7 +171,7 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 4),
                                   child: TextWidget(
-                                    fontSize: ResponsiveUtil.isTablet(context)
+                                    fontSize: context.isTab
                                         ? 9.sp
                                         : 14.sp,
                                     textAlign: TextAlign.center,
@@ -199,7 +197,7 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 4),
                                   child: TextWidget(
-                                    fontSize: ResponsiveUtil.isTablet(context)
+                                    fontSize: context.isTab
                                         ? 9.sp
                                         : 14.sp,
                                     textAlign: TextAlign.center,
@@ -233,13 +231,13 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                               TextWidget(
                                 title: "لا يوجد نتائج حالية",
                                 fontWeight: FontWeight.bold,
-                                fontSize: ResponsiveUtil.isTablet(context)
+                                fontSize: context.isTab
                                     ? 8.sp
                                     : 14,
                               ),
                               TextWidget(
                                 title: "يمكنك البحث عن أي كلمة في القرأن ",
-                                fontSize: ResponsiveUtil.isTablet(context)
+                                fontSize: context.isTab
                                     ? 8.sp
                                     : 12,
                               ),
@@ -253,7 +251,7 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                                   TextWidget(
                                     title: "لا يوجد نتائج عن ",
                                     fontWeight: FontWeight.bold,
-                                    fontSize: ResponsiveUtil.isTablet(context)
+                                    fontSize: context.isTab
                                         ? 8.sp
                                         : 14,
                                   ),
@@ -263,7 +261,7 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                                     color: CentralizedCubit.isDarkMode
                                         ? KColors.primary
                                         : KColors.primary2Color,
-                                    fontSize: ResponsiveUtil.isTablet(context)
+                                    fontSize: context.isTab
                                         ? 8.sp
                                         : 14,
                                   ),
@@ -271,7 +269,7 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                               ),
                               TextWidget(
                                 title: "يمكنك البحث عن أي كلمة في القرأن ",
-                                fontSize: ResponsiveUtil.isTablet(context)
+                                fontSize: context.isTab
                                     ? 8.sp
                                     : 12,
                               ),

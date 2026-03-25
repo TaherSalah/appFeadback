@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
-import '../../data/models/ar_hadith_model.dart';
 import '../../../../core/utils/style/k_color.dart';
 import '../../controllers/books_controller.dart';
 import '../../controllers/extensions/books_getters_extension.dart';
+import '../../data/models/ar_hadith_model.dart';
 
 class SearchResultCard extends StatelessWidget {
   final ARHadithModel hadith;
@@ -19,7 +19,7 @@ class SearchResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final baseColor = KColors.primaryColor;
 
     return Container(

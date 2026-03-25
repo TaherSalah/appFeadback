@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart' as ja; // تمت التسمية هنا
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/log.dart';
 
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/localization/localization_manager.dart';
 import '../../../../core/utils/style/k_color.dart';
 import '../../../../core/utils/style/k_helper.dart';
-import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/widgets/KLoading.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 import '../../../../core/widgets/head_title_item_builder.dart';
@@ -66,7 +66,7 @@ class QuranDetailsViewItemBuilder extends StatelessWidget {
                               TextWidget(
                                   title: bloc.quranDetailsModal!.reciterName,
                                   height: 2,
-                                  fontSize: ResponsiveUtil.isTablet(context)
+                                  fontSize: context.isTab
                                       ? 8.sp
                                       : 11.5.sp)
                             ],

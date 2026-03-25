@@ -1,8 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:quran_library/quran.dart';
 
 class TafsirViewerDetailsScreen extends StatefulWidget {
@@ -61,7 +61,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
 
   // ✅ dialog تحميل مميز بأسلوب حذف الورد
   void _showDownloadingDialog() {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -229,7 +229,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
 
   Future<void> _gotoPageDialog() async {
     final controller = TextEditingController(text: _pageNumber.toString());
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     final result = await showDialog<int>(
       context: context,
@@ -473,7 +473,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
   }
 
   Widget _dialogCircleButton({required IconData icon, required VoidCallback onTap}) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -527,7 +527,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
       );
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final isTablet = MediaQuery.sizeOf(context).width >= 600;
     final bgColor = isDark ? const Color(0xFF0D1117) : const Color(0xFFF5F7F5);
     final cardColor = isDark ? const Color(0xFF161D1B) : Colors.white;

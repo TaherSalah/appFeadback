@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
-import '../../../../core/utils/style/responsive_util.dart';
 
 class HadithTranslate extends StatelessWidget {
   final String otherLangHadithText;
@@ -21,7 +21,7 @@ class HadithTranslate extends StatelessWidget {
               'hadithTranslate'.tr, // Ensure key exists or use fallback
               style: TextStyle(
                  fontFamily: 'naskh',
-                 fontSize: ResponsiveUtil.isTablet(context) ? 18 : 24,
+                 fontSize: context.isTab ? 18 : 24,
                  color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
            ),

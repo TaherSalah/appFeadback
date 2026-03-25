@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../data/models/bookmark_model.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
 import '../../../../core/utils/style/k_color.dart';
 import '../../controllers/books_controller.dart';
 import '../../controllers/extensions/books_getters_extension.dart';
+import '../../data/models/bookmark_model.dart';
 
 class BookmarkCard extends StatelessWidget {
   final BookmarkModel bookmark;
@@ -20,7 +21,7 @@ class BookmarkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final baseColor = KColors.primaryColor;
     final hadith = bookmark.hadith.target;
 
@@ -208,7 +209,7 @@ class BookmarkCard extends StatelessWidget {
   }
 
   void _showCategoryDialog(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final baseColor = KColors.primaryColor;
     
     final categories = [
@@ -283,7 +284,7 @@ class BookmarkCard extends StatelessWidget {
   }
 
   void _showDeleteHadithDialog(BuildContext context, VoidCallback onDelete) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     showDialog(
       context: context,

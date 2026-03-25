@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 import '../../../core/utils/style/k_color.dart';
 import '../controllers/books_controller.dart';
@@ -13,9 +13,8 @@ class BookmarksView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final baseColor = KColors.primaryColor;
-    final booksCtrl = Get.find<BooksController>();
 
     return Scaffold(
       // appBar: AppBar(

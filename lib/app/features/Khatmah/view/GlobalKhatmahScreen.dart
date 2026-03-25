@@ -1,28 +1,28 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'dart:math' as math;
+
+import 'package:confetti/confetti.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:muslimdaily/app/core/services/feature_guard_service.dart';
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/global_khatmah_service.dart';
-import 'package:muslimdaily/app/features/quran/SurahModel.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:confetti/confetti.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:speech_to_text/speech_to_text.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'dart:math' as math;
-import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/khatmah_certificate_screen.dart';
+import 'package:muslimdaily/app/features/quran/SurahModel.dart';
 import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:quran/quran.dart' as quran;
-import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
-import 'package:muslimdaily/app/core/services/feature_guard_service.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../main.dart';
 
@@ -221,7 +221,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     if (_userNickname != null && _userNickname!.isNotEmpty) return;
 
     final controller = TextEditingController();
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
     const int maxLength = 12;
     final errorText = validateNickname(controller.text);
     final isValid = errorText == null;
@@ -301,7 +301,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                               maxLength: maxLength,
                               textAlign: TextAlign.center,
                               onChanged: (_) => setLocalState(() {}),
-                                 style: TextStyle(
+                                 style: const TextStyle(
                           fontFamily: "cairo",
                                 fontWeight: FontWeight.w600,
                               ),
@@ -315,7 +315,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                   borderRadius: BorderRadius.circular(14),
                                   borderSide: BorderSide.none,
                                 ),
-                                errorStyle: TextStyle(
+                                errorStyle: const TextStyle(
                                     fontFamily: "cairo",fontSize: 11),
                               ),
                             ),
@@ -326,7 +326,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                 padding: const EdgeInsets.only(top: 8),
                                 child: Text(
                                   errorMessage,
-                                     style: TextStyle(
+                                     style: const TextStyle(
                           fontFamily: "cairo",
                                     fontSize: 12,
                                     color: Colors.redAccent,
@@ -349,7 +349,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                         borderRadius: BorderRadius.circular(14),
                                       ),
                                     ),
-                                    child: Text(
+                                    child: const Text(
                                       'إلغاء',
                                          style: TextStyle(
                           fontFamily: "cairo",),
@@ -381,7 +381,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                         borderRadius: BorderRadius.circular(14),
                                       ),
                                     ),
-                                    child: Text(
+                                    child: const Text(
                                       'حفظ',
                                          style: TextStyle(
                           fontFamily: "cairo",),
@@ -395,14 +395,14 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       ),
 
                       // Icon
-                      Positioned(
+                      const Positioned(
                         top: -30,
                         left: 0,
                         right: 0,
                         child: CircleAvatar(
                           radius: 30,
                           backgroundColor: Colors.teal,
-                          child: const Icon(
+                          child: Icon(
                             Icons.person_outline,
                             size: 34,
                             color: Colors.white,
@@ -479,7 +479,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Scaffold(
 
@@ -496,7 +496,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         ),
         title: Text(
           _isDetailView ? 'تفاصيل الختمة' : 'الختمة الجماعية',
-             style: TextStyle(
+             style: const TextStyle(
                           fontFamily: "cairo",
             color: Colors.green,
             fontWeight: FontWeight.bold,
@@ -688,7 +688,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           title,
              style: TextStyle(
                           fontFamily: "cairo",
-            fontSize:ResponsiveUtil.isTablet(context)? 18:14.sp,
+            fontSize:context.isTab? 18:14.sp,
 
             fontWeight: FontWeight.w900,
             color: isDark ? Colors.white : Colors.black87,
@@ -738,7 +738,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.analytics_rounded,
-                      color: KColors.primaryColor, size:ResponsiveUtil.isTablet(context)? 28:25),
+                      color: KColors.primaryColor, size:context.isTab? 28:25),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
@@ -753,7 +753,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                             'تأثيرك في المجتمع',
                                style: TextStyle(
                           fontFamily: "cairo",
-                              fontSize:ResponsiveUtil.isTablet(context)? 18:14.sp,
+                              fontSize:context.isTab? 18:14.sp,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white : Colors.black87,
                             ),
@@ -767,7 +767,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                         _userNickname ?? 'مشارك مجهول',
                            style: TextStyle(
                           fontFamily: "cairo",
-                          fontSize:ResponsiveUtil.isTablet(context)? 13:13.sp,
+                          fontSize:context.isTab? 13:13.sp,
                           color: Colors.grey,
                           fontWeight: FontWeight.bold,
                         ),
@@ -834,7 +834,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           // const SizedBox(height: 8),
           Text(
             value,
-               style: TextStyle(
+               style: const TextStyle(
                           fontFamily: "cairo",
               fontSize: 22,
               fontWeight: FontWeight.w900,
@@ -843,7 +843,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           ),
           Text(
             label,
-               style: TextStyle(
+               style: const TextStyle(
                           fontFamily: "cairo",
               fontSize: 11,
               color: Colors.grey,
@@ -984,7 +984,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               ),
               Text(
                 _formatRelativeTime(activity['updated_at']),
-                   style: TextStyle(
+                   style: const TextStyle(
                           fontFamily: "cairo",fontSize: 10, color: Colors.grey),
               ),
             ],
@@ -1053,7 +1053,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                           title,
                              style: TextStyle(
                           fontFamily: "cairo",
-                            fontSize:ResponsiveUtil.isTablet(context)? 20:13.sp,
+                            fontSize:context.isTab? 20:13.sp,
 
                             fontWeight: FontWeight.w900,
                             color: isDark ? Colors.white : Colors.black87,
@@ -1063,7 +1063,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                           'نشاط مجتمعي قائم بنظام ال $typeLabel',
                              style: TextStyle(
                           fontFamily: "cairo",
-                            fontSize:ResponsiveUtil.isTablet(context)? 12:10.sp,
+                            fontSize:context.isTab? 12:10.sp,
 
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
@@ -1119,7 +1119,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                           fontFamily: "cairo",
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
-                      fontSize:ResponsiveUtil.isTablet(context)? 15:12.sp,
+                      fontSize:context.isTab? 15:12.sp,
 
                     ),
                   ),
@@ -1141,7 +1141,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           label,
              style: TextStyle(
                           fontFamily: "cairo",
-              fontSize:                              ResponsiveUtil.isTablet(context)? 11:10.sp
+              fontSize:                              context.isTab? 11:10.sp
     , fontWeight: FontWeight.bold, color: Colors.grey),
         ),
       ],
@@ -1387,12 +1387,12 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   }
 
   Widget _buildNoCampaign() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.cloud_off_rounded, size: 80, color: Colors.grey),
-          const SizedBox(height: 16),
+          Icon(Icons.cloud_off_rounded, size: 80, color: Colors.grey),
+          SizedBox(height: 16),
           Text(
             'لا توجد حملة نشطة حالياً',
                style: TextStyle(
@@ -1631,7 +1631,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       children: [
                         Text(
                           '${item['user_name'] ?? 'أحد المتسابقين'}',
-                             style: TextStyle(
+                             style: const TextStyle(
                           fontFamily: "cairo",
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -1639,7 +1639,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                         ),
                         Text(
                           '${isDone ? 'أتم قراءة' : 'بدأ قراءة'} ورد رقم ${item['item_index']}',
-                             style: TextStyle(
+                             style: const TextStyle(
                           fontFamily: "cairo",
                               fontSize: 12, color: Colors.grey, height: 1.2),
                         ),
@@ -1648,7 +1648,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   ),
                   Text(
                     _formatRelativeTime(item['updated_at']),
-                       style: TextStyle(
+                       style: const TextStyle(
                           fontFamily: "cairo",fontSize: 10, color: Colors.grey),
                   ),
                 ],
@@ -1680,7 +1680,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             ).createShader(bounds),
             child: Text(
               campaign['title'] ?? 'بدون عنوان',
-                 style: TextStyle(
+                 style: const TextStyle(
                           fontFamily: "cairo",
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
@@ -1786,7 +1786,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'تقدم الختمة الحالية',
                  style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.w600),
@@ -1796,7 +1796,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                  style: TextStyle(
                           fontFamily: "cairo",
                   fontWeight: FontWeight.bold, color: KColors.primaryColor,
-                fontSize:ResponsiveUtil.isTablet(context)? 12:10.sp,
+                fontSize:context.isTab? 12:10.sp,
 
               ),
             ),
@@ -1838,7 +1838,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               ' تم إنجاز ${(percent * campaign['target_total']).toInt()} من ${campaign['target_total']} حتى الآن!',
-                 style: TextStyle(
+                 style: const TextStyle(
                           fontFamily: "cairo",
                   fontSize: 10,
                   color: Colors.green,
@@ -1847,8 +1847,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           )
         // 🎉
         else if (_progress.any((p) => (p['status'] ?? '') == 'reading'))
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
             child: Text(
               '👈 اضغط على الجزء الأصفر مرة أخرى بعد القراءة لإتمامه (سيتحول للأخضر)',
                  style: TextStyle(
@@ -1958,7 +1958,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                 Icon(Icons.search_off_rounded,
                     size: 48, color: Colors.grey.withOpacity(0.5)),
                 const SizedBox(height: 10),
-                Text('لا توجد نتائج للبحث',
+                const Text('لا توجد نتائج للبحث',
                        style: TextStyle(
                           fontFamily: "cairo",color: Colors.grey)),
               ],
@@ -2026,7 +2026,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     }
 
     final bool isMine = _myClaims.contains(index);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     return InkWell(
       onTap: () => _showActionSheet(index, status, label),
       borderRadius: BorderRadius.circular(24),
@@ -2123,7 +2123,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 'مشاركة في الختمة الجماعية',
                    style: TextStyle(
                           fontFamily: "cairo",
@@ -2132,7 +2132,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               const SizedBox(height: 8),
               Text(
                 'هل تود المساهمة بقراءة $label؟',
-                   style: TextStyle(
+                   style: const TextStyle(
                           fontFamily: "cairo",color: Colors.grey),
               ),
               const SizedBox(height: 24),
@@ -2145,7 +2145,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: Text('أنا سأقرأه',
+                  child: const Text('أنا سأقرأه',
                          style: TextStyle(
                           fontFamily: "cairo",
                           color: Colors.white, fontWeight: FontWeight.bold)),
@@ -2159,7 +2159,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: Text('تمت القراءة بحمد الله',
+                  child: const Text('تمت القراءة بحمد الله',
                          style: TextStyle(
                           fontFamily: "cairo",
                           color: Colors.white, fontWeight: FontWeight.bold)),
@@ -2172,7 +2172,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     _navigateToQuran(index);
                   },
                   icon: const Icon(Icons.menu_book_rounded, color: Colors.teal),
-                  label: Text('قراءة من المصحف',
+                  label: const Text('قراءة من المصحف',
                          style: TextStyle(
                           fontFamily: "cairo",
                           color: Colors.teal, fontWeight: FontWeight.bold)),
@@ -2192,7 +2192,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child:
-                    Text('إلغاء',    style: TextStyle(
+                    const Text('إلغاء',    style: TextStyle(
                           fontFamily: "cairo",color: Colors.grey)),
               ),
             ],
@@ -2387,7 +2387,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
   }
 
   void _showHelpDialog() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     showDialog(
       context: context,
       builder: (context) => Directionality(
@@ -2400,7 +2400,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             children: [
               Icon(Icons.help_outline_rounded, color: KColors.primaryColor),
               const SizedBox(width: 10),
-              Text('كيف أشارك؟',
+              const Text('كيف أشارك؟',
                      style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
             ],
@@ -2439,7 +2439,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('فهمت، شكراً',
+              child: const Text('فهمت، شكراً',
                      style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
             ),
@@ -2457,10 +2457,10 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         children: [
           Text(title,
               style:
-                  TextStyle(
+                  const TextStyle(
                   fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 14)),
           Text(desc,
-                 style: TextStyle(
+                 style: const TextStyle(
                           fontFamily: "cairo",fontSize: 12, color: Colors.grey)),
         ],
       ),
@@ -2607,7 +2607,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                 'إحصائيات مجتمع رفيق المسلم اليومي',
                    style: TextStyle(
                           fontFamily: "cairo",
-                  fontSize:ResponsiveUtil.isTablet(context)? 16:14.sp,
+                  fontSize:context.isTab? 16:14.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
@@ -2650,7 +2650,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           // const SizedBox(height: 5),
           Text(
             value,
-               style: TextStyle(
+               style: const TextStyle(
                           fontFamily: "cairo",
               fontSize: 18,
               fontWeight: FontWeight.w900,
@@ -2660,7 +2660,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           Text(
             label,
             textAlign: TextAlign.center,
-               style: TextStyle(
+               style: const TextStyle(
                           fontFamily: "cairo",
               fontSize: 10,
               color: Colors.grey,
@@ -2758,7 +2758,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       child: OutlinedButton.icon(
         onPressed: _joinRandomWard,
         icon: const Icon(Icons.bolt_rounded, size: 20, color: Colors.amber),
-        label: Text('انضم إلى ورد عشوائي الآن',
+        label: const Text('انضم إلى ورد عشوائي الآن',
                style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
         style: OutlinedButton.styleFrom(
@@ -2828,7 +2828,7 @@ class _AnalyticsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final primaryColor = KColors.primaryColor;
 
     return Container(
@@ -2864,7 +2864,7 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             shaderCallback: (bounds) => LinearGradient(
               colors: [primaryColor, Colors.blueAccent],
             ).createShader(bounds),
-            child: Text(
+            child: const Text(
               'تحليل القراءة الشخصي',
                  style: TextStyle(
                           fontFamily: "cairo",
@@ -2934,7 +2934,7 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                         Icon(Icons.history_rounded,
                             color: primaryColor, size: 24),
                         const SizedBox(width: 10),
-                        Text(
+                        const Text(
                           'سجل الإنجازات الأخيرة',
                              style: TextStyle(
                           fontFamily: "cairo",
@@ -2973,7 +2973,7 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                             },
                             icon: const Icon(Icons.workspace_premium_rounded,
                                 color: Colors.white),
-                            label: Text('استلام شهادة تقدير',
+                            label: const Text('استلام شهادة تقدير',
                                    style: TextStyle(
                           fontFamily: "cairo",
                                     fontWeight: FontWeight.bold,
@@ -3031,7 +3031,7 @@ class _AnalyticsBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           Text(value,
-                 style: TextStyle(
+                 style: const TextStyle(
                           fontFamily: "cairo",
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
@@ -3182,7 +3182,7 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                   campaignId != null
                       ? _formatDate(item['updated_at'])
                       : '${_formatDate(item['updated_at'])} • في ${_getCampaignTitleForId(item['campaign_id'])}',
-                     style: TextStyle(
+                     style: const TextStyle(
                           fontFamily: "cairo",
                     fontSize: 11,
                     color: Colors.grey,
@@ -3197,7 +3197,7 @@ class _AnalyticsBottomSheet extends StatelessWidget {
               color: Colors.green.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(
+            child: const Text(
               'مكتمل',
                  style: TextStyle(
                           fontFamily: "cairo",
@@ -3220,7 +3220,7 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             Icon(Icons.auto_stories_outlined,
                 size: 60, color: Colors.grey.withOpacity(0.5)),
             const SizedBox(height: 15),
-            Text(
+            const Text(
               'ابدأ رحلتك اليوم!',
                  style: TextStyle(
                           fontFamily: "cairo",

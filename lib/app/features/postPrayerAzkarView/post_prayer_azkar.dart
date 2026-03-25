@@ -11,7 +11,7 @@ class PostPrayerAzkarView extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(PostPrayerAzkarController());
     final con = Provider.of<AzkarProvider>(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final bool allDone = con.isPrayerDone;
 
     return Scaffold(

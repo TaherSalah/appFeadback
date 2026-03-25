@@ -2,16 +2,9 @@ import 'dart:math' as math;
 
 import 'package:geolocator/geolocator.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-
-import '../../../core/cubit/centralized_cubit.dart';
-import '../../../core/shard/exports/all_exports.dart';
-
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
 
 class IslamicCardWidget extends StatelessWidget {
@@ -28,7 +21,7 @@ class IslamicCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = context.isTablet;
+    final isTablet = context.isTab;
     final isDark = context.isDark;
 
     return GestureDetector(
@@ -366,7 +359,7 @@ void showThemeSheet(
                           text,
                           style: TextStyle(
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 16 : 13.sp,
+                                context.isTab ? 16 : 13.sp,
                             fontFamily: "cairo",
                             fontWeight: FontWeight.w600,
                           ),

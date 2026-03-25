@@ -1,5 +1,4 @@
 
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 
@@ -9,7 +8,7 @@ class HazbNawawiList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final con = Provider.of<AzkarProvider>(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final double fontSize = CentralizedCubit.get(context).azkarFontSize();
     final bool allDone = con.isHazbNawawiDone;
 
@@ -28,7 +27,7 @@ class HazbNawawiList extends StatelessWidget {
         Expanded(
           child: ListView.separated(
             padding: EdgeInsets.only(
-              bottom: ResponsiveUtil.isTablet(context) ? 50.h : 80.h,
+              bottom: context.isTab ? 50.h : 80.h,
             ),
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),

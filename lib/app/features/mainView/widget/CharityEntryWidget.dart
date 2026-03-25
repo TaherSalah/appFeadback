@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-import '../../charity/CharityDashboardScreen.dart';
-import '../../charity/services/charity_service.dart';
-import '../../charity/models/charity_models.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
 import '../../../core/utils/style/app_theme_colors.dart';
+import '../../charity/CharityDashboardScreen.dart';
+import '../../charity/models/charity_models.dart';
+import '../../charity/services/charity_service.dart';
 
 class CharityEntryWidget extends StatefulWidget {
   const CharityEntryWidget({super.key});
@@ -52,7 +52,7 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -120,7 +120,7 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                                   'مُتتبع الصدقة',
                                      style: TextStyle(
                           fontFamily: "cairo",
-                                    fontSize:ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
+                                    fontSize:context.isTab ? 10.sp : 16.sp,
                                     fontWeight: FontWeight.bold,
                                     color: AppThemeColors.cardHeaderColor(context),
                                   ),
@@ -249,7 +249,7 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                 value,
                    style: TextStyle(
                           fontFamily: "cairo",
-                  fontSize:ResponsiveUtil.isTablet(context)?9.5.sp :22.sp,
+                  fontSize:context.isTab?9.5.sp :22.sp,
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
@@ -260,7 +260,7 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                   unit,
                      style: TextStyle(
                           fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context)?8.sp :10.sp,
+                    fontSize: context.isTab?8.sp :10.sp,
                     fontWeight: FontWeight.w600,
                     color: color.withOpacity(0.7),
                   ),
@@ -273,7 +273,7 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
             label,
                style: TextStyle(
                           fontFamily: "cairo",
-              fontSize:ResponsiveUtil.isTablet(context)?8.sp: 11.sp,
+              fontSize:context.isTab?8.sp: 11.sp,
               fontWeight: FontWeight.w500,
               color: AppThemeColors.cardSubtitleColor(context),
             ),

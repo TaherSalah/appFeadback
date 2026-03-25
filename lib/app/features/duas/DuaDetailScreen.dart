@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../../core/shard/widgets/ui_animations.dart';
 import 'models/dua_models.dart';
 import 'services/dua_service.dart';
-import '../../core/shard/widgets/ui_animations.dart';
 
 class DuaDetailScreen extends StatefulWidget {
   final Dua dua;
@@ -33,7 +33,6 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

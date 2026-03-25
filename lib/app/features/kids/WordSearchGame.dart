@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../core/utils/style/k_dialog_helper.dart';
 import 'kids_data/sounds_helper.dart';
-import '../../../core/utils/style/k_dialog_helper.dart';
 
 class WordSearchGame extends StatefulWidget {
   const WordSearchGame({super.key});
@@ -15,6 +16,29 @@ class WordSearchGame extends StatefulWidget {
 class _WordSearchGameState extends State<WordSearchGame> {
   final List<String> _wordsToFind = ['الله', 'محمد', 'مسجد', 'قرآن', 'صلاة'];
   final List<String> _foundWords = [];
+  int _score = 0;
+  int _highScore = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHighScore();
+  }
+
+  Future<void> _loadHighScore() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _highScore = prefs.getInt('word_search_high_score') ?? 0;
+    });
+  }
+
+  Future<void> _saveHighScore() async {
+    if (_score > _highScore) {
+      _highScore = _score;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('word_search_high_score', _highScore);
+    }
+  }
 
   final List<List<String>> _grid = [
     ['ا', 'ل', 'ل', 'ه', 'ص'],
@@ -50,6 +74,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
         !_foundWords.contains(_selectedWord)) {
       setState(() {
         _foundWords.add(_selectedWord);
+        _score += 10; // 10 points per word
         _selectedCells.clear();
         _selectedWord = '';
       });
@@ -57,6 +82,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
       KidsSoundHelper.playSuccess();
 
       if (_foundWords.length == _wordsToFind.length) {
+        _saveHighScore();
         _showWinDialog();
       }
     } else {
@@ -75,25 +101,33 @@ class _WordSearchGameState extends State<WordSearchGame> {
       title: 'رائع يا بطل! 🎉',
       description: 'لقد وجدت جميع الكلمات بنجاح وتستحق هذه المكافأة!',
       additionalContent: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF10B981).withOpacity(0.1),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: const Color(0xFF10B981).withOpacity(0.2)),
-        ),
-        child: Row(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.stars_rounded, color: Color(0xFFF59E0B), size: 28),
-            const SizedBox(width: 10),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.stars_rounded, color: Color(0xFFF59E0B), size: 28),
+                const SizedBox(width: 10),
+                Text(
+                  'لقد حصلت على $_score نقطة! ✨',
+                  style: TextStyle(
+                      fontFamily: "cairo",
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF10B981),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
             Text(
-              'لقد حصلت على 20 نجمة ✨',
+              'أعلى نتيجة: $_highScore ✨',
               style: TextStyle(
-                  fontFamily: "cairo",
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF10B981),
+                fontFamily: "cairo",
+                fontSize: 14.sp,
+                color: Colors.grey[600],
               ),
             ),
           ],
@@ -115,7 +149,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -126,7 +160,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
             style: TextStyle(
                   fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+              fontSize: context.isTab ? 14.sp : 20.sp,
             ),
           ),
           centerTitle: true,
@@ -151,7 +185,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
                     style: TextStyle(
                   fontFamily: "cairo",
                       fontSize:
-                          ResponsiveUtil.isTablet(context) ? 11.sp : 16.sp,
+                          context.isTab ? 11.sp : 16.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -191,6 +225,45 @@ class _WordSearchGameState extends State<WordSearchGame> {
                         ),
                       );
                     }).toList(),
+                  ),
+                ],
+              ),
+            ),
+
+            // Score Header
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.withOpacity(0.3)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.stars, color: Colors.amber),
+                      const SizedBox(width: 8),
+                      Text(
+                        'النتيجة: $_score',
+                        style: TextStyle(
+                          fontFamily: "cairo",
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    'الأفضل: $_highScore',
+                    style: TextStyle(
+                      fontFamily: "cairo",
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                    ),
                   ),
                 ],
               ),
@@ -239,7 +312,7 @@ class _WordSearchGameState extends State<WordSearchGame> {
                                 _grid[row][col],
                                 style: TextStyle(
                   fontFamily: "cairo",
-                                  fontSize: ResponsiveUtil.isTablet(context)
+                                  fontSize: context.isTab
                                       ? 14.sp
                                       : 20.sp,
                                   fontWeight: FontWeight.bold,

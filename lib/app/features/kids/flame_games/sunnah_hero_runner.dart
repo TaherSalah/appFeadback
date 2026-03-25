@@ -3,7 +3,6 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'base_flame_game.dart';
 
 class SunnahHeroRunner extends BaseEducationalGame with TapCallbacks {
@@ -37,6 +36,7 @@ class SunnahHeroRunner extends BaseEducationalGame with TapCallbacks {
 
   @override
   Future<void> onLoad() async {
+    await super.onLoad();
     // Elegant gradient sky
     add(BackgroundGradient(colors: [
       const Color(0xFF0D47A1), // Blue 900

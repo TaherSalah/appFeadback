@@ -1,25 +1,25 @@
-import 'dart:ui';
 import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/rendering.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
-import 'package:screen_brightness/screen_brightness.dart' as sb;
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
+import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/DrawerWidget.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
-import 'package:quran_library/quran_library.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/features/quran/data/reading_analytics_service.dart';
 import 'package:muslimdaily/app/features/quran/data/reflections_service.dart';
 import 'package:muslimdaily/app/features/quran/view/ReadingAnalyticsScreen.dart';
 import 'package:muslimdaily/app/features/quran/view/widget/page_reflections_screen.dart';
-import 'package:muslimdaily/app/features/quran/view/widget/surahListView.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:quran_library/quran_library.dart';
+import 'package:screen_brightness/screen_brightness.dart' as sb;
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 enum _QuranMenuAction {
   audio,
@@ -56,7 +56,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   final GlobalKey _shareKey = GlobalKey();
   bool _isSharing = false;
 
-  bool get isDark => Theme.of(context).brightness == Brightness.dark;
+  bool get isDark => context.isDark;
 
   Color _darkBackgroundColor = const Color(0xFF101623);
   Color _lightBackgroundColor = const Color(0xFFF7F1E1);
@@ -625,7 +625,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   Future<void> _showSadaqahDialog() async {
     String selectedName = "";
     final names = ["والديّ", "جميع المسلمين", "والدي ووالدتي", "نفسي"];
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     await showDialog(
       context: context,
@@ -1811,7 +1811,7 @@ class _NoteDialogWidgetState extends State<NoteDialogWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

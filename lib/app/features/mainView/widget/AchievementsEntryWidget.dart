@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import '../../achievements/AchievementsScreen.dart';
-import '../../achievements/services/achievement_service.dart';
 import '../../achievements/models/achievement_models.dart';
+import '../../achievements/services/achievement_service.dart';
 
 class AchievementsEntryWidget extends StatefulWidget {
   const AchievementsEntryWidget({super.key});
@@ -31,7 +31,6 @@ class _AchievementsEntryWidgetState extends State<AchievementsEntryWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_progress == null) return const SizedBox.shrink();
 

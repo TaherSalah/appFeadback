@@ -78,7 +78,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(context.isTablet ? 70 : 50),
+        preferredSize: Size.fromHeight(context.isTab ? 70 : 50),
         child: AppBar(
           leading: CupertinoNavigationBarBackButton(
             color: context.isDark ? Colors.white : Colors.black,
@@ -90,7 +90,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                           fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
-              fontSize: context.isTablet ? 12.sp : 18.sp,
+              fontSize: context.isTab ? 12.sp : 18.sp,
             ),
           ),
           actions: [

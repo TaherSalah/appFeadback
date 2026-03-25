@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/utils/style/responsive_util.dart';
-import 'kids_data/sounds_helper.dart';
 import 'dart:math';
-import '../../../core/utils/style/k_dialog_helper.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import '../../core/utils/style/k_dialog_helper.dart';
+import 'kids_data/sounds_helper.dart';
 
 class PrayerMovementsGame extends StatefulWidget {
   const PrayerMovementsGame({super.key});
@@ -179,7 +178,7 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final movement = _movements[_currentQuestion];
 
     return Directionality(
@@ -191,7 +190,7 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
             style: TextStyle(
                   fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+              fontSize: context.isTab ? 14.sp : 20.sp,
             ),
           ),
           centerTitle: true,
@@ -220,7 +219,7 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                         style: TextStyle(
                   fontFamily: "cairo",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                              context.isTab ? 10.sp : 14.sp,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -236,7 +235,7 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                         style: TextStyle(
                   fontFamily: "cairo",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 12.sp : 16.sp,
+                              context.isTab ? 12.sp : 16.sp,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -278,7 +277,7 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                             movement['name'],
                             style: TextStyle(
                   fontFamily: "cairo",
-                              fontSize: ResponsiveUtil.isTablet(context)
+                              fontSize: context.isTab
                                   ? 14.sp
                                   : 20.sp,
                               fontWeight: FontWeight.bold,
@@ -290,7 +289,7 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                             movement['description'],
                             style: TextStyle(
                   fontFamily: "cairo",
-                              fontSize: ResponsiveUtil.isTablet(context)
+                              fontSize: context.isTab
                                   ? 10.sp
                                   : 14.sp,
                               color: Colors.grey,
@@ -307,7 +306,7 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                       style: TextStyle(
                   fontFamily: "cairo",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 11.sp : 16.sp,
+                            context.isTab ? 11.sp : 16.sp,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
                       ),
@@ -377,7 +376,7 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
               option,
               style: TextStyle(
                   fontFamily: "cairo",
-                fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+                fontSize: context.isTab ? 14.sp : 20.sp,
                 fontWeight: _answered && index == correctIndex
                     ? FontWeight.bold
                     : FontWeight.normal,

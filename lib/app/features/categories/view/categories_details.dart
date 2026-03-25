@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/categories/data/repo/categories_repo_immp.dart';
 
 import '../../../core/localization/localization_manager.dart';
 import '../../../core/utils/constent/router.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/k_color.dart';
-import '../../../core/utils/style/responsive_util.dart';
 import '../../../core/widgets/KLoading.dart';
 import '../../../core/widgets/custom_text_widget.dart';
 import '../../hadithDetails/data/repo/hadith_details_repo_immp.dart';
@@ -69,7 +69,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
       },
       child: BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (BuildContext context, state) {
-          final isDark = Theme.of(context).brightness == Brightness.dark;
+          final isDark = context.isDark;
 
           return state.maybeMap(
             orElse: () {
@@ -90,7 +90,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                 slivers: [
                   SliverAppBar(
                       leading: CupertinoNavigationBarBackButton(
-                        color: Theme.of(context).brightness == Brightness.dark
+                        color: context.isDark
                             ? Colors.white
                             : Colors.black,
                       ),
@@ -100,7 +100,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontFamily: "me",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 8.sp : 18.sp,
+                            context.isTab ? 8.sp : 18.sp,
                       ),
                       actions: [
                         Padding(
@@ -124,7 +124,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                                         fontWeight: FontWeight.bold,
                                         fontFamily: "me",
                                         fontSize:
-                                            ResponsiveUtil.isTablet(context)
+                                            context.isTab
                                                 ? 8.sp
                                                 : 16.sp))))
                       ]),
@@ -184,7 +184,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                                             title:
                                                 "${value.allHadithCategorieModal?.data?[index].title}",
                                             fontSize:
-                                                ResponsiveUtil.isTablet(context)
+                                                context.isTab
                                                     ? 7.sp
                                                     : 14.sp,
                                             height: 2.5),

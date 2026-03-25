@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_controller.dart';
 import 'package:muslimdaily/app/features/settings/widgets/notification_sections.dart';
@@ -13,7 +13,7 @@ class NotificationSettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(NotificationSettingsController());
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

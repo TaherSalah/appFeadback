@@ -7,9 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/shard/exports/all_exports.dart';
-import '../../../core/shard/widgets/ui_animations.dart';
 import '../../../core/utils/style/k_color.dart';
-import '../../../core/utils/style/responsive_util.dart';
 import '../SurahModel.dart';
 import 'widget/surahListView.dart';
 
@@ -317,14 +315,14 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                         TextWidget(
                           title: "حجم الخط",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 18.sp,
+                              context.isTab ? 10.sp : 18.sp,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         TextWidget(
                           title: "${fontSizeValue.toInt()}",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 10.sp : 18.sp,
+                              context.isTab ? 10.sp : 18.sp,
                           fontWeight: FontWeight.bold,
                           color: KColors.primaryColor,
                         ),
@@ -396,7 +394,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = ResponsiveUtil.isTablet(context);
+    final isTablet = context.isTab;
 
     return Scaffold(
       extendBodyBehindAppBar: true,

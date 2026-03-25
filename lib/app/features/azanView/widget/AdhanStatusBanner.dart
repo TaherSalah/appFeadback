@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter/material.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/services/AdhanDiagnosticHelper.dart';
 import 'package:muslimdaily/app/features/azanView/view/AdhanDiagnosticScreen.dart';
 
@@ -38,7 +38,7 @@ class _AdhanStatusBannerState extends State<AdhanStatusBanner> {
   Widget build(BuildContext context) {
     if (_isLoading || !_isUnhealthy) return const SizedBox.shrink();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // تخصيص الرسالة بناءً على نوع الجهاز
     String message = "تنبيه: الأذان قد لا يعمل بكفاءة بسبب إعدادات الهاتف.";

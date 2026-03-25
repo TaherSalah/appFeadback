@@ -1,17 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import '../../duas/DuasMainScreen.dart';
 import '../../duas/data/duas_data.dart';
-import 'dart:math';
 
 class DuasEntryWidget extends StatelessWidget {
   const DuasEntryWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // دعاء اليوم (عشوائي)
     final randomDua = DuasData.allDuas[Random().nextInt(DuasData.allDuas.length)];
 

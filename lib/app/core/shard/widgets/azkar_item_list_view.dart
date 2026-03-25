@@ -35,16 +35,16 @@ class AzkarListViewItemBuilder extends StatelessWidget {
                                         width: 2)),
                                 elevation: 10,
                                 titleTextStyle: const TextStyle(),
-                                title: Text(
+                                title: const Text(
                                     textAlign: TextAlign.center,
                                     'فضل الذكر ',
                                     style:
-                                        TextStyle(
+                                        const TextStyle(
                   fontFamily: "cairo",color: Colors.black)),
                                 content: Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: Text(Azkary.azkarContent[index],
-                                           style: TextStyle(
+                                           style: const TextStyle(
                           fontFamily: "cairo",))),
                                 actions: <Widget>[
                                   Center(
@@ -78,12 +78,12 @@ class AzkarListViewItemBuilder extends StatelessWidget {
                             children: [
                               Text(Azkary.azkarDescription[index],
                                   textAlign: TextAlign.center,
-                                     style: TextStyle(
+                                     style: const TextStyle(
                           fontFamily: "cairo",
                                       fontSize: 15, color: Colors.white)),
                               // ignore: unnecessary_string_escapes
                               Text('  مرات التسبيح(${Azkary.azkarCount[index]})\ مرة',
-                                     style: TextStyle(
+                                     style: const TextStyle(
                           fontFamily: "cairo",
                                       fontSize: 12,
                                       color: Colors.white,

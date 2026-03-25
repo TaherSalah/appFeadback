@@ -1,10 +1,8 @@
-import 'dart:typed_data';
-
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:intl/intl.dart' as intl;
 
 class ZakatPdfService {
   static Future<void> generateAndPrint({

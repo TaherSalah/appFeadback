@@ -1,11 +1,13 @@
 import 'dart:ui' as ui;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../core/utils/style/k_dialog_helper.dart';
 import 'kids_data/sounds_helper.dart';
-import '../../../core/utils/style/k_dialog_helper.dart';
 
 class ColoringStroke {
   final List<Offset> points;
@@ -152,7 +154,7 @@ class _IslamicColoringScreenState extends State<IslamicColoringScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final template = _templates[_currentTemplateIndex];
 
     return Directionality(

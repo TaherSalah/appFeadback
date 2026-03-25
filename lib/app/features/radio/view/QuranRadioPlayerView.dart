@@ -46,7 +46,7 @@ class _QuranRadioPlayerViewState extends State<QuranRadioPlayerView> {
 
     return BlocBuilder<CentralizedCubit, CentralizedState>(
       builder: (context, state) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return state is ConnectivityState &&
                 state.status == ConnectivityStatus.disconnected

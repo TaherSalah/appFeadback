@@ -364,7 +364,7 @@ class InheritanceEngine {
             fractionString: _doubleToFraction(original),
             count: _getCount(key, input),
             amount: amount,
-            description: reasons[key]! + " (تم إنقاصها بالعول)"));
+            description: "${reasons[key]!} (تم إنقاصها بالعول)"));
       }
       return results;
     }
@@ -392,7 +392,7 @@ class InheritanceEngine {
         double unitValue = remainingAmount / sonsUnits;
         double sonsFraction = (input.sons * 2) / sonsUnits;
         double daughtersFraction = input.daughters / sonsUnits;
-        if (input.sons > 0)
+        if (input.sons > 0) {
           results.add(DetailedHeirShare(
               name: "الأبناء",
               fraction: (remainingAmount / netEstate) * sonsFraction,
@@ -401,7 +401,8 @@ class InheritanceEngine {
               amount: unitValue * 2 * input.sons,
               description: "الباقي تعصيباً (للذكر مثل حظ الأنثيين)",
               isAsabah: true));
-        if (input.daughters > 0 && input.sons > 0)
+        }
+        if (input.daughters > 0 && input.sons > 0) {
           results.add(DetailedHeirShare(
               name: "البنات",
               fraction: (remainingAmount / netEstate) * daughtersFraction,
@@ -410,6 +411,7 @@ class InheritanceEngine {
               amount: unitValue * input.daughters,
               description: "الباقي تعصيباً مع الإخوة",
               isAsabah: true));
+        }
       }
 
       // If no sons, check son's sons
@@ -425,7 +427,7 @@ class InheritanceEngine {
             amount: unitValue * 2 * input.sonsOfSons,
             description: "الباقي تعصيباً",
             isAsabah: true));
-        if (input.daughtersOfSons > 0)
+        if (input.daughtersOfSons > 0) {
           results.add(DetailedHeirShare(
               name: "بنات الابن",
               fraction: (remainingAmount / netEstate) *
@@ -435,6 +437,7 @@ class InheritanceEngine {
               amount: unitValue * input.daughtersOfSons,
               description: "الباقي تعصيباً مع أبناء الابن",
               isAsabah: true));
+        }
       }
 
       // Father as asabah (if only daughters or no branch)
@@ -518,7 +521,7 @@ class InheritanceEngine {
       else if (input.fullBrothers > 0 || input.fullSisters > 0) {
         int fSibUnits = (input.fullBrothers * 2) + input.fullSisters;
         double unitValue = remainingAmount / fSibUnits;
-        if (input.fullBrothers > 0)
+        if (input.fullBrothers > 0) {
           results.add(DetailedHeirShare(
               name: "الإخوة الأشقاء",
               fraction: (remainingAmount / netEstate) *
@@ -528,7 +531,8 @@ class InheritanceEngine {
               amount: unitValue * 2 * input.fullBrothers,
               description: "الباقي تعصيباً",
               isAsabah: true));
-        if (input.fullSisters > 0)
+        }
+        if (input.fullSisters > 0) {
           results.add(DetailedHeirShare(
               name: "الأخوات الشقيقات",
               fraction: (remainingAmount / netEstate) *
@@ -538,6 +542,7 @@ class InheritanceEngine {
               amount: unitValue * input.fullSisters,
               description: "الباقي تعصيباً مع الإخوة",
               isAsabah: true));
+        }
       }
 
       // Consanguine Brothers & Sisters
@@ -545,7 +550,7 @@ class InheritanceEngine {
         int cSibUnits =
             (input.consanguineBrothers * 2) + input.consanguineSisters;
         double unitValue = remainingAmount / cSibUnits;
-        if (input.consanguineBrothers > 0)
+        if (input.consanguineBrothers > 0) {
           results.add(DetailedHeirShare(
               name: "الإخوة لأب",
               fraction: (remainingAmount / netEstate) *
@@ -555,7 +560,8 @@ class InheritanceEngine {
               amount: unitValue * 2 * input.consanguineBrothers,
               description: "الباقي تعصيباً",
               isAsabah: true));
-        if (input.consanguineSisters > 0)
+        }
+        if (input.consanguineSisters > 0) {
           results.add(DetailedHeirShare(
               name: "الأخوات لأب",
               fraction: (remainingAmount / netEstate) *
@@ -565,10 +571,11 @@ class InheritanceEngine {
               amount: unitValue * input.consanguineSisters,
               description: "الباقي تعصيباً مع الإخوة لأب",
               isAsabah: true));
+        }
       }
 
       // Nephews, Uncles, etc. (Simplified hierarchy)
-      else if (input.nephewsFull > 0)
+      else if (input.nephewsFull > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء الأخ الشقيق",
             fraction: remainingAmount / netEstate,
@@ -577,7 +584,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.nephewsConsanguine > 0)
+      } else if (input.nephewsConsanguine > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء الأخ لأب",
             fraction: remainingAmount / netEstate,
@@ -586,7 +593,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.grandNephewsFull > 0)
+      } else if (input.grandNephewsFull > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء ابن الأخ الشقيق",
             fraction: remainingAmount / netEstate,
@@ -595,7 +602,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.grandNephewsConsanguine > 0)
+      } else if (input.grandNephewsConsanguine > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء ابن الأخ لأب",
             fraction: remainingAmount / netEstate,
@@ -604,7 +611,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.paternalUnclesFull > 0)
+      } else if (input.paternalUnclesFull > 0) {
         results.add(DetailedHeirShare(
             name: "الأعمام الأشقاء",
             fraction: remainingAmount / netEstate,
@@ -613,7 +620,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.paternalUnclesConsanguine > 0)
+      } else if (input.paternalUnclesConsanguine > 0) {
         results.add(DetailedHeirShare(
             name: "الأعمام لأب",
             fraction: remainingAmount / netEstate,
@@ -622,7 +629,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.cousinsFull > 0)
+      } else if (input.cousinsFull > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء العم الشقيق",
             fraction: remainingAmount / netEstate,
@@ -631,7 +638,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.cousinsConsanguine > 0)
+      } else if (input.cousinsConsanguine > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء العم لأب",
             fraction: remainingAmount / netEstate,
@@ -640,7 +647,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.grandCousinsFull > 0)
+      } else if (input.grandCousinsFull > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء ابن العم الشقيق",
             fraction: remainingAmount / netEstate,
@@ -649,7 +656,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.grandCousinsConsanguine > 0)
+      } else if (input.grandCousinsConsanguine > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء ابن العم لأب",
             fraction: remainingAmount / netEstate,
@@ -658,7 +665,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.paternalGreatUnclesFull > 0)
+      } else if (input.paternalGreatUnclesFull > 0) {
         results.add(DetailedHeirShare(
             name: "أعمام الأب الأشقاء",
             fraction: remainingAmount / netEstate,
@@ -667,7 +674,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.paternalGreatUnclesConsanguine > 0)
+      } else if (input.paternalGreatUnclesConsanguine > 0) {
         results.add(DetailedHeirShare(
             name: "أعمام الأب لأب",
             fraction: remainingAmount / netEstate,
@@ -676,7 +683,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.paternalGreatCousinsFull > 0)
+      } else if (input.paternalGreatCousinsFull > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء عم الأب الأشقاء",
             fraction: remainingAmount / netEstate,
@@ -685,7 +692,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
-      else if (input.paternalGreatCousinsConsanguine > 0)
+      } else if (input.paternalGreatCousinsConsanguine > 0) {
         results.add(DetailedHeirShare(
             name: "أبناء عم الأب لأب",
             fraction: remainingAmount / netEstate,
@@ -694,6 +701,7 @@ class InheritanceEngine {
             amount: remainingAmount,
             description: "الباقي تعصيباً",
             isAsabah: true));
+      }
 
       // Radd (Return) - if no asabah exist, redistribute to fixed share heirs (except spouse in most madhabs)
       else {
@@ -724,7 +732,7 @@ class InheritanceEngine {
                   _doubleToFraction(res.fraction + heirRaddFraction),
               amount: res.amount + (remainingAmount * (res.fraction / raddSum)),
               description:
-                  res.description + " (بالإضافة إلى الرد لعدم وجود عاصب)",
+                  "${res.description} (بالإضافة إلى الرد لعدم وجود عاصب)",
               count: res.count,
             );
           }

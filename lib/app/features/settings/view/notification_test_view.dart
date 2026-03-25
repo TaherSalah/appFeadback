@@ -1,6 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
@@ -9,7 +9,7 @@ class NotificationTestView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
 
     return Scaffold(
       appBar: AppBar(

@@ -1,12 +1,13 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:confetti/confetti.dart';
+import 'package:intl/intl.dart' as intl;
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
 import '../../core/widgets/KLoading.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
-import 'package:intl/intl.dart' as intl;
 
 class AchievementsScreen extends StatefulWidget {
   const AchievementsScreen({super.key});
@@ -77,7 +78,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

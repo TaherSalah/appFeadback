@@ -194,7 +194,7 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
     final pageNumber = widget.pageIndex + 1;
 
     return Directionality(
@@ -599,7 +599,7 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -848,7 +848,7 @@ class _DeleteConfirmDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -1048,7 +1048,7 @@ class _StatisticsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

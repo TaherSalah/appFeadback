@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/utils/style/responsive_util.dart';
+
 import '../../../core/utils/style/k_dialog_helper.dart';
 
 class DailyStreakWidget extends StatefulWidget {
@@ -125,7 +125,7 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -184,7 +184,7 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
                   'التزامك اليومي',
                      style: TextStyle(
                           fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 14.sp,
+                    fontSize: context.isTab ? 12.sp : 14.sp,
                     fontWeight: FontWeight.w600,
                     color: Colors.white.withOpacity(0.9),
                   ),
@@ -194,7 +194,7 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
                   '$_streakDays يوم متتالي',
                      style: TextStyle(
                           fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 18.sp : 22.sp,
+                    fontSize: context.isTab ? 18.sp : 22.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                     height: 1.2,

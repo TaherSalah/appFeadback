@@ -1,16 +1,16 @@
 import 'dart:ui' as ui;
-import 'package:flutter/cupertino.dart';
 
+import 'package:animate_do/animate_do.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
 import '../../core/widgets/KLoading.dart';
-import 'models/charity_models.dart';
-import 'services/charity_service.dart';
-import 'services/charity_pdf_service.dart';
 import 'AddCharityScreen.dart';
-import 'package:animate_do/animate_do.dart';
+import 'models/charity_models.dart';
+import 'services/charity_pdf_service.dart';
+import 'services/charity_service.dart';
 
 class CharityHistoryScreen extends StatefulWidget {
   const CharityHistoryScreen({super.key});
@@ -47,7 +47,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -165,7 +165,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
 
   Widget _buildFilterChip(
       String label, CharityCategory? category, bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     final isSelected = _filterCategory == category;
     return Padding(
       padding: EdgeInsets.only(left: 8.w),
@@ -192,7 +192,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
   }
 
   Widget _buildDonationCard(CharityDonation donation, bool isDark, int index) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     return FadeInUp(
       duration: const Duration(milliseconds: 600),
       delay: Duration(milliseconds: 100 * (index % 10)), // Staggered entry
@@ -390,7 +390,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
     );
   }
   Future<bool> _showDeleteDonationDialog(BuildContext context) async {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     final result = await showDialog<bool>(
       context: context,

@@ -1,8 +1,10 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+
 import '../../core/services/feedback_service.dart';
 
 /// شاشة إرسال الشكاوى والاقتراحات
@@ -115,7 +117,7 @@ class _FeedbackViewState extends State<FeedbackView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

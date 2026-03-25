@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:lottie/lottie.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:quran_library/quran.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -172,8 +171,8 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final query = searchKey.text.trim();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isTablet = ResponsiveUtil.isTablet(context);
+    final isDark = context.isDark;
+    final isTablet = context.isTab;
     final screenWidth = MediaQuery.sizeOf(context).width;
 
     return Directionality(
@@ -476,8 +475,8 @@ class _AyaResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isTablet = ResponsiveUtil.isTablet(context);
+    final isDark = context.isDark;
+    final isTablet = context.isTab;
 
     final Color primary = isDark ? KColors.primaryColor : KColors.primary2Color;
 
@@ -711,7 +710,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = ResponsiveUtil.isTablet(context);
+    final isTablet = context.isTab;
 
     return Center(
       child: SingleChildScrollView(
@@ -789,7 +788,7 @@ class _SearchHistoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = ResponsiveUtil.isTablet(context);
+    final isTablet = context.isTab;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

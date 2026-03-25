@@ -375,7 +375,7 @@ class RateService {
 
   /// دايالوج مخصص جميل
   // Future<void> _showCustomDialog(BuildContext context) async {
-  //   final isDark = Theme.of(context).brightness == Brightness.dark;
+  //   final isDark = context.isDark;
   //
   //   return showDialog(
   //     context: context,

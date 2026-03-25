@@ -9,7 +9,7 @@ class PostPrayerAzkarList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final con = Provider.of<AzkarProvider>(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final double fontSize = CentralizedCubit.get(context).azkarFontSize();
 
     return ListView.separated(

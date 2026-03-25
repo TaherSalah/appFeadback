@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 class AchievementAlbumScreen extends StatelessWidget {
   final int totalStars;
@@ -21,7 +20,7 @@ class AchievementAlbumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -32,7 +31,7 @@ class AchievementAlbumScreen extends StatelessWidget {
             style: TextStyle(
                   fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+              fontSize: context.isTab ? 14.sp : 20.sp,
             ),
           ),
           centerTitle: true,
@@ -65,7 +64,7 @@ class AchievementAlbumScreen extends StatelessWidget {
                     style: TextStyle(
                   fontFamily: "cairo",
                       fontSize:
-                          ResponsiveUtil.isTablet(context) ? 11.sp : 16.sp,
+                          context.isTab ? 11.sp : 16.sp,
                       color: Colors.white,
                     ),
                   ),
@@ -74,7 +73,7 @@ class AchievementAlbumScreen extends StatelessWidget {
                     style: TextStyle(
                   fontFamily: "cairo",
                       fontSize:
-                          ResponsiveUtil.isTablet(context) ? 18.sp : 32.sp,
+                          context.isTab ? 18.sp : 32.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -133,7 +132,7 @@ class AchievementAlbumScreen extends StatelessWidget {
               'الشارات المفتوحة 🏅',
               style: TextStyle(
                   fontFamily: "cairo",
-                fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                fontSize: context.isTab ? 12.sp : 18.sp,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : Colors.black87,
               ),
@@ -208,7 +207,7 @@ class AchievementAlbumScreen extends StatelessWidget {
                                 badge['title'],
                                 style: TextStyle(
                   fontFamily: "cairo",
-                                  fontSize: ResponsiveUtil.isTablet(context)
+                                  fontSize: context.isTab
                                       ? 11.sp
                                       : 16.sp,
                                   fontWeight: FontWeight.bold,
@@ -220,7 +219,7 @@ class AchievementAlbumScreen extends StatelessWidget {
                                 badge['desc'],
                                 style: TextStyle(
                   fontFamily: "cairo",
-                                  fontSize: ResponsiveUtil.isTablet(context)
+                                  fontSize: context.isTab
                                       ? 9.sp
                                       : 12.sp,
                                   color: Colors.grey,
@@ -265,7 +264,7 @@ class AchievementAlbumScreen extends StatelessWidget {
             label,
             style: TextStyle(
                   fontFamily: "cairo",
-              fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp,
+              fontSize: context.isTab ? 9.sp : 12.sp,
               color: Colors.grey,
             ),
             textAlign: TextAlign.center,
@@ -275,7 +274,7 @@ class AchievementAlbumScreen extends StatelessWidget {
             value,
             style: TextStyle(
                   fontFamily: "cairo",
-              fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+              fontSize: context.isTab ? 12.sp : 18.sp,
               fontWeight: FontWeight.bold,
               color: color,
             ),

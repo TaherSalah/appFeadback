@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 class SoulComfortWidget extends StatelessWidget {
   const SoulComfortWidget({super.key});
@@ -76,7 +76,7 @@ class SoulComfortWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -97,7 +97,7 @@ class SoulComfortWidget extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           SizedBox(
-            height: ResponsiveUtil.isTablet(context)? 80:50,
+            height: context.isTab? 80:50,
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               scrollDirection: Axis.horizontal,
@@ -140,7 +140,7 @@ class SoulComfortWidget extends StatelessWidget {
                           mood['label'],
                           style: TextStyle(
                   fontFamily: "cairo",
-                            fontSize: ResponsiveUtil.isTablet(context)? 10.sp:14.sp,
+                            fontSize: context.isTab? 10.sp:14.sp,
                             color: isDark ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.w600,
                           ),
@@ -203,7 +203,7 @@ class SoulComfortWidget extends StatelessWidget {
                     "علاج ${mood['label']}",
                     style: TextStyle(
                   fontFamily: "cairo",
-                      fontSize: ResponsiveUtil.isTablet(context)?14.sp:20.sp,
+                      fontSize: context.isTab?14.sp:20.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87,
                     ),
@@ -273,7 +273,7 @@ class SoulComfortWidget extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                   fontFamily: "cairo",
-                            fontSize:ResponsiveUtil.isTablet(context)?10.sp: 16.sp,
+                            fontSize:context.isTab?10.sp: 16.sp,
                             color: isDark ? Colors.white70 : Colors.black87,
                             fontWeight: FontWeight.w500,
                             height: 1.6,
@@ -295,7 +295,7 @@ class SoulComfortWidget extends StatelessWidget {
                           mood['msg'],
                           style: TextStyle(
                   fontFamily: "cairo",
-                            fontSize:ResponsiveUtil.isTablet(context)?10.sp: 14.sp,
+                            fontSize:context.isTab?10.sp: 14.sp,
                             color: isDark ? Colors.grey : Colors.grey.shade700,
                             fontStyle: FontStyle.italic,
                           ),
@@ -320,7 +320,7 @@ class SoulComfortWidget extends StatelessWidget {
                         style: TextStyle(
                   fontFamily: "cairo",
                           color: Colors.white,
-                          fontSize:ResponsiveUtil.isTablet(context)? 10.sp: 16.sp,
+                          fontSize:context.isTab? 10.sp: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

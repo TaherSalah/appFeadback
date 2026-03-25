@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart' as intl;
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/shard/widgets/def_text_widget.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-import 'package:uuid/uuid.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/features/calendar/data/models/calendar_event_model.dart';
 import 'package:muslimdaily/app/features/calendar/data/services/calendar_service.dart';
-import 'package:intl/intl.dart' as intl;
+import 'package:uuid/uuid.dart';
 
 class AddEventSheet extends StatefulWidget {
   final DateTime selectedDate;
@@ -156,13 +155,13 @@ class _AddEventSheetState extends State<AddEventSheet> {
   @override
   Widget build(BuildContext context) {
     // 🎨 Theme Logic
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final backgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final surfaceColor = isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade50;
     final textColor = isDark ? Colors.white : Colors.black87;
     final hintColor = isDark ? Colors.white54 : Colors.grey.shade600;
     final primaryColor = const Color(0xFF1B5E20); // Deep Green
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     // Helper for input decoration
     InputDecoration buildInputDecoration(String label, IconData icon) {
       return InputDecoration(

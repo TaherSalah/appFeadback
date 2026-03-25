@@ -1,16 +1,13 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 // ignore: undefined_hidden_name
 import '../../../../core/shard/exports/all_exports.dart' hide ScaleAnimation;
-import '../../../../core/utils/style/responsive_util.dart';
-import '../../../../core/utils/style/k_style.dart';
 import '../../../../core/utils/style/k_color.dart';
+import '../../../../core/utils/style/k_style.dart';
 import '../../controllers/books_controller.dart';
 import '../../controllers/extensions/books_getters_extension.dart';
 import '../../data/models/collection_model.dart';
@@ -59,7 +56,7 @@ Widget bookNameLogo(BuildContext context, String id, Color color, String collect
             style: KTextStyle.of(context).body2.copyWith(
               color: color,
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14 : 16,
+              fontSize: context.isTab ? 14 : 16,
               height: 1.2,
             ),
           ),
@@ -177,7 +174,7 @@ class BooksCover extends StatelessWidget {
                                   padding: EdgeInsets.all(8.r),
                                   child: customSvgWithColor(
                                     SvgPath.svgBookCover,
-                                    height: ResponsiveUtil.isTablet(context) ? 140.0 : 125,
+                                    height: context.isTab ? 140.0 : 125,
                                     color: booksColor ?? KColors.of(context).primary,
                                   ),
                                 ),
@@ -185,15 +182,15 @@ class BooksCover extends StatelessWidget {
                                 // Decorative Pattern
                                 customSvg(
                                   SvgPath.svgBookCoverLogo,
-                                  height: ResponsiveUtil.isTablet(context) ? 140.0 : 110
+                                  height: context.isTab ? 140.0 : 110
                                 ),
                                 
                                 // Book Title (Centered correctly)
                                 Positioned(
-                                  top: ResponsiveUtil.isTablet(context) ? 40 : 45,
+                                  top: context.isTab ? 40 : 45,
                                   child: SizedBox(
-                                    height: ResponsiveUtil.isTablet(context) ? 70 : 60,
-                                    width: ResponsiveUtil.isTablet(context) ? 80 : 70,
+                                    height: context.isTab ? 70 : 60,
+                                    width: context.isTab ? 80 : 70,
                                     child: Center(
                                       child: bookNameLogo(
                                         context,

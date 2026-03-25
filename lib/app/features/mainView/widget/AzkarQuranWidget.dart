@@ -63,7 +63,7 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     return Stack(
       children: [
         Padding(
@@ -180,7 +180,7 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
             },
             child: Icon(
               Icons.copy,
-              color: Theme.of(context).brightness == Brightness.dark
+              color: context.isDark
                   ? const Color(0xFF00897B)
                   : CupertinoColors.systemRed,
               size: MediaQuery.sizeOf(context).width > 600 ? 25 : 20,
@@ -200,7 +200,7 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
         //       },
         //       child: Icon(
         //         Icons.share,
-        //         color: Theme.of(context).brightness == Brightness.dark ? Colors.white: CupertinoColors.darkBackgroundGray,
+        //         color: context.isDark ? Colors.white: CupertinoColors.darkBackgroundGray,
         //         size: MediaQuery.sizeOf(context).width>600?25: 20,
         //       ),
         //     )),
@@ -218,7 +218,7 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
         //         //           ? KColors.blackColor
         //         //           : KColors.whiteColor,
         //         //       content: TextWidget(
-        //         //           fontSize: ResponsiveUtil.isTablet(context)
+        //         //           fontSize: context.isTab
         //         //               ? 10.sp
         //         //               : 12.sp,
         //         //           textAlign: TextAlign.right,
@@ -228,7 +228,7 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
         //       },
         //       child: Icon(
         //         Icons.copy,
-        //         color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF00897B): CupertinoColors.systemRed,
+        //         color: context.isDark ? const Color(0xFF00897B): CupertinoColors.systemRed,
         //
         //         size: MediaQuery.sizeOf(context).width>600?25: 20,
         //       ),

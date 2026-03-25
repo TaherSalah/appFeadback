@@ -16,6 +16,7 @@ class MosqueStackerGame extends BaseEducationalGame with TapCallbacks {
 
   @override
   Future<void> onLoad() async {
+    await super.onLoad();
     // Elegant mosque interior background
     add(BackgroundGradient(colors: [
       const Color(0xFF004D40), // Teal 900

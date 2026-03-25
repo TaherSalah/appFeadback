@@ -10,8 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart' as intl;
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../localization/localization_manager.dart';
@@ -100,7 +99,7 @@ class KHelper {
   }
 
   static showErrorFlushBar(BuildContext context, String message) {
-    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+    Color backgroundColor = context.isDark
         ? Colors.red.shade900 // داكن في الوضع الليلي
         : Colors.redAccent; // فاتح في الوضع النهاري
 
@@ -117,7 +116,7 @@ class KHelper {
   }
 
   static showSuccessFlushBar(BuildContext context, String message) {
-    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+    Color backgroundColor = context.isDark
         ? Colors.green.shade900 // داكن في الوضع الليلي
         : Colors.green; // فاتح في الوضع النهاري
 
@@ -134,7 +133,7 @@ class KHelper {
   }
 
   static showWarningFlushBar(BuildContext context, String message) {
-    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+    Color backgroundColor = context.isDark
         ? Colors.amber.shade800 // داكن في الوضع الليلي
         : Colors.amber; // فاتح في الوضع النهاري
 
@@ -151,7 +150,7 @@ class KHelper {
   }
 
   static showNeutralFlushBar(BuildContext context, String message) {
-    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+    Color backgroundColor = context.isDark
         ? Colors.grey.shade700 // داكن في الوضع الليلي
         : Colors.grey.shade300; // فاتح في الوضع النهاري
 
@@ -364,7 +363,7 @@ class KHelper {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => Container(
-        width: ResponsiveUtil.isTablet(context)
+        width: context.isTab
             ? MediaQuery.sizeOf(context).width / 1.5
             : MediaQuery.sizeOf(context).width / 1,
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
@@ -381,13 +380,13 @@ class KHelper {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: TextWidget(
                       title: title,
-                      fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 14.sp,
+                      fontSize: context.isTab ? 8.sp : 14.sp,
                       textAlign: TextAlign.center,
                     ),
                   ),
                 TextWidget(
                   title: content,
-                  fontSize: ResponsiveUtil.isTablet(context) ? 7.5.sp : 14.sp,
+                  fontSize: context.isTab ? 7.5.sp : 14.sp,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 10.h),
@@ -401,10 +400,10 @@ class KHelper {
                       },
                       child: TextWidget(
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 7.sp : 11.sp,
+                              context.isTab ? 7.sp : 11.sp,
                           title: noAction ?? LocalizationManager.call('no')),
                     ),
-                    ResponsiveUtil.isTablet(context)
+                    context.isTab
                         ? const SizedBox(width: 0)
                         : const SizedBox(width: 10),
                     CupertinoButton(
@@ -412,7 +411,7 @@ class KHelper {
                       onPressed: onPressed,
                       child: TextWidget(
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 7.sp : 11.sp,
+                              context.isTab ? 7.sp : 11.sp,
                           color: KColors.whiteColor,
                           title: yesAction ?? LocalizationManager.call('yes')),
                     ),
@@ -442,7 +441,7 @@ class KHelper {
                 title: header ?? const SizedBox(),
                 content: TextWidget(
                     title: content.toString(),
-                    fontSize: ResponsiveUtil.isTablet(context) ? 7.sp : 14.sp),
+                    fontSize: context.isTab ? 7.sp : 14.sp),
                 actions: <CupertinoDialogAction>[
                   CupertinoDialogAction(
 
@@ -456,7 +455,7 @@ class KHelper {
                       child: TextWidget(
                           title: btn1 ?? LocalizationManager.call('no'),
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp)),
+                              context.isTab ? 8.sp : 12.sp)),
                   CupertinoDialogAction(
 
                       /// This parameter indicates the action would perform
@@ -470,7 +469,7 @@ class KHelper {
                       child: TextWidget(
                           title: btn2 ?? LocalizationManager.call('yes'),
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp))
+                              context.isTab ? 8.sp : 12.sp))
                 ]));
   }
 

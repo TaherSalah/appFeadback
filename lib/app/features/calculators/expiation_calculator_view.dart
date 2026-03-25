@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+
 import '../../core/shard/widgets/ui_animations.dart';
-import '../../core/utils/style/responsive_util.dart';
 import 'logic/expiation_logic.dart';
 
 class Currency {
@@ -78,8 +78,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    bool isDark = context.isDark;
+    final bool isTap = context.isTab;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -304,7 +304,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
     String? suffix,
     Function(String)? onChanged,
   }) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,7 +322,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           keyboardType: TextInputType.number,
           textAlign: TextAlign.right,
           onChanged: onChanged,
-             style: TextStyle(
+             style: const TextStyle(
           fontFamily: "cairo",fontWeight: FontWeight.bold),
           decoration: InputDecoration(
             filled: true,
@@ -345,7 +345,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
     required bool isSelected,
     required bool isDark,
   }) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return InkWell(
       onTap: () {
@@ -427,7 +427,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildCalculatorCard(bool isDark) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -571,7 +571,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildInfoBox(bool isDark) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Container(
       width: double.infinity,
@@ -618,7 +618,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildBulletItem(String text, bool isDark) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 2, right: 8),
@@ -642,7 +642,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildCurrencyDropdown(bool isDark) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -689,7 +689,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
     final String priceStr = intl.NumberFormat("#,##0").format(price);
     final String kaffaraPriceStr =
         intl.NumberFormat("#,##0").format(price * 60);
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Column(
       children: [
@@ -749,7 +749,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   TableRow _buildTableRow(List<String> cells, {bool isHeader = false}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return TableRow(
       decoration: BoxDecoration(
@@ -798,7 +798,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             "اختلف العلماء: الجمهور يرى القضاء فقط، وبعضهم يرى الفدية مع القضاء إذا كان الإفطار خوفاً على الجنين. استشيري عالماً موثوقاً."
       },
     ];
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Column(
       children: [
@@ -807,7 +807,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration:  BoxDecoration(
             color:isDark ?KColors.primaryColor.withOpacity(0.2) :const Color(0xFF1E40AF), // Dark Blue
-            borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
           ),
           child: Text(
             "أسئلة شائعة",
@@ -869,7 +869,7 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
   }
 
   Widget _buildDisclaimerNote(bool isDark) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
 
     return Container(
       width: double.infinity,

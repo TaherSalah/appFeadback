@@ -1,4 +1,3 @@
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/features/splashView/splashView.dart';
 
 import '../../core/shard/exports/all_exports.dart';
@@ -164,7 +163,7 @@ class _WhatsNewViewState extends State<WhatsNewView>
 
   // ✅ صفحة عرض الميزة مع أنيميشن
   Widget _buildAnimatedFeaturePage(AppFeature feature) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -227,7 +226,7 @@ class _WhatsNewViewState extends State<WhatsNewView>
                     textAlign: TextAlign.center,
                        style: TextStyle(
                           fontFamily: "cairo",
-                      fontSize: ResponsiveUtil.isTablet(context) ? 15.sp : 20.sp,
+                      fontSize: context.isTab ? 15.sp : 20.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark ? KColors.primaryColor : Colors.black87,
                     ),
@@ -255,7 +254,7 @@ class _WhatsNewViewState extends State<WhatsNewView>
                     textAlign: TextAlign.center,
                        style: TextStyle(
                           fontFamily: "cairo",
-                      fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 15.sp,
+                      fontSize: context.isTab ? 10.sp : 15.sp,
                       color: Colors.grey.shade700,
                       height: 1.5,
                     ),
@@ -273,7 +272,7 @@ class _WhatsNewViewState extends State<WhatsNewView>
 
   // ✅ أزرار التنقل مع أنيميشن
   Widget _buildAnimatedNavigationButtons() {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 600),
@@ -316,7 +315,7 @@ class _WhatsNewViewState extends State<WhatsNewView>
                        style: TextStyle(
                           fontFamily: "cairo",
                       fontSize:
-                          ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
+                          context.isTab ? 10.sp : 16.sp,
                       color: Colors.grey.shade600,
                     ),
                   ),
@@ -372,7 +371,7 @@ class _WhatsNewViewState extends State<WhatsNewView>
                   ),
                   padding: EdgeInsets.symmetric(
                       horizontal:
-                          ResponsiveUtil.isTablet(context) ? 15.w : 24.w,
+                          context.isTab ? 15.w : 24.w,
                       vertical: 12.h),
                   elevation: 5,
                   shadowColor: Theme.of(context).primaryColor.withOpacity(0.4),
@@ -387,7 +386,7 @@ class _WhatsNewViewState extends State<WhatsNewView>
                          style: TextStyle(
                           fontFamily: "cairo",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
+                            context.isTab ? 10.sp : 16.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
@@ -404,7 +403,7 @@ class _WhatsNewViewState extends State<WhatsNewView>
                             ? Icons.arrow_forward_ios
                             : Icons.start,
                         color: Colors.white,
-                        size: ResponsiveUtil.isTablet(context) ? 15.sp : 18.sp,
+                        size: context.isTab ? 15.sp : 18.sp,
                       ),
                     ),
                   ],

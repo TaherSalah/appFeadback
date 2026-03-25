@@ -1,9 +1,10 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WorshipTrackerWidget extends StatefulWidget {
   const WorshipTrackerWidget({super.key});
@@ -98,7 +99,7 @@ class _WorshipTrackerWidgetState extends State<WorshipTrackerWidget> {
   Widget build(BuildContext context) {
     if (_isLoading) return const SizedBox.shrink();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final int completedCount = _dailyTasks.where((t) => t['done']).length;
     final double progress = completedCount / _dailyTasks.length;
 

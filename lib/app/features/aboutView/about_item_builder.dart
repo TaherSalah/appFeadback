@@ -1,6 +1,5 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -92,7 +91,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
       Share.share(msg, subject: 'رَفِيقُ المُسْلِمِ اليَوْمِيّ');
     }
 
-    final bool isTablate = context.isTablet;
+    final bool isTablate = context.isTab;
     final isDark = context.isDark;
 
     return Directionality(
@@ -292,7 +291,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
   }
 
   Widget _buildSectionTitle(String title, IconData icon, Color color) {
-    final bool isTap = context.isTablet;
+    final bool isTap = context.isTab;
     return Row(
       children: [
         Icon(icon, size: 20.sp, color: color),
@@ -376,7 +375,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    final bool isTap = context.isTablet;
+    final bool isTap = context.isTab;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -422,7 +421,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    final bool isTap = ResponsiveUtil.isTablet(context);
+    final bool isTap = context.isTab;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),

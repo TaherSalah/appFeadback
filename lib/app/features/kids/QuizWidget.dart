@@ -1,7 +1,8 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 class QuizWidget extends StatefulWidget {
   const QuizWidget({super.key});
@@ -84,7 +85,7 @@ class _QuizWidgetState extends State<QuizWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final correctAnswer = _todaysQuestion['answer'];
 
     return Padding(

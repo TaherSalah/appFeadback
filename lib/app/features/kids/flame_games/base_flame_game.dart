@@ -41,7 +41,7 @@ abstract class BaseEducationalGame extends FlameGame {
     highScoreNotifier.value = highScore;
   }
 
-  Future<void> _saveHighScore() async {
+  Future<void> saveHighScore() async {
     if (score > highScore) {
       highScore = score;
       isNewHighScore = true;
@@ -55,11 +55,14 @@ abstract class BaseEducationalGame extends FlameGame {
     score += points;
     scoreNotifier.value = score;
     onScoreUpdate?.call(score);
+    if (score > highScore) {
+      saveHighScore();
+    }
   }
 
   void gameOver() {
     isGameOver = true;
-    _saveHighScore();
+    saveHighScore();
     pauseEngine();
     overlays.add('GameOver');
     onGameOver?.call();

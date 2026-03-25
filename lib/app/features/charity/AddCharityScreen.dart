@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+
 import '../../core/utils/style/k_color.dart';
-import '../../core/utils/style/responsive_util.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
 
@@ -96,8 +96,8 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-bool isTab = ResponsiveUtil.isTablet(context);
+    final isDark = context.isDark;
+bool isTab = context.isTab;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -472,7 +472,7 @@ bool isTab = ResponsiveUtil.isTablet(context);
   }
 
   Widget _buildSectionTitle(String title) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return Text(
       title,

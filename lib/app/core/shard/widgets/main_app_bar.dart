@@ -116,7 +116,7 @@ PreferredSizeWidget mainAppBarWidget(
         //     topRight: Radius.circular(30.r))),
         isScrollable: true,
         physics: const BouncingScrollPhysics(),
-        tabs: [
+        tabs: const [
           Tab(
             child: Text("القرأن الكريم",
                    style: TextStyle(

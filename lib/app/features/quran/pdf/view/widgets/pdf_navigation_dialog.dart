@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/quran/pdf/data/quran_pdf_data.dart';
 
 class PdfNavigationDialog extends StatefulWidget {
@@ -36,7 +36,7 @@ class _PdfNavigationDialogState extends State<PdfNavigationDialog>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     return Dialog(
       backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

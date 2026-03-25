@@ -35,7 +35,7 @@ class _QuranChannalPlayerViewState extends State<QuranChannalPlayerView> {
   @override
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return BlocBuilder<CentralizedCubit, CentralizedState>(
       builder: (context, state) {

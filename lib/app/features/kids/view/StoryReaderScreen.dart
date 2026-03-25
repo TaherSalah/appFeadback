@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:confetti/confetti.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_it/get_it.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:share_plus/share_plus.dart';
+
 import '../../../core/utils/style/k_color.dart';
 import '../../../core/utils/style/k_dialog_helper.dart';
 import '../../achievements/services/achievement_service.dart';
-import 'package:get_it/get_it.dart';
 
 class StoryReaderScreen extends StatefulWidget {
   final Map<String, dynamic> story;
@@ -194,7 +195,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
     final String emoji = widget.story['emoji']?.toString() ?? '✨';
     final String title = widget.story['title']?.toString() ?? 'قصة جميلة';
     final String content = widget.story['content']?.toString() ?? '';

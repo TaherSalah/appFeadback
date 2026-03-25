@@ -116,22 +116,22 @@ class _TasbihScreenState extends State<TasbihScreen>
       builder: (context) => Directionality(
         textDirection: TextDirection.rtl,
         child: CupertinoAlertDialog(
-          title: Text('تخطي الذكر؟',
+          title: const Text('تخطي الذكر؟',
                  style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
-          content: Text('هل تريد تخطي هذا الذكر والانتقال للذكر التالي؟',
+          content: const Text('هل تريد تخطي هذا الذكر والانتقال للذكر التالي؟',
                  style: TextStyle(
                           fontFamily: "cairo",)),
           actions: [
             CupertinoDialogAction(
                 child:
-                    Text('إلغاء',    style: TextStyle(
+                    const Text('إلغاء',    style: TextStyle(
                           fontFamily: "cairo",color: Colors.grey)),
                 onPressed: () => Navigator.pop(context)),
             CupertinoDialogAction(
               isDestructiveAction: true,
               child:
-                  Text('تخطي',    style: TextStyle(
+                  const Text('تخطي',    style: TextStyle(
                           fontFamily: "cairo",color: Colors.orange)),
               onPressed: () {
                 widget.wird.adhkar[currentDhikrIndex].currentCount =
@@ -170,7 +170,7 @@ class _TasbihScreenState extends State<TasbihScreen>
   }
 
   void _showCompletionSheet() {
-    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    // final isDark = context.isDark;
     showCupertinoModalPopup(
       context: context,
       barrierDismissible: false,
@@ -257,7 +257,7 @@ class _TasbihScreenState extends State<TasbihScreen>
                         padding: EdgeInsets.symmetric(vertical: 16.h),
                         borderRadius: BorderRadius.circular(20),
                         color: const Color(0xFF00897B),
-                        child: Text("خروج",
+                        child: const Text("خروج",
                                style: TextStyle(
                           fontFamily: "cairo",
                                 fontWeight: FontWeight.bold,
@@ -286,7 +286,7 @@ class _TasbihScreenState extends State<TasbihScreen>
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    // final isDark = context.isDark;
     final primaryColor =
         context.isDark ? Colors.tealAccent : const Color(0xFF00897B);
 
@@ -594,7 +594,7 @@ class _TasbihScreenState extends State<TasbihScreen>
 
   Widget _buildControlButton(IconData icon, String label, VoidCallback onTap,
       bool enabled, bool isHighlight) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     return GestureDetector(
       onTap: enabled ? onTap : null,
       child: Column(

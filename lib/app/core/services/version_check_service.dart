@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import '../widgets/CustomGradientDialog.dart';
 
 class VersionCheckService {
@@ -59,7 +60,7 @@ class VersionCheckService {
       context: context,
       barrierDismissible: !isMandatory,
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         return WillPopScope(
           onWillPop: () async => !isMandatory,
           child: CustomGradientDialog(

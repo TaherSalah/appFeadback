@@ -34,7 +34,7 @@ import '../../../features/counterView/counter_azkar.dart';
 import '../../../features/hadith/hadith_view.dart';
 import '../../../features/hadithDetails/hadith_details_view.dart';
 import '../../../features/QiblaView/QiblaDirection.dart';
-import '../../../features/mainView/widget/KidsCornerScreen.dart';
+import '../../../features/kids/KidsCornerScreen.dart';
 import '../../../features/messaView/azkar_massa.dart';
 import '../../../features/postPrayerAzkarView/post_prayer_azkar.dart';
 import '../../../features/quran/quranView.dart';

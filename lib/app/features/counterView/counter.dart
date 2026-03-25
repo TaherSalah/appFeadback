@@ -754,7 +754,7 @@ class _UpdatedAzkarCounterState extends State<UpdatedAzkarCounter> {
               Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: context.isDark
                   ? Colors.white
                   : Colors.black,
             ),

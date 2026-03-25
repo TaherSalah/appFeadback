@@ -1,9 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/shard/constanc/app_style.dart';
 import 'package:muslimdaily/app/core/utils/constent/quranLove.dart';
-import 'package:flutter/cupertino.dart';
 
 // class QuranLoveView extends StatelessWidget {
 //   const QuranLoveView({super.key});
@@ -22,7 +22,7 @@ import 'package:flutter/cupertino.dart';
 //           preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
 //           child: AppBar(
 //
-//             leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
+//             leading:  CupertinoNavigationBarBackButton(color:   context.isDark
 //                 ? Colors.white
 //                 : Colors.black,),
 //             centerTitle: true,
@@ -40,7 +40,7 @@ import 'package:flutter/cupertino.dart';
 //         ),
 //         body: SingleChildScrollView(
 //           child: Padding(
-//             padding:  EdgeInsets.symmetric(horizontal: ResponsiveUtil.isTablet(context)?12.w:20.w),
+//             padding:  EdgeInsets.symmetric(horizontal: context.isTab?12.w:20.w),
 //             child: Column(
 //               children: [
 //                 Text(quranLoveReg,textAlign: TextAlign.justify,style: TextStyle(fontSize: 22.sp,fontFamily: "maja"),)
@@ -66,7 +66,7 @@ import 'package:flutter/cupertino.dart';
 //           preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).width>600? 70:50),
 //           child: AppBar(
 //
-//             leading:  CupertinoNavigationBarBackButton(color:   Theme.of(context).brightness == Brightness.dark
+//             leading:  CupertinoNavigationBarBackButton(color:   context.isDark
 //                 ? Colors.white
 //                 : Colors.black,),
 //             centerTitle: true,
@@ -84,7 +84,7 @@ import 'package:flutter/cupertino.dart';
 //         ),
 //         body: SingleChildScrollView(
 //           child: Padding(
-//             padding:  EdgeInsets.symmetric(horizontal: ResponsiveUtil.isTablet(context)?12.w:20.w),
+//             padding:  EdgeInsets.symmetric(horizontal: context.isTab?12.w:20.w),
 //             child: Column(
 //               children: [
 //                 Text(quranKhatem.replaceAll("۞", ""),textAlign: TextAlign.justify,style: TextStyle(fontSize: 22.sp,fontFamily: "maja"),)
@@ -115,7 +115,7 @@ class QuranTextScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

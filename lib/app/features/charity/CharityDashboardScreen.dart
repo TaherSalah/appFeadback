@@ -1,22 +1,21 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+
 import '../../core/utils/style/app_theme_colors.dart';
-import '../../core/utils/style/responsive_util.dart';
 import '../../core/widgets/KLoading.dart';
-import 'models/charity_models.dart';
-import 'services/charity_service.dart';
+import 'AchievementsScreen.dart';
 import 'AddCharityScreen.dart';
 import 'CharityHistoryScreen.dart';
-
-import 'RecurringCharityScreen.dart';
 import 'MonthlyGoalScreen.dart';
+import 'RecurringCharityScreen.dart';
 import 'ReminderSettingsScreen.dart';
-import 'AchievementsScreen.dart';
+import 'models/charity_models.dart';
+import 'services/charity_service.dart';
 
 class CharityDashboardScreen extends StatefulWidget {
   const CharityDashboardScreen({super.key});
@@ -51,7 +50,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -328,7 +327,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildDailySuggestionCard(bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return Container(
       padding: EdgeInsets.all(20.w),
@@ -447,7 +446,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
 
   Widget _buildStatCard(
       String emoji, String label, String value, Color color, bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -494,7 +493,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildQuickAddRow(bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -531,7 +530,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildDashboardQuickAddChip(double amount, bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     return InkWell(
       onTap: () async {
         final donation = CharityDonation.withCategory(
@@ -579,7 +578,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildMonthlyGoalCard(bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     final goal = _charityService.getMonthlyGoal();
     final progress =
         _charityService.getGoalProgress(_stats?.totalThisMonth ?? 0);
@@ -705,7 +704,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildStreakCard(bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
@@ -761,7 +760,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildChartCard(bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     if (_stats?.monthlyData == null || _stats!.monthlyData.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -857,7 +856,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
   }
 
   Widget _buildCategoryBreakdown(bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     if (_stats?.categoryBreakdown == null ||
         _stats!.categoryBreakdown.isEmpty) {
       return const SizedBox.shrink();
@@ -1085,7 +1084,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
 
   Widget _buildActionButton(IconData? icon, String label, Color color,
       VoidCallback onTap, bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return InkWell(
       onTap: onTap,

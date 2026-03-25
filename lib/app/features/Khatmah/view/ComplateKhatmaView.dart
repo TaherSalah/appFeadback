@@ -50,7 +50,7 @@ class _ComplateKhatmaViewState extends State<ComplateKhatmaView> {
       child: Scaffold(
         appBar: AppBar(
           leading: CupertinoNavigationBarBackButton(
-            color: Theme.of(context).brightness == Brightness.dark
+            color: context.isDark
                 ? Colors.white
                 : Colors.black,
           ),

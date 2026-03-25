@@ -34,6 +34,7 @@ class FruitCollectorGame extends BaseEducationalGame with DragCallbacks {
 
   @override
   Future<void> onLoad() async {
+    await super.onLoad();
     add(BackgroundGradient(level: level));
 
     player = Player();

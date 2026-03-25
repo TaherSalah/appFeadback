@@ -14,7 +14,7 @@ class About extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: CupertinoNavigationBarBackButton(
-            color: Theme.of(context).brightness == Brightness.dark
+            color: context.isDark
                 ? Colors.white
                 : Colors.black,
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 import '../../../../core/utils/style/k_color.dart';
 import '../../controllers/books_controller.dart';
@@ -22,7 +22,7 @@ class ChapterExpansionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final booksCtrl = Get.find<BooksController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final baseColor = KColors.primaryColor;
     const Color goldColor = Color(0xFFD4AF37);
 

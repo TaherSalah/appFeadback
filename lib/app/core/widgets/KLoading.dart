@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 import '../utils/constent/assets_manager.dart';
 import '../utils/style/k_color.dart';
@@ -52,8 +53,8 @@ class KLoading {
                 alignment: Alignment.center,
                 children: <Widget>[
                   SizedBox(
-                    width: ResponsiveUtil.isTablet(context) ? 120 : 80,
-                    height: ResponsiveUtil.isTablet(context) ? 120 : 80,
+                    width: context.isTab ? 120 : 80,
+                    height: context.isTab ? 120 : 80,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       backgroundColor: KColors.of(context).accentColor,
@@ -125,7 +126,7 @@ class KLoading {
         padding: const EdgeInsets.all(8.0),
         child: CupertinoActivityIndicator(
           radius: radius ?? 15,
-          color: Theme.of(context).brightness == Brightness.dark?Colors.white:KColors.primary2Color,
+          color: context.isDark?Colors.white:KColors.primary2Color,
         ),
       ),
     );

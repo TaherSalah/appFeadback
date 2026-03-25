@@ -22,6 +22,7 @@ class KaabaProtectorGame extends BaseEducationalGame with TapCallbacks, DragCall
 
   @override
   Future<void> onLoad() async {
+    await super.onLoad();
     // Beautiful desert sunset gradient
     add(BackgroundGradient(colors: [
       const Color(0xFF1A237E), // Deep Blue (Night/Early Dawn)

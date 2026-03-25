@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/radio/data/repo/QuranRadioRepoImmp.dart';
 import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioBloc.dart';
 import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioState.dart';
@@ -10,7 +10,6 @@ import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioState.d
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/utils/constent/router.dart';
 import '../../../../core/utils/style/k_color.dart';
-import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/widgets/KLoading.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 
@@ -138,7 +137,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
 
               SliverToBoxAdapter(
                 child: SizedBox(
-                    height: ResponsiveUtil.isTablet(context) ? 20 : 15),
+                    height: context.isTab ? 20 : 15),
               ),
 
               if (isInitialLoading)
@@ -194,7 +193,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                               children: [
                                 Image.asset(
                                   "assets/icons/radio.png",
-                                  height: ResponsiveUtil.isTablet(context)
+                                  height: context.isTab
                                       ? 80
                                       : 30,
                                 ),

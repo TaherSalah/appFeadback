@@ -1,9 +1,9 @@
 import 'dart:developer' as dev;
+
 import 'package:flutter/cupertino.dart';
 import 'package:lottie/lottie.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:quran_library/quran.dart';
 
@@ -183,7 +183,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
   @override
   Widget build(BuildContext context) {
     final query = searchKey.text.trim();
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     print("Bookmarks ==== >$books");
 
     return Directionality(
@@ -231,12 +231,12 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                       itemCount: ayah.length,
                       // physics: const BouncingScrollPhysics(), // تمكين التمرير
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: ResponsiveUtil.isTablet(context)
+                        crossAxisCount: context.isTab
                             ? 6
                             : 3, // يقلّل الأعمدة → الكروت أوسع
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 30,
-                        mainAxisExtent: ResponsiveUtil.isTablet(context)
+                        mainAxisExtent: context.isTab
                             ? 150
                             : 130, // ارتفاع ثابت مناسب
                       ),
@@ -373,7 +373,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                                         title: "لا يوجد علامات محفوظه حالية",
                                         fontWeight: FontWeight.bold,
                                         fontSize:
-                                            ResponsiveUtil.isTablet(context)
+                                            context.isTab
                                                 ? 8.sp
                                                 : 14,
                                       ),
@@ -389,7 +389,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                                             title: "لا يوجد نتائج عن ",
                                             fontWeight: FontWeight.bold,
                                             fontSize:
-                                                ResponsiveUtil.isTablet(context)
+                                                context.isTab
                                                     ? 8.sp
                                                     : 14,
                                           ),
@@ -400,7 +400,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                                                 ? KColors.primary
                                                 : KColors.primary2Color,
                                             fontSize:
-                                                ResponsiveUtil.isTablet(context)
+                                                context.isTab
                                                     ? 8.sp
                                                     : 14,
                                           ),
@@ -410,7 +410,7 @@ class _AyaBookmarkScreenState extends State<AyaBookmarkScreen> {
                                         title:
                                             "يمكنك البحث عن أي كلمة في القرأن",
                                         fontSize:
-                                            ResponsiveUtil.isTablet(context)
+                                            context.isTab
                                                 ? 8.sp
                                                 : 12,
                                       ),

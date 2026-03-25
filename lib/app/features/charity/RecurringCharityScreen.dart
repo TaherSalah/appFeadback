@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
-import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
 
-import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/app_theme_colors.dart';
-import '../../core/utils/style/responsive_util.dart';
+import '../../core/utils/style/k_color.dart';
 import '../../core/widgets/KLoading.dart';
 import 'models/charity_models.dart';
 import 'services/charity_service.dart';
@@ -43,8 +41,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
     final amountController = TextEditingController(text: existing?.amount.toString() ?? '');
     int selectedDay = existing?.dayOfMonth ?? 1;
     CharityCategory selectedCategory = existing?.category ?? CharityCategory.sadaqah;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    bool isTab = ResponsiveUtil.isTablet(context);
+    final isDark = context.isDark;
+    bool isTab = context.isTab;
 
     await showModalBottomSheet(
       context: context,
@@ -241,7 +239,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
   }
 
   Widget _buildSectionHeader(bool isDark, String title, String subtitle) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return Row(
       children: [
@@ -281,7 +279,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -375,7 +373,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
   }
 
   Widget _buildEmptyState() {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return Center(
       child: Column(
@@ -569,7 +567,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
   }
 
   Widget _buildTextField(bool isDark, TextEditingController controller, String label, IconData icon, {bool isNumber = false}) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return Container(
       decoration: BoxDecoration(

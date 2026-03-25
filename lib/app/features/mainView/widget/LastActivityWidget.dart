@@ -1,23 +1,24 @@
+import 'dart:convert'; // For jsonDecode
+
+import 'package:animate_do/animate_do.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:gap/gap.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:quran_library/quran_library.dart' hide SurahModel;
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../Khatmah/data/khatmah_model.dart';
 import '../../Khatmah/view/KhatmahDashboard.dart';
 import '../../WirdView/TasbihScreen.dart';
 import '../../WirdView/data/Wird.dart';
 import '../../WirdView/data/WirdManager.dart';
-import 'package:quran_library/quran_library.dart' hide SurahModel;
-import '../../quran/view/widget/QuranViewItemBuilder.dart';
-import '../../quran/view/SurahDetailScreen.dart';
 import '../../quran/SurahModel.dart';
-import 'dart:convert'; // For jsonDecode
-import 'package:animate_do/animate_do.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:gap/gap.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import '../../quran/view/SurahDetailScreen.dart';
+import '../../quran/view/widget/QuranViewItemBuilder.dart';
 
 class LastActivityWidget extends StatefulWidget {
   const LastActivityWidget({super.key});
@@ -118,8 +119,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
-    bool isTab = context.isTablet;
+    bool isDark = context.isDark;
+    bool isTab = context.isTab;
 
     if (_bookmarkVerseId == null &&
         _lastReadPage == null &&

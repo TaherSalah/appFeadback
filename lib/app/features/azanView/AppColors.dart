@@ -140,7 +140,7 @@
 //
 //   /// التحقق من الوضع الليلي
 //   static bool isDarkMode(BuildContext context) {
-//     return Theme.of(context).brightness == Brightness.dark;
+//     return context.isDark;
 //   }
 //
 //   // ========== الخلفيات ==========

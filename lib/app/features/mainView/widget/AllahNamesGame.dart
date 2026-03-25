@@ -1,12 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import '../../../core/utils/style/responsive_util.dart';
-import 'kids_data/sounds_helper.dart';
-import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../core/utils/style/k_dialog_helper.dart';
+import '../../kids/kids_data/sounds_helper.dart';
 
 class AllahNamesGame extends StatefulWidget {
   const AllahNamesGame({super.key});
@@ -18,6 +20,29 @@ class AllahNamesGame extends StatefulWidget {
 class _AllahNamesGameState extends State<AllahNamesGame> {
   int _currentQuestion = 0;
   int _score = 0;
+  int _highScore = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHighScore();
+    _generateQuestion();
+  }
+
+  Future<void> _loadHighScore() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _highScore = prefs.getInt('allah_names_high_score') ?? 0;
+    });
+  }
+
+  Future<void> _saveHighScore() async {
+    if (_score > _highScore) {
+      _highScore = _score;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('allah_names_high_score', _highScore);
+    }
+  }
 
   final List<Map<String, String>> _allahNames = [
     {'name': 'الرحمن', 'meaning': 'الكثير الرحمة'},
@@ -39,12 +64,6 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
 
   List<String> _currentOptions = [];
   String _correctAnswer = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _generateQuestion();
-  }
 
   void _generateQuestion() {
     final nameData = _allahNames[_currentQuestion];
@@ -93,6 +112,7 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                 _generateQuestion();
               });
             } else {
+              _saveHighScore();
               _showFinalScore();
             }
           },
@@ -114,7 +134,7 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
           Text(
             'نتيجتك: $_score/${_allahNames.length * 5}',
             style: TextStyle(
-                  fontFamily: "cairo",
+              fontFamily: "cairo",
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF10B981),
@@ -127,19 +147,32 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
               color: const Color(0xFFF59E0B).withOpacity(0.1),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: Row(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.stars_rounded,
-                    color: Color(0xFFF59E0B), size: 24),
-                const SizedBox(width: 8),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.stars_rounded, color: Color(0xFFF59E0B), size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      'حصلت على $_score نجمة ✨',
+                      style: const TextStyle(
+                        fontFamily: "cairo",
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFF59E0B),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
                 Text(
-                  'حصلت على $_score نجمة ✨',
+                  'أعلى نتيجة: $_highScore ✨',
                   style: TextStyle(
-                  fontFamily: "cairo",
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFFF59E0B),
+                    fontFamily: "cairo",
+                    fontSize: 14,
+                    color: Colors.grey[600],
                   ),
                 ),
               ],
@@ -163,22 +196,12 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final nameData = _allahNames[_currentQuestion];
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        // appBar: AppBar(
-        //   title: Text(
-        //     'أسماء الله الحسنى 🌟',
-        //     style: GoogleFonts.cairo(
-        //       fontWeight: FontWeight.bold,
-        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
-        //     ),
-        //   ),
-        //   centerTitle: true,
-        // ),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
             MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
@@ -191,16 +214,14 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
             title: Text(
               "أسماء الله الحسنى",
               style: TextStyle(
-                  fontFamily: "cairo",
+                fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
               ),
             ),
           ),
         ),
-
         body: Column(
           children: [
             // Progress
@@ -208,7 +229,7 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                gradient:  LinearGradient(
+                gradient: LinearGradient(
                   colors: [KColors.primaryColor, KColors.primaryColor],
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -219,25 +240,36 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                   Text(
                     'الاسم ${_currentQuestion + 1}/${_allahNames.length}',
                     style: TextStyle(
-                  fontFamily: "cairo",
-                      fontSize:
-                          ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                      fontFamily: "cairo",
+                      fontSize: context.isTab ? 10.sp : 14.sp,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Icon(Icons.star, color: Colors.white, size: 20),
-                      const SizedBox(width: 4),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.white, size: 20),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$_score',
+                            style: TextStyle(
+                              fontFamily: "cairo",
+                              fontSize: context.isTab ? 12.sp : 16.sp,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                       Text(
-                        '$_score',
+                        'الأفضل: $_highScore',
                         style: TextStyle(
-                  fontFamily: "cairo",
-                          fontSize:
-                              ResponsiveUtil.isTablet(context) ? 12.sp : 16.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          fontFamily: "cairo",
+                          fontSize: 10.sp,
+                          color: Colors.white70,
                         ),
                       ),
                     ],
@@ -245,7 +277,6 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                 ],
               ),
             ),
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
@@ -254,21 +285,18 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                     Text(
                       nameData['name']!,
                       style: TextStyle(
-                  fontFamily: "cairo",
-                        fontSize: ResponsiveUtil.isTablet(context)
-                            ? 18.sp
-                            : 32.sp,
+                        fontFamily: "cairo",
+                        fontSize: context.isTab ? 18.sp : 32.sp,
                         fontWeight: FontWeight.bold,
-                        color:isDark?KColors.primaryColor :Colors.brown.shade700,
+                        color: isDark ? KColors.primaryColor : Colors.brown.shade700,
                       ),
                     ),
                     const SizedBox(height: 24),
                     Text(
                       'ما معنى هذا الاسم؟',
                       style: TextStyle(
-                  fontFamily: "cairo",
-                        fontSize:
-                            ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                        fontFamily: "cairo",
+                        fontSize: context.isTab ? 12.sp : 18.sp,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
                       ),
@@ -280,11 +308,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                           child: ElevatedButton(
                             onPressed: () => _checkAnswer(option),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: isDark
-                                  ? const Color(0xFF1E293B)
-                                  : Colors.white,
-                              foregroundColor:
-                                  isDark ? Colors.white : Colors.black87,
+                              backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                              foregroundColor: isDark ? Colors.white : Colors.black87,
                               padding: const EdgeInsets.all(20),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -294,10 +319,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                             child: Text(
                               option,
                               style: TextStyle(
-                  fontFamily: "cairo",
-                                fontSize: ResponsiveUtil.isTablet(context)
-                                    ? 11.sp
-                                    : 16.sp,
+                                fontFamily: "cairo",
+                                fontSize: context.isTab ? 11.sp : 16.sp,
                               ),
                             ),
                           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
 import 'kids_data/hadiths_data.dart';
 
 class HadithsForKidsScreen extends StatelessWidget {
@@ -9,7 +9,6 @@ class HadithsForKidsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -20,7 +19,7 @@ class HadithsForKidsScreen extends StatelessWidget {
             style: TextStyle(
                   fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+              fontSize: context.isTab ? 14.sp : 20.sp,
             ),
           ),
           centerTitle: true,
@@ -74,7 +73,7 @@ class HadithsForKidsScreen extends StatelessWidget {
                           hadith.title,
                           style: TextStyle(
                   fontFamily: "cairo",
-                            fontSize: ResponsiveUtil.isTablet(context)
+                            fontSize: context.isTab
                                 ? 12.sp
                                 : 16.sp,
                             fontWeight: FontWeight.bold,
@@ -96,7 +95,7 @@ class HadithsForKidsScreen extends StatelessWidget {
                       style: TextStyle(
                   fontFamily: "cairo",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 11.sp : 15.sp,
+                            context.isTab ? 11.sp : 15.sp,
                         color: Colors.white,
                         height: 1.8,
                         fontWeight: FontWeight.w600,
@@ -115,7 +114,7 @@ class HadithsForKidsScreen extends StatelessWidget {
                           hadith.meaning,
                           style: TextStyle(
                   fontFamily: "cairo",
-                            fontSize: ResponsiveUtil.isTablet(context)
+                            fontSize: context.isTab
                                 ? 10.sp
                                 : 13.sp,
                             color: Colors.white70,

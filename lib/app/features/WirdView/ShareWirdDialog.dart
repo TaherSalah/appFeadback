@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -95,7 +96,7 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    // final isDark = context.isDark;
     final primaryColor = context.isDark ? Colors.tealAccent : const Color(0xFF00897B);
 
     return Dialog(
@@ -344,11 +345,11 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
         icon: _isSharing 
           ? const CupertinoActivityIndicator(color: Colors.white) 
           : const Icon(CupertinoIcons.share),
-        label: Text(_isSharing ? "جاري التجهيز..." : "مشاركة الصورة",    style: TextStyle(
+        label: Text(_isSharing ? "جاري التجهيز..." : "مشاركة الصورة",    style: const TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
-          foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+          foregroundColor: context.isDark ? Colors.black : Colors.white,
           padding: EdgeInsets.symmetric(vertical: 14.h),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),

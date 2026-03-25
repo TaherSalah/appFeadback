@@ -1,11 +1,12 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'models/dua_models.dart';
-import 'data/duas_data.dart';
-import 'services/dua_service.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
 import 'DuaDetailScreen.dart';
+import 'data/duas_data.dart';
+import 'models/dua_models.dart';
+import 'services/dua_service.dart';
 
 class DuasMainScreen extends StatefulWidget {
   const DuasMainScreen({super.key});
@@ -34,7 +35,7 @@ class _DuasMainScreenState extends State<DuasMainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -168,7 +167,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
     const source2 = 'البخاري (5054) ومسلم (1159)';
 
 // داخل الواجهة:
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -501,7 +500,7 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                           fontFamily: "cairo",
           fontSize: 14.sp,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).brightness == Brightness.dark
+          color: context.isDark
               ? Colors.white70
               : Colors.black87,
         ),

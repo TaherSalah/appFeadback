@@ -1,13 +1,15 @@
 import 'dart:convert';
+
+import 'package:animate_do/animate_do.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart' hide TextDirection;
-import 'package:animate_do/animate_do.dart';
-import 'package:fl_chart/fl_chart.dart';
-import '../../../core/utils/style/k_color.dart';
-import '../../../core/utils/style/responsive_util.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../core/utils/style/k_color.dart';
 
 class KidsStatisticsScreen extends StatefulWidget {
   const KidsStatisticsScreen({super.key});
@@ -143,7 +145,7 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     const primaryColor = Color(0xFF0EA5E9);
 
     if (_isLoading) {
@@ -710,7 +712,7 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: ResponsiveUtil.isTablet(context) ? 4 : 4,
+        crossAxisCount: context.isTab ? 4 : 4,
         crossAxisSpacing: 10.w,
         mainAxisSpacing: 10.h,
         childAspectRatio: 0.8,

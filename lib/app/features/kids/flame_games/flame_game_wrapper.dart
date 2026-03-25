@@ -1,8 +1,9 @@
 import 'dart:ui';
-import 'package:flutter/material.dart';
+
 import 'package:flame/game.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'base_flame_game.dart';
 import 'kids_points_service.dart';
 

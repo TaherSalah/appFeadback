@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:share_plus/share_plus.dart';
+
 import '../../core/services/content_service.dart';
 import '../../core/utils/style/k_color.dart';
 import '../../core/widgets/KLoading.dart';
@@ -60,7 +61,7 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

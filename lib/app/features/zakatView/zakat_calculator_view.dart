@@ -18,14 +18,13 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/shard/widgets/ui_animations.dart';
-
 import 'package:url_launcher/url_launcher.dart'; //
+
+import '../../core/shard/widgets/ui_animations.dart';
 import '../../core/utils/style/app_theme_colors.dart';
-import '../../core/utils/style/responsive_util.dart';
-import 'zakat_pdf_service.dart';
-import 'metal_price_service.dart';
 import '../azanView/adhan_workmanager_service.dart';
+import 'metal_price_service.dart';
+import 'zakat_pdf_service.dart';
 
 class ZakatRecord {
   final String date;
@@ -766,7 +765,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         "مصارف الزكاة الشرعية",
                            style: TextStyle(
                           fontFamily: "cairo",
-                            fontSize: context.isTablet ? 10.sp : 18.sp,
+                            fontSize: context.isTab ? 10.sp : 18.sp,
                             fontWeight: FontWeight.bold,
                             color: const Color(AppStyle.primaryColor)),
                         textAlign: TextAlign.center,
@@ -782,7 +781,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         child: Text(
                           "۞ إِنَّمَا الصَّدَقَاتُ لِلْفُقَرَاءِ وَالْمَسَاكِينِ وَالْعَامِلِينَ عَلَيْهَا وَالْمُؤَلَّفَةِ قُلُوبُهُمْ وَفِي الرِّقَابِ وَالْغَارِمِينَ وَفِي سَبِيلِ اللَّهِ وَابْنِ السَّبِيلِ ۖ فَرِيضَةً مِّنَ اللَّهِ ۗ وَاللَّهُ عَلِيمٌ حَكِيمٌ ۞",
                           style: GoogleFonts.amiri(
-                              fontSize: context.isTablet ? 12.sp : 16.sp,
+                              fontSize: context.isTab ? 12.sp : 16.sp,
                               height: 1.8),
                           textAlign: TextAlign.center,
                         ),
@@ -845,7 +844,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
           Text(title,
                  style: TextStyle(
                           fontFamily: "cairo",
-                  fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                  fontSize: context.isTab ? 10.sp : 14.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87)),
           Text(description,
@@ -1134,7 +1133,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
       return intl.NumberFormat("#,##0.######", "en_US").format(value);
     }
 
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -1349,7 +1348,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                             ? Colors.white70
                                             : Colors.black54),
                                     fontWeight: FontWeight.bold,
-                                    fontSize: ResponsiveUtil.isTablet(context)
+                                    fontSize: context.isTab
                                         ? 9.5.sp
                                         : 12.sp,
                                   ),
@@ -1383,7 +1382,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                             ? Colors.white70
                                             : Colors.black54),
                                     fontWeight: FontWeight.bold,
-                                    fontSize: ResponsiveUtil.isTablet(context)
+                                    fontSize: context.isTab
                                         ? 9.5.sp
                                         : 12.sp,
                                   ),
@@ -1401,7 +1400,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                            style: TextStyle(
                           fontFamily: "cairo",
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                                context.isTab ? 8.sp : 12.sp,
                             color: Colors.grey[600]),
                         textAlign: TextAlign.center),
                     const SizedBox(height: 8),
@@ -1413,7 +1412,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             Text("عيار 24 (للنصاب)",
                                    style: TextStyle(
                           fontFamily: "cairo",
-                                    fontSize: ResponsiveUtil.isTablet(context)
+                                    fontSize: context.isTab
                                         ? 8.sp
                                         : 10.sp,
                                     color: Colors.amber[800])),
@@ -1429,7 +1428,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             Text("عيار 21",
                                    style: TextStyle(
                           fontFamily: "cairo",
-                                    fontSize: ResponsiveUtil.isTablet(context)
+                                    fontSize: context.isTab
                                         ? 8.sp
                                         : 10.sp,
                                     color: Colors.grey)),
@@ -1445,7 +1444,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             Text("عيار 18",
                                    style: TextStyle(
                           fontFamily: "cairo",
-                                    fontSize: ResponsiveUtil.isTablet(context)
+                                    fontSize: context.isTab
                                         ? 8.sp
                                         : 10.sp,
                                     color: Colors.grey)),
@@ -1464,7 +1463,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                            style: TextStyle(
                           fontFamily: "cairo",
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+                                context.isTab ? 8.sp : 12.sp,
                             color: Colors.grey[600]),
                         textAlign: TextAlign.center),
                     const SizedBox(height: 5),
@@ -1501,7 +1500,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                  style: TextStyle(
                           fontFamily: "cairo",
                                   fontWeight: FontWeight.bold,
-                                  fontSize: ResponsiveUtil.isTablet(context)
+                                  fontSize: context.isTab
                                       ? 10.sp
                                       : 13.sp,
                                   color:
@@ -1509,7 +1508,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           Text(_isHijriYear ? "هجري (2.5%)" : "ميلادي (2.577%)",
                                  style: TextStyle(
                           fontFamily: "cairo",
-                                  fontSize: ResponsiveUtil.isTablet(context)
+                                  fontSize: context.isTab
                                       ? 7.sp
                                       : 11.sp,
                                   color: Colors.grey)),
@@ -2214,13 +2213,13 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                            style: TextStyle(
                           fontFamily: "cairo",
                             fontSize:
-                                ResponsiveUtil.isTablet(context) ? 9.sp : 16.sp,
+                                context.isTab ? 9.sp : 16.sp,
                             color: isDark ? KColors.whiteColor : Colors.black)),
                     Text(
                         "${formatter(_nisabValue)} ${_selectedCurrency.symbol}",
                            style: TextStyle(
                           fontFamily: "cairo",
-                            fontSize: context.isTablet ? 10.sp : 18.sp,
+                            fontSize: context.isTab ? 10.sp : 18.sp,
                             fontWeight: FontWeight.bold,
                             color: isDark ? KColors.whiteColor : Colors.black)),
                   ],
@@ -2299,7 +2298,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
             title,
                style: TextStyle(
                           fontFamily: "cairo",
-              fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
+              fontSize: context.isTab ? 10.sp : 16.sp,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF00897B),
             ),
@@ -2315,7 +2314,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
   Widget _buildSmallInput(
       TextEditingController controller, bool isDark, String hint) {
     return SizedBox(
-      height: ResponsiveUtil.isTablet(context) ? 90 : 40,
+      height: context.isTab ? 90 : 40,
       child: TextField(
         controller: controller,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -2330,7 +2329,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
           hintText: hint,
           hintStyle: TextStyle(
               fontFamily: "cairo",
-              fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp,
+              fontSize: context.isTab ? 8.sp : 10.sp,
               color: Colors.grey.shade400),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
@@ -2385,7 +2384,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                       labelPrefix != null ? TextAlign.end : TextAlign.right,
                      style: TextStyle(
                           fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 7.sp : 12.sp,
+                    fontSize: context.isTab ? 7.sp : 12.sp,
                     color: isNegative
                         ? Colors.red
                         : (isDark ? Colors.white70 : Colors.black87),
@@ -2403,7 +2402,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
             children: [
               Expanded(
                 child: SizedBox(
-                  height: ResponsiveUtil.isTablet(context) ? 70 : 45,
+                  height: context.isTab ? 70 : 45,
                   child: TextField(
                     controller: controller,
                     keyboardType:
@@ -2415,7 +2414,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           fontFamily: "cairo",
                           color: Colors.grey.withOpacity(0.5),
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp),
+                              context.isTab ? 9.sp : 12.sp),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 0, horizontal: 12),
                       border: OutlineInputBorder(
@@ -2458,7 +2457,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   suffix,
                      style: TextStyle(
                           fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 7.sp : 12.sp,
+                    fontSize: context.isTab ? 7.sp : 12.sp,
                     color: const Color(0xFFD97706), // Amber text
                   ),
                   textAlign: TextAlign.center,
@@ -3189,7 +3188,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
              style: TextStyle(
                           fontFamily: "cairo",
             color: isSelected ? Colors.white : Colors.grey,
-            fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
+            fontSize: context.isTab ? 8.sp : 12.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -3220,7 +3219,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                 "كيف تحسب زكاتك؟",
                    style: TextStyle(
                           fontFamily: "cairo",
-                  fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
+                  fontSize: context.isTab ? 10.sp : 16.sp,
                   fontWeight: FontWeight.bold,
                   color: KColors.primaryColor,
                 ),
@@ -3239,7 +3238,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
             "* يرجى التواصل مع جهة أو دار فتوى شرعية للتحقق من الحالات الخاصة.",
                style: TextStyle(
                           fontFamily: "cairo",
-              fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 13.sp,
+              fontSize: context.isTab ? 9.sp : 13.sp,
               height: 1.6,
               color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
             ),
@@ -3404,7 +3403,7 @@ class _CurrencyConverterSheetState extends State<_CurrencyConverterSheet> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(

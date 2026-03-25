@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import '../azkar_massa_controller.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 class AzkarMassaFAB extends StatelessWidget {
   const AzkarMassaFAB({super.key});
@@ -11,10 +11,10 @@ class AzkarMassaFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AzkarMassaController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final theme = Theme.of(context);
     final primaryColor = isDark ? KColors.primaryColor : theme.colorScheme.primary;
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return Obx(() {
       final bool isPlayingNow = controller.isPlaying;

@@ -1,6 +1,5 @@
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 class DrawerModle {
   final IconData? icon;
@@ -205,7 +204,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
   }
 
   Widget _buildHeader(BuildContext context, ThemeData theme, bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 12),
       decoration: BoxDecoration(
@@ -273,7 +272,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
 
   Widget _buildSection(BuildContext context, ThemeData theme,
       DrawerSection section, bool isDark) {
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -322,7 +321,7 @@ class _DrawerWidgetState extends State<DrawerWidget>
   Widget _buildDrawerItem(
       BuildContext context, ThemeData theme, DrawerModle item, bool isDark) {
     final isSelected = item.route == widget.selectItmeRoute;
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 4),

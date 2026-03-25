@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:hijri/hijri_calendar.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 
 import '../../../core/shard/exports/all_exports.dart';
 
@@ -109,11 +108,11 @@ class _HalalGreetingState extends State<HalalGreeting> {
       greeting,
       textAlign: TextAlign.center,
       style: GoogleFonts.notoKufiArabic(
-        color: Theme.of(context).brightness == Brightness.dark
+        color: context.isDark
             ? Colors.white
             : Colors.black,
         fontWeight: FontWeight.w600,
-        fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 11.sp,
+        fontSize: context.isTab ? 8.sp : 11.sp,
       ),
     );
   }
@@ -194,12 +193,12 @@ class _AdhkarReminderState extends State<AdhkarReminder> {
     return Text(
       reminder,
       style: GoogleFonts.notoKufiArabic(
-        fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 11.sp,
+        fontSize: context.isTab ? 8.sp : 11.sp,
         fontWeight: FontWeight.w600,
-        color: Theme.of(context).brightness == Brightness.dark
+        color: context.isDark
             ? Colors.white
             : Colors.black,
-        // color: Theme.of(context).brightness == Brightness.dark
+        // color: context.isDark
         //     ? Colors.white.withOpacity(0.8)
         //     : const Color(0xFF2C3E50),
       ),

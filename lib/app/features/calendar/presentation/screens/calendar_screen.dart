@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:table_calendar/table_calendar.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/features/calendar/data/models/calendar_event_model.dart';
 import 'package:muslimdaily/app/features/calendar/data/services/calendar_service.dart';
+import 'package:table_calendar/table_calendar.dart';
 
-import '../../../../core/utils/style/responsive_util.dart';
 import '../widgets/add_event_sheet.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -344,9 +343,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final hijriDate = HijriCalendar.fromDate(_focusedDay);
-    bool isTab = ResponsiveUtil.isTablet(context);
+    bool isTab = context.isTab;
 
     return Directionality(
       textDirection: TextDirection.rtl,

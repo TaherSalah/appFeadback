@@ -620,7 +620,7 @@ class _AllahNameWidgetState extends State<AllahNameWidget> {
                     child: Text(
                       _todaysName['name']!,
                       style: GoogleFonts.amiri(
-                        fontSize: context.isTablet ? 15.sp : 32.sp,
+                        fontSize: context.isTab ? 15.sp : 32.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors
                             .white, // Color is ignored by ShaderMask but required
@@ -639,7 +639,7 @@ class _AllahNameWidgetState extends State<AllahNameWidget> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                   fontFamily: "cairo",
-                      fontSize: context.isTablet ? 10.sp : 14.sp,
+                      fontSize: context.isTab ? 10.sp : 14.sp,
                       color: isDark ? Colors.white70 : Colors.black87,
                       fontWeight: FontWeight.w600,
                     ),
@@ -668,7 +668,7 @@ class _AllahNameWidgetState extends State<AllahNameWidget> {
                             _todaysName['reflection']!,
                             style: TextStyle(
                   fontFamily: "cairo",
-                              fontSize: context.isTablet ? 9.sp : 12.sp,
+                              fontSize: context.isTab ? 9.sp : 12.sp,
                               color:
                                   isDark ? Colors.grey[300] : Colors.grey[800],
                             ),

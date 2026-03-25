@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/utils/style/responsive_util.dart';
+
 import '../../../core/utils/style/k_dialog_helper.dart';
 
 class VirtualShopScreen extends StatefulWidget {
@@ -206,7 +206,7 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // Group items by type
     final Map<String, List<Map<String, dynamic>>> groupedItems = {};
@@ -226,7 +226,7 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
         //     'المتجر 🏪',
         //     style: GoogleFonts.cairo(
         //       fontWeight: FontWeight.bold,
-        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        //       fontSize: context.isTab ? 14.sp : 20.sp,
         //     ),
         //   ),
         //   centerTitle: true,
@@ -350,7 +350,7 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
               title,
               style: TextStyle(
                   fontFamily: "cairo",
-                fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                fontSize: context.isTab ? 12.sp : 18.sp,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : Colors.black87,
               ),
@@ -408,7 +408,7 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
                 item['name'],
                 style: TextStyle(
                   fontFamily: "cairo",
-                  fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
+                  fontSize: context.isTab ? 10.sp : 14.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
@@ -425,7 +425,7 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
               item['description'],
               style: TextStyle(
                   fontFamily: "cairo",
-                fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
+                fontSize: context.isTab ? 8.sp : 11.sp,
                 color: Colors.grey,
               ),
             ),
@@ -438,7 +438,7 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
                   '${item['cost']}',
                   style: TextStyle(
                   fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp,
+                    fontSize: context.isTab ? 9.sp : 12.sp,
                     fontWeight: FontWeight.bold,
                     color: canAfford ? Colors.amber : Colors.red,
                   ),
@@ -463,7 +463,7 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
                   'شراء',
                   style: TextStyle(
                   fontFamily: "cairo",
-                    fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
+                    fontSize: context.isTab ? 8.sp : 11.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),

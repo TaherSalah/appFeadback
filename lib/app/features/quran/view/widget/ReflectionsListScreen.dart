@@ -34,7 +34,7 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,

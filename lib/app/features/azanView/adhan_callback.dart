@@ -1,3 +1,4 @@
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -163,7 +164,7 @@ class BatteryOptimizationHelper {
     final isDisabled = await isBatteryOptimizationDisabled();
     if (isDisabled || !context.mounted) return;
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     showDialog(
       context: context,

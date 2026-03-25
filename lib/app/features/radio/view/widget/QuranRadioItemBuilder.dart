@@ -3,11 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/features/radio/data/repo/QuranRadioRepoImmp.dart';
 import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioBloc.dart';
 import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioState.dart';
+
 import '../../../../core/shard/exports/all_exports.dart';
 import '../../../../core/utils/constent/router.dart';
 import '../../../../core/utils/style/app_theme_colors.dart';
 import '../../../../core/utils/style/k_color.dart';
-import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/widgets/KLoading.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 
@@ -89,7 +89,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
           // حدّ أقصى لما نعرضه حسب الإجمالي
           final itemCount =
               total == 0 ? 0 : (_visibleCount > total ? total : _visibleCount);
-          final isDark = Theme.of(context).brightness == Brightness.dark;
+          final isDark = context.isDark;
 
           // لو لسه محمّل البيانات الأساسية
           final isInitialLoading =
@@ -139,7 +139,7 @@ Navigator.canPop(context)
 
               SliverToBoxAdapter(
                 child: SizedBox(
-                    height: ResponsiveUtil.isTablet(context) ? 20 : 15),
+                    height: context.isTab ? 20 : 15),
               ),
 
               if (isInitialLoading)
@@ -199,7 +199,7 @@ Navigator.canPop(context)
                               children: [
                                 Image.asset(
                                   "assets/icons/radio.png",
-                                  height: ResponsiveUtil.isTablet(context)
+                                  height: context.isTab
                                       ? 80
                                       : 30,
                                 ),

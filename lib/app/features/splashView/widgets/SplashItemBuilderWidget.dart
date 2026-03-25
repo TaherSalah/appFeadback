@@ -126,7 +126,7 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                     ),
                   ),
                 ),
-                SizedBox(height: context.isTablet ? 90.h : 70.h),
+                SizedBox(height: context.isTab ? 90.h : 70.h),
                 
                 // ⏳ Elegant Pulse Loading
                 // ⏳ Premium Animated Title & Slogan
@@ -139,7 +139,7 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                         "رَفِيقُ الْمُسْلِمِ الْيَوْمِيُّ",
                         style: TextStyle(
                           fontFamily: "me",
-                          fontSize: context.isTablet ? 14.sp : 30.sp,
+                          fontSize: context.isTab ? 14.sp : 30.sp,
                           color:  primaryGreen,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.2,
@@ -155,7 +155,7 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                         style: TextStyle(
                           fontFamily: "me",
 
-                          fontSize: context.isTablet ? 10.sp : 20.sp,
+                          fontSize: context.isTab ? 10.sp : 20.sp,
                           color: isDark ? Colors.white70 : Colors.black54,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 3,
@@ -169,7 +169,7 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
 
             // 👨‍💻 4. Premium Cut-out Branding Section (Bottom)
             Positioned(
-              bottom:context.isTablet ? 15.h :0.h,
+              bottom:context.isTab ? 15.h :0.h,
               child: FadeInUp(
                 duration: const Duration(milliseconds: 800),
                 delay: const Duration(milliseconds: 600),
@@ -232,7 +232,7 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                                 child: Text(
                                   "Taher Salah",
                                   style: GoogleFonts.momoSignature(
-                                    fontSize: context.isTablet ? 6.sp : 9.sp,
+                                    fontSize: context.isTab ? 6.sp : 9.sp,
                                     color: Colors.white,
                                   ),
                                 ),

@@ -2,9 +2,9 @@ import 'package:badges/badges.dart' as badges;
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 import '../utils/style/k_color.dart';
-import '../utils/style/responsive_util.dart';
 import 'custom_text_widget.dart';
 
 
@@ -25,7 +25,7 @@ class BadgeItemBuilder extends StatelessWidget {
             fontWeight: FontWeight.w500,
             color: Colors.white,
             title: badgeNumber ?? '0',
-            fontSize: ResponsiveUtil.isTablet(context) ? 6.sp : 9.sp,
+            fontSize: context.isTab ? 6.sp : 9.sp,
           ),
           badgeStyle: badges.BadgeStyle(
             badgeColor: KColors.greenColor,

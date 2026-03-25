@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
-import '../../../core/utils/style/responsive_util.dart';
-import 'kids_data/duas_data.dart';
+
 import '../../../core/utils/style/k_dialog_helper.dart';
+import '../../kids/kids_data/duas_data.dart';
 
 class DailyDuasScreen extends StatelessWidget {
   const DailyDuasScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -22,7 +22,7 @@ class DailyDuasScreen extends StatelessWidget {
         //     'أدعية يومية 🤲',
         //     style: GoogleFonts.cairo(
         //       fontWeight: FontWeight.bold,
-        //       fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+        //       fontSize: context.isTab ? 14.sp : 20.sp,
         //     ),
         //   ),
         //   centerTitle: true,
@@ -33,7 +33,7 @@ class DailyDuasScreen extends StatelessWidget {
           ),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: context.isDark
                   ? Colors.white
                   : Colors.black,
             ),
@@ -98,7 +98,7 @@ class DailyDuasScreen extends StatelessWidget {
                       style: TextStyle(
                   fontFamily: "cairo",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 11.sp : 14.sp,
+                            context.isTab ? 11.sp : 14.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -115,7 +115,7 @@ class DailyDuasScreen extends StatelessWidget {
   }
 
   void _showDuaDialog(BuildContext context, DuaForKids dua) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     KDialogHelper.showCustomDialog(
       context: context,

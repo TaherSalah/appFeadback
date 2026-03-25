@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../core/services/content_service.dart';
+import '../../../core/utils/style/k_dialog_helper.dart';
 import '../../../core/utils/style/responsive_util.dart';
 import '../../../core/widgets/KLoading.dart';
 import 'kids_data/islamic_stories.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/services/content_service.dart';
-import '../../../core/utils/style/k_dialog_helper.dart';
 
 class StoriesScreen extends StatefulWidget {
   final VoidCallback? onStoryCompleted;
@@ -66,7 +67,6 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -265,7 +265,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final isLastPage = _currentPage >= widget.story.paragraphs.length;
 
     return Directionality(

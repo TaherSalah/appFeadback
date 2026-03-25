@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:muslimdaily/app/core/extensions/extensions.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:muslimdaily/app/core/extensions/extensions.dart';
 import 'package:muslimdaily/app/core/shard/constanc/app_string.dart';
 import 'package:muslimdaily/app/core/shard/widgets/done_widget.dart';
+import 'package:provider/provider.dart';
+
 import '../../core/controller/azkar_controller.dart';
 import 'sleep_controller.dart';
 import 'widgets/sleep_fab.dart';
-import 'widgets/sleep_player_ui.dart';
 import 'widgets/sleep_list.dart';
+import 'widgets/sleep_player_ui.dart';
 
 class SleepAzkar extends StatelessWidget {
   const SleepAzkar({super.key});

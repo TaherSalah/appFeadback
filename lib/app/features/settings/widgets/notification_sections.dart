@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_controller.dart';
 import 'package:muslimdaily/app/features/settings/widgets/settings_widgets.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 class AdhanSection extends StatelessWidget {
   final NotificationSettingsController controller;
@@ -210,7 +211,7 @@ class SalatFrequencySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     return SettingsSection(
       title: 'الصلاة على النبي ﷺ',
       children: [
@@ -373,7 +374,7 @@ class FrequencyChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    bool isDark = context.isDark;
     final primaryColor = isSelected ? const Color(0xFF178B74) : (isDark ? const Color(0xFF1E293B) : Colors.white);
 
     return Padding(

@@ -100,13 +100,13 @@ class AdhanAudioDownloader {
           if (file.name.contains('fajir')) {
             extractedFilePathFajir = extractedFile.path;
             await prefs.setString(
-                '${index}$ADHAN_PATH_FAJIR_AUDIO', extractedFile.path);
+                '$index$ADHAN_PATH_FAJIR_AUDIO', extractedFile.path);
             log('extractedFilePathFajir: ${extractedFile.path}',
                 name: 'AdhanAudioDownloader');
           } else {
             extractedFilePath = extractedFile.path;
             await prefs.setString(
-                '${index}$ADHAN_PATH_AUDIO', extractedFile.path);
+                '$index$ADHAN_PATH_AUDIO', extractedFile.path);
             log('extractedFilePath: ${extractedFile.path}',
                 name: 'AdhanAudioDownloader');
           }

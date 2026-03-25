@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../../core/utils/style/responsive_util.dart';
+import 'package:gap/gap.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+
 import '../../../data/models/collection_model.dart';
 
 // Helper for SVG rendering
@@ -75,23 +76,23 @@ class BookName extends StatelessWidget {
                         )),
                     child: customSvgWithColor(
                       SvgPath.svgBookCover,
-                      height: ResponsiveUtil.isTablet(context) ? 280.0 : 300,
+                      height: context.isTab ? 280.0 : 300,
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
                   customSvg(SvgPath.svgBookCoverLogo,
 
-                      height: ResponsiveUtil.isTablet(context) ? 280.0 : 300),
+                      height: context.isTab ? 280.0 : 300),
                   Transform.translate(
-                    offset: ResponsiveUtil.isTablet(context)
+                    offset: context.isTab
                         ? const Offset(-10, 20)
                         : const Offset(-15, 5),
                     child: SizedBox(
-                      height: ResponsiveUtil.isTablet(context) ? 140 : 120,
-                      width: ResponsiveUtil.isTablet(context) ? 140 : 120,
+                      height: context.isTab ? 140 : 120,
+                      width: context.isTab ? 140 : 120,
                       child: bookNameLogo(
                               '${collection.id! - 1}', const Color(0xFFFFFFFF),
-                              height: ResponsiveUtil.isTablet(context) ? 110 : 130)
+                              height: context.isTab ? 110 : 130)
                     ),
                   )
                 ],
@@ -120,7 +121,7 @@ class BookName extends StatelessWidget {
                   collection.arAndEnName,
                   style: TextStyle(
                     fontSize:
-                        ResponsiveUtil.isTablet(context) ? 22.0 : 20,
+                        context.isTab ? 22.0 : 20,
                     fontFamily: 'kufi',
                     fontWeight: FontWeight.bold,
                     // color: Theme.of(context).primaryColor,

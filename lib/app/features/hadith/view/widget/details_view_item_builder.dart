@@ -3,15 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/localization/localization_manager.dart';
 import '../../../../core/utils/constent/router.dart';
 import '../../../../core/utils/style/k_color.dart';
-import '../../../../core/utils/style/responsive_util.dart';
 import '../../../../core/widgets/KLoading.dart';
 import '../../../../core/widgets/custom_divider_widget.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
@@ -74,7 +73,7 @@ class HadithViewItemBuilder extends StatelessWidget {
         ),
         SliverToBoxAdapter(
             child:
-                SizedBox(height: ResponsiveUtil.isTablet(context) ? 20 : 15)),
+                SizedBox(height: context.isTab ? 20 : 15)),
         SliverToBoxAdapter(
             child: FadeAnimation(
           delay: const Duration(milliseconds: 100),
@@ -98,7 +97,7 @@ class HadithViewItemBuilder extends StatelessWidget {
                           : KColors.primaryColor,
                       title: LocalizationManager.call("view-all"),
                       fontSize:
-                          ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp),
+                          context.isTab ? 8.sp : 10.sp),
                 ),
               ],
             ),
@@ -132,12 +131,12 @@ class HadithViewItemBuilder extends StatelessWidget {
                               title:
                                   "${LocalizationManager.call("notSearchFound")} ",
                               fontSize:
-                                  ResponsiveUtil.isTablet(context) ? 8.sp : 10,
+                                  context.isTab ? 8.sp : 10,
                             ),
                             TextWidget(
                               fontWeight: FontWeight.w600,
                               fontSize:
-                                  ResponsiveUtil.isTablet(context) ? 8.sp : 10,
+                                  context.isTab ? 8.sp : 10,
                               color: CentralizedCubit.isDarkMode
                                   ? KColors.primary
                                   : KColors.primary2Color,
@@ -150,17 +149,17 @@ class HadithViewItemBuilder extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
-                      width: ResponsiveUtil.isTablet(context)
+                      width: context.isTab
                           ? MediaQuery.sizeOf(context).width / 3
                           : MediaQuery.sizeOf(context).width / 2.5,
                       child: CustomButton(
                         horizontalPadding: 2,
                         verticalPadding:
-                            ResponsiveUtil.isTablet(context) ? 14.h : 7,
+                            context.isTab ? 14.h : 7,
                         radius: 6.r,
                         title: LocalizationManager.call('goCatePage'),
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp,
+                            context.isTab ? 8.sp : 10.sp,
                         backgroundColor: CentralizedCubit.isDarkMode
                             ? KColors.blackColor
                             : KColors.primary2Color,

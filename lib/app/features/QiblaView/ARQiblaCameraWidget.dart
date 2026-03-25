@@ -258,7 +258,7 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(20)
                     ),
-                    child: Text(
+                    child: const Text(
                       "القبلة هنا ✨",
                       style: TextStyle(
                   fontFamily: "cairo",color: Colors.white, fontWeight: FontWeight.bold),
@@ -313,10 +313,10 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Column(
+                    const Column(
                       children: [
-                         const Icon(Icons.share_location, color: Colors.white70),
-                         const SizedBox(height: 5),
+                         Icon(Icons.share_location, color: Colors.white70),
+                         SizedBox(height: 5),
                          Text("المسافة",    style: TextStyle(
                           fontFamily: "cairo",color: Colors.white70, fontSize: 10)),
                       ],
@@ -332,10 +332,10 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
                          ),
                     ),
                      Container(width: 1, height: 30, color: Colors.white12),
-                     Column(
+                     const Column(
                       children: [
-                         const Icon(Icons.compass_calibration, color: Colors.white70),
-                         const SizedBox(height: 5),
+                         Icon(Icons.compass_calibration, color: Colors.white70),
+                         SizedBox(height: 5),
                          Text("الدقة عالية",    style: TextStyle(
                           fontFamily: "cairo",color: Colors.white70, fontSize: 10)),
                       ],
