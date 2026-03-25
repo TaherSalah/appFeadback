@@ -126,7 +126,7 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                     ),
                   ),
                 ),
-                SizedBox(height: context.isTablet ? 90.h : 60.h),
+                SizedBox(height: context.isTablet ? 90.h : 70.h),
                 
                 // ⏳ Elegant Pulse Loading
                 // ⏳ Premium Animated Title & Slogan
@@ -138,8 +138,8 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                       child: Text(
                         "رَفِيقُ الْمُسْلِمِ الْيَوْمِيُّ",
                         style: TextStyle(
-                          fontFamily: "cairo",
-                          fontSize: context.isTablet ? 14.sp : 18.sp,
+                          fontFamily: "me",
+                          fontSize: context.isTablet ? 14.sp : 30.sp,
                           color:  primaryGreen,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.2,
@@ -153,8 +153,9 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                       child: Text(
                         "فِي حَيَاتِهِ الْيَوْمِيَّةِ",
                         style: TextStyle(
-                          fontFamily: "cairo",
-                          fontSize: context.isTablet ? 10.sp : 13.sp,
+                          fontFamily: "me",
+
+                          fontSize: context.isTablet ? 10.sp : 20.sp,
                           color: isDark ? Colors.white70 : Colors.black54,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 3,
@@ -168,7 +169,7 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
 
             // 👨‍💻 4. Premium Cut-out Branding Section (Bottom)
             Positioned(
-              bottom:context.isTablet ? 15.h : 60.h,
+              bottom:context.isTablet ? 15.h :0.h,
               child: FadeInUp(
                 duration: const Duration(milliseconds: 800),
                 delay: const Duration(milliseconds: 600),
@@ -186,10 +187,10 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                           decoration: BoxDecoration(
                             color: isDark ? Colors.white.withOpacity(0.08) : Colors.white.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(24),
-                            border: Border.all(
-                              color: isDark ? Colors.white.withOpacity(0.12) : Colors.white70,
-                              width: 1.2,
-                            ),
+                            // border: Border.all(
+                            //   color: isDark ? Colors.white.withOpacity(0.12) : Colors.white70,
+                            //   width: 1.2,
+                            // ),
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -231,7 +232,7 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                                 child: Text(
                                   "Taher Salah",
                                   style: GoogleFonts.momoSignature(
-                                    fontSize: context.isTablet ? 6.sp : 16.sp,
+                                    fontSize: context.isTablet ? 6.sp : 9.sp,
                                     color: Colors.white,
                                   ),
                                 ),
@@ -243,29 +244,29 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
                     ),
 
                     // 🏷️ "Developed By" Cut-out Label
-                    Positioned(
-                      top: -12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: isDark ? deepEmerald : const Color(0xFFF8FAFC),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
-                            width: 0.5,
-                          ),
-                        ),
-                        child: Text(
-                          "تطوير بواسطة",
-                          style: TextStyle(
-                            fontFamily: "cairo",
-                            fontSize: context.isTablet ? 6.sp : 10.sp,
-                            color: isDark ? Colors.white70 : Colors.grey.shade600,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Positioned(
+                    //   top: -12,
+                    //   child: Container(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+                    //     decoration: BoxDecoration(
+                    //       color: isDark ? deepEmerald : const Color(0xFFF8FAFC),
+                    //       borderRadius: BorderRadius.circular(8),
+                    //       border: Border.all(
+                    //         color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                    //         width: 0.5,
+                    //       ),
+                    //     ),
+                    //     child: Text(
+                    //       "تطوير بواسطة",
+                    //       style: TextStyle(
+                    //         fontFamily: "cairo",
+                    //         fontSize: context.isTablet ? 6.sp : 10.sp,
+                    //         color: isDark ? Colors.white70 : Colors.grey.shade600,
+                    //         letterSpacing: 2,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
