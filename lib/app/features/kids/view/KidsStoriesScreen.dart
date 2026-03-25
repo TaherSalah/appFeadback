@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
-import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:animate_do/animate_do.dart';
 import '../../../core/services/content_service.dart';
@@ -367,7 +366,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
             centerTitle: true,
             title: Text(
               'ركن الطفل المسلم',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
@@ -421,7 +421,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
               //             children: [
               //               Text(
               //                 'ركن الطفل المسلم',
-              //                 style: GoogleFonts.cairo(
+              //                    style: TextStyle(
+                          //fontFamily: "cairo",
               //                   fontWeight: FontWeight.bold,
               //                   fontSize: 24.sp,
               //                   color: Colors.white,
@@ -457,7 +458,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                     children: [
                       Text(
                         'اختر مغامرتك القادمة',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : Colors.black87,
@@ -494,10 +496,12 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                     child: TextField(
                       controller: _searchController,
                       onChanged: (_) => _applyFilters(),
-                      style: GoogleFonts.cairo(fontSize: 14.sp),
+                         style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp),
                       decoration: InputDecoration(
                         hintText: 'ابحث عن قصة',
-                        hintStyle: GoogleFonts.cairo(color: Colors.grey.shade400, fontSize: 13.sp),
+                        hintStyle: TextStyle(
+                            fontFamily: "cairo",color: Colors.grey.shade400, fontSize: 13.sp),
                         prefixIcon:  Icon(Icons.search_rounded, color: KColors.primaryColor),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -547,7 +551,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
           // SizedBox(height: 10.h),
           Text(
             'لا توجد قصص بهذا الاسم حالياً!',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white70 : Colors.black54,
@@ -556,7 +561,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
           SizedBox(height: 5.h),
           Text(
             'جرب البحث بكلمات أخرى أو اختر تصنيفاً مختلفاً',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 12.sp,
               color: isDark ? Colors.white38 : Colors.black38,
             ),
@@ -568,7 +574,6 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
 
   Widget _buildAchievementCard(bool isDark) {
     final progress = _levelProgress;
-    final level = _userLevel;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
@@ -604,7 +609,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                   ),
                   child: Text(
                     'مستواك: بطل مغامر $_userLevel',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 12.sp,
@@ -614,7 +620,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                 SizedBox(height: 12.h),
                 Text(
                   'لقد جمعت $_userStars نجمة! ',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 18.sp,
@@ -647,7 +654,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                 SizedBox(height: 8.h),
                 Text(
                   'استمر في القراءة لتصل للمستوى القادم!',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     color: Colors.white.withOpacity(0.8),
                     fontSize: 11.sp,
                   ),
@@ -717,7 +725,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                   SizedBox(width: 8.w),
                   Text(
                     cat['name']!,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 14.sp,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                       color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
@@ -821,7 +830,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                             story['title'] ?? '',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 13.sp,
                               fontWeight: FontWeight.bold,
                               height: 1.3,
@@ -835,7 +845,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                               SizedBox(width: 4.w),
                               Text(
                                 '${story['stars_reward'] ?? 10}',
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 11.sp,
                                   color: Colors.amber.shade700,
                                   fontWeight: FontWeight.bold,
@@ -864,7 +875,8 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
                   ),
                   child: Text(
                     story['category'] ?? 'منوع',
-                    style: GoogleFonts.cairo(color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.bold),
+                       style: TextStyle(
+                          fontFamily: "cairo",color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

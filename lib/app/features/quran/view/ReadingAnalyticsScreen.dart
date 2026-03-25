@@ -107,7 +107,8 @@ class _ReadingAnalyticsScreenState extends State<ReadingAnalyticsScreen> {
             centerTitle: true,
             title: Text(
               "إحصائيات القراءة",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:

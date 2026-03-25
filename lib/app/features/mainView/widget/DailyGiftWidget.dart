@@ -104,7 +104,8 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget>
             ),
             child: Text(
               _todaysGift['type']!,
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 12.sp,
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
@@ -206,7 +207,8 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget>
                   children: [
                     Text(
                       "لديك هدية جديدة! 🎁",
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -214,7 +216,8 @@ class _DailyGiftWidgetState extends State<DailyGiftWidget>
                     ),
                     Text(
                       "اضغط لفتح صندوق هدايا الرحمن اليومي",
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 11.sp,
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),

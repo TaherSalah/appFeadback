@@ -92,7 +92,6 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
       Share.share(msg, subject: 'رَفِيقُ المُسْلِمِ اليَوْمِيّ');
     }
 
-    final con = Provider.of<AzkarProvider>(context);
     final bool isTablate = context.isTablet;
     final isDark = context.isDark;
 
@@ -140,7 +139,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                 SizedBox(height: 16.h),
                 Text(
                   "رَفِيقُ المُسْلِمِ اليَوْمِيُ",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontWeight: FontWeight.bold,
                     fontSize: isTablate ? 12.sp : 18.sp,
                     color: isDark ? Colors.white : Colors.green.shade900,
@@ -148,7 +148,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                 ),
                 Text(
                   "إصدار 2.1.0",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 12.sp,
                     color: isDark ? Colors.white70 : Colors.green.shade700,
                   ),
@@ -275,7 +276,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                 Text(
                   AppString.KAppRights,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: isTablate ? 8.5.sp : 10.sp,
                     color: Colors.grey,
                     fontWeight: FontWeight.w500,
@@ -297,7 +299,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
         SizedBox(width: 8.w),
         Text(
           title,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontWeight: FontWeight.bold,
             fontSize: isTap ? 10.sp : 14.sp,
           ),
@@ -341,7 +344,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
               SizedBox(width: 10.w),
               Text(
                 title,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontWeight: FontWeight.bold,
                   fontSize: isTablate ? 10.sp : 15.sp,
                   color: isDark ? Colors.white : Colors.black87,
@@ -353,7 +357,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
           Text(
             content,
             textAlign: TextAlign.justify,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: isTablate ? 9.sp : 13.sp,
               height: 1.6,
               color: isDark ? Colors.white70 : Colors.black54,
@@ -396,7 +401,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
             // SizedBox(width: 12.w),
             Text(
               title,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: isTap ? 10.sp : 14.sp,
@@ -436,7 +442,8 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
             SizedBox(width: 8.w),
             Text(
               title,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: color,
                 fontWeight: FontWeight.bold,
                 fontSize: isTap ? 9.sp : 12.sp,

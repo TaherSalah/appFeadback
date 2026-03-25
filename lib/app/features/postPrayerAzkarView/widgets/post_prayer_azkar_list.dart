@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
-import 'package:muslimdaily/app/core/controller/azkar_controller.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
 class PostPrayerAzkarList extends StatelessWidget {

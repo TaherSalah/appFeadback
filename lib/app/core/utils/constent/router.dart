@@ -16,7 +16,7 @@ import 'package:muslimdaily/app/features/radio/view/QuranRadioPlayerView.dart';
 import 'package:muslimdaily/app/features/radio/view/widget/RadioSearchScreen.dart';
 import 'package:muslimdaily/app/features/rokiaView/rokiaView.dart';
 import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
-import 'package:muslimdaily/app/features/splashView/splash.dart';
+import 'package:muslimdaily/app/features/splashView/splashView.dart';
 import 'package:muslimdaily/app/features/zakatView/zakat_calculator_view.dart';
 import 'package:muslimdaily/app/features/calculators/inheritance_calculator_view.dart';
 import 'package:muslimdaily/app/features/calculators/expiation_calculator_view.dart';

@@ -174,7 +174,8 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                       widget.azkarDes,
                       textAlign: TextAlign.center,
                       textDirection: TextDirection.rtl,
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         height: 1.9,
                         fontSize: size.width > 600 ? 9.sp : 13.sp,
                         color: isDark ? Colors.grey[200] : Colors.grey[900],
@@ -257,7 +258,8 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                   SizedBox(width: 6.w),
                   Text(
                     widget.azkarRepate,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       color: widget.repertColor ??
                           (isDark ? Colors.white : Colors.black87),
                       fontWeight: FontWeight.bold,
@@ -311,7 +313,8 @@ class _AzkarActionButton extends StatelessWidget {
             SizedBox(width: 6.w),
             Text(
               label,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white70 : Colors.grey[900],

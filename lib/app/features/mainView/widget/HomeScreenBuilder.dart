@@ -20,7 +20,6 @@ import 'AzkarQuranWidget.dart';
 import 'CharityEntryWidget.dart';
 import 'OtherAzkarWidget.dart';
 import '../controllar/MainController.dart';
-import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/shard/exports/all_exports.dart';
 import 'PrayerHeaderSection.dart';
 import 'AllahNameWidget.dart';
@@ -28,8 +27,6 @@ import 'FridayCompanionWidget.dart';
 import '../../../core/services/version_check_service.dart';
 import '../../../core/services/system_control_service.dart';
 import '../../../core/widgets/ScrollingText.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:animate_do/animate_do.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -248,17 +245,21 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     if (path == '/surahListScreen') return 'quran';
     if (path == '/azkarSabah' ||
         path == '/azkarMassa' ||
-        path == '/allazkarlistview') return 'azkar';
+        path == '/allazkarlistview') {
+      return 'azkar';
+    }
     if (path == '/azkarCounter') return 'sebha';
-    if (path == '/compplateKhatna' || path == '/globalKhatmah')
+    if (path == '/compplateKhatna' || path == '/globalKhatmah') {
       return 'khatmah';
+    }
     if (path == Routes.zakatCalculatorRoute) return 'zakat';
     if (path == Routes.inheritanceCalculatorRoute) return 'inheritance';
     if (path == Routes.expiationCalculatorRoute) return 'expiation';
     if (path == '/WirdHomeScreen') return 'wird';
     if (path == '/QuranRadioView') return 'radio';
-    if (path == '/NineBooksScreen' || path == Routes.categoriesRoute)
+    if (path == '/NineBooksScreen' || path == Routes.categoriesRoute) {
       return 'hadith';
+    }
     if (path == '/mosquesMap') return 'mosques';
     if (path == '/kidsCorner' || path == '/KidsCornerScreen') return 'kids';
     if (path == '/timingScreen') return 'timing';
@@ -408,6 +409,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                             remainingTime: con.remainingTimeText,
                             location: _locationText ?? 'لم يتم تحديد الموقع',
                             adjustedPrayers: con.adjustedPrayersForUI,
+                            isRamadan: con.isRamadan,
                             backgroundGradient: con.getNextPrayerGradient(),
                             iqamaTimeText: con
                                 .getIqamaTextForPrayer(con.upcomingPrayerName),
@@ -505,7 +507,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                       Expanded(
                                         child: ScrollingText(
                                           text: text,
-                                          style: GoogleFonts.cairo(
+                                             style: TextStyle(
+                          fontFamily: "cairo",
                                             color: Colors.white,
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
@@ -562,7 +565,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                     Expanded(
                                       child: Text(
                                         _dailyQuote,
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                           color: isDark
@@ -849,7 +853,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                                               horizontal: 10, vertical: 8),
                                           child: Text(
                                             banner['title'],
-                                            style: GoogleFonts.cairo(
+                                               style: TextStyle(
+                          fontFamily: "cairo",
                                               color: Colors.white,
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,

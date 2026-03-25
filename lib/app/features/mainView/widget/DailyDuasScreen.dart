@@ -40,7 +40,8 @@ class DailyDuasScreen extends StatelessWidget {
             centerTitle: true,
             title: Text(
               'أدعية يومية',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
@@ -94,7 +95,8 @@ class DailyDuasScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       dua.title,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize:
                             ResponsiveUtil.isTablet(context) ? 11.sp : 14.sp,
                         fontWeight: FontWeight.bold,
@@ -131,7 +133,8 @@ class DailyDuasScreen extends StatelessWidget {
         ),
         child: Text(
           dua.arabic,
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
             height: 2.0,

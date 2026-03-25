@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:muslimdaily/app/core/services/system_control_service.dart';
-import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:animate_do/animate_do.dart';
 
 class FeatureGuardService {
@@ -87,7 +86,8 @@ class FeatureGuardService {
                 Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                    fontFamily: "cairo",
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
@@ -97,7 +97,8 @@ class FeatureGuardService {
                 Text(
                   message,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                    fontFamily: "cairo",
                     fontSize: 14.sp,
                     color: isDark ? Colors.white70 : Colors.black54,
                   ),
@@ -114,7 +115,8 @@ class FeatureGuardService {
                     ),
                     child: Text(
                       'حسناً',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                        fontFamily: "cairo",
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:quran_library/quran.dart';
 
@@ -266,7 +265,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                   children: [
                     Text(
                       'اذهب إلى صفحة',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -275,7 +275,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                     const SizedBox(height: 12),
                     Text(
                       'أدخل رقم الصفحة (1–604) للانتقال إليها مباشرة.',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 13,
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),
@@ -305,7 +306,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                               autofocus: true,
                               keyboardType: TextInputType.number,
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF4CAF50),
@@ -330,7 +332,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 2),
                                 ),
-                                errorStyle: GoogleFonts.cairo(fontSize: 10, height: 0.8),
+                                errorStyle: TextStyle(
+                  fontFamily: "cairo",fontSize: 10, height: 0.8),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) return 'مطلوب';
@@ -371,7 +374,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                             ),
                             child: Text(
                               'إلغاء',
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 16,
                                 color: isDark ? Colors.white60 : Colors.black54,
                               ),
@@ -408,7 +412,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                               ),
                               child: Text(
                                 'انتقال',
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -545,7 +550,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
               children: [
                 Text(
                   'تفسير الآيات',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     color: const Color(0xFF4CAF50),
                     fontWeight: FontWeight.bold,
                     fontSize: isTablet ? 14.sp : 17.sp,
@@ -630,7 +636,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                           const SizedBox(width: 6),
                           Text(
                             'صفحة $_pageNumber',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: isTablet ? 10.sp : 14.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -665,7 +672,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                     Expanded(
                       child: Text(
                         'قم بتنزيل التفسير أولاً للاستخدام بدون إنترنت',
-                        style: GoogleFonts.cairo(fontSize: 11, color: Colors.orange),
+                        style: TextStyle(
+                  fontFamily: "cairo",fontSize: 11, color: Colors.orange),
                       ),
                     ),
                   ],
@@ -676,7 +684,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                   ? Center(
                       child: Text(
                         'لا توجد آيات لهذه الصفحة',
-                        style: GoogleFonts.cairo(color: Colors.grey),
+                        style: TextStyle(
+                  fontFamily: "cairo",color: Colors.grey),
                       ),
                     )
                   : ListView.builder(
@@ -738,7 +747,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                           child: Center(
                                             child: Text(
                                               '$a',
-                                              style: GoogleFonts.cairo(
+                                              style: TextStyle(
+                  fontFamily: "cairo",
                                                 fontSize: isTablet ? 8.sp : 12.sp,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white,
@@ -749,7 +759,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                         const SizedBox(width: 8),
                                         Text(
                                           ayah.surahNumber != null ? 'سورة رقم ${ayah.surahNumber}' : ayahLabel,
-                                          style: GoogleFonts.cairo(
+                                          style: TextStyle(
+                  fontFamily: "cairo",
                                             fontSize: isTablet ? 8.sp : 11.sp,
                                             color: isDark ? Colors.white54 : Colors.black45,
                                           ),
@@ -761,7 +772,8 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                             const SizedBox(width: 4),
                                             Text(
                                               'اضغط للتفسير',
-                                              style: GoogleFonts.cairo(
+                                              style: TextStyle(
+                  fontFamily: "cairo",
                                                 fontSize: isTablet ? 7.sp : 10.sp,
                                                 color: const Color(0xFF4CAF50).withOpacity(0.8),
                                               ),

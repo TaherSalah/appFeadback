@@ -112,7 +112,8 @@ class _VirtualPetWidgetState extends State<VirtualPetWidget> {
           const SizedBox(height: 16),
           Text(
             'النجوم المجمعة: ${widget.totalStars} ⭐',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF0EA5E9),
@@ -129,7 +130,8 @@ class _VirtualPetWidgetState extends State<VirtualPetWidget> {
             ),
             child: Text(
               _getMotivationMessage(),
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 14.sp,
                 color: const Color(0xFF0EA5E9),
                 fontWeight: FontWeight.w600,
@@ -195,7 +197,8 @@ class _VirtualPetWidgetState extends State<VirtualPetWidget> {
                 children: [
                   Text(
                     _petName,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize:
                           ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
                       fontWeight: FontWeight.bold,
@@ -205,7 +208,8 @@ class _VirtualPetWidgetState extends State<VirtualPetWidget> {
                   const SizedBox(height: 4),
                   Text(
                     'المستوى: ${_getLevelName()}',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize:
                           ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
                       color: Colors.white70,

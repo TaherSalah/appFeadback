@@ -74,7 +74,8 @@ class _IslamicColoringGameState extends State<IslamicColoringGame> {
             const SizedBox(width: 10),
             Text(
               'لقد حصلت على 15 نجمة ✨',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF10B981),
@@ -124,7 +125,8 @@ class _IslamicColoringGameState extends State<IslamicColoringGame> {
         appBar: AppBar(
           title: Text(
             'التلوين الإسلامي 🎨',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
             ),
@@ -175,7 +177,8 @@ class _IslamicColoringGameState extends State<IslamicColoringGame> {
                           const SizedBox(height: 4),
                           Text(
                             page['name'],
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 10.sp,
                               color: isSelected
                                   ? Colors.white
@@ -212,7 +215,8 @@ class _IslamicColoringGameState extends State<IslamicColoringGame> {
                     children: [
                       Text(
                         currentPage['name'],
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -277,7 +281,8 @@ class _IslamicColoringGameState extends State<IslamicColoringGame> {
                 children: [
                   Text(
                     'اختر اللون:',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87,

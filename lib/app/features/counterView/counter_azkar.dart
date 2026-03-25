@@ -31,7 +31,8 @@ class _AzkarCounterState extends State<AzkarCounter> {
               centerTitle: true,
               title: Text(
                 AppString.KCounter,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     color: Colors.green,
                     fontWeight: FontWeight.bold,
                     fontSize:
@@ -66,7 +67,8 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
               // العنوان الرئيسي
               // Text(
               //   'سبحة الأذكار',
-              //   style: GoogleFonts.cairo(
+              //      style: TextStyle(
+               //    fontFamily: "cairo",
               //     fontSize: isTablet ? 32.sp : 28.sp,
               //     color: Colors.white,
               //     fontWeight: FontWeight.bold,
@@ -175,7 +177,8 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                       textAlign: TextAlign.center,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: isTablet ? 12.sp : 10.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -198,7 +201,8 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                       ),
                       child: Text(
                         '${Azkary.azkarCount[index]} مرة',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: isTablet ? 10.sp : 8.sp,
                           color: const Color(0xFF10B981),
                           fontWeight: FontWeight.w600,
@@ -249,7 +253,8 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                 SizedBox(height: 20.h),
                 Text(
                   Azkary.azkarDescription[index],
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                    fontFamily: "cairo",
                     fontSize: 22.sp,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -277,7 +282,8 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                       SizedBox(width: 6.w),
                       Text(
                         '${Azkary.azkarCount[index]} مرة',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 14.sp,
                           color: const Color(0xFF10B981),
                           fontWeight: FontWeight.w600,
@@ -291,7 +297,8 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                   child: SingleChildScrollView(
                     child: Text(
                       Azkary.azkarContent[index],
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                        fontFamily: "cairo",
                         fontSize: 16.sp,
                         color: const Color(0xFFCBD5E1),
                         height: 1.8,
@@ -314,7 +321,8 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                     ),
                     child: Text(
                       'تم',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                        fontFamily: "cairo",
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -378,7 +386,8 @@ Widget buildCounterDisplay({dynamic counter}) {
             ),
             child: Text(
               '$counter',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                fontFamily: "cairo",
                 fontSize: isTablet ? 22.sp : 16.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -390,7 +399,8 @@ Widget buildCounterDisplay({dynamic counter}) {
           // // النص تحت العداد
           // Text(
           //   'عدد التسبيحات',
-          //   style: GoogleFonts.cairo(
+          //      style: TextStyle(
+                      //    fontFamily: "cairo",
           //     fontSize: isTablet ? 18.sp : 16.sp,
           //     color: const Color(0xFFCBD5E1),
           //     fontWeight: FontWeight.w500,
@@ -1031,7 +1041,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
                 children: [
                   Text(
                     'الدورة الحالية',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                      fontFamily: "cairo",
                       fontSize:isTablet?10.sp: 15.sp,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF94A3B8),
@@ -1057,7 +1068,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
                     ),
                     child: Text(
                       '$_cycleCount',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                        fontFamily: "cairo",
                         fontSize:isTablet?15.sp :20.sp,
                         color: const Color(0xFF10B981),
                         fontWeight: FontWeight.bold,
@@ -1123,7 +1135,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
                 children: [
                   Text(
                     'الخرزة',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                      fontFamily: "cairo",
                       fontSize:isTablet?10.sp: 15.sp,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF94A3B8),
@@ -1149,7 +1162,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
                     ),
                     child: Text(
                       '${currentBead + 1} / $beadsCount',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                        fontFamily: "cairo",
                         fontSize:isTablet?15.sp :20.sp,
                         color: const Color(0xFF6366F1),
                         fontWeight: FontWeight.bold,
@@ -1390,7 +1404,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
                         child: Center(
                           child: Text(
                             '${currentBead + 1}',
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: ResponsiveUtil.isTablet(context)
                                   ? 18.sp
                                   : 11.sp,
@@ -1557,7 +1572,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
                               SizedBox(height: 6.h),
                               Text(
                                 'سبِّح',
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 15.sp,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -1722,7 +1738,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
               Flexible(
                 child: Text(
                   label,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: isTablet ? 10.sp : 13.sp,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

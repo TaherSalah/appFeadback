@@ -132,7 +132,8 @@ class _ReadViewState extends State<ReadView> {
           centerTitle: true,
           title: Text(
             booksCtrl.currentCollection.bookName,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize:

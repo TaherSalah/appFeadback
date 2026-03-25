@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -264,7 +263,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
             children: [
               Text(
                 "سجل حسابات الزكاة",
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                   color: const Color(AppStyle.primaryColor),
@@ -275,7 +275,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                 child: _history.isEmpty
                     ? Center(
                         child: Text("لا يوجد سجلات محفوظة",
-                            style: GoogleFonts.cairo(color: Colors.grey)),
+                               style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey)),
                       )
                     : ListView.builder(
                         itemCount: _history.length,
@@ -289,12 +290,14 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                   color: Color(AppStyle.primaryColor)),
                               title: Text(
                                 "${intl.NumberFormat("#,##0.######", "en_US").format(record.amount)} ${record.currency}",
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16.sp),
                               ),
                               subtitle: Text(record.date,
-                                  style: GoogleFonts.cairo(fontSize: 12.sp)),
+                                     style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp)),
                             ),
                           );
                         },
@@ -761,7 +764,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                     children: [
                       Text(
                         "مصارف الزكاة الشرعية",
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: context.isTablet ? 10.sp : 18.sp,
                             fontWeight: FontWeight.bold,
                             color: const Color(AppStyle.primaryColor)),
@@ -839,12 +843,14 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87)),
           Text(description,
-              style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey)),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp, color: Colors.grey)),
           const Divider(),
         ],
       ),
@@ -859,26 +865,27 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
       String due = "";
       if (camels < 10) {
         due = "شاة واحدة";
-      } else if (camels < 15)
+      } else if (camels < 15) {
         due = "شاتان";
-      else if (camels < 20)
+      } else if (camels < 20) {
         due = "3 شياه";
-      else if (camels < 25)
+      } else if (camels < 25) {
         due = "4 شياه";
-      else if (camels < 36)
+      } else if (camels < 36) {
         due = "بنت مخاض (أنثى إبل سنة)";
-      else if (camels < 46)
+      } else if (camels < 46) {
         due = "بنت لبون (أنثى إبل سنتين)";
-      else if (camels < 61)
+      } else if (camels < 61) {
         due = "حقة (أنثى إبل 3 سنوات)";
-      else if (camels < 76)
+      } else if (camels < 76) {
         due = "جذعة (أنثى إبل 4 سنوات)";
-      else if (camels < 91)
+      } else if (camels < 91) {
         due = "بنتا لبون";
-      else if (camels < 121)
+      } else if (camels < 121) {
         due = "حقتان";
-      else
+      } else {
         due = "ثلاث بنات لبون (أو أكثر حسب العدد)";
+      }
       parts.add("الإبل ($camels): $due");
     }
 
@@ -887,9 +894,9 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
       String due = "";
       if (cows < 40) {
         due = "تبيع (سنة)";
-      } else if (cows < 60)
+      } else if (cows < 60) {
         due = "مسنة (سنتين)";
-      else {
+      } else {
         int tabia = cows ~/ 30;
         int musinna = (cows % 30) ~/ 40; // Simplified
         due = "تبيع عن كل 30 ومسنة عن كل 40";
@@ -902,13 +909,13 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
       String due = "";
       if (sheep < 121) {
         due = "شاة واحدة";
-      } else if (sheep < 201)
+      } else if (sheep < 201) {
         due = "شاتان";
-      else if (sheep < 400)
+      } else if (sheep < 400) {
         due = "3 شياه";
-      else
+      } else {
         due = "شاة عن كل 100";
-
+      }
       parts.add("الغنم ($sheep): $due");
     }
 
@@ -939,15 +946,18 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
     List<Widget> cards = [];
 
-    if (camels >= 5)
+    if (camels >= 5) {
       cards.add(_buildCattleItemCard(
           isDark, "إبل", camels, _getCamelDue(camels), Icons.pets));
-    if (cows >= 30)
+    }
+    if (cows >= 30) {
       cards.add(_buildCattleItemCard(
           isDark, "بقر", cows, _getCowDue(cows), Icons.pets));
-    if (sheep >= 40)
+    }
+    if (sheep >= 40) {
       cards.add(_buildCattleItemCard(
           isDark, "غنم", sheep, _getSheepDue(sheep), Icons.pets));
+    }
 
     if (cards.isEmpty) return const SizedBox.shrink();
 
@@ -979,10 +989,12 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text("$type (العدد: $count)",
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         fontWeight: FontWeight.bold, fontSize: 13.sp)),
                 Text("المستخرج شرعاً: $due",
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         color: Colors.amber.shade900,
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold)),
@@ -1051,7 +1063,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   padding: const EdgeInsets.all(24),
                   children: [
                     Text("زكاة المهن الحرة والرواتب 💼",
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: KColors.primaryColor)),
@@ -1079,7 +1092,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           backgroundColor: KColors.primaryColor,
                           foregroundColor: Colors.white,
                           minimumSize: const Size(double.infinity, 50)),
-                      child: Text("فهمت، شكراً", style: GoogleFonts.cairo()),
+                      child: Text("فهمت، شكراً",    style: TextStyle(
+                          fontFamily: "cairo",)),
                     )
                   ],
                 ),
@@ -1098,11 +1112,13 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontWeight: FontWeight.bold, fontSize: 14.sp)),
           const SizedBox(height: 4),
           Text(content,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 13.sp, height: 1.5, color: Colors.grey.shade700)),
         ],
       ),
@@ -1143,7 +1159,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
           ],
           title: Text(
             "حاسبة الزكاة",
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
@@ -1197,7 +1214,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         ),
                         title: Text(
                           "العملة الحالية",
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 13.sp,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white : Colors.black87,
@@ -1216,7 +1234,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                               icon: Icon(Icons.keyboard_arrow_down,
                                   color:
                                       isDark ? Colors.white70 : Colors.black54),
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   color: const Color(AppStyle.primaryColor),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13.sp),
@@ -1284,7 +1303,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                               _isLoadingPrices
                                   ? "جاري التحديث..."
                                   : "تحديث الأسعار تلقائياً للان",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 color: KColors.primaryColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12.sp,
@@ -1321,7 +1341,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   "نصاب الذهب (85g)",
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     color: _isGoldStandard
                                         ? Colors.white
                                         : (isDark
@@ -1354,7 +1375,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   "نصاب الفضة (595g)",
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     color: !_isGoldStandard
                                         ? Colors.white
                                         : (isDark
@@ -1376,7 +1398,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
                     // Gold Prices Row
                     Text("أسعار الذهب (الجرام) - أدخل عيار 24 لحساب النصاب",
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize:
                                 ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
                             color: Colors.grey[600]),
@@ -1388,7 +1411,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             child: Column(
                           children: [
                             Text("عيار 24 (للنصاب)",
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                     fontSize: ResponsiveUtil.isTablet(context)
                                         ? 8.sp
                                         : 10.sp,
@@ -1403,7 +1427,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             child: Column(
                           children: [
                             Text("عيار 21",
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                     fontSize: ResponsiveUtil.isTablet(context)
                                         ? 8.sp
                                         : 10.sp,
@@ -1418,7 +1443,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             child: Column(
                           children: [
                             Text("عيار 18",
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                     fontSize: ResponsiveUtil.isTablet(context)
                                         ? 8.sp
                                         : 10.sp,
@@ -1435,7 +1461,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
                     // Silver Price Row
                     Text("سعر جرام الفضة اليوم (${_selectedCurrency.symbol})",
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize:
                                 ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
                             color: Colors.grey[600]),
@@ -1471,7 +1498,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("نوع الحول (العام)",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontWeight: FontWeight.bold,
                                   fontSize: ResponsiveUtil.isTablet(context)
                                       ? 10.sp
@@ -1479,7 +1507,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                   color:
                                       isDark ? Colors.white : Colors.black87)),
                           Text(_isHijriYear ? "هجري (2.5%)" : "ميلادي (2.577%)",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: ResponsiveUtil.isTablet(context)
                                       ? 7.sp
                                       : 11.sp,
@@ -1527,7 +1556,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           Expanded(
                             child: Text(
                               "ملاحظة: لا تجب الزكاة في الحاجات الأصلية كالمسكن الشخصي، السيارات، والأثاث.",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 10.sp,
                                   color: Colors.orange.shade800),
                             ),
@@ -1572,7 +1602,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("طبيعة الاستثمار:",
-                              style: GoogleFonts.cairo(fontSize: 12.sp)),
+                                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp)),
                           Row(
                             children: [
                               _buildToggleBtn("مضاربة", _isSpeculativeStock,
@@ -1639,7 +1670,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           Expanded(
                             child: Text(
                               "ملاحظة: زكاة التجارة على (الكاش + البضائع بسعر البيع + الديون الجيدة). الأصول الثابتة (أثاث، مبيعات، ماكينات) لا زكاة عليها.",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 10.sp,
                                   color: Colors.orange.shade800),
                             ),
@@ -1694,7 +1726,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         runSpacing: 10,
                         children: [
                           Text("غرض اقتناء الذهب:",
-                              style: GoogleFonts.cairo(fontSize: 12.sp)),
+                                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp)),
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -1725,7 +1758,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           ),
                           child: Text(
                             "ملاحظة: ذهب الزينة المعتاد لا زكاة فيه عند جمهور الفقهاء. إذا كان الوزن كبيراً جداً (خارج المعتاد) يُفضل احتسابه كادخار.",
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 10.sp, color: Colors.blue.shade800),
                           ),
                         ),
@@ -1792,7 +1826,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("نوع العقار:",
-                              style: GoogleFonts.cairo(fontSize: 12.sp)),
+                                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp)),
                           Row(
                             children: [
                               _buildToggleBtn("للإيجار", !_isRealEstateTrading,
@@ -1843,7 +1878,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                 _isRealEstateTrading
                                     ? "المتاجرة: زكاتك على القيمة الإجمالية."
                                     : "للإيجار: زكاتك على صافي الإيراد السنوي.",
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                     fontSize: 10.sp,
                                     color: Colors.blue.shade700),
                               ),
@@ -1867,7 +1903,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   children: [
                     Text(
                       "تختلف النسبة حسب طريقة الري",
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 12.sp, color: Colors.grey),
                     ),
                     const SizedBox(height: 10),
@@ -1890,15 +1927,18 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             DropdownMenuItem(
                                 value: 0,
                                 child: Text("ري طبيعي (مطر/عيون) - 10%",
-                                    style: GoogleFonts.cairo(fontSize: 14.sp))),
+                                       style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp))),
                             DropdownMenuItem(
                                 value: 1,
                                 child: Text("ري صناعي (آلات) - 5%",
-                                    style: GoogleFonts.cairo(fontSize: 14.sp))),
+                                       style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp))),
                             DropdownMenuItem(
                                 value: 2,
                                 child: Text("ري مختلط - 7.5%",
-                                    style: GoogleFonts.cairo(fontSize: 14.sp))),
+                                       style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp))),
                           ],
                           onChanged: (v) {
                             setState(() => _irrigationMethod = v ?? 1);
@@ -1924,7 +1964,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                       padding: const EdgeInsets.only(top: 8.0, right: 12.0),
                       child: Text(
                         "* لا تجب الزكاة إلا إذا بلغ المحصول 5 أوسق (653 كجم تقريباً)",
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 10.sp, color: Colors.grey),
                       ),
                     ),
@@ -1956,7 +1997,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           Expanded(
                             child: Text(
                               "ملاحظة: الزكاة في السائمة (التي ترعى) فقط. أما المعلوفة (التي تشتري لها علفاً أغلب العام) فلا زكاة فيها.",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 10.sp,
                                   color: Colors.orange.shade800),
                             ),
@@ -2032,7 +2074,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           children: [
                             Text(
                               "إجمالي زكاة الفطر:",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 14.sp,
                                 color: isDark
                                     ? Colors.purpleAccent
@@ -2041,7 +2084,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             ),
                             Text(
                               "${formatMoney(_zakatFitrTotal)} ${_selectedCurrency.symbol}",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.bold,
                                 color: isDark
@@ -2167,13 +2211,15 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         _isGoldStandard
                             ? "نصاب الزكاة (85 جرام ذهب 24)"
                             : "نصاب الزكاة (595 جرام فضة)",
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize:
                                 ResponsiveUtil.isTablet(context) ? 9.sp : 16.sp,
                             color: isDark ? KColors.whiteColor : Colors.black)),
                     Text(
                         "${formatter(_nisabValue)} ${_selectedCurrency.symbol}",
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: context.isTablet ? 10.sp : 18.sp,
                             fontWeight: FontWeight.bold,
                             color: isDark ? KColors.whiteColor : Colors.black)),
@@ -2188,7 +2234,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                       _isGoldStandard
                           ? "نصاب الفضة: ${formatter(silverNisab)}"
                           : "نصاب الذهب: ${formatter(goldNisab)}",
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 10.sp, color: Colors.grey),
                     ),
                   ],
@@ -2212,7 +2259,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                 Expanded(
                   child: Text(
                     "ثروتك بلغت نصاب الفضة ولم تبلغ نصاب الذهب. يُنصح بإخراج الزكاة (الأحظ للفقراء) في عروض التجارة والنقود.",
-                    style: GoogleFonts.cairo(fontSize: 11.sp, height: 1.4),
+                       style: TextStyle(
+                          fontFamily: "cairo",fontSize: 11.sp, height: 1.4),
                   ),
                 ),
               ],
@@ -2249,7 +2297,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
           childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
           title: Text(
             title,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF00897B),
@@ -2272,13 +2321,15 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         inputFormatters: [ThousandsSeparatorInputFormatter()],
         textAlign: TextAlign.center,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 14.sp,
             fontWeight: FontWeight.bold,
             color: const Color(0xFFD97706)), // Amber color for price
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.cairo(
+          hintStyle: TextStyle(
+              fontFamily: "cairo",
               fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 10.sp,
               color: Colors.grey.shade400),
           contentPadding:
@@ -2321,7 +2372,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               if (labelPrefix != null)
                 Text(
                   labelPrefix,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 12.sp,
                     color: isDark ? Colors.white70 : Colors.black87,
                   ),
@@ -2331,7 +2383,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   label,
                   textAlign:
                       labelPrefix != null ? TextAlign.end : TextAlign.right,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 7.sp : 12.sp,
                     color: isNegative
                         ? Colors.red
@@ -2358,7 +2411,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                     inputFormatters: [ThousandsSeparatorInputFormatter()],
                     decoration: InputDecoration(
                       hintText: "القيمة هنا",
-                      hintStyle: GoogleFonts.cairo(
+                      hintStyle: TextStyle(
+                          fontFamily: "cairo",
                           color: Colors.grey.withOpacity(0.5),
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp),
@@ -2377,7 +2431,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                       filled: true,
                       fillColor: isDark ? Colors.black12 : Colors.white,
                     ),
-                    style: GoogleFonts.cairo(fontSize: 14.sp),
+                       style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp),
                     onChanged: (v) => _calculate(),
                   ),
                 ),
@@ -2401,7 +2456,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                 width: 70,
                 child: Text(
                   suffix,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 7.sp : 12.sp,
                     color: const Color(0xFFD97706), // Amber text
                   ),
@@ -2439,7 +2495,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
         child: Text(
           "أدخل تفاصيل ممتلكاتك (مال، ذهب، بضائع...) لظهور البطاقة",
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(color: Colors.grey, fontSize: 14.sp),
+             style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey, fontSize: 14.sp),
         ),
       );
     }
@@ -2469,13 +2526,15 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
             Text(
               "يرجى إدخال سعر الذهب/الفضة الحالي في \"إعدادات الأسعار\" في الأعلى ليتمكن التطبيق من معرفة بلوغ النصاب وحساب الزكاة.",
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 14.sp, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               "إجمالي ثروتك الحالية: ${formatter(_totalWealth)} ${_selectedCurrency.symbol}",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   color: Colors.blue.shade700, fontSize: 13.sp),
             ),
           ],
@@ -2543,7 +2602,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         const SizedBox(height: 8),
                         Text(
                           "تفاصيل زكاتك",
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             color: Colors.white,
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
@@ -2559,7 +2619,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   Text(
                     intl.DateFormat('EEEE, d MMMM yyyy', 'ar')
                         .format(DateTime.now()),
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       color: Colors.grey,
                       fontSize: 12.sp,
                     ),
@@ -2592,7 +2653,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             reachedNisab
                                 ? "بلغ النصاب (تجب الزكاة)"
                                 : "لم يبلغ النصاب (لا تجب الزكاة)",
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 14.sp,
                               color: reachedNisab ? Colors.green : Colors.red,
                               fontWeight: FontWeight.bold,
@@ -2657,7 +2719,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text("زكاة الأنعام:",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 13.sp, color: Colors.grey)),
                         ),
                       ),
@@ -2666,7 +2729,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             horizontal: 20, vertical: 4),
                         child: Text(
                           _zakatCattleResult,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 14.sp, fontWeight: FontWeight.bold),
                         ),
                       )
@@ -2689,7 +2753,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           children: [
                             Text(
                               "إجمالي قيمة الزكاة المستحقة (${_isHijriYear ? 'هجري' : 'ميلادي'})",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 14.sp,
                                 color: const Color(AppStyle.primaryColor),
                               ),
@@ -2697,7 +2762,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                             const SizedBox(height: 4),
                             Text(
                               "${formatter(_totalZakat)} ${_selectedCurrency.symbol}",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 24.sp,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(AppStyle.primaryColor),
@@ -2710,11 +2776,13 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("تم دفع:",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 12.sp, color: Colors.grey)),
                                   Text(
                                       "${formatter(_paidZakat)} ${_selectedCurrency.symbol}",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 12.sp,
                                           color: Colors.teal,
                                           fontWeight: FontWeight.bold)),
@@ -2725,12 +2793,14 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("المتبقي:",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.bold)),
                                   Text(
                                       "${formatter(_totalZakat - _paidZakat)} ${_selectedCurrency.symbol}",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 16.sp,
                                           color: Colors.red,
                                           fontWeight: FontWeight.bold)),
@@ -2741,7 +2811,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                                 _totalZakat == 0)
                               Text(
                                 "(راجع تفاصيل زكاة الأنعام أعلاه)",
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 10.sp,
                                   color: Colors.grey,
                                 ),
@@ -2755,7 +2826,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                         child: Text(
                           "لم تبلغ ممتلكاتك النصاب الشرعي بعد، لا تجب عليك الزكاة حالياً.",
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             color: Colors.orange.shade700,
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -2819,7 +2891,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   const SizedBox(height: 10),
                   Text(
                     "تقبل الله منا ومنكم صالح الأعمال",
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 10.sp,
                       color: Colors.grey,
                     ),
@@ -2917,7 +2990,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
       child: Column(
         children: [
           Text("تحليل مصادر الزكاة",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontWeight: FontWeight.bold,
                   fontSize: 14.sp,
                   color: const Color(AppStyle.primaryColor))),
@@ -2966,7 +3040,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               height: 10,
               decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
           const SizedBox(width: 6),
-          Text(text, style: GoogleFonts.cairo(fontSize: 10.sp)),
+          Text(text,    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 10.sp)),
         ],
       ),
     );
@@ -2994,7 +3069,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text("تسجيل مبلغ مدفوع من الزكاة",
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 18.sp, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 _buildSmallInput(
@@ -3015,7 +3091,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                       backgroundColor: Colors.teal,
                       minimumSize: const Size(double.infinity, 50)),
                   child: Text("تأكيد التسجيل",
-                      style: GoogleFonts.cairo(color: Colors.white)),
+                         style: TextStyle(
+                          fontFamily: "cairo",color: Colors.white)),
                 ),
                 TextButton(
                   onPressed: () {
@@ -3023,7 +3100,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                     Navigator.pop(context);
                   },
                   child: Text("تصفير المدفوعات",
-                      style: GoogleFonts.cairo(color: Colors.red)),
+                         style: TextStyle(
+                          fontFamily: "cairo",color: Colors.red)),
                 )
               ],
             ),
@@ -3053,7 +3131,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
           const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.cairo(fontSize: 10.sp, color: color),
+               style: TextStyle(
+                          fontFamily: "cairo",fontSize: 10.sp, color: color),
           ),
         ],
       ),
@@ -3069,7 +3148,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
         children: [
           Text(
             label,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: isSub ? 13.sp : 15.sp,
               color: isSub
                   ? (isDark ? Colors.grey.shade400 : Colors.grey.shade700)
@@ -3079,7 +3159,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
           ),
           Text(
             value,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: isSub ? 13.sp : 15.sp,
               color: isSub
                   ? (isDark ? Colors.grey.shade400 : Colors.grey.shade700)
@@ -3105,7 +3186,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
         ),
         child: Text(
           label,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             color: isSelected ? Colors.white : Colors.grey,
             fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
             fontWeight: FontWeight.bold,
@@ -3136,7 +3218,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               const SizedBox(width: 8),
               Text(
                 "كيف تحسب زكاتك؟",
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
                   fontWeight: FontWeight.bold,
                   color: KColors.primaryColor,
@@ -3154,7 +3237,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
             "* عروض التجارة: يفضل حسابها بدقة (كاش في النشاط + بضائع بسعر البيع + ديون النشاط).\n"
             "* نصاب الفضة: يظهر لك تنبيه (الأحظ للفقراء) إذا بلغت ثروتك نصاب الفضة ولم تبلغ نصاب الذهب.\n\n"
             "* يرجى التواصل مع جهة أو دار فتوى شرعية للتحقق من الحالات الخاصة.",
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 13.sp,
               height: 1.6,
               color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
@@ -3168,7 +3252,8 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               onPressed: _showZakatChannelsSheet,
               icon: const Icon(Icons.people_outline, size: 18),
               label: Text("لمن تعطى الزكاة؟ (مصارف الزكاة)",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       color: isDark ? Colors.white : CupertinoColors.black)),
               style: OutlinedButton.styleFrom(
                 foregroundColor: KColors.whiteGrayColor,
@@ -3327,7 +3412,8 @@ class _CurrencyConverterSheetState extends State<_CurrencyConverterSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("محول العملات السريع",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: const Color(AppStyle.primaryColor))),
@@ -3375,7 +3461,8 @@ class _CurrencyConverterSheetState extends State<_CurrencyConverterSheet> {
             child: Text(
               "${intl.NumberFormat("#,##0.##").format(_result)} ${widget.baseCurrency.symbol}",
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.green),
@@ -3389,12 +3476,14 @@ class _CurrencyConverterSheetState extends State<_CurrencyConverterSheet> {
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(AppStyle.primaryColor)),
               child: Text("اعتماد القيمة",
-                  style: GoogleFonts.cairo(color: Colors.white)),
+                     style: TextStyle(
+                          fontFamily: "cairo",color: Colors.white)),
             ),
           ),
           const SizedBox(height: 10),
           Text("* أسعار التحويل تقريبية (ثابتة في الكود حالياً للتجربة)",
-              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey)),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 10.sp, color: Colors.grey)),
         ],
       ),
     );

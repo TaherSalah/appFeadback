@@ -66,7 +66,8 @@ class AdhanFullscreenActivity extends StatelessWidget {
                     ),
                     child: Text(
                       "إيقاف الأذان",
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 22,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

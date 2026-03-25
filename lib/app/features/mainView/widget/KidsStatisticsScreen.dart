@@ -202,7 +202,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
                             // SizedBox(height: 10.h),
                             Text(
                               'إحصائياتي',
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 24.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -210,7 +211,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
                             ),
                             Text(
                               'شاهد تقدمك الرائع!',
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 14.sp,
                                 color: Colors.white.withOpacity(0.9),
                               ),
@@ -326,7 +328,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
               SizedBox(width: 8.w),
               Text(
                 'نجمة',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 18.sp,
                   color: Colors.white.withOpacity(0.8),
                 ),
@@ -362,7 +365,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
           SizedBox(height: 8.h),
           Text(
             'بقي لك ${nextLevel - _totalStars} نجمة للمستوى التالي',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 12.sp,
               color: Colors.white.withOpacity(0.8),
             ),
@@ -400,7 +404,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
           ),
           Text(
             'أيام متتالية',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 12.sp,
               color: isDark ? Colors.white70 : Colors.black54,
             ),
@@ -409,7 +414,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
             SizedBox(height: 4.h),
             Text(
               'أعلى: $_longestStreak',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 10.sp,
                 color: Colors.grey,
               ),
@@ -444,7 +450,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
           SizedBox(height: 8.h),
           Text(
             _getRankTitle().split(' ').first,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 14.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
@@ -452,7 +459,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
           ),
           Text(
             'الرتبة الحالية',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 11.sp,
               color: Colors.grey,
             ),
@@ -510,7 +518,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
               ),
               Text(
                 stat['label']!,
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 11.sp,
                   color: Colors.grey,
                 ),
@@ -527,7 +536,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
       children: [
         Text(
           title,
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black87,
@@ -570,7 +580,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                 return BarTooltipItem(
                   '${rod.toY.toInt()} نشاط',
-                  GoogleFonts.cairo(
+                  TextStyle(
+                  fontFamily: "cairo",
                       color: primaryColor, fontWeight: FontWeight.bold),
                 );
               },
@@ -587,7 +598,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
                       padding: EdgeInsets.only(top: 8.h),
                       child: Text(
                         data[value.toInt()]['date'] as String,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 9.sp, color: Colors.grey),
                       ),
                     );
@@ -742,7 +754,8 @@ class _KidsStatisticsScreenState extends State<KidsStatisticsScreen> {
               SizedBox(height: 4.h),
               Text(
                 badge['title'] as String,
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 10.sp,
                   fontWeight: FontWeight.bold,
                   color: isUnlocked

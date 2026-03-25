@@ -117,7 +117,8 @@ class _AdhanStatusBannerState extends State<AdhanStatusBanner> {
                       children: [
                         Text(
                           "مشكلة في تنبيهات الأذان",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white : Colors.red.shade900,
@@ -125,7 +126,8 @@ class _AdhanStatusBannerState extends State<AdhanStatusBanner> {
                         ),
                         Text(
                           message,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 12,
                             color:
                                 isDark ? Colors.white70 : Colors.red.shade800,

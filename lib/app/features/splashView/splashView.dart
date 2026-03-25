@@ -214,34 +214,38 @@ class SplashView extends StatefulWidget {
 }
 
 class _SplashViewState extends State<SplashView> {
+  // 🛠️ للمطور: اجعل القيمة true إذا كنت تريد تثبيت الشاشة للاختبار
+  final bool _freezeForTesting = false;
+
   @override
   void initState() {
     FlutterNativeSplash.remove();
     _checkAppStateAndNavigate();
     super.initState();
-    // Timer(
-    //     const Duration(seconds: 3),
-    //     () => Navigator.pushReplacement(context,
-    //         MaterialPageRoute(builder: (context) => const MainView())));
   }
 
 // التحقق من حالة التطبيق والانتقال للشاشة المناسبة
   Future<void> _checkAppStateAndNavigate() async {
     try {
       // ✅ Parallelize all initial checks and a short delay
-      // Reduced delay to 500ms for faster feel
       final results = await Future.wait([
         SystemControlService()
             .isMaintenanceModeActive()
             .timeout(const Duration(seconds: 2), onTimeout: () => false),
         VersionService.checkAppState(),
-        Future.delayed(const Duration(milliseconds: 500)),
+        Future.delayed(const Duration(milliseconds: 6000)),
       ]);
 
       final bool isMaintenance = results[0] as bool;
       final AppState appState = results[1] as AppState;
 
       if (!mounted) return;
+
+      // 🛑 إذا كان وضع الاختبار مفعلاً، لا تنتقل لأي شاشة
+      if (_freezeForTesting) {
+        debugPrint('ℹ️ Splash is frozen for testing mode.');
+        return;
+      }
 
       if (isMaintenance) {
         Navigator.pushReplacement(
@@ -270,7 +274,7 @@ class _SplashViewState extends State<SplashView> {
       }
     } catch (e) {
       debugPrint('❌ Error in Splash: $e');
-      if (mounted) _navigateToMain();
+      if (mounted && !_freezeForTesting) _navigateToMain();
     }
   }
 
@@ -303,7 +307,7 @@ class _SplashViewState extends State<SplashView> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: SplashItemBuilder(),
+      body: SplashItemBuilderWidget(),
     );
   }
 }

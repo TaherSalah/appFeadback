@@ -169,7 +169,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
             const SizedBox(width: 10),
             Text(
               'لقد حصلت على $stars نجمة ✨',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF0EA5E9),
@@ -247,7 +248,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                             child: Text(
                               title,
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 color: Colors.white,
                                 fontSize: 22.sp,
                                 fontWeight: FontWeight.bold,
@@ -292,7 +294,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('حجم الخط: ',
-                        style: GoogleFonts.cairo(fontSize: 14.sp)),
+                           style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp)),
                     IconButton(
                       icon: const Icon(Icons.remove_circle_outline),
                       onPressed: () {
@@ -324,7 +327,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                           padding: EdgeInsets.only(bottom: 20.h),
                           child: Text(
                             paragraph.trim(),
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: _fontSize.sp,
                               height: 1.8,
                               color: isDark ? Colors.white70 : Colors.black87,
@@ -355,7 +359,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                                   SizedBox(width: 8.w),
                                   Text(
                                     'ماذا تعلمنا من القصة؟',
-                                    style: GoogleFonts.cairo(
+                                       style: TextStyle(
+                          fontFamily: "cairo",
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.sp,
                                       color: Colors.amber.shade800,
@@ -367,7 +372,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                               Text(
                                 moral,
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: (_fontSize - 2).sp,
                                   color: isDark ? Colors.white60 : Colors.black54,
                                   fontStyle: FontStyle.italic,
@@ -386,7 +392,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                         icon: Icon(_isAlreadyCompleted ? Icons.check_circle_rounded : Icons.emoji_events_rounded),
                         label: Text(
                           _isAlreadyCompleted ? 'تمت القراءة مسبقاً' : 'لقد قرأت القصة!',
-                          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                             style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: _isAlreadyCompleted ? Colors.grey : const Color(0xFF0EA5E9),

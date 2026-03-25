@@ -59,7 +59,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             centerTitle: true,
             title: Text(
               "الإحصائيات",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize: context.isTablet ? 12.sp : 18.sp,
@@ -286,7 +287,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       child: Column(
         children: [
           Text("إجمالي التسبيحات",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 14.sp,
                   color: Colors.grey,
                   fontWeight: FontWeight.w600)),
@@ -332,7 +334,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   fontWeight: FontWeight.bold,
                   color: context.isDark ? Colors.white : Colors.black87)),
           Text("$title ($unit)",
-              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 10.sp, color: Colors.grey),
               textAlign: TextAlign.center),
         ],
       ),
@@ -346,7 +349,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         Icon(icon, size: context.isTablet ? 15.sp : 20.sp, color: primaryColor),
         SizedBox(width: 8.w),
         Text(title,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: context.isTablet ? 10.sp : 14.sp,
                 fontWeight: FontWeight.bold,
                 color: context.isDark ? Colors.white70 : Colors.black87)),
@@ -399,7 +403,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     return Padding(
                       padding: EdgeInsets.only(top: 8.h),
                       child: Text(data[value.toInt()]['date'] as String,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 9.sp, color: Colors.grey)),
                     );
                   }
@@ -528,7 +533,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               // ),
               // SizedBox(height: 8.h),
               Text(ach['title']!,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: context.isTablet ? 9.sp : 12.sp,
                       fontWeight: FontWeight.bold,
                       color: isUnlocked
@@ -540,7 +546,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: Text(
                   ach['desc']!,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: context.isTablet ? 7.sp : 10.sp,
                       color: Colors.grey),
                   textAlign: TextAlign.center,

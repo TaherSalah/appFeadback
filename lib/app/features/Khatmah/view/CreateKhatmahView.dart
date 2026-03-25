@@ -207,7 +207,8 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
               centerTitle: true,
               title: Text(
                 'إنشاء ختمة جديدة',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
@@ -253,13 +254,15 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                           ),
                           child: TextFormField(
                             controller: _titleController,
-                            style: GoogleFonts.cairo(fontSize: 14.sp),
+                               style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp),
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 15),
                               border: InputBorder.none,
                               hintText: "مثال: ختمة رمضان",
-                              hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                              hintStyle: TextStyle(
+                                  fontFamily: "cairo",color: Colors.grey),
                               prefixIcon:
                                   const Icon(Icons.edit, color: Colors.green),
                             ),
@@ -298,7 +301,8 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                                       isExpanded: true,
                                       hint: Text(
                                         "اختر عدد الايام",
-                                        style: GoogleFonts.cairo(
+                                        style: TextStyle(
+                                            fontFamily: "cairo",
                                             fontSize: 14.sp,
                                             color: Colors.grey),
                                       ),
@@ -350,7 +354,8 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 5, right: 10),
                                     child: Text(state.errorText!,
-                                        style: GoogleFonts.cairo(
+                                        style: TextStyle(
+                                            fontFamily: "cairo",
                                             color: Colors.red, fontSize: 12.sp)),
                                   )
                               ],
@@ -387,7 +392,8 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                                       isExpanded: true,
                                       hint: Text(
                                         "اختر طريقة التوزيع",
-                                        style: GoogleFonts.cairo(
+                                        style: TextStyle(
+                                            fontFamily: "cairo",
                                             fontSize: 14.sp,
                                             color: Colors.grey),
                                       ),
@@ -423,7 +429,8 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 5, right: 10),
                                     child: Text(state.errorText!,
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                             color: Colors.red, fontSize: 12.sp)),
                                   )
                               ],
@@ -463,7 +470,8 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                               child: Center(
                                 child: Text(
                                   "ابدأ الختمة",
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     color: Colors.white,
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.bold,
@@ -489,7 +497,8 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
       padding: const EdgeInsets.only(right: 5),
       child: Text(
         text,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
           fontSize: 14.sp,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).brightness == Brightness.dark

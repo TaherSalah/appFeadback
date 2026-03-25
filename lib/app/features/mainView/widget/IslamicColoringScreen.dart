@@ -165,7 +165,8 @@ class _IslamicColoringScreenState extends State<IslamicColoringScreen> {
           ),
           title: Text(
             'لوّن الحديث الشريف',
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp),
+            style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 16.sp),
           ),
           actions: [
             Padding(
@@ -174,7 +175,8 @@ class _IslamicColoringScreenState extends State<IslamicColoringScreen> {
                 children: [
                    const Icon(Icons.star, color: Colors.amber, size: 20),
                    const SizedBox(width: 4),
-                   Text('$_stars', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                   Text('$_stars', style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -195,7 +197,8 @@ class _IslamicColoringScreenState extends State<IslamicColoringScreen> {
                         const SizedBox(width: 8),
                         Text(
                           template.title,
-                          style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 13.sp),
+                          style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 13.sp),
                         ),
                         const Spacer(),
                         Container(
@@ -206,7 +209,8 @@ class _IslamicColoringScreenState extends State<IslamicColoringScreen> {
                           ),
                           child: Text(
                             'تم التلوين: ${(_coverage * 100).toInt()}%',
-                            style: GoogleFonts.cairo(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 11.sp),
+                            style: TextStyle(
+                  fontFamily: "cairo",color: Colors.green, fontWeight: FontWeight.bold, fontSize: 11.sp),
                           ),
                         ),
                       ],
@@ -302,11 +306,13 @@ class _IslamicColoringScreenState extends State<IslamicColoringScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('اختر اللون وحجم الفرشاة:', style: GoogleFonts.cairo(fontSize: 11.sp, color: Colors.grey)),
+              Text('اختر اللون وحجم الفرشاة:', style: TextStyle(
+                  fontFamily: "cairo",fontSize: 11.sp, color: Colors.grey)),
               TextButton.icon(
                 onPressed: _showClearConfirm,
                 icon: const Icon(Icons.delete_sweep, color: Colors.red, size: 20),
-                label: Text('مسح', style: GoogleFonts.cairo(color: Colors.red, fontSize: 12.sp)),
+                label: Text('مسح', style: TextStyle(
+                  fontFamily: "cairo",color: Colors.red, fontSize: 12.sp)),
               ),
             ],
           ),
@@ -396,7 +402,8 @@ class ColoringPainter extends CustomPainter {
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
-        style: GoogleFonts.cairo(fontSize: size.width * 0.16, fontWeight: FontWeight.w900),
+        style: TextStyle(
+                  fontFamily: "cairo",fontSize: size.width * 0.16, fontWeight: FontWeight.w900),
       ),
       textDirection: ui.TextDirection.rtl,
     )..layout(maxWidth: size.width - 40);
@@ -455,7 +462,8 @@ class ColoringPainter extends CustomPainter {
     final outlinePainter = TextPainter(
       text: TextSpan(
         text: text,
-        style: GoogleFonts.cairo(
+        style: TextStyle(
+                  fontFamily: "cairo",
           fontSize: size.width * 0.16,
           fontWeight: FontWeight.w900,
           foreground: Paint()

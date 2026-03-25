@@ -99,7 +99,8 @@ class _SocialBannerWidgetState extends State<SocialBannerWidget> {
                     children: [
                       Text(
                         title,
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -108,7 +109,8 @@ class _SocialBannerWidgetState extends State<SocialBannerWidget> {
                       ),
                       Text(
                         isTelegram ? 'تابعنا على تليجرام' : 'راسلنا على واتساب',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           color: Colors.white.withOpacity(0.9),
                           fontSize: 11,
                         ),
@@ -124,7 +126,8 @@ class _SocialBannerWidgetState extends State<SocialBannerWidget> {
                   ),
                   child: Text(
                     isTelegram ? 'انضم' : 'تواصل',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       color: bgColor,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,

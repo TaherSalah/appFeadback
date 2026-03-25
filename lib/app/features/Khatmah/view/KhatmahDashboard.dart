@@ -140,14 +140,16 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                 const SizedBox(width: 8),
                 Text(
                   "تهانينا!",
-                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             content: Text(
               textAlign: TextAlign.center,
               'لقد أتممت الختمة "${k.title}". بارك الله فيك وجعلها في ميزان حسناتك.',
-              style: GoogleFonts.cairo(height: 1.4),
+              style: TextStyle(
+                  fontFamily: "cairo",height: 1.4),
             ),
             actions: [
               // TextButton(
@@ -324,7 +326,8 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                         percent: progressPercent > 1 ? 1 : progressPercent,
                         center: Text(
                           "${(progressPercent * 100).toStringAsFixed(1)}%",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -347,7 +350,8 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                                 Expanded(
                                   child: Text(
                                     k.title,
-                                    style: GoogleFonts.cairo(
+                                    style: TextStyle(
+                  fontFamily: "cairo",
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.sp,
@@ -377,7 +381,8 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                               ),
                               child: Text(
                                 "ورد اليوم: $todayWirdText",
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 12.sp,
                                 ),
@@ -486,7 +491,8 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
         const SizedBox(height: 4),
         Text(
           value,
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             color: color ?? Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 14.sp,
@@ -494,7 +500,8 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
         ),
         Text(
           label,
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             color: Colors.white54,
             fontSize: 10.sp,
           ),
@@ -585,7 +592,8 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
             centerTitle: true,
             title: Text(
               "الختمات الحالية",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:

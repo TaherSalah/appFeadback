@@ -62,7 +62,8 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
                       const Spacer(),
                       Text(
                         widget.dua.category.arabicName,
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -91,7 +92,8 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
                           index: 1,
                           child: Text(
                             widget.dua.title,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 24.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -110,7 +112,8 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
                             ),
                             child: Text(
                               widget.dua.arabic,
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 22.sp,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
@@ -140,7 +143,8 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
                                     SizedBox(width: 8.w),
                                     Text(
                                       'المعنى',
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white.withOpacity(0.9),
@@ -151,7 +155,8 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
                                 SizedBox(height: 12.h),
                                 Text(
                                   widget.dua.meaning,
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     fontSize: 15.sp,
                                     color: Colors.white.withOpacity(0.95),
                                     height: 1.8,
@@ -180,7 +185,8 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
                                   SizedBox(width: 8.w),
                                   Text(
                                     widget.dua.source!,
-                                    style: GoogleFonts.cairo(
+                                       style: TextStyle(
+                          fontFamily: "cairo",
                                       fontSize: 13.sp,
                                       color: Colors.white.withOpacity(0.9),
                                     ),
@@ -205,7 +211,8 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('تم النسخ',
-                                          style: GoogleFonts.cairo()),
+                                             style: TextStyle(
+                          fontFamily: "cairo",)),
                                     ),
                                   );
                                 },
@@ -257,7 +264,8 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
             SizedBox(height: 4.h),
             Text(
               label,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 12.sp,
                 color: Colors.white,
                 fontWeight: FontWeight.w600,

@@ -39,11 +39,13 @@ class AzkarListViewItemBuilder extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                     'فضل الذكر ',
                                     style:
-                                        GoogleFonts.cairo(color: Colors.black)),
+                                        TextStyle(
+                  fontFamily: "cairo",color: Colors.black)),
                                 content: Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: Text(Azkary.azkarContent[index],
-                                        style: GoogleFonts.cairo())),
+                                           style: TextStyle(
+                          fontFamily: "cairo",))),
                                 actions: <Widget>[
                                   Center(
                                     child: ElevatedButton(
@@ -76,11 +78,13 @@ class AzkarListViewItemBuilder extends StatelessWidget {
                             children: [
                               Text(Azkary.azkarDescription[index],
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                       fontSize: 15, color: Colors.white)),
                               // ignore: unnecessary_string_escapes
                               Text('  مرات التسبيح(${Azkary.azkarCount[index]})\ مرة',
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                       fontSize: 12,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600)),

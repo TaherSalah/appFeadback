@@ -1,7 +1,5 @@
 // =============== الشاشة الرئيسية ===============
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/utils/style/k_color.dart';
@@ -88,7 +86,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
           centerTitle: true,
           title: Text(
             "أورادك اليومية",
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize: context.isTablet ? 12.sp : 18.sp,
@@ -152,7 +151,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                             children: [
                               Text(
                                 "الأوراد الجارية",
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.bold,
                                   color: context.isDark
@@ -207,7 +207,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                                 EdgeInsets.fromLTRB(20.w, 30.h, 20.w, 10.h),
                             child: Text(
                               "الأوراد المنجزة",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey,
@@ -250,7 +251,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
           },
           label: Text(
             'إضافة ورد جديد',
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+               style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
           ),
           icon: const Icon(Icons.add_rounded),
           backgroundColor: KColors.primaryColor,
@@ -308,7 +310,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
         ),
         Text(
           label,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 10.sp,
             color: Colors.grey,
           ),
@@ -330,7 +333,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
         SizedBox(height: 16.h),
         Text(
           "لا توجد أوراد حالية",
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 14.sp,
             color: Colors.grey,
             fontWeight: FontWeight.bold,
@@ -338,7 +342,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
         ),
         Text(
           "ابدأ بإضافة أول ورد لك اليوم",
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 11.sp,
             color: Colors.grey.shade500,
           ),
@@ -382,7 +387,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
               child: Center(
                 child: Text(
                   cat,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     color: isSelected
                         ? (context.isDark ? Colors.black : Colors.white)
                         : (context.isDark ? Colors.white70 : Colors.black87),
@@ -479,7 +485,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                       children: [
                         Text(
                           wird.name,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
                             color:
@@ -491,7 +498,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                         SizedBox(height: 2.h),
                         Text(
                           '${wird.adhkar.length} ذكر • $totalCount تسبيحة',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             color: Colors.grey,
                             fontSize: 10.sp,
                           ),
@@ -505,7 +513,8 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
                               SizedBox(width: 4.w),
                               Text(
                                 'أكملته ${wird.completedCount} مرة',
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   color: Colors.green,
                                   fontSize: 9.sp,
                                   fontWeight: FontWeight.bold,

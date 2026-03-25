@@ -74,7 +74,8 @@ class _StoriesScreenState extends State<StoriesScreen> {
         appBar: AppBar(
           title: Text(
             'قصص إسلامية 📚',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
             ),
@@ -130,7 +131,8 @@ class _StoriesScreenState extends State<StoriesScreen> {
                       ),
                       title: Text(
                         story.title,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 12.sp : 16.sp,
                           fontWeight: FontWeight.bold,
@@ -145,7 +147,8 @@ class _StoriesScreenState extends State<StoriesScreen> {
                           if (isRead) const SizedBox(width: 4),
                           Text(
                             isRead ? 'قرأتها ⭐' : '⭐ ${story.starsReward} نجمة',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: ResponsiveUtil.isTablet(context)
                                   ? 9.sp
                                   : 12.sp,
@@ -236,7 +239,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
             const SizedBox(width: 10),
             Text(
               'لقد حصلت على ${widget.story.starsReward} نجمة ✨',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF10B981),
@@ -270,7 +274,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
         appBar: AppBar(
           title: Text(
             widget.story.title,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
             ),
@@ -286,7 +291,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                 children: [
                   Text(
                     'صفحة ${_currentPage + 1} من ${widget.story.paragraphs.length + 1}',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp,
                       color: Colors.grey,
                     ),
@@ -322,7 +328,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                       isLastPage
                           ? widget.story.moral
                           : widget.story.paragraphs[_currentPage],
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize:
                             ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
                         height: 2.0,
@@ -347,7 +354,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                     ElevatedButton.icon(
                       onPressed: _previousPage,
                       icon: const Icon(Icons.arrow_back),
-                      label: Text('السابق', style: GoogleFonts.cairo()),
+                      label: Text('السابق', style: TextStyle(
+                  fontFamily: "cairo",)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey,
                         padding: const EdgeInsets.symmetric(
@@ -364,7 +372,8 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                     icon: Icon(isLastPage ? Icons.star : Icons.arrow_forward),
                     label: Text(
                       isLastPage ? 'إنهاء' : 'التالي',
-                      style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4CAF50),

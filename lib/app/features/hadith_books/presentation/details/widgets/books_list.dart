@@ -13,9 +13,8 @@ class BooksList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final booksCtrl = Get.find<BooksController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = AppColors.primary;
+    const baseColor = AppColors.primary;
     const Color goldColor = Color(0xFFD4AF37);
 
     return GetBuilder<BooksController>(builder: (controller) {
@@ -33,7 +32,8 @@ class BooksList extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   'جاري تحميل الكتب...',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 16.sp,
                     color: isDark ? Colors.white70 : Colors.black54,
                   ),
@@ -97,7 +97,8 @@ class BooksList extends StatelessWidget {
                     child: Center(
                       child: Text(
                         '${i + 1}',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                           color: isDark ? goldColor : baseColor,
@@ -112,7 +113,8 @@ class BooksList extends StatelessWidget {
                   Expanded(
                     child: Text(
                       book.bookName,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 15.sp,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,

@@ -244,7 +244,8 @@ class AzkarCounter extends StatelessWidget {
           centerTitle: true,
           title: Text(
             'إدارة الأذكار',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 20.sp,
@@ -328,7 +329,8 @@ class AzkarCounter extends StatelessWidget {
                         children: [
                           Text(
                             zikr.text,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: isTablet ? 20.sp : 18.sp,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -353,7 +355,8 @@ class AzkarCounter extends StatelessWidget {
                                 ),
                                 child: Text(
                                   'الهدف: ${zikr.targetCount}',
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     fontSize: 12.sp,
                                     color: const Color(0xFF10B981),
                                     fontWeight: FontWeight.w600,
@@ -386,7 +389,8 @@ class AzkarCounter extends StatelessWidget {
                                       SizedBox(width: 4.w),
                                       Text(
                                         '${zikr.completedCycles}',
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 12.sp,
                                           color: const Color(0xFFFBBF24),
                                           fontWeight: FontWeight.w600,
@@ -440,14 +444,16 @@ class AzkarCounter extends StatelessWidget {
                       children: [
                         Text(
                           'التقدم: ${zikr.currentProgress} / ${zikr.targetCount}',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 12.sp,
                             color: const Color(0xFF94A3B8),
                           ),
                         ),
                         Text(
                           '${(progress * 100).toInt()}%',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 12.sp,
                             color: const Color(0xFF10B981),
                             fontWeight: FontWeight.bold,
@@ -490,9 +496,10 @@ class AzkarCounter extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.r),
           ),
-          title: Text(
+          title: const Text(
             'إضافة ذكر جديد',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
@@ -502,11 +509,13 @@ class AzkarCounter extends StatelessWidget {
             children: [
               TextField(
                 controller: textController,
-                style: GoogleFonts.cairo(color: Colors.white),
+                   style: const TextStyle(
+                          fontFamily: "cairo",color: Colors.white),
                 maxLines: 3,
                 decoration: InputDecoration(
                   hintText: 'نص الذكر',
-                  hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                  hintStyle: const TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
                   filled: true,
                   fillColor: const Color(0xFF334155),
                   border: OutlineInputBorder(
@@ -519,10 +528,12 @@ class AzkarCounter extends StatelessWidget {
               TextField(
                 controller: countController,
                 keyboardType: TextInputType.number,
-                style: GoogleFonts.cairo(color: Colors.white),
+                   style: const TextStyle(
+                          fontFamily: "cairo",color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'العدد المطلوب',
-                  hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                  hintStyle: const TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
                   filled: true,
                   fillColor: const Color(0xFF334155),
                   border: OutlineInputBorder(
@@ -536,9 +547,10 @@ class AzkarCounter extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(
+              child: const Text(
                 'إلغاء',
-                style: GoogleFonts.cairo(color: Colors.grey),
+                   style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
               ),
             ),
             ElevatedButton(
@@ -556,9 +568,10 @@ class AzkarCounter extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'إضافة',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -580,9 +593,10 @@ class AzkarCounter extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.r),
           ),
-          title: Text(
+          title: const Text(
             'تعديل الذكر',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
@@ -592,11 +606,13 @@ class AzkarCounter extends StatelessWidget {
             children: [
               TextField(
                 controller: textController,
-                style: GoogleFonts.cairo(color: Colors.white),
+                   style: const TextStyle(
+                          fontFamily: "cairo",color: Colors.white),
                 maxLines: 3,
                 decoration: InputDecoration(
                   hintText: 'نص الذكر',
-                  hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                  hintStyle: const TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
                   filled: true,
                   fillColor: const Color(0xFF334155),
                   border: OutlineInputBorder(
@@ -609,10 +625,12 @@ class AzkarCounter extends StatelessWidget {
               TextField(
                 controller: countController,
                 keyboardType: TextInputType.number,
-                style: GoogleFonts.cairo(color: Colors.white),
+                   style: const TextStyle(
+                          fontFamily: "cairo",color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'العدد المطلوب',
-                  hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                  hintStyle: const TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
                   filled: true,
                   fillColor: const Color(0xFF334155),
                   border: OutlineInputBorder(
@@ -626,9 +644,10 @@ class AzkarCounter extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(
+              child: const Text(
                 'إلغاء',
-                style: GoogleFonts.cairo(color: Colors.grey),
+                   style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
               ),
             ),
             ElevatedButton(
@@ -647,9 +666,10 @@ class AzkarCounter extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'حفظ',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -671,21 +691,24 @@ class AzkarCounter extends StatelessWidget {
           ),
           title: Text(
             'حذف الذكر',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
           content: Text(
             'هل أنت متأكد من حذف هذا الذكر؟',
-            style: GoogleFonts.cairo(color: const Color(0xFF94A3B8)),
+               style: TextStyle(
+                          fontFamily: "cairo",color: const Color(0xFF94A3B8)),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'إلغاء',
-                style: GoogleFonts.cairo(color: Colors.grey),
+                   style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
               ),
             ),
             ElevatedButton(
@@ -701,7 +724,8 @@ class AzkarCounter extends StatelessWidget {
               ),
               child: Text(
                 'حذف',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -737,7 +761,8 @@ class _UpdatedAzkarCounterState extends State<UpdatedAzkarCounter> {
             centerTitle: true,
             title: Text(
               'المسبحة الإلكترونية',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -800,7 +825,8 @@ class _UpdatedCounterWidgetBuilderState
                     SizedBox(height: 24.h),
                     Text(
                       'اختر ذكرًا للبدء',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 24.sp,
                         color: const Color(0xFF94A3B8),
                         fontWeight: FontWeight.bold,
@@ -819,7 +845,8 @@ class _UpdatedCounterWidgetBuilderState
                       icon: const Icon(Icons.list_alt),
                       label: Text(
                         'اختر من القائمة',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontWeight: FontWeight.bold,
                           fontSize: 16.sp,
                         ),
@@ -911,7 +938,8 @@ class _UpdatedCounterWidgetBuilderState
         children: [
           Text(
             zikr.text,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: isTablet ? 24.sp : 20.sp,
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -952,7 +980,8 @@ class _UpdatedCounterWidgetBuilderState
           SizedBox(height: 8.h),
           Text(
             '${zikr.currentProgress} / ${zikr.targetCount}',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 14.sp,
               color: const Color(0xFF94A3B8),
             ),
@@ -985,14 +1014,16 @@ class _UpdatedCounterWidgetBuilderState
             children: [
               Text(
                 label,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 10.sp,
                   color: color,
                 ),
               ),
               Text(
                 value,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 16.sp,
                   color: color,
                   fontWeight: FontWeight.bold,
@@ -1040,7 +1071,8 @@ class _UpdatedCounterWidgetBuilderState
           ),
           child: Text(
             '${zikr.currentProgress}',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: isTablet ? 48.sp : 42.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -1508,7 +1540,8 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
                     child: Center(
                       child: Text(
                         '${currentBead + 1}',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 18.sp,
                           color: const Color(0xFFF59E0B),
                           fontWeight: FontWeight.bold,
@@ -1584,7 +1617,8 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
                       SizedBox(height: 6.h),
                       Text(
                         'سبِّح',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 12.sp,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -1629,7 +1663,8 @@ class _UpdatedTasbeehRealState extends State<UpdatedTasbeehReal>
         ),
         child: Text(
           'إعادة تعيين',
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: isTablet ? 16.sp : 14.sp,
             color: Colors.white,
             fontWeight: FontWeight.bold,

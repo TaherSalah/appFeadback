@@ -26,7 +26,8 @@ class HadithOfDayView extends StatelessWidget {
         centerTitle: true,
         title: Text(
           'حديث اليوم',
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black87,
             fontSize: 18.sp,
@@ -71,7 +72,8 @@ class HadithOfDayView extends StatelessWidget {
                 SizedBox(height: 16.h),
                 Text(
                   'لم يتم تحميل حديث اليوم',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 18.sp,
                     color: Colors.grey[500],
                   ),
@@ -122,7 +124,8 @@ class HadithOfDayView extends StatelessWidget {
                     SizedBox(height: 12.h),
                     Text(
                       'حديث اليوم',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : const Color(0xFF2C3E50),
@@ -131,7 +134,8 @@ class HadithOfDayView extends StatelessWidget {
                     SizedBox(height: 6.h),
                     Text(
                       _formatDate(DateTime.now()),
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14.sp,
                         color: isDark ? Colors.grey[400] : Colors.grey[700],
                       ),
@@ -185,7 +189,8 @@ class HadithOfDayView extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     hadith.bookName,
-                                    style: GoogleFonts.cairo(
+                                    style: TextStyle(
+                  fontFamily: "cairo",
                                       fontSize: 13.sp,
                                       fontWeight: FontWeight.bold,
                                       color: baseColor,
@@ -207,7 +212,8 @@ class HadithOfDayView extends StatelessWidget {
                           ),
                           child: Text(
                             '#${hadith.hadithNumber}',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 13.sp,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white70 : Colors.black87,
@@ -270,7 +276,8 @@ class HadithOfDayView extends StatelessWidget {
                             SizedBox(width: 6.w),
                             Text(
                               hadith.grade1!,
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.green,
@@ -303,7 +310,8 @@ class HadithOfDayView extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 hadith.babName!,
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: 13.sp,
                                   color: isDark ? Colors.grey[400] : Colors.grey[700],
                                 ),
@@ -454,7 +462,8 @@ class _ActionButton extends StatelessWidget {
               SizedBox(height: 6.h),
               Text(
                 label,
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                   color: isHighlighted

@@ -76,7 +76,8 @@ class IslamicHeaderWidget extends StatelessWidget {
                   ),
                   Text(
                     gregorian ?? '',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                      fontFamily: "cairo",
                       color: Colors.teal.shade900,
                       fontWeight: FontWeight.bold,
                       fontSize: isTablet ? 17 : 12,
@@ -84,7 +85,8 @@ class IslamicHeaderWidget extends StatelessWidget {
                   ),
                   Text(
                     hijriDate,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                      fontFamily: "cairo",
                       color: Colors.black87,
                       fontWeight: FontWeight.w600,
                       fontSize: isTablet ? 14 : 12,
@@ -129,7 +131,8 @@ class IslamicHeaderWidget extends StatelessWidget {
                 children: [
                   Text(
                     '${_getPrayerIcon(nextPrayer)} $nextPrayer',
-                    style: GoogleFonts.cairo(
+    style: TextStyle(
+    fontFamily: "cairo",
                       color: Colors.deepPurple.shade900,
                       fontWeight: FontWeight.bold,
                       fontSize: isTablet ? 18 : 15,
@@ -137,7 +140,8 @@ class IslamicHeaderWidget extends StatelessWidget {
                   ),
                   Text(
                     'الوقت المتبقي:',
-                    style: GoogleFonts.cairo(
+    style: TextStyle(
+    fontFamily: "cairo",
                       color: Colors.deepPurple.shade700,
                       fontWeight: FontWeight.w600,
                       fontSize: isTablet ? 13 : 12,
@@ -145,7 +149,8 @@ class IslamicHeaderWidget extends StatelessWidget {
                   ),
                   Text(
                     remainingTimeText,
-                    style: GoogleFonts.cairo(
+                  style: TextStyle(
+    fontFamily: "cairo",
                       color: Colors.deepPurple.shade900,
                       fontWeight: FontWeight.bold,
                       fontSize: isTablet ? 16 : 14,

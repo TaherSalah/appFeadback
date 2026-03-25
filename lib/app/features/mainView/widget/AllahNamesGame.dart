@@ -113,7 +113,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
         children: [
           Text(
             'نتيجتك: $_score/${_allahNames.length * 5}',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF10B981),
@@ -134,7 +135,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                 const SizedBox(width: 8),
                 Text(
                   'حصلت على $_score نجمة ✨',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFF59E0B),
@@ -188,7 +190,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
             centerTitle: true,
             title: Text(
               "أسماء الله الحسنى",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -215,7 +218,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                 children: [
                   Text(
                     'الاسم ${_currentQuestion + 1}/${_allahNames.length}',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize:
                           ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
                       color: Colors.white,
@@ -228,7 +232,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                       const SizedBox(width: 4),
                       Text(
                         '$_score',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 12.sp : 16.sp,
                           color: Colors.white,
@@ -248,7 +253,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                   children: [
                     Text(
                       nameData['name']!,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: ResponsiveUtil.isTablet(context)
                             ? 18.sp
                             : 32.sp,
@@ -259,7 +265,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                     const SizedBox(height: 24),
                     Text(
                       'ما معنى هذا الاسم؟',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize:
                             ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
                         fontWeight: FontWeight.bold,
@@ -286,7 +293,8 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                             ),
                             child: Text(
                               option,
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: ResponsiveUtil.isTablet(context)
                                     ? 11.sp
                                     : 16.sp,

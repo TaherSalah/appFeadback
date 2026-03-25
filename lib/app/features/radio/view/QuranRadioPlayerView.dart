@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 
 import 'package:muslimdaily/app/core/widgets/QuranRadioPlayer.dart';
@@ -79,7 +77,8 @@ class _QuranRadioPlayerViewState extends State<QuranRadioPlayerView> {
                         centerTitle: true,
                         title: Text(
                           "اذاعة القران الكريم ",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                            fontFamily: "cairo",
                             color: Colors.green,
                             fontWeight: FontWeight.bold,
                             fontSize: MediaQuery.sizeOf(context).width > 600

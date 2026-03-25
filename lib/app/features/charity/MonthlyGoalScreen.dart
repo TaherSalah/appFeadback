@@ -100,7 +100,8 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
             centerTitle: true,
             title: Text(
               'هدف الصدقة الشهري',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -121,7 +122,8 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                     children: [
                       Text(
                         'حدد هدفك المالي للصدقة هذا الشهر',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize:isTab?10.sp :14.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -129,7 +131,8 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                       SizedBox(height: 8.h),
                       Text(
                         'تحديد هدف يساعدك على المداومة والتحفيز على العطاء المستمر.',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize:isTab?9.sp :12.sp,
                           color: Colors.grey,
                         ),
@@ -150,7 +153,8 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                         child: TextFormField(
                           controller: _goalController,
                           keyboardType: TextInputType.number,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: isTab?10.sp:24.sp,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF10B981),
@@ -159,7 +163,8 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                             hintText: 'مثلاً: 1000',
                             suffixText: 'جنيه',
                             hintStyle: TextStyle(fontSize: isTab?9.sp:16.sp,),
-                            suffixStyle: GoogleFonts.cairo(
+                            suffixStyle:TextStyle(
+                              fontFamily: "cairo",
                               fontSize: isTab?10.sp:16.sp,
                               color: Colors.grey,
                             ),
@@ -182,7 +187,8 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
                           ),
                           child: Text(
                             'حفظ الهدف الشهري',
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize:isTab?12.sp:18.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,

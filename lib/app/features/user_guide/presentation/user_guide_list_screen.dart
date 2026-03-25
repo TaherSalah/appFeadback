@@ -108,7 +108,8 @@ class _UserGuideListScreenState extends State<UserGuideListScreen>
               : null,
           title: Text(
             "دليل المستخدم",
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize:
@@ -190,7 +191,8 @@ class _UserGuideListScreenState extends State<UserGuideListScreen>
             const SizedBox(height: 16),
             Text(
               "لا توجد نتائج",
-              style: GoogleFonts.cairo(fontSize: 18, color: Colors.grey),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 18, color: Colors.grey),
             ),
           ],
         ),
@@ -226,7 +228,8 @@ class _UserGuideListScreenState extends State<UserGuideListScreen>
             Expanded(
               child: Text(
                 item.title,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
@@ -261,7 +264,8 @@ class _UserGuideListScreenState extends State<UserGuideListScreen>
             item.description,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.cairo(fontSize: 13),
+               style: TextStyle(
+                          fontFamily: "cairo",fontSize: 13),
           ),
         ),
         onTap: () async {

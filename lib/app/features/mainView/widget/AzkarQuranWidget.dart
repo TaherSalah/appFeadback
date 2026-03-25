@@ -94,7 +94,8 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
                 children: [
                   Text(
                     "أدعية من القرآن",
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.sizeOf(context).width > 600
                             ? 10.sp

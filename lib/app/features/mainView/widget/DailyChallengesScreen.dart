@@ -220,7 +220,8 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
             centerTitle: true,
             title: Text(
               "التحديات",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -269,7 +270,8 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
         children: [
           Text(
             title,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -283,7 +285,8 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
             ),
             child: Text(
               '$completed/$total',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -334,7 +337,8 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
         // ),
         title: Text(
           challenge['title'],
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             fontSize: ResponsiveUtil.isTablet(context) ? 11.sp : 15.sp,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black87,
@@ -346,7 +350,8 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
             const SizedBox(height: 4),
             Text(
               challenge['description'],
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
                 color: Colors.grey,
               ),
@@ -358,7 +363,8 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
                 const SizedBox(width: 4),
                 Text(
                   '+${challenge['reward']}',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 13.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.amber,
@@ -380,7 +386,8 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
                 ),
                 child: Text(
                   'تم!',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),

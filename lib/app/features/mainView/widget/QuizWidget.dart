@@ -94,7 +94,8 @@ class _QuizWidgetState extends State<QuizWidget> {
         children: [
           Text(
             "سؤال التحدي اليومي 🧠",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
@@ -129,7 +130,8 @@ class _QuizWidgetState extends State<QuizWidget> {
                   ),
                   child: Text(
                     "اختبر معلوماتك",
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 12.sp,
                       color: Colors.indigo,
                       fontWeight: FontWeight.bold,
@@ -140,7 +142,8 @@ class _QuizWidgetState extends State<QuizWidget> {
                 Text(
                   _todaysQuestion['question'],
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
@@ -193,7 +196,8 @@ class _QuizWidgetState extends State<QuizWidget> {
                             Expanded(
                               child: Text(
                                 option,
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: 14
                                       .sp, // Reduced font size to avoid overflow
                                   fontWeight: FontWeight.w600,
@@ -213,7 +217,8 @@ class _QuizWidgetState extends State<QuizWidget> {
                     padding: const EdgeInsets.only(top: 10),
                     child: Text(
                       "أحسنت! إجابة صحيحة 🎉",
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14.sp,
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
@@ -225,7 +230,8 @@ class _QuizWidgetState extends State<QuizWidget> {
                     padding: const EdgeInsets.only(top: 10),
                     child: Text(
                       "إجابة خاطئة، الصحيح: $correctAnswer",
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14.sp,
                         color: Colors.red,
                         fontWeight: FontWeight.bold,

@@ -87,7 +87,8 @@ class SoulComfortWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               "بماذا تشعر اليوم؟",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : Colors.black87,
@@ -137,7 +138,8 @@ class SoulComfortWidget extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           mood['label'],
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: ResponsiveUtil.isTablet(context)? 10.sp:14.sp,
                             color: isDark ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.w600,
@@ -199,7 +201,8 @@ class SoulComfortWidget extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(
                     "علاج ${mood['label']}",
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: ResponsiveUtil.isTablet(context)?14.sp:20.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87,
@@ -222,7 +225,8 @@ class SoulComfortWidget extends StatelessWidget {
                         Text(
                           // "📖 من القرآن الكريم",
                           "من القرآن الكريم",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 12.sp,
                             color: mood['color'],
                             fontWeight: FontWeight.bold,
@@ -256,7 +260,8 @@ class SoulComfortWidget extends StatelessWidget {
                         Text(
                           // "🤲 دعاء مستحب",
                           "دعاء مستحب",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 12.sp,
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
@@ -266,7 +271,8 @@ class SoulComfortWidget extends StatelessWidget {
                         Text(
                           mood['dua'],
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize:ResponsiveUtil.isTablet(context)?10.sp: 16.sp,
                             color: isDark ? Colors.white70 : Colors.black87,
                             fontWeight: FontWeight.w500,
@@ -287,7 +293,8 @@ class SoulComfortWidget extends StatelessWidget {
                       Expanded(
                         child: Text(
                           mood['msg'],
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize:ResponsiveUtil.isTablet(context)?10.sp: 14.sp,
                             color: isDark ? Colors.grey : Colors.grey.shade700,
                             fontStyle: FontStyle.italic,
@@ -310,7 +317,8 @@ class SoulComfortWidget extends StatelessWidget {
                       ),
                       child: Text(
                         "الحمد لله",
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           color: Colors.white,
                           fontSize:ResponsiveUtil.isTablet(context)? 10.sp: 16.sp,
                           fontWeight: FontWeight.bold,

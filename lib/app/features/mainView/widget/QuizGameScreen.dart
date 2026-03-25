@@ -103,7 +103,8 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
         children: [
           Text(
             'نتيجتك: $_score من ${_questions.length * 10}',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF10B981),
@@ -112,7 +113,8 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
           const SizedBox(height: 12),
           Text(
             _getEncouragementMessage(),
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 14.sp,
               color: Colors.grey[600],
             ),
@@ -180,7 +182,8 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
             centerTitle: true,
             title: Text(
               "اختبر معلوماتك",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -211,7 +214,8 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
                       const SizedBox(width: 8),
                       Text(
                         'السؤال ${_currentQuestion + 1}/${_questions.length}',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
                           color: Colors.white,
@@ -226,7 +230,8 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
                       const SizedBox(width: 4),
                       Text(
                         '$_score',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 12.sp : 16.sp,
                           color: Colors.white,
@@ -260,7 +265,8 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
                       ),
                       child: Text(
                         question['question'],
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
                           fontWeight: FontWeight.bold,
@@ -346,7 +352,8 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
                       ? Icon(icon, color: Colors.white, size: 24)
                       : Text(
                           String.fromCharCode(65 + index), // A, B, C
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontWeight: FontWeight.bold,
                             color: borderColor == null
                                 ? Colors.blue
@@ -359,7 +366,8 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
               Expanded(
                 child: Text(
                   option,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 11.sp : 16.sp,
                     fontWeight: _answered &&
                             (index == correctIndex || index == _selectedAnswer)

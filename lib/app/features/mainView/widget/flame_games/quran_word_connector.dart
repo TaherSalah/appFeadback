@@ -135,7 +135,8 @@ class QuranWordConnector extends BaseEducationalGame with TapCallbacks {
     final double headerY = size.y * 0.12;
     
     // Premium Typography
-    final targetStyle = GoogleFonts.cairo(
+    final targetStyle = TextStyle(
+                  fontFamily: "cairo",
       color: Colors.white, 
       fontSize: size.x * 0.09, 
       fontWeight: FontWeight.bold,
@@ -148,7 +149,8 @@ class QuranWordConnector extends BaseEducationalGame with TapCallbacks {
     )..layout();
     targetPainter.paint(canvas, Offset((size.x - targetPainter.width) / 2, headerY));
 
-    final progressStyle = GoogleFonts.cairo(
+    final progressStyle = TextStyle(
+                  fontFamily: "cairo",
       color: Colors.amberAccent, 
       fontSize: size.x * 0.06, 
       fontWeight: FontWeight.w600,
@@ -259,7 +261,8 @@ class LetterBubble extends PositionComponent with TapCallbacks, HasGameRef<Quran
     canvas.drawCircle(Offset(radius, radius), radius, borderPaint);
 
     // Letter Styling
-    final textStyle = GoogleFonts.cairo(
+    final textStyle = TextStyle(
+                  fontFamily: "cairo",
       color: Colors.white, 
       fontSize: size.x * 0.55, 
       fontWeight: FontWeight.bold,

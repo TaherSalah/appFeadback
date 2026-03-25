@@ -100,7 +100,8 @@ class CharityPlatformsScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             'منصات التبرع الموثوقة 🌐',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: 20.sp,
             ),
@@ -164,7 +165,8 @@ class CharityPlatformsScreen extends StatelessWidget {
                       children: [
                         Text(
                           platform.name,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                           ),
@@ -181,7 +183,8 @@ class CharityPlatformsScreen extends StatelessWidget {
                           ),
                           child: Text(
                             platform.country,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 11.sp,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF3B82F6),
@@ -196,7 +199,8 @@ class CharityPlatformsScreen extends StatelessWidget {
               SizedBox(height: 12.h),
               Text(
                 platform.description,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 13.sp,
                   color: Colors.grey[600],
                   height: 1.6,
@@ -213,7 +217,8 @@ class CharityPlatformsScreen extends StatelessWidget {
                   SizedBox(width: 6.w),
                   Text(
                     'زيارة الموقع',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 13.sp,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF3B82F6),
@@ -238,7 +243,8 @@ class CharityPlatformsScreen extends StatelessWidget {
           SnackBar(
             content: Text(
               'تعذر فتح الرابط',
-              style: GoogleFonts.cairo(),
+                 style: TextStyle(
+                          fontFamily: "cairo",),
             ),
           ),
         );

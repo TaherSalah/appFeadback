@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
-import 'package:muslimdaily/app/core/controller/azkar_controller.dart';
 import '../../core/shard/exports/all_exports.dart';
 import 'post_prayer_azkar_controller.dart';
 import 'widgets/post_prayer_azkar_list.dart';
@@ -35,7 +33,8 @@ class PostPrayerAzkarView extends StatelessWidget {
           centerTitle: true,
           title: Text(
             AppString.KPrayer,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,

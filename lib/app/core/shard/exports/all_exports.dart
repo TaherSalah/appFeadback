@@ -16,7 +16,7 @@ export '../constanc/app_style.dart';
 export 'package:flutter/services.dart';
 export 'package:muslimdaily/app/core/shard/widgets/rate_bar.dart';
 export 'package:muslimdaily/app/core/shard/widgets/my_divider.dart';
-export 'package:muslimdaily/app/core/shard/widgets/splach_builder.dart';
+export 'package:muslimdaily/app/features/splashView/widgets/SplashItemBuilderWidget.dart';
 export 'package:muslimdaily/app/core/model/azkar_massa_model.dart';
 export 'package:muslimdaily/app/core/model/all_azkar_modal.dart';
 export 'dart:convert';

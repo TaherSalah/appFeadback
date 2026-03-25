@@ -258,7 +258,8 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
                     SizedBox(height: 10.h),
                     Text(
                       widget.cityName!,
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 25.sp,
                         color: Colors.white70,
                       ),
@@ -360,7 +361,8 @@ class _AdhanOverlayScreenState extends State<AdhanOverlayScreen>
           SizedBox(height: 5.h),
           Text(
             label,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 12.sp,
               color: Colors.white,
             ),

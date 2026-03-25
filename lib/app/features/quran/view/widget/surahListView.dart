@@ -39,7 +39,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
   List<surahModel.SurahModel> surahInfoList = [];
   List<SurahItem> _allSurahItems = [];
   List<SurahItem> _filteredSurahItems = [];
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   bool isLoading = true;
 
@@ -48,7 +48,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
   List<String> _filteredHizbItems = [];
 
   // Voice Search
-  stt.SpeechToText _speech = stt.SpeechToText();
+  final stt.SpeechToText _speech = stt.SpeechToText();
   bool _isListening = false;
 
   // New views data
@@ -299,7 +299,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
                 // widget.useOldMushaf
                 //     ? "فِهْرِسُ القُرْآنِ الكَرِيم (الاصدار القديم)"
                 "فِهْرِسُ القُرْآنِ الكَرِيم",
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     color: Colors.green,
                     fontWeight: FontWeight.w900,
                     fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp),
@@ -319,11 +320,13 @@ class _SurahListScreenState extends State<SurahListScreen> {
                           labelColor: KColors.primaryColor,
                           unselectedLabelColor:
                               isDark ? Colors.white38 : Colors.black38,
-                          labelStyle: GoogleFonts.cairo(
+                          labelStyle: TextStyle(
+                            fontFamily: "cairo",
                             fontWeight: FontWeight.w900,
                             fontSize: 16.sp,
                           ),
-                          unselectedLabelStyle: GoogleFonts.cairo(
+                          unselectedLabelStyle: TextStyle(
+                            fontFamily: "cairo",
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
                           ),
@@ -456,7 +459,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
     if (_filteredSurahItems.isEmpty) {
       return Center(
           child:
-              Text("لا توجد نتائج", style: GoogleFonts.cairo(fontSize: 16.sp)));
+              Text("لا توجد نتائج",    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 16.sp)));
     }
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -619,7 +623,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
     if (_filteredJozzs.isEmpty) {
       return Center(
           child:
-              Text("لا توجد نتائج", style: GoogleFonts.cairo(fontSize: 16.sp)));
+              Text("لا توجد نتائج",    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 16.sp)));
     }
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -707,7 +712,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
     if (_filteredHizbItems.isEmpty) {
       return Center(
           child:
-              Text("لا توجد نتائج", style: GoogleFonts.cairo(fontSize: 16.sp)));
+              Text("لا توجد نتائج",    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 16.sp)));
     }
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),

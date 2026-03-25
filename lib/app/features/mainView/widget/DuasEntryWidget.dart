@@ -53,7 +53,8 @@ class DuasEntryWidget extends StatelessWidget {
                     SizedBox(width: 12.w),
                     Text(
                       'دعاء اليوم',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -76,7 +77,8 @@ class DuasEntryWidget extends StatelessWidget {
                 children: [
                   Text(
                     randomDua.title,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -85,7 +87,8 @@ class DuasEntryWidget extends StatelessWidget {
                   SizedBox(height: 8.h),
                   Text(
                     randomDua.arabic,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 13.sp,
                       color: Colors.white.withOpacity(0.95),
                       height: 1.8,

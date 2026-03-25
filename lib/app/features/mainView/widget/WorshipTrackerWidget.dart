@@ -112,7 +112,8 @@ class _WorshipTrackerWidgetState extends State<WorshipTrackerWidget> {
             children: [
               Text(
                 "جدول الطاعات اليومي 📝",
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
@@ -126,7 +127,8 @@ class _WorshipTrackerWidgetState extends State<WorshipTrackerWidget> {
                 ),
                 child: Text(
                   "${(progress * 100).toInt()}% مكتمل",
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
                     color: progress == 1.0 ? Colors.white : Colors.amber.shade900,
@@ -202,7 +204,8 @@ class _WorshipTrackerWidgetState extends State<WorshipTrackerWidget> {
                             Expanded(
                               child: Text(
                                 task['title'],
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: 12.sp,
                                   fontWeight: isDone ? FontWeight.bold : FontWeight.normal,
                                   color: isDone 
@@ -233,7 +236,8 @@ class _WorshipTrackerWidgetState extends State<WorshipTrackerWidget> {
                          child: Center(
                            child: Text(
                              "ما شاء الله! يوم مبارك 🌟",
-                             style: GoogleFonts.cairo(
+                             style: TextStyle(
+                  fontFamily: "cairo",
                                color: Colors.white,
                                fontWeight: FontWeight.bold,
                                fontSize: 14.sp

@@ -102,7 +102,8 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                 centerTitle: true,
                 title: Text(
                   "اذاعة القران الكريم",
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     color: Colors.green,
                     fontWeight: FontWeight.bold,
                     fontSize:

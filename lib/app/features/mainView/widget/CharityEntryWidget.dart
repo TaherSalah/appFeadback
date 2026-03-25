@@ -118,7 +118,8 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                               children: [
                                 Text(
                                   'مُتتبع الصدقة',
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     fontSize:ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
                                     fontWeight: FontWeight.bold,
                                     color: AppThemeColors.cardHeaderColor(context),
@@ -129,7 +130,8 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                                     children: [
                                       Text(
                                         'نبتة الخير: ',
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 10.sp,
                                           color: Colors.grey,
                                         ),
@@ -200,7 +202,8 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                           SizedBox(width: 8.w),
                           Text(
                             'لديك صدقة مستحقة اليوم! ✨',
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 12.sp,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.orange.shade300 : Colors.orange.shade800,
@@ -244,7 +247,8 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
             children: [
               Text(
                 value,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize:ResponsiveUtil.isTablet(context)?9.5.sp :22.sp,
                   fontWeight: FontWeight.bold,
                   color: color,
@@ -254,7 +258,8 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                 SizedBox(width: 4.w),
                 Text(
                   unit,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context)?8.sp :10.sp,
                     fontWeight: FontWeight.w600,
                     color: color.withOpacity(0.7),
@@ -266,7 +271,8 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
           SizedBox(height: 2.h),
           Text(
             label,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize:ResponsiveUtil.isTablet(context)?8.sp: 11.sp,
               fontWeight: FontWeight.w500,
               color: AppThemeColors.cardSubtitleColor(context),

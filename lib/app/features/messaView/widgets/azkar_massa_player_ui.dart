@@ -82,7 +82,8 @@ class AzkarMassaPlayerUI extends StatelessWidget {
                     ),
                     Text(
                       AzkarMassaController.performerName,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 12,
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),
@@ -262,7 +263,8 @@ class AzkarMassaPlayerUI extends StatelessWidget {
                                     const SizedBox(height: 4),
                                     Text(
                                       'أذكار المساء • صوت هادئ وخاشع',
-                                      style: GoogleFonts.cairo(
+                                      style: TextStyle(
+                  fontFamily: "cairo",
                                         fontSize: isTab ? 12.5 : 11.5,
                                         fontWeight: FontWeight.w600,
                                         color: isDark ? Colors.white70 : Colors.black54,
@@ -287,7 +289,8 @@ class AzkarMassaPlayerUI extends StatelessWidget {
                                     const SizedBox(width: 4),
                                     Text(
                                       'أوفلاين',
-                                      style: GoogleFonts.cairo(
+                                      style: TextStyle(
+                  fontFamily: "cairo",
                                         fontSize: 11,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.green.shade700,
@@ -334,7 +337,8 @@ class AzkarMassaPlayerUI extends StatelessWidget {
                               : Icon(Icons.download_rounded, size: 19, color: isDark ? Colors.greenAccent : primaryColor),
                           label: Text(
                             controller.isDownloading ? 'جاري تحميل أذكار المساء...' : 'تحميل للتشغيل بدون إنترنت',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white : Colors.grey[900],
@@ -359,7 +363,8 @@ class AzkarMassaPlayerUI extends StatelessWidget {
                       ),
                       Text(
                         controller.formatDuration(controller.position),
-                        style: GoogleFonts.cairo(fontSize: 11, color: isDark ? Colors.white70 : Colors.black54),
+                        style: TextStyle(
+                  fontFamily: "cairo",fontSize: 11, color: isDark ? Colors.white70 : Colors.black54),
                       ),
                       Expanded(
                         child: SliderTheme(
@@ -384,7 +389,8 @@ class AzkarMassaPlayerUI extends StatelessWidget {
                       ),
                       Text(
                         controller.formatDuration(controller.duration),
-                        style: GoogleFonts.cairo(fontSize: 11, color: isDark ? Colors.white70 : Colors.black54),
+                        style: TextStyle(
+                  fontFamily: "cairo",fontSize: 11, color: isDark ? Colors.white70 : Colors.black54),
                       ),
                       IconButton(
                         onPressed: durationMs == 0
@@ -456,7 +462,8 @@ class AzkarMassaPlayerUI extends StatelessWidget {
                     textDirection: ui.TextDirection.rtl,
                     child: Text(
                       'استمع للأذكار بهدوء وخشوع، وحاول ترديدها بقلب حاضر.',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 12.5,
                         height: 1.6,
                         color: isDark ? Colors.grey[300] : Colors.grey[800],

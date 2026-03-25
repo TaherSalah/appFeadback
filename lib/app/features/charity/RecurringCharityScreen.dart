@@ -89,7 +89,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                       SizedBox(width: 12.w),
                       Text(
                         existing == null ? 'إضافة التزام صدقة جديد' : 'تعديل التزام الصدقة',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontWeight: FontWeight.bold, 
                           fontSize: isTab?10.sp: 16.sp,
                           color: AppThemeColors.cardHeaderColor(context),
@@ -166,7 +167,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                             alignment: Alignment.center,
                             child: Text(
                               day.toString(),
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 color: isSelected ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF64748B)),
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                                 fontSize: 13.sp,
@@ -224,7 +226,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                       ),
                       child: Text(
                         existing == null ? 'تفعيل الالتزام' : 'حفظ التعديلات',
-                        style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize:isTab?10.sp: 16.sp)
+                           style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize:isTab?10.sp: 16.sp)
                       ),
                     ),
                   ),
@@ -244,7 +247,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
       children: [
         Text(
           title, 
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: isTab ? 10.sp : 15.sp,
             fontWeight: FontWeight.bold,
             color: AppThemeColors.cardHeaderColor(context),
@@ -254,7 +258,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
           SizedBox(width: 8.w),
           Text(
             subtitle, 
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 11.sp, 
               color: isDark ? Colors.white38 : Colors.black38,
             )
@@ -267,7 +272,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
   void _showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: GoogleFonts.cairo()),
+        content: Text(message,    style: TextStyle(
+                          fontFamily: "cairo",)),
         backgroundColor: Colors.redAccent,
       ),
     );
@@ -322,7 +328,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
             centerTitle: true,
             title: Text(
               'الصدقات الدورية',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -378,12 +385,14 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
           SizedBox(height: 16.h),
           Text(
             'لا توجد صدقات دورية مضافة بعد',
-            style: GoogleFonts.cairo(fontSize:isTab? 10.sp:16.sp, color: Colors.grey),
+               style: TextStyle(
+                          fontFamily: "cairo",fontSize:isTab? 10.sp:16.sp, color: Colors.grey),
           ),
           SizedBox(height: 8.h),
           Text(
             'أضف صدقاتك الشهرية لتذكيرك بها',
-            style: GoogleFonts.cairo(fontSize:isTab? 8.sp: 14.sp, color: Colors.grey.withOpacity(0.8)),
+               style: TextStyle(
+                          fontFamily: "cairo",fontSize:isTab? 8.sp: 14.sp, color: Colors.grey.withOpacity(0.8)),
           ),
         ],
       ),
@@ -433,7 +442,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                     children: [
                       Text(
                         item.title,
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontWeight: FontWeight.bold,
                           fontSize: 16.sp,
                           color: AppThemeColors.cardHeaderColor(context),
@@ -441,7 +451,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                       ),
                       Text(
                         '${item.amount} ${item.currency}',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 14.sp,
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
@@ -477,7 +488,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
                     SizedBox(width: 6.w),
                     Text(
                       'تذكير يوم ${item.dayOfMonth} من كل شهر',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 12.sp,
                         color: isDark ? Colors.orange.shade300 : Colors.orange.shade800,
                         fontWeight: FontWeight.w600,
@@ -535,16 +547,20 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
       builder: (context) => Directionality(
         textDirection: TextDirection.rtl,
         child: AlertDialog(
-          title: Text('حذف الالتزام', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-          content: Text('هل أنت متأكد من حذف هذا الالتزام؟', style: GoogleFonts.cairo()),
+          title: Text('حذف الالتزام',    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
+          content: Text('هل أنت متأكد من حذف هذا الالتزام؟',    style: TextStyle(
+                          fontFamily: "cairo",)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+              child: Text('إلغاء',    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey)),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text('حذف', style: GoogleFonts.cairo(color: Colors.red, fontWeight: FontWeight.bold)),
+              child: Text('حذف',    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.red, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -564,14 +580,16 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
       child: TextField(
         controller: controller,
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
           fontSize:isTab? 9.sp:14.sp,
           color: AppThemeColors.cardHeaderColor(context),
         ),
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon, color: AppColors.primary, size: isTab?15.sp: 20.sp),
-          labelStyle: GoogleFonts.cairo(
+          labelStyle: TextStyle(
+                          fontFamily: "cairo",
             fontSize: isTab? 10.sp:13.sp,
             color: isDark ? Colors.white38 : Colors.black38,
           ),
@@ -612,7 +630,8 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
             // SizedBox(width: 8.w),
             Text(
               label, 
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 13.sp, 
                 color: isSelected ? AppColors.primary : (isDark ? Colors.white60 : const Color(0xFF64748B)), 
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,

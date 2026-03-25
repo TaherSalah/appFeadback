@@ -137,6 +137,7 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       }
     } catch (e) {
       print('Error refreshing user stats: $e');
+
     }
   }
 
@@ -275,7 +276,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                           children: [
                             Text(
                               'أدخل اسمك للمنافسة',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black87,
@@ -285,7 +287,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                             Text(
                               'سيظهر هذا الاسم للمشاركين الآخرين',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 13.5,
                                 color: isDark ? Colors.white70 : Colors.black87,
                               ),
@@ -298,7 +301,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                               maxLength: maxLength,
                               textAlign: TextAlign.center,
                               onChanged: (_) => setLocalState(() {}),
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontWeight: FontWeight.w600,
                               ),
                               decoration: InputDecoration(
@@ -311,7 +315,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                   borderRadius: BorderRadius.circular(14),
                                   borderSide: BorderSide.none,
                                 ),
-                                errorStyle: GoogleFonts.cairo(fontSize: 11),
+                                errorStyle: TextStyle(
+                                    fontFamily: "cairo",fontSize: 11),
                               ),
                             ),
 
@@ -321,7 +326,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                 padding: const EdgeInsets.only(top: 8),
                                 child: Text(
                                   errorMessage,
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     fontSize: 12,
                                     color: Colors.redAccent,
                                     fontWeight: FontWeight.bold,
@@ -345,7 +351,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                     ),
                                     child: Text(
                                       'إلغاء',
-                                      style: GoogleFonts.cairo(),
+                                         style: TextStyle(
+                          fontFamily: "cairo",),
                                     ),
                                   ),
                                 ),
@@ -376,7 +383,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                                     ),
                                     child: Text(
                                       'حفظ',
-                                      style: GoogleFonts.cairo(),
+                                         style: TextStyle(
+                          fontFamily: "cairo",),
                                     ),
                                   ),
                                 ),
@@ -488,7 +496,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         ),
         title: Text(
           _isDetailView ? 'تفاصيل الختمة' : 'الختمة الجماعية',
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             color: Colors.green,
             fontWeight: FontWeight.bold,
           ),
@@ -677,7 +686,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         const SizedBox(width: 10),
         Text(
           title,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize:ResponsiveUtil.isTablet(context)? 18:14.sp,
 
             fontWeight: FontWeight.w900,
@@ -741,7 +751,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                         children: [
                           Text(
                             'تأثيرك في المجتمع',
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize:ResponsiveUtil.isTablet(context)? 18:14.sp,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white : Colors.black87,
@@ -754,7 +765,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       ),
                       Text(
                         _userNickname ?? 'مشارك مجهول',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize:ResponsiveUtil.isTablet(context)? 13:13.sp,
                           color: Colors.grey,
                           fontWeight: FontWeight.bold,
@@ -792,7 +804,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             const SizedBox(height: 10),
             Text(
               'اضغط لعرض التحليل التفصيلي للختمات',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 10,
                 color: KColors.primaryColor.withOpacity(0.6),
                 fontWeight: FontWeight.bold,
@@ -821,7 +834,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           // const SizedBox(height: 8),
           Text(
             value,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 22,
               fontWeight: FontWeight.w900,
               height: 1,
@@ -829,7 +843,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           ),
           Text(
             label,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 11,
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -872,7 +887,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       isTop ? Colors.amber : Colors.grey.withOpacity(0.2),
                   child: Text(
                     '${index + 1}',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: isTop ? Colors.black87 : Colors.grey,
@@ -883,7 +899,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                 Expanded(
                   child: Text(
                     name,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87,
                     ),
@@ -891,7 +908,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                 ),
                 Text(
                   '$count ورد',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontWeight: FontWeight.w900,
                     color: KColors.primaryColor,
                   ),
@@ -940,7 +958,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               Expanded(
                 child: RichText(
                   text: TextSpan(
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       color: isDark ? Colors.white70 : Colors.black87,
                       fontSize: 13,
                     ),
@@ -965,7 +984,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               ),
               Text(
                 _formatRelativeTime(activity['updated_at']),
-                style: GoogleFonts.cairo(fontSize: 10, color: Colors.grey),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontSize: 10, color: Colors.grey),
               ),
             ],
           ),
@@ -1031,7 +1051,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       children: [
                         Text(
                           title,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize:ResponsiveUtil.isTablet(context)? 20:13.sp,
 
                             fontWeight: FontWeight.w900,
@@ -1040,7 +1061,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                         ),
                         Text(
                           'نشاط مجتمعي قائم بنظام ال $typeLabel',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize:ResponsiveUtil.isTablet(context)? 12:10.sp,
 
                             color: Colors.grey,
@@ -1093,7 +1115,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                 child: Center(
                   child: Text(
                     'انضم للختمة الآن',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
                       fontSize:ResponsiveUtil.isTablet(context)? 15:12.sp,
@@ -1116,7 +1139,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         const SizedBox(width: 5),
         Text(
           label,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
               fontSize:                              ResponsiveUtil.isTablet(context)? 11:10.sp
     , fontWeight: FontWeight.bold, color: Colors.grey),
         ),
@@ -1371,7 +1395,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           const SizedBox(height: 16),
           Text(
             'لا توجد حملة نشطة حالياً',
-            style: GoogleFonts.cairo(fontSize: 18, color: Colors.grey),
+               style: TextStyle(
+                          fontFamily: "cairo",fontSize: 18, color: Colors.grey),
           ),
         ],
       ),
@@ -1459,7 +1484,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               const SizedBox(width: 10),
               Text(
                 'لوحة الصدارة المحلية',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black87),
@@ -1503,7 +1529,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                             isTop ? Colors.amber : Colors.grey.withOpacity(0.2),
                         child: Text(
                           '${index + 1}',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: isTop ? Colors.black87 : Colors.grey),
@@ -1513,7 +1540,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       Expanded(
                         child: Text(
                           entry.key,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white : Colors.black87,
                             fontSize: 14,
@@ -1522,7 +1550,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       ),
                       Text(
                         '${entry.value} ورد',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontWeight: FontWeight.w900,
                             color: KColors.primaryColor),
                       ),
@@ -1557,7 +1586,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               const SizedBox(width: 10),
               Text(
                 'آخر المشاركات بالتفصيل',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black87),
@@ -1601,14 +1631,16 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                       children: [
                         Text(
                           '${item['user_name'] ?? 'أحد المتسابقين'}',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               height: 1.2),
                         ),
                         Text(
                           '${isDone ? 'أتم قراءة' : 'بدأ قراءة'} ورد رقم ${item['item_index']}',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 12, color: Colors.grey, height: 1.2),
                         ),
                       ],
@@ -1616,7 +1648,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   ),
                   Text(
                     _formatRelativeTime(item['updated_at']),
-                    style: GoogleFonts.cairo(fontSize: 10, color: Colors.grey),
+                       style: TextStyle(
+                          fontFamily: "cairo",fontSize: 10, color: Colors.grey),
                   ),
                 ],
               ),
@@ -1647,7 +1680,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             ).createShader(bounds),
             child: Text(
               campaign['title'] ?? 'بدون عنوان',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
@@ -1711,7 +1745,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           const SizedBox(height: 8),
           Text(
             _currentQuote,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: isDark ? Colors.white70 : Colors.black87,
               fontSize: 13,
               fontStyle: FontStyle.italic,
@@ -1753,11 +1788,13 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           children: [
             Text(
               'تقدم الختمة الحالية',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.w600),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w600),
             ),
             Text(
               '${(percent * 100).toInt()}%',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontWeight: FontWeight.bold, color: KColors.primaryColor,
                 fontSize:ResponsiveUtil.isTablet(context)? 12:10.sp,
 
@@ -1801,7 +1838,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               ' تم إنجاز ${(percent * campaign['target_total']).toInt()} من ${campaign['target_total']} حتى الآن!',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 10,
                   color: Colors.green,
                   fontWeight: FontWeight.bold),
@@ -1813,7 +1851,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               '👈 اضغط على الجزء الأصفر مرة أخرى بعد القراءة لإتمامه (سيتحول للأخضر)',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 10,
                   color: Colors.amber,
                   fontWeight: FontWeight.bold),
@@ -1856,7 +1895,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           const SizedBox(height: 12),
           Text(
             value,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 24,
               fontWeight: FontWeight.w900,
               height: 1.1,
@@ -1867,7 +1907,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
           Text(
             label,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 11,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
               height: 1.1,
@@ -1918,7 +1959,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     size: 48, color: Colors.grey.withOpacity(0.5)),
                 const SizedBox(height: 10),
                 Text('لا توجد نتائج للبحث',
-                    style: GoogleFonts.cairo(color: Colors.grey)),
+                       style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey)),
               ],
             ),
           ),
@@ -2042,7 +2084,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   const SizedBox(height: 6),
                   Text(
                     label,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 13,
                         fontWeight: FontWeight.w900,
                         color:
@@ -2082,13 +2125,15 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             children: [
               Text(
                 'مشاركة في الختمة الجماعية',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
                 'هل تود المساهمة بقراءة $label؟',
-                style: GoogleFonts.cairo(color: Colors.grey),
+                   style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
               ),
               const SizedBox(height: 24),
               if (status == 'available')
@@ -2101,7 +2146,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                         borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text('أنا سأقرأه',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                           color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               if (status == 'reading' && isMine)
@@ -2114,7 +2160,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                         borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text('تمت القراءة بحمد الله',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                           color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               if (status != 'completed') ...[
@@ -2126,7 +2173,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   },
                   icon: const Icon(Icons.menu_book_rounded, color: Colors.teal),
                   label: Text('قراءة من المصحف',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                           color: Colors.teal, fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
@@ -2144,7 +2192,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child:
-                    Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+                    Text('إلغاء',    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey)),
               ),
             ],
           ),
@@ -2352,7 +2401,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               Icon(Icons.help_outline_rounded, color: KColors.primaryColor),
               const SizedBox(width: 10),
               Text('كيف أشارك؟',
-                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                     style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
             ],
           ),
           content: SingleChildScrollView(
@@ -2377,7 +2427,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   ),
                   child: Text(
                     '💡 ملاحظة: إذا حجزت ورداً ولم تكمله خلال 24 ساعة، سيعود متاحاً للآخرين تلقائياً.',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 12,
                         color: isDark ? Colors.white : Colors.black87),
                   ),
@@ -2389,7 +2440,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text('فهمت، شكراً',
-                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                     style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -2405,9 +2457,11 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         children: [
           Text(title,
               style:
-                  GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 14)),
+                  TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 14)),
           Text(desc,
-              style: GoogleFonts.cairo(fontSize: 12, color: Colors.grey)),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12, color: Colors.grey)),
         ],
       ),
     );
@@ -2445,7 +2499,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -2453,7 +2508,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
                     ),
                     Text(
                       subtitle,
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 10,
                         color: isDark ? Colors.white60 : Colors.grey,
                       ),
@@ -2549,7 +2605,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
               const SizedBox(width: 10),
               Text(
                 'إحصائيات مجتمع رفيق المسلم اليومي',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize:ResponsiveUtil.isTablet(context)? 16:14.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
@@ -2593,7 +2650,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           // const SizedBox(height: 5),
           Text(
             value,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 18,
               fontWeight: FontWeight.w900,
               height: 1,
@@ -2602,7 +2660,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 10,
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -2640,14 +2699,16 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       child: TextField(
         controller: _searchController,
         onChanged: (val) => setState(() => _searchQuery = val),
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
           fontSize: 14,
           fontWeight: FontWeight.w600,
           color: isDark ? Colors.white : Colors.black87,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.cairo(
+          hintStyle:TextStyle(
+            fontFamily: "cairo",
             fontSize: 13,
             color: isDark ? Colors.white54 : Colors.grey[500],
           ),
@@ -2698,7 +2759,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         onPressed: _joinRandomWard,
         icon: const Icon(Icons.bolt_rounded, size: 20, color: Colors.amber),
         label: Text('انضم إلى ورد عشوائي الآن',
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+               style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 14),
           foregroundColor: isDark ? Colors.amber[300] : Colors.amber[800],
@@ -2804,7 +2866,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             ).createShader(bounds),
             child: Text(
               'تحليل القراءة الشخصي',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
                   color: Colors.white),
@@ -2814,7 +2877,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             campaignId == null
                 ? 'أداؤك ومساهمتك في جميع الختمات'
                 : 'أداؤك ومساهمتك في هذه الختمة',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 13,
                 color: isDark ? Colors.blueGrey[300] : Colors.grey[600],
                 letterSpacing: 0.5),
@@ -2872,7 +2936,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                         const SizedBox(width: 10),
                         Text(
                           'سجل الإنجازات الأخيرة',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -2909,7 +2974,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                             icon: const Icon(Icons.workspace_premium_rounded,
                                 color: Colors.white),
                             label: Text('استلام شهادة تقدير',
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white)),
                             style: ElevatedButton.styleFrom(
@@ -2965,13 +3031,15 @@ class _AnalyticsBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           Text(value,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 height: 1,
               )),
           Text(label,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 12,
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                   fontWeight: FontWeight.w600)),
@@ -2994,7 +3062,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
         children: [
           Text(
             'مساهمتي مقابل الختمات الكلية',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                fontFamily: "cairo",
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white70 : Colors.black87),
@@ -3036,14 +3105,16 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                 children: [
                   Text(
                     count.toString(),
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
                         color: primaryColor),
                   ),
                   Text(
                     'ورد مكتمل',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 12,
                         color: isDark ? Colors.grey[500] : Colors.grey[600],
                         height: 0.5),
@@ -3101,7 +3172,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
               children: [
                 Text(
                   'أتممت ورد رقم ${item['item_index'] ?? '؟؟'}',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87),
@@ -3110,7 +3182,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
                   campaignId != null
                       ? _formatDate(item['updated_at'])
                       : '${_formatDate(item['updated_at'])} • في ${_getCampaignTitleForId(item['campaign_id'])}',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 11,
                     color: Colors.grey,
                   ),
@@ -3126,7 +3199,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             ),
             child: Text(
               'مكتمل',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 10,
                   color: Colors.green,
                   fontWeight: FontWeight.bold),
@@ -3148,7 +3222,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             const SizedBox(height: 15),
             Text(
               'ابدأ رحلتك اليوم!',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 16,
                   color: Colors.grey,
                   fontWeight: FontWeight.bold),
@@ -3156,7 +3231,8 @@ class _AnalyticsBottomSheet extends StatelessWidget {
             Text(
               'شارك في قراءة ورد لتبدأ في جمع النقاط والأوسمة',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 12, color: Colors.grey[400]),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12, color: Colors.grey[400]),
             ),
           ],
         ),

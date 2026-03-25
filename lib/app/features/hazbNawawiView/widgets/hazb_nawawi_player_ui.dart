@@ -62,7 +62,8 @@ class HazbNawawiPlayerUI extends GetView<HazbNawawiController> {
               Expanded(
                 child: Text(
                   'حزب الإمام النووي',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black,
@@ -274,7 +275,8 @@ class HazbNawawiPlayerUI extends GetView<HazbNawawiController> {
                                     const SizedBox(height: 4),
                                     Text(
                                       'حزب الإمام النووي',
-                                      style: GoogleFonts.cairo(
+                                      style: TextStyle(
+                  fontFamily: "cairo",
                                         fontSize: isTab ? 12.5 : 11.5,
                                         fontWeight: FontWeight.w600,
                                         color: isDark
@@ -307,7 +309,8 @@ class HazbNawawiPlayerUI extends GetView<HazbNawawiController> {
                                     const SizedBox(width: 4),
                                     Text(
                                       'أوفلاين',
-                                      style: GoogleFonts.cairo(
+                                      style: TextStyle(
+                  fontFamily: "cairo",
                                         fontSize: 11,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.green.shade700,
@@ -381,7 +384,8 @@ class HazbNawawiPlayerUI extends GetView<HazbNawawiController> {
                             controller.isDownloading
                                 ? 'جاري تحميل حزب الإمام النووي...'
                                 : 'تحميل للتشغيل بدون إنترنت',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white : Colors.grey[900],
@@ -411,7 +415,8 @@ class HazbNawawiPlayerUI extends GetView<HazbNawawiController> {
                       ),
                       Text(
                         controller.formatDuration(controller.position),
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 11,
                           color: isDark ? Colors.white70 : Colors.black54,
                         ),
@@ -445,7 +450,8 @@ class HazbNawawiPlayerUI extends GetView<HazbNawawiController> {
                       ),
                       Text(
                         controller.formatDuration(controller.duration),
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 11,
                           color: isDark ? Colors.white70 : Colors.black54,
                         ),
@@ -538,7 +544,8 @@ class HazbNawawiPlayerUI extends GetView<HazbNawawiController> {
                     textDirection: ui.TextDirection.rtl,
                     child: Text(
                       'استمع للأذكار بهدوء وخشوع، وحاول ترديدها بقلب حاضر.',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 12.5,
                         height: 1.6,
                         color: isDark ? Colors.grey[300] : Colors.grey[800],

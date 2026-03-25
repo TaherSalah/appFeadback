@@ -634,7 +634,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               ],
               title: Text(
                 _getViewTitle(),
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
@@ -745,7 +746,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                         children: [
                           Text(
                             _getGreeting(),
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -753,7 +755,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           ),
                           Text(
                             _getRankTitle(),
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 12.sp,
                               color: Colors.white.withOpacity(0.9),
                             ),
@@ -781,7 +784,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           SizedBox(width: 8.w),
                           Text(
                             '$_totalStars نقطة',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 16.sp,
@@ -791,7 +795,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                       ),
                       Text(
                         'إنجاز رائع!',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                             color: Colors.white70, fontSize: 11.sp),
                       ),
                     ],
@@ -809,7 +814,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               // const SizedBox(width: 8),
               Text(
                 "اختر مغامرتك اليوم",
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
@@ -937,7 +943,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
             // const SizedBox(height: 8),
             Text(
               title,
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontWeight: FontWeight.bold,
                 fontSize: 14.sp,
                 color: Theme.of(context).brightness == Brightness.dark
@@ -950,7 +957,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
 
             Text(
               subtitle,
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 10.sp,
                 color: Colors.grey,
               ),
@@ -982,7 +990,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   Expanded(
                     child: Text(
                       "تتبع المسار لتصبح بطلاً خارقاً! أكمل كل مستوى لفتح المستوى التالي.",
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 13.sp,
                         color: isDark ? Colors.white70 : Colors.blue.shade900,
                       ),
@@ -1007,7 +1016,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               const SizedBox(height: 4),
               Text(
                 "أكملت ${_levels.where((l) => (l['tasks'] as List).every((t) => t['done'])).length} من ${_levels.length} مستويات",
-                style: GoogleFonts.cairo(fontSize: 11.sp, color: Colors.grey),
+                style: TextStyle(
+                  fontFamily: "cairo",fontSize: 11.sp, color: Colors.grey),
               ),
             ],
           ),
@@ -1106,7 +1116,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                     const SizedBox(height: 8),
                     Text(
                       level['title'].split(':')[1].trim(),
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
                         color: isDark ? Colors.white : Colors.black87,
@@ -1114,7 +1125,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                     ),
                     Text(
                       "$completedCount / ${tasks.length}",
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 11.sp,
                         color: Colors.grey,
                       ),
@@ -1190,7 +1202,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                     const SizedBox(width: 12),
                     Text(
                       _levels[index]['title'],
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1230,7 +1243,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           ),
                           title: Text(
                             task['title'],
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontWeight: task['done']
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -1241,7 +1255,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           ),
                           trailing: Text(
                             "+${task['points']} ⭐",
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                                 color: Colors.amber,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -1290,14 +1305,16 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   children: [
                     Text(
                       'إجمالي النجوم',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14.sp,
                         color: Colors.white,
                       ),
                     ),
                     Text(
                       '$_totalStars ⭐',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 28.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -1335,7 +1352,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
         // Badges section
         Text(
           'أوسمتك المستحقة 🏅',
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black87,
@@ -1357,7 +1375,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                 const SizedBox(height: 12),
                 Text(
                   'لا توجد شارات بعد\nابدأ بجمع النجوم والتحديات!',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 14.sp,
                     color: Colors.grey,
                   ),
@@ -1407,7 +1426,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                         children: [
                           Text(
                             badge['title'] ?? '',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 15.sp,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white : Colors.black87,
@@ -1415,7 +1435,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           ),
                           Text(
                             badge['desc'] ?? '',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 12.sp,
                               color: Colors.grey,
                             ),
@@ -1435,7 +1456,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
             icon: const Icon(Icons.refresh, color: Colors.red),
             label: Text(
               'تصفير كل التقدم',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.red,
                 fontWeight: FontWeight.bold,
               ),
@@ -1463,7 +1485,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           const SizedBox(height: 8),
           Text(
             label,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 11.sp,
               color: Colors.grey,
             ),
@@ -1471,7 +1494,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           ),
           Text(
             value,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: color,
@@ -1509,7 +1533,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text("إعدادات الملف الشخصي",
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize:
                                 ResponsiveUtil.isTablet(context) ? 14.sp : 18.sp,
                             fontWeight: FontWeight.bold)),
@@ -1526,11 +1551,13 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      style: GoogleFonts.cairo(),
+                      style: TextStyle(
+                  fontFamily: "cairo",),
                     ),
                     const SizedBox(height: 20),
                     Text("اختر بطلك",
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 16.sp, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 15),
                     Row(
@@ -1559,7 +1586,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                                         style: TextStyle(fontSize: 40))),
                                 const SizedBox(height: 8),
                                 Text("ولد",
-                                    style: GoogleFonts.cairo(
+                                    style: TextStyle(
+                  fontFamily: "cairo",
                                         fontWeight: FontWeight.bold,
                                         color: tempGender == 'boy'
                                             ? Colors.blue
@@ -1591,7 +1619,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                                         style: TextStyle(fontSize: 40))),
                                 const SizedBox(height: 8),
                                 Text("بنت",
-                                    style: GoogleFonts.cairo(
+                                    style: TextStyle(
+                  fontFamily: "cairo",
                                         fontWeight: FontWeight.bold,
                                         color: tempGender == 'girl'
                                             ? Colors.pink
@@ -1624,7 +1653,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                         ),
                         child: Text(
                           "حفظ",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 16.sp,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -1662,7 +1692,8 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               Expanded(
                 child: Text(
                   "هنا تجد كل المتعة والتعلم! اختر نشاطاً لتبدأ رحلتك.",
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 13.sp,
                     color: isDark ? Colors.white70 : Colors.orange.shade900,
                   ),

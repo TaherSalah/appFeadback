@@ -38,7 +38,8 @@ class SettingsView extends StatelessWidget {
             centerTitle: true,
             title: Text(
               "الإعدادات",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
@@ -217,6 +218,14 @@ class SettingsView extends StatelessWidget {
                           builder: (context) => const SettingsEmailDialog(),
                         ),
                       ),
+                      const SettingsDivider(),
+                      SettingsListTile(
+                        icon: Icons.telegram_rounded,
+                        title: 'قناة التلجرام',
+                        subtitle: 'انضم لمجتمع رفيق المسلم اليومي على تلجرام',
+                        iconColor: const Color(0xFF229ED9),
+                        onTap: () => _showTelegramDialog(context),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 40),
@@ -225,6 +234,60 @@ class SettingsView extends StatelessWidget {
             );
           },
         ),
+      ),
+    );
+  }
+
+  void _showTelegramDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          "انضم إلينا على تلجرام",
+          textAlign: TextAlign.center,
+             style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image.asset(
+                "assets/images/telegram_qr.png",
+                width: 250.w,
+                fit: BoxFit.contain,
+              ),
+            ),
+            SizedBox(height: 20.h),
+            Text(
+              "اشترك في القناة لتصلك آخر التحديثات والميزات الجديدة فور صدورها.",
+              textAlign: TextAlign.center,
+                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("إغلاق",    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF229ED9),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () => Get.find<SettingsController>().launchTelegram(),
+            child: Text(
+              "انضم الآن",
+                 style: TextStyle(
+                          fontFamily: "cairo",color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
       ),
     );
   }

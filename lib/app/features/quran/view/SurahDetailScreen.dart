@@ -1,15 +1,8 @@
-import 'dart:async';
-import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
-// import 'package:muslimdaily/app/features/shareCard/PremiumShareCard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -698,7 +691,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                               // السورة السابقة (تظهر في اليمين في RTL)
                               _buildNavButton(
                                 title: currentIndex > 0
-                                    ? "${widget.allSurahs[currentIndex - 1].name}"
+                                    ? widget.allSurahs[currentIndex - 1].name
                                     : "البداية",
                                 icon: Icons
                                     .arrow_back_ios_new_rounded, // سهم لليمين
@@ -718,7 +711,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                               _buildNavButton(
                                 title: currentIndex <
                                         widget.allSurahs.length - 1
-                                    ? "${widget.allSurahs[currentIndex + 1].name}"
+                                    ? widget.allSurahs[currentIndex + 1].name
                                     : "النهاية",
                                 icon: Icons
                                     .arrow_forward_ios_rounded, // سهم لليسار
@@ -833,7 +826,8 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
               padding: EdgeInsets.symmetric(horizontal: 5.w),
               child: Text(
                 title,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
                   color: onPressed == null

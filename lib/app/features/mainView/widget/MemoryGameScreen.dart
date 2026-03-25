@@ -317,14 +317,16 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> {
                 children: [
                    const Icon(Icons.star, color: Colors.amber, size: 20),
                    const SizedBox(width: 4),
-                   Text('$_stars', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                   Text('$_stars', style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
           ],
           title: Text(
             level.title,
-            style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                  fontFamily: "cairo",fontSize: 14.sp, fontWeight: FontWeight.bold),
           ),
         ),
         body: Column(
@@ -394,8 +396,10 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> {
       children: [
         Icon(icon, color: Colors.white, size: 20),
         const SizedBox(height: 2),
-        Text(value, style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.sp)),
-        Text(label, style: GoogleFonts.cairo(color: Colors.white70, fontSize: 9.sp)),
+        Text(value, style: TextStyle(
+                  fontFamily: "cairo",color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.sp)),
+        Text(label, style: TextStyle(
+                  fontFamily: "cairo",color: Colors.white70, fontSize: 9.sp)),
       ],
     );
   }
@@ -480,7 +484,8 @@ class MemoryCardWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 2),
             child: Text(
               card.label,
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 8.sp,
                 fontWeight: FontWeight.bold,
                 color: card.isMatched ? Colors.green : (isDark ? Colors.white70 : Colors.black87),

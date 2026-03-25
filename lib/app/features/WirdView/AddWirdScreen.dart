@@ -384,9 +384,6 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = context.isDark ? Colors.tealAccent : const Color(0xFF00897B);
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -400,7 +397,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
             centerTitle: true,
             title: Text(
               "إضافة ورد جديد",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -474,7 +472,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
                             const Spacer(),
                             Text(
                               "اسحب للترتيب",
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 10.sp, color: Colors.grey),
                             ),
                             SizedBox(width: 4.w),
@@ -545,7 +544,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
             }
           },
           label: Text("حفظ الورد",
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
           icon: const Icon(Icons.check_circle_outline_rounded),
           backgroundColor: KColors.primaryColor,
           foregroundColor: Colors.white,
@@ -565,7 +565,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
         SizedBox(width: 8.w),
         Text(
           title,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 14.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white70 : Colors.black87),
@@ -590,11 +591,13 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       ),
       child: TextField(
         controller: nameController,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 13.sp, color: context.isDark ? Colors.white : Colors.black87),
         decoration: InputDecoration(
           hintText: "مثال: أذكار ما بعد الصلاة",
-          hintStyle: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey),
+          hintStyle: TextStyle(
+              fontFamily: "cairo",fontSize: 12.sp, color: Colors.grey),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide.none),
@@ -614,11 +617,13 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
       ),
       child: TextField(
         controller: customCategoryController,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 13.sp, color: context.isDark ? Colors.white : Colors.black87),
         decoration: InputDecoration(
           hintText: "اكتب اسم التصنيف الجديد...",
-          hintStyle: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey),
+          hintStyle: TextStyle(
+              fontFamily: "cairo",fontSize: 12.sp, color: Colors.grey),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide.none),
@@ -661,7 +666,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               child: Center(
                 child: Text(
                   f['label']!,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 11.sp,
                     color: isSelected
                         ? (context.isDark ? Colors.black : Colors.white)
@@ -713,7 +719,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               selectedTime != null
                   ? selectedTime!.format(context)
                   : "اضغط لضبط ميعاد التنبيه",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 14.sp,
                 color: context.isDark ? Colors.white : Colors.black87,
                 fontWeight:
@@ -769,7 +776,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
               child: Center(
                 child: Text(
                   cat,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 11.sp,
                     color: isSelected
                         ? (context.isDark ? Colors.black : Colors.white)
@@ -840,7 +848,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
         subtitle: Padding(
           padding: EdgeInsets.only(top: 4.h),
           child: Text("التكرار: ${dhikr['count']} مرة",
-              style: GoogleFonts.cairo(fontSize: 10.sp, color: Colors.grey)),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 10.sp, color: Colors.grey)),
         ),
       ),
     );
@@ -870,7 +879,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
           SizedBox(width: 12.w),
           Expanded(
             child: Text(dhikr.text,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 12.sp,
                     color: context.isDark ? Colors.white : Colors.black87)),
           ),
@@ -906,7 +916,8 @@ class _AddWirdScreenState extends State<AddWirdScreen> {
             SizedBox(width: 10.w),
             Text(
               "إضافة ذكر مخصص",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 13.sp,
                   fontWeight: FontWeight.bold,
                   color: context.isDark ? Colors.tealAccent : const Color(0xFF00897B)),

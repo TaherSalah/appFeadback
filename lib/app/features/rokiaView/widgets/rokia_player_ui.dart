@@ -96,14 +96,16 @@ class RokiaPlayerUI extends GetView<RokiaController> {
                     children: [
                       Text(
                         'الرقية الشرعية',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
                       ),
                       Text(
                         RokiaController.performerName,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 12,
                           color: isDark ? Colors.white70 : Colors.black54,
                         ),
@@ -292,7 +294,8 @@ class RokiaPlayerUI extends GetView<RokiaController> {
                                     const SizedBox(height: 4),
                                     Text(
                                       'الرقية الشرعية • آيات مختارة للشفاء والسكينة',
-                                      style: GoogleFonts.cairo(
+                                      style: TextStyle(
+                  fontFamily: "cairo",
                                         fontSize: isTab ? 12.5 : 11.5,
                                         fontWeight: FontWeight.w600,
                                         color: isDark ? Colors.white70 : Colors.black54,
@@ -318,7 +321,8 @@ class RokiaPlayerUI extends GetView<RokiaController> {
                                     const SizedBox(width: 4),
                                     Text(
                                       'أوفلاين',
-                                      style: GoogleFonts.cairo(
+                                      style: TextStyle(
+                  fontFamily: "cairo",
                                         fontSize: 11,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.green.shade700,
@@ -365,7 +369,8 @@ class RokiaPlayerUI extends GetView<RokiaController> {
                               : Icon(Icons.download_rounded, size: 19, color: isDark ? Colors.greenAccent : primaryColor),
                           label: Text(
                             controller.isDownloading ? 'جاري تحميل الرقية الشرعية...' : 'تحميل للتشغيل بدون إنترنت',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white : Colors.grey[900],
@@ -390,7 +395,8 @@ class RokiaPlayerUI extends GetView<RokiaController> {
                       ),
                       Text(
                         controller.formatDuration(controller.position),
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 11,
                           color: isDark ? Colors.white70 : Colors.black54,
                         ),
@@ -418,7 +424,8 @@ class RokiaPlayerUI extends GetView<RokiaController> {
                       ),
                       Text(
                         controller.formatDuration(controller.duration),
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 11,
                           color: isDark ? Colors.white70 : Colors.black54,
                         ),
@@ -493,7 +500,8 @@ class RokiaPlayerUI extends GetView<RokiaController> {
                     textDirection: ui.TextDirection.rtl,
                     child: Text(
                       'استمع للرقية بهدوء وخشوع، واسأل الله الشفاء والعافية.',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 12.5,
                         height: 1.6,
                         color: isDark ? Colors.grey[300] : Colors.grey[800],

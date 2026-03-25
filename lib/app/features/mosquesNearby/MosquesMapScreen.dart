@@ -202,7 +202,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                   children: [
                     Text(
                       isEditing ? "تعديل بيانات المسجد" : "إضافة مسجد جديد",
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -271,7 +272,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                             ),
                             child: Text(
                               'إلغاء',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 14,
                                 color: isDark
                                     ? Colors.white
@@ -294,7 +296,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                             icon: Icon(
                                 isEditing ? Icons.check : Icons.add_location),
                             label: Text(isEditing ? 'تحديث' : 'حفظ',
-                                style: GoogleFonts.cairo()),
+                                   style: TextStyle(
+                          fontFamily: "cairo",)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
@@ -412,7 +415,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                   children: [
                     Text(
                       'حذف المسجد؟',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -422,7 +426,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                     Text(
                       'هل أنت متأكد من رغبتك في حذف "${mosque.name}"؟\n'
                       'لا يمكن التراجع عن هذه العملية.',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 14,
                         height: 1.4,
                         color: isDark ? Colors.white70 : Colors.black87,
@@ -452,7 +457,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                           Expanded(
                             child: Text(
                               'سيتم حذف المسجد نهائياً من قاعدة البيانات.',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 12.5,
                                 color: Colors.red,
                               ),
@@ -480,7 +486,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                             ),
                             child: Text(
                               'تراجع',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 14,
                                 color: isDark
                                     ? Colors.white
@@ -506,7 +513,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                               }
                             },
                             icon: const Icon(Icons.delete_outline),
-                            label: Text('حذف', style: GoogleFonts.cairo()),
+                            label: Text('حذف',    style: TextStyle(
+                          fontFamily: "cairo",)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
@@ -675,7 +683,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
             ),
             child: Text(
               "المساجد القريبة",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
               ),
@@ -814,7 +823,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                           child: FadeIn(
                                             child: Text(
                                               mosque.name,
-                                              style: GoogleFonts.cairo(
+                                                 style: TextStyle(
+                          fontFamily: "cairo",
                                                 fontSize: 10.sp,
                                                 fontWeight: FontWeight.bold,
                                                 backgroundColor: Colors.white70,
@@ -869,7 +879,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                     children: [
                                       Text(
                                         "نطاق البحث: ${(_searchRadius / 1000).toStringAsFixed(1)} كم",
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13.sp),
                                       ),
@@ -923,7 +934,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                               backgroundColor: Colors.blue,
                               icon: const Icon(Icons.check),
                               label: Text("تأكيد الموقع",
-                                  style: GoogleFonts.cairo()),
+                                     style: TextStyle(
+                          fontFamily: "cairo",)),
                               onPressed: _confirmLocation,
                             ),
                           ),
@@ -945,7 +957,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                             icon: const Icon(Icons.keyboard_arrow_up),
                             label: Text(
                               "إظهار المساجد القريبة",
-                              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                                 style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
                             ),
                             onPressed: () {
                               setState(() {
@@ -997,7 +1010,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                   children: [
                                     Text(
                                       "المساجد القريبة",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 18.sp,
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -1012,7 +1026,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                           ),
                                           child: Text(
                                             "${_mosques.length} مسجد",
-                                            style: GoogleFonts.cairo(
+                                               style: TextStyle(
+                          fontFamily: "cairo",
                                                 color: Colors.green,
                                                 fontSize: 12.sp,
                                                 fontWeight: FontWeight.bold),
@@ -1055,7 +1070,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                 Expanded(
                                   child: Center(
                                     child: Text("لم يتم العثور على مساجد",
-                                        style: GoogleFonts.cairo()),
+                                           style: TextStyle(
+                          fontFamily: "cairo",)),
                                   ),
                                 )
                               else
@@ -1117,7 +1133,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                             ),
                                             title: Text(
                                               mosque.name,
-                                              style: GoogleFonts.cairo(
+                                                 style: TextStyle(
+                          fontFamily: "cairo",
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 14.sp),
                                             ),
@@ -1127,7 +1144,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                               children: [
                                                 Text(
                                                   mosque.address,
-                                                  style: GoogleFonts.cairo(
+                                                     style: TextStyle(
+                          fontFamily: "cairo",
                                                       fontSize: 11.sp,
                                                       color: Colors.grey),
                                                   maxLines: 1,
@@ -1142,7 +1160,8 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                                     const SizedBox(width: 4),
                                                     Text(
                                                       "${mosque.distance.toStringAsFixed(2)} كم",
-                                                      style: GoogleFonts.cairo(
+                                                         style: TextStyle(
+                          fontFamily: "cairo",
                                                           fontSize: 11.sp,
                                                           color: Colors.blue),
                                                     ),
@@ -1187,12 +1206,12 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                                     ),
                                                     itemBuilder: (_) => [
                                                       if (mosque.isUserAdded)
-                                                        PopupMenuItem(
+                                                        const PopupMenuItem(
                                                           value: 'edit',
                                                           child: Row(
                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                             crossAxisAlignment: CrossAxisAlignment.end,
-                                                            children: const [
+                                                            children: [
                                                               Icon(Icons.edit, color: Colors.orange, size: 18),
                                                               SizedBox(width: 8),
                                                               Text('تعديل',style: TextStyle(fontFamily: "cairo")),
@@ -1200,24 +1219,24 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                                           ),
                                                         ),
                                                       if (mosque.isUserAdded)
-                                                        PopupMenuItem(
+                                                        const PopupMenuItem(
                                                           value: 'delete',
                                                           child: Row(
                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                             crossAxisAlignment: CrossAxisAlignment.end,
-                                                            children: const [
+                                                            children: [
                                                               Icon(Icons.delete_outline, color: Colors.red, size: 18),
                                                               SizedBox(width: 8),
                                                               Text('حذف',style: TextStyle(fontFamily: "cairo")),
                                                             ],
                                                           ),
                                                         ),
-                                                      PopupMenuItem(
+                                                      const PopupMenuItem(
                                                         value: 'directions',
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           crossAxisAlignment: CrossAxisAlignment.end,
-                                                          children: const [
+                                                          children: [
                                                             Icon(Icons.directions, color: Colors.blue, size: 18),
                                                             SizedBox(width: 8),
                                                             Text('الاتجاهات',style: TextStyle(fontFamily: "cairo"),),

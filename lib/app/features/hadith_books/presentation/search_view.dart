@@ -72,7 +72,8 @@ class _SearchViewState extends State<SearchView> {
             centerTitle: true,
             title: Text(
               'البحث في الأحاديث',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -98,13 +99,15 @@ class _SearchViewState extends State<SearchView> {
               child: TextField(
                 controller: textController,
                 textAlign: TextAlign.right,
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 16.sp,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
                 decoration: InputDecoration(
                   hintText: _getHintText(),
-                  hintStyle: GoogleFonts.cairo(
+                  hintStyle: TextStyle(
+                  fontFamily: "cairo",
                     color: isDark ? Colors.grey[500] : Colors.grey[600],
                   ),
                   prefixIcon: Icon(
@@ -178,7 +181,8 @@ class _SearchViewState extends State<SearchView> {
                     SizedBox(width: 8.w),
                     Text(
                       'النتائج: ${searchCtrl.searchResults.length}',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
                         color: isDark ? Colors.grey[400] : Colors.grey[700],
@@ -270,7 +274,8 @@ class _SearchViewState extends State<SearchView> {
       },
       selectedColor: baseColor,
       backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-      labelStyle: GoogleFonts.cairo(
+      labelStyle: TextStyle(
+                  fontFamily: "cairo",
         fontSize: 13.sp,
         fontWeight: FontWeight.w600,
         color: isSelected ? Colors.white : (isDark ? Colors.grey[400] : Colors.grey[700]),
@@ -303,7 +308,8 @@ class _SearchViewState extends State<SearchView> {
           SizedBox(height: 16.h),
           Text(
             title,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
               color: Colors.grey[500],
@@ -313,7 +319,8 @@ class _SearchViewState extends State<SearchView> {
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 14.sp,
               color: Colors.grey[400],
             ),

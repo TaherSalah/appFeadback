@@ -28,7 +28,8 @@ PreferredSizeWidget mainAppBarWidget(
     ),
     title: Text(
       'رَفِيقُ المُسْلِمِ اليَوْمِيُّ',
-      style: GoogleFonts.cairo(
+         style: TextStyle(
+                          fontFamily: "cairo",
           fontSize: isTablate ? 12.sp : 17.sp, fontWeight: FontWeight.bold),
     ),
     // backgroundColor: Colors.amber.withOpacity(0.8),
@@ -118,43 +119,53 @@ PreferredSizeWidget mainAppBarWidget(
         tabs: [
           Tab(
             child: Text("القرأن الكريم",
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
           Tab(
             child: Text(AppString.KAzan,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
           Tab(
             child: Text(AppString.Ksabah,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
           Tab(
             child: Text(AppString.KMessa,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
           Tab(
             child: Text(AppString.KPrayer,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
           Tab(
             child: Text(AppString.KSleep,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
           Tab(
             child: Text(AppString.KOtherZakar,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
           Tab(
             child: Text(AppString.KRokia,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
           Tab(
             child: Text(AppString.KCounter,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
           Tab(
             child: Text(AppString.KAbout,
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w700)),
           ),
         ]),
   );

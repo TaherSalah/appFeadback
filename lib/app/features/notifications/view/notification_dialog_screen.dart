@@ -77,7 +77,8 @@ class NotificationDialogScreen extends StatelessWidget {
                       Text(
                         title,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : Colors.black87,
@@ -100,7 +101,8 @@ class NotificationDialogScreen extends StatelessWidget {
                         child: Text(
                           content,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 15,
                             height: 1.6,
                             color: isDark ? Colors.white70 : Colors.black87,
@@ -130,7 +132,8 @@ class NotificationDialogScreen extends StatelessWidget {
                           ),
                           child: Text(
                             confirmText ?? 'حسناً',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,

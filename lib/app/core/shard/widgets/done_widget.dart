@@ -25,7 +25,8 @@ class DoneScreen extends StatelessWidget {
           centerTitle: true,
           title: Text(
             AppString.KForYou,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
@@ -128,7 +129,8 @@ class DoneDialogWidget extends StatelessWidget {
                     child: Text(
                       KDaialogText ?? AppString.KSabahDaialogText,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontWeight: FontWeight.bold,
                         fontSize: isTap?18.sp:14.sp,
                         color: isDark ? Colors.white : Colors.black87,
@@ -143,7 +145,8 @@ class DoneDialogWidget extends StatelessWidget {
                     child: Text(
                       KZakarFeaturesTitle ?? AppString.KZakarSleepFeaturesTitle,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         color: Colors.green,
                         fontWeight: FontWeight.w900,
                         fontSize:isTap?14.sp: 12.sp,
@@ -184,7 +187,8 @@ class DoneDialogWidget extends StatelessWidget {
                       child: Text(
                         doneText ?? AppString.doneText,
                         textAlign: TextAlign.justify,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           height: 1.8,
                           fontSize:isTap?16.sp :12.sp,
                           color: isDark ? Colors.white70 : Colors.black54,
@@ -222,7 +226,8 @@ class DoneDialogWidget extends StatelessWidget {
                           ),
                           child: Text(
                             repratBtn ?? "إعادة العداد",
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize:isTap?18.sp: 13.sp,
                               fontWeight: FontWeight.bold,
                             ),

@@ -101,7 +101,8 @@ class HadithInArabic extends StatelessWidget {
               children: [
                 Text(
                   'اختر التصنيف',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
@@ -127,7 +128,8 @@ class HadithInArabic extends StatelessWidget {
                       child: Text(
                         category,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white : Colors.black87,
@@ -225,7 +227,8 @@ ${_cleanHtmlTags(otherLangHadithText)}
                         ),
                         child: Text(
                           "حديث #${arabicHadith.hadithNumber}",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white70 : Colors.black87,
@@ -246,7 +249,8 @@ ${_cleanHtmlTags(otherLangHadithText)}
                             ),
                             child: Text(
                               _parseGrade(arabicHadith.grade1!),
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.green,
@@ -284,7 +288,8 @@ ${_cleanHtmlTags(otherLangHadithText)}
                   // Translation Section
                   Text(
                     'الترجمة',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: baseColor,
@@ -472,7 +477,8 @@ class _ActionButton extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   label,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                     color: isHighlighted

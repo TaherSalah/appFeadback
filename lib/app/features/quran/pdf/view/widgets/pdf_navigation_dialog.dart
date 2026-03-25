@@ -91,7 +91,8 @@ class _PdfNavigationDialogState extends State<PdfNavigationDialog>
                             return ListTile(
                               title: Text(
                                 '$surahIndex. $surahName',
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                     fontWeight: FontWeight.bold),
                               ),
                               trailing:
@@ -117,7 +118,8 @@ class _PdfNavigationDialogState extends State<PdfNavigationDialog>
                       return ListTile(
                         title: Text(
                           'الجزء $juzIndex',
-                          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold),
                         ),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {

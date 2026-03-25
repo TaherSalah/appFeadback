@@ -107,7 +107,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
             centerTitle: true,
             title: Text(
               'سجل الصدقات ',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -171,7 +172,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
       child: FilterChip(
         label: Text(
           label,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: isTab ? 9.5.sp : 14.sp,
             fontWeight: FontWeight.w600,
             color: isSelected ? Colors.white : null,
@@ -219,7 +221,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
               SnackBar(
                 content: Text(
                   'تم حذف الصدقة',
-                  style: GoogleFonts.cairo(),
+                     style: TextStyle(
+                          fontFamily: "cairo",),
                 ),
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
@@ -289,7 +292,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                           children: [
                             Text(
                               donation.category.arabicName,
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: isTab ? 10.sp : 16.sp,
                                 fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black87,
@@ -298,7 +302,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                             SizedBox(height: 2.h),
                             Text(
                               '${donation.date.day}/${donation.date.month}/${donation.date.year}',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: isTab ? 8.sp : 12.sp,
                                 color: Colors.grey[500],
                               ),
@@ -313,7 +318,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                                     if (donation.paymentMethod != null) ...[
                                       Text(
                                         '${donation.paymentMethod!.icon} ${donation.paymentMethod!.arabicName}',
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: isTab ? 8.sp : 11.sp,
                                           color: const Color(0xFF3B82F6),
                                           fontWeight: FontWeight.w600,
@@ -332,7 +338,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                                       Expanded(
                                         child: Text(
                                           donation.notes!,
-                                          style: GoogleFonts.cairo(
+                                             style: TextStyle(
+                          fontFamily: "cairo",
                                             fontSize: isTab ? 9.sp : 12.sp,
                                             color: Colors.grey[600],
                                             fontStyle: FontStyle.italic,
@@ -354,7 +361,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                         children: [
                           Text(
                             '${donation.amount.toStringAsFixed(0)}',
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: isTab ? 12.sp : 20.sp,
                               fontWeight: FontWeight.w900,
                               color: const Color(0xFF10B981),
@@ -362,7 +370,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                           ),
                           Text(
                             donation.currency,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: isTab ? 8.sp : 10.sp,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFF10B981).withOpacity(0.7),
@@ -419,7 +428,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                   children: [
                     Text(
                       'تأكيد الحذف',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -429,7 +439,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                     SizedBox(height: 8.h),
                     Text(
                       'هل أنت متأكد من حذف هذه الصدقة؟\nلا يمكن التراجع عن هذه العملية.',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 13.sp,
                         height: 1.4,
                         color: isDark ? Colors.white70 : Colors.black87,
@@ -461,7 +472,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                           Expanded(
                             child: Text(
                               'سيتم حذف الصدقة نهائيًا من القائمة.',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 12.5.sp,
                                 color: Colors.red,
                               ),
@@ -492,7 +504,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                             ),
                             child: Text(
                               'إلغاء',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 14.sp,
                                 color: isDark
                                     ? Colors.white
@@ -506,7 +519,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                           child: ElevatedButton.icon(
                             onPressed: () => Navigator.of(dialogContext).pop(true),
                             icon: const Icon(Icons.delete_outline),
-                            label: Text('حذف', style: GoogleFonts.cairo()),
+                            label: Text('حذف',    style: TextStyle(
+                          fontFamily: "cairo",)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
@@ -574,7 +588,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
           // SizedBox(height: 16.h),
           Text(
             'لا توجد صدقات بعد',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -582,7 +597,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
           SizedBox(height: 8.h),
           Text(
             'ابدأ بإضافة أول صدقة لك',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 14.sp,
               color: Colors.grey,
             ),

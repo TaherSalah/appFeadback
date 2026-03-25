@@ -167,7 +167,8 @@ class _AddEventSheetState extends State<AddEventSheet> {
     InputDecoration buildInputDecoration(String label, IconData icon) {
       return InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.cairo(color: hintColor),
+        labelStyle: TextStyle(
+            fontFamily: "cairo",color: hintColor),
         prefixIcon: Icon(icon, color: primaryColor),
         filled: true,
         fillColor: surfaceColor,
@@ -225,7 +226,8 @@ class _AddEventSheetState extends State<AddEventSheet> {
                     ? 'تعديل المهمة'
                     : 'إضافة مهمة جديدة',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: isTab ? 14.sp : 20.sp,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -236,7 +238,8 @@ class _AddEventSheetState extends State<AddEventSheet> {
               // 📌 Title Input
               TextField(
                 controller: _titleController,
-                style: GoogleFonts.cairo(color: textColor),
+                   style: TextStyle(
+                          fontFamily: "cairo",color: textColor),
                 decoration:
                     buildInputDecoration('عنوان المهمة', Icons.task_alt),
               ),
@@ -245,7 +248,8 @@ class _AddEventSheetState extends State<AddEventSheet> {
               // 📄 Description Input
               TextField(
                 controller: _descController,
-                style: GoogleFonts.cairo(color: textColor),
+                   style: TextStyle(
+                          fontFamily: "cairo",color: textColor),
                 maxLines: 3,
                 minLines: 1,
                 decoration: buildInputDecoration(
@@ -256,7 +260,8 @@ class _AddEventSheetState extends State<AddEventSheet> {
               // 🎨 Color Picker
               Text(
                 'لون المهمة',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: isTab ? 10.sp : 14.sp,
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -315,11 +320,13 @@ class _AddEventSheetState extends State<AddEventSheet> {
                 child: DropdownButtonFormField<String>(
                   value: _recurrence,
                   icon: Icon(Icons.keyboard_arrow_down, color: hintColor),
-                  style: GoogleFonts.cairo(color: textColor, fontSize: 14.sp),
+                     style: TextStyle(
+                          fontFamily: "cairo",color: textColor, fontSize: 14.sp),
                   dropdownColor: surfaceColor,
                   decoration: InputDecoration(
                     labelText: 'تكرار المهمة',
-                    labelStyle: GoogleFonts.cairo(color: hintColor),
+                    labelStyle: TextStyle(
+                        fontFamily: "cairo",color: hintColor),
                     prefixIcon:
                         Icon(Icons.repeat_rounded, color: Colors.orange),
                     border: InputBorder.none,
@@ -375,7 +382,8 @@ class _AddEventSheetState extends State<AddEventSheet> {
                     SwitchListTile(
                       title: Text(
                         'تفعيل التذكير',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontWeight: FontWeight.bold, color: textColor),
                       ),
                       secondary: Container(
@@ -411,7 +419,8 @@ class _AddEventSheetState extends State<AddEventSheet> {
                             children: [
                               Text(
                                 'وقت التنبيه',
-                                style: GoogleFonts.cairo(color: hintColor),
+                                style:TextStyle(
+                                    fontFamily: "cairo",color: hintColor),
                               ),
                               const Spacer(),
                               Container(
@@ -427,7 +436,8 @@ class _AddEventSheetState extends State<AddEventSheet> {
                                   // 12-hour format with AM/PM
                                   intl.DateFormat('hh:mm a', 'ar')
                                       .format(_reminderTime!),
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     fontWeight: FontWeight.bold,
                                     color: primaryColor,
                                     fontSize: 16.sp,

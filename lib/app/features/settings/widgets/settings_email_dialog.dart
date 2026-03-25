@@ -50,7 +50,8 @@ class _SettingsEmailDialogState extends State<SettingsEmailDialog> {
                 children: [
                   Text(
                     'عرض سجل الشكاوى',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : const Color(0xFF0D47A1),
@@ -59,7 +60,8 @@ class _SettingsEmailDialogState extends State<SettingsEmailDialog> {
                   const SizedBox(height: 8),
                   Text(
                     'أدخل البريد الإلكتروني الذي استخدمته عند إرسال الشكوى لمتابعة حالتها.',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 12.sp,
                       height: 1.4,
                       color: isDark ? Colors.white70 : Colors.blue.shade900,
@@ -69,11 +71,13 @@ class _SettingsEmailDialogState extends State<SettingsEmailDialog> {
                   SizedBox(height: 20.h),
                   TextField(
                     controller: controller,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                         color: isDark ? Colors.white : Colors.black),
                     decoration: InputDecoration(
                       labelText: 'البريد الإلكتروني',
-                      labelStyle: GoogleFonts.cairo(),
+                      labelStyle: TextStyle(
+                  fontFamily: "cairo",),
                       hintText: "example@mail.com",
                       hintStyle: TextStyle(
                           color: isDark ? Colors.grey : Colors.grey[600]),
@@ -107,7 +111,8 @@ class _SettingsEmailDialogState extends State<SettingsEmailDialog> {
                           ),
                           child: Text(
                             'إلغاء',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 13.sp,
                               color: isDark
                                   ? Colors.white
@@ -136,7 +141,8 @@ class _SettingsEmailDialogState extends State<SettingsEmailDialog> {
                               size: 18),
                           label: Text(
                             'عرض',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 13.sp,
                               fontWeight: FontWeight.bold,
                             ),

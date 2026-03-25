@@ -43,7 +43,8 @@ class _DuasMainScreenState extends State<DuasMainScreen> {
             isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
         appBar: AppBar(
           title: Text('الأدعية 🤲',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontWeight: FontWeight.bold, fontSize: 20.sp)),
           centerTitle: true,
           elevation: 0,
@@ -56,10 +57,12 @@ class _DuasMainScreenState extends State<DuasMainScreen> {
               padding: EdgeInsets.all(16.w),
               child: TextField(
                 onChanged: (value) => setState(() => _searchQuery = value),
-                style: GoogleFonts.cairo(),
+                   style: TextStyle(
+                          fontFamily: "cairo",),
                 decoration: InputDecoration(
                   hintText: 'ابحث عن دعاء...',
-                  hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                  hintStyle: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: isDark ? const Color(0xFF2D3748) : Colors.white,
@@ -132,7 +135,8 @@ class _DuasMainScreenState extends State<DuasMainScreen> {
             SizedBox(height: 8.h),
             Text(
               category.arabicName,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 12.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -171,7 +175,8 @@ class _DuasMainScreenState extends State<DuasMainScreen> {
                 Expanded(
                   child: Text(
                     dua.title,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -182,7 +187,8 @@ class _DuasMainScreenState extends State<DuasMainScreen> {
             SizedBox(height: 12.h),
             Text(
               dua.arabic,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 14.sp,
                 height: 2.0,
               ),

@@ -52,7 +52,8 @@ class BookmarksView extends StatelessWidget {
           centerTitle: true,
           title: Text(
               'الأحاديث المحفوظة',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize:
@@ -86,11 +87,13 @@ class BookmarksView extends StatelessWidget {
                       ),
                       labelColor: Colors.white,
                       unselectedLabelColor: isDark ? Colors.grey[400] : Colors.grey[700],
-                      labelStyle: GoogleFonts.cairo(
+                      labelStyle: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                       ),
-                      unselectedLabelStyle: GoogleFonts.cairo(
+                      unselectedLabelStyle: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
                       ),
@@ -138,7 +141,8 @@ class BookmarksView extends StatelessWidget {
             SizedBox(height: 16.h),
             Text(
               'لا توجد أحاديث محفوظة',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey[500],
@@ -147,7 +151,8 @@ class BookmarksView extends StatelessWidget {
             SizedBox(height: 8.h),
             Text(
               'ابدأ بحفظ الأحاديث المفضلة لديك',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 14.sp,
                 color: Colors.grey[400],
               ),

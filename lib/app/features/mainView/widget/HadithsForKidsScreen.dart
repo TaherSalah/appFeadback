@@ -17,7 +17,8 @@ class HadithsForKidsScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             'أحاديث للأطفال 📿',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
             ),
@@ -71,7 +72,8 @@ class HadithsForKidsScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           hadith.title,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: ResponsiveUtil.isTablet(context)
                                 ? 12.sp
                                 : 16.sp,
@@ -91,7 +93,8 @@ class HadithsForKidsScreen extends StatelessWidget {
                     ),
                     child: Text(
                       hadith.hadith,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize:
                             ResponsiveUtil.isTablet(context) ? 11.sp : 15.sp,
                         color: Colors.white,
@@ -110,7 +113,8 @@ class HadithsForKidsScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           hadith.meaning,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: ResponsiveUtil.isTablet(context)
                                 ? 10.sp
                                 : 13.sp,

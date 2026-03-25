@@ -42,7 +42,8 @@ class _HizbeListScreenState extends State<HizbeListScreen> {
             centerTitle: true,
             title: Text(
               "احزاب القران الكريم",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:

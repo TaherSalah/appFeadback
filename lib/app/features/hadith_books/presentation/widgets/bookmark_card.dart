@@ -83,7 +83,8 @@ class BookmarkCard extends StatelessWidget {
                       ),
                       child: Text(
                         bookmark.category,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
                           color: baseColor,
@@ -156,7 +157,8 @@ class BookmarkCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               hadith.bookName,
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w600,
                                 color: isDark ? Colors.grey[500] : Colors.grey[600],
@@ -172,7 +174,8 @@ class BookmarkCard extends StatelessWidget {
                     // Saved Date
                     Text(
                       _formatDate(bookmark.createdAt),
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 11.sp,
                         color: isDark ? Colors.grey[600] : Colors.grey[500],
                       ),
@@ -233,7 +236,8 @@ class BookmarkCard extends StatelessWidget {
             children: [
               Text(
                 'تغيير التصنيف',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
@@ -261,7 +265,8 @@ class BookmarkCard extends StatelessWidget {
                     child: Text(
                       category,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white : Colors.black87,
@@ -318,7 +323,8 @@ class BookmarkCard extends StatelessWidget {
                     // العنوان
                     Text(
                       'حذف الحديث؟',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -331,7 +337,8 @@ class BookmarkCard extends StatelessWidget {
                       'هل أنت متأكد من حذف هذا الحديث من المحفوظات؟\n'
                           'لا يمكن التراجع عن هذا الإجراء بعد الحذف.',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14,
                         height: 1.4,
                         color: isDark ? Colors.white70 : Colors.black87,
@@ -365,7 +372,8 @@ class BookmarkCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               'سيتم حذف الحديث نهائيًا من قائمتك.',
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 12.5,
                                 color: Colors.red,
                               ),
@@ -399,7 +407,8 @@ class BookmarkCard extends StatelessWidget {
                             ),
                             child: Text(
                               'إلغاء',
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 14,
                                 color: isDark
                                     ? Colors.white
@@ -418,7 +427,8 @@ class BookmarkCard extends StatelessWidget {
                             icon: const Icon(Icons.delete_outline),
                             label: Text(
                               'حذف',
-                              style: GoogleFonts.cairo(),
+                              style: TextStyle(
+                  fontFamily: "cairo",),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,

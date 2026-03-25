@@ -1,10 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
-import 'package:muslimdaily/app/core/controller/azkar_controller.dart';
-import '../../../core/cubit/centralized_cubit.dart';
 
 class HazbNawawiList extends StatelessWidget {
   const HazbNawawiList({super.key});

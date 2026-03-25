@@ -101,7 +101,8 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
               const SizedBox(width: 10),
               Text(
                 'لقد حصلت على $reward نجمة 🔥',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFFF59E0B),
@@ -181,7 +182,8 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
               children: [
                 Text(
                   'التزامك اليومي',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 14.sp,
                     fontWeight: FontWeight.w600,
                     color: Colors.white.withOpacity(0.9),
@@ -190,7 +192,8 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
                 const SizedBox(height: 2),
                 Text(
                   '$_streakDays يوم متتالي',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 18.sp : 22.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -202,7 +205,8 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
                   _streakDays > 0
                       ? 'ما شاء الله! استمر في التقدم'
                       : 'ابدأ رحلتك اليوم!',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 11.sp,
                     color: Colors.white.withOpacity(0.7),
                   ),

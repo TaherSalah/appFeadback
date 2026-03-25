@@ -15,7 +15,8 @@ class NotificationTestView extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'اختبار التنبيهات',
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
           ),
@@ -257,7 +258,8 @@ class NotificationTestView extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
         title,
-        style: GoogleFonts.cairo(
+        style: TextStyle(
+                  fontFamily: "cairo",
           fontSize: 18,
           fontWeight: FontWeight.bold,
           color: KColors.primaryColor,
@@ -339,7 +341,8 @@ class NotificationTestView extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                   content: Text('تم إرسال تنبيه: $label',
-                      style: GoogleFonts.cairo())),
+                      style: TextStyle(
+                  fontFamily: "cairo",))),
             );
           }
         },
@@ -351,7 +354,8 @@ class NotificationTestView extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ),

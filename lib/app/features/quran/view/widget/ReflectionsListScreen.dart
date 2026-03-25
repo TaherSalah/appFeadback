@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:quran_library/quran_library.dart';
+
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/features/quran/data/reflection_model.dart';
 import 'package:muslimdaily/app/features/quran/data/reflections_service.dart';
@@ -74,7 +71,8 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
             centerTitle: true,
             title: Text(
                 "قائمة الخواطر",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -106,7 +104,8 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
           SizedBox(height: 16.h),
           Text(
             "لا توجد خواطر مسجلة بعد",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 16.sp,
               color: isDark ? Colors.white70 : Colors.grey[600],
             ),
@@ -166,7 +165,8 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
                         ),
                         child: Text(
                           "صفحة $pageNumber",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 12.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.teal,
@@ -189,7 +189,8 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
                             SizedBox(width: 4.w),
                             Text(
                               "${reflections.length} خاطرة",
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 11.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.orange,
@@ -203,7 +204,8 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
                   SizedBox(height: 10.h),
                   Text(
                     latestReflection.content,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 14.sp,
                       color: isDark ? Colors.white : Colors.black87,
                     ),
@@ -214,7 +216,8 @@ class _ReflectionsListScreenState extends State<ReflectionsListScreen> {
                     SizedBox(height: 8.h),
                     Text(
                       "و ${reflections.length - 1} خاطرة أخرى...",
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 12.sp,
                         color: isDark ? Colors.white54 : Colors.grey[600],
                         fontStyle: FontStyle.italic,

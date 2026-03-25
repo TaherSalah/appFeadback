@@ -62,7 +62,8 @@ class SleepAzkar extends StatelessWidget {
         ],
         title: Text(
           AppString.KSleep,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             color: Colors.green,
             fontWeight: FontWeight.bold,
             fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,

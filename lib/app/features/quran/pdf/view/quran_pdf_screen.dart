@@ -54,7 +54,8 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
           : AppBar(
               title: Text(
                 'القرآن الكريم (PDF)',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -158,7 +159,8 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
                       ),
                       child: Text(
                         _getPageLabel(),
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -178,7 +180,8 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
                 children: [
                   Text(
                     _getPageLabel(),
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

@@ -81,7 +81,8 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                               SizedBox(height: 16.h),
                               Text(
                                 '! انتهت اللعبة',
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: 26.sp,
 
                                   fontWeight: FontWeight.bold,
@@ -105,7 +106,8 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                           SizedBox(width: 8.w),
                                           Text(
                                             '${widget.game.score}',
-                                            style: GoogleFonts.cairo(
+                                            style: TextStyle(
+                  fontFamily: "cairo",
                                               fontSize: 24.sp,
                                               color: Colors.amber[800],
                                               fontWeight: FontWeight.bold,
@@ -117,7 +119,8 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                         SizedBox(height: 4.h),
                                         Text(
                                           'رقم قياسي جديد! 🎉',
-                                          style: GoogleFonts.cairo(
+                                          style: TextStyle(
+                  fontFamily: "cairo",
                                             fontSize: 14.sp,
                                             color: Colors.green[700],
                                             fontWeight: FontWeight.bold,
@@ -127,7 +130,8 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                         SizedBox(height: 4.h),
                                         Text(
                                           'أعلى نتيجة: ${widget.game.highScore}',
-                                          style: GoogleFonts.cairo(
+                                          style: TextStyle(
+                  fontFamily: "cairo",
                                             fontSize: 14.sp,
                                             color: Colors.grey[600],
                                           ),
@@ -157,7 +161,8 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                       ),
                                       child: Text(
                                         'لعب مجدداً',
-                                        style: GoogleFonts.cairo(
+                                        style: TextStyle(
+                  fontFamily: "cairo",
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -180,7 +185,8 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                       ),
                                       child: Text(
                                         'خروج',
-                                        style: GoogleFonts.cairo(
+                                        style: TextStyle(
+                  fontFamily: "cairo",
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.grey[700],
@@ -231,7 +237,8 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                     builder: (context, score, child) {
                                       return Text(
                                         '$score',
-                                        style: GoogleFonts.cairo(
+                                        style: TextStyle(
+                  fontFamily: "cairo",
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18.sp,
@@ -249,7 +256,8 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                     builder: (context, highScore, child) {
                                       return Text(
                                         '$highScore',
-                                        style: GoogleFonts.cairo(
+                                        style: TextStyle(
+                  fontFamily: "cairo",
                                           color: Colors.white.withOpacity(0.9),
                                           fontWeight: FontWeight.w500,
                                           fontSize: 16.sp,

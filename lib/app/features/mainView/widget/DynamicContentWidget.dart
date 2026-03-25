@@ -91,7 +91,8 @@ class _DynamicContentWidgetState extends State<DynamicContentWidget> {
                       ),
                       child: Text(
                         _getTypeLabel(item['type']),
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 10.sp,
                           color: _getTypeColor(item['type']),
                           fontWeight: FontWeight.bold,
@@ -112,7 +113,8 @@ class _DynamicContentWidgetState extends State<DynamicContentWidget> {
                 SizedBox(height: 8.h),
                 Text(
                   item['title'] ?? '',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
@@ -121,7 +123,8 @@ class _DynamicContentWidgetState extends State<DynamicContentWidget> {
                 SizedBox(height: 6.h),
                 Text(
                   item['body'] ?? '',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 12.sp,
                     color: isDark ? Colors.grey[300] : Colors.grey[700],
                     height: 1.5,

@@ -70,7 +70,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
         // appBar: AppBar(
         //   title: Text(
         //     'قصص ملهمة عن الصدقة 📖',
-        //     style: GoogleFonts.cairo(
+        //        style: TextStyle(
+                          //fontFamily: "cairo",
         //       fontWeight: FontWeight.bold,
         //       fontSize: 20.sp,
         //     ),
@@ -100,7 +101,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
             centerTitle: true,
             title: Text(
               'قصص ملهمة عن الصدقة',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -137,7 +139,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                         child: FilterChip(
                           label: Text(
                             category,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 13.sp,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                               color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
@@ -173,7 +176,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                       ? Center(
                           child: Text(
                             'لا توجد قصص حالياً',
-                            style: GoogleFonts.cairo(color: isDark ? Colors.white70 : Colors.black54),
+                               style: TextStyle(
+                          fontFamily: "cairo",color: isDark ? Colors.white70 : Colors.black54),
                           ),
                         )
                       : ListView.builder(
@@ -235,7 +239,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                       children: [
                         Text(
                           story.title,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white : const Color(0xFF1E293B),
@@ -243,7 +248,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                         ),
                         Text(
                           story.source,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 11.sp,
                             color: isDark ? Colors.white60 : Colors.black45,
                           ),
@@ -258,7 +264,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                 story.content.length > 150
                     ? '${story.content.substring(0, 150)}...'
                     : story.content,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 13.sp,
                   color: isDark ? Colors.white70 : Colors.black87,
                   height: 1.8,
@@ -270,7 +277,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                 children: [
                   Text(
                     'عرض التفاصيل ⬅️',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
@@ -345,7 +353,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                       Expanded(
                         child: Text(
                           story.title,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -365,7 +374,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                       children: [
                         Text(
                           story.content,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 14.sp,
                             height: 2.0,
                             color: isDark ? Colors.white : Colors.black87,
@@ -390,7 +400,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                               SizedBox(width: 8.w),
                               Text(
                                 story.source,
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w600,
                                   color: _getGradientColors(story.category)[0],
@@ -419,7 +430,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                           icon: const Icon(Icons.share),
                           label: Text(
                             'مشاركة',
-                            style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                               style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _getGradientColors(story.category)[0],
@@ -446,7 +458,8 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                           ),
                           child: Text(
                             'إغلاق',
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontWeight: FontWeight.bold,
                               color: _getGradientColors(story.category)[0],
                             ),

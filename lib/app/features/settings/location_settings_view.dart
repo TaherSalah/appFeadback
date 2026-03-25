@@ -189,7 +189,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
         // appBar: AppBar(
         //   title: Text(
         //     'إعدادات الموقع',
-        //     style: GoogleFonts.cairo(
+        //        style: TextStyle(
+                          //fontFamily: "cairo",
         //       fontSize: 20,
         //       fontWeight: FontWeight.bold,
         //       color: isDark ? Colors.white : Colors.black87,
@@ -210,7 +211,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
             centerTitle: true,
             title: Text(
               'إعدادات الموقع',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: isDark ? Colors.white : Colors.black87,
                 fontWeight: FontWeight.w900,
                 fontSize: 18.sp,
@@ -259,7 +261,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                                       horizontal: 16, vertical: 8),
                                   title: Text(
                                     'تحديد تلقائي (GPS)',
-                                    style: GoogleFonts.cairo(
+                                       style: TextStyle(
+                          fontFamily: "cairo",
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                       color: isDark
@@ -269,7 +272,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                                   ),
                                   subtitle: Text(
                                     'اختيار أقرب مدينة بناءً على موقعك الحالي',
-                                    style: GoogleFonts.cairo(
+                                       style: TextStyle(
+                          fontFamily: "cairo",
                                       fontSize: 11,
                                       color: Colors.grey,
                                     ),
@@ -399,7 +403,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                                     const SizedBox(width: 8),
                                     Text(
                                       'الموقع المختار: $tempCountry - $tempCity',
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                         fontWeight: FontWeight.bold,
                                         color: KColors.primaryColor,
                                         fontSize: 14,
@@ -432,7 +437,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
               elevation: _hasChanges ? 8 : 0,
               label: Text(
                 'حفظ خيارات الموقع',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -455,7 +461,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
       padding: const EdgeInsets.only(bottom: 12.0, right: 8.0),
       child: Text(
         title,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: isDark ? const Color(0xFFD4AF37) : const Color(0xFFB8860B),
@@ -509,7 +516,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
       children: [
         Text(
           label,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 12,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.grey[400] : Colors.grey[700],
@@ -532,7 +540,8 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
               dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
               icon: Icon(Icons.keyboard_arrow_down,
                   color: isDark ? Colors.white70 : Colors.black54),
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: isDark ? Colors.white : Colors.black87,
                 fontSize: 14,
               ),

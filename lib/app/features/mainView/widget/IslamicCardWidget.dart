@@ -904,7 +904,8 @@ Widget buildCurrentLocation(
         const SizedBox(width: 8),
         Text(
           '$selectedCountry - $selectedCity',
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+            fontFamily: "cairo",
             fontSize: 14.sp,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black87,

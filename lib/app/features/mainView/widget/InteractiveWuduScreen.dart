@@ -109,7 +109,8 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
             const SizedBox(width: 10),
             Text(
               'لقد حصلت على 50 نجمة ✨',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF10B981),
@@ -152,7 +153,8 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
         appBar: AppBar(
           title: Text(
             'تعليم الوضوء 💧',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
             ),
@@ -171,7 +173,8 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                     children: [
                       Text(
                         'الخطوة ${_currentStep + 1} من ${_wuduSteps.length}',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
                           color: Colors.grey,
@@ -179,7 +182,8 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                       ),
                       Text(
                         '${((_currentStep + 1) / _wuduSteps.length * 100).toInt()}%',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
                           fontWeight: FontWeight.bold,
@@ -229,7 +233,8 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                     // Title
                     Text(
                       step['title'],
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize:
                             ResponsiveUtil.isTablet(context) ? 16.sp : 24.sp,
                         fontWeight: FontWeight.bold,
@@ -252,7 +257,8 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                       ),
                       child: Text(
                         step['description'],
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
                           height: 1.8,
@@ -280,7 +286,8 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                           Expanded(
                             child: Text(
                               step['detail'],
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: ResponsiveUtil.isTablet(context)
                                     ? 10.sp
                                     : 14.sp,
@@ -316,7 +323,8 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                       child: OutlinedButton.icon(
                         onPressed: _previousStep,
                         icon: const Icon(Icons.arrow_back),
-                        label: Text('السابق', style: GoogleFonts.cairo()),
+                        label: Text('السابق', style: TextStyle(
+                  fontFamily: "cairo",)),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
@@ -340,7 +348,8 @@ class _InteractiveWuduScreenState extends State<InteractiveWuduScreen> {
                         _currentStep == _wuduSteps.length - 1
                             ? 'إنهاء'
                             : 'التالي',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),

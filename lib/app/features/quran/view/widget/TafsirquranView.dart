@@ -72,7 +72,8 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                     children: [
                       Text(
                         'جاري تحميل التفسير',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : Colors.black87,
@@ -81,7 +82,8 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                       const SizedBox(height: 6),
                       Text(
                         tafsirName,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF43A047),
@@ -90,7 +92,8 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                       const SizedBox(height: 12),
                       Text(
                         'يتم الآن تنزيل ملف التفسير.\nيُرجى الانتظار حتى اكتمال التحميل.',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 13,
                           height: 1.6,
                           color: isDark ? Colors.white70 : Colors.black54,
@@ -121,7 +124,8 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                             Expanded(
                               child: Text(
                                 'لن تحتاج إلى تنزيله مجدداً — سيُحفظ على جهازك.',
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: 12,
                                   color: Colors.green,
                                 ),
@@ -248,7 +252,8 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
               children: [
                 Text(
                   'كتب تفسير القرآن الكريم',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     color: const Color(0xFF43A047),
                     fontWeight: FontWeight.bold,
                     fontSize: isTablet ? 14.sp : 17.sp,
@@ -410,7 +415,8 @@ class _BookCard extends StatelessWidget {
                                   const SizedBox(width: 3),
                                   Text(
                                     'محمّل',
-                                    style: GoogleFonts.cairo(
+                                    style: TextStyle(
+                  fontFamily: "cairo",
                                         fontSize: 9,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold),
@@ -436,7 +442,8 @@ class _BookCard extends StatelessWidget {
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: isTablet ? 9.sp : 11.sp,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white : Colors.black87,
@@ -505,7 +512,8 @@ class _ActionButton extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               'اقرأ',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 11,
                   color: Colors.white,
                   fontWeight: FontWeight.bold),
@@ -530,7 +538,8 @@ class _ActionButton extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             'تحميل',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 11,
                 color: const Color(0xFF43A047),
                 fontWeight: FontWeight.bold),

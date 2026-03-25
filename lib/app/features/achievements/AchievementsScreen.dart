@@ -46,7 +46,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
       child: Scaffold(
         backgroundColor: isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
         appBar: AppBar(
-          title: Text('الإنجازات 🏆', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 20.sp)),
+          title: Text('الإنجازات 🏆',    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 20.sp)),
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -91,11 +92,14 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('المستوى ${_progress!.level}', style: GoogleFonts.cairo(fontSize: 24.sp, fontWeight: FontWeight.bold, color: Colors.white)),
-                  Text(_progress!.levelTitle, style: GoogleFonts.cairo(fontSize: 14.sp, color: Colors.white.withOpacity(0.9))),
+                  Text('المستوى ${_progress!.level}',    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 24.sp, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text(_progress!.levelTitle,    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp, color: Colors.white.withOpacity(0.9))),
                 ],
               ),
-              Text('${_progress!.totalPoints} نقطة', style: GoogleFonts.cairo(fontSize: 20.sp, fontWeight: FontWeight.bold, color: Colors.white)),
+              Text('${_progress!.totalPoints} نقطة',    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 20.sp, fontWeight: FontWeight.bold, color: Colors.white)),
             ],
           ),
           SizedBox(height: 16.h),
@@ -108,7 +112,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
           ),
           SizedBox(height: 8.h),
           Text('${_progress!.currentLevelPoints} / ${_progress!.nextLevelPoints} للمستوى التالي',
-              style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.white.withOpacity(0.9))),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp, color: Colors.white.withOpacity(0.9))),
         ],
       ),
     );
@@ -142,8 +147,10 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
           children: [
             Text(emoji, style: TextStyle(fontSize: 32.sp)),
             SizedBox(height: 8.h),
-            Text(label, style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold, color: color)),
-            if (subtitle != null) Text(subtitle, style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey)),
+            Text(label,    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp, fontWeight: FontWeight.bold, color: color)),
+            if (subtitle != null) Text(subtitle,    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp, color: Colors.grey)),
           ],
         ),
       ),
@@ -175,7 +182,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               ),
               SizedBox(height: 8.h),
               Text(achievement.title,
-                  style: GoogleFonts.cairo(fontSize: 11.sp, fontWeight: FontWeight.bold), textAlign: TextAlign.center, maxLines: 2),
+                     style: TextStyle(
+                          fontFamily: "cairo",fontSize: 11.sp, fontWeight: FontWeight.bold), textAlign: TextAlign.center, maxLines: 2),
             ],
           ),
         );

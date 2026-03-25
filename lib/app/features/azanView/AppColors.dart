@@ -1,5 +1,3 @@
-// import 'package:flutter/material.dart';
-//
 // /// 🎨 نظام الألوان الموحد للتطبيق
 // class AppColors {
 //   AppColors._();

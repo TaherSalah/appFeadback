@@ -134,7 +134,8 @@ class QuranTextScreen extends StatelessWidget {
             centerTitle: true,
             title: Text(
               "دعاء ختم القرآن الكريم",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -272,7 +273,8 @@ class QuranTextScreen extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             bottomText,
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 11.sp,
                               fontWeight: FontWeight.w600,
                               color:

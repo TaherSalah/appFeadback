@@ -251,7 +251,8 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
             centerTitle: true,
             title: Text(
               'تشخيص نظام الأذان',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize: MediaQuery.sizeOf(context).width > 600

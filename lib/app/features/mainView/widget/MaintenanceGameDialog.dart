@@ -127,7 +127,8 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                 children: [
                   Text(
                     'عذراً، القسم قيد الصيانة',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                       color: widget.isDark ? Colors.white : Colors.black87,
@@ -136,7 +137,8 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                   SizedBox(height: 10.h),
                   Text(
                     'في انتظار العودة، استمتع باللعبة! 🎮',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 14.sp,
                       height: 1.5,
                       color: widget.isDark ? Colors.white70 : Colors.black87,
@@ -175,7 +177,8 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                               ),
                               child: Text(
                                 'النقاط: $_score',
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -231,7 +234,8 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                                   children: [
                                     Text(
                                       'انتهت اللعبة!',
-                                      style: GoogleFonts.cairo(
+                                      style: TextStyle(
+                  fontFamily: "cairo",
                                         fontSize: 24.sp,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
@@ -240,7 +244,8 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                                     SizedBox(height: 8.h),
                                     Text(
                                       'النقاط: $_score',
-                                      style: GoogleFonts.cairo(
+                                      style: TextStyle(
+                  fontFamily: "cairo",
                                         fontSize: 18.sp,
                                         color: Colors.white70,
                                       ),
@@ -262,7 +267,8 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                                       ),
                                       child: Text(
                                         'إعادة المحاولة',
-                                        style: GoogleFonts.cairo(
+                                        style: TextStyle(
+                  fontFamily: "cairo",
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -287,7 +293,8 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                                   ),
                                   child: Text(
                                     'اضغط للقفز! 👆',
-                                    style: GoogleFonts.cairo(
+                                    style: TextStyle(
+                  fontFamily: "cairo",
                                       fontSize: 12.sp,
                                       color: Colors.white,
                                     ),
@@ -321,7 +328,8 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                         Expanded(
                           child: Text(
                             'سنعود قريباً بميزات محسّنة وأداء أفضل.',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 12.5.sp,
                               color: const Color(0xFFf97316),
                               fontWeight: FontWeight.w600,
@@ -342,7 +350,8 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                       icon: const Icon(Icons.check_circle_outline_rounded),
                       label: Text(
                         'حسناً',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontWeight: FontWeight.bold,
                           fontSize: 15.sp,
                         ),

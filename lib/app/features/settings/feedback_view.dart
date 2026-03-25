@@ -7,7 +7,7 @@ import '../../core/services/feedback_service.dart';
 
 /// شاشة إرسال الشكاوى والاقتراحات
 class FeedbackView extends StatefulWidget {
-  const FeedbackView({Key? key}) : super(key: key);
+  const FeedbackView({super.key});
 
   @override
   State<FeedbackView> createState() => _FeedbackViewState();
@@ -22,7 +22,7 @@ class _FeedbackViewState extends State<FeedbackView> {
   final _feedbackService = FeedbackService();
   final _imagePicker = ImagePicker();
 
-  int _rating = 5;
+  final int _rating = 5;
   String _selectedCategory = 'مشكلة';
   List<File> _selectedImages = [];
   bool _isSubmitting = false;
@@ -123,7 +123,8 @@ class _FeedbackViewState extends State<FeedbackView> {
         appBar: AppBar(
           title: Text(
             'الشكاوى والاقتراحات',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
             ),
@@ -158,7 +159,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                     Expanded(
                       child: Text(
                         'نسعد بتلقي ملاحظاتكم واقتراحاتكم لتحسين التطبيق',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 13,
                           color: isDark ? Colors.white70 : Colors.black87,
                         ),
@@ -174,7 +176,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'الاسم *',
-                  labelStyle: GoogleFonts.cairo(),
+                  labelStyle: TextStyle(
+                          fontFamily: "cairo",),
                   prefixIcon: const Icon(Icons.person_outline),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -184,7 +187,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                style: GoogleFonts.cairo(),
+                   style: TextStyle(
+                          fontFamily: "cairo",),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'الرجاء إدخال الاسم';
@@ -199,7 +203,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'البريد الإلكتروني *',
-                  labelStyle: GoogleFonts.cairo(),
+                  labelStyle: TextStyle(
+                          fontFamily: "cairo",),
                   prefixIcon: const Icon(Icons.email_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -209,7 +214,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                style: GoogleFonts.cairo(),
+                   style: TextStyle(
+                          fontFamily: "cairo",),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -228,7 +234,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _phoneController,
                 decoration: InputDecoration(
                   labelText: 'رقم الهاتف (اختياري)',
-                  labelStyle: GoogleFonts.cairo(),
+                  labelStyle: TextStyle(
+                          fontFamily: "cairo",),
                   prefixIcon: const Icon(Icons.phone_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -238,7 +245,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                style: GoogleFonts.cairo(),
+                   style: TextStyle(
+                          fontFamily: "cairo",),
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 16),
@@ -250,7 +258,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                 decoration: InputDecoration(
 
                   labelText: 'التصنيف *',
-                  labelStyle: GoogleFonts.cairo(),
+                  labelStyle: TextStyle(
+                          fontFamily: "cairo",),
                   prefixIcon: const Icon(Icons.category_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -260,7 +269,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   color: isDark ? Colors.white : Colors.black87,
 
                 ),
@@ -300,7 +310,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                       children: [
                         Icon(icon, color: color, size: 20),
                         const SizedBox(width: 12),
-                        Text(category, style: GoogleFonts.cairo(),textAlign: TextAlign.right,),
+                        Text(category,    style: TextStyle(
+                          fontFamily: "cairo",),textAlign: TextAlign.right,),
                       ],
                     ),
                   );
@@ -350,9 +361,11 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _descriptionController,
                 decoration: InputDecoration(
                   labelText: 'الوصف *',
-                  labelStyle: GoogleFonts.cairo(),
+                  labelStyle: TextStyle(
+                          fontFamily: "cairo",),
                   hintText: 'اكتب وصفاً تفصيلياً...',
-                  hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                  hintStyle: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 60),
                     child: Icon(Icons.description_outlined),
@@ -366,7 +379,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                       : Colors.grey.withOpacity(0.05),
                   alignLabelWithHint: true,
                 ),
-                style: GoogleFonts.cairo(),
+                   style: const TextStyle(
+                          fontFamily: "cairo",),
                 maxLines: 5,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -388,7 +402,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                   _selectedImages.isEmpty
                       ? 'إضافة صور (اختياري)'
                       : 'تم اختيار ${_selectedImages.length} صورة',
-                  style: GoogleFonts.cairo(),
+                     style: TextStyle(
+                          fontFamily: "cairo",),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -489,7 +504,8 @@ class _FeedbackViewState extends State<FeedbackView> {
                       )
                     : Text(
                         'إرسال',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -502,7 +518,8 @@ class _FeedbackViewState extends State<FeedbackView> {
               Text(
                 'ملاحظة: سيتم جمع معلومات الجهاز تلقائياً (نظام التشغيل، الإصدار، الموديل) للمساعدة في حل المشاكل التقنية.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 11,
                   color: Colors.grey,
                   height: 1.5,

@@ -194,7 +194,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
               : null,
           title: Text(
             "حاسبة المواريث",
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize:
@@ -228,7 +229,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                         height: 24.h,
                         color: KColors.primaryColor.withOpacity(0.1)),
                     Text("الوصايا والمنح",
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             fontWeight: FontWeight.bold,
                             fontSize:isTap?8.sp: 15.sp,
 
@@ -265,7 +267,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                                   child: ChoiceChip(
                                     label: Text(m,
                                         style:
-                                            GoogleFonts.cairo(fontSize:isTap?8.sp: 12.sp)),
+                                            TextStyle(
+                  fontFamily: "cairo",fontSize:isTap?8.sp: 12.sp)),
                                     selected: _selectedMadhab == m,
                                     selectedColor:
                                         KColors.primaryColor.withOpacity(0.2),
@@ -340,7 +343,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                     ],
                     ExpansionTile(
                       title: Text("الإخوة والأعمام",
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize:isTap? 10.sp:14.sp, color: KColors.primaryColor)),
                       tilePadding: EdgeInsets.zero,
                       children: [
@@ -478,7 +482,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                         shadowColor: KColors.primaryColor.withOpacity(0.4),
                       ),
                       label: Text("احسب التقسيم",
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                               fontWeight: FontWeight.bold,
                               fontSize: isTap? 10.sp :16.sp,
                               color: Colors.white)),
@@ -527,7 +532,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                             borderRadius: BorderRadius.circular(12)),
                       ),
                       label: Text("مسح",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                              fontFamily: "cairo",
                               color: Colors.red.shade700, fontSize: isTap?9.5.sp:14.sp)),
                     ),
                   ),
@@ -557,7 +563,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
       child: Row(
         children: [
           Expanded(
-              child: Text(label, style: GoogleFonts.cairo(fontSize:isTap?9.5.sp :14.sp))),
+              child: Text(label,    style: TextStyle(
+                          fontFamily: "cairo",fontSize:isTap?9.5.sp :14.sp))),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             decoration: BoxDecoration(
@@ -574,7 +581,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                   .map((f) => DropdownMenuItem(
                         value: f,
                         child: Text(f,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize:isTap? 8.sp:13.sp, fontWeight: FontWeight.bold)),
                       ))
                   .toList(),
@@ -613,7 +621,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontWeight: FontWeight.bold,
                   fontSize:isTap?9.5.sp: 16.sp,
 
@@ -630,7 +639,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
 
     return Row(
       children: [
-        Text("جنس المتوفى:", style: GoogleFonts.cairo(
+        Text("جنس المتوفى:",    style: TextStyle(
+                          fontFamily: "cairo",
           fontSize:isTap?8.8.sp: 14.sp,
 
         )),
@@ -660,7 +670,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(label,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
               color: isSelected
                   ? Colors.white
                   : (isDark ? Colors.white : Colors.black),
@@ -677,7 +688,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize:isTap?8.sp: 13.sp
                 ,
                 color: isDark ? Colors.white70 : Colors.black54)),
@@ -685,7 +697,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+             style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
           decoration: InputDecoration(
             filled: true,
             fillColor:
@@ -712,7 +725,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
       child: Row(
         children: [
           Expanded(
-              child: Text(label, style: GoogleFonts.cairo(fontSize:isTap? 9.sp:13.sp))),
+              child: Text(label,    style: TextStyle(
+                          fontFamily: "cairo",fontSize:isTap? 9.sp:13.sp))),
           Row(
             children: [
               IconButton(
@@ -723,7 +737,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                   width:isTap? 25.w:7.w,
                   child: Center(
                       child: Text("$value",
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                               fontWeight: FontWeight.bold, fontSize: 13.sp)))),
               IconButton(
                   onPressed:
@@ -746,7 +761,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
       child: Row(
         children: [
           Expanded(
-              child: Text(label, style: GoogleFonts.cairo(fontSize:isTap?8.sp : 13.sp))),
+              child: Text(label,    style: TextStyle(
+                          fontFamily: "cairo",fontSize:isTap?8.sp : 13.sp))),
           Transform.scale(
             scale: 0.8,
             child: Switch(
@@ -764,7 +780,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("نتائج تقسيم الميراث",
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
                 fontWeight: FontWeight.bold,
                 fontSize: 18.sp,
                 color: KColors.primaryColor)),
@@ -822,7 +839,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
               shadowColor: KColors.primaryColor.withOpacity(0.4),
             ),
             label: Text("مشاركة التقرير كـ PDF",
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontWeight: FontWeight.bold,
                     fontSize: 16.sp,
                     color: Colors.white)),
@@ -848,7 +866,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
             onChanged: onValueChange,
           ),
           Expanded(
-              child: Text(label, style: GoogleFonts.cairo(fontSize:isTap?8.5.sp :12.sp))),
+              child: Text(label,    style: TextStyle(
+                          fontFamily: "cairo",fontSize:isTap?8.5.sp :12.sp))),
         ],
       ),
     );
@@ -873,10 +892,12 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(share.name,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontWeight: FontWeight.bold, fontSize: 16.sp)),
               Text(intl.NumberFormat("#,##0.##").format(share.amount) + " ج.م",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontWeight: FontWeight.bold,
                       color: KColors.primaryColor,
                       fontSize: 16.sp)),
@@ -884,7 +905,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
           ),
           SizedBox(height: 6.h),
           Text(share.description,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 12.sp,
                   color: isDark ? Colors.white60 : Colors.black54)),
         ],
@@ -913,7 +935,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
             child: Text(
               "هذه النتائج استرشادية فقط، ويرجى الرجوع لأهل العلم والاختصاص.",
               textAlign: TextAlign.justify,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize:isTap?9.sp: 12.sp,
 
                 fontWeight: FontWeight.bold,
@@ -940,7 +963,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         ),
         Text(
           "تقرير توزيع الميراث التفصيلي:",
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: 16.sp,
               color: KColors.primaryColor),
@@ -976,19 +1000,22 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                         flex: 2,
                         child: Text("الوارث",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 fontWeight: FontWeight.bold, fontSize: 13.sp))),
                     Expanded(
                         flex: 1,
                         child: Text("نصيبه",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 fontWeight: FontWeight.bold, fontSize: 13.sp))),
                     Expanded(
                         flex: 3,
                         child: Text("التوضيح",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 fontWeight: FontWeight.bold, fontSize: 13.sp))),
                   ],
                 ),
@@ -1018,7 +1045,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                         flex: 2,
                         child: Text(share.name,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 fontWeight: FontWeight.w600, fontSize: 12.sp)),
                       ),
                       Expanded(
@@ -1036,7 +1064,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                                     ? share.fraction.toStringAsFixed(2)
                                     : "0"),
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 fontWeight: FontWeight.bold,
                                 color: KColors.primaryColor,
                                 fontSize: 12.sp),
@@ -1049,7 +1078,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                           padding: EdgeInsets.symmetric(horizontal: 4.w),
                           child: Text(share.description,
                               textAlign: TextAlign.right,
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 10.sp,
                                   color: isDark
                                       ? Colors.white70
@@ -1084,7 +1114,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         ),
         Text(
           "تصحيح المسألة وإخراج نصيب كل فرد:",
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: 16.sp,
               color: KColors.primaryColor),
@@ -1156,7 +1187,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                           child: Column(
                             children: [
                               Text(share.numerator.toString(),
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                       fontSize: 11.sp,
                                       fontWeight: FontWeight.bold)),
                               Container(
@@ -1165,7 +1197,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                                   color:
                                       isDark ? Colors.white30 : Colors.black38),
                               Text(share.denominator.toString(),
-                                  style: GoogleFonts.cairo(fontSize: 11.sp)),
+                                     style: TextStyle(
+                          fontFamily: "cairo",fontSize: 11.sp)),
                             ],
                           )),
                       Expanded(
@@ -1192,12 +1225,14 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
               children: [
                 Text(
                   "إجمالي ما تم تقسيمه على الورثة = ",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontWeight: FontWeight.bold, fontSize: 13.sp),
                 ),
                 Text(
                   "${intl.NumberFormat("#,##0").format(_results.fold(0.0, (sum, item) => sum + item.amount))} ج.م",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontWeight: FontWeight.bold,
                       fontSize: 14.sp,
                       color: KColors.primaryColor),
@@ -1213,14 +1248,16 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   Widget _tableHeader(String text) {
     return Text(text,
         textAlign: TextAlign.center,
-        style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 10.sp));
+           style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 10.sp));
   }
 
   Widget _tableCell(String text,
       {bool isPrimary = false, bool isBold = false}) {
     return Text(text,
         textAlign: TextAlign.center,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
           fontSize: 11.sp,
           fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
           color: isPrimary ? KColors.primaryColor : null,

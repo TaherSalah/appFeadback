@@ -52,7 +52,8 @@ class HadithViewItemBuilder extends StatelessWidget {
           // title: Text("موسوعة الاحاديث"),
           title: Text(
             "موسوعة الاحاديث",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:

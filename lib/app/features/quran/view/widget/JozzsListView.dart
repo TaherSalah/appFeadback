@@ -40,7 +40,8 @@ class _JozzsListScreenState extends State<JozzsListScreen> {
             centerTitle: true,
             title: Text(
               "اجزاء القران الكريم",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:

@@ -41,7 +41,8 @@ class HazbNawawiView extends StatelessWidget {
               ],
               title: Text(
                 AppString.KHazbNawawi,
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:

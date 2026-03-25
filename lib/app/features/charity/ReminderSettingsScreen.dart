@@ -112,7 +112,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
             centerTitle: true,
             title: Text(
               'إعدادات التذكير ',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -196,7 +197,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
                       ),
                       child: Text(
                         'حفظ الإعدادات',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -215,7 +217,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
       padding: EdgeInsets.only(bottom: 12.h, right: 8.w),
       child: Text(
         title,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
           fontSize: 16.sp,
           fontWeight: FontWeight.bold,
           color: const Color(0xFF10B981),
@@ -234,10 +237,12 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
       ),
       child: SwitchListTile(
         title: Text(title,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
                 fontWeight: FontWeight.bold, fontSize: 14.sp)),
         subtitle: Text(subtitle,
-            style: GoogleFonts.cairo(fontSize: 11.sp, color: Colors.grey)),
+               style: TextStyle(
+                          fontFamily: "cairo",fontSize: 11.sp, color: Colors.grey)),
         value: value,
         onChanged: onChanged,
         activeColor: const Color(0xFF10B981),
@@ -258,10 +263,12 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: GoogleFonts.cairo(fontWeight: FontWeight.w600)),
+            Text(title,    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.w600)),
             Text(
               '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF10B981),
                 fontSize: 18.sp,
@@ -294,7 +301,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('يوم التذكير',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontWeight: FontWeight.w600, fontSize: 13.sp)),
           SizedBox(height: 8.h),
           Wrap(
@@ -309,7 +317,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
 
               return ChoiceChip(
                 label: Text(days[index],
-                    style: GoogleFonts.cairo(fontSize: 10.sp)),
+                       style: TextStyle(
+                          fontFamily: "cairo",fontSize: 10.sp)),
                 selected: currentIsSelected,
                 onSelected: (selected) {
                   if (selected) setState(() => _weeklyDay = isoDay);

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -81,7 +80,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
         SnackBar(
           content: Text(
             _isFavorite ? 'تمت الإضافة للمفضلة' : 'تم الإزالة من المفضلة',
-            style: GoogleFonts.cairo(),
+            style: TextStyle(
+                  fontFamily: "cairo",),
           ),
           duration: const Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
@@ -138,18 +138,18 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                         fontSize: 20, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 10),
                 pw.Text(widget.item.description,
-                    style: pw.TextStyle(fontSize: 14)),
+                    style: const pw.TextStyle(fontSize: 14)),
                 pw.SizedBox(height: 20),
                 pw.Text('التفاصيل:',
                     style: pw.TextStyle(
                         fontSize: 16, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 5),
                 pw.Text(widget.item.details.replaceAll('•', '-'),
-                    style: pw.TextStyle(fontSize: 12)),
+                    style: const pw.TextStyle(fontSize: 12)),
                 pw.Spacer(),
                 pw.Center(
                   child: pw.Text('شكراً لاستخدامكم تطبيق رفيق المسلم',
-                      style: pw.TextStyle(fontSize: 10, color: PdfColors.grey)),
+                      style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey)),
                 ),
               ],
             ),
@@ -217,7 +217,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
             centerTitle: true,
             title: Text(
               widget.item.title,
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -263,7 +264,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                         const Icon(Icons.play_circle_filled, color: Colors.red),
                     label: Text(
                       'شاهد شرح الفيديو',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                           color: Colors.red, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -330,7 +332,7 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                 const SizedBox(height: 8),
                 Theme(
                   data: Theme.of(context).copyWith(
-                    colorScheme: ColorScheme.light(primary: Colors.green),
+                    colorScheme: const ColorScheme.light(primary: Colors.green),
                   ),
                   child: Stepper(
                     physics: const NeverScrollableScrollPhysics(),
@@ -347,7 +349,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                               title: const SizedBox.shrink(),
                               content: Text(
                                 step,
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                     fontSize: 15, fontWeight: FontWeight.bold),
                               ),
                               isActive: widget.item.steps!.indexOf(step) <=
@@ -410,7 +413,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                     icon: const Icon(Icons.rocket_launch),
                     label: Text(
                       'جرب الميزة الآن',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -437,7 +441,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
         children: [
           Text(
             'هل كان هذا الشرح مفيداً؟',
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 16),
           if (_isHelpful == null)
@@ -458,7 +463,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
           else
             Text(
               'شكراً لتقييمك! نسعى دائماً للأفضل.',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                   color: Colors.green, fontWeight: FontWeight.bold),
             ),
         ],
@@ -476,7 +482,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
           const SizedBox(height: 4),
           Text(label,
               style:
-                  GoogleFonts.cairo(color: color, fontWeight: FontWeight.bold)),
+                  TextStyle(
+                  fontFamily: "cairo",color: color, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -533,7 +540,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                           r.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                               fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                       ),

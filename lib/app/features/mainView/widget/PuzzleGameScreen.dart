@@ -173,7 +173,8 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
                   const SizedBox(width: 4),
                   Text(
                     '$_stars',
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -187,7 +188,8 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
           centerTitle: true,
           title: Text(
             level.title,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               color: level.colors[0],
               fontWeight: FontWeight.bold,
               fontSize: 18.sp,
@@ -218,7 +220,8 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
                   Expanded(
                     child: Text(
                       level.instruction,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -227,7 +230,8 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
                   ),
                   Text(
                     '${_currentLevelIndex + 1}/${_levels.length}',
-                    style: GoogleFonts.cairo(color: Colors.white70, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                  fontFamily: "cairo",color: Colors.white70, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -281,7 +285,8 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
                       ),
                       title: Text(
                         step,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 14.sp,
                           fontWeight: isCorrect ? FontWeight.bold : FontWeight.w500,
                           color: isDark ? Colors.white : Colors.black87,
@@ -305,7 +310,8 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
                   icon: const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
                   label: Text(
                     _isComplete ? 'إجابة رائعة! 🎉' : 'تحقق من الترتيب',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,

@@ -127,7 +127,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
               title: Text(
                      "حاسبة الكفارات",
 
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
@@ -145,7 +146,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                 const SizedBox(height: 16),
                 Text(
                   "اختر نوع الحساب",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize:isTap?12.sp: 18.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
@@ -249,7 +251,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontWeight: FontWeight.bold, fontSize: 16.sp)),
           const SizedBox(height: 16),
           ...children,
@@ -282,7 +285,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal)),
             if (isSelected)
@@ -306,7 +310,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize:isTap?10.sp: 14.sp,
 
                 color: isDark ? Colors.white70 : Colors.black54)),
@@ -317,7 +322,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           keyboardType: TextInputType.number,
           textAlign: TextAlign.right,
           onChanged: onChanged,
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+             style: TextStyle(
+          fontFamily: "cairo",fontWeight: FontWeight.bold),
           decoration: InputDecoration(
             filled: true,
             fillColor: isDark ? Colors.black26 : Colors.grey.shade100,
@@ -391,7 +397,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             const SizedBox(height: 8),
             Text(
               title,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize:isTap?10.sp: 14.sp,
 
                 fontWeight: FontWeight.bold,
@@ -406,7 +413,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize:isTap?8.sp: 14.sp,
 
                 color: isDark ? Colors.white38 : Colors.black45,
@@ -450,7 +458,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                 _selectedType == ExpiationType.fasting
                     ? "حاسبة الفدية"
                     : "حاسبة الكفارة",
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize:isTap?10.sp: 14.sp,
@@ -497,7 +506,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                     _selectedType == ExpiationType.fasting
                         ? "مبلغ الفدية الإجمالي"
                         : "مبلغ الكفارة الإجمالي",
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                      fontFamily: "cairo",
                       fontSize:isTap?9.sp: 12.sp,
 
                       color: Colors.grey,
@@ -511,7 +521,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                     children: [
                       Text(
                         _selectedCurrency.symbol,
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize:isTap?10.sp: 18.sp,
 
                           fontWeight: FontWeight.bold,
@@ -521,7 +532,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                       const SizedBox(width: 4),
                       Text(
                         intl.NumberFormat("#,##0").format(_total),
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize:isTap?15.sp: 32.sp,
 
                           fontWeight: FontWeight.bold,
@@ -540,7 +552,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                     ),
                     child: Text(
                       "$_mealsCount وجبة بإطعام المساكين",
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize:isTap?8.sp: 11.sp,
@@ -575,7 +588,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
         children: [
           Text(
             "ما هي الفدية؟",
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize:isTap?9.sp: 13.sp,
 
@@ -585,7 +599,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           const SizedBox(height: 8),
           Text(
             "الفدية واجبة على من لا يستطيع الصيام بعذر دائم لا يُرجى زواله، مثل:",
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize:isTap?8.sp: 11.sp,
 
               color: isDark ? Colors.white70 : const Color(0xFF92400E),
@@ -614,7 +629,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize:isTap?8.sp: 11.sp,
                 color: isDark ? Colors.white60 : Colors.black87,
               ),
@@ -656,7 +672,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
               child: Text(
                 textAlign: TextAlign.right,
                 value.name,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize:isTap? 8.sp :  12.sp, fontWeight: FontWeight.bold),
               ),
             );
@@ -686,7 +703,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           child: Text(
             "جدول المقارنة",
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize:isTap?10.sp: 14.sp,
@@ -743,7 +761,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           child: Text(
             cell,
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: isHeader ? 9.sp : 10.sp,
               fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
               color: isHeader
@@ -793,7 +812,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
           child: Text(
             "أسئلة شائعة",
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize:isTap?10.sp: 14.sp,
@@ -818,7 +838,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                   iconColor: Colors.blue,
                   title: Text(
                     faq["q"]!,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize:isTap?9.sp: 12.sp,
 
                       fontWeight: FontWeight.bold,
@@ -830,7 +851,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                       child: Text(
                         faq["a"]!,
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize:isTap?8.sp: 11.sp,
                           color: isDark ? Colors.white70 : Colors.black54,
                         ),
@@ -866,7 +888,8 @@ class _ExpiationCalculatorViewState extends State<ExpiationCalculatorView> {
             child: Text(
               "هذه النتائج استرشادية فقط، ويرجى الرجوع لأهل العلم والاختصاص.",
               textAlign: TextAlign.justify,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize:isTap?9.sp :12.sp,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white70 : Colors.black87,

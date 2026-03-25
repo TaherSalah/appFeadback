@@ -279,7 +279,8 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
                         const SizedBox(width: 4),
                         Text(
                           '${widget.currentStars}',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             fontSize: 14.sp,
@@ -296,7 +297,8 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
             centerTitle: true,
             title: Text(
               "المتجر",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -346,7 +348,8 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
             const SizedBox(width: 8),
             Text(
               title,
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : Colors.black87,
@@ -403,7 +406,8 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
             Expanded(
               child: Text(
                 item['name'],
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
@@ -419,7 +423,8 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
           children: [
             Text(
               item['description'],
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
                 color: Colors.grey,
               ),
@@ -431,7 +436,8 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
                 const SizedBox(width: 4),
                 Text(
                   '${item['cost']}',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp,
                     fontWeight: FontWeight.bold,
                     color: canAfford ? Colors.amber : Colors.red,
@@ -455,7 +461,8 @@ class _VirtualShopScreenState extends State<VirtualShopScreen> {
                 ),
                 child: Text(
                   'شراء',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,

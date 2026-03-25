@@ -24,7 +24,8 @@ class SupportDeveloperScreen extends StatelessWidget {
         content: Text(
           'تم نسخ الرقم: $text',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(),
+             style: TextStyle(
+                          fontFamily: "cairo",),
         ),
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.green,
@@ -47,7 +48,8 @@ class SupportDeveloperScreen extends StatelessWidget {
           leading: const CupertinoNavigationBarBackButton(color: Colors.white),
           title: Text(
             'ادعم المشروع 🤍',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -79,7 +81,8 @@ class SupportDeveloperScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(
                     'ساهم في استمرار التطبيق',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: isTab ? 12.sp : 18.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.green.shade900,
@@ -89,7 +92,8 @@ class SupportDeveloperScreen extends StatelessWidget {
                   Text(
                     'تطبيق رفيق المسلم مجاني تماماً وسيظل كذلك بإذن الله. دعمك يساعدنا على تغطية تكاليف الخوادم وتطوير ميزات جديدة لخدمة المسلمين حول العالم.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: isTab ? 9.sp : 13.sp,
                       color: isDark ? Colors.white70 : Colors.green.shade800,
                       height: 1.6,
@@ -158,14 +162,16 @@ class SupportDeveloperScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'فودافون كاش',
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
                               ),
                               Text(
                                 '01094529752',
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 18,
                                   letterSpacing: 1.2,
                                   color: Colors.red.shade700,
@@ -190,7 +196,8 @@ class SupportDeveloperScreen extends StatelessWidget {
                   Center(
                     child: Text(
                       'جزاكم الله خيراً على دعمكم الدائم ❤️',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 14,
                         color: Colors.grey,
                         fontWeight: FontWeight.w500,
@@ -214,7 +221,8 @@ class SupportDeveloperScreen extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           title,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white70 : Colors.black54,
@@ -258,7 +266,8 @@ class SupportDeveloperScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       color: textColor,
@@ -266,7 +275,8 @@ class SupportDeveloperScreen extends StatelessWidget {
                   ),
                   Text(
                     subtitle,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 12,
                       color: textColor.withOpacity(0.8),
                     ),

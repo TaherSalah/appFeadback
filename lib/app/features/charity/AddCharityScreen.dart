@@ -139,7 +139,8 @@ bool isTab = ResponsiveUtil.isTablet(context);
               centerTitle: true,
               title: Text(
                  widget.donation != null ? 'تعديل الصدقة' : 'إضافة صدقة جديدة',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
@@ -173,10 +174,12 @@ bool isTab = ResponsiveUtil.isTablet(context);
                             controller: _amountController,
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
-                            style: GoogleFonts.cairo(fontSize: isTab?9.sp:16.sp),
+                            style: TextStyle(
+                  fontFamily: "cairo",fontSize: isTab?9.sp:16.sp),
                             decoration: InputDecoration(
                               hintText: 'أدخل المبلغ',
-                              hintStyle: GoogleFonts.cairo(
+                              hintStyle: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: isTab?9.sp:16.sp,
                                 color: Colors.grey,
                               ),
@@ -205,7 +208,8 @@ bool isTab = ResponsiveUtil.isTablet(context);
                                     value: c,
                                     child: Text(
                                       c,
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -265,7 +269,8 @@ bool isTab = ResponsiveUtil.isTablet(context);
                               // SizedBox(width: 6.w),
                               Text(
                                 category.arabicName,
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize:isTab?9.sp:11.5.sp,
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
@@ -330,7 +335,8 @@ bool isTab = ResponsiveUtil.isTablet(context);
                               // SizedBox(width: 6.w),
                               Text(
                                 method.arabicName,
-                                style: GoogleFonts.cairo(
+                                   style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize:isTab?9.sp:11.5.sp,
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
@@ -387,7 +393,8 @@ bool isTab = ResponsiveUtil.isTablet(context);
                           SizedBox(width: 12.w),
                           Text(
                             '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize:isTab?10.sp: 16.sp,
                               fontWeight: FontWeight.w600,
                             ),
@@ -413,10 +420,12 @@ bool isTab = ResponsiveUtil.isTablet(context);
                     child: TextFormField(
                       controller: _notesController,
                       maxLines: 1,
-                      style: GoogleFonts.cairo(fontSize: isTab?10.sp:16.sp),
+                         style: TextStyle(
+                          fontFamily: "cairo",fontSize: isTab?10.sp:16.sp),
                       decoration: InputDecoration(
                         hintText: 'اكتب ملاحظات إضافية...',
-                        hintStyle: GoogleFonts.cairo(color: Colors.grey,fontSize: isTab?10.sp:16.sp),
+                        hintStyle: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey,fontSize: isTab?10.sp:16.sp),
                         border: InputBorder.none,
                       ),
                     ),
@@ -444,7 +453,8 @@ bool isTab = ResponsiveUtil.isTablet(context);
                               widget.donation != null
                                   ? 'تحديث الصدقة'
                                   : 'حفظ الصدقة',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize:isTab? 10.sp:18.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -466,7 +476,8 @@ bool isTab = ResponsiveUtil.isTablet(context);
 
     return Text(
       title,
-      style: GoogleFonts.cairo(
+         style: TextStyle(
+                          fontFamily: "cairo",
         fontSize: isTab? 10.sp:16.sp,
         fontWeight: FontWeight.bold,
       ),

@@ -51,7 +51,8 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
         appBar: AppBar(
           title: Text(
             'سجل الشكاوى',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
             ),
@@ -81,11 +82,13 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                     const SizedBox(height: 16),
                     Text(
                       'حدث خطأ في جلب البيانات',
-                      style: GoogleFonts.cairo(),
+                         style: TextStyle(
+                          fontFamily: "cairo",),
                     ),
                     TextButton(
                       onPressed: _refresh,
-                      child: Text('إعادة المحاولة', style: GoogleFonts.cairo()),
+                      child: Text('إعادة المحاولة',    style: TextStyle(
+                          fontFamily: "cairo",)),
                     ),
                   ],
                 ),
@@ -103,14 +106,16 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                     const SizedBox(height: 16),
                     Text(
                       'لا توجد شكاوى سابقة مسجلة',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 16,
                         color: Colors.grey,
                       ),
                     ),
                     Text(
                       'بهذا البريد: ${widget.userEmail}',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 12,
                         color: Colors.grey,
                       ),
@@ -150,7 +155,8 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                           ),
                           child: Text(
                             status,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 10,
                               color: _getStatusColor(status),
                               fontWeight: FontWeight.bold,
@@ -161,7 +167,8 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                         Expanded(
                           child: Text(
                             item['category'] ?? 'شكوى',
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
@@ -172,7 +179,8 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                     subtitle: Text(
                       '📅 ${date.day}/${date.month}/${date.year}',
                       style:
-                          GoogleFonts.cairo(fontSize: 11, color: Colors.grey),
+                          TextStyle(
+                  fontFamily: "cairo",fontSize: 11, color: Colors.grey),
                     ),
                     children: [
                       Padding(
@@ -182,7 +190,8 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                           children: [
                             Text(
                               'وصف الشكوى:',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
                                 color: Colors.green,
@@ -191,7 +200,8 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                             const SizedBox(height: 8),
                             Text(
                               item['description'] ?? '',
-                              style: GoogleFonts.cairo(fontSize: 13),
+                                 style: TextStyle(
+                          fontFamily: "cairo",fontSize: 13),
                             ),
                             if (item['reply'] != null &&
                                 item['reply'].toString().isNotEmpty) ...[
@@ -214,7 +224,8 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                                         const SizedBox(width: 8),
                                         Text(
                                           'رد الإدارة:',
-                                          style: GoogleFonts.cairo(
+                                             style: TextStyle(
+                          fontFamily: "cairo",
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13,
                                             color: Colors.green,
@@ -225,7 +236,8 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                                     const SizedBox(height: 8),
                                     Text(
                                       item['reply'],
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                         fontSize: 13,
                                         fontStyle: FontStyle.italic,
                                       ),

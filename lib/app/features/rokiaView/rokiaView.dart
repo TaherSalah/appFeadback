@@ -62,7 +62,8 @@ class RokiaScreen extends StatelessWidget {
         ],
         title: Text(
           AppString.KRokia,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             color: Colors.green,
             fontWeight: FontWeight.bold,
             fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,

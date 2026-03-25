@@ -66,7 +66,8 @@ class FajrAlarmEntryWidget extends StatelessWidget {
                     children: [
                       Text(
                         "منبه الفجر المتقدم",
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : Colors.black87,
@@ -75,7 +76,8 @@ class FajrAlarmEntryWidget extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         "اضبط منبهك واستيقظ لصلاة الفجر في وقتها",
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 10.sp,
                           color: isDark ? Colors.white54 : Colors.grey[600],
                           height: 1.2,

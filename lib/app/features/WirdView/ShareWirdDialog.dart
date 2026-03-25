@@ -115,7 +115,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("مشاركة الذكر", style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16.sp, color: context.isDark ? Colors.white : Colors.black87)),
+                  Text("مشاركة الذكر",    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 16.sp, color: context.isDark ? Colors.white : Colors.black87)),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
                     child: Icon(CupertinoIcons.xmark_circle_fill, color: Colors.grey.withOpacity(0.5)),
@@ -157,7 +158,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
                               children: [
                                 Image.asset("assets/images/logoApp.png", height: 32.h, width: 32.h, color: _brandColor),
                                 SizedBox(width: 8.w),
-                                Text("رفيق المسلم", style: GoogleFonts.cairo(color: _brandColor, fontSize: 12.sp, fontWeight: FontWeight.bold)),
+                                Text("رفيق المسلم",    style: TextStyle(
+                          fontFamily: "cairo",color: _brandColor, fontSize: 12.sp, fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ],
@@ -201,7 +203,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("تخصيص التصميم", style: GoogleFonts.cairo(fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.grey)),
+        Text("تخصيص التصميم",    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.grey)),
         SizedBox(height: 12.h),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -224,7 +227,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
         SizedBox(height: 16.h),
         
         // Color Pickers
-        Text("ألوان النصوص", style: GoogleFonts.cairo(fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.grey)),
+        Text("ألوان النصوص",    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.grey)),
         SizedBox(height: 8.h),
         _buildSimpleColorSection("لون الذكر", _textPalette, _textColor, (c) => setState(() => _textColor = c)),
         SizedBox(height: 8.h),
@@ -246,7 +250,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
           ],
         ),
         SizedBox(height: 12.h),
-        Text("الخلفيات", style: GoogleFonts.cairo(fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.grey)),
+        Text("الخلفيات",    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.grey)),
         SizedBox(height: 12.h),
         SizedBox(
           height: 60.h,
@@ -287,7 +292,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
         SizedBox(
           width: 60.w,
           child: Text(title,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   color: Colors.grey, fontSize: 10.sp, fontWeight: FontWeight.bold)),
         ),
         Expanded(
@@ -338,7 +344,8 @@ class _ShareWirdDialogState extends State<ShareWirdDialog> {
         icon: _isSharing 
           ? const CupertinoActivityIndicator(color: Colors.white) 
           : const Icon(CupertinoIcons.share),
-        label: Text(_isSharing ? "جاري التجهيز..." : "مشاركة الصورة", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        label: Text(_isSharing ? "جاري التجهيز..." : "مشاركة الصورة",    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,

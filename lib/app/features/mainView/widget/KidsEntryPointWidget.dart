@@ -58,7 +58,8 @@ class KidsEntryPointWidget extends StatelessWidget {
                     children: [
                       Text(
                         "ركن المسلم الصغير 👶",
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: ResponsiveUtil.isTablet(context)?10.sp:16.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -66,7 +67,8 @@ class KidsEntryPointWidget extends StatelessWidget {
                       ),
                       Text(
                         "مهمات يومية، مستويات، ونجوم في انتظارك!",
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:ResponsiveUtil.isTablet(context)?8.sp: 11.sp,
                           color: Colors.white.withOpacity(0.9),
                         ),

@@ -80,7 +80,8 @@ class SearchResultCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               hadith.bookName,
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.bold,
                                 color: baseColor,
@@ -100,7 +101,8 @@ class SearchResultCard extends StatelessWidget {
                       ),
                       child: Text(
                         '#${hadith.hadithNumber}',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 11.sp,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white70 : Colors.black87,
@@ -134,7 +136,8 @@ class SearchResultCard extends StatelessWidget {
                     ),
                     child: Text(
                       hadith.grade1!,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 11.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.green,
@@ -157,7 +160,8 @@ class SearchResultCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           hadith.babName!,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 12.sp,
                             color: isDark ? Colors.grey[400] : Colors.grey[700],
                           ),

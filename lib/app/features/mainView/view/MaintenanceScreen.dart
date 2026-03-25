@@ -29,7 +29,8 @@ class MaintenanceScreen extends StatelessWidget {
               const SizedBox(height: 30),
               Text(
                 'التطبيق في وضع الصيانة',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -41,7 +42,8 @@ class MaintenanceScreen extends StatelessWidget {
                 child: Text(
                   'نحن الآن نقوم ببعض التحسينات لخدمتكم بشكل أفضل. سنعود للعمل قريباً إن شاء الله.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                    fontFamily: "cairo",
                     fontSize: 16,
                     color: Colors.white70,
                   ),

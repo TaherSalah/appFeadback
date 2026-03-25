@@ -453,10 +453,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:objectbox/objectbox.dart';
 import 'package:get_it/get_it.dart';
-import 'package:path_provider/path_provider.dart';
-
 import '../../../core/cubit/centralized_cubit.dart';
 import '../../../core/utils/constent/lists.dart';
 import '../../../core/utils/objectbox.dart';

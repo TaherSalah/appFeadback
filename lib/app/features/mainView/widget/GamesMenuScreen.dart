@@ -48,7 +48,8 @@ class GamesMenuScreen extends StatelessWidget {
             centerTitle: true,
             title: Text(
               "الألعاب التعليمية",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -350,7 +351,8 @@ class GamesMenuScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize:
                           ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
                       fontWeight: FontWeight.bold,
@@ -360,7 +362,8 @@ class GamesMenuScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp,
                       color: Colors.white70,
                     ),
@@ -372,7 +375,8 @@ class GamesMenuScreen extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         'حتى $reward نجمة',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 8.sp : 11.sp,
                           color: Colors.white,

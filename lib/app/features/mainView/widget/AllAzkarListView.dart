@@ -61,7 +61,8 @@ leading: Navigator.canPop(context) ? CupertinoNavigationBarBackButton(
           centerTitle: true,
           title: Text(
             "أذكار المسلم",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:

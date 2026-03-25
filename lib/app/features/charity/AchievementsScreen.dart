@@ -114,7 +114,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
             centerTitle: true,
             title: Text(
               'لوحة الإنجازات',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -170,7 +171,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
           SizedBox(height: 24.h),
           Text(
             'الأوسمة المستحقة',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : const Color(0xFF2D3142),
@@ -237,7 +239,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               children: [
                 Text(
                   'لقد جمعت ${_unlocked.length} وسامًا!',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     color: Colors.white,
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
@@ -245,7 +248,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
                 ),
                 Text(
                   'استمر في العطاء لتفتح المزيد من الإنجازات',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 12.sp,
                   ),
@@ -296,7 +300,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
           Text(
             def['title'],
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 14.sp,
               fontWeight: FontWeight.bold,
               color: isUnlocked
@@ -307,7 +312,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
           Text(
             def['description'],
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 10.sp,
               color: isDark ? Colors.white54 : Colors.grey[600],
             ),
@@ -323,7 +329,8 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               child: Text(
                 intl.DateFormat('yyyy/MM/dd', 'ar')
                     .format(achievement.unlockedDate),
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 9.sp,
                   color: Colors.amber[800],
                   fontWeight: FontWeight.bold,

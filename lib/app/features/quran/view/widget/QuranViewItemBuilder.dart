@@ -1258,7 +1258,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             centerTitle: true,
             title: Text(
               "القران الكريم",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
@@ -1276,7 +1277,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         //           icon: const Icon(Icons.check_circle_outline,
         //               color: Colors.white),
         //           label: Text('تمت القراءة ✅',
-        //               style: GoogleFonts.cairo(
+        //                  style: TextStyle(
+                          //fontFamily: "cairo",
         //                   color: Colors.white, fontWeight: FontWeight.bold)),
         //         ),
         //       )
@@ -1464,7 +1466,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                         const SizedBox(height: 8),
                         Text(
                           '${(_brightnessIndicatorValue * 100).toInt()}%',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -1630,7 +1633,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             children: [
               Text(
                 'سطوع الشاشة',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.teal[800],
@@ -1780,7 +1784,7 @@ class NoteDialogWidget extends StatefulWidget {
   final ValueChanged<String> onSave;
   final VoidCallback onDelete;
 
-  const NoteDialogWidget({
+  const NoteDialogWidget({super.key,
     this.initialText,
     required this.onSave,
     required this.onDelete,

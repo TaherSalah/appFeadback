@@ -11,7 +11,8 @@ PreferredSizeWidget customAppBar(String title, {Widget? leading,List<Widget>? ac
     ),
     title: Text(
       title,
-      style: GoogleFonts.cairo(fontSize: 15.sp,fontWeight: FontWeight.bold,color:color?? Colors.white),
+         style: TextStyle(
+                          fontFamily: "cairo",fontSize: 15.sp,fontWeight: FontWeight.bold,color:color?? Colors.white),
     ),
     // backgroundColor: Colors.amber.withOpacity(0.8),
     backgroundColor: const Color(0xffE1ECC8),

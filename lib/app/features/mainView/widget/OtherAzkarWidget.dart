@@ -126,7 +126,8 @@ class _OtherAzkarWidgetState extends State<OtherAzkarWidget> {
                 children: [
                   Text(
                     "أدعية مختارة",
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.sizeOf(context).width > 600
                             ? 10.sp

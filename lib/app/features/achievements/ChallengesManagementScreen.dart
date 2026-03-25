@@ -36,7 +36,8 @@ class _ChallengesManagementScreenState extends State<ChallengesManagementScreen>
       child: Scaffold(
         backgroundColor: isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
         appBar: AppBar(
-          title: Text('التحديات 🎯', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 20.sp)),
+          title: Text('التحديات 🎯',    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 20.sp)),
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -69,12 +70,15 @@ class _ChallengesManagementScreenState extends State<ChallengesManagementScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(challenge.title, style: GoogleFonts.cairo(fontSize: 16.sp, fontWeight: FontWeight.bold)),
-                    Text(challenge.description, style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey)),
+                    Text(challenge.title,    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                    Text(challenge.description,    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp, color: Colors.grey)),
                   ],
                 ),
               ),
-              Text('${challenge.rewardPoints} نقطة', style: GoogleFonts.cairo(fontSize: 14.sp, fontWeight: FontWeight.bold, color: const Color(0xFF10B981))),
+              Text('${challenge.rewardPoints} نقطة',    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14.sp, fontWeight: FontWeight.bold, color: const Color(0xFF10B981))),
             ],
           ),
           SizedBox(height: 16.h),
@@ -86,7 +90,8 @@ class _ChallengesManagementScreenState extends State<ChallengesManagementScreen>
             borderRadius: BorderRadius.circular(4.r),
           ),
           SizedBox(height: 8.h),
-          Text('${challenge.currentProgress} / ${challenge.targetValue}', style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey)),
+          Text('${challenge.currentProgress} / ${challenge.targetValue}',    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp, color: Colors.grey)),
         ],
       ),
     );

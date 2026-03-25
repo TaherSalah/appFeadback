@@ -637,7 +637,8 @@ class _AllahNameWidgetState extends State<AllahNameWidget> {
                   Text(
                     _todaysName['meaning']!,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: context.isTablet ? 10.sp : 14.sp,
                       color: isDark ? Colors.white70 : Colors.black87,
                       fontWeight: FontWeight.w600,
@@ -665,7 +666,8 @@ class _AllahNameWidgetState extends State<AllahNameWidget> {
                         Expanded(
                           child: Text(
                             _todaysName['reflection']!,
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: context.isTablet ? 9.sp : 12.sp,
                               color:
                                   isDark ? Colors.grey[300] : Colors.grey[800],

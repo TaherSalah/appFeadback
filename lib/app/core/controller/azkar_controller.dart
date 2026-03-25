@@ -322,7 +322,8 @@ Widget alertDefDialog(String number, String type) {
             Text(
               ' رائع لقد وصلت الي $number $type ',
               style:
-                  GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.bold),
+                  TextStyle(
+                  fontFamily: "cairo",fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ],
         )),

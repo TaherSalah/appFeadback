@@ -43,7 +43,8 @@ class SettingsFontSizeSlider extends StatelessWidget {
               const SizedBox(width: 16),
               Text(
                 title,
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                   color: isDark ? Colors.white : Colors.black87,
@@ -52,7 +53,8 @@ class SettingsFontSizeSlider extends StatelessWidget {
               const Spacer(),
               Text(
                 '${value.round()}',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                   color: isDark ? Colors.white : Colors.black87,

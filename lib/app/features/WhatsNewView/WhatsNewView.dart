@@ -1,5 +1,5 @@
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
-import 'package:muslimdaily/app/features/splashView/splash.dart';
+import 'package:muslimdaily/app/features/splashView/splashView.dart';
 
 import '../../core/shard/exports/all_exports.dart';
 import '../../core/utils/style/k_color.dart';
@@ -225,7 +225,8 @@ class _WhatsNewViewState extends State<WhatsNewView>
                   child: Text(
                     feature.title,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: ResponsiveUtil.isTablet(context) ? 15.sp : 20.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark ? KColors.primaryColor : Colors.black87,
@@ -252,7 +253,8 @@ class _WhatsNewViewState extends State<WhatsNewView>
                   child: Text(
                     feature.description,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 15.sp,
                       color: Colors.grey.shade700,
                       height: 1.5,
@@ -311,7 +313,8 @@ class _WhatsNewViewState extends State<WhatsNewView>
                   ),
                   child: Text(
                     'تخطي',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize:
                           ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
                       color: Colors.grey.shade600,
@@ -336,7 +339,8 @@ class _WhatsNewViewState extends State<WhatsNewView>
               ),
               child: Text(
                 '${_currentPage + 1} / ${widget.newFeatures.length}',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                   // color: Theme.of(context).primaryColor,
@@ -380,7 +384,8 @@ class _WhatsNewViewState extends State<WhatsNewView>
                       _currentPage < widget.newFeatures.length - 1
                           ? 'التالي'
                           : 'ابدأ الآن',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize:
                             ResponsiveUtil.isTablet(context) ? 10.sp : 16.sp,
                         fontWeight: FontWeight.w600,

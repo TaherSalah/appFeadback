@@ -117,18 +117,22 @@ class _TasbihScreenState extends State<TasbihScreen>
         textDirection: TextDirection.rtl,
         child: CupertinoAlertDialog(
           title: Text('تخطي الذكر؟',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                 style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
           content: Text('هل تريد تخطي هذا الذكر والانتقال للذكر التالي؟',
-              style: GoogleFonts.cairo()),
+                 style: TextStyle(
+                          fontFamily: "cairo",)),
           actions: [
             CupertinoDialogAction(
                 child:
-                    Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+                    Text('إلغاء',    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey)),
                 onPressed: () => Navigator.pop(context)),
             CupertinoDialogAction(
               isDestructiveAction: true,
               child:
-                  Text('تخطي', style: GoogleFonts.cairo(color: Colors.orange)),
+                  Text('تخطي',    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.orange)),
               onPressed: () {
                 widget.wird.adhkar[currentDhikrIndex].currentCount =
                     widget.wird.adhkar[currentDhikrIndex].targetCount;
@@ -206,7 +210,8 @@ class _TasbihScreenState extends State<TasbihScreen>
                 ),
                 SizedBox(height: 24.h),
                 Text("تقبل الله طاعتك!",
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 24.sp,
                         fontWeight: FontWeight.w900,
                         color: context.isDark ? Colors.white : Colors.black87)),
@@ -214,7 +219,8 @@ class _TasbihScreenState extends State<TasbihScreen>
                 Text(
                   "لقد أتممت هذا الورد بنجاح للمرة رقم ${widget.wird.completedCount}",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15.sp, color: Colors.grey),
+                     style: TextStyle(
+                          fontFamily: "cairo",fontSize: 15.sp, color: Colors.grey),
                 ),
                 SizedBox(height: 40.h),
                 Row(
@@ -227,7 +233,8 @@ class _TasbihScreenState extends State<TasbihScreen>
                             ? Colors.white.withOpacity(0.05)
                             : Colors.grey.shade100,
                         child: Text("إعادة الورد",
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 color: context.isDark
                                     ? Colors.white70
                                     : Colors.black54,
@@ -251,7 +258,8 @@ class _TasbihScreenState extends State<TasbihScreen>
                         borderRadius: BorderRadius.circular(20),
                         color: const Color(0xFF00897B),
                         child: Text("خروج",
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white)),
                         onPressed: () {
@@ -344,7 +352,8 @@ class _TasbihScreenState extends State<TasbihScreen>
                                   if (!isFocusMode) ...[
                                     Text(
                                       "انقر في أي مكان للتسبيح",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 12.sp,
                                           color: Colors.grey.withOpacity(0.5)),
                                     ),
@@ -384,7 +393,8 @@ class _TasbihScreenState extends State<TasbihScreen>
             children: [
               Text(
                 "الذكر ${currentDhikrIndex + 1} من $totalAdhkar",
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 13.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white60 : Colors.black54),
@@ -529,7 +539,8 @@ class _TasbihScreenState extends State<TasbihScreen>
                 ),
                 Text(
                   "من ${dhikr.targetCount}",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey.withOpacity(0.6)),
@@ -627,7 +638,8 @@ class _TasbihScreenState extends State<TasbihScreen>
           SizedBox(height: 6.h),
           Text(
             label,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 10.sp,
               fontWeight: FontWeight.bold,
               color: !enabled
@@ -665,7 +677,8 @@ class _TasbihScreenState extends State<TasbihScreen>
               child: Text(
                 widget.wird.name,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 16.sp,
                     color: isDark ? Colors.white : Colors.black87),
               ),

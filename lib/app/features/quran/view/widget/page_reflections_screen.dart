@@ -1,9 +1,5 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:path_provider/path_provider.dart';
@@ -227,7 +223,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                   )
                 : Text(
                     'خواطر صفحة $pageNumber',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.sizeOf(context).width > 600
@@ -275,7 +272,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                           // const SizedBox(width: 8),
                           Text(
                             'تصدير الخواطر',
-                            style: GoogleFonts.cairo(),
+                            style: TextStyle(
+                  fontFamily: "cairo",),
                             textAlign: TextAlign.right,
                           ),
                           const SizedBox(width: 15),
@@ -289,7 +287,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                       child: Row(
                         children: [
                           // const SizedBox(width: 8),
-                          Text('الإحصائيات', style: GoogleFonts.cairo()),
+                          Text('الإحصائيات', style: TextStyle(
+                  fontFamily: "cairo",)),
                           const SizedBox(width: 30),
 
                           const Icon(Icons.bar_chart, size: 20),
@@ -302,7 +301,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
             ],
             // title: Text(
             //   "احزاب القران الكريم",
-            //   style: GoogleFonts.cairo(
+            //   style: TextStyle(
+                  //fontFamily: "cairo",
             //       color: Colors.green,
             //       fontWeight: FontWeight.bold,
             //       fontSize:
@@ -316,7 +316,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
           icon: const Icon(Icons.add, color: Colors.white),
           label: Text(
             'إضافة خاطرة',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
@@ -368,7 +369,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
         backgroundColor: color?.color.withOpacity(0.2),
         selectedColor:
             color?.color.withOpacity(0.4) ?? Colors.teal.withOpacity(0.4),
-        labelStyle: GoogleFonts.cairo(
+        labelStyle: TextStyle(
+                  fontFamily: "cairo",
           fontSize: 12.sp,
           color: isSelected
               ? Colors.white
@@ -393,7 +395,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
             _searchController.text.isNotEmpty || _filterColor != null
                 ? 'لا توجد نتائج'
                 : 'لا توجد خواطر مسجلة لهذه الصفحة',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 16.sp,
               color: isDark ? Colors.white70 : Colors.grey[600],
             ),
@@ -449,7 +452,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                         ),
                         child: Text(
                           reflection.color.name,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 10.sp,
                             fontWeight: FontWeight.bold,
                             color: reflection.color.color,
@@ -465,7 +469,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                     SizedBox(width: 4.w),
                     Text(
                       _formatDate(reflection.createdAt),
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 11.sp,
                         color: isDark ? Colors.white54 : Colors.grey[600],
                       ),
@@ -520,7 +525,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
               ),
               child: Text(
                 reflection.content,
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 14.sp,
                   height: 1.6,
                   color: isDark ? Colors.white : Colors.black87,
@@ -541,7 +547,8 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                     SizedBox(width: 4.w),
                     Text(
                       'تم التعديل ${_formatDate(reflection.updatedAt)}',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 10.sp,
                         color: isDark ? Colors.white38 : Colors.grey[500],
                         fontStyle: FontStyle.italic,
@@ -667,7 +674,8 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                     SizedBox(height: 16.h),
                     Text(
                       'التصنيف:',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 13.sp,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -726,7 +734,8 @@ class _ReflectionDialogState extends State<_ReflectionDialog> {
                                 SizedBox(width: 12.w),
                                 Text(
                                   _selectedColor.name,
-                                  style: GoogleFonts.cairo(
+                                  style: TextStyle(
+                  fontFamily: "cairo",
                                     fontSize: 14.sp,
                                     color:
                                         isDark ? Colors.white : Colors.black87,
@@ -874,7 +883,8 @@ class _DeleteConfirmDialog extends StatelessWidget {
                 children: [
                   Text(
                     'تأكيد الحذف',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87,
@@ -884,7 +894,8 @@ class _DeleteConfirmDialog extends StatelessWidget {
                   SizedBox(height: 8.h),
                   Text(
                     'هل أنت متأكد من حذف هذه الخاطرة؟\nلا يمكن التراجع عن هذا الإجراء.',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 13.sp,
                       height: 1.4,
                       color: isDark ? Colors.white70 : Colors.black87,
@@ -916,7 +927,8 @@ class _DeleteConfirmDialog extends StatelessWidget {
                         Expanded(
                           child: Text(
                             'سيتم حذف العنصر نهائيًا من القائمة.',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 12.5.sp,
                               color: Colors.red,
                             ),
@@ -947,7 +959,8 @@ class _DeleteConfirmDialog extends StatelessWidget {
                           ),
                           child: Text(
                             'إلغاء',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 14.sp,
                               color:
                                   isDark ? Colors.white : Colors.grey.shade800,
@@ -962,7 +975,8 @@ class _DeleteConfirmDialog extends StatelessWidget {
                           icon: const Icon(Icons.delete_outline),
                           label: Text(
                             'حذف',
-                            style: GoogleFonts.cairo(),
+                            style: TextStyle(
+                  fontFamily: "cairo",),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
@@ -1046,7 +1060,8 @@ class _StatisticsDialog extends StatelessWidget {
             Icon(Icons.bar_chart, color: Colors.teal, size: 28.sp),
             SizedBox(width: 8.w),
             Text('إحصائيات الخواطر',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                     fontWeight: FontWeight.bold, fontSize: 16.sp)),
           ],
         ),
@@ -1056,14 +1071,16 @@ class _StatisticsDialog extends StatelessWidget {
           children: [
             Text(
               'صفحة ${pageIndex + 1}',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 14.sp, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16.h),
             _buildStatRow('إجمالي الخواطر', totalCount.toString(), Colors.teal),
             SizedBox(height: 12.h),
             Text('التصنيفات:',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 13.sp, fontWeight: FontWeight.bold)),
             SizedBox(height: 8.h),
             ...colorCounts.entries.map((entry) {
@@ -1081,7 +1098,8 @@ class _StatisticsDialog extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('إغلاق', style: GoogleFonts.cairo(color: Colors.teal)),
+            child: Text('إغلاق', style: TextStyle(
+                  fontFamily: "cairo",color: Colors.teal)),
           ),
         ],
       ),
@@ -1103,11 +1121,13 @@ class _StatisticsDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Text(label, style: GoogleFonts.cairo(fontSize: 13.sp)),
+            Text(label, style: TextStyle(
+                  fontFamily: "cairo",fontSize: 13.sp)),
           ],
         ),
         Text(value,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 13.sp, fontWeight: FontWeight.bold)),
       ],
     );
@@ -1154,7 +1174,8 @@ class _ColorPickerBottomSheet extends StatelessWidget {
               // Title
               Text(
                 'اختر التصنيف',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
@@ -1219,7 +1240,8 @@ class _ColorPickerBottomSheet extends StatelessWidget {
                           Expanded(
                             child: Text(
                               color.name,
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 15.sp,
                                 fontWeight: isSelected
                                     ? FontWeight.bold

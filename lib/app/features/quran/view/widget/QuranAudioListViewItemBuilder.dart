@@ -46,7 +46,8 @@ class QuranAudioListViewItemBuilder extends StatelessWidget {
           centerTitle: true,
           title: Text(
             "كل  القرائ",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:

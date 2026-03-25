@@ -1,9 +1,6 @@
-import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/responsive_util.dart';
@@ -25,7 +22,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
   Timer? _debounce;
 
   // Voice Search
-  stt.SpeechToText _speech = stt.SpeechToText();
+  final stt.SpeechToText _speech = stt.SpeechToText();
   bool _isListening = false;
 
   // Search History
@@ -197,7 +194,8 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
             centerTitle: true,
             title: Text(
               "البحث بالآية",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.w700,
                 fontSize: screenWidth > 600 ? 12.sp : 18.sp,
@@ -309,7 +307,8 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                               itemColor: isDark ? Colors.white : Colors.black54,
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
-                                fontFamily: GoogleFonts.cairo().fontFamily,
+                                fontFamily: TextStyle(
+                  fontFamily: "cairo",).fontFamily,
                                 fontSize: isTablet ? 9.sp : 14,
                               ),
                               onSuffixTap: () {
@@ -342,7 +341,8 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                                 color: isDark
                                     ? Colors.grey[500]
                                     : Colors.grey[600],
-                                fontFamily: GoogleFonts.cairo().fontFamily,
+                                fontFamily: TextStyle(
+                  fontFamily: "cairo",).fontFamily,
                                 fontSize: isTablet ? 8.sp : 13,
                               ),
                               onChanged: (value) {
@@ -856,7 +856,7 @@ class _SearchHistoryList extends StatelessWidget {
                     ),
                     onPressed: () => onDelete(term),
                   ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                   dense: true,
                   visualDensity: VisualDensity.compact,
                 ),

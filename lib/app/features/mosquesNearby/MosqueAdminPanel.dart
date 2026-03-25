@@ -63,18 +63,22 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text("تأكيد الحذف",
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+               style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
         content: Text("هل أنت متأكد من حذف ${mosque.name}؟",
-            style: GoogleFonts.cairo()),
+               style: TextStyle(
+                          fontFamily: "cairo",)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text("إلغاء", style: GoogleFonts.cairo()),
+            child: Text("إلغاء",    style: TextStyle(
+                          fontFamily: "cairo",)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(context, true),
-            child: Text("حذف", style: GoogleFonts.cairo(color: Colors.white)),
+            child: Text("حذف",    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.white)),
           ),
         ],
       ),
@@ -99,7 +103,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text("تعديل المسجد",
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+               style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -125,7 +130,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("إلغاء", style: GoogleFonts.cairo()),
+            child: Text("إلغاء",    style: TextStyle(
+                          fontFamily: "cairo",)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -142,7 +148,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
                 KHelper.showError(message: "فشل التحديث");
               }
             },
-            child: Text("حفظ", style: GoogleFonts.cairo()),
+            child: Text("حفظ",    style: TextStyle(
+                          fontFamily: "cairo",)),
           ),
         ],
       ),
@@ -154,7 +161,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
     return Scaffold(
       appBar: AppBar(
         title: Text("إدارة المساجد",
-            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+               style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: _isLoading
@@ -184,7 +192,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
                     children: [
                       Text(
                         "إحصائيات المساجد",
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -210,7 +219,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
                       ? Center(
                           child: Text(
                             "لا توجد مساجد مضافة",
-                            style: GoogleFonts.cairo(fontSize: 16.sp),
+                               style: TextStyle(
+                          fontFamily: "cairo",fontSize: 16.sp),
                           ),
                         )
                       : ListView.builder(
@@ -242,7 +252,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
                                 ),
                                 title: Text(
                                   mosque.name,
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14.sp,
                                   ),
@@ -252,7 +263,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
                                   children: [
                                     Text(
                                       mosque.address,
-                                      style: GoogleFonts.cairo(fontSize: 11.sp),
+                                         style: TextStyle(
+                          fontFamily: "cairo",fontSize: 11.sp),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -264,7 +276,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
                                         SizedBox(width: 4.w),
                                         Text(
                                           "الجهاز: $shortDeviceId",
-                                          style: GoogleFonts.cairo(
+                                             style: TextStyle(
+                          fontFamily: "cairo",
                                             fontSize: 10.sp,
                                             color: Colors.grey,
                                           ),
@@ -303,7 +316,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
       children: [
         Text(
           value,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 24.sp,
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -311,7 +325,8 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
         ),
         Text(
           label,
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 12.sp,
             color: Colors.white70,
           ),

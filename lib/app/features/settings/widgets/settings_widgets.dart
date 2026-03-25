@@ -23,7 +23,8 @@ class SettingsSection extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 12.0, right: 8.0),
           child: Text(
             title,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: isDark ? KColors.primaryColor : const Color(0xFFB8860B),
@@ -93,7 +94,8 @@ class SettingsListTile extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                         color: isDark ? Colors.white : Colors.black87,
@@ -103,7 +105,8 @@ class SettingsListTile extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         subtitle!,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 11,
                           color: Colors.grey,
                           height: 1.2,
@@ -189,7 +192,8 @@ class SettingsDropdownTile<T> extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                     color: isDark ? Colors.white : Colors.black87,
@@ -198,7 +202,8 @@ class SettingsDropdownTile<T> extends StatelessWidget {
                 if (subtitle != null)
                   Text(
                     subtitle!,
-                    style: GoogleFonts.cairo(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(
+                  fontFamily: "cairo",fontSize: 12, color: Colors.grey),
                   ),
               ],
             ),
@@ -220,7 +225,8 @@ class SettingsDropdownTile<T> extends StatelessWidget {
               underline: const SizedBox(),
               isDense: true,
               dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: isDark ? Colors.white : Colors.black87,
                 fontSize: 12,
               ),
@@ -278,7 +284,8 @@ class SettingsSwitchTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                     color: isDark ? Colors.white : Colors.black87,
@@ -287,7 +294,8 @@ class SettingsSwitchTile extends StatelessWidget {
                 if (subtitle != null)
                   Text(
                     subtitle!,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 11,
                       color: Colors.grey,
                       height: 1.2,
@@ -349,7 +357,8 @@ class SettingsSliderTile extends StatelessWidget {
         children: [
           Text(
             title,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 12,
               color: isDark ? Colors.white70 : Colors.black54,
             ),
@@ -368,7 +377,8 @@ class SettingsSliderTile extends StatelessWidget {
           ),
           Text(
             label,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 12,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,

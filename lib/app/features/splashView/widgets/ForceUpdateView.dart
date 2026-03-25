@@ -39,7 +39,8 @@ class ForceUpdateView extends StatelessWidget {
             SizedBox(height: 30.h),
             Text(
               'تحديث جديد متوفر!',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -49,7 +50,8 @@ class ForceUpdateView extends StatelessWidget {
             SizedBox(height: 15.h),
             Text(
               'أنت تستخدم نسخة قديمة من التطبيق. يرجى التحديث الآن للاستمرار في الاستمتاع بكافة المميزات والخدمات بشكل صحيح.',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 16.sp,
                 color: Colors.white.withOpacity(0.9),
                 height: 1.6,
@@ -71,7 +73,8 @@ class ForceUpdateView extends StatelessWidget {
               onPressed: () {},
               child: Text(
                 'تحديث الآن 🚀',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),

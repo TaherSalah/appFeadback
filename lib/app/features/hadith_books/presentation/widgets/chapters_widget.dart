@@ -20,8 +20,6 @@ class HadithsPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseColor = KColors.primaryColor;
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: GetX<BooksController>(
@@ -121,7 +119,8 @@ class HadithsPageView extends StatelessWidget {
           SizedBox(width: 8.w),
           Text(
             booksCtrl.currentCollection.bookName,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 14.sp,
               fontWeight: FontWeight.bold,
               color: baseColor,
@@ -134,7 +133,8 @@ class HadithsPageView extends StatelessWidget {
           Expanded(
             child: Text(
               booksCtrl.arabicHadiths[index - 1].bookName,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 13.sp,
                 fontWeight: FontWeight.w500,
                 color: isDark ? Colors.white54 : Colors.black54,

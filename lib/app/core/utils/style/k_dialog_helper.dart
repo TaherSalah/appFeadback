@@ -78,7 +78,8 @@ class KDialogHelper {
                     // Title
                     Text(
                       title,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -90,7 +91,8 @@ class KDialogHelper {
                     // Description
                     Text(
                       description,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 14,
                         height: 1.5,
                         color: isDark ? Colors.white70 : Colors.black87,
@@ -182,7 +184,8 @@ class KDialogHelper {
         icon: icon != null ? Icon(icon, size: 18) : const SizedBox.shrink(),
         label: Text(
           label,
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          style: TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: color ?? Theme.of(context).primaryColor,
@@ -209,7 +212,8 @@ class KDialogHelper {
         ),
         child: Text(
           label,
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white70 : Colors.black87,
           ),

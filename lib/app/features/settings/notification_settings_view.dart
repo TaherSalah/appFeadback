@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_controller.dart';
 import 'package:muslimdaily/app/features/settings/widgets/notification_sections.dart';
-import 'view/notification_test_view.dart';
 
 class NotificationSettingsView extends StatelessWidget {
   const NotificationSettingsView({super.key});
@@ -29,7 +28,8 @@ class NotificationSettingsView extends StatelessWidget {
             centerTitle: true,
             title: Text(
               'إعدادات التنبيهات',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
@@ -52,26 +52,26 @@ class NotificationSettingsView extends StatelessWidget {
                   SalatFrequencySection(controller: controller),
                   RemindersSection(controller: controller),
 
-                  // Test Button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                        foregroundColor: isDark ? Colors.white : Colors.black87,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
-                      ),
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const NotificationTestView()),
-                      ),
-                      icon: const Icon(Icons.build_circle_outlined),
-                      label: Text('اختبار التنبيهات (للمطورين)', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  const SizedBox(height: 100),
+                  // // Test Button
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(vertical: 24),
+                  //   child: ElevatedButton.icon(
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+                  //       foregroundColor: isDark ? Colors.white : Colors.black87,
+                  //       padding: const EdgeInsets.symmetric(vertical: 12),
+                  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  //       elevation: 0,
+                  //     ),
+                  //     onPressed: () => Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => const NotificationTestView()),
+                  //     ),
+                  //     icon: const Icon(Icons.build_circle_outlined),
+                  //     label: Text('اختبار التنبيهات (للمطورين)', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -95,7 +95,8 @@ class NotificationSettingsView extends StatelessWidget {
                             height: 20, width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
                           )
-                        : Text('حفظ التغييرات', style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                        : Text('حفظ التغييرات',    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                     icon: controller.isLoading.value ? null : const Icon(Icons.save_rounded, color: Colors.white),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),

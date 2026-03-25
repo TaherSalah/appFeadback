@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 
 import 'dart:async';
@@ -164,7 +165,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                         const SizedBox(height: 20),
                         Text(
                           '⚙️ إعدادات الحساب',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                            fontFamily: "cairo",
                             fontSize: ResponsiveUtil.isTablet(context)
                                 ? 11.sp
                                 : 15.sp,
@@ -190,7 +192,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                         // طريقة الحساب
                         Text(
                           'طريقة الحساب',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                            fontFamily: "cairo",
                             fontSize:
                                 ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
                             color: Colors.grey,
@@ -205,7 +208,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                         // المذهب
                         Text(
                           'المذهب (صلاة العصر)',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                            fontFamily: "cairo",
                             fontSize:
                                 ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
                             color: Colors.grey,
@@ -224,7 +228,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                           children: [
                             Text(
                               'تفعيل التوقيت الصيفي (+ساعة)',
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                                fontFamily: "cairo",
                                 fontSize: ResponsiveUtil.isTablet(context)
                                     ? 9.sp
                                     : 14.sp,
@@ -249,7 +254,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                         // تعديل الساعات (فارق التوقيت)
                         Text(
                           'تعديل الساعات يدوياً',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize:
                                 ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
                             color: Colors.grey,
@@ -290,7 +296,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                               ),
                               Text(
                                 "${con.manualOffset > 0 ? '+' : ''}${con.manualOffset} ساعة",
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                                  fontFamily: "cairo",
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.bold,
                                   color: isDark ? Colors.white : Colors.black87,
@@ -320,7 +327,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                         // تعديل الدقائق يدوياً لكل صلاة
                         Text(
                           'تعديل الدقائق يدوياً (لكل صلاة)',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                            fontFamily: "cairo",
                             fontSize:
                                 ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
                             color: Colors.grey,
@@ -367,7 +375,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                             },
                             child: Text(
                               'حفظ التغييرات',
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                                fontFamily: "cairo",
                                 fontSize: ResponsiveUtil.isTablet(context)
                                     ? 10.sp
                                     : 16.sp,
@@ -395,7 +404,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                             },
                             child: Text(
                               'الغاء',
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                                fontFamily: "cairo",
                                 fontSize: ResponsiveUtil.isTablet(context)
                                     ? 10.sp
                                     : 16.sp,
@@ -451,7 +461,8 @@ class _AzanViewState extends StateMVC<AzanView> {
               value: item.key,
               child: Text(
                 item.value,
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 13.sp,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
@@ -504,7 +515,8 @@ class _AzanViewState extends StateMVC<AzanView> {
               value: Madhab.shafi,
               child: Text(
                 'الشافعي / المالكي / الحنبلي (الجمهور)',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 13.sp,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
@@ -514,7 +526,8 @@ class _AzanViewState extends StateMVC<AzanView> {
               value: Madhab.hanafi,
               child: Text(
                 'الحنفي',
-                style: GoogleFonts.cairo(
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 13.sp,
                   color: isDark ? Colors.white : Colors.black87,
                 ),
@@ -575,7 +588,8 @@ class _AzanViewState extends StateMVC<AzanView> {
           centerTitle: true,
           title: Text(
             "مواقيت الصلاة",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+              fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
@@ -761,8 +775,9 @@ class _AzanViewState extends StateMVC<AzanView> {
               // const SizedBox(width: 8),
               Text(
                 'اختر موقعك',
-                style: GoogleFonts.cairo(
-                  fontSize: ResponsiveUtil.isTablet(context) ? 10.sp : 13.sp,
+                style: TextStyle(
+                  fontFamily: "cairo",
+                  fontSize: context.isTablet ? 10.sp : 13.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey,
 
@@ -880,7 +895,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                           con.isLoadingLocation
                               ? 'جاري التحديد...'
                               : 'تحديد تلقائي',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize:
@@ -919,7 +935,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                         const SizedBox(width: 4),
                         Text(
                           'إحداثيات يدوية',
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             color: isDark ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.bold,
                             fontSize:
@@ -950,10 +967,11 @@ class _AzanViewState extends StateMVC<AzanView> {
       builder: (context) => AlertDialog(
         backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
+        title: const Text(
           'إدخال الإحداثيات يدوياً',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+             style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -961,18 +979,21 @@ class _AzanViewState extends StateMVC<AzanView> {
             Text(
               'أدخل خط العرض وخط الطول بدقة (مثال: 30.04)',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey),
+              style: TextStyle(
+                  fontFamily: "cairo",fontSize: 12.sp, color: Colors.grey),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: latController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                   color: isDark ? Colors.white : Colors.black),
               decoration: InputDecoration(
                 labelText: 'خط العرض (Latitude)',
-                labelStyle: GoogleFonts.cairo(),
+                labelStyle: const TextStyle(
+                    fontFamily: "cairo"),
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
@@ -982,11 +1003,13 @@ class _AzanViewState extends StateMVC<AzanView> {
               controller: lngController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                   color: isDark ? Colors.white : Colors.black),
               decoration: InputDecoration(
                 labelText: 'خط الطول (Longitude)',
-                labelStyle: GoogleFonts.cairo(),
+                labelStyle: TextStyle(
+                  fontFamily: "cairo",),
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
@@ -996,7 +1019,8 @@ class _AzanViewState extends StateMVC<AzanView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.red)),
+            child: const Text('إلغاء',    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.red)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1016,7 +1040,8 @@ class _AzanViewState extends StateMVC<AzanView> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
-            child: Text('حفظ', style: GoogleFonts.cairo(color: Colors.white)),
+            child: const Text('حفظ',    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.white)),
           ),
         ],
       ),
@@ -1060,7 +1085,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                 const SizedBox(width: 8),
                 Text(
                   hint,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 13.sp,
                     color: Colors.grey,
                   ),
@@ -1072,7 +1098,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                 value: item,
                 child: Text(
                   item,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
                     color: isDark ? Colors.white : Colors.black87,
                   ),
@@ -1114,7 +1141,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                 child: TextFormField(
                   expands: true,
                   maxLines: null,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 12.sp,
                       color: isDark ? Colors.white : Colors.black87),
                   textDirection: TextDirection.rtl,
@@ -1125,7 +1153,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                       vertical: 8,
                     ),
                     hintText: 'ابحث عن $hint...',
-                    hintStyle: GoogleFonts.cairo(
+                    hintStyle: TextStyle(
+                        fontFamily: "cairo",
                         fontSize:
                             ResponsiveUtil.isTablet(context) ? 8.sp : 12.sp,
                         color: Colors.grey),
@@ -1204,7 +1233,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                   (con.isUsingGPS && selectedCity == 'الموقع الفعلي (GPS)')
                       ? 'موقعك الفعلي (GPS)'
                       : '$selectedCountry - $selectedCity',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
@@ -1216,7 +1246,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                     con.longitude != null)
                   Text(
                     'إحداثيات: ${con.latitude!.toStringAsFixed(4)}, ${con.longitude!.toStringAsFixed(4)}',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 10.sp,
                       color: isDark ? Colors.white70 : Colors.grey.shade700,
                     ),
@@ -1285,7 +1316,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                 children: [
                   Text(
                     'الصلاة القادمة',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 12.sp,
                       color: Colors.white.withOpacity(0.9),
                       fontWeight: FontWeight.w500,
@@ -1293,7 +1325,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                   ),
                   Text(
                     nextPrayer,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 20.sp,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -1317,7 +1350,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                 const SizedBox(width: 8),
                 Text(
                   'الوقت المتبقي: $remainingTimeText',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 14.sp,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -1491,7 +1525,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                       children: [
                         Text(
                           prayer["name"] as String,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                             color: isNext
@@ -1502,7 +1537,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                         if (con.getIqamaTextForPrayer(prayer["name"] as String).isNotEmpty)
                           Text(
                             con.getIqamaTextForPrayer(prayer["name"] as String),
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize: 10.sp,
                               color: isNext ? Colors.green.withOpacity(0.7) : Colors.grey,
                             ),
@@ -1524,7 +1560,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                     child: Text(
                       intl.DateFormat('h:mm a')
                           .format((prayer["time"] as DateTime).toLocal()),
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                         color: isNext
@@ -1551,7 +1588,8 @@ class _AzanViewState extends StateMVC<AzanView> {
         children: [
           Text(
             prayer,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
               color: isDark ? Colors.white70 : Colors.black87,
             ),
@@ -1572,7 +1610,8 @@ class _AzanViewState extends StateMVC<AzanView> {
                 child: Text(
                   "${currentOffset > 0 ? '+' : ''}$currentOffset",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 14.sp,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,

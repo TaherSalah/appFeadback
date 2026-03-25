@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import '../../../core/shard/exports/all_exports.dart';
-import '../../../core/shard/widgets/azkar_item_builder.dart';
 
 class AzkarOtherItem extends StatelessWidget {
   final String azkarOtherTitle;

@@ -73,7 +73,8 @@ class _AchievementsEntryWidgetState extends State<AchievementsEntryWidget> {
                     SizedBox(width: 12.w),
                     Text(
                       'الإنجازات',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -93,7 +94,8 @@ class _AchievementsEntryWidgetState extends State<AchievementsEntryWidget> {
                     children: [
                       Text(
                         'المستوى ${_progress!.level}',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -101,7 +103,8 @@ class _AchievementsEntryWidgetState extends State<AchievementsEntryWidget> {
                       ),
                       Text(
                         _progress!.levelTitle,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 12.sp,
                           color: Colors.white.withOpacity(0.9),
                         ),
@@ -119,7 +122,8 @@ class _AchievementsEntryWidgetState extends State<AchievementsEntryWidget> {
                     children: [
                       Text(
                         '${_progress!.totalPoints}',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -127,7 +131,8 @@ class _AchievementsEntryWidgetState extends State<AchievementsEntryWidget> {
                       ),
                       Text(
                         'نقطة',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 11.sp,
                           color: Colors.white.withOpacity(0.9),
                         ),

@@ -35,7 +35,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       child: Scaffold(
         backgroundColor: isDark ? const Color(0xFF1A1F36) : const Color(0xFFF5F7FA),
         appBar: AppBar(
-          title: Text('لوحة الصدارة 🏆', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 20.sp)),
+          title: Text('لوحة الصدارة 🏆',    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 20.sp)),
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -74,7 +75,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             ),
             alignment: Alignment.center,
             child: Text(medal.isNotEmpty ? medal : '#${entry.rank}',
-                style: GoogleFonts.cairo(fontSize: medal.isNotEmpty ? 20.sp : 16.sp, fontWeight: FontWeight.bold)),
+                   style: TextStyle(
+                          fontFamily: "cairo",fontSize: medal.isNotEmpty ? 20.sp : 16.sp, fontWeight: FontWeight.bold)),
           ),
           SizedBox(width: 16.w),
           Text(entry.avatar, style: TextStyle(fontSize: 28.sp)),
@@ -83,12 +85,15 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(entry.name, style: GoogleFonts.cairo(fontSize: 16.sp, fontWeight: FontWeight.bold)),
-                Text('المستوى ${entry.level}', style: GoogleFonts.cairo(fontSize: 12.sp, color: Colors.grey)),
+                Text(entry.name,    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                Text('المستوى ${entry.level}',    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 12.sp, color: Colors.grey)),
               ],
             ),
           ),
-          Text('${entry.points}', style: GoogleFonts.cairo(fontSize: 18.sp, fontWeight: FontWeight.bold, color: const Color(0xFF10B981))),
+          Text('${entry.points}',    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 18.sp, fontWeight: FontWeight.bold, color: const Color(0xFF10B981))),
         ],
       ),
     );

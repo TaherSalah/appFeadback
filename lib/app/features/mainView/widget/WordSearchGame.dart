@@ -89,7 +89,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
             const SizedBox(width: 10),
             Text(
               'لقد حصلت على 20 نجمة ✨',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF10B981),
@@ -122,7 +123,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
         appBar: AppBar(
           title: Text(
             'البحث عن الكلمات 🔍',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
             ),
@@ -146,7 +148,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
                 children: [
                   Text(
                     'ابحث عن هذه الكلمات:',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize:
                           ResponsiveUtil.isTablet(context) ? 11.sp : 16.sp,
                       fontWeight: FontWeight.bold,
@@ -177,7 +180,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
                             if (found) const SizedBox(width: 4),
                             Text(
                               word,
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 color: Colors.white,
                                 fontWeight:
                                     found ? FontWeight.bold : FontWeight.normal,
@@ -233,7 +237,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
                             child: Center(
                               child: Text(
                                 _grid[row][col],
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: ResponsiveUtil.isTablet(context)
                                       ? 14.sp
                                       : 20.sp,
@@ -263,7 +268,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
                   children: [
                     Text(
                       'الكلمة: $_selectedWord',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -282,7 +288,8 @@ class _WordSearchGameState extends State<WordSearchGame> {
                         ),
                         child: Text(
                           'تحقق',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,

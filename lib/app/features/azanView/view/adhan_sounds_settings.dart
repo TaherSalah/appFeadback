@@ -28,7 +28,8 @@ class _AdhanSoundsSettingsScreenState
       appBar: AppBar(
         title: Text(
           "أصوات الأذان",
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             color: Colors.green,
             fontWeight: FontWeight.bold,
             fontSize: 18.sp,
@@ -67,7 +68,8 @@ class _AdhanSoundsSettingsScreenState
                           horizontal: 16, vertical: 8),
                       title: Text(
                         adhan.adhanName, // In a real app, translate this
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                           fontSize: 16.sp,

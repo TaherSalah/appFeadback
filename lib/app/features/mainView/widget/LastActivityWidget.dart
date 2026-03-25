@@ -235,7 +235,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                   Gap(8.w),
                   Text(
                     "${(_activeKhatmah!.progressPercent * 100).toInt()}%",
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 10.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.purple.shade400,
@@ -251,7 +252,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                     _activeKhatmah!.isBehind
                         ? "متأخر بـ ${_activeKhatmah!.daysBehind} يوم"
                         : "اليوم ${_activeKhatmah!.currentDay}",
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 10.sp,
                       fontWeight: FontWeight.bold,
                       color: _activeKhatmah!.isBehind
@@ -265,7 +267,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                         : _activeKhatmah!.daysAhead > 0
                             ? "متقدم بـ ${_activeKhatmah!.daysAhead} يوم"
                             : "في الموعد",
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 10.sp,
                       fontWeight: FontWeight.bold,
                       color: _activeKhatmah!.isBehind
@@ -402,7 +405,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                         children: [
                           Text(
                             title,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black87),
@@ -422,7 +426,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                                 fontSize: 13.sp,
                                   color: isDark ? Colors.white70 : Colors.black54
                               ),
-                              // style: GoogleFonts.cairo(
+                              //    style: TextStyle(
+                          //fontFamily: "cairo",
                               //     fontSize: 13.sp,
                               //     color: isDark ? Colors.white70 : Colors.black54),
                             ),
@@ -439,7 +444,8 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                                   fontWeight: FontWeight.bold
                               ),
 
-                              // style: GoogleFonts.cairo(
+                              //    style: TextStyle(
+                          //fontFamily: "cairo",
                               //     fontSize: 11.sp,
                               //     color: color,
                               //     fontWeight: FontWeight.bold),

@@ -1,10 +1,6 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/services/image_share_service.dart';
@@ -208,7 +204,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                 ),
                 Text(
                   "تخصيص ومشاركة",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     color: Colors.white,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -434,7 +431,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                               Text(
                                                 widget.source!,
                                                 textAlign: TextAlign.center,
-                                                style: GoogleFonts.cairo(
+                                                   style: TextStyle(
+                          fontFamily: "cairo",
                                                   fontSize: _getSourceFontSize(),
                                                   color: _sourceColor,
                                                   fontWeight: FontWeight.w600,
@@ -461,7 +459,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                       SizedBox(height: 4.h),
                                       Text(
                                         "رفيق المسلم اليومي",
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                           color: Colors.white,
                                           fontSize: _getBrandingFontSize(),
                                           fontWeight: FontWeight.bold,
@@ -533,7 +532,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                         //               color: const Color(0xFFFFD700), size: 16.sp),
                         //           SizedBox(width: 8.w),
                         //           Text("الثيمات الجاهزة",
-                        //               style: GoogleFonts.cairo(
+                        //                  style: TextStyle(
+                          //fontFamily: "cairo",
                         //                   color: Colors.white,
                         //                   fontSize: 12.sp,
                         //                   fontWeight: FontWeight.bold)),
@@ -728,7 +728,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                       color: const Color(0xFFD4AF37), size: 16.sp),
                                   SizedBox(width: 8.w),
                                   Text("نوع الخط",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           color: Colors.white,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.bold)),
@@ -782,7 +783,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                       color: const Color(0xFFD4AF37), size: 16.sp),
                                   SizedBox(width: 8.w),
                                   Text("حجم الخط",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           color: Colors.white,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.bold)),
@@ -815,7 +817,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                     ),
                                     child: Text(
                                       "${(_fontSizeMultiplier * 100).toInt()}%",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                         color: const Color(0xFFFFD700),
                                         fontSize: 10.sp,
                                         fontWeight: FontWeight.bold,
@@ -836,7 +839,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                       color: const Color(0xFFD4AF37), size: 16.sp),
                                   SizedBox(width: 8.w),
                                   Text("تخصيص الألوان",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           color: Colors.white,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.bold)),
@@ -894,7 +898,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                   icon: const Icon(Icons.restart_alt, size: 18),
                                   label: Text(
                                     "إعادة تعيين الإعدادات",
-                                    style: GoogleFonts.cairo(
+                                       style: TextStyle(
+                          fontFamily: "cairo",
                                       fontSize: 11.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -971,7 +976,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                 ),
                                 Text(
                                   "${(_bgDimming * 100).toInt()}%",
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     color: Colors.white70,
                                     fontSize: 10.sp,
                                   ),
@@ -1024,7 +1030,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                                       .contains(_selectedBgIndex)
                                       ? "جاري التحميل..."
                                       : "مشاركة كصورة"),
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                       fontWeight: FontWeight.w900,
                                       fontSize: 16.sp),
                                 ),
@@ -1214,7 +1221,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
                 color: isSelected ? Colors.white : Colors.white70),
             SizedBox(width: 6.w),
             Text(title,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     color: isSelected ? Colors.white : Colors.white70,
                     fontSize: 11.sp,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w600)),
@@ -1308,7 +1316,8 @@ class _PremiumShareCardState extends State<PremiumShareCard> {
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     color: Colors.white,
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w600,

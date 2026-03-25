@@ -1,10 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
-import 'package:muslimdaily/app/core/controller/azkar_controller.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
-import 'package:muslimdaily/app/core/shard/widgets/done_widget.dart';
 import 'azkar_other_controller.dart';
 import 'widgets/azkar_other_list.dart';
 
@@ -36,7 +32,8 @@ class AzkarOthers extends StatelessWidget {
           centerTitle: true,
           title: Text(
             AppString.KOtherZakar,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,

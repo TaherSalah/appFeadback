@@ -315,8 +315,6 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
   Widget build(BuildContext context) {
     final isDark = context.isDark;
     final goldColor = KColors.primaryColor;
-    final bgColor = isDark ? const Color(0xFF0F0F1E) : const Color(0xFFFAFAFA);
-    // final cardColor = isDark ? const Color(0xFF1A1A2E) : Colors.white;
     final cardColor = AppThemeColors.cardBackgroundColor(context);
     final textColor = isDark ? Colors.white : const Color(0xFF2C3E50);
 
@@ -345,7 +343,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
             centerTitle: true,
             title: Text(
               "منبه الفجر",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize: context.isTablet ? 12.sp : 18.sp,
@@ -408,7 +407,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                       const SizedBox(width: 6),
                                       Text(
                                         "اضغط لتعديل الوقت",
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 12.sp,
                                           color: goldColor,
                                         ),
@@ -460,7 +460,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                         children: [
                                           Text(
                                             "المتبقي",
-                                            style: GoogleFonts.cairo(
+                                               style: TextStyle(
+                          fontFamily: "cairo",
                                               fontSize: 12.sp,
                                               color: Colors.grey,
                                             ),
@@ -488,7 +489,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                         children: [
                                           Text(
                                             "أذان الفجر اليوم",
-                                            style: GoogleFonts.cairo(
+                                               style: TextStyle(
+                          fontFamily: "cairo",
                                               fontSize: 12.sp,
                                               color: Colors.grey,
                                             ),
@@ -521,7 +523,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                 children: [
                                   Text(
                                     "أيام التنبيه",
-                                    style: GoogleFonts.cairo(
+                                       style: TextStyle(
+                          fontFamily: "cairo",
                                       fontSize:
                                           context.isTablet ? 10.sp : 14.sp,
                                       fontWeight: FontWeight.bold,
@@ -541,7 +544,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                       _selectedDays.length == 7
                                           ? "إلغاء الكل"
                                           : "تحديد الكل",
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                         fontSize:
                                             context.isTablet ? 10.sp : 12.sp,
                                         color: goldColor,
@@ -631,7 +635,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                             child: Center(
                                               child: Text(
                                                 _getDayAbbr(day),
-                                                style: GoogleFonts.cairo(
+                                                   style: TextStyle(
+                          fontFamily: "cairo",
                                                   fontSize: context.isTablet
                                                       ? 9.sp
                                                       : 14.sp,
@@ -651,7 +656,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                           _getDayName(day).length > 6
                                               ? _getDayName(day).substring(0, 7)
                                               : _getDayName(day),
-                                          style: GoogleFonts.cairo(
+                                             style: TextStyle(
+                          fontFamily: "cairo",
                                             fontSize: 10.sp,
                                             color: isSelected
                                                 ? goldColor
@@ -735,7 +741,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                   ),
                                   title: Text(
                                     "عدد التنبيهات (غفوة)",
-                                    style: GoogleFonts.cairo(
+                                       style: TextStyle(
+                          fontFamily: "cairo",
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w600,
                                       color: textColor,
@@ -882,7 +889,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                                   progressColor: Colors.white))
                       : Text(
                           "حفظ التغييرات",
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: ResponsiveUtil.isTablet(context)
                                 ? 10.sp
                                 : 16.sp,
@@ -918,7 +926,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
       ),
       title: Text(
         title,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
           fontSize: isTap ? 10.sp : 14.sp,
           fontWeight: FontWeight.w600,
           color: textColor,
@@ -926,7 +935,8 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
       ),
       subtitle: Text(
         subtitle,
-        style: GoogleFonts.cairo(
+           style: TextStyle(
+                          fontFamily: "cairo",
           fontSize: isTap ? 8.sp : 11.sp,
           color: textColor.withOpacity(0.6),
         ),

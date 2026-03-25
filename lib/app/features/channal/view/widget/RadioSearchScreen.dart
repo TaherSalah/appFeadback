@@ -64,7 +64,8 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
             centerTitle: true,
             title: Text(
               "البحث بالاية ",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:

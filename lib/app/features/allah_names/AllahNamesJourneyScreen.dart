@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'dart:ui';
 import 'dart:math' as math;
 
 class AllahNamesJourneyScreen extends StatefulWidget {
@@ -161,7 +160,8 @@ class _AllahNamesJourneyScreenState extends State<AllahNamesJourneyScreen> {
                                 Text(
                                   name['meaning']!,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.cairo(
+                                     style: TextStyle(
+                          fontFamily: "cairo",
                                     fontSize: 18.sp,
                                     color: Colors.white.withOpacity(0.95),
                                     fontWeight: FontWeight.bold,
@@ -185,7 +185,8 @@ class _AllahNamesJourneyScreenState extends State<AllahNamesJourneyScreen> {
                                     Expanded(
                                       child: Text(
                                         name['reflection']!,
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 14.sp,
                                           color: Colors.white70,
                                           fontStyle: FontStyle.italic,
@@ -218,7 +219,8 @@ class _AllahNamesJourneyScreenState extends State<AllahNamesJourneyScreen> {
                     ),
                     Text(
                       "${(currentPage + 1).toInt()} / ${widget.names.length}",
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         color: Colors.white70,
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
@@ -241,7 +243,8 @@ class _AllahNamesJourneyScreenState extends State<AllahNamesJourneyScreen> {
                          Icon(Icons.keyboard_arrow_down, color: Colors.white54, size: 24.sp),
                          Text(
                           "اسحب للأعلى لاستكشاف المزيد",
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             color: Colors.white54,
                             fontSize: 10.sp,
                           ),

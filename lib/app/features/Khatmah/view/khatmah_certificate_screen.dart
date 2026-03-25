@@ -10,7 +10,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart'; // Optional for easy printing/sharing of PDF
-import 'package:printing/printing.dart'; // Optional for easy printing/sharing of PDF
 // Fixing imports:
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
@@ -44,7 +43,8 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: Text('شهادة الإنجاز', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        title: Text('شهادة الإنجاز',    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -70,7 +70,8 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                     ElevatedButton.icon(
                       onPressed: () => _captureAndShareImage(context),
                       icon: const Icon(Icons.share_rounded, color: Colors.white),
-                      label: Text('مشاركة صورة', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Colors.white)),
+                      label: Text('مشاركة صورة',    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold, color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: KColors.primaryColor,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -81,7 +82,8 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                     ElevatedButton.icon(
                       onPressed: () => _generateAndSharePdf(context),
                       icon: const Icon(Icons.picture_as_pdf_rounded, color: Colors.white),
-                      label: Text('حفظ كملف PDF', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Colors.white)),
+                      label: Text('حفظ كملف PDF',    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold, color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.brown,
                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -134,7 +136,8 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                 ),
                 Text(
                   'CERTIFICATE OF APPRECIATION',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 10,
                     letterSpacing: 2,
                     color: Colors.grey,
@@ -149,7 +152,8 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                 Text(
                   'يسر أسرة تطبيق رفيق المسلم أن تتقدم بخالص الشكر',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 14, color: Colors.grey[700]),
+                     style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14, color: Colors.grey[700]),
                 ),
                 const SizedBox(height: 15),
                 Text(
@@ -165,18 +169,21 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                 Text(
                   'على مشاركته الفعالة في الختمة الجماعية',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 14, color: Colors.grey[700]),
+                     style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14, color: Colors.grey[700]),
                 ),
                 Text(
                   '"${widget.campaignTitle}"',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: KColors.primaryColor),
+                     style: TextStyle(
+                          fontFamily: "cairo",fontSize: 18, fontWeight: FontWeight.bold, color: KColors.primaryColor),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   'حيث ساهم بإتمام قراءة ${widget.contributionCount} ورد من كتاب الله',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 14, color: Colors.black87),
+                     style: TextStyle(
+                          fontFamily: "cairo",fontSize: 14, color: Colors.black87),
                 ),
                 const SizedBox(height: 20),
                 Text(
@@ -194,15 +201,18 @@ class _KhatmahCertificateScreenState extends State<KhatmahCertificateScreen> {
                  Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('التاريخ', style: GoogleFonts.cairo(fontSize: 10, color: Colors.grey)),
-                    Text('${widget.date.year}/${widget.date.month}/${widget.date.day}', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                    Text('التاريخ',    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 10, color: Colors.grey)),
+                    Text('${widget.date.year}/${widget.date.month}/${widget.date.day}',    style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
                   ],
                 ),
                 // Logo or Signature placeholder
                  Column(
                   children: [
                     Image.asset('assets/images/logoApp.png', height: 40, errorBuilder: (_,__,___) => const Icon(Icons.mosque)),
-                    Text('تطبيق رفيق المسلم', style: GoogleFonts.cairo(fontSize: 8, fontWeight: FontWeight.bold)),
+                    Text('تطبيق رفيق المسلم',    style: TextStyle(
+                          fontFamily: "cairo",fontSize: 8, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ],

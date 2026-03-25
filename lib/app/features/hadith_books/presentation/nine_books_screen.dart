@@ -59,7 +59,8 @@ class _NineBooksScreenState extends State<NineBooksScreen> {
           centerTitle: true,
           title: Text(
             "المكتبة الإسلامية",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,

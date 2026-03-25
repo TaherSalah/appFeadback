@@ -69,7 +69,8 @@ class _QuranChannalPlayerViewState extends State<QuranChannalPlayerView> {
                         centerTitle: true,
                         title: Text(
                           "اذاعة القران الكريم ",
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                             color: Colors.green,
                             fontWeight: FontWeight.bold,
                             fontSize: MediaQuery.sizeOf(context).width > 600

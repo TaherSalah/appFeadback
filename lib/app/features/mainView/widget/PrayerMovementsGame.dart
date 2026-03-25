@@ -110,7 +110,8 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
         children: [
           Text(
             'نتيجتك: $_score/${_movements.length * 10}',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF10B981),
@@ -131,7 +132,8 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                 const SizedBox(width: 8),
                 Text(
                   'حصلت على $stars نجمة ✨',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                  fontFamily: "cairo",
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFF59E0B),
@@ -186,7 +188,8 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
         appBar: AppBar(
           title: Text(
             'تعليم حركات الصلاة 🙏',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
             ),
@@ -214,7 +217,8 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                       const SizedBox(width: 8),
                       Text(
                         'الحركة ${_currentQuestion + 1}/${_movements.length}',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 10.sp : 14.sp,
                           color: Colors.white,
@@ -229,7 +233,8 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                       const SizedBox(width: 4),
                       Text(
                         '$_score',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize:
                               ResponsiveUtil.isTablet(context) ? 12.sp : 16.sp,
                           color: Colors.white,
@@ -271,7 +276,8 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                           const SizedBox(height: 16),
                           Text(
                             movement['name'],
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: ResponsiveUtil.isTablet(context)
                                   ? 14.sp
                                   : 20.sp,
@@ -282,7 +288,8 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
                           const SizedBox(height: 8),
                           Text(
                             movement['description'],
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: ResponsiveUtil.isTablet(context)
                                   ? 10.sp
                                   : 14.sp,
@@ -297,7 +304,8 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
 
                     Text(
                       'اختر الحركة الصحيحة:',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize:
                             ResponsiveUtil.isTablet(context) ? 11.sp : 16.sp,
                         fontWeight: FontWeight.bold,
@@ -367,7 +375,8 @@ class _PrayerMovementsGameState extends State<PrayerMovementsGame> {
           child: Center(
             child: Text(
               option,
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
                 fontWeight: _answered && index == correctIndex
                     ? FontWeight.bold

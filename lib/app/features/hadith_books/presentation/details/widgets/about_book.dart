@@ -48,7 +48,8 @@ class AboutBook extends StatelessWidget {
           ),
           title: Text(
             'عن الكتاب',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,

@@ -158,7 +158,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             centerTitle: true,
             title: Text(
               'متتبع الصدقات',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -365,7 +366,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
               SizedBox(width: 12.w),
               Text(
                 'اقتراح الصدقة اليومية',
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: isTab?10.sp:18.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -376,7 +378,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           SizedBox(height: 16.h),
           Text(
             '${_suggestion?.suggestedAmount.toStringAsFixed(0)} جنيه',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 32.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -385,7 +388,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           SizedBox(height: 8.h),
           Text(
             _suggestion?.reason ?? '',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize: 13.sp,
               color: Colors.white.withOpacity(0.9),
             ),
@@ -399,7 +403,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             ),
             child: Text(
               _suggestion?.motivation ?? '',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 13.sp,
                 color: Colors.white,
                 fontStyle: FontStyle.italic,
@@ -467,7 +472,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           // SizedBox(height: 8.h),
           Text(
             label,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize:isTab? 9.sp:13.sp,
               color: AppThemeColors.cardSubtitleColor(context),
             ),
@@ -475,7 +481,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           SizedBox(height: 4.h),
           Text(
             value,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize:isTab? 9.sp:14.sp,
               fontWeight: FontWeight.bold,
               color: color,
@@ -494,7 +501,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
       children: [
         Text(
           'تسجيل سريع لصدقة اليوم:',
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: isTab?10.sp:14.sp,
 
             fontWeight: FontWeight.bold,
@@ -559,7 +567,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         ),
         child: Text(
           '+$amount',
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize:isTab? 10.sp:16.sp,
             fontWeight: FontWeight.bold,
             color: const Color(0xFF10B981),
@@ -604,7 +613,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                     SizedBox(width: 12.w),
                     Text(
                       'الهدف الشهري',
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize:isTab? 10.sp:16.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -621,7 +631,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                   children: [
                     Text(
                       'لم يتم تحديد هدف لهذا الشهر',
-                      style: GoogleFonts.cairo(color: Colors.grey),
+                         style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
                     ),
                     TextButton(
                       onPressed: () {
@@ -633,7 +644,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                       },
                       child: Text(
                         'اضبط هدفك الآن',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF10B981),
                         ),
@@ -650,14 +662,16 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                     children: [
                       Text(
                         '${(_stats?.totalThisMonth ?? 0).toStringAsFixed(0)} جنيه',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF10B981),
                         ),
                       ),
                       Text(
                         'من ${goal.amount.toStringAsFixed(0)} جنيه',
-                        style: GoogleFonts.cairo(color: Colors.grey),
+                           style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
                       ),
                     ],
                   ),
@@ -676,7 +690,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                   SizedBox(height: 8.h),
                   Text(
                     'لقد حققت ${(progress * 100).toStringAsFixed(0)}% من هدفك الشهري! ✨',
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 12.sp,
                       fontStyle: FontStyle.italic,
                     ),
@@ -711,7 +726,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
               children: [
                 Text(
                   'سلسلة الصدقة المتواصلة',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize:isTab? 10.sp:14.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -720,7 +736,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                 SizedBox(height: 4.h),
                 Text(
                   '${_stats?.currentStreak ?? 0} يوم متتالي',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize:isTab? 9.sp:14.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -729,7 +746,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                 SizedBox(height: 4.h),
                 Text(
                   'أطول سلسلة: ${_stats?.longestStreak ?? 0} يوم',
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize:isTab? 9.sp:14.sp,
                     color: Colors.white.withOpacity(0.9),
                   ),
@@ -769,7 +787,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         children: [
           Text(
             'الصدقات الشهرية',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize:isTab? 10.sp:18.sp,
               fontWeight: FontWeight.bold,
               color: AppThemeColors.cardHeaderColor(context),
@@ -796,7 +815,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                             value.toInt() < _stats!.monthlyData.length) {
                           return Text(
                             _stats!.monthlyData[value.toInt()].label,
-                            style: GoogleFonts.cairo(fontSize:isTab? 6.5.sp:10.sp),
+                               style: TextStyle(
+                          fontFamily: "cairo",fontSize:isTab? 6.5.sp:10.sp),
                           );
                         }
                         return const Text('');
@@ -857,7 +877,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         children: [
           Text(
             'التوزيع حسب الفئات',
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               fontSize:isTab? 10.sp:18.sp,
               fontWeight: FontWeight.bold,
               color: AppThemeColors.cardHeaderColor(context),
@@ -883,7 +904,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                           // SizedBox(width: 8.w),
                           Text(
                             entry.key.arabicName,
-                            style: GoogleFonts.cairo(
+                               style: TextStyle(
+                          fontFamily: "cairo",
                               fontSize:isTab? 9.sp:14.sp,
                               color: AppThemeColors.cardHeaderColor(context),
                             ),
@@ -892,7 +914,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                       ),
                       Text(
                         '${entry.value.toStringAsFixed(0)} جنيه',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize:isTab? 9.sp:14.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -924,7 +947,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
       children: [
         Text(
           'روابط سريعة',
-          style: GoogleFonts.cairo(
+             style: TextStyle(
+                          fontFamily: "cairo",
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
           ),
@@ -982,7 +1006,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             SizedBox(width: 8.w),
             Text(
               'صدقات مستحقة اليوم',
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -1010,12 +1035,14 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                           children: [
                             Text(
                               item.title,
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontWeight: FontWeight.bold, fontSize: 15.sp),
                             ),
                             Text(
                               'المقدار المستحق: ${item.amount} ${item.currency}',
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                   fontSize: 13.sp, color: Colors.grey),
                             ),
                           ],
@@ -1044,7 +1071,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                               borderRadius: BorderRadius.circular(8.r)),
                         ),
                         child: Text('تبرعت ',
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                  fontFamily: "cairo",
                                 color: Colors.white, fontSize: 12.sp)),
                       ),
                     ],
@@ -1075,7 +1103,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
             SizedBox(height: 8.h),
             Text(
               label,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: isTab?10.sp :14.sp,
                 fontWeight: FontWeight.bold,
                 color: color,

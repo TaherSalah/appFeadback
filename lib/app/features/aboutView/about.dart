@@ -19,7 +19,7 @@ class About extends StatelessWidget {
                 : Colors.black,
           ),
         ),
-        body:  SingleChildScrollView(
+        body:  const SingleChildScrollView(
             physics: BouncingScrollPhysics(), child: AboutItemBuilder()),
       ),
     );

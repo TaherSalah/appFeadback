@@ -71,7 +71,8 @@ class ChapterExpansionWidget extends StatelessWidget {
           ),
           title: Text(
             _cleanText(chapterTitle),
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 15.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
@@ -132,7 +133,8 @@ class ChapterExpansionWidget extends StatelessWidget {
                             ),
                             child: Text(
                               '${chapterIndex + 1}',
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.bold,
                                 color: isCurrentChapter ? baseColor : Colors.grey,
@@ -143,7 +145,8 @@ class ChapterExpansionWidget extends StatelessWidget {
                           Expanded(
                             child: Text(
                               _cleanText(chapter.babName ?? 'بدون عنوان'),
-                              style: GoogleFonts.cairo(
+                              style: TextStyle(
+                  fontFamily: "cairo",
                                 fontSize: 13.sp,
                                 fontWeight: isCurrentChapter
                                     ? FontWeight.bold

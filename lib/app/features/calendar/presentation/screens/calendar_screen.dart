@@ -73,7 +73,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
             child: StatefulBuilder(builder: (context, setStateDialog) {
               return AlertDialog(
                 title: Text('تخصيص التقويم',
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                       style: TextStyle(
+                          fontFamily: "cairo",fontWeight: FontWeight.bold)),
                 contentPadding: EdgeInsets.zero,
                 content: SizedBox(
                   width: double.maxFinite,
@@ -85,7 +86,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         indicatorColor: _calendarThemeColor,
                         unselectedLabelColor: Colors.grey,
                         labelStyle:
-                            GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                            TextStyle(
+                  fontFamily: "cairo",fontWeight: FontWeight.bold),
                         tabs: const [
                           Tab(text: 'المظهر'),
                           Tab(text: 'الإعدادات'),
@@ -101,7 +103,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               child: Column(
                                 children: [
                                   Text('لون واجهة التقويم',
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontWeight: FontWeight.bold)),
                                   SizedBox(height: 12.h),
                                   Wrap(
@@ -156,7 +159,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   Divider(),
                                   SizedBox(height: 10.h),
                                   Text('شكل التحديد',
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontWeight: FontWeight.bold)),
                                   SizedBox(height: 12.h),
                                   Row(
@@ -179,7 +183,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               child: Column(
                                 children: [
                                   Text('حجم الخط',
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontWeight: FontWeight.bold)),
                                   Slider(
                                     value: _fontScale,
@@ -195,13 +200,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     },
                                   ),
                                   Text('مقياس: ${(_fontScale * 100).toInt()}%',
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           color: Colors.grey)),
                                   SizedBox(height: 20.h),
                                   Divider(),
                                   SizedBox(height: 10.h),
                                   Text('بداية الأسبوع',
-                                      style: GoogleFonts.cairo(
+                                         style: TextStyle(
+                          fontFamily: "cairo",
                                           fontWeight: FontWeight.bold)),
                                   DropdownButton<StartingDayOfWeek>(
                                     value: _startingDayOfWeek,
@@ -224,24 +231,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       DropdownMenuItem(
                                         value: StartingDayOfWeek.saturday,
                                         child: Text('السبت (الافتراضي)',
-                                            style: GoogleFonts.cairo()),
+                                               style: TextStyle(
+                          fontFamily: "cairo",)),
                                       ),
                                       DropdownMenuItem(
                                         value: StartingDayOfWeek.sunday,
                                         child: Text('الأحد',
-                                            style: GoogleFonts.cairo()),
+                                               style: TextStyle(
+                          fontFamily: "cairo",)),
                                       ),
                                       DropdownMenuItem(
                                         value: StartingDayOfWeek.monday,
                                         child: Text('الإثنين',
-                                            style: GoogleFonts.cairo()),
+                                               style: TextStyle(
+                          fontFamily: "cairo",)),
                                       ),
                                     ],
                                   ),
                                   SizedBox(height: 20.h),
                                   CheckboxListTile(
                                     title: Text('الأولوية للتقويم الهجري',
-                                        style: GoogleFonts.cairo()),
+                                           style: TextStyle(
+                          fontFamily: "cairo",)),
                                     value: _isHijriMode,
                                     activeColor: _calendarThemeColor,
                                     onChanged: (val) async {
@@ -267,7 +278,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       Navigator.pop(context);
                       setState(() {});
                     },
-                    child: Text('إغلاق', style: GoogleFonts.cairo()),
+                    child: Text('إغلاق',    style: TextStyle(
+                          fontFamily: "cairo",)),
                   ),
                 ],
               );
@@ -315,7 +327,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
           SizedBox(height: 4.h),
           Text(label,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 12.sp,
                   color: isSelected ? _calendarThemeColor : Colors.grey)),
         ],
@@ -349,7 +362,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
             centerTitle: true,
             title: Text(
               "التقويم الإسلامي",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: _calendarThemeColor, // Dynamic Theme Color
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -390,7 +404,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     children: [
                       Text(
                         hijriDate.toFormat("MMMM yyyy"), // Hijri Month Year
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: (isTab ? 14.sp : 18.sp) * _fontScale,
                           fontWeight: FontWeight.bold,
                           color: _calendarThemeColor, // Dynamic
@@ -399,7 +414,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       Text(
                         intl.DateFormat('MMMM yyyy', 'ar')
                             .format(_focusedDay), // Gregorian
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: (isTab ? 10.sp : 14.sp) * _fontScale,
                           color: Colors.grey,
                         ),
@@ -423,7 +439,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       ),
                       child: Text(
                         'اليوم',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -456,14 +473,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       : null,
                 ),
                 defaultTextStyle:
-                    GoogleFonts.cairo(fontSize: 14.sp * _fontScale),
-                weekendTextStyle: GoogleFonts.cairo(
+                TextStyle(
+                    fontFamily: "cairo",fontSize: 14.sp * _fontScale),
+                weekendTextStyle: TextStyle(
+                    fontFamily: "cairo",
                     color: Colors.red, fontSize: 14.sp * _fontScale),
                 withinRangeTextStyle:
-                    GoogleFonts.cairo(fontSize: 14.sp * _fontScale),
-                disabledTextStyle: GoogleFonts.cairo(
+                    TextStyle(
+                  fontFamily: "cairo",fontSize: 14.sp * _fontScale),
+                disabledTextStyle: TextStyle(
+                    fontFamily: "cairo",
                     fontSize: 14.sp * _fontScale, color: Colors.grey),
-                outsideTextStyle: GoogleFonts.cairo(
+                outsideTextStyle: TextStyle(
+                  fontFamily: "cairo",
                     color: Colors.grey, fontSize: 14.sp * _fontScale),
               ),
               locale: 'ar_SA',
@@ -533,7 +555,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     children: [
                       Text(
                         'أحداث هذا اليوم',
-                        style: GoogleFonts.cairo(
+                           style: TextStyle(
+                          fontFamily: "cairo",
                           fontSize: isTab ? 10.sp : 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -567,7 +590,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         padding: EdgeInsets.only(top: 40.h),
                         child: Text(
                           'لا توجد مناسبات أو مهام في هذا اليوم',
-                          style: GoogleFonts.cairo(color: Colors.grey),
+                             style: TextStyle(
+                          fontFamily: "cairo",color: Colors.grey),
                         ),
                       ),
                     )
@@ -611,7 +635,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
             children: [
               Text(
                 mainText,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   color: isSelected ? Colors.white : null,
                   fontWeight: FontWeight.bold,
                   fontSize: 14.sp,
@@ -619,7 +644,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
               Text(
                 subText,
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   color: isSelected ? Colors.white70 : Colors.grey,
                   fontSize: 10.sp,
                 ),
@@ -728,7 +754,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       children: [
                         Text(
                           event.title,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 14.sp,
 
                             fontWeight: FontWeight.bold,
@@ -751,7 +778,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               event.description!,
                               maxLines: 10,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cairo(
+                                 style: TextStyle(
+                          fontFamily: "cairo",
                                 fontSize: 11.sp,
                                 color: Theme.of(context)
                                     .textTheme
@@ -776,7 +804,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   SizedBox(width: 4.w),
                                   Text(
                                     _getRecurrenceLabel(event.recurrence!),
-                                    style: GoogleFonts.cairo(
+                                       style: TextStyle(
+                          fontFamily: "cairo",
                                         fontSize: 10.sp, color: Colors.grey),
                                   ),
                                   SizedBox(width: 10.w),
@@ -789,7 +818,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     // 12-hour format
                                     intl.DateFormat('hh:mm a', 'ar')
                                         .format(event.reminderDateTime!),
-                                    style: GoogleFonts.cairo(
+                                       style: TextStyle(
+                          fontFamily: "cairo",
                                         fontSize: 10.sp, color: Colors.grey),
                                   ),
                                 ]

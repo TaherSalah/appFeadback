@@ -124,7 +124,8 @@ class HadithOfDayCard extends StatelessWidget {
                               children: [
                                 Text(
                                   'حديث اليوم',
-                                  style: GoogleFonts.cairo(
+                                  style: TextStyle(
+                  fontFamily: "cairo",
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
                                     color: isDark ? Colors.white : const Color(0xFF2C3E50),
@@ -132,7 +133,8 @@ class HadithOfDayCard extends StatelessWidget {
                                 ),
                                 Text(
                                   _formatDate(DateTime.now()),
-                                  style: GoogleFonts.cairo(
+                                  style: TextStyle(
+                  fontFamily: "cairo",
                                     fontSize: 12.sp,
                                     color: isDark ? Colors.grey[400] : Colors.grey[700],
                                   ),
@@ -195,7 +197,8 @@ class HadithOfDayCard extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     hadith.bookName,
-                                    style: GoogleFonts.cairo(
+                                    style: TextStyle(
+                  fontFamily: "cairo",
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w600,
                                       color: isDark ? Colors.grey[400] : Colors.grey[700],
@@ -285,7 +288,8 @@ class HadithOfDayCard extends StatelessWidget {
           SizedBox(height: 12.h),
           Text(
             'لم يتم تحميل حديث اليوم',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 16.sp,
               color: Colors.grey[600],
             ),

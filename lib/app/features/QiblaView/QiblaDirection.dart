@@ -290,7 +290,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
             centerTitle: true,
             title: Text(
               "اتجاه القبلة",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
@@ -327,7 +328,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
           const SizedBox(height: 20),
           Text(
             "جاري تحميل بيانات القبلة...",
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
               color: isDark ? Colors.white : Colors.black,
               fontSize: 16,
             ),
@@ -353,7 +355,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
             Text(
               _getErrorMessage(_errorMessage),
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 color: isDark ? Colors.white : Colors.black,
                 fontSize: 16,
               ),
@@ -496,7 +499,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                     top: 12,
                     child: Text(
                       "\u{1F54B}",
-                      style: GoogleFonts.cairo(
+                         style: TextStyle(
+                          fontFamily: "cairo",
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 35,
@@ -606,7 +610,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
                 const SizedBox(width: 8),
                 Text(
                   _getDirectionMessage(angle),
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: ResponsiveUtil.isTablet(context) ? 16 : 14,
                     fontWeight: FontWeight.bold,
                     color: (angle < 10 || angle > 350)
@@ -723,11 +728,13 @@ class _QiblaDirectionState extends State<QiblaDirection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 12,
                         color: isDark ? Colors.grey[400] : Colors.grey[600])),
                 Text(value,
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black),
@@ -744,7 +751,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
     return Column(
       children: [
         Text(title,
-            style: GoogleFonts.cairo(
+               style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 12,
                 color: isDark ? Colors.grey[400] : Colors.grey[600])),
         const SizedBox(height: 4),
@@ -755,7 +763,8 @@ class _QiblaDirectionState extends State<QiblaDirection> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(value,
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.greenAccent : Colors.green[700])),

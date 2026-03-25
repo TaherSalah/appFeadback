@@ -29,7 +29,8 @@ class AchievementAlbumScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             'ألبوم الإنجازات 📸',
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
             ),
@@ -61,7 +62,8 @@ class AchievementAlbumScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     'إجمالي النجوم',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize:
                           ResponsiveUtil.isTablet(context) ? 11.sp : 16.sp,
                       color: Colors.white,
@@ -69,7 +71,8 @@ class AchievementAlbumScreen extends StatelessWidget {
                   ),
                   Text(
                     '$totalStars ⭐',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize:
                           ResponsiveUtil.isTablet(context) ? 18.sp : 32.sp,
                       fontWeight: FontWeight.bold,
@@ -128,7 +131,8 @@ class AchievementAlbumScreen extends StatelessWidget {
             // Badges section
             Text(
               'الشارات المفتوحة 🏅',
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : Colors.black87,
@@ -151,7 +155,8 @@ class AchievementAlbumScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       Text(
                         'لا توجد شارات بعد\nابدأ بجمع النجوم!',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 14.sp,
                           color: Colors.grey,
                         ),
@@ -201,7 +206,8 @@ class AchievementAlbumScreen extends StatelessWidget {
                             children: [
                               Text(
                                 badge['title'],
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: ResponsiveUtil.isTablet(context)
                                       ? 11.sp
                                       : 16.sp,
@@ -212,7 +218,8 @@ class AchievementAlbumScreen extends StatelessWidget {
                               const SizedBox(height: 4),
                               Text(
                                 badge['desc'],
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(
+                  fontFamily: "cairo",
                                   fontSize: ResponsiveUtil.isTablet(context)
                                       ? 9.sp
                                       : 12.sp,
@@ -256,7 +263,8 @@ class AchievementAlbumScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp,
               color: Colors.grey,
             ),
@@ -265,7 +273,8 @@ class AchievementAlbumScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
               fontWeight: FontWeight.bold,
               color: color,

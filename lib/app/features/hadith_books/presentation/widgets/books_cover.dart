@@ -112,7 +112,8 @@ class BooksCover extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 12.w),
                   child: Text(
                     title.tr,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                  fontFamily: "cairo",
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,

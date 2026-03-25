@@ -81,7 +81,8 @@ class _JannahPlanterWidgetState extends State<JannahPlanterWidget> with SingleTi
         children: [
            Text(
             "غراس الجنة 🌴",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
@@ -137,7 +138,8 @@ class _JannahPlanterWidgetState extends State<JannahPlanterWidget> with SingleTi
                                 const SizedBox(height: 8),
                                 Text(
                                   "اغرس",
-                                  style: GoogleFonts.cairo(
+                                  style: TextStyle(
+                  fontFamily: "cairo",
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.bold,
                                     color: isDark ? Colors.white : Colors.black87,
@@ -158,7 +160,8 @@ class _JannahPlanterWidgetState extends State<JannahPlanterWidget> with SingleTi
                                         offset: Offset(0, -30 * value),
                                         child: Text(
                                           "+1 🌴",
-                                          style: GoogleFonts.cairo(
+                                          style: TextStyle(
+                  fontFamily: "cairo",
                                             fontSize: 18.sp,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.green,
@@ -184,7 +187,8 @@ class _JannahPlanterWidgetState extends State<JannahPlanterWidget> with SingleTi
                     children: [
                       Text(
                         "قال رسول الله ﷺ:",
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                  fontFamily: "cairo",
                           fontSize: 10.sp,
                           color: isDark ? Colors.teal.shade100 : Colors.teal.shade800,
                         ),
@@ -221,7 +225,8 @@ class _JannahPlanterWidgetState extends State<JannahPlanterWidget> with SingleTi
       children: [
         Text(
           label,
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+                  fontFamily: "cairo",
             fontSize: 10.sp,
             color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
           ),
@@ -234,7 +239,8 @@ class _JannahPlanterWidgetState extends State<JannahPlanterWidget> with SingleTi
           ),
           child: Text(
             "$count",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 14.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.tealAccent : Colors.teal,

@@ -428,7 +428,8 @@ class RunnerItem extends PositionComponent with HasGameRef<SunnahHeroRunner> {
     
     // Tag banner for the text
     final labelFontSize = w * 0.25;
-    final labelStyle = GoogleFonts.cairo(
+    final labelStyle = TextStyle(
+                  fontFamily: "cairo",
       color: Colors.white,
       fontWeight: FontWeight.bold,
       fontSize: labelFontSize,

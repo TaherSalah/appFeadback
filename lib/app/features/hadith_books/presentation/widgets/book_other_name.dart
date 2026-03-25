@@ -50,7 +50,8 @@ class BookOtherName extends StatelessWidget {
           // Collection Name
           Text(
             booksCtrl.currentCollection.arAndEnName,
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 12.sp,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white70 : Colors.black54,
@@ -93,7 +94,8 @@ class BookOtherName extends StatelessWidget {
           // Instruction
           Text(
             "اسحب لليسار لبدء القراءة",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               fontSize: 14.sp,
               color: isDark ? Colors.white38 : Colors.black38,
             ),

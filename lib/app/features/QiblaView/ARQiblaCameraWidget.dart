@@ -260,7 +260,8 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
                     ),
                     child: Text(
                       "القبلة هنا ✨",
-                      style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                  fontFamily: "cairo",color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   )
               ],
@@ -316,13 +317,15 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
                       children: [
                          const Icon(Icons.share_location, color: Colors.white70),
                          const SizedBox(height: 5),
-                         Text("المسافة", style: GoogleFonts.cairo(color: Colors.white70, fontSize: 10)),
+                         Text("المسافة",    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.white70, fontSize: 10)),
                       ],
                     ),
                     Container(width: 1, height: 30, color: Colors.white12),
                     Text(
                          isAligned ? "أنت تواجه القبلة" : "ابحث عن الكعبة",
-                         style: GoogleFonts.cairo(
+                         style: TextStyle(
+                  fontFamily: "cairo",
                            color: isAligned ? Colors.greenAccent : Colors.white, 
                            fontWeight: FontWeight.bold,
                            fontSize: 16
@@ -333,7 +336,8 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
                       children: [
                          const Icon(Icons.compass_calibration, color: Colors.white70),
                          const SizedBox(height: 5),
-                         Text("الدقة عالية", style: GoogleFonts.cairo(color: Colors.white70, fontSize: 10)),
+                         Text("الدقة عالية",    style: TextStyle(
+                          fontFamily: "cairo",color: Colors.white70, fontSize: 10)),
                       ],
                     ),
                   ],

@@ -39,7 +39,8 @@ class CollectionDetailsScreen extends StatelessWidget {
             centerTitle: true,
             title: Text(
               collection.bookName,
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -135,7 +136,8 @@ class CollectionDetailsScreen extends StatelessWidget {
                     SizedBox(width: 8.w),
                     Text(
                       'قائمة الكتب',
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(
+                  fontFamily: "cairo",
                         fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,

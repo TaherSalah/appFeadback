@@ -247,7 +247,8 @@ class _Header extends StatelessWidget {
             ),
             Text(
               "يَوْمَ الْجُمُعَةِ سَيِّدُ الأَيَّامِ",
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 11.sp,
                 color: isDark ? Colors.white38 : Colors.black38,
               ),
@@ -392,7 +393,8 @@ class _ProgressSection extends StatelessWidget {
             children: [
               Text(
                 allDone ? "🌟 أكملت كل السنن!" : "إنجازك اليوم",
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white60 : Colors.black54,
@@ -410,7 +412,8 @@ class _ProgressSection extends StatelessWidget {
                 ),
                 child: Text(
                   "$completed / $total",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
                     color: _FridayCompanionWidgetState._goldDark,
@@ -570,7 +573,8 @@ class _SalawatSection extends StatelessWidget {
                 icon: const Icon(Icons.share_outlined, size: 17),
                 label: Text(
                   "شارك كصورة",
-                  style: GoogleFonts.cairo(
+                     style: TextStyle(
+                          fontFamily: "cairo",
                       fontWeight: FontWeight.bold, fontSize: 12.sp),
                 ),
               ),
@@ -670,7 +674,8 @@ class _SunnahsSection extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     "أتممت سنن الجمعة — بارك الله فيك",
-                    style: GoogleFonts.cairo(
+                       style: TextStyle(
+                          fontFamily: "cairo",
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark
@@ -738,7 +743,8 @@ class _SunnahsSection extends StatelessWidget {
           //           // const SizedBox(width: 8),
           //           Text(
           //             "اقرأ سورة الكهف الآن",
-          //             style: GoogleFonts.cairo(
+          //                style: TextStyle(
+            //              fontFamily: "cairo",
           //               fontWeight: FontWeight.bold, fontSize: 12.sp,
           //             ),
           //           ),
@@ -764,7 +770,8 @@ class _SunnahsSection extends StatelessWidget {
               icon: const Icon(Icons.chrome_reader_mode, size: 17),
               label: Text(
                 "اقرأ سورة الكهف الآن",
-                style: GoogleFonts.cairo(
+                   style: TextStyle(
+                          fontFamily: "cairo",
                     fontWeight: FontWeight.bold, fontSize: 12.sp),
               ),
             ),
@@ -835,7 +842,8 @@ class _SunnahChip extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               sunnah['title'],
-              style: GoogleFonts.cairo(
+                 style: TextStyle(
+                          fontFamily: "cairo",
                 fontSize: 11.sp,
                 fontWeight: _isDone ? FontWeight.bold : FontWeight.w500,
                 color: _isDone

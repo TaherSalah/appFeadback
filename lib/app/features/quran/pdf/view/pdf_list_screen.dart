@@ -1,13 +1,10 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/features/quran/pdf/data/pdf_book_model.dart';
 import 'package:muslimdaily/app/features/quran/pdf/data/pdf_service.dart';
 import 'package:muslimdaily/app/features/quran/pdf/view/quran_pdf_screen.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:get_storage/get_storage.dart';
-
 import '../../../../core/services/feature_guard_service.dart';
 import '../../../../core/utils/style/k_helper.dart';
 
@@ -152,7 +149,8 @@ class _PdfListScreenState extends State<PdfListScreen> {
             centerTitle: true,
             title: Text(
               "مكتبة المصحف الشريف",
-              style: GoogleFonts.cairo(
+              style: TextStyle(
+                  fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
@@ -174,7 +172,8 @@ class _PdfListScreenState extends State<PdfListScreen> {
                         const SizedBox(height: 16),
                         Text(
                           'المكتبة فارغة حالياً',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                  fontFamily: "cairo",
                               fontSize: 18, color: Colors.grey),
                         ),
                         const SizedBox(height: 8),
@@ -265,7 +264,8 @@ class _PdfListScreenState extends State<PdfListScreen> {
                                     children: [
                                       Text(
                                         book.title,
-                                        style: GoogleFonts.cairo(
+                                        style: TextStyle(
+                  fontFamily: "cairo",
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13,
                                             height: 1.2),

@@ -57,7 +57,8 @@ class _ComplateKhatmaViewState extends State<ComplateKhatmaView> {
           centerTitle: true,
           title: Text(
             "الختمات المنجزة",
-            style: GoogleFonts.cairo(
+            style: TextStyle(
+                  fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize: 14.sp,
@@ -142,7 +143,8 @@ class _ComplateKhatmaViewState extends State<ComplateKhatmaView> {
                                           Expanded(
                                             child: Text(
                                               khatmah.title,
-                                              style: GoogleFonts.cairo(
+                                              style: TextStyle(
+                  fontFamily: "cairo",
                                                 color: Colors.white,
                                                 fontSize: 16.sp,
                                                 fontWeight: FontWeight.bold,
@@ -160,7 +162,8 @@ class _ComplateKhatmaViewState extends State<ComplateKhatmaView> {
                                             ),
                                             child: Text(
                                               "تمت بحمد الله",
-                                              style: GoogleFonts.cairo(
+                                              style: TextStyle(
+                  fontFamily: "cairo",
                                                 color: Colors.white,
                                                 fontSize: 10.sp,
                                                 fontWeight: FontWeight.bold,
@@ -177,7 +180,8 @@ class _ComplateKhatmaViewState extends State<ComplateKhatmaView> {
                                           const Gap(6),
                                           Text(
                                             "${khatmah.startDate.toString().split(' ').first}  ➔  ${khatmah.endDate.toString().split(' ').first}",
-                                            style: GoogleFonts.cairo(
+                                            style: TextStyle(
+                  fontFamily: "cairo",
                                               color: Colors.white.withOpacity(0.9),
                                               fontSize: 11.sp,
                                             ),
@@ -192,7 +196,8 @@ class _ComplateKhatmaViewState extends State<ComplateKhatmaView> {
                                           const Gap(6),
                                           Text(
                                             "أُنجزت $durationText",
-                                            style: GoogleFonts.cairo(
+                                            style: TextStyle(
+                  fontFamily: "cairo",
                                               color: Colors.amberAccent,
                                               fontSize: 11.sp,
                                               fontWeight: FontWeight.bold,

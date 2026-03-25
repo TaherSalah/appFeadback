@@ -169,7 +169,8 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
                         const SizedBox(width: 10),
                         Text(
                           widget.title,
-                          style: GoogleFonts.cairo(
+                             style: TextStyle(
+                          fontFamily: "cairo",
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white : _accent,
@@ -278,7 +279,8 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
                                                 const SizedBox(width: 8),
                                                 Text(
                                                   _statusText(state),
-                                                  style: GoogleFonts.cairo(
+                                                     style: TextStyle(
+                          fontFamily: "cairo",
                                                     color: Colors.white,
                                                     fontSize: 10.sp,
                                                     fontWeight: FontWeight.bold,
@@ -376,7 +378,8 @@ class _QuranRadioPlayerState extends State<QuranRadioPlayer> {
                                       const SizedBox(height: 20),
                                       Text(
                                         "بث مباشر – لا يدعم التقديم أو الترجيع",
-                                        style: GoogleFonts.cairo(
+                                           style: TextStyle(
+                          fontFamily: "cairo",
                                           fontSize: 10.sp,
                                           color: isDark ? Colors.white38 : Colors.black38,
                                         ),

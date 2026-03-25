@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import '../mainView/controllar/MainController.dart';
 
@@ -50,5 +51,13 @@ class SettingsController extends GetxController {
   void setHijriAdjustment(int newValue) {
     MainController().setHijriAdjustment(newValue);
     update();
+  }
+
+  // --- External Links ---
+  Future<void> launchTelegram() async {
+    final Uri url = Uri.parse('https://t.me/rafiqMuslim');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
   }
 }

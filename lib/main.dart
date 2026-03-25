@@ -125,28 +125,37 @@ Future<void> _initAppServices() async {
 void _registerHiveAdapters() {
   if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(KhatmahModelAdapter());
   if (!Hive.isAdapterRegistered(22)) Hive.registerAdapter(MonthlyGoalAdapter());
-  if (!Hive.isAdapterRegistered(23))
+  if (!Hive.isAdapterRegistered(23)) {
     Hive.registerAdapter(CharityAchievementAdapter());
-  if (!Hive.isAdapterRegistered(10))
+  }
+  if (!Hive.isAdapterRegistered(10)) {
     Hive.registerAdapter(CharityDonationAdapter());
+  }
   if (!Hive.isAdapterRegistered(11)) Hive.registerAdapter(AchievementAdapter());
-  if (!Hive.isAdapterRegistered(12))
+  if (!Hive.isAdapterRegistered(12)) {
     Hive.registerAdapter(UserProgressAdapter());
+  }
   if (!Hive.isAdapterRegistered(13)) Hive.registerAdapter(ChallengeAdapter());
   if (!Hive.isAdapterRegistered(14)) Hive.registerAdapter(CustomDuaAdapter());
   if (!Hive.isAdapterRegistered(15)) Hive.registerAdapter(DuaReminderAdapter());
-  if (!Hive.isAdapterRegistered(21))
+  if (!Hive.isAdapterRegistered(21)) {
     Hive.registerAdapter(RecurringCharityAdapter());
-  if (!Hive.isAdapterRegistered(16))
+  }
+  if (!Hive.isAdapterRegistered(16)) {
     Hive.registerAdapter(AchievementTypeAdapter());
-  if (!Hive.isAdapterRegistered(17))
+  }
+  if (!Hive.isAdapterRegistered(17)) {
     Hive.registerAdapter(AchievementRarityAdapter());
-  if (!Hive.isAdapterRegistered(18))
+  }
+  if (!Hive.isAdapterRegistered(18)) {
     Hive.registerAdapter(ChallengeTypeAdapter());
-  if (!Hive.isAdapterRegistered(25))
+  }
+  if (!Hive.isAdapterRegistered(25)) {
     Hive.registerAdapter(CalendarEventAdapter());
-  if (!Hive.isAdapterRegistered(30))
+  }
+  if (!Hive.isAdapterRegistered(30)) {
     Hive.registerAdapter(PdfBookModelAdapter());
+  }
 }
 
 Future<void> _openHiveBoxes() async {
