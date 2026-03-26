@@ -8,6 +8,8 @@ import 'package:quran_library/quran.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../../../../core/utils/style/k_helper.dart';
+
 class AyaSearchScreen extends StatefulWidget {
   const AyaSearchScreen({super.key});
 
@@ -110,31 +112,25 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
           );
         } else {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز",
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontFamily: "cairo"),
-                ),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     content: Text(
+            //       "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز",
+            //       textAlign: TextAlign.right,
+            //       style: TextStyle(fontFamily: "cairo"),
+            //     ),
+            //     backgroundColor: Colors.redAccent,
+            //   ),
+            // );
+            KHelper.showError(message:  "عذراً، ميزة البحث الصوتي غير مدعومة على هذا الجهاز");
+
           }
         }
       } catch (e) {
         debugPrint("Speech recognition exception: $e");
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "حدث خطأ أثناء تشغيل البحث الصوتي",
-                textAlign: TextAlign.right,
-                style: TextStyle(fontFamily: "cairo"),
-              ),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
+          KHelper.showError(message:  "حدث خطأ أثناء تشغيل البحث الصوتي",);
+
         }
       }
     } else {

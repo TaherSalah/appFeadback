@@ -387,9 +387,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
       await _audioPlayer.pause();
       if (mounted) setState(() {});
     });
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text('سيتم إيقاف الصوت بعد 10 دقائق')),
-    // );
     KHelper.showSuccess(message: 'سيتم إيقاف الصوت بعد 10 دقائق');
 
   }

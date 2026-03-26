@@ -41,21 +41,12 @@ class _MonthlyGoalScreenState extends State<MonthlyGoalScreen> {
   Future<void> _saveGoal() async {
     final amount = double.tryParse(_goalController.text);
     if (amount == null || amount <= 0) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(content: Text('الرجاء إدخال مبلغ صحيح')),
-      // );
       KHelper.showError(message:'الرجاء إدخال مبلغ صحيح' );
       return;
     }
 
     await _charityService.setMonthlyGoal(amount);
     if (mounted) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     content: Text('تم حفظ الهدف الشهري بنجاح 🎯'),
-      //     backgroundColor: Color(0xFF10B981),
-      //   ),
-      // );
       KHelper.showSuccess(message: "تم حفظ الهدف الشهري بنجاح");
       Navigator.pop(context);
     }

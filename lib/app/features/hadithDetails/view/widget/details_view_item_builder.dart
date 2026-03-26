@@ -109,25 +109,25 @@ class _DetailsViewItemBuilderState extends State<DetailsViewItemBuilder> {
                           ? Colors.white
                           : Colors.black,
                     ),
-                    actions: [
-                      IconButton(
-                        icon: Icon(Icons.image_outlined,
-                            color:
-                                isDark ? Colors.amber : Colors.amber.shade700),
-                        onPressed: () {
-                          final bloc = HadithDetailsBloc.get(context);
-                          showGeneralDialog(
-                            context: context,
-                            pageBuilder: (context, anim1, anim2) =>
-                                PremiumShareCard(
-                              azkarName: "حديث شريف",
-                              text: bloc.hadithDetailsModal?.hadeeth ?? "",
-                              source: "حديث شريف - رفيق المسلم",
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                    // actions: [
+                    //   IconButton(
+                    //     icon: Icon(Icons.image_outlined,
+                    //         color:
+                    //             isDark ? Colors.amber : Colors.amber.shade700),
+                    //     onPressed: () {
+                    //       final bloc = HadithDetailsBloc.get(context);
+                    //       showGeneralDialog(
+                    //         context: context,
+                    //         pageBuilder: (context, anim1, anim2) =>
+                    //             PremiumShareCard(
+                    //           azkarName: "حديث شريف",
+                    //           text: bloc.hadithDetailsModal?.hadeeth ?? "",
+                    //           source: "حديث شريف - رفيق المسلم",
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
+                    // ],
                   ),
                   // SliverToBoxAdapter(
                   //   child: Padding(

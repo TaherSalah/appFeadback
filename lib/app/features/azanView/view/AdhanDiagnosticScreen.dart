@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/services/AdhanDiagnosticHelper.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -136,32 +137,20 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
 
       if (mounted) {
         if (status.isGranted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✅ تم تعطيل تحسين البطارية'),
-              backgroundColor: Colors.green,
-            ),
-          );
+
+          KHelper.showSuccess(message: "تم تعطيل تحسين البطارية");
           _loadDiagnostics();
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:
-                  Text('⚠️ لم يتم منح الإذن. يرجى تفعيله من إعدادات النظام'),
-              backgroundColor: Colors.orange,
-              duration: Duration(seconds: 4),
-            ),
-          );
+
+          KHelper.showError(message: "لم يتم منح الإذن. يرجى تفعيله من إعدادات النظام");
+
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ خطأ: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+
+        KHelper.showError(message: "خطأ: $e");
+
       }
     }
   }
@@ -172,32 +161,20 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
 
       if (mounted) {
         if (status.isGranted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✅ تم منح إذن الظهور فوق التطبيقات'),
-              backgroundColor: Colors.green,
-            ),
-          );
+
+          KHelper.showSuccess(message: "تم منح إذن الظهور فوق التطبيقات");
           _loadDiagnostics();
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:
-                  Text('⚠️ لم يتم منح الإذن. يرجى تفعيله من إعدادات النظام'),
-              backgroundColor: Colors.orange,
-              duration: Duration(seconds: 4),
-            ),
-          );
+
+          KHelper.showError(message: "لم يتم منح الإذن. يرجى تفعيله من إعدادات النظام");
+
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ خطأ: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+
+        KHelper.showError(message: "خطأ: $e");
+
       }
     }
   }

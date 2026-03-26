@@ -75,17 +75,6 @@ class _AddCharityScreenState extends State<AddCharityScreen> {
 
     if (mounted) {
       Navigator.pop(context);
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text(
-      //       widget.donation != null
-      //           ? 'تم تحديث الصدقة بنجاح'
-      //           : 'تم إضافة الصدقة بنجاح ',
-      //       style: GoogleFonts.cairo(),
-      //     ),
-      //     backgroundColor: const Color(0xFF10B981),
-      //   ),
-      // );
       KHelper.showSuccess(message:
       widget.donation != null
                   ? 'تم تحديث الصدقة بنجاح'

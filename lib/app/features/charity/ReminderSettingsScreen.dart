@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
+import '../../core/utils/style/k_helper.dart';
 import '../../core/widgets/KLoading.dart';
 import 'services/charity_service.dart';
 
@@ -65,12 +66,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
     });
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم حفظ إعدادات التذكير بنجاح 🔔'),
-          backgroundColor: Color(0xFF10B981),
-        ),
-      );
+      KHelper.showSuccess(message:  "تم حفظ إعدادات التذكير بنجاح ");
+
     }
   }
 

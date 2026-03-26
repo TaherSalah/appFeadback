@@ -545,12 +545,6 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         await _charityService.addDonation(donation);
         _loadData();
         if (mounted) {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text('تم تسجيل صدقة بقيمة $amount جنيه ✨', style: GoogleFonts.cairo()),
-          //     backgroundColor: const Color(0xFF10B981),
-          //   ),
-          // );
           KHelper.showSuccess(message: 'تم تسجيل صدقة بقيمة $amount جنيه ');
         }
       },
@@ -1052,14 +1046,6 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                           await _charityService.confirmRecurringDonation(item);
                           _loadData();
                           if (mounted) {
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   SnackBar(
-                            //     content: Text(
-                            //         'تقبل الله منك! تم تسجيل الصدقة ✅',
-                            //         style: GoogleFonts.cairo()),
-                            //     backgroundColor: const Color(0xFF10B981),
-                            //   ),
-                            // );
                             KHelper.showSuccess(message: 'تقبل الله منك! تم تسجيل الصدقة',);
                           }
                         },

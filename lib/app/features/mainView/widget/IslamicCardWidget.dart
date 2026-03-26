@@ -218,11 +218,7 @@ void showThemeSheet(
   ) async {
     final ok = await ensureLocationPermission();
     if (!ok) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(
-      //       content: Text('تعذّر استخدام الموقع. تحقق من الصلاحيات وخدمة الموقع.'),
-      //     ),
-      //   );
+
       KHelper.showError(
           message: 'تعذّر استخدام الموقع. تحقق من الصلاحيات وخدمة الموقع.');
 
@@ -278,20 +274,9 @@ void showThemeSheet(
       if (onLocationChanged != null) onLocationChanged();
       KHelper.showSuccess(message: 'تم تحديد الموقع: $bestCountry - $bestCity');
 
-      // ScaffoldMessenger.of(context).showSnackBar(
-      // SnackBar(
-      //   content: Text('تم تحديد الموقع: $bestCountry - $bestCity'),
-      // ),
-
-      // );
     } else {
       KHelper.showError(message: 'لم يتم العثور على مدينة مناسبة في البيانات.');
 
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     content: Text('لم يتم العثور على مدينة مناسبة في البيانات.'),
-      //   ),
-      // );
     }
   }
 

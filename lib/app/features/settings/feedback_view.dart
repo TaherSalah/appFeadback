@@ -74,19 +74,7 @@ class _FeedbackViewState extends State<FeedbackView> {
       );
 
       if (mounted) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-          // SnackBar(
-          //   content: Text(
-          //     'تم إرسال الملاحظات بنجاح ✅',
-          //     style: GoogleFonts.cairo(),
-          //   ),
-          //   backgroundColor: Colors.green,
-          //   behavior: SnackBarBehavior.floating,
-          //   shape: RoundedRectangleBorder(
-          //     borderRadius: BorderRadius.circular(10),
-          //   ),
-          // ),
-        // );
+
         KHelper.showSuccess(message:              'تم إرسال الملاحظات بنجاح ',
         );
         Navigator.pop(context);
@@ -94,19 +82,6 @@ class _FeedbackViewState extends State<FeedbackView> {
     } catch (e) {
       if (mounted) {
         KHelper.showError(message:               'فشل إرسال الملاحظات: $e',);
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text(
-        //       'فشل إرسال الملاحظات: $e',
-        //       style: GoogleFonts.cairo(),
-        //     ),
-        //     backgroundColor: Colors.red,
-        //     behavior: SnackBarBehavior.floating,
-        //     shape: RoundedRectangleBorder(
-        //       borderRadius: BorderRadius.circular(10),
-        //     ),
-        //   ),
-        // );
       }
     } finally {
       if (mounted) {

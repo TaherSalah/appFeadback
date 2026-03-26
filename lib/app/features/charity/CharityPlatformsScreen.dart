@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/utils/style/k_helper.dart';
+
 class CharityPlatform {
   final String name;
   final String description;
@@ -239,15 +241,8 @@ class CharityPlatformsScreen extends StatelessWidget {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'تعذر فتح الرابط',
-                 style: TextStyle(
-                          fontFamily: "cairo",),
-            ),
-          ),
-        );
+        KHelper.showError(message:  'تعذر فتح الرابط',);
+
       }
     }
   }

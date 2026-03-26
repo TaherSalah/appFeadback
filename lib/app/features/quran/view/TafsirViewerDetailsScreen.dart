@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:quran_library/quran.dart';
 
+import '../../../core/utils/style/k_helper.dart';
+
 class TafsirViewerDetailsScreen extends StatefulWidget {
   /// ابدأ بصفحة معينة (١–٦٠٤). لو ما اتحطتش قيمة، هيبدأ بآخر صفحة محفوظة من المكتبة
   final int? initialPage;
@@ -201,16 +203,14 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
       setState(() {});
       await _loadPageAyahs();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم تفعيل التفسير المختار')),
-        );
+        KHelper.showSuccess(message:  'تم تفعيل التفسير المختار');
+
       }
     } catch (e) {
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('تعذّر تفعيل التفسير: $e')),
-        );
+        KHelper.showError(message:  'تعذّر تفعيل التفسير: $e');
+
       }
     } finally {
       if (mounted) setState(() => _downloading = false);

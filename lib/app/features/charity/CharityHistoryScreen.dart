@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
+import '../../core/utils/style/k_helper.dart';
 import '../../core/widgets/KLoading.dart';
 import 'AddCharityScreen.dart';
 import 'models/charity_models.dart';
@@ -217,18 +218,8 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
           await _charityService.deleteDonation(donation.id);
           _loadDonations();
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'تم حذف الصدقة',
-                     style: TextStyle(
-                          fontFamily: "cairo",),
-                ),
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.r)),
-              ),
-            );
+            KHelper.showSuccess(message: "تم حذف الصدقة");
+
           }
         },
         child: InkWell(

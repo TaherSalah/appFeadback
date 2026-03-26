@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/shard/exports/all_exports.dart';
+import '../../../core/utils/style/k_helper.dart';
 import '../data/model/user_guide_item.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -76,18 +77,8 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
     });
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _isFavorite ? 'تمت الإضافة للمفضلة' : 'تم الإزالة من المفضلة',
-            style: TextStyle(
-                  fontFamily: "cairo",),
-          ),
-          duration: const Duration(seconds: 1),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.green,
-        ),
-      );
+      KHelper.showSuccess(message:   _isFavorite ? 'تمت الإضافة للمفضلة' : 'تم الإزالة من المفضلة');
+
     }
   }
 

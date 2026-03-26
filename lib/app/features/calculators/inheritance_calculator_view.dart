@@ -6,6 +6,7 @@ import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
 import '../../core/shard/widgets/ui_animations.dart';
+import '../../core/utils/style/k_helper.dart';
 import 'logic/inheritance_logic.dart';
 import 'services/inheritance_pdf_service.dart';
 
@@ -790,27 +791,6 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         SizedBox(height: 24.h),
         _buildResultReportTable(isDark),
         _buildIndividualSharesTable(isDark),
-        // Center(
-        //   child: TextButton.icon(
-        //     onPressed: () async {
-        //       if (_results.isNotEmpty && _lastInput != null) {
-        //         final netEstate = _lastInput!.totalEstate - _lastInput!.debts;
-        //         await InheritancePdfService.generateInheritanceReport(
-        //           results: _results,
-        //           input: _lastInput!,
-        //           netEstate: netEstate,
-        //         );
-        //       } else {
-        //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        //             content:
-        //                 Text("يرجى إجراء الحساب أولاً قبل تصدير التقرير")));
-        //       }
-        //     },
-        //     icon: const Icon(Icons.share, size: 18),
-        //     label: Text("مشاركة التقرير كـ PDF",
-        //         style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-        //   ),
-        // ),
         SizedBox(height: 15.h),
 
         Center(
@@ -824,9 +804,8 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                       netEstate: netEstate,
                     );
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content:
-                            Text("يرجى إجراء الحساب أولاً قبل تصدير التقرير")));
+                    KHelper.showError(message: "يرجى إجراء الحساب أولاً قبل تصدير التقرير");
+
                   }
                 },
             icon: const Icon(Icons.share, color: Colors.white),

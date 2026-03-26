@@ -230,7 +230,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
 
           // كبسولة عدد التكرار (تحت الكارت)
           Positioned(
-            bottom: -15.h,
+            bottom:context.isTab?-20.h :-15.h,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
               decoration: BoxDecoration(
@@ -251,7 +251,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                 children: [
                   Icon(
                     Icons.repeat_rounded,
-                    size: 18.sp,
+                    size:context.isTab?15.sp :18.sp,
                     color: widget.repertColor ??
                         (isDark ? Colors.white : Colors.black87),
                   ),
@@ -263,7 +263,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                       color: widget.repertColor ??
                           (isDark ? Colors.white : Colors.black87),
                       fontWeight: FontWeight.bold,
-                      fontSize: 13.sp,
+                      fontSize:context.isTab?9.sp: 13.sp,
                     ),
                   ),
                 ],
@@ -307,7 +307,8 @@ class _AzkarActionButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 18.sp,
+              size:context.isTab?15.sp :18.sp,
+
               color: isDark ? Colors.greenAccent : primary,
             ),
             SizedBox(width: 6.w),
@@ -315,8 +316,8 @@ class _AzkarActionButton extends StatelessWidget {
               label,
                  style: TextStyle(
                           fontFamily: "cairo",
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w600,
+                fontSize:context.isTab?9.sp: 12.sp,
+                   fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white70 : Colors.grey[900],
               ),
             ),

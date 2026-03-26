@@ -51,6 +51,7 @@ class NotificationSettingsView extends StatelessWidget {
                   AzkarSection(controller: controller),
                   SalatFrequencySection(controller: controller),
                   RemindersSection(controller: controller),
+                   const SizedBox(height: 60),
 
                   // // Test Button
                   // Padding(
@@ -71,11 +72,10 @@ class NotificationSettingsView extends StatelessWidget {
                   //     label: Text('اختبار التنبيهات (للمطورين)', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                   //   ),
                   // ),
-                  // const SizedBox(height: 100),
                 ],
               ),
             ),
-            
+
             // Save Floating Button
             Positioned(
               bottom: 24,

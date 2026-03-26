@@ -45,19 +45,6 @@ class HadithDetailsView extends StatelessWidget {
                         Clipboard.setData(ClipboardData(
                                 text: bloc.hadithDetailsModal?.hadeeth))
                             .then((_) {
-                          // Show a snackbar to indicate that the text has been copied
-                          // ScaffoldMessenger.of(context).showSnackBar(
-                          //   SnackBar(
-                          //       backgroundColor: isDark
-                          //           ? KColors.blackColor
-                          //           : KColors.whiteColor,
-                          //       content: TextWidget(
-                          //           fontSize: context.isTab
-                          //               ? 10.sp
-                          //               : 12.sp,
-                          //           textAlign: TextAlign.right,
-                          //           title: '! تم نسخ الحديث إلى الحافظة')),
-                          // );
                           KHelper.showSuccess(
                               message: 'تم نسخ الحديث إلى الحافظة!');
                         });
@@ -249,7 +236,6 @@ $hadithText
 """;
 
   Clipboard.setData(ClipboardData(text: copyText));
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('تم نسخ الحديث مع رابط التطبيق!')),
-  );
+  KHelper.showSuccess(message: 'تم نسخ الحديث مع رابط التطبيق!');
+
 }

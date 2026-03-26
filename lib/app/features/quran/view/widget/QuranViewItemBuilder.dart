@@ -557,9 +557,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       _bookmarkedPage = null;
     });
     KHelper.showSuccess(message: "تم ازالة العلامة");
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text('✅ تم ازالة العلامة')),
-    // );
   }
 
   void _goToBookmark() {

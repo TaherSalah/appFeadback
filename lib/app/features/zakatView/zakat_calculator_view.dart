@@ -244,10 +244,6 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     final String jsonString =
         json.encode(_history.map((e) => e.toJson()).toList());
     await prefs.setString('zakat_history', jsonString);
-
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text("تم حفظ العملية في السجل")),
-    // );
     KHelper.showSuccess(message: "تم حفظ العملية في السجل");
   }
 
@@ -431,13 +427,6 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
       );
 
       if (mounted) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text(
-        //       textAlign: TextAlign.right,
-        //         "تم ضبط التذكير بنجاح ليوم ${intl.DateFormat('yyyy-MM-dd').format(scheduledDate)}"),
-        //   ),
-        // );
         KHelper.showSuccess(
             message:
                 "تم ضبط التذكير بنجاح ليوم ${intl.DateFormat('yyyy-MM-dd').format(scheduledDate)}");
@@ -445,9 +434,6 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
     } catch (e) {
       debugPrint("Error scheduling notification: $e");
       if (mounted) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text("حدث خطأ في ضبط التذكير: $e")),
-        // );
         KHelper.showError(message: "حدث خطأ في ضبط التذكير: $e");
       }
     }
@@ -721,10 +707,6 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
 
     _resetValues();
     _calculate(); // Recalculate to zero everything out
-
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text("تم تصفير جميع القيم")),
-    // );
     KHelper.showSuccess(message: "تم تصفير جميع القيم");
   }
 

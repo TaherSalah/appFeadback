@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../core/shard/widgets/ui_animations.dart';
+import '../../core/utils/style/k_helper.dart';
 import 'models/dua_models.dart';
 import 'services/dua_service.dart';
 
@@ -207,13 +208,8 @@ class _DuaDetailScreenState extends State<DuaDetailScreen> {
                                 () {
                                   Clipboard.setData(
                                       ClipboardData(text: widget.dua.arabic));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('تم النسخ',
-                                             style: TextStyle(
-                          fontFamily: "cairo",)),
-                                    ),
-                                  );
+                                  KHelper.showSuccess(message:  'تم النسخ');
+
                                 },
                               ),
                               _buildActionButton(

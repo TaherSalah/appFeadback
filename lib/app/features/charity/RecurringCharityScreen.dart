@@ -267,15 +267,7 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
     );
   }
 
-  void _showErrorSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message,    style: TextStyle(
-                          fontFamily: "cairo",)),
-        backgroundColor: Colors.redAccent,
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
