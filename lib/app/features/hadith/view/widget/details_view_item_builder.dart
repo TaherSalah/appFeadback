@@ -56,7 +56,7 @@ class HadithViewItemBuilder extends StatelessWidget {
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp),
+                    context.isTab ? 12.sp : 18.sp),
           ),
           leading: const SizedBox(),
           actions: [
@@ -255,7 +255,7 @@ class HadithViewItemBuilder extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                       maxLines: 2,
                                       fontSize:
-                                          MediaQuery.sizeOf(context).width > 600
+                                          context.isTab
                                               ? 6.sp
                                               : 10.sp,
                                       title: value.categoriesModal?[index].title
@@ -359,7 +359,7 @@ class CardPackagesExamBuilderWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      height: MediaQuery.sizeOf(context).width > 600
+                      height: context.isTab
                           ? constraints.maxHeight * 0.65
                           : calculatedHeight,
                       child: cardImgUrl != null

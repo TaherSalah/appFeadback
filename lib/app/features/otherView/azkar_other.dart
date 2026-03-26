@@ -16,7 +16,7 @@ class AzkarOthers extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(
-          MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+          context.isTab ? 70 : 50,
         ),
         child: AppBar(
           actions: [
@@ -36,7 +36,7 @@ class AzkarOthers extends StatelessWidget {
                           fontFamily: "cairo",
               color: Colors.green,
               fontWeight: FontWeight.bold,
-              fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              fontSize: context.isTab ? 12.sp : 18.sp,
             ),
           ),
         ),

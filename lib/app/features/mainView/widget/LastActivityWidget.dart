@@ -10,16 +10,14 @@ import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:quran_library/quran_library.dart' hide SurahModel;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../Khatmah/data/khatmah_model.dart';
 import '../../Khatmah/view/KhatmahDashboard.dart';
 import '../../WirdView/TasbihScreen.dart';
 import '../../WirdView/data/Wird.dart';
 import '../../WirdView/data/WirdManager.dart';
-import '../../quran/SurahModel.dart';
-import '../../quran/view/SurahDetailScreen.dart';
-import '../../quran/view/widget/QuranViewItemBuilder.dart';
-
+import '../../quranView/SurahModel.dart';
+import '../../quranView/view/SurahDetailScreen.dart';
+import '../../quranView/view/widget/QuranViewItemBuilder.dart';
 class LastActivityWidget extends StatefulWidget {
   const LastActivityWidget({super.key});
 

@@ -50,7 +50,7 @@ class _QuranChannalPlayerViewState extends State<QuranChannalPlayerView> {
                     // backgroundColor: AppStyle.bgColors,
                     appBar: PreferredSize(
                       preferredSize: Size.fromHeight(
-                          MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+                          context.isTab ? 80 : 50),
                       child: AppBar(
                         leading:  CupertinoNavigationBarBackButton(
                           color:isDark?Colors.white : Colors.black,
@@ -73,7 +73,7 @@ class _QuranChannalPlayerViewState extends State<QuranChannalPlayerView> {
                   fontFamily: "cairo",
                             color: Colors.green,
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.sizeOf(context).width > 600
+                            fontSize: context.isTab
                                 ? 12.sp
                                 : 18.sp,
                           ),
@@ -97,7 +97,7 @@ class _QuranChannalPlayerViewState extends State<QuranChannalPlayerView> {
                         child: QuranRadioPlayer(
                       title: "widget.title",
                       streamUrl:
-                          "https://win.holol.com/live/quran/playlist.m3u8",
+                          "https://win.holol.com/live/quranView/playlist.m3u8",
                     )),
                   ),
                 ),

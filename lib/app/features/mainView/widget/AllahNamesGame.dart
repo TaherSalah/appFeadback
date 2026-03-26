@@ -194,6 +194,46 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
     );
   }
 
+  void _showPauseDialog() {
+    KDialogHelper.showCustomDialog(
+      context: context,
+      type: KDialogType.info,
+      icon: Icons.pause_rounded,
+      title: 'إيقاف مؤقت',
+      description: 'هل تريد الاستمرار؟',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'استكمال',
+          color: Colors.green,
+          onPressed: () => Navigator.pop(context),
+        ),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'إعادة اللعب',
+          color: Colors.blue,
+          onPressed: () {
+            Navigator.pop(context);
+            setState(() {
+              _currentQuestion = 0;
+              _score = 0;
+              _generateQuestion();
+            });
+          },
+        ),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'خروج',
+          color: Colors.grey,
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
@@ -204,12 +244,18 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
-            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+            context.isTab ? 70 : 50,
           ),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.pause_rounded),
+                onPressed: _showPauseDialog,
+              ),
+            ],
             centerTitle: true,
             title: Text(
               "أسماء الله الحسنى",
@@ -217,7 +263,7 @@ class _AllahNamesGameState extends State<AllahNamesGame> {
                 fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize: context.isTab ? 12.sp : 18.sp,
               ),
             ),
           ),

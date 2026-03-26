@@ -101,35 +101,6 @@ class GamesMenuScreen extends StatelessWidget {
               isDark: isDark,
             ),
             const SizedBox(height: 16),
-            // _buildGameCard(
-            //   context,
-            //   title: 'تعليم الوضوء التفاعلي',
-            //   emoji: '🚿',
-            //   description: 'تعلم الوضوء خطوة بخطوة',
-            //   color: const Color(0xFF2196F3),
-            //   reward: 50,
-            //   onTap: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (_) => const InteractiveWuduScreen()),
-            //   ),
-            //   isDark: isDark,
-            // ),
-            // const SizedBox(height: 16),
-            // _buildGameCard(
-            //   context,
-            //   title: 'تعليم حركات الصلاة',
-            //   emoji: '🙏',
-            //   description: 'تعلم حركات الصلاة بطريقة ممتعة',
-            //   color: const Color(0xFF4CAF50),
-            //   reward: 40,
-            //   onTap: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(builder: (_) => const PrayerMovementsGame()),
-            //   ),
-            //   isDark: isDark,
-            // ),
-            // const SizedBox(height: 16),
             _buildGameCard(
               context,
               title: 'أسماء الله الحسنى',
@@ -187,51 +158,7 @@ class GamesMenuScreen extends StatelessWidget {
               },
               isDark: isDark,
             ),
-            // const SizedBox(height: 16),
-            // _buildGameCard(
-            //   context,
-            //   title: 'حامي الكعبة',
-            //   emoji: '🕋',
-            //   description: 'احمِ الكعبة من الفيلة',
-            //   color: Colors.black87,
-            //   reward: 120,
-            //   onTap: () async {
-            //     await Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (_) => FlameGameWrapper(
-            //           game: KaabaProtectorGame(),
-            //           title: 'حامي الكعبة',
-            //         ),
-            //       ),
-            //     );
-            //     onRefresh?.call();
-            //   },
-            //   isDark: isDark,
-            // ),
             const SizedBox(height: 16),
-            // _buildGameCard(
-            //   context,
-            //   title: 'بناء المسجد',
-            //   emoji: '🕌',
-            //   description: 'ابنِ أعلى مئذنة ومسجد',
-            //   color: Colors.teal,
-            //   reward: 80,
-            //   onTap: () async {
-            //     await Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (_) => FlameGameWrapper(
-            //           game: MosqueStackerGame(),
-            //           title: 'بناء المسجد',
-            //         ),
-            //       ),
-            //     );
-            //     onRefresh?.call();
-            //   },
-            //   isDark: isDark,
-            // ),
-            // const SizedBox(height: 16),
             _buildGameCard(
               context,
               title: 'موصّل كلمات القرآن',
@@ -253,42 +180,6 @@ class GamesMenuScreen extends StatelessWidget {
               },
               isDark: isDark,
             ),
-            const SizedBox(height: 16),
-            // _buildGameCard(
-            //   context,
-            //   title: 'تلوين الأحاديث',
-            //   emoji: '🎨',
-            //   description: 'لوّن أحاديث نبينا واحصل على نجوم',
-            //   color: Colors.pinkAccent,
-            //   reward: 40,
-            //   onTap: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(builder: (_) => const IslamicColoringScreen()),
-            //   ),
-            //   isDark: isDark,
-            // ),
-            // const SizedBox(height: 16),
-            // _buildGameCard(
-            //   context,
-            //   title: 'رحلة الحج',
-            //   emoji: '🚶‍♂️',
-            //   description: 'انطلق في رحلة بين المشاعر',
-            //   color: Colors.lightGreen,
-            //   reward: 150,
-            //   onTap: () async {
-            //     await Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (_) => FlameGameWrapper(
-            //           game: HajjJourneyGame(),
-            //           title: 'رحلة الحج',
-            //         ),
-            //       ),
-            //     );
-            //     onRefresh?.call();
-            //   },
-            //   isDark: isDark,
-            // ),
           ],
         ),
       ),

@@ -6,8 +6,9 @@ import 'package:just_audio/just_audio.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/QiblaView/QiblaDirection.dart';
 import 'package:muslimdaily/app/features/mainView/MainView.dart';
-import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../quranView/quranView.dart';
 
 class AdhanOverlayScreen extends StatefulWidget {
   final String? prayerName;

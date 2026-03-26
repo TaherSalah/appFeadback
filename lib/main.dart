@@ -26,11 +26,11 @@ import 'package:quran_library/quran.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'app/features/calendar/data/models/calendar_event_model.dart';
-import 'app/features/quran/pdf/data/pdf_book_model.dart';
 import 'app/core/services/adhan_logic/background_services.dart';
 import 'package:logger/logger.dart';
 
 import 'app/core/adhan_system/service/adhan_foreground_service.dart';
+import 'app/features/quranView/pdf/data/pdf_book_model.dart';
 
 final logger = Logger();
 

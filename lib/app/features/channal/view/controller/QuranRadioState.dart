@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:muslimdaily/app/core/errors/failuers.dart';
-import 'package:muslimdaily/app/features/radio/data/modal/QuranRadioModel.dart';
+
+import '../../../radioView/data/modal/QuranRadioModel.dart';
 part 'QuranRadioState.freezed.dart';
 
 @freezed

@@ -6,8 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../quran/quranView.dart';
 
+import '../../quranView/quranView.dart';
 import '../../shareCard/PremiumShareCard.dart';
 
 // ══════════════════════════════════════════════

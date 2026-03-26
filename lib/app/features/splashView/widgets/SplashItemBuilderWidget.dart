@@ -169,7 +169,7 @@ class _SplashItemBuilderWidgetState extends State<SplashItemBuilderWidget> {
 
             // 👨‍💻 4. Premium Cut-out Branding Section (Bottom)
             Positioned(
-              bottom:context.isTab ? 15.h :0.h,
+              bottom:context.isTab ? 15.h :5.h,
               child: FadeInUp(
                 duration: const Duration(milliseconds: 800),
                 delay: const Duration(milliseconds: 600),

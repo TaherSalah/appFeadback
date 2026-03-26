@@ -203,7 +203,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
         // ),
         appBar: PreferredSize(
           preferredSize:
-              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(context.isTab ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,

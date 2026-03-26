@@ -199,7 +199,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
               color: Colors.green,
               fontWeight: FontWeight.bold,
               fontSize:
-              MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+              context.isTab ? 12.sp : 18.sp,
             ),
           ),
         ),

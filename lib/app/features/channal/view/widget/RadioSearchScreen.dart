@@ -43,7 +43,7 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
         // ),
         appBar: PreferredSize(
           preferredSize:
-              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+              Size.fromHeight(context.isTab ? 80 : 50),
           child: AppBar(
             leading: const CupertinoNavigationBarBackButton(
               color: Colors.black,
@@ -67,7 +67,7 @@ class _RadioSearchScreenState extends State<RadioSearchScreen> {
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    context.isTab ? 12.sp : 18.sp,
               ),
             ),
           ),

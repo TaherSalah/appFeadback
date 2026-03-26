@@ -5,10 +5,9 @@ import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import 'package:muslimdaily/app/features/mainView/MainView.dart';
 import 'package:muslimdaily/app/features/messaView/azkar_massa.dart';
-import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:muslimdaily/app/features/hadith/hadith_view.dart';
 import 'package:muslimdaily/app/features/sabahView/azkar_sabah.dart';
-import 'package:muslimdaily/app/features/sleep_view/sleep_azkar.dart';
+import 'package:muslimdaily/app/features/sleepView/sleep_azkar.dart';
 import 'package:muslimdaily/app/features/charity/CharityDashboardScreen.dart';
 import 'package:muslimdaily/app/core/adhan_system/manager/adhan_manager.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/GlobalKhatmahScreen.dart';
@@ -19,6 +18,8 @@ import 'package:muslimdaily/app/features/notifications/view/notification_dialog_
 import 'package:hijri/hijri_calendar.dart' as hijri;
 import 'package:muslimdaily/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../features/quranView/quranView.dart';
 
 class NotificationManager {
   static final NotificationManager _instance = NotificationManager._internal();

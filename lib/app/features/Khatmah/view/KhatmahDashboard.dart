@@ -573,7 +573,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize:
-              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(context.isTab ? 70 : 50),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
@@ -597,7 +597,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    context.isTab ? 12.sp : 18.sp,
               ),
             ),
           ),

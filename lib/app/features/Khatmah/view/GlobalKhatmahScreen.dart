@@ -16,8 +16,6 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/global_khatmah_service.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/khatmah_certificate_screen.dart';
-import 'package:muslimdaily/app/features/quran/SurahModel.dart';
-import 'package:muslimdaily/app/features/quran/quranView.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +23,8 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../main.dart';
+import '../../quranView/SurahModel.dart';
+import '../../quranView/quranView.dart';
 
 class GlobalKhatmahScreen extends StatefulWidget {
   const GlobalKhatmahScreen({super.key});

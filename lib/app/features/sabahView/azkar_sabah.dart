@@ -45,7 +45,7 @@ class AzkarSabah extends StatelessWidget {
   PreferredSizeWidget _buildAppBar(BuildContext context, bool isDark, AzkarProvider con) {
     return PreferredSize(
       preferredSize: Size.fromHeight(
-        MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+        context.isTab ? 70 : 50,
       ),
       child: AppBar(
         leading: CupertinoNavigationBarBackButton(
@@ -65,7 +65,7 @@ class AzkarSabah extends StatelessWidget {
                           fontFamily: "cairo",
             color: Colors.green,
             fontWeight: FontWeight.bold,
-            fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+            fontSize: context.isTab ? 12.sp : 18.sp,
           ),
         ),
       ),

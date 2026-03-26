@@ -55,7 +55,7 @@ class SystemControlService {
     // 🛡️ Provide default statuses if no cache is available (e.g., first run offline)
     if (cachedMap.isEmpty) {
       cachedMap = {
-        'quran': 'active',
+        'quranView': 'active',
         'azkar': 'active',
         'sebha': 'active',
         'khatmah': 'active',
@@ -63,7 +63,7 @@ class SystemControlService {
         'inheritance': 'active',
         'expiation': 'active',
         'wird': 'active',
-        'radio': 'active',
+        'radioView': 'active',
         'hadith': 'active',
         'mosques': 'active',
         'kids': 'active',

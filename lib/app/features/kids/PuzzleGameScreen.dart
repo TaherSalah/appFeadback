@@ -153,6 +153,42 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
     );
   }
 
+  void _showPauseDialog() {
+    KDialogHelper.showCustomDialog(
+      context: context,
+      type: KDialogType.info,
+      icon: Icons.pause_rounded,
+      title: 'إيقاف مؤقت',
+      description: 'هل تريد الاستمرار؟',
+      actions: [
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'استكمال',
+          color: Colors.green,
+          onPressed: () => Navigator.pop(context),
+        ),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'إعادة اللعب',
+          color: Colors.blue,
+          onPressed: () {
+            Navigator.pop(context);
+            _shuffleSteps();
+          },
+        ),
+        KDialogHelper.buildButton(
+          context: context,
+          label: 'خروج',
+          color: Colors.grey,
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
@@ -166,6 +202,10 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
             color: isDark ? Colors.white : Colors.black,
           ),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.pause_rounded),
+              onPressed: _showPauseDialog,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(

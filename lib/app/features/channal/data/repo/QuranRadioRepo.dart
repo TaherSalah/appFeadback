@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:muslimdaily/app/features/radio/data/modal/QuranRadioModel.dart';
+
+import '../../../radioView/data/modal/QuranRadioModel.dart';
 
 
 

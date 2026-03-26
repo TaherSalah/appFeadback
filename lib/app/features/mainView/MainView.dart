@@ -2,7 +2,6 @@
 import 'package:muslimdaily/app/features/QiblaView/QiblaDirection.dart';
 import 'package:muslimdaily/app/features/calendar/presentation/screens/calendar_screen.dart';
 import 'package:muslimdaily/app/features/mainView/widget/HomeScreenBuilder.dart';
-import 'package:muslimdaily/app/features/radio/QuranRadioView.dart';
 import 'package:muslimdaily/app/features/settings/settings_view.dart';
 import 'package:muslimdaily/app/core/widgets/CustomGradientDialog.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
@@ -10,6 +9,8 @@ import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_callback.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../radioView/QuranRadioView.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});

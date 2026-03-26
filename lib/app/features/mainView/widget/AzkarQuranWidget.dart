@@ -97,7 +97,7 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
                     style: TextStyle(
                   fontFamily: "cairo",
                         fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.sizeOf(context).width > 600
+                        fontSize: context.isTab
                             ? 10.sp
                             : 15.sp),
                   ),
@@ -107,7 +107,7 @@ class _AzkarQuranWidgetState extends State<AzkarQuranWidget> {
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                         fontSize:
-                            MediaQuery.sizeOf(context).width > 600 ? 25 : 16),
+                            context.isTab ? 25 : 16),
                   ),
                 ],
               ),
@@ -152,7 +152,7 @@ ${quranicAzkar[currentIndex]}
             },
             child: Icon(
               Icons.share,
-              size: MediaQuery.sizeOf(context).width > 600 ? 25 : 20,
+              size: context.isTab ? 25 : 20,
             ),
           ),
         ),
@@ -183,7 +183,7 @@ iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%
               color: context.isDark
                   ? const Color(0xFF00897B)
                   : CupertinoColors.systemRed,
-              size: MediaQuery.sizeOf(context).width > 600 ? 25 : 20,
+              size: context.isTab ? 25 : 20,
             ),
           ),
         ),

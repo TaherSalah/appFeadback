@@ -6,7 +6,6 @@ import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/mainView/widget/IslamicCardWidget.dart';
 import 'package:muslimdaily/app/features/mainView/widget/LastActivityWidget.dart';
-import 'package:muslimdaily/app/features/quran/SurahModel.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/settings_view.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
@@ -24,6 +23,7 @@ import '../../../core/widgets/SocialBannerWidget.dart';
 import '../../Khatmah/data/khatmah_model.dart';
 import '../../azanView/widget/AdhanStatusBanner.dart';
 import '../../charity/CharityDashboardScreen.dart';
+import '../../quranView/SurahModel.dart';
 import '../controllar/MainController.dart';
 import 'AllahNameWidget.dart';
 import 'AzkarQuranWidget.dart';
@@ -241,7 +241,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
   }
 
   String _getFeatureId(String path) {
-    if (path == '/surahListScreen') return 'quran';
+    if (path == '/surahListScreen') return 'quranView';
     if (path == '/azkarSabah' ||
         path == '/azkarMassa' ||
         path == '/allazkarlistview') {
@@ -255,7 +255,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
     if (path == Routes.inheritanceCalculatorRoute) return 'inheritance';
     if (path == Routes.expiationCalculatorRoute) return 'expiation';
     if (path == '/WirdHomeScreen') return 'wird';
-    if (path == '/QuranRadioView') return 'radio';
+    if (path == '/QuranRadioView') return 'radioView';
     if (path == '/NineBooksScreen' || path == Routes.categoriesRoute) {
       return 'hadith';
     }
@@ -674,7 +674,7 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
                       child: Column(
                         children: [
                           SizedBox(
-                              height: MediaQuery.sizeOf(context).width > 600
+                              height: context.isTab
                                   ? 25
                                   : 20),
 

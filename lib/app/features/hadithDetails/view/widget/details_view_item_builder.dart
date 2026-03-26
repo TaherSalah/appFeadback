@@ -651,7 +651,7 @@ class CardPackagesExamBuilderWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      height: MediaQuery.sizeOf(context).width > 600
+                      height: context.isTab
                           ? constraints.maxHeight * 0.65
                           : calculatedHeight,
                       child: cardImgUrl != null

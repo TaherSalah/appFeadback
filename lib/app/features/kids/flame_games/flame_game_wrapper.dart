@@ -83,9 +83,8 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                               Text(
                                 '! انتهت اللعبة',
                                 style: TextStyle(
-                  fontFamily: "cairo",
+                                  fontFamily: "cairo",
                                   fontSize: 26.sp,
-
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black87,
                                 ),
@@ -108,7 +107,7 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                           Text(
                                             '${widget.game.score}',
                                             style: TextStyle(
-                  fontFamily: "cairo",
+                                              fontFamily: "cairo",
                                               fontSize: 24.sp,
                                               color: Colors.amber[800],
                                               fontWeight: FontWeight.bold,
@@ -121,7 +120,7 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                         Text(
                                           'رقم قياسي جديد! 🎉',
                                           style: TextStyle(
-                  fontFamily: "cairo",
+                                            fontFamily: "cairo",
                                             fontSize: 14.sp,
                                             color: Colors.green[700],
                                             fontWeight: FontWeight.bold,
@@ -132,7 +131,7 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                         Text(
                                           'أعلى نتيجة: ${widget.game.highScore}',
                                           style: TextStyle(
-                  fontFamily: "cairo",
+                                            fontFamily: "cairo",
                                             fontSize: 14.sp,
                                             color: Colors.grey[600],
                                           ),
@@ -163,7 +162,7 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                       child: Text(
                                         'لعب مجدداً',
                                         style: TextStyle(
-                  fontFamily: "cairo",
+                                          fontFamily: "cairo",
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -187,7 +186,7 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                       child: Text(
                                         'خروج',
                                         style: TextStyle(
-                  fontFamily: "cairo",
+                                          fontFamily: "cairo",
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.grey[700],
@@ -196,6 +195,84 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                                     ),
                                   ),
                                 ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                'Pause': (context, game) {
+                  return Container(
+                    color: Colors.black54,
+                    child: Center(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: Container(
+                          constraints: BoxConstraints(maxWidth: 400.w),
+                          padding: EdgeInsets.all(24.r),
+                          margin: EdgeInsets.symmetric(horizontal: 24.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.95),
+                            borderRadius: BorderRadius.circular(24.r),
+                            boxShadow: [
+                              BoxShadow(color: Colors.black26, blurRadius: 15, spreadRadius: 2, offset: const Offset(0, 5))
+                            ]
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'إيقاف مؤقت',
+                                style: TextStyle(
+                                  fontFamily: "cairo",
+                                  fontSize: 26.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: 32.h),
+                              ElevatedButton(
+                                onPressed: () {
+                                  widget.game.resumeEngine();
+                                  widget.game.overlays.remove('Pause');
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF4CAF50),
+                                  foregroundColor: Colors.white,
+                                  minimumSize: Size(double.infinity, 50.h),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+                                ),
+                                child: Text('استكمال', style: TextStyle(fontFamily: "cairo", fontSize: 18.sp, fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(height: 12.h),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _hasSaved = false;
+                                  widget.game.restart();
+                                  widget.game.overlays.remove('Pause');
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  minimumSize: Size(double.infinity, 50.h),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+                                ),
+                                child: Text('إعادة اللعب', style: TextStyle(fontFamily: "cairo", fontSize: 18.sp, fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(height: 12.h),
+                              OutlinedButton(
+                                onPressed: () {
+                                  _saveScore();
+                                  Navigator.pop(context);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: Size(double.infinity, 50.h),
+                                  side: BorderSide(color: Colors.grey[300]!, width: 2),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+                                ),
+                                child: Text('خروج', style: TextStyle(fontFamily: "cairo", fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.grey[700])),
                               ),
                             ],
                           ),
@@ -274,11 +351,11 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                       
                       Spacer(),
       
-                      // Close Button
+                      // Pause Button
                       GestureDetector(
                         onTap: () {
-                          _saveScore();
-                          Navigator.pop(context);
+                          widget.game.pauseEngine();
+                          widget.game.overlays.add('Pause');
                         },
                         child: Container(
                           padding: EdgeInsets.all(8.r),
@@ -287,7 +364,7 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white.withOpacity(0.2))
                           ),
-                          child: Icon(Icons.close_rounded, color: Colors.white, size: 24.sp),
+                          child: Icon(Icons.pause_rounded, color: Colors.white, size: 24.sp),
                         ),
                       ),
                     ],

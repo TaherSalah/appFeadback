@@ -353,7 +353,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         resizeToAvoidBottomInset: false,
         appBar: PreferredSize(
           preferredSize:
-              Size.fromHeight(MediaQuery.sizeOf(context).width > 600 ? 70 : 50),
+              Size.fromHeight(context.isTab ? 70 : 50),
           child: AppBar(
             leading: (ModalRoute.of(context)?.canPop ?? false) ? CupertinoNavigationBarBackButton(
               color: isDark ? Colors.white : Colors.black,
@@ -366,7 +366,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 color: _calendarThemeColor, // Dynamic Theme Color
                 fontWeight: FontWeight.bold,
                 fontSize:
-                    MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                    context.isTab ? 12.sp : 18.sp,
               ),
             ),
             actions: [

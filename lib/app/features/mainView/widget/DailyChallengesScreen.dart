@@ -210,7 +210,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
         // ),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
-            MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+            context.isTab ? 70 : 50,
           ),
           child: AppBar(
             leading: CupertinoNavigationBarBackButton(
@@ -227,7 +227,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
                 fontSize:
-                MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                context.isTab ? 12.sp : 18.sp,
               ),
             ),
           ),

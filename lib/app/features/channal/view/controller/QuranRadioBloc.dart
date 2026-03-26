@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/core/errors/failuers.dart';
-import 'package:muslimdaily/app/features/radio/data/modal/QuranRadioModel.dart';
 import '../../../../core/localization/localization_manager.dart';
+import '../../../radioView/data/modal/QuranRadioModel.dart';
 import '../../data/repo/QuranRadioRepoImmp.dart';
 import 'QuranRadioState.dart';
 

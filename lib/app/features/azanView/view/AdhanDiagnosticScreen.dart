@@ -207,7 +207,7 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
         // ),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
-              MediaQuery.sizeOf(context).width > 600 ? 80 : 50),
+              context.isTab ? 80 : 50),
           child: AppBar(
             leading:  CupertinoNavigationBarBackButton(
               color:isDark?Colors.white : Colors.black,
@@ -230,7 +230,7 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
                           fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600
+                fontSize: context.isTab
                     ? 12.sp
                     : 18.sp,
               ),

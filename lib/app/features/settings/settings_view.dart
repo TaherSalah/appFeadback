@@ -5,9 +5,8 @@ import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/settings/feedback_view.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
-
 import '../azanView/widget/AdhanStatusBanner.dart';
-import '../user_guide/presentation/user_guide_list_screen.dart';
+import '../userGuide/presentation/user_guide_list_screen.dart';
 import 'settings_controller.dart';
 import 'widgets/settings_email_dialog.dart';
 import 'widgets/settings_font_size_slider.dart';
@@ -18,7 +17,6 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SettingsController(context));
     final isDark = context.isDark;
 
     return Directionality(
@@ -26,7 +24,7 @@ class SettingsView extends StatelessWidget {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
-            MediaQuery.sizeOf(context).width > 600 ? 80 : 50,
+            context.isTab ? 80 : 50,
           ),
           child: AppBar(
             leading: Navigator.canPop(context)
@@ -43,7 +41,7 @@ class SettingsView extends StatelessWidget {
                           fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                fontSize: context.isTab ? 12.sp : 18.sp,
               ),
             ),
           ),
@@ -244,7 +242,7 @@ class SettingsView extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
+        title: const Text(
           "انضم إلينا على تلجرام",
           textAlign: TextAlign.center,
              style: TextStyle(
@@ -273,7 +271,7 @@ class SettingsView extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("إغلاق",    style: TextStyle(
+            child: const Text("إغلاق",    style: TextStyle(
                           fontFamily: "cairo",color: Colors.grey)),
           ),
           ElevatedButton(
@@ -282,7 +280,7 @@ class SettingsView extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             onPressed: () => Get.find<SettingsController>().launchTelegram(),
-            child: Text(
+            child: const Text(
               "انضم الآن",
                  style: TextStyle(
                           fontFamily: "cairo",color: Colors.white, fontWeight: FontWeight.bold),

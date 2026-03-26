@@ -3,15 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
-import 'package:muslimdaily/app/features/radio/data/repo/QuranRadioRepoImmp.dart';
-import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioBloc.dart';
-import 'package:muslimdaily/app/features/radio/view/controller/QuranRadioState.dart';
-
 import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/utils/constent/router.dart';
 import '../../../../core/utils/style/k_color.dart';
 import '../../../../core/widgets/KLoading.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
+import '../../../radioView/data/repo/QuranRadioRepoImmp.dart';
+import '../../../radioView/view/controller/QuranRadioBloc.dart';
+import '../../../radioView/view/controller/QuranRadioState.dart';
 
 class QuranRadioItemBuilder extends StatefulWidget {
   const QuranRadioItemBuilder({super.key});
@@ -108,7 +107,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                     color: Colors.green,
                     fontWeight: FontWeight.bold,
                     fontSize:
-                        MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                        context.isTab ? 12.sp : 18.sp,
                   ),
                 ),
                 leading: InkWell(
@@ -205,7 +204,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                                   fontWeight: FontWeight.w600,
                                   maxLines: 2,
                                   fontSize:
-                                      MediaQuery.sizeOf(context).width > 600
+                                      context.isTab
                                           ? 6.sp
                                           : 10.sp,
                                   title: item.name.toString() ?? "",

@@ -605,7 +605,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
         child: Scaffold(
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(
-              MediaQuery.sizeOf(context).width > 600 ? 70 : 50,
+              context.isTab ? 70 : 50,
             ),
             child: AppBar(
               leading: _currentView == KidsView.home
@@ -640,7 +640,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize:
-                      MediaQuery.sizeOf(context).width > 600 ? 12.sp : 18.sp,
+                      context.isTab ? 12.sp : 18.sp,
                 ),
               ),
             ),
@@ -1712,19 +1712,6 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           mainAxisSpacing: 16,
           childAspectRatio: 0.9,
           children: [
-            // _buildQuickNavCard(
-            //   title: "قصص إسلامية",
-            //   emoji: "📚",
-            //   color: const Color(0xFFFF9800),
-            //   onTap: () async {
-            //     await Navigator.push(
-            //       context,
-            //       CupertinoPageRoute(builder: (_) => const KidsStoriesScreen()),
-            //     );
-            //     _loadProgress();
-            //   },
-            //   subtitle: '',
-            // ),
             _buildQuickNavCard(
               title: "ألعاب تعليمية",
               emoji: "🎮",
@@ -1740,28 +1727,6 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
               },
               subtitle: '',
             ),
-            // _buildQuickNavCard(
-            //   title: "المتجر",
-            //   emoji: "🏪",
-            //   color: const Color(0xFF00BCD4),
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (_) => VirtualShopScreen(
-            //           currentStars: _totalStars,
-            //           onPurchase: (cost) {
-            //             setState(() {
-            //               _totalStars -= cost;
-            //             });
-            //             _saveProgress();
-            //           },
-            //         ),
-            //       ),
-            //     );
-            //   },
-            //   subtitle: '',
-            // ),
             _buildQuickNavCard(
               subtitle: "",
               title: "التحديات",
@@ -1776,33 +1741,6 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                 _loadProgress();
               },
             ),
-            // _buildQuickNavCard(
-            //   title: "أحاديث للأطفال",
-            //   emoji: "📿",
-            //   color: const Color(0xFF009688),
-            //   onTap: () async {
-            //     await Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //           builder: (_) => const HadithsForKidsScreen()),
-            //     );
-            //     _loadProgress();
-            //   },
-            //   subtitle: '',
-            // ),
-            // _buildQuickNavCard(
-            //   subtitle: "",
-            //   title: "أدعية يومية",
-            //   emoji: "🤲",
-            //   color: const Color(0xFF673AB7),
-            //   onTap: () async {
-            //     await Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (_) => const DailyDuasScreen()),
-            //     );
-            //     _loadProgress();
-            //   },
-            // ),
           ],
         ),
         const SizedBox(height: 40),

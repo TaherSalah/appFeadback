@@ -11,7 +11,7 @@ class QuranRadioPlayer extends StatefulWidget {
   const QuranRadioPlayer({
     super.key,
     this.title = "إذاعة القرآن",
-    this.streamUrl = "https://backup.qurango.net/radio/mohammad_alabdullah_albizi",
+    this.streamUrl = "https://backup.qurango.net/radioView/mohammad_alabdullah_albizi",
     this.accentColor,
     this.compact = false,
   });
