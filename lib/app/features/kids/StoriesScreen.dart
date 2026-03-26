@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../core/services/content_service.dart';
-import '../../../core/utils/style/k_dialog_helper.dart';
-import '../../../core/utils/style/responsive_util.dart';
-import '../../../core/widgets/KLoading.dart';
+import '../../core/services/content_service.dart';
+import '../../core/utils/style/k_dialog_helper.dart';
+import '../../core/widgets/KLoading.dart';
 import 'kids_data/islamic_stories.dart';
 
 class StoriesScreen extends StatefulWidget {
@@ -77,7 +75,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
             style: TextStyle(
                   fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 14.sp : 20.sp,
+              fontSize: context.isTab ? 14.sp : 20.sp,
             ),
           ),
           centerTitle: true,
@@ -134,7 +132,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                         style: TextStyle(
                   fontFamily: "cairo",
                           fontSize:
-                              ResponsiveUtil.isTablet(context) ? 12.sp : 16.sp,
+                              context.isTab ? 12.sp : 16.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -149,7 +147,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                             isRead ? 'قرأتها ⭐' : '⭐ ${story.starsReward} نجمة',
                             style: TextStyle(
                   fontFamily: "cairo",
-                              fontSize: ResponsiveUtil.isTablet(context)
+                              fontSize: context.isTab
                                   ? 9.sp
                                   : 12.sp,
                               color: Colors.white70,
@@ -277,7 +275,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
             style: TextStyle(
                   fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+              fontSize: context.isTab ? 12.sp : 18.sp,
             ),
           ),
           centerTitle: true,
@@ -293,7 +291,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                     'صفحة ${_currentPage + 1} من ${widget.story.paragraphs.length + 1}',
                     style: TextStyle(
                   fontFamily: "cairo",
-                      fontSize: ResponsiveUtil.isTablet(context) ? 9.sp : 12.sp,
+                      fontSize: context.isTab ? 9.sp : 12.sp,
                       color: Colors.grey,
                     ),
                   ),
@@ -331,7 +329,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                       style: TextStyle(
                   fontFamily: "cairo",
                         fontSize:
-                            ResponsiveUtil.isTablet(context) ? 12.sp : 18.sp,
+                            context.isTab ? 12.sp : 18.sp,
                         height: 2.0,
                         color: isDark ? Colors.white : Colors.black87,
                         fontWeight:

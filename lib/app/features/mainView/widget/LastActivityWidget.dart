@@ -381,7 +381,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
             child: InkWell(
               onTap: onTap,
               child: Padding(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.all(context.isTab?10.w:16.w),
                 child: Row(
                   children: [
                     Container(
@@ -395,7 +395,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                       ),
                       child: Icon(icon,
                           color: isDark ? color : color.withOpacity(0.8),
-                          size: 28.sp),
+                          size:context.isTab?18.sp: 28.sp),
                     ),
                     const Gap(16),
                     Expanded(
@@ -408,7 +408,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
                             title,
                                style: TextStyle(
                           fontFamily: "cairo",
-                                fontSize: 14.sp,
+                                fontSize:context.isTab?10.sp: 14.sp,
                                 fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black87),
                             maxLines: 1,                    // ✅ أضف هذا

@@ -594,7 +594,7 @@ class PrayerHeaderSection extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        spacing: context.isTab?20: 5,
+        spacing: context.isTab?20: 1,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: prayers.map((name) {
           final isUpcoming = nextPrayer.contains(name);
