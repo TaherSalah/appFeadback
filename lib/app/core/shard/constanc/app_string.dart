@@ -13,23 +13,24 @@ class AppString {
       'Designed and Developed by Taher Salah ';
   // '\u{1f60e} Designed and Developed by Taher Salah ';
 
-  static const String KPrayerAppBar = 'أذكار بعد الصلاة المكتوبة';
-  static const String KAppAbout = 'عن التطبيق';
-  static const String KDevlop = 'تطوير';
-  static const String KContact = 'تواصل معنا';
-  static const String KSadka = 'صدقة جارية';
-  static const String Ksabah = 'أذكار الصباح';
-  static const String KMessa = 'أذكار المساء';
-  static const String KPrayer = 'أذكار الصلاة';
-  static const String KSleep = 'أذكار النوم';
-  static const String KOtherZakar = 'أذكار مختارة';
-  static const String KHazbNawawi = "حزب الإمام النووي";
-  static const String KRokia = 'الرقية الشرعية';
-  static const String KCounter = 'المسبحةُ الالكترونية';
-  static const String KSabhText = 'سبٌح';
-  static const String KRestText = 'إعادة';
-  static const String KAbout = 'عنـــــا';
-  static const String KAzan = 'مواقيت الصلاة';
+  static const String KPrayerAppBar = 'أَذْكَارُ بَعْدَ الصَّلَاةِ الْمَكْتُوبَةِ';
+  static const String KAppAbout = 'عَنْ التَّطْبِيقِ';
+  static const String KDevlop = 'تَطْوِيرٌ';
+  static const String KContact = 'تَوَاصَلْ مَعَنَا';
+  static const String KSadka = 'صَدَقَةٌ جَارِيَةٌ';
+  static const String Ksabah = 'أَذْكَارُ الصَّبَاحِ';
+  static const String KMessa = 'أَذْكَارُ الْمَسَاءِ';
+  static const String KPrayer = 'أَذْكَارُ الصَّلَاةِ';
+  static const String KSleep = 'أَذْكَارُ النَّوْمِ';
+  static const String KOtherZakar = 'أَذْكَارٌ مُخْتَارَةٌ';
+  static const String KHazbNawawi = 'حِزْبُ الإِمَامِ النَّوَوِيِّ';
+  static const String KPropheticDua = 'أَدْعِيَةٌ نَبَوِيَّةٌ';
+  static const String KRokia = 'الرُّقْيَةُ الشَّرْعِيَّةُ';
+  static const String KCounter = 'الْمِسْبَحَةُ الإِلِكْتُرُونِيَّةُ';
+  static const String KSabhText = 'سَبِّحْ';
+  static const String KRestText = 'إِعَادَةٌ';
+  static const String KAbout = 'عَنَّا';
+  static const String KAzan = 'مَوَاقِيتُ الصَّلَاةِ';
   static const String KSabahDaialogText =
       'تهانينا باتمامك وردك اليومي من اذكار الصباح';
   static const String KMessaDaialogText =

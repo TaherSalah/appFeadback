@@ -15,6 +15,7 @@ import 'package:muslimdaily/app/features/calculators/expiation_calculator_view.d
 import 'package:muslimdaily/app/features/kids/view/KidsStoriesScreen.dart';
 import '../../../features/channal/view/widget/RadioSearchScreen.dart';
 import '../../../features/hazbNawawiView/hazb_nawawi_view.dart';
+import '../../../features/propheticDuaView/prophetic_dua_view.dart';
 import '../../../features/WirdView/WirdHomeScreen.dart';
 import '../../../features/aboutView/about.dart';
 import '../../../features/aboutView/SupportDeveloperScreen.dart';
@@ -102,6 +103,7 @@ class Routes {
   static const String fajrAlarmRoute = "/fajrAlarm";
   static const String kidsStoriesRoute = "/kidsStories";
   static const String hazbNawawiRoute = "/hazbNawawi";
+  static const String propheticDuaRoute = "/propheticDua";
 }
 
 class QuranRadioPlayerArgs {
@@ -150,6 +152,8 @@ class RouteGenerator {
 
       case Routes.hazbNawawiRoute:
         return MaterialPageRoute(builder: (_) => const HazbNawawiView());
+      case Routes.propheticDuaRoute:
+        return MaterialPageRoute(builder: (_) => const PropheticDuaView());
 
       case Routes.categoriesRoute:
         return MaterialPageRoute(builder: (_) => const CategoriesView());

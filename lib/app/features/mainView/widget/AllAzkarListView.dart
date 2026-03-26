@@ -45,6 +45,11 @@ class Allazkarlistview extends StatelessWidget {
         "icon": "assets/images/rub-el-hizb.png",
         "navigate": "/hazbNawawi",
       },
+      {
+        "title": AppString.KPropheticDua,
+        "icon": "assets/images/sunna.png",
+        "navigate": "/propheticDua",
+      },
     ];
     bool isTab = context.isTab;
     final isDark = context.isDark;

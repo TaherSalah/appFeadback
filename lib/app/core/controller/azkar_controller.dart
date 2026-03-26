@@ -25,6 +25,7 @@ class AzkarProvider extends ChangeNotifier {
     _initialPrayerRepate = List<int>.from(Azkary.azkarPrayerRepate);
     _initialQuranRepate = List<int>.from(Azkary.rokiaQuranRepe);
     _initialHazbNawawiRepate = List<int>.from(Azkary.azkarHazbNawawiRepate);
+    _initialPropheticRepate = List<int>.from(Azkary.azkarPropheticRepate);
   }
 
   late List<int> _initialSleepRepate;
@@ -34,6 +35,7 @@ class AzkarProvider extends ChangeNotifier {
   late List<int> _initialPrayerRepate;
   late List<int> _initialQuranRepate;
   late List<int> _initialHazbNawawiRepate;
+  late List<int> _initialPropheticRepate;
   bool get isSleepDone => Azkary.azkarSleepRepate.every((c) => c <= 0);
   bool get isSabahDone => Azkary.azkarSabahRepate.every((c) => c <= 0);
   bool get isMessaDone => Azkary.azkarMassaRepate.every((c) => c <= 0);
@@ -41,6 +43,7 @@ class AzkarProvider extends ChangeNotifier {
   bool get isPrayerDone => Azkary.azkarPrayerRepate.every((c) => c <= 0);
   bool get isQuranDone => Azkary.rokiaQuranRepe.every((c) => c <= 0);
   bool get isHazbNawawiDone => Azkary.azkarHazbNawawiRepate.every((c) => c <= 0);
+  bool get isPropheticDone => Azkary.azkarPropheticRepate.every((c) => c <= 0);
 
   AzkarRemoteServices azkarRemoteServices = AzkarRemoteServices();
   int counter = 0;
@@ -104,6 +107,7 @@ class AzkarProvider extends ChangeNotifier {
   int zOtherIndex = 0;
   int zPrayerIndex = 0;
   int zHazbNawawiIndex = 0;
+  int zPropheticIndex = 0;
 
   // decrementQuran(quranCurrentIndex) {
   //   if (quranCurrentIndex >= 0 &&
@@ -196,6 +200,14 @@ class AzkarProvider extends ChangeNotifier {
     }
   }
 
+  void decrementProphetic(int index) {
+    if (index < 0 || index >= Azkary.azkarPropheticRepate.length) return;
+    if (Azkary.azkarPropheticRepate[index] > 0) {
+      Azkary.azkarPropheticRepate[index]--;
+      notifyListeners();
+    }
+  }
+
   void resetSleep() {
     Azkary.azkarSleepRepate = List<int>.from(_initialSleepRepate);
     KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
@@ -239,6 +251,13 @@ class AzkarProvider extends ChangeNotifier {
 
   void resetHazbNawawi() {
     Azkary.azkarHazbNawawiRepate = List<int>.from(_initialHazbNawawiRepate);
+    KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
+
+    notifyListeners();
+  }
+
+  void resetProphetic() {
+    Azkary.azkarPropheticRepate = List<int>.from(_initialPropheticRepate);
     KHelper.showSuccess(message: "تم إعادة تعيين الأذكار إلى الصفر بنجاح.");
 
     notifyListeners();
