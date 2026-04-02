@@ -38,6 +38,10 @@ class AdhanManager {
         .cancelSchedulesByChannelKey('shruq_channel_once');
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('shruq_channel_loop');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('pre_prayer_channel_v1');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('iqamah_channel_v1');
 
     final now = DateTime.now();
     int scheduledCount = 0;
@@ -46,6 +50,8 @@ class AdhanManager {
     final prefs = await SharedPreferences.getInstance();
     final enableFajr = prefs.getBool('enableFajrAdhan') ?? true;
     final enableNormal = prefs.getBool('enableNormalAdhan') ?? true;
+    final isPrePrayerEnabled = prefs.getBool('is_pre_prayer_reminder_enabled') ?? true;
+    final isIqamahEnabled = prefs.getBool('is_iqamah_reminder_enabled') ?? true;
     
     // ⭐ Sync city name for notifications
     final cityName = prefs.getString('selected_city') ?? '';
@@ -113,6 +119,62 @@ class AdhanManager {
           case 'isha':
             arabicPrayerName = 'العشاء';
             break;
+        }
+
+        // ── Pre-prayer reminder (15 minutes before)
+        if (isPrePrayerEnabled && prayerKey != 'sunrise' && arabicPrayerName != 'الشروق') {
+          final prePrayerTime = prayerTime.subtract(const Duration(minutes: 15));
+          if (prePrayerTime.isAfter(now)) {
+            await AwesomeNotifications().createNotification(
+              content: NotificationContent(
+                id: 40000 + uniqueId,
+                channelKey: 'pre_prayer_channel_v1',
+                title: '\u200Fاقتربت صلاة $arabicPrayerName',
+                body: '\u200Fباقي 15 دقيقة على صلاة $arabicPrayerName',
+                category: NotificationCategory.Reminder,
+                wakeUpScreen: true,
+                autoDismissible: true,
+                icon: 'resource://drawable/ic_stat_logoapp',
+                largeIcon: 'resource://drawable/ic_stat_logoapp',
+                notificationLayout: NotificationLayout.BigText,
+                color: const Color(0xFF178B74),
+                payload: {'prayerName': arabicPrayerName, 'type': 'pre_prayer'},
+              ),
+              schedule: NotificationCalendar.fromDate(
+                date: prePrayerTime,
+                preciseAlarm: true,
+                allowWhileIdle: true,
+              ),
+            );
+          }
+        }
+
+        // ── Iqamah reminder (15 minutes after)
+        if (isIqamahEnabled && prayerKey != 'sunrise' && arabicPrayerName != 'الشروق') {
+          final iqamahTime = prayerTime.add(const Duration(minutes: 15));
+          if (iqamahTime.isAfter(now)) {
+            await AwesomeNotifications().createNotification(
+              content: NotificationContent(
+                id: 50000 + uniqueId,
+                channelKey: 'iqamah_channel_v1',
+                title: '\u200Fحان الآن موعد إقامة صلاة $arabicPrayerName',
+                body: '\u200Fلاتنسي أذكار بعد الصلاة المفروضة',
+                category: NotificationCategory.Reminder,
+                wakeUpScreen: true,
+                autoDismissible: true,
+                icon: 'resource://drawable/ic_stat_logoapp',
+                largeIcon: 'resource://drawable/ic_stat_logoapp',
+                notificationLayout: NotificationLayout.BigText,
+                color: const Color(0xFF178B74),
+                payload: {'prayerName': arabicPrayerName, 'type': 'iqamah'},
+              ),
+              schedule: NotificationCalendar.fromDate(
+                date: iqamahTime,
+                preciseAlarm: true,
+                allowWhileIdle: true,
+              ),
+            );
+          }
         }
 
         // ⭐ Native AwesomeNotifications Scheduling (Mirrors Salawat/Azkar)

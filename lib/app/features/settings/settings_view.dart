@@ -18,7 +18,7 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
-
+Get.put(SettingsController(context));
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(

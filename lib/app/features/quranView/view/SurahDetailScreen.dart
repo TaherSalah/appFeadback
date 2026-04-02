@@ -278,11 +278,13 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            return Container(
-              padding: const EdgeInsets.all(24),
+            return SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xff11151d) : Colors.white,
                 borderRadius:
@@ -385,6 +387,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                   const SizedBox(height: 20),
                 ],
               ),
+             ),
             );
           },
         );
@@ -432,7 +435,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                         KHelper.showSuccess(
                             message: "سرعة التمرير: $scrollSpeed");
                       },
-                      backgroundColor: Colors.orange,
+                      backgroundColor: KColors.primary2Color,
                       mini: true,
                       child: const Icon(Icons.remove, color: Colors.white),
                     ),
@@ -447,7 +450,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                         KHelper.showSuccess(
                             message: "سرعة التمرير: $scrollSpeed");
                       },
-                      backgroundColor: Colors.orange,
+                      backgroundColor: KColors.primary2Color,
                       mini: true,
                       child: const Icon(Icons.add, color: Colors.white),
                     ),
@@ -484,32 +487,32 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                       size: 26,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: () async {
-                      if (bookmarkId == widget.surah.id) {
-                        await removeBookmark();
-                        KHelper.showError(
-                            message:
-                                "تَمَّ حَذْفُ عَلَامَةِ سُورَةِ ${widget.surah.name} بِنَجَاحٍ");
-                        bookmarkId = null;
-                      } else {
-                        await saveBookmark(widget.surah.id, widget.surah.name);
-                        bookmarkId = widget.surah.id;
-                        KHelper.showSuccess(
-                            message:
-                                "تَمَّ إِضَافَةُ عَلَامَةِ سُورَةِ ${widget.surah.name} بِنَجَاحٍ");
-                      }
-                      setState(() {});
-                    },
-                    child: Icon(
-                      size: 30,
-                      bookmarkId == widget.surah.id
-                          ? Icons.bookmark_add
-                          : Icons.bookmark,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
+                  // const SizedBox(width: 8),
+                  // InkWell(
+                  //   onTap: () async {
+                  //     if (bookmarkId == widget.surah.id) {
+                  //       await removeBookmark();
+                  //       KHelper.showError(
+                  //           message:
+                  //               "تَمَّ حَذْفُ عَلَامَةِ سُورَةِ ${widget.surah.name} بِنَجَاحٍ");
+                  //       bookmarkId = null;
+                  //     } else {
+                  //       await saveBookmark(widget.surah.id, widget.surah.name);
+                  //       bookmarkId = widget.surah.id;
+                  //       KHelper.showSuccess(
+                  //           message:
+                  //               "تَمَّ إِضَافَةُ عَلَامَةِ سُورَةِ ${widget.surah.name} بِنَجَاحٍ");
+                  //     }
+                  //     setState(() {});
+                  //   },
+                  //   child: Icon(
+                  //     size: 30,
+                  //     bookmarkId == widget.surah.id
+                  //         ? Icons.bookmark_add
+                  //         : Icons.bookmark,
+                  //     color: isDark ? Colors.white : Colors.black,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
