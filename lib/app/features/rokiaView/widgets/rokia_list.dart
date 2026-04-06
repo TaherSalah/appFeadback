@@ -22,7 +22,7 @@ class RokiaList extends StatelessWidget {
       padding: EdgeInsets.only(
         bottom: context.isTab ? 100 : 120,
       ),
-      shrinkWrap: true,
+      // removed shrinkWrap for performance (already has Scaffold body space)
       physics: const BouncingScrollPhysics(),
       itemCount: Azkary.rokiaQuranTitle.length,
       itemBuilder: (context, quranCurrentIndex) {

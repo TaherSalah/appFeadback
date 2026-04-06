@@ -516,7 +516,12 @@ class _QiblaDirectionState extends State<QiblaDirection> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDark ? Colors.grey[850] : Colors.white,
+                border: Border.all(
+                  color:
+                       KColors.primaryColor,
+                  width:  1,
+                ),
+                color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -552,7 +557,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
             isDark,
           ),
 
-        const SizedBox(height: 15),
+        const SizedBox(height: 5),
 
         // معلومات الزوايا
         Row(

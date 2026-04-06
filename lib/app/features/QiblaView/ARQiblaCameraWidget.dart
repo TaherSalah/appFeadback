@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/widgets/KLoading.dart';
@@ -226,7 +227,7 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
         if (isInView)
           Positioned(
             left: (screenWidth / 2) + horizontalOffset - 60, // Centered
-            top: MediaQuery.of(context).size.height * 0.4, // Slightly above center
+            top:context.isTablet ? MediaQuery.of(context).size.height * 0.4:MediaQuery.of(context).size.height * 0.3, // Slightly above center
             child: Column(
               children: [
                 ScaleTransition(
@@ -259,7 +260,7 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
                       borderRadius: BorderRadius.circular(20)
                     ),
                     child: const Text(
-                      "القبلة هنا ✨",
+                      "القبلة هنا",
                       style: TextStyle(
                   fontFamily: "cairo",color: Colors.white, fontWeight: FontWeight.bold),
                     ),
@@ -270,7 +271,7 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
         else 
           // 5. Off-screen Indicators
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.45,
+            top: context.isTablet ? MediaQuery.of(context).size.height *  0.45:MediaQuery.of(context).size.height *  0.35,
             left: diff > 0 ? null : 20,
             right: diff > 0 ? 20 : null,
             child: ScaleTransition(
@@ -296,7 +297,7 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
           
         // 6. Bottom Info Panel
         Positioned(
-          bottom: 40,
+          bottom:context.isTablet ? 40 : 100,
           left: 20,
           right: 20,
           child: ClipRRect(

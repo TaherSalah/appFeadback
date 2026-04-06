@@ -14,7 +14,7 @@ class AzkarMassaList extends StatelessWidget {
     final double fontSize = CentralizedCubit.get(context).azkarFontSize();
 
     return ListView.separated(
-      shrinkWrap: true,
+      // removed shrinkWrap for performance (already has Scaffold body space)
       physics: const BouncingScrollPhysics(),
       itemBuilder: (context, zMessaIndex) {
         final bool isFinished = Azkary.azkarMassaRepate[zMessaIndex] <= 0;

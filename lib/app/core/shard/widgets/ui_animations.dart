@@ -1132,7 +1132,7 @@ class ScrollAppearAnimation extends StatefulWidget {
 
   const ScrollAppearAnimation({
     required this.child,
-    this.duration = const Duration(milliseconds: 600),
+    this.duration = const Duration(milliseconds: 200), // Reduced from 600ms for snappier scroll
     super.key,
   });
 
@@ -1183,8 +1183,8 @@ class StaggeredItemAnimation extends StatefulWidget {
   const StaggeredItemAnimation({
     required this.child,
     required this.index,
-    this.duration = const Duration(milliseconds: 300),
-    this.delay = Duration.zero, // Default to zero
+    this.duration = const Duration(milliseconds: 250), // Reduced from 300ms
+    this.delay = Duration.zero,
     super.key,
   });
 
@@ -1212,8 +1212,10 @@ class _StaggeredItemAnimationState extends State<StaggeredItemAnimation>
       end: 1.0,
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
 
+    // Cap the staggered delay to prevent deep list items from appearing incredibly slowly
+    // (index % 10) ensures that we never wait more than ~800ms to start the animation
     Future.delayed(
-      Duration(milliseconds: (widget.index * 100)) + widget.delay,
+      Duration(milliseconds: (widget.index % 10) * 80) + widget.delay,
       () {
         if (mounted) controller.forward();
       },
