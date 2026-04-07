@@ -1,16 +1,22 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/services.dart';
-import 'package:mvc_pattern/mvc_pattern.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:just_audio/just_audio.dart';
 import '../data/model/adhan_data.dart';
 import '../helpers/adhan_audio_downloader.dart';
 
-class AdhanSoundsController extends ControllerMVC {
-  factory AdhanSoundsController() => _this ??= AdhanSoundsController._();
+class AdhanSoundsController extends GetxController {
+  static AdhanSoundsController get instance {
+    try {
+      return Get.find<AdhanSoundsController>();
+    } catch (_) {
+      return Get.put(AdhanSoundsController._());
+    }
+  }
+
   AdhanSoundsController._();
-  static AdhanSoundsController? _this;
 
   List<AdhanData> adhanList = [];
   bool isLoading = true;
@@ -28,13 +34,14 @@ class AdhanSoundsController extends ControllerMVC {
   final AdhanAudioDownloader _downloader = AdhanAudioDownloader();
 
   @override
-  void initState() {
-    super.initState();
+  void onInit() {
+    super.onInit();
     _loadAdhanData();
   }
 
   Future<void> _loadAdhanData() async {
-    setState(() => isLoading = true);
+    isLoading = true;
+    update();
     try {
       final jsonString =
           await rootBundle.loadString('assets/json/adhanSounds.json');
@@ -46,7 +53,8 @@ class AdhanSoundsController extends ControllerMVC {
     } catch (e) {
       log('Error loading Adhan sounds: $e');
     }
-    setState(() => isLoading = false);
+    isLoading = false;
+    update();
   }
 
   Future<void> selectAdhan(int index) async {
@@ -72,7 +80,8 @@ class AdhanSoundsController extends ControllerMVC {
     }
 
     // Set as selected
-    setState(() => selectedIndex = index);
+    selectedIndex = index;
+    update();
     await prefs.setInt('selected_adhan_index', index);
 
     // Also save the file names for backwards compatibility if needed
@@ -93,42 +102,41 @@ class AdhanSoundsController extends ControllerMVC {
   }
 
   Future<void> _downloadAdhan(int index) async {
-    setState(() {
-      isDownloading = true;
-      downloadIndex = index;
-      downloadProgress = 0.0;
-    });
+    isDownloading = true;
+    downloadIndex = index;
+    downloadProgress = 0.0;
+    update();
 
     try {
       await _downloader.downloadAndUnzipAdhan(
         adhanList[index],
         onReceiveProgress: (received, total) {
           if (total != -1) {
-            setState(() {
-              downloadProgress = received / total;
-            });
+            downloadProgress = received / total;
+            update();
           }
         },
       );
     } catch (e) {
       log('Error during download: $e');
     } finally {
-      setState(() {
-        isDownloading = false;
-        downloadIndex = -1;
-        downloadProgress = 0.0;
-      });
+      isDownloading = false;
+      downloadIndex = -1;
+      downloadProgress = 0.0;
+      update();
     }
   }
 
   Future<void> togglePlay(int index) async {
     if (currentlyPlayingIndex == index && audioPlayer.playing) {
       await audioPlayer.pause();
-      setState(() => currentlyPlayingIndex = null);
+      currentlyPlayingIndex = null;
+      update();
     } else {
       try {
         await audioPlayer.stop();
-        setState(() => currentlyPlayingIndex = index);
+        currentlyPlayingIndex = index;
+        update();
 
         final prefs = await SharedPreferences.getInstance();
         final fajirPath = prefs
@@ -146,19 +154,21 @@ class AdhanSoundsController extends ControllerMVC {
         // Listen to completion
         audioPlayer.playerStateStream.listen((state) {
           if (state.processingState == ProcessingState.completed) {
-            setState(() => currentlyPlayingIndex = null);
+            currentlyPlayingIndex = null;
+            update();
           }
         });
       } catch (e) {
         log('Error playing audio: $e');
-        setState(() => currentlyPlayingIndex = null);
+        currentlyPlayingIndex = null;
+        update();
       }
     }
   }
 
   @override
-  void dispose() {
+  void onClose() {
     audioPlayer.dispose();
-    super.dispose();
+    super.onClose();
   }
 }

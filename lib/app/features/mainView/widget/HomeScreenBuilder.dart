@@ -8,7 +8,7 @@ import 'package:muslimdaily/app/features/mainView/widget/IslamicCardWidget.dart'
 import 'package:muslimdaily/app/features/mainView/widget/LastActivityWidget.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/settings_view.dart';
-import 'package:mvc_pattern/mvc_pattern.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,12 +39,9 @@ class MainViewBuilder extends StatefulWidget {
   _MainViewBuilderState createState() => _MainViewBuilderState();
 }
 
-class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
-  _MainViewBuilderState() : super(MainController()) {
-    con = controller as MainController;
-  }
+class _MainViewBuilderState extends State<MainViewBuilder> {
+  final MainController con = MainController.instance;
 
-  late MainController con;
   int _refreshCounter = 0;
   late CentralizedCubit centralizedCubit;
   int? verseId;
@@ -380,10 +377,12 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
       ),
     );
 
-    return SafeArea(
-        top: false,
-        bottom: true,
-        child: Scaffold(
+    return GetBuilder<MainController>(
+      builder: (con) {
+        return SafeArea(
+            top: false,
+            bottom: true,
+            child: Scaffold(
           body: Directionality(
             textDirection: TextDirection.rtl,
             child: Stack(
@@ -1102,8 +1101,8 @@ class _MainViewBuilderState extends StateMVC<MainViewBuilder> {
               ],
             ),
           ),
-
-          /// TODO:- for test Adhan Overlay Screen
-        ));
+        ),
+      );
+    });
   }
 }

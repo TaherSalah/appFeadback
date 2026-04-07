@@ -19,10 +19,13 @@ class AzkarOtherItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AzkerItemBuilder(
+      isOther: true,
       azkarName: "أذكار مختارة",
+      // fontFamily: "",
       azkarTitle: azkarOtherTitle,
       azkarDes: azkarOtherDesc,
       fontSize: fontSize,
+
       azkarRepate: azkarRepate,
       color: color,
     );

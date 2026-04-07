@@ -9,7 +9,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
   flutter_timezone
   geolocator_windows
-  media_kit_libs_windows_audio
   objectbox_flutter_libs
   permission_handler_windows
   printing

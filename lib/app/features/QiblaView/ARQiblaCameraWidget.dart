@@ -297,7 +297,7 @@ class _ARQiblaCameraWidgetState extends State<ARQiblaCameraWidget> with TickerPr
           
         // 6. Bottom Info Panel
         Positioned(
-          bottom:context.isTablet ? 40 : 100,
+          bottom:context.isTablet ? 110 : 100,
           left: 20,
           right: 20,
           child: ClipRRect(

@@ -400,7 +400,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
         children: [
           // البوصلة الرئيسية
           Expanded(
-            flex: 1,
+            flex: context.isTab? 2:1,
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 20),
               child: Stack(
@@ -545,7 +545,7 @@ class _QiblaDirectionState extends State<QiblaDirection> {
 
   Widget _buildInfoContent(bool isDark, double? angle) {
     return Column(
-      spacing: 6,
+      spacing:context.isTab? 15:6,
       mainAxisSize: MainAxisSize.min,
       children: [
         // معلومات الموقع

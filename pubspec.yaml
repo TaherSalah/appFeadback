@@ -56,7 +56,6 @@ dependencies:
   dropdown_button2: ^2.3.9
   connectivity_plus: ^7.0.0
   flutter_native_splash: ^2.3.5
-  mvc_pattern: ^8.12.0
   json_annotation: ^4.8.1
   equatable: ^2.0.5
   freezed_annotation: ^2.4.1

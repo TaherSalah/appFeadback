@@ -13,7 +13,7 @@ import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/mainView/controllar/MainController.dart';
-import 'package:mvc_pattern/mvc_pattern.dart' hide StateSetter;
+import 'package:get/get.dart';
 
 import '../../core/utils/style/app_theme_colors.dart';
 import 'adhan_callback.dart';
@@ -26,12 +26,8 @@ class AzanView extends StatefulWidget {
   _AzanViewState createState() => _AzanViewState();
 }
 
-class _AzanViewState extends StateMVC<AzanView> {
-  _AzanViewState() : super(MainController()) {
-    con = controller as MainController;
-  }
-
-  late MainController con;
+class _AzanViewState extends State<AzanView> {
+  final MainController con = MainController.instance;
 
   // استخدام خدمة WorkManager
   // final AdhanWorkManagerService _adhanService = AdhanWork                  ManagerService();
@@ -114,7 +110,7 @@ class _AzanViewState extends StateMVC<AzanView> {
   Future<void> _selectByLocation() async {
     try {
       await con.autoDetectLocation();
-      setState(() {});
+      con.update();
       await _scheduleAllPrayerNotifications();
     } catch (e) {
       if (mounted) {
@@ -533,9 +529,8 @@ class _AzanViewState extends StateMVC<AzanView> {
           value: con.selectedMadhab,
           onChanged: (value) {
             if (value != null) {
-              setStateSheet(() {
-                con.selectedMadhab = value;
-              });
+              con.selectedMadhab = value;
+              con.update();
             }
           },
           buttonStyleData: const ButtonStyleData(
@@ -558,188 +553,104 @@ class _AzanViewState extends StateMVC<AzanView> {
 
   @override
   void dispose() {
-    // لا داعي لـ dispose WorkManager
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.isDark;
-    final selectedCountry = con.selectedCountry;
-    final selectedCity = con.selectedCity;
-    final prayerTimes = con.prayerTimes;
-    final nextPrayer = con.nextPrayer;
-    final remainingTimeText = con.remainingTimeText;
+    return GetBuilder<MainController>(
+      builder: (con) {
+        final isDark = context.isDark;
+        final selectedCountry = con.selectedCountry;
+        final selectedCity = con.selectedCity;
+        final prayerTimes = con.prayerTimes;
+        final nextPrayer = con.nextPrayer;
+        final remainingTimeText = con.remainingTimeText;
 
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(context.isTab ? 70 : 50),
-        child: AppBar(
-          leading: Navigator.canPop(context)
-              ? CupertinoNavigationBarBackButton(
-                  color: isDark ? Colors.white : Colors.black,
-                )
-              : null,
-          centerTitle: true,
-          title: Text(
-            "مواقيت الصلاة",
-            style: TextStyle(
-              fontFamily: "cairo",
-              color: Colors.green,
-              fontWeight: FontWeight.bold,
-              fontSize: context.isTab ? 12.sp : 18.sp,
-            ),
-          ),
-          actions: [
-            // IconButton(
-            //   icon: const Icon(Icons.bug_report, color: Colors.orange),
-            //   tooltip: 'اختبار الأذان (20 ثانية)',
-            //   onPressed: () async {
-            //     bool isAllowed =
-            //         await AwesomeNotifications().isNotificationAllowed();
-            //     if (!isAllowed) {
-            //       await AwesomeNotifications()
-            //           .requestPermissionToSendNotifications();
-            //       isAllowed =
-            //           await AwesomeNotifications().isNotificationAllowed();
-            //       if (!isAllowed) {
-            //         KHelper.showError(message: 'يجب تفعيل الإشعارات أولاً!');
-            //         return;
-            //       }
-            //     }
-            //
-            //     try {
-            //       KHelper.showSuccess(message: 'جاري جدولة الاختبار...');
-            //       final success = await AdhanWorkManagerService()
-            //           .scheduleTestAdhan(secondsFromNow: 20);
-            //       if (success == null) {
-            //         KHelper.showSuccess(
-            //             message: '🧪 تم جدولة اختبار شامل بعد 20 ثانية');
-            //       } else {
-            //         KHelper.showError(message: '❌ فشل الاختبار: $success');
-            //       }
-            //     } catch (e) {
-            //       KHelper.showError(message: '❌ خطأ: $e');
-            //     }
-            //   },
-            // ),
-
-            IconButton(
-              icon: const Icon(Icons.settings),
-              tooltip: 'إعدادات الحساب',
-              onPressed: _showCalculationSettings,
-            ),
-            // IconButton(
-            //   icon: const Icon(Icons.volume_up_rounded),
-            //   tooltip: 'أصوات الأذان',
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //           builder: (_) => const AdhanSoundsSettingsScreen()),
-            //     );
-            //   },
-            // ),
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: 'إعادة جدولة الإشعارات',
-              onPressed: _scheduleAllPrayerNotifications,
-            ),
-          ],
-          // actions: [
-          //   if (Platform.isAndroid)
-          //     FutureBuilder<bool>(
-          //       future: BatteryOptimizationHelper.isBatteryOptimizationDisabled(),
-          //       builder: (context, snapshot) {
-          //         return IconButton(
-          //           icon: const Icon(Icons.battery_charging_full),
-          //           tooltip: 'فحص إعدادات البطارية',
-          //           onPressed: () async {
-          //             final isDisabled = await BatteryOptimizationHelper.isBatteryOptimizationDisabled();
-          //             if (!mounted) return;
-          //
-          //             if (isDisabled) {
-          //               KHelper.showSuccess(message: "التطبيق مُستثنى من توفير البطارية");
-          //             } else {
-          //               BatteryOptimizationHelper.showBatteryOptimizationDialog(context);
-          //             }
-          //           },
-          //         );
-          //       },
-          //     ),
-          //   IconButton(
-          //     icon: const Icon(Icons.refresh),
-          //     tooltip: 'إعادة جدولة الإشعارات',
-          //     onPressed: _scheduleAllPrayerNotifications,
-          //   ),
-          // ],
-        ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-            // gradient: LinearGradient(
-            //   begin: Alignment.topCenter,
-            //   end: Alignment.bottomCenter,
-            //   colors: isDark
-            //       ? [
-            //     const Color(0xFF0F172A),
-            //     const Color(0xFF1E293B),
-            //     const Color(0xFF0F172A),
-            //   ]
-            //       : [
-            //     Colors.blue.shade50,
-            //     Colors.white,
-            //     Colors.blue.shade50,
-            //   ],
-            // ),
-            ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Directionality(
-            textDirection: ui.TextDirection.rtl,
-            child: Column(
-              children: [
-                // 🎯 قسم عرض الموقع الحالي فقط
-                if (con.isLoadingLocation)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: KLoading.progressIOSIndicator(context: context),
-                  )
-                else if (selectedCountry != null && selectedCity != null)
-                  FadeAnimation(
-                    delay: const Duration(milliseconds: 100),
-                    child: buildCurrentLocation(
-                        context, isDark, selectedCountry, selectedCity),
-                  ),
-
-                const SizedBox(height: 24),
-
-                // ⏰ الصلاة القادمة (بطاقة مميزة)
-                if (prayerTimes != null && nextPrayer.isNotEmpty)
-                  FadeAnimation(
-                    delay: const Duration(milliseconds: 200),
-                    child: _buildNextPrayerCard(context, isDark, nextPrayer,
-                        remainingTimeText, prayerTimes),
-                  ),
-
-                const SizedBox(height: 24),
-
-                // 📋 قائمة المواقيت المحسّنة
-                if (prayerTimes != null)
-                  Expanded(
-                    child: _buildPrayerTimesList(
-                        context, isDark, prayerTimes, nextPrayer),
-                  )
-                else
-                  KLoading.progressIOSIndicator(context: context),
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(context.isTab ? 70 : 50),
+            child: AppBar(
+              leading: Navigator.canPop(context)
+                  ? CupertinoNavigationBarBackButton(
+                      color: isDark ? Colors.white : Colors.black,
+                    )
+                  : null,
+              centerTitle: true,
+              title: Text(
+                "مواقيت الصلاة",
+                style: TextStyle(
+                  fontFamily: "cairo",
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize: context.isTab ? 12.sp : 18.sp,
+                ),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  tooltip: 'إعدادات الحساب',
+                  onPressed: _showCalculationSettings,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: 'إعادة جدولة الإشعارات',
+                  onPressed: _scheduleAllPrayerNotifications,
+                ),
               ],
             ),
           ),
-        ),
-      ),
+          body: Container(
+            decoration: const BoxDecoration(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Directionality(
+                textDirection: ui.TextDirection.rtl,
+                child: Column(
+                  children: [
+                    // 🎯 قسم عرض الموقع الحالي فقط
+                    if (con.isLoadingLocation)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: KLoading.progressIOSIndicator(context: context),
+                      )
+                    else if (selectedCountry != null && selectedCity != null)
+                      FadeAnimation(
+                        delay: const Duration(milliseconds: 100),
+                        child: buildCurrentLocation(
+                            context, isDark, selectedCountry, selectedCity),
+                      ),
+
+                    const SizedBox(height: 24),
+
+                    // ⏰ الصلاة القادمة (بطاقة مميزة)
+                    if (prayerTimes != null && nextPrayer.isNotEmpty)
+                      FadeAnimation(
+                        delay: const Duration(milliseconds: 200),
+                        child: _buildNextPrayerCard(context, isDark, nextPrayer,
+                            remainingTimeText, prayerTimes),
+                      ),
+
+                    const SizedBox(height: 24),
+
+                    // 📋 قائمة المواقيت المحسّنة
+                    if (prayerTimes != null)
+                      Expanded(
+                        child: _buildPrayerTimesList(
+                            context, isDark, prayerTimes, nextPrayer),
+                      )
+                    else
+                      KLoading.progressIOSIndicator(context: context),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
+
 
   Widget _buildLocationSelector(
     BuildContext context,

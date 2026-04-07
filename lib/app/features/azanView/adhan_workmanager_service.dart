@@ -41,7 +41,7 @@ class AdhanWorkManagerService {
   /// Get Next Prayer map for UI
   Future<Map<String, dynamic>?> getNextPrayer() async {
     try {
-      final mainCtrl = MainController();
+      final mainCtrl = MainController.instance;
       // Target time is calculated and stored in MainController
       if (mainCtrl.upcomingPrayerName.isNotEmpty &&
           mainCtrl.targetTime != null) {

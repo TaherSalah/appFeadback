@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:muslimdaily/app/core/utils/log.dart';
 import 'package:muslimdaily/app/features/azanView/adhan_workmanager_service.dart';
-import 'package:mvc_pattern/mvc_pattern.dart';
+import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,12 +19,16 @@ import '../../../core/services/system_control_service.dart';
 import '../../../core/utils/constent/router.dart';
 import '../../../core/utils/style/k_helper.dart';
 
-class MainController extends ControllerMVC {
-  static final MainController _instance = MainController._internal();
+class MainController extends GetxController {
+  static MainController get instance {
+    try {
+      return Get.find<MainController>();
+    } catch (_) {
+      return Get.put(MainController._internal());
+    }
+  }
 
-  factory MainController() => _instance;
-
-  MainController._internal() : super();
+  MainController._internal();
 
   // مفاتيح SharedPreferences
   static const _kCountryKey = 'selected_country';
@@ -214,8 +218,8 @@ class MainController extends ControllerMVC {
   // ];
 
   @override
-  void initState() {
-    super.initState();
+  void onInit() {
+    super.onInit();
 
     HijriCalendar.setLocal('ar');
 
@@ -226,7 +230,7 @@ class MainController extends ControllerMVC {
         initl.DateFormat('EEEE, d MMMM yyyy', 'ar').format(now),
       );
       _updateHijriDate();
-      setState(() {});
+      update();
     });
 
     _loadCountriesAndLocation();
@@ -279,11 +283,11 @@ class MainController extends ControllerMVC {
       globalIshaOffset = globalOffsets['isha'] ?? 0;
 
       calculatePrayerTimes();
-      setState(() {});
+      update();
     });
 
     calculatePrayerTimes();
-    setState(() {});
+    update();
   }
 
   void _updateHijriDate() {
@@ -300,7 +304,7 @@ class MainController extends ControllerMVC {
     // تحديث الويدجت فوراً ليعكس التغيير
     await AdhanWorkManagerService().updateWidget();
 
-    setState(() {});
+    update();
   }
 
   /// تحديد الموقع تلقائياً باستخدام GPS
@@ -310,7 +314,7 @@ class MainController extends ControllerMVC {
   Future<void> autoDetectLocation({bool silent = false}) async {
     // بدء حالة التحميل
     isLoadingLocation = true;
-    setState(() {});
+    update();
 
     try {
       final locationService = LocationService();
@@ -363,14 +367,14 @@ class MainController extends ControllerMVC {
 
       calculatePrayerTimes();
       await AdhanWorkManagerService().initialize(forceReschedule: true);
-      setState(() {});
+      update();
     } catch (e) {
       if (!silent) KHelper.showError(message: 'حدث خطأ أثناء تحديد الموقع');
       log('Error in autoDetectLocation: $e');
     } finally {
       // إنهاء حالة التحميل
       isLoadingLocation = false;
-      setState(() {});
+      update();
     }
   }
 
@@ -425,7 +429,7 @@ class MainController extends ControllerMVC {
     // إعادة الحساب والجدولة
     calculatePrayerTimes();
     await AdhanWorkManagerService().initialize(forceReschedule: true);
-    setState(() {});
+    update();
   }
 
   // دوال تعديل الدقائق يدوياً
@@ -474,7 +478,6 @@ class MainController extends ControllerMVC {
       : toArabicDigits(
           '${hijri!.hDay} ${hijri!.getLongMonthName()} ${hijri!.hYear} هـ',
         );
-
   bool get isRamadan => hijri?.hMonth == 9;
 
   // تحميل الدول + قراءة الموقع المخزون (إن وجد)
@@ -527,7 +530,7 @@ class MainController extends ControllerMVC {
             : cities.keys.first;
       }
 
-      setState(() {});
+      update();
       calculatePrayerTimes();
     } catch (e) {
       log('Error loading JSON: $e');
@@ -572,7 +575,7 @@ class MainController extends ControllerMVC {
     await _saveSelection();
     calculatePrayerTimes();
     await AdhanWorkManagerService().initialize(forceReschedule: true);
-    setState(() {});
+    update();
   }
 
   /// إدخال الإحداثيات يدوياً
@@ -586,7 +589,7 @@ class MainController extends ControllerMVC {
     await _saveSelection();
     calculatePrayerTimes();
     await AdhanWorkManagerService().initialize(forceReschedule: true);
-    setState(() {});
+    update();
   }
 
   void calculatePrayerTimes() {
@@ -700,9 +703,8 @@ class MainController extends ControllerMVC {
     // حفظ نسخة معدلة للاستخدام في الواجهة
     _adjustedPrayersForUI = prayers;
 
-    setState(() {
-      prayerTimes = times;
-    });
+    prayerTimes = times;
+    update();
   }
 
   // خريطة لتخزين المواعيد المعدلة للواجهة
@@ -769,18 +771,17 @@ class MainController extends ControllerMVC {
       final m = (remaining % 3600) ~/ 60;
       final s = remaining % 60;
 
-      setState(() {
-        progressValue = progress.clamp(0.0, 1.0);
-        remainingTimeText =
-            "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
-        if (isIqama) {
-          nextPrayer = "إقامة صلاة $upcomingPrayerName بعد";
-        } else {
-          nextPrayer = (upcomingPrayerName == "الشروق")
-              ? "الشروق بعد"
-              : "صلاة $upcomingPrayerName بعد";
-        }
-      });
+      progressValue = progress.clamp(0.0, 1.0);
+      remainingTimeText =
+          "${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}";
+      if (isIqama) {
+        nextPrayer = "إقامة صلاة $upcomingPrayerName بعد";
+      } else {
+        nextPrayer = (upcomingPrayerName == "الشروق")
+            ? "الشروق بعد"
+            : "صلاة $upcomingPrayerName بعد";
+      }
+      update();
     });
   }
 
@@ -837,12 +838,12 @@ class MainController extends ControllerMVC {
     }
 
     calculatePrayerTimes(); // يعيد حساب المواقيت بناء على المكان الجديد
-    setState(() {}); // يخبّر كل الـ Views اللي راكبة على هذا الكنترولر
+    update(); // يخبّر كل الـ Views اللي راكبة على هذا الكنترولر
   }
 
   @override
-  void dispose() {
+  void onClose() {
     countdownTimer?.cancel();
-    super.dispose();
+    super.onClose();
   }
 }

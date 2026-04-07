@@ -558,7 +558,9 @@ class NotificationManager {
     final bool isContinuousShuruqEnabled =
         prefs.getBool('is_continuous_shuruq_enabled') ?? false;
 
-    if (!isSunriseEnabled || time.isBefore(DateTime.now())) return;
+    final localTime = time.toLocal();
+
+    if (!isSunriseEnabled || localTime.isBefore(DateTime.now())) return;
 
     // Use new explicit channels to bypass Android caching
     final String channelKey =
@@ -586,7 +588,7 @@ class NotificationManager {
         color: const Color(0xFF178B74),
       ),
       schedule: NotificationCalendar.fromDate(
-        date: time,
+        date: localTime,
         preciseAlarm: true,
         allowWhileIdle: true,
       ),

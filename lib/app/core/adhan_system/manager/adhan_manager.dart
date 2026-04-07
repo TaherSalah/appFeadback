@@ -67,7 +67,7 @@ class AdhanManager {
       int prayerIndex = 0;
       for (final entry in times.entries) {
         final prayerKey = entry.key;
-        final prayerTime = entry.value;
+        final prayerTime = entry.value.toLocal();
 
         // Skip non-prayers or Shuruq handled separately
         if (prayerKey == 'midnight' || prayerKey == 'lastThird') {
@@ -181,6 +181,7 @@ class AdhanManager {
         // 🛠️ [تعديل تقني]: تم استبدال AlarmManager بنظام جدولة النظام الأصلي (Native)
         // هذا يضمن أن الأذان سيعمل حتى لو كان التطبيق مغلقاً تماماً والهاتف في وضع القفل (Lock Screen).
         // تم استلهام هذا الحل من إشعار "الصلاة على النبي" الذي أثبت كفاءته.
+        // [تصحيح]: تم استخدام .toLocal() لضمان الموعد الصحيح حسب التوقيت المحلي للمستخدم.
         await AwesomeNotifications().createNotification(
           content: NotificationContent(
             id: uniqueId,

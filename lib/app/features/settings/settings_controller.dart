@@ -46,10 +46,10 @@ class SettingsController extends GetxController {
   }
 
   // --- Hijri Management ---
-  int get hijriAdjustment => MainController().hijriAdjustment;
+  int get hijriAdjustment => MainController.instance.hijriAdjustment;
 
   void setHijriAdjustment(int newValue) {
-    MainController().setHijriAdjustment(newValue);
+    MainController.instance.setHijriAdjustment(newValue);
     update();
   }
 

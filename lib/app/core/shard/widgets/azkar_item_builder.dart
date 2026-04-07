@@ -3,6 +3,8 @@ import 'package:muslimdaily/app/features/shareCard/PremiumShareCard.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../exports/all_exports.dart';
+import 'AzkarActionButton.dart';
+import 'AzkarOrnamentDivider.dart';
 
 // تأكد أن AppStyle / Azkary / ScrollAppearAnimation / con موجودين عندك في المشروع
 
@@ -15,7 +17,8 @@ class AzkerItemBuilder extends StatefulWidget {
   final Color? color;
   final Color? repertColor;
   final Color? repertColor2;
-
+  final String? fontFamily;
+  final bool isOther;
   const AzkerItemBuilder({
     super.key,
     required this.azkarTitle,
@@ -26,6 +29,8 @@ class AzkerItemBuilder extends StatefulWidget {
     this.repertColor,
     this.repertColor2,
     this.azkarName,
+    this.fontFamily,
+    this.isOther = false,
   });
 
   @override
@@ -163,7 +168,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                     ),
 
                     // الفاصل الزخرفي تحت العنوان
-                    _AzkarOrnamentDivider(
+                    AzkarOrnamentDivider(
                       color: baseColor,
                     ),
 
@@ -174,12 +179,20 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                       widget.azkarDes,
                       textAlign: TextAlign.center,
                       textDirection: TextDirection.rtl,
-                         style: TextStyle(
-                          fontFamily: "cairo",
-                        height: 1.9,
-                        fontSize: size.width > 600 ? 9.sp : 13.sp,
-                        color: isDark ? Colors.grey[200] : Colors.grey[900],
-                      ),
+                      style: widget.isOther == true
+                          ? GoogleFonts.amiri(
+                              fontSize: widget.fontSize ?? 18.sp,
+                              height: 2.0,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : Colors.black87,
+                            )
+                          : TextStyle(
+                              fontFamily: widget.fontFamily ?? "cairo",
+                              height: 1.9,
+                              fontSize: size.width > 600 ? 9.sp : 13.sp,
+                              color:
+                                  isDark ? Colors.grey[200] : Colors.grey[900],
+                            ),
                     ),
 
                     SizedBox(height: 18.h),
@@ -189,14 +202,14 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // زر النسخ
-                        _AzkarActionButton(
+                        AzkarActionButton(
                           icon: Icons.copy_rounded,
                           label: "نسخ",
                           onTap: () => copyText(shareFullTextFancy),
                         ),
 
                         // زر مشاركة الصورة
-                        _AzkarActionButton(
+                        AzkarActionButton(
                           icon: Icons.image_outlined,
                           label: "صورة",
                           onTap: () {
@@ -213,7 +226,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                         ),
 
                         // زر المشاركة
-                        _AzkarActionButton(
+                        AzkarActionButton(
                           icon: Icons.share_rounded,
                           label: "مشاركة",
                           onTap: () {
@@ -230,7 +243,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
 
           // كبسولة عدد التكرار (تحت الكارت)
           Positioned(
-            bottom:context.isTab?-20.h :-15.h,
+            bottom: context.isTab ? -20.h : -15.h,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
               decoration: BoxDecoration(
@@ -251,19 +264,19 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                 children: [
                   Icon(
                     Icons.repeat_rounded,
-                    size:context.isTab?15.sp :18.sp,
+                    size: context.isTab ? 15.sp : 18.sp,
                     color: widget.repertColor ??
                         (isDark ? Colors.white : Colors.black87),
                   ),
                   SizedBox(width: 6.w),
                   Text(
                     widget.azkarRepate,
-                       style: TextStyle(
-                          fontFamily: "cairo",
+                    style: TextStyle(
+                      fontFamily: "cairo",
                       color: widget.repertColor ??
                           (isDark ? Colors.white : Colors.black87),
                       fontWeight: FontWeight.bold,
-                      fontSize:context.isTab?9.sp: 13.sp,
+                      fontSize: context.isTab ? 9.sp : 13.sp,
                     ),
                   ),
                 ],
@@ -276,127 +289,4 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
   }
 }
 
-class _AzkarActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
 
-  const _AzkarActionButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = context.isDark;
-    final primary = Theme.of(context).colorScheme.primary;
-
-    return InkWell(
-      borderRadius: BorderRadius.circular(30.r),
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30.r),
-          color: isDark
-              ? Colors.white.withOpacity(0.04)
-              : primary.withOpacity(0.06),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size:context.isTab?15.sp :18.sp,
-
-              color: isDark ? Colors.greenAccent : primary,
-            ),
-            SizedBox(width: 6.w),
-            Text(
-              label,
-                 style: TextStyle(
-                          fontFamily: "cairo",
-                fontSize:context.isTab?9.sp: 12.sp,
-                   fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white70 : Colors.grey[900],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _AzkarOrnamentDivider extends StatelessWidget {
-  final Color color;
-
-  const _AzkarOrnamentDivider({required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = context.isDark;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
-      child: Row(
-        children: [
-          // خط يسار
-          Expanded(
-            child: Container(
-              height: 1,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerRight,
-                  end: Alignment.centerLeft,
-                  colors: [
-                    color.withOpacity(0.0),
-                    color.withOpacity(isDark ? 0.7 : 0.6),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // دائرة مزخرفة في المنتصف
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 8.w),
-            padding: EdgeInsets.all(4.r),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: color.withOpacity(0.7),
-                width: 1,
-              ),
-            ),
-            child: Container(
-              width: 6.r,
-              height: 6.r,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: color.withOpacity(0.9),
-              ),
-            ),
-          ),
-
-          // خط يمين
-          Expanded(
-            child: Container(
-              height: 1,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    color.withOpacity(0.0),
-                    color.withOpacity(isDark ? 0.7 : 0.6),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
