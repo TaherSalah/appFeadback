@@ -268,7 +268,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
               const SizedBox(height: 16),
               Expanded(
                 child: _history.isEmpty
-                    ? Center(
+                    ? const Center(
                         child: Text("لا يوجد سجلات محفوظة",
                                style: TextStyle(
                           fontFamily: "cairo",color: Colors.grey)),
@@ -1073,7 +1073,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                           backgroundColor: KColors.primaryColor,
                           foregroundColor: Colors.white,
                           minimumSize: const Size(double.infinity, 50)),
-                      child: Text("فهمت، شكراً",    style: TextStyle(
+                      child: const Text("فهمت، شكراً",    style: TextStyle(
                           fontFamily: "cairo",)),
                     )
                   ],
@@ -3071,7 +3071,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                       minimumSize: const Size(double.infinity, 50)),
-                  child: Text("تأكيد التسجيل",
+                  child: const Text("تأكيد التسجيل",
                          style: TextStyle(
                           fontFamily: "cairo",color: Colors.white)),
                 ),
@@ -3080,7 +3080,7 @@ class _ZakatCalculatorViewState extends State<ZakatCalculatorView> {
                     setState(() => _paidZakat = 0);
                     Navigator.pop(context);
                   },
-                  child: Text("تصفير المدفوعات",
+                  child: const Text("تصفير المدفوعات",
                          style: TextStyle(
                           fontFamily: "cairo",color: Colors.red)),
                 )
@@ -3456,7 +3456,7 @@ class _CurrencyConverterSheetState extends State<_CurrencyConverterSheet> {
               onPressed: _apply,
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(AppStyle.primaryColor)),
-              child: Text("اعتماد القيمة",
+              child: const Text("اعتماد القيمة",
                      style: TextStyle(
                           fontFamily: "cairo",color: Colors.white)),
             ),

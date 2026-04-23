@@ -255,15 +255,15 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
                             controller: _titleController,
                                style: TextStyle(
                           fontFamily: "cairo",fontSize: 14.sp),
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 15),
                               border: InputBorder.none,
                               hintText: "مثال: ختمة رمضان",
                               hintStyle: TextStyle(
                                   fontFamily: "cairo",color: Colors.grey),
                               prefixIcon:
-                                  const Icon(Icons.edit, color: Colors.green),
+                                  Icon(Icons.edit, color: Colors.green),
                             ),
                             validator: (v) => v == null || v.isEmpty
                                 ? "أدخل اسم الختمة"

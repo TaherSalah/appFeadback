@@ -264,7 +264,7 @@ class _MaintenanceGameDialogState extends State<MaintenanceGameDialog> with Tick
                                         ),
                                         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
                                       ),
-                                      child: Text(
+                                      child: const Text(
                                         'إعادة المحاولة',
                                         style: TextStyle(
                   fontFamily: "cairo",

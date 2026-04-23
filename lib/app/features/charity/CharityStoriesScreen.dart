@@ -429,7 +429,7 @@ class _CharityStoriesScreenState extends State<CharityStoriesScreen> {
                             );
                           },
                           icon: const Icon(Icons.share),
-                          label: Text(
+                          label: const Text(
                             'مشاركة',
                                style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold),

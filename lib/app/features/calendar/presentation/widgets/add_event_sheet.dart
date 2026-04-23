@@ -160,7 +160,7 @@ class _AddEventSheetState extends State<AddEventSheet> {
     final surfaceColor = isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade50;
     final textColor = isDark ? Colors.white : Colors.black87;
     final hintColor = isDark ? Colors.white54 : Colors.grey.shade600;
-    final primaryColor = const Color(0xFF1B5E20); // Deep Green
+    const primaryColor = Color(0xFF1B5E20); // Deep Green
     bool isTab = context.isTab;
     // Helper for input decoration
     InputDecoration buildInputDecoration(String label, IconData icon) {
@@ -327,7 +327,7 @@ class _AddEventSheetState extends State<AddEventSheet> {
                     labelStyle: TextStyle(
                         fontFamily: "cairo",color: hintColor),
                     prefixIcon:
-                        Icon(Icons.repeat_rounded, color: Colors.orange),
+                        const Icon(Icons.repeat_rounded, color: Colors.orange),
                     border: InputBorder.none,
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),

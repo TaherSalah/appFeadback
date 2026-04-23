@@ -11,7 +11,7 @@ class AzkarActionButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const AzkarActionButton({
+  const AzkarActionButton({super.key, 
     required this.icon,
     required this.label,
     required this.onTap,

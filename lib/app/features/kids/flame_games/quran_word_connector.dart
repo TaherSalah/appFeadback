@@ -45,7 +45,9 @@ class QuranWordConnector extends BaseEducationalGame with TapCallbacks {
     currentTarget = targetWords[random.nextInt(targetWords.length)];
     selectedWord = '';
     
-    bubbles.forEach((b) => b.removeFromParent());
+    for (var b in bubbles) {
+      b.removeFromParent();
+    }
     bubbles.clear();
 
     final letters = currentTarget.split('');
@@ -142,7 +144,7 @@ class QuranWordConnector extends BaseEducationalGame with TapCallbacks {
       color: Colors.white, 
       fontSize: size.x * 0.09, 
       fontWeight: FontWeight.bold,
-      shadows: [const Shadow(color: Colors.cyanAccent, blurRadius: 15)]
+      shadows: const [Shadow(color: Colors.cyanAccent, blurRadius: 15)]
     );
     
     final targetPainter = TextPainter(
@@ -180,10 +182,10 @@ class CosmicBackground extends Component with HasGameRef<QuranWordConnector> {
   void render(Canvas canvas) {
     // Deep Space Gradient
     final paint = Paint()
-      ..shader = RadialGradient(
+      ..shader = const RadialGradient(
         center: Alignment.center,
         radius: 1.2,
-        colors: [const Color(0xFF1A237E), const Color(0xFF000000)],
+        colors: [Color(0xFF1A237E), Color(0xFF000000)],
       ).createShader(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y));
     canvas.drawRect(Rect.fromLTWH(0, 0, gameRef.size.x, gameRef.size.y), paint);
 
@@ -268,7 +270,7 @@ class LetterBubble extends PositionComponent with TapCallbacks, HasGameRef<Quran
       color: Colors.white, 
       fontSize: size.x * 0.55, 
       fontWeight: FontWeight.bold,
-      shadows: [const Shadow(color: Colors.white70, blurRadius: 8)]
+      shadows: const [Shadow(color: Colors.white70, blurRadius: 8)]
     );
     
     final textPainter = TextPainter(

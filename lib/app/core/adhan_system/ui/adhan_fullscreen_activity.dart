@@ -64,7 +64,7 @@ class AdhanFullscreenActivity extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(color: Colors.white, width: 2),
                     ),
-                    child: Text(
+                    child: const Text(
                       "إيقاف الأذان",
                          style: TextStyle(
                           fontFamily: "cairo",

@@ -197,7 +197,7 @@ bool isTab = context.isTab;
                                     value: c,
                                     child: Text(
                                       c,
-                                         style: TextStyle(
+                                         style: const TextStyle(
                           fontFamily: "cairo",
                                         fontWeight: FontWeight.bold,
                                       ),

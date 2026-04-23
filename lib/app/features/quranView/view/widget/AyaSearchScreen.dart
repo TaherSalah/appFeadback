@@ -302,7 +302,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                               itemColor: isDark ? Colors.white : Colors.black54,
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
-                                fontFamily: TextStyle(
+                                fontFamily: const TextStyle(
                   fontFamily: "cairo",).fontFamily,
                                 fontSize: isTablet ? 9.sp : 14,
                               ),
@@ -336,7 +336,7 @@ class _AyaSearchScreenState extends State<AyaSearchScreen> {
                                 color: isDark
                                     ? Colors.grey[500]
                                     : Colors.grey[600],
-                                fontFamily: TextStyle(
+                                fontFamily: const TextStyle(
                   fontFamily: "cairo",).fontFamily,
                                 fontSize: isTablet ? 8.sp : 13,
                               ),

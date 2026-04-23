@@ -11,7 +11,7 @@ class AboutBook extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
-    final baseColor = AppColors.primary;
+    const baseColor = AppColors.primary;
     const Color goldColor = Color(0xFFD4AF37);
 
     return Theme(

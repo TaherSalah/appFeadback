@@ -351,7 +351,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '${donation.amount.toStringAsFixed(0)}',
+                            donation.amount.toStringAsFixed(0),
                                style: TextStyle(
                           fontFamily: "cairo",
                               fontSize: isTab ? 12.sp : 20.sp,
@@ -510,7 +510,7 @@ class _CharityHistoryScreenState extends State<CharityHistoryScreen> {
                           child: ElevatedButton.icon(
                             onPressed: () => Navigator.of(dialogContext).pop(true),
                             icon: const Icon(Icons.delete_outline),
-                            label: Text('حذف',    style: TextStyle(
+                            label: const Text('حذف',    style: TextStyle(
                           fontFamily: "cairo",)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,

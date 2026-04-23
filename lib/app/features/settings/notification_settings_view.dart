@@ -95,7 +95,7 @@ class NotificationSettingsView extends StatelessWidget {
                             height: 20, width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
                           )
-                        : Text('حفظ التغييرات',    style: TextStyle(
+                        : const Text('حفظ التغييرات',    style: TextStyle(
                           fontFamily: "cairo",fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                     icon: controller.isLoading.value ? null : const Icon(Icons.save_rounded, color: Colors.white),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

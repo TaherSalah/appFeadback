@@ -92,7 +92,7 @@ class _PdfNavigationDialogState extends State<PdfNavigationDialog>
                             return ListTile(
                               title: Text(
                                 '$surahIndex. $surahName',
-                                style: TextStyle(
+                                style: const TextStyle(
                   fontFamily: "cairo",
                                     fontWeight: FontWeight.bold),
                               ),
@@ -119,7 +119,7 @@ class _PdfNavigationDialogState extends State<PdfNavigationDialog>
                       return ListTile(
                         title: Text(
                           'الجزء $juzIndex',
-                          style: TextStyle(
+                          style: const TextStyle(
                   fontFamily: "cairo",fontWeight: FontWeight.bold),
                         ),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),

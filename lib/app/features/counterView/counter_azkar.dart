@@ -530,6 +530,17 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
     )..repeat();
     _shimmerAnimation =
         Tween<double>(begin: -2.0, end: 2.0).animate(_shimmerController);
+
+    // تحميل الحالة من الـ Provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<AzkarProvider>(context, listen: false);
+      setState(() {
+        currentBead = provider.currentBead;
+        _cycleCount = provider.cycleCount;
+        currentZikrIndex = provider.currentZikrIndex;
+        currentZikrCount = provider.currentZikrCount;
+      });
+    });
   }
 
   @override
@@ -590,6 +601,14 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
         // تأثير خاص لإكمال دورة beads
         // _createCompletionEffect();
       }
+
+      // حفظ الحالة في الـ Provider
+      provider.updateTasbeehState(
+        newCurrentZikrIndex: currentZikrIndex,
+        newCurrentZikrCount: currentZikrCount,
+        newCurrentBead: currentBead,
+        newCycleCount: _cycleCount,
+      );
     });
 
     _moveController.reset();
@@ -636,6 +655,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
     setState(() {
       currentBead = 0;
       _cycleCount = 0;
+      currentZikrIndex = 0;
+      currentZikrCount = 0;
     });
     _moveController.reset();
   }
@@ -945,7 +966,7 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
                     //     ),
                     //   ),
                     // ),
-                    Center(child: buildCounterDisplay(counter: currentBead + 1))
+                    Center(child: buildCounterDisplay(counter: currentZikrCount))
                   ],
                 );
               },

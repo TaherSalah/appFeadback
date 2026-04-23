@@ -138,7 +138,7 @@ class HadithInArabic extends StatelessWidget {
                       ),
                     ),
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),

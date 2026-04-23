@@ -270,7 +270,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
                                           : Colors.black87,
                                     ),
                                   ),
-                                  subtitle: Text(
+                                  subtitle: const Text(
                                     'اختيار أقرب مدينة بناءً على موقعك الحالي',
                                        style: TextStyle(
                           fontFamily: "cairo",
@@ -435,7 +435,7 @@ class _LocationSettingsViewState extends State<LocationSettingsView> {
               // backgroundColor: const Color(0xFFD4AF37),
               backgroundColor: KColors.primaryColor,
               elevation: _hasChanges ? 8 : 0,
-              label: Text(
+              label: const Text(
                 'حفظ خيارات الموقع',
                    style: TextStyle(
                           fontFamily: "cairo",

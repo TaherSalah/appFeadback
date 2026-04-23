@@ -25,7 +25,7 @@ class AdhanTaskHandler extends TaskHandler {
     final title = params['prayerName'] != null
         ? 'صلاة ${params['prayerName']}'
         : 'وقت الأذان';
-    final body = 'حان الآن موعد الأذان';
+    const body = 'حان الآن موعد الأذان';
 
     await AdhanForegroundService.startService(
       title: title,

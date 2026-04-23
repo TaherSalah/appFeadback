@@ -1,6 +1,5 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'widgets/prophetic_dua_list.dart';
 

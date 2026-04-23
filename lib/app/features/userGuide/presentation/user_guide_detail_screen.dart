@@ -253,7 +253,7 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                     onPressed: _watchVideo,
                     icon:
                         const Icon(Icons.play_circle_filled, color: Colors.red),
-                    label: Text(
+                    label: const Text(
                       'شاهد شرح الفيديو',
                       style: TextStyle(
                   fontFamily: "cairo",
@@ -340,7 +340,7 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                               title: const SizedBox.shrink(),
                               content: Text(
                                 step,
-                                style: TextStyle(
+                                style: const TextStyle(
                   fontFamily: "cairo",
                                     fontSize: 15, fontWeight: FontWeight.bold),
                               ),
@@ -402,7 +402,7 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                       Navigator.pushNamed(context, widget.item.routeName!);
                     },
                     icon: const Icon(Icons.rocket_launch),
-                    label: Text(
+                    label: const Text(
                       'جرب الميزة الآن',
                       style: TextStyle(
                   fontFamily: "cairo",
@@ -430,7 +430,7 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'هل كان هذا الشرح مفيداً؟',
             style: TextStyle(
                   fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 16),
@@ -452,7 +452,7 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
               ],
             )
           else
-            Text(
+            const Text(
               'شكراً لتقييمك! نسعى دائماً للأفضل.',
               style: TextStyle(
                   fontFamily: "cairo",
@@ -531,7 +531,7 @@ class _UserGuideDetailScreenState extends State<UserGuideDetailScreen> {
                           r.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                          style: const TextStyle(
                   fontFamily: "cairo",
                               fontWeight: FontWeight.bold, fontSize: 13),
                         ),

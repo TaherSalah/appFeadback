@@ -98,7 +98,7 @@ class _FeedbackViewState extends State<FeedbackView> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'الشكاوى والاقتراحات',
                style: TextStyle(
                           fontFamily: "cairo",
@@ -153,7 +153,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'الاسم *',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                           fontFamily: "cairo",),
                   prefixIcon: const Icon(Icons.person_outline),
                   border: OutlineInputBorder(
@@ -164,7 +164,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                   style: TextStyle(
+                   style: const TextStyle(
                           fontFamily: "cairo",),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -180,7 +180,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'البريد الإلكتروني *',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                           fontFamily: "cairo",),
                   prefixIcon: const Icon(Icons.email_outlined),
                   border: OutlineInputBorder(
@@ -191,7 +191,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                   style: TextStyle(
+                   style: const TextStyle(
                           fontFamily: "cairo",),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
@@ -211,7 +211,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _phoneController,
                 decoration: InputDecoration(
                   labelText: 'رقم الهاتف (اختياري)',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                           fontFamily: "cairo",),
                   prefixIcon: const Icon(Icons.phone_outlined),
                   border: OutlineInputBorder(
@@ -222,7 +222,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                   style: TextStyle(
+                   style: const TextStyle(
                           fontFamily: "cairo",),
                 keyboardType: TextInputType.phone,
               ),
@@ -235,7 +235,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                 decoration: InputDecoration(
 
                   labelText: 'التصنيف *',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                           fontFamily: "cairo",),
                   prefixIcon: const Icon(Icons.category_outlined),
                   border: OutlineInputBorder(
@@ -287,7 +287,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                       children: [
                         Icon(icon, color: color, size: 20),
                         const SizedBox(width: 12),
-                        Text(category,    style: TextStyle(
+                        Text(category,    style: const TextStyle(
                           fontFamily: "cairo",),textAlign: TextAlign.right,),
                       ],
                     ),
@@ -338,10 +338,10 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _descriptionController,
                 decoration: InputDecoration(
                   labelText: 'الوصف *',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                           fontFamily: "cairo",),
                   hintText: 'اكتب وصفاً تفصيلياً...',
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                           fontFamily: "cairo",color: Colors.grey),
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 60),
@@ -379,7 +379,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                   _selectedImages.isEmpty
                       ? 'إضافة صور (اختياري)'
                       : 'تم اختيار ${_selectedImages.length} صورة',
-                     style: TextStyle(
+                     style: const TextStyle(
                           fontFamily: "cairo",),
                 ),
                 style: OutlinedButton.styleFrom(
@@ -479,7 +479,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                               AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : Text(
+                    : const Text(
                         'إرسال',
                            style: TextStyle(
                           fontFamily: "cairo",
@@ -492,7 +492,7 @@ class _FeedbackViewState extends State<FeedbackView> {
               const SizedBox(height: 16),
 
               // ملاحظة الخصوصية
-              Text(
+              const Text(
                 'ملاحظة: سيتم جمع معلومات الجهاز تلقائياً (نظام التشغيل، الإصدار، الموديل) للمساعدة في حل المشاكل التقنية.',
                 textAlign: TextAlign.center,
                    style: TextStyle(

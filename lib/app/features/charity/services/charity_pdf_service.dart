@@ -120,9 +120,9 @@ class CharityPdfService {
       pw.Font font, pw.Font boldFont, CharityStats stats) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(10),
-      decoration: pw.BoxDecoration(
+      decoration: const pw.BoxDecoration(
         color: PdfColors.grey100,
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(10)),
+        borderRadius: pw.BorderRadius.all(pw.Radius.circular(10)),
       ),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,

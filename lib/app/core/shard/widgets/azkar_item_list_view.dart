@@ -39,7 +39,7 @@ class AzkarListViewItemBuilder extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                     'فضل الذكر ',
                                     style:
-                                        const TextStyle(
+                                        TextStyle(
                   fontFamily: "cairo",color: Colors.black)),
                                 content: Directionality(
                                     textDirection: TextDirection.rtl,

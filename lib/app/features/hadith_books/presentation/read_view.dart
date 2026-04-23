@@ -98,7 +98,7 @@ class _ReadViewState extends State<ReadView> {
         child: AppBar(
           actions: [
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.search,
                 color: Colors.white,
               ),
@@ -112,7 +112,7 @@ class _ReadViewState extends State<ReadView> {
               },
             ),
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.bookmarks,
                 color: Colors.white,
               ),

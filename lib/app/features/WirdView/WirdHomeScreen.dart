@@ -249,7 +249,7 @@ class _WirdHomeScreenState extends State<WirdHomeScreen>
               await manager.saveAwrad([...awrad, ...completedAwrad]);
             }
           },
-          label: Text(
+          label: const Text(
             'إضافة ورد جديد',
                style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold),

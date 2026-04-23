@@ -63,9 +63,7 @@ class AdhanController extends GetxController {
       log('Initializing adhan data...', name: 'AdhanController');
 
       currentLocation ??= PrayerCacheManager.getStoredLocation();
-      if (currentLocation == null) {
-        currentLocation = await _detectCurrentLocation();
-      }
+      currentLocation ??= await _detectCurrentLocation();
       if (currentLocation == null) {
         log('No location available', name: 'AdhanController');
         state.isLoadingPrayerData.value = false;

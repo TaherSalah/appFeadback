@@ -113,7 +113,7 @@ class FeatureGuardService {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                     ),
-                    child: Text(
+                    child: const Text(
                       'حسناً',
                       style: TextStyle(
                         fontFamily: "cairo",

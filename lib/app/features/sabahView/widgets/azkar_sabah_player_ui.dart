@@ -80,7 +80,7 @@ class AzkarSabahPlayerUI extends GetView<AzkarSabahController> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'أذكار الصباح',
                         style: TextStyle(
                   fontFamily: "cairo",

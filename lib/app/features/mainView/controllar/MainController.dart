@@ -323,10 +323,11 @@ class MainController extends GetxController {
       final pos = await locationService.getCurrentPosition();
 
       if (pos == null) {
-        if (!silent)
+        if (!silent) {
           KHelper.showError(
               message:
                   'تعذر الحصول على الموقع. تحقق من الصلاحيات وخدمة الموقع.');
+        }
         return;
       }
 
@@ -343,18 +344,20 @@ class MainController extends GetxController {
         selectedCountry = address['country'];
         selectedCity = address['city'];
 
-        if (!silent)
+        if (!silent) {
           KHelper.showSuccess(
               message: 'تم تحديد الموقع بنجاح: ${selectedCity ?? ""}');
+        }
       } else {
         // فشل Geocoding - ربما لا يوجد إنترنت
         selectedCountry = 'تحديد تلقائي';
         selectedCity = 'الموقع الفعلي (GPS)';
 
-        if (!silent)
+        if (!silent) {
           KHelper.showSuccess(
               message:
                   'تم تحديد موقعك بنجاح\n💡 الإنترنت مطلوب فقط لعرض اسم المدينة');
+        }
       }
 
       await locationService.saveLocation(

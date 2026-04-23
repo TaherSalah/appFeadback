@@ -159,7 +159,7 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
                       ),
                       child: Text(
                         _getPageLabel(),
-                        style: TextStyle(
+                        style: const TextStyle(
                   fontFamily: "cairo",
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -180,7 +180,7 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
                 children: [
                   Text(
                     _getPageLabel(),
-                    style: TextStyle(
+                    style: const TextStyle(
                   fontFamily: "cairo",fontWeight: FontWeight.bold),
                   ),
                 ],

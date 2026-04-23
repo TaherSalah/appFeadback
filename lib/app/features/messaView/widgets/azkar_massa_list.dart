@@ -21,7 +21,7 @@ class AzkarMassaList extends StatelessWidget {
         final String repeatText =
             isFinished ? "تم بنجاح" : '${Azkary.azkarMassaRepate[zMessaIndex]}';
 
-        final Color primaryColorLocal = Color(AppStyle.primaryColor);
+        const Color primaryColorLocal = Color(AppStyle.primaryColor);
         final Color cardAccent = isFinished
             ? const Color(AppStyle.yellowColor)
             : (isDark ? Colors.black : primaryColorLocal);

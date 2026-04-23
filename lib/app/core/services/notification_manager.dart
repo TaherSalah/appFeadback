@@ -1691,7 +1691,7 @@ class NotificationManager {
         navigator.push(
           PageRouteBuilder(
             opaque: false,
-            pageBuilder: (_, __, ___) => NotificationDialogScreen(
+            pageBuilder: (_, __, ___) => const NotificationDialogScreen(
               title: 'فضل الصيام',
               content:
                   '1. عن سَهلٍ رَضِيَ الله تعالى عنه أنَّ النَّبيَّ صلَّى اللهُ عليه وسلَّم قال: ((إنَّ في الجنَّةِ بابًا يقال له: الريَّانُ، يدخُلُ منه الصَّائِمونَ يومَ القيامةِ، لا يدخُلُ منه أحدٌ غَيرُهم. فيقال: أين الصَّائِمونَ؟ فيقومونَ، لا يدخُلُ منه أحدٌ غَيرُهم، فإذا دخَلُوا أُغلِقَ، فلم يدخُلْ منه أحدٌ ))\n\n'

@@ -138,7 +138,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
               children: [
                 Lottie.asset("assets/json/congrats.json"),
                 const SizedBox(width: 8),
-                Text(
+                const Text(
                   "تهانينا!",
                   style: TextStyle(
                   fontFamily: "cairo",fontWeight: FontWeight.bold),
@@ -148,7 +148,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
             content: Text(
               textAlign: TextAlign.center,
               'لقد أتممت الختمة "${k.title}". بارك الله فيك وجعلها في ميزان حسناتك.',
-              style: TextStyle(
+              style: const TextStyle(
                   fontFamily: "cairo",height: 1.4),
             ),
             actions: [
@@ -301,7 +301,7 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
         child: Stack(
           children: [
             // Background Decoration
-            Positioned(
+            const Positioned(
               top: -20,
               left: -20,
               child: Opacity(

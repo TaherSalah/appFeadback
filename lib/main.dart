@@ -68,7 +68,7 @@ Future<void> main() async {
         sharedPreferences: Di.sharedPreferences,
       )..localization(),
       child: BlocBuilder<CentralizedCubit, CentralizedState>(
-        builder: (context, state) => const MashkahApp(),
+        builder: (context, state) => const RafiqMuslimApp(),
       ),
     ),
   );

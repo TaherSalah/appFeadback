@@ -6,7 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
 import '../../core/utils/style/k_dialog_helper.dart';
+import '../../core/widgets/game_dialog.dart';
 import 'kids_data/sounds_helper.dart';
+
 
 class QuizGameScreen extends StatefulWidget {
   const QuizGameScreen({super.key});
@@ -175,43 +177,46 @@ class _QuizGameScreenState extends State<QuizGameScreen> {
   }
 
   void _showPauseDialog() {
-    KDialogHelper.showCustomDialog(
+    showDialog(
       context: context,
-      type: KDialogType.info,
-      icon: Icons.pause_rounded,
-      title: 'إيقاف مؤقت',
-      description: 'هل تريد الاستمرار؟',
-      actions: [
-        KDialogHelper.buildButton(
-          context: context,
-          label: 'استكمال',
-          color: Colors.green,
-          onPressed: () => Navigator.pop(context),
-        ),
-        KDialogHelper.buildButton(
-          context: context,
-          label: 'إعادة اللعب',
-          color: Colors.blue,
-          onPressed: () {
-            Navigator.pop(context);
-            setState(() {
-              _currentQuestion = 0;
-              _score = 0;
-              _answered = false;
-              _selectedAnswer = null;
-            });
-          },
-        ),
-        KDialogHelper.buildButton(
-          context: context,
-          label: 'خروج',
-          color: Colors.grey,
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-          },
-        ),
-      ],
+      barrierDismissible: false,
+      builder: (context) => GameDialog(
+        title: 'إيقاف مؤقت',
+        subtitle: 'هل تريد الاستمرار؟',
+        icon: const Icon(Icons.pause_rounded, color: Colors.white, size: 32),
+        actions: [
+          GameDialogAction(
+            label: 'استكمال',
+            icon: Icons.play_arrow_rounded,
+            gradient: const LinearGradient(colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)]),
+            onPressed: () => Navigator.pop(context),
+          ),
+          GameDialogAction(
+            label: 'إعادة اللعب',
+            icon: Icons.replay_rounded,
+            gradient: const LinearGradient(colors: [Color(0xFF2196F3), Color(0xFF1565C0)]),
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _currentQuestion = 0;
+                _score = 0;
+                _answered = false;
+                _selectedAnswer = null;
+              });
+            },
+          ),
+          GameDialogAction(
+            label: 'خروج',
+            icon: Icons.exit_to_app_rounded,
+            backgroundColor: Colors.grey.shade200,
+            textColor: Colors.grey.shade700,
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 

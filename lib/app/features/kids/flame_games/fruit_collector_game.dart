@@ -251,10 +251,10 @@ class Player extends PositionComponent with HasGameRef<FruitCollectorGame> {
     _handlePaint.color = const Color(0xFF6D4C41);
     _handlePaint.strokeWidth = w * 0.08;
     
-    _bodyPaint.shader = LinearGradient(
+    _bodyPaint.shader = const LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [const Color(0xFF8D6E63), const Color(0xFF5D4037)],
+      colors: [Color(0xFF8D6E63), Color(0xFF5D4037)],
     ).createShader(Rect.fromLTWH(0, 0, w, h));
     
     _bodyPath.reset();
@@ -270,7 +270,7 @@ class Player extends PositionComponent with HasGameRef<FruitCollectorGame> {
           fontWeight: FontWeight.bold, 
           fontFamily: "me",
           fontSize: w * 0.15,
-          shadows: [Shadow(blurRadius: 3, color: Colors.black45, offset: Offset(1, 1))]
+          shadows: const [Shadow(blurRadius: 3, color: Colors.black45, offset: Offset(1, 1))]
         )
       ),
       textDirection: TextDirection.rtl,
@@ -363,7 +363,7 @@ class GameItem extends PositionComponent with HasGameRef<FruitCollectorGame> {
       textDirection: TextDirection.ltr,
     )..layout();
     _labelPainter = TextPainter(
-      text: TextSpan(text: isHalal ? 'حلال' : 'حرام', style: TextStyle(color: Colors.white, fontSize: size.x * 0.25, fontWeight: FontWeight.bold, shadows: [const Shadow(blurRadius: 2)])),
+      text: TextSpan(text: isHalal ? 'حلال' : 'حرام', style: TextStyle(color: Colors.white, fontSize: size.x * 0.25, fontWeight: FontWeight.bold, shadows: const [Shadow(blurRadius: 2)])),
       textDirection: TextDirection.rtl,
     )..layout();
   }

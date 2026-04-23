@@ -213,7 +213,7 @@ class _LastActivityWidgetState extends State<LastActivityWidget> {
           context,
           title: "الختمة",
           subtitle: "تقدمك الحالي",
-          detail: "${_activeKhatmah!.title}",
+          detail: _activeKhatmah!.title,
           extra: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 4,

@@ -81,11 +81,11 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                       const SizedBox(height: 6),
                       Text(
                         tafsirName,
-                        style: TextStyle(
+                        style: const TextStyle(
                   fontFamily: "cairo",
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF43A047),
+                          color: Color(0xFF43A047),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -115,11 +115,11 @@ class _TafsirQuranViewState extends State<TafsirQuranView> {
                           border: Border.all(
                               color: Colors.green.withOpacity(0.4), width: 1.2),
                         ),
-                        child: Row(
+                        child: const Row(
                           children: [
-                            const Icon(Icons.info_outline,
+                            Icon(Icons.info_outline,
                                 size: 18, color: Colors.green),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 'لن تحتاج إلى تنزيله مجدداً — سيُحفظ على جهازك.',
@@ -406,12 +406,12 @@ class _BookCard extends StatelessWidget {
                                 color: const Color(0xFF43A047),
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: Row(
+                              child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.check_circle,
+                                  Icon(Icons.check_circle,
                                       size: 10, color: Colors.white),
-                                  const SizedBox(width: 3),
+                                  SizedBox(width: 3),
                                   Text(
                                     'محمّل',
                                     style: TextStyle(
@@ -503,12 +503,12 @@ class _ActionButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.auto_stories_rounded,
+            Icon(Icons.auto_stories_rounded,
                 size: 14, color: Colors.white),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Text(
               'اقرأ',
               style: TextStyle(
@@ -529,18 +529,18 @@ class _ActionButton extends StatelessWidget {
         border: Border.all(color: const Color(0xFF43A047), width: 1.2),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.cloud_download_outlined,
+          Icon(Icons.cloud_download_outlined,
               size: 14, color: Color(0xFF43A047)),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(
             'تحميل',
             style: TextStyle(
                   fontFamily: "cairo",
                 fontSize: 11,
-                color: const Color(0xFF43A047),
+                color: Color(0xFF43A047),
                 fontWeight: FontWeight.bold),
           ),
         ],

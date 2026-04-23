@@ -170,11 +170,11 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
             const SizedBox(width: 10),
             Text(
               'لقد حصلت على $stars نجمة ✨',
-                 style: TextStyle(
+                 style: const TextStyle(
                           fontFamily: "cairo",
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF0EA5E9),
+                color: Color(0xFF0EA5E9),
               ),
             ),
           ],
@@ -254,7 +254,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                                 color: Colors.white,
                                 fontSize: 22.sp,
                                 fontWeight: FontWeight.bold,
-                                shadows: [
+                                shadows: const [
                                   Shadow(
                                       color: Colors.black26,
                                       blurRadius: 10,
@@ -304,7 +304,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                       },
                     ),
                     Text('${_fontSize.toInt()}',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline),
                       onPressed: () {
@@ -337,7 +337,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                           ),
                         ),
                       );
-                    }).toList(),
+                    }),
                     if (moral.isNotEmpty) ...[
                       SizedBox(height: 40.h),
                       FadeInUp(
@@ -393,7 +393,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                         icon: Icon(_isAlreadyCompleted ? Icons.check_circle_rounded : Icons.emoji_events_rounded),
                         label: Text(
                           _isAlreadyCompleted ? 'تمت القراءة مسبقاً' : 'لقد قرأت القصة!',
-                             style: TextStyle(
+                             style: const TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold),
                         ),
                         style: ElevatedButton.styleFrom(

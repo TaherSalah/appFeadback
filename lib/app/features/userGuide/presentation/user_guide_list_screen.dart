@@ -183,12 +183,12 @@ class _UserGuideListScreenState extends State<UserGuideListScreen>
 
   Widget _buildFilteredList(List<UserGuideItem> items) {
     if (items.isEmpty) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.search_off, size: 80, color: Colors.grey),
-            const SizedBox(height: 16),
+            Icon(Icons.search_off, size: 80, color: Colors.grey),
+            SizedBox(height: 16),
             Text(
               "لا توجد نتائج",
                  style: TextStyle(
@@ -228,7 +228,7 @@ class _UserGuideListScreenState extends State<UserGuideListScreen>
             Expanded(
               child: Text(
                 item.title,
-                   style: TextStyle(
+                   style: const TextStyle(
                           fontFamily: "cairo",
                     fontWeight: FontWeight.bold, fontSize: 16),
               ),
@@ -264,7 +264,7 @@ class _UserGuideListScreenState extends State<UserGuideListScreen>
             item.description,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-               style: TextStyle(
+               style: const TextStyle(
                           fontFamily: "cairo",fontSize: 13),
           ),
         ),

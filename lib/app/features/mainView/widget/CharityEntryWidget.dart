@@ -164,7 +164,7 @@ class _CharityEntryWidgetState extends State<CharityEntryWidget> {
                       Expanded(
                         child: _buildStatItemLarge(
                           isDark,
-                          '${_stats?.totalThisMonth.toStringAsFixed(0) ?? '0'}',
+                          _stats?.totalThisMonth.toStringAsFixed(0) ?? '0',
                           'صدقة الشهر',
                           const Color(0xFF10B981),
                           'EGP',

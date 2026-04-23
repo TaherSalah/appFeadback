@@ -9,7 +9,7 @@ import 'AzkarActionButton.dart';
 class AzkarOrnamentDivider extends StatelessWidget {
   final Color color;
 
-  const AzkarOrnamentDivider({required this.color});
+  const AzkarOrnamentDivider({super.key, required this.color});
 
   @override
   Widget build(BuildContext context) {

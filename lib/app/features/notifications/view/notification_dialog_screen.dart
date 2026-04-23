@@ -133,7 +133,7 @@ class NotificationDialogScreen extends StatelessWidget {
                           ),
                           child: Text(
                             confirmText ?? 'حسناً',
-                            style: TextStyle(
+                            style: const TextStyle(
                   fontFamily: "cairo",
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

@@ -537,19 +537,19 @@ class _RecurringCharityScreenState extends State<RecurringCharityScreen> {
       builder: (context) => Directionality(
         textDirection: TextDirection.rtl,
         child: AlertDialog(
-          title: Text('حذف الالتزام',    style: TextStyle(
+          title: const Text('حذف الالتزام',    style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
-          content: Text('هل أنت متأكد من حذف هذا الالتزام؟',    style: TextStyle(
+          content: const Text('هل أنت متأكد من حذف هذا الالتزام؟',    style: TextStyle(
                           fontFamily: "cairo",)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('إلغاء',    style: TextStyle(
+              child: const Text('إلغاء',    style: TextStyle(
                           fontFamily: "cairo",color: Colors.grey)),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text('حذف',    style: TextStyle(
+              child: const Text('حذف',    style: TextStyle(
                           fontFamily: "cairo",color: Colors.red, fontWeight: FontWeight.bold)),
             ),
           ],

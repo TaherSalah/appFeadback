@@ -18,7 +18,9 @@ class PrayerCacheManager {
       if (storedDate == null || storedPrayerTimes == null) return false;
       if (!_isDateValid(storedDate)) return false;
       if (currentLocation != null &&
-          !_isLocationValid(storedLocation, currentLocation)) return false;
+          !_isLocationValid(storedLocation, currentLocation)) {
+        return false;
+      }
 
       return true;
     } catch (e) {

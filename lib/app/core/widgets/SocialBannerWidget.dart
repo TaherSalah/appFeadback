@@ -99,7 +99,7 @@ class _SocialBannerWidgetState extends State<SocialBannerWidget> {
                     children: [
                       Text(
                         title,
-                           style: TextStyle(
+                           style: const TextStyle(
                           fontFamily: "cairo",
                           color: Colors.white,
                           fontSize: 14,

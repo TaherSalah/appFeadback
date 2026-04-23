@@ -90,7 +90,7 @@ class SystemControlService {
           .select('feature_name, status')
           .timeout(const Duration(seconds: 10));
 
-      if (response != null && response is List) {
+      if (response is List) {
         final Map<String, String> statuses = {};
         for (var item in response) {
           final String key = item['feature_name']?.toString() ?? '';
@@ -156,7 +156,7 @@ class SystemControlService {
           .select('key, value')
           .timeout(const Duration(seconds: 10));
 
-      if (response != null && response is List) {
+      if (response is List) {
         final targetKeys = [
           'quote_enabled',
           'quote_visible',
@@ -217,7 +217,7 @@ class SystemControlService {
           .select('key, value')
           .timeout(const Duration(seconds: 10));
 
-      if (response != null && response is List) {
+      if (response is List) {
         final data = response as List;
         final newsActiveVal = _findValue(data, 'news_active')?.toLowerCase();
         final active = newsActiveVal == 'true' ||
@@ -274,7 +274,7 @@ class SystemControlService {
           .order('created_at', ascending: false)
           .timeout(const Duration(seconds: 10));
 
-      if (response != null && response is List) {
+      if (response is List) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(cacheKey, jsonEncode(response));
       }
@@ -327,7 +327,7 @@ class SystemControlService {
           .filter('key', 'in',
               '("broadcast_message", "broadcast_id", "broadcast_active")');
 
-      if (response != null && response is List) {
+      if (response is List) {
         final data = response as List;
         final active = _findValue(data, 'broadcast_active') == 'true';
         final message = _findValue(data, 'broadcast_message');
@@ -380,7 +380,7 @@ class SystemControlService {
           .filter('key', 'in',
               '("link_facebook", "link_whatsapp", "link_appstore", "link_playstore")');
 
-      if (response != null && response is List) {
+      if (response is List) {
         final Map<String, String> links = {};
         for (var item in response) {
           links[item['key'].toString()] = item['value'].toString();
@@ -435,7 +435,7 @@ class SystemControlService {
               '("prayer_offset_fajr", "prayer_offset_sunrise", "prayer_offset_dhuhr", "prayer_offset_asr", "prayer_offset_maghrib", "prayer_offset_isha")')
           .timeout(const Duration(seconds: 10));
 
-      if (response != null && response is List) {
+      if (response is List) {
         final Map<String, int> offsets = {};
         for (var item in response) {
           final key = item['key'].toString().replaceFirst('prayer_offset_', '');
@@ -462,7 +462,7 @@ class SystemControlService {
           .filter('key', 'in',
               '("social_banner_title", "social_banner_url", "social_banner_platform", "social_banner_active")');
 
-      if (response != null && response is List && response.isNotEmpty) {
+      if (response is List && response.isNotEmpty) {
         final data = response as List;
         final title = _findValue(data, 'social_banner_title');
         final url = _findValue(data, 'social_banner_url');

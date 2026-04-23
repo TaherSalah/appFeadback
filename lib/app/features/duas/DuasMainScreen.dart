@@ -58,11 +58,11 @@ class _DuasMainScreenState extends State<DuasMainScreen> {
               padding: EdgeInsets.all(16.w),
               child: TextField(
                 onChanged: (value) => setState(() => _searchQuery = value),
-                   style: TextStyle(
+                   style: const TextStyle(
                           fontFamily: "cairo",),
                 decoration: InputDecoration(
                   hintText: 'ابحث عن دعاء...',
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                           fontFamily: "cairo",color: Colors.grey),
                   prefixIcon: const Icon(Icons.search),
                   filled: true,

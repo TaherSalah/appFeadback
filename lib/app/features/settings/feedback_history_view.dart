@@ -49,7 +49,7 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'سجل الشكاوى',
                style: TextStyle(
                           fontFamily: "cairo",
@@ -80,14 +80,14 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                     const Icon(Icons.error_outline,
                         size: 60, color: Colors.grey),
                     const SizedBox(height: 16),
-                    Text(
+                    const Text(
                       'حدث خطأ في جلب البيانات',
                          style: TextStyle(
                           fontFamily: "cairo",),
                     ),
                     TextButton(
                       onPressed: _refresh,
-                      child: Text('إعادة المحاولة',    style: TextStyle(
+                      child: const Text('إعادة المحاولة',    style: TextStyle(
                           fontFamily: "cairo",)),
                     ),
                   ],
@@ -104,7 +104,7 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                   children: [
                     const Icon(Icons.history, size: 80, color: Colors.grey),
                     const SizedBox(height: 16),
-                    Text(
+                    const Text(
                       'لا توجد شكاوى سابقة مسجلة',
                          style: TextStyle(
                           fontFamily: "cairo",
@@ -114,7 +114,7 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                     ),
                     Text(
                       'بهذا البريد: ${widget.userEmail}',
-                         style: TextStyle(
+                         style: const TextStyle(
                           fontFamily: "cairo",
                         fontSize: 12,
                         color: Colors.grey,
@@ -167,7 +167,7 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                         Expanded(
                           child: Text(
                             item['category'] ?? 'شكوى',
-                               style: TextStyle(
+                               style: const TextStyle(
                           fontFamily: "cairo",
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
@@ -179,7 +179,7 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                     subtitle: Text(
                       '📅 ${date.day}/${date.month}/${date.year}',
                       style:
-                          TextStyle(
+                          const TextStyle(
                   fontFamily: "cairo",fontSize: 11, color: Colors.grey),
                     ),
                     children: [
@@ -188,7 +188,7 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'وصف الشكوى:',
                                  style: TextStyle(
                           fontFamily: "cairo",
@@ -200,7 +200,7 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                             const SizedBox(height: 8),
                             Text(
                               item['description'] ?? '',
-                                 style: TextStyle(
+                                 style: const TextStyle(
                           fontFamily: "cairo",fontSize: 13),
                             ),
                             if (item['reply'] != null &&
@@ -217,11 +217,11 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
+                                    const Row(
                                       children: [
-                                        const Icon(Icons.reply,
+                                        Icon(Icons.reply,
                                             size: 16, color: Colors.green),
-                                        const SizedBox(width: 8),
+                                        SizedBox(width: 8),
                                         Text(
                                           'رد الإدارة:',
                                              style: TextStyle(
@@ -236,7 +236,7 @@ class _FeedbackHistoryViewState extends State<FeedbackHistoryView> {
                                     const SizedBox(height: 8),
                                     Text(
                                       item['reply'],
-                                         style: TextStyle(
+                                         style: const TextStyle(
                           fontFamily: "cairo",
                                         fontSize: 13,
                                         fontStyle: FontStyle.italic,

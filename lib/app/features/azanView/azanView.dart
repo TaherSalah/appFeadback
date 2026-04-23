@@ -745,7 +745,9 @@ class _AzanViewState extends State<AzanView> {
                     if (value == null ||
                         selectedCountry == null ||
                         value == 'إحداثيات يدوية' ||
-                        value == 'الموقع الفعلي (GPS)') return;
+                        value == 'الموقع الفعلي (GPS)') {
+                      return;
+                    }
                     await con.setLocation(
                         country: selectedCountry, city: value);
                     if (onLocationChanged != null) onLocationChanged();

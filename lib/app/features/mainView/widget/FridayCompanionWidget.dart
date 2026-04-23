@@ -331,7 +331,7 @@ class _MainCard extends StatelessWidget {
               right: 0,
               child: Container(
                 height: 3,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(colors: [
                     Colors.transparent,
                     _FridayCompanionWidgetState._gold,
@@ -351,9 +351,9 @@ class _MainCard extends StatelessWidget {
                     completed: completed,
                     total: total,
                     allDone: allDone),
-                _Divider(),
+                const _Divider(),
                 _SalawatSection(isDark: isDark),
-                _Divider(),
+                const _Divider(),
                 _SunnahsSection(
                   isDark: isDark,
                   sunnahs: sunnahs,
@@ -461,7 +461,7 @@ class _SalawatSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           // gradient: LinearGradient(
           //   colors: isDark
           //       ? [const Color(0xFF0F2B1C), const Color(0xFF0B1B12)]

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../shard/exports/all_exports.dart';
 import '../shard/widgets/ui_animations.dart';
+import '../utils/services_locator.dart';
 
 class AzkarProvider extends ChangeNotifier {
   Future<void> launchInWeb(Uri url) async {
@@ -26,6 +27,26 @@ class AzkarProvider extends ChangeNotifier {
     _initialQuranRepate = List<int>.from(Azkary.rokiaQuranRepe);
     _initialHazbNawawiRepate = List<int>.from(Azkary.azkarHazbNawawiRepate);
     _initialPropheticRepate = List<int>.from(Azkary.azkarPropheticRepate);
+
+    // تحميل العداد من التخزين المحلي
+    _loadCounter();
+  }
+
+  void _loadCounter() {
+    counter = Di.sharedPreferences.getInt('tasbeeh_counter') ?? 0;
+    currentZikrIndex = Di.sharedPreferences.getInt('tasbeeh_current_zikr_index') ?? 0;
+    currentZikrCount = Di.sharedPreferences.getInt('tasbeeh_current_zikr_count') ?? 0;
+    currentBead = Di.sharedPreferences.getInt('tasbeeh_current_bead') ?? 0;
+    cycleCount = Di.sharedPreferences.getInt('tasbeeh_cycle_count') ?? 0;
+    notifyListeners();
+  }
+
+  void _saveCounter() {
+     Di.sharedPreferences.setInt('tasbeeh_counter', counter);
+     Di.sharedPreferences.setInt('tasbeeh_current_zikr_index', currentZikrIndex);
+     Di.sharedPreferences.setInt('tasbeeh_current_zikr_count', currentZikrCount);
+     Di.sharedPreferences.setInt('tasbeeh_current_bead', currentBead);
+     Di.sharedPreferences.setInt('tasbeeh_cycle_count', cycleCount);
   }
 
   late List<int> _initialSleepRepate;
@@ -47,6 +68,10 @@ class AzkarProvider extends ChangeNotifier {
 
   AzkarRemoteServices azkarRemoteServices = AzkarRemoteServices();
   int counter = 0;
+  int currentZikrIndex = 0;
+  int currentZikrCount = 0;
+  int currentBead = 0;
+  int cycleCount = 0;
 
   AllAzkarModel allAzkarModel = AllAzkarModel();
   List<Content> azkarMassaList = [];
@@ -267,18 +292,41 @@ class AzkarProvider extends ChangeNotifier {
 
   incrementCount() {
     counter++;
+    _saveCounter();
+    notifyListeners();
+  }
 
+  updateTasbeehState({
+    int? newCurrentZikrIndex,
+    int? newCurrentZikrCount,
+    int? newCurrentBead,
+    int? newCycleCount,
+  }) {
+    if (newCurrentZikrIndex != null) currentZikrIndex = newCurrentZikrIndex;
+    if (newCurrentZikrCount != null) currentZikrCount = newCurrentZikrCount;
+    if (newCurrentBead != null) currentBead = newCurrentBead;
+    if (newCycleCount != null) cycleCount = newCycleCount;
+    _saveCounter();
     notifyListeners();
   }
 
   restCount() {
     counter = 0;
+    currentZikrIndex = 0;
+    currentZikrCount = 0;
+    currentBead = 0;
+    cycleCount = 0;
+    _saveCounter();
     notifyListeners();
   }
 
   removeCount() {
     counter = 0;
-
+    currentZikrIndex = 0;
+    currentZikrCount = 0;
+    currentBead = 0;
+    cycleCount = 0;
+    _saveCounter();
     notifyListeners();
   }
 
@@ -341,7 +389,7 @@ Widget alertDefDialog(String number, String type) {
             Text(
               ' رائع لقد وصلت الي $number $type ',
               style:
-                  TextStyle(
+                  const TextStyle(
                   fontFamily: "cairo",fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ],

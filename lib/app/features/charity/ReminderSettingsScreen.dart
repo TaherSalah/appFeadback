@@ -261,7 +261,7 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title,    style: TextStyle(
+            Text(title,    style: const TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.w600)),
             Text(
               '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',

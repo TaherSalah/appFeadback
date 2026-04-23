@@ -71,7 +71,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             length: 2,
             child: StatefulBuilder(builder: (context, setStateDialog) {
               return AlertDialog(
-                title: Text('تخصيص التقويم',
+                title: const Text('تخصيص التقويم',
                        style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
                 contentPadding: EdgeInsets.zero,
@@ -85,7 +85,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         indicatorColor: _calendarThemeColor,
                         unselectedLabelColor: Colors.grey,
                         labelStyle:
-                            TextStyle(
+                            const TextStyle(
                   fontFamily: "cairo",fontWeight: FontWeight.bold),
                         tabs: const [
                           Tab(text: 'المظهر'),
@@ -101,7 +101,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               padding: EdgeInsets.all(16.w),
                               child: Column(
                                 children: [
-                                  Text('لون واجهة التقويم',
+                                  const Text('لون واجهة التقويم',
                                          style: TextStyle(
                           fontFamily: "cairo",
                                           fontWeight: FontWeight.bold)),
@@ -155,9 +155,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     }).toList(),
                                   ),
                                   SizedBox(height: 20.h),
-                                  Divider(),
+                                  const Divider(),
                                   SizedBox(height: 10.h),
-                                  Text('شكل التحديد',
+                                  const Text('شكل التحديد',
                                          style: TextStyle(
                           fontFamily: "cairo",
                                           fontWeight: FontWeight.bold)),
@@ -181,7 +181,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               padding: EdgeInsets.all(16.w),
                               child: Column(
                                 children: [
-                                  Text('حجم الخط',
+                                  const Text('حجم الخط',
                                          style: TextStyle(
                           fontFamily: "cairo",
                                           fontWeight: FontWeight.bold)),
@@ -199,13 +199,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     },
                                   ),
                                   Text('مقياس: ${(_fontScale * 100).toInt()}%',
-                                         style: TextStyle(
+                                         style: const TextStyle(
                           fontFamily: "cairo",
                                           color: Colors.grey)),
                                   SizedBox(height: 20.h),
-                                  Divider(),
+                                  const Divider(),
                                   SizedBox(height: 10.h),
-                                  Text('بداية الأسبوع',
+                                  const Text('بداية الأسبوع',
                                          style: TextStyle(
                           fontFamily: "cairo",
                                           fontWeight: FontWeight.bold)),
@@ -226,7 +226,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       await _calendarService
                                           .setStartOfWeek(saveVal);
                                     },
-                                    items: [
+                                    items: const [
                                       DropdownMenuItem(
                                         value: StartingDayOfWeek.saturday,
                                         child: Text('السبت (الافتراضي)',
@@ -249,7 +249,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   ),
                                   SizedBox(height: 20.h),
                                   CheckboxListTile(
-                                    title: Text('الأولوية للتقويم الهجري',
+                                    title: const Text('الأولوية للتقويم الهجري',
                                            style: TextStyle(
                           fontFamily: "cairo",)),
                                     value: _isHijriMode,
@@ -277,7 +277,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       Navigator.pop(context);
                       setState(() {});
                     },
-                    child: Text('إغلاق',    style: TextStyle(
+                    child: const Text('إغلاق',    style: TextStyle(
                           fontFamily: "cairo",)),
                   ),
                 ],
@@ -436,7 +436,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         color: _calendarThemeColor, // Dynamic
                         borderRadius: BorderRadius.circular(20.r),
                       ),
-                      child: Text(
+                      child: const Text(
                         'اليوم',
                            style: TextStyle(
                           fontFamily: "cairo",
@@ -587,7 +587,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     Center(
                       child: Padding(
                         padding: EdgeInsets.only(top: 40.h),
-                        child: Text(
+                        child: const Text(
                           'لا توجد مناسبات أو مهام في هذا اليوم',
                              style: TextStyle(
                           fontFamily: "cairo",color: Colors.grey),
@@ -597,7 +597,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   else
                     ..._selectedEvents
                         .map((event) => _buildEventItem(event))
-                        .toList(),
+                        ,
                 ],
               ),
             ),

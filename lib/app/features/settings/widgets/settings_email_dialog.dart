@@ -76,7 +76,7 @@ class _SettingsEmailDialogState extends State<SettingsEmailDialog> {
                         color: isDark ? Colors.white : Colors.black),
                     decoration: InputDecoration(
                       labelText: 'البريد الإلكتروني',
-                      labelStyle: TextStyle(
+                      labelStyle: const TextStyle(
                   fontFamily: "cairo",),
                       hintText: "example@mail.com",
                       hintStyle: TextStyle(

@@ -386,7 +386,7 @@ class _DailyChallengesScreenState extends State<DailyChallengesScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'تم!',
                   style: TextStyle(
                   fontFamily: "cairo",

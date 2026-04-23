@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:muslimdaily/app/core/extensions/extensions.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
+import '../../core/shard/exports/all_exports.dart';
+import '../../core/widgets/game_dialog.dart';
 import '../../core/shard/widgets/ui_animations.dart';
 import '../../core/utils/style/k_helper.dart';
 import 'logic/inheritance_logic.dart';
 import 'services/inheritance_pdf_service.dart';
+
 
 class InheritanceCalculatorView extends StatefulWidget {
   const InheritanceCalculatorView({super.key});
@@ -108,11 +113,35 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
   HeirsInput? _lastInput;
 
   void _calculate() {
+    double totalEstate = double.tryParse(_totalEstateController.text.replaceAll(',', '')) ?? 0.0;
+    double debts = double.tryParse(_debtsController.text.replaceAll(',', '')) ?? 0.0;
+
+    int totalHeirsSelected = _wives + (_hasHusband ? 1 : 0) + (_hasFather ? 1 : 0) + (_hasMother ? 1 : 0) +
+        _sons + _daughters + _sonsOfSons + _daughtersOfSons +
+        (_hasPaternalGrandfather ? 1 : 0) + (_hasMaternalGrandmother ? 1 : 0) + (_hasPaternalGrandmother ? 1 : 0) +
+        _fullBrothers + _fullSisters + _consanguineBrothers + _consanguineSisters +
+        _uterineBrothers + _uterineSisters + _nephewsFull + _nephewsConsanguine +
+        _paternalUnclesFull + _paternalUnclesConsanguine + _cousinsFull + _cousinsConsanguine +
+        _grandNephewsFull + _grandNephewsConsanguine + _grandCousinsFull + _grandCousinsConsanguine +
+        _paternalGreatUnclesFull + _paternalGreatUnclesConsanguine + _paternalGreatCousinsFull + _paternalGreatCousinsConsanguine;
+
+    if (totalEstate <= 0) {
+      KHelper.showErrorFlushBar(context, "الرجاء إدخال قيمة صحيحة لإجمالي التركة قبل الحساب.");
+      return;
+    }
+
+    if (totalHeirsSelected == 0) {
+      KHelper.showErrorFlushBar(context, "الرجاء تحديد وارث واحد على الأقل لحساب نصيبه.");
+      return;
+    }
+
+    if (debts >= totalEstate) {
+      KHelper.showWarningFlushBar(context, "إجمالي الديون يساوى أو يتجاوز التركة، لا يتبقى شيء للورثة.");
+    }
+
     final input = HeirsInput(
-      totalEstate:
-          double.tryParse(_totalEstateController.text.replaceAll(',', '')) ??
-              0.0,
-      debts: double.tryParse(_debtsController.text.replaceAll(',', '')) ?? 0.0,
+      totalEstate: totalEstate,
+      debts: debts,
       willFractions: _selectedWills.where((w) => w != "لا يوجد").toList(),
       heirsConsent: _heirsConsent,
       deceasedGender: _deceasedGender,
@@ -214,6 +243,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                 index: 0,
                 child: _buildSection(
                   title: "بيانات المتوفى والتركة",
+                  infoText: "أدخل إجمالي ما تركه المتوفى قبل خصم أي مصاريف، ثم أدخل الديون المتعلقة بالتركة أو بالمتوفى لاستخراجها قبل التقسيم.",
                   isDark: isDark,
                   children: [
                     _buildGenderToggle(isDark),
@@ -228,13 +258,19 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                     Divider(
                         height: 24.h,
                         color: KColors.primaryColor.withOpacity(0.1)),
-                    Text("الوصايا والمنح",
-                           style: TextStyle(
-                          fontFamily: "cairo",
-                            fontWeight: FontWeight.bold,
-                            fontSize:isTap?8.sp: 15.sp,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("الوصايا والمنح",
+                               style: TextStyle(
+                              fontFamily: "cairo",
+                                fontWeight: FontWeight.bold,
+                                fontSize: isTap ? 8.sp : 15.sp,
+                                color: KColors.primaryColor)),
+                        _buildInfoButton("الوصايا والمنح", "تنفذ الوصايا قبل تقسيم التركة بشرط ألا تتجاوز الثلث، إلا إذا وافق الورثة على الزيادة.", context),
+                      ],
+                    ),
 
-                            color: KColors.primaryColor)),
                     SizedBox(height: 12.h),
                     _buildWillDropdown("هل توجد وصية؟", 0),
                     _buildWillDropdown("وصية ثانية؟", 1),
@@ -255,6 +291,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                 index: 1,
                 child: _buildSection(
                   title: "مذهب التقسيم / القانون المتبع",
+                  infoText: "تختلف بعض قواعد التوريث (مثل ميراث الإخوة مع الجد والرد والعول) باختلاف المذاهب الفقهية أو القوانين الوضعية المختارة.",
                   isDark: isDark,
                   children: [
                     SizedBox(
@@ -293,6 +330,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                 index: 2,
                 child: _buildSection(
                   title: "الورثة الأساسيون",
+                  infoText: "الورثة الذين لهم علاقة مباشرة بوفاة المتوفى (الأصول والفروع والزوجين). هؤلاء هم أصحاب الفروض والعصبات الأقرب.",
                   isDark: isDark,
                   children: [
                     if (_deceasedGender == Gender.male)
@@ -321,6 +359,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                 index: 3,
                 child: _buildSection(
                   title: "أقارب آخرون (الحواشي والأجداد)",
+                  infoText: "يشمل هذا القسم الجد والجدة والإخوة وأبناءهم والأعمام وأبناءهم. هؤلاء قد يحجبون في حال وجود ورثة أقرب.",
                   isDark: isDark,
                   children: [
                     _buildCounterField("عدد أبناء الابن", _sonsOfSons,
@@ -342,91 +381,106 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                           _hasPaternalGrandmother,
                           (v) => setState(() => _hasPaternalGrandmother = v)),
                     ],
-                    ExpansionTile(
-                      title: Text("الإخوة والأعمام",
-                             style: TextStyle(
-                          fontFamily: "cairo",
-                              fontSize:isTap? 10.sp:14.sp, color: KColors.primaryColor)),
-                      tilePadding: EdgeInsets.zero,
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 16.h),
+
+              // 4.5 Brothers and Uncles
+              StaggeredItemAnimation(
+                index: 4,
+                child: _buildSection(
+                  title: "الإخوة والأعمام",
+                  infoText: "هذا القسم خاص بالحواشي من الإخوة والأخوات لأم، والأعمام وأبنائهم. يتم توريثهم بالتعصيب في الغالب ويُحجبون بالأصول الذكور أو الفروع المذكرة.",
+                  isDark: isDark,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                                child: Column(children: [
-                              _buildCounterField("أخ لأم", _uterineBrothers,
-                                  (v) => setState(() => _uterineBrothers = v)),
-                              _buildCounterField("ابن أخ شقيق", _nephewsFull,
-                                  (v) => setState(() => _nephewsFull = v)),
-                              _buildCounterField(
-                                  "ابن ابن أخ شقيق",
-                                  _grandNephewsFull,
-                                  (v) => setState(() => _grandNephewsFull = v)),
-                              _buildCounterField(
-                                  "عم شقيق",
-                                  _paternalUnclesFull,
-                                  (v) =>
-                                      setState(() => _paternalUnclesFull = v)),
-                              _buildCounterField("ابن عم شقيق", _cousinsFull,
-                                  (v) => setState(() => _cousinsFull = v)),
-                              _buildCounterField(
-                                  "ابن ابن عم شقيق",
-                                  _grandCousinsFull,
-                                  (v) => setState(() => _grandCousinsFull = v)),
-                              _buildCounterField(
-                                  "عم الأب (شقيق)",
-                                  _paternalGreatUnclesFull,
-                                  (v) => setState(
-                                      () => _paternalGreatUnclesFull = v)),
-                              _buildCounterField(
-                                  "ابن عم الأب (شقيق)",
-                                  _paternalGreatCousinsFull,
-                                  (v) => setState(
-                                      () => _paternalGreatCousinsFull = v)),
-                            ])),
-                            SizedBox(width: 8.w),
-                            Expanded(
-                                child: Column(children: [
-                              _buildCounterField("أخت لأم", _uterineSisters,
-                                  (v) => setState(() => _uterineSisters = v)),
-                              _buildCounterField(
-                                  "ابن أخ لأب",
-                                  _nephewsConsanguine,
-                                  (v) =>
-                                      setState(() => _nephewsConsanguine = v)),
-                              _buildCounterField(
-                                  "ابن ابن أخ لأب",
-                                  _grandNephewsConsanguine,
-                                  (v) => setState(
-                                      () => _grandNephewsConsanguine = v)),
-                              _buildCounterField(
-                                  "عم لأب",
-                                  _paternalUnclesConsanguine,
-                                  (v) => setState(
-                                      () => _paternalUnclesConsanguine = v)),
-                              _buildCounterField(
-                                  "ابن عم لأب",
-                                  _cousinsConsanguine,
-                                  (v) =>
-                                      setState(() => _cousinsConsanguine = v)),
-                              _buildCounterField(
-                                  "ابن ابن عم لأب",
-                                  _grandCousinsConsanguine,
-                                  (v) => setState(
-                                      () => _grandCousinsConsanguine = v)),
-                              _buildCounterField(
-                                  "عم الأب (لأب)",
-                                  _paternalGreatUnclesConsanguine,
-                                  (v) => setState(() =>
-                                      _paternalGreatUnclesConsanguine = v)),
-                              _buildCounterField(
-                                  "ابن عم الأب (من الأب)",
-                                  _paternalGreatCousinsConsanguine,
-                                  (v) => setState(() =>
-                                      _paternalGreatCousinsConsanguine = v)),
-                            ])),
-                          ],
-                        ),
+                        Expanded(
+                            child: Column(children: [
+                          _buildCounterField("أخ شقيق", _fullBrothers,
+                              (v) => setState(() => _fullBrothers = v)),
+                          _buildCounterField("أخت شقيقة", _fullSisters,
+                              (v) => setState(() => _fullSisters = v)),
+                          _buildCounterField("أخ لأم", _uterineBrothers,
+                              (v) => setState(() => _uterineBrothers = v)),
+                          _buildCounterField("ابن أخ شقيق", _nephewsFull,
+
+                              (v) => setState(() => _nephewsFull = v)),
+                          _buildCounterField(
+                              "ابن ابن أخ شقيق",
+                              _grandNephewsFull,
+                              (v) => setState(() => _grandNephewsFull = v)),
+                          _buildCounterField(
+                              "عم شقيق",
+                              _paternalUnclesFull,
+                              (v) =>
+                                  setState(() => _paternalUnclesFull = v)),
+                          _buildCounterField("ابن عم شقيق", _cousinsFull,
+                              (v) => setState(() => _cousinsFull = v)),
+                          _buildCounterField(
+                              "ابن ابن عم شقيق",
+                              _grandCousinsFull,
+                              (v) => setState(() => _grandCousinsFull = v)),
+                          _buildCounterField(
+                              "عم الأب (شقيق)",
+                              _paternalGreatUnclesFull,
+                              (v) => setState(
+                                  () => _paternalGreatUnclesFull = v)),
+                          _buildCounterField(
+                              "ابن عم الأب (شقيق)",
+                              _paternalGreatCousinsFull,
+                              (v) => setState(
+                                  () => _paternalGreatCousinsFull = v)),
+                        ])),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                            child: Column(children: [
+                          _buildCounterField("أخ لأب", _consanguineBrothers,
+                              (v) => setState(() => _consanguineBrothers = v)),
+                          _buildCounterField("أخت لأب", _consanguineSisters,
+                              (v) => setState(() => _consanguineSisters = v)),
+                          _buildCounterField("أخت لأم", _uterineSisters,
+                              (v) => setState(() => _uterineSisters = v)),
+                          _buildCounterField(
+                              "ابن أخ لأب",
+                              _nephewsConsanguine,
+
+                              (v) =>
+                                  setState(() => _nephewsConsanguine = v)),
+                          _buildCounterField(
+                              "ابن ابن أخ لأب",
+                              _grandNephewsConsanguine,
+                              (v) => setState(
+                                  () => _grandNephewsConsanguine = v)),
+                          _buildCounterField(
+                              "عم لأب",
+                              _paternalUnclesConsanguine,
+                              (v) => setState(
+                                  () => _paternalUnclesConsanguine = v)),
+                          _buildCounterField(
+                              "ابن عم لأب",
+                              _cousinsConsanguine,
+                              (v) =>
+                                  setState(() => _cousinsConsanguine = v)),
+                          _buildCounterField(
+                              "ابن ابن عم لأب",
+                              _grandCousinsConsanguine,
+                              (v) => setState(
+                                  () => _grandCousinsConsanguine = v)),
+                          _buildCounterField(
+                              "عم الأب (لأب)",
+                              _paternalGreatUnclesConsanguine,
+                              (v) => setState(() =>
+                                  _paternalGreatUnclesConsanguine = v)),
+                          _buildCounterField(
+                              "ابن عم الأب (من الأب)",
+                              _paternalGreatCousinsConsanguine,
+                              (v) => setState(() =>
+                                  _paternalGreatCousinsConsanguine = v)),
+                        ])),
                       ],
                     ),
                   ],
@@ -437,9 +491,11 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
 
               // 5. Special Cases
               StaggeredItemAnimation(
-                index: 4,
+                index: 5,
+
                 child: _buildSection(
                   title: "حالات ومسائل خاصة",
+                  infoText: "حالات فرعية تؤثر على الحساب مثل المناسخات (وفاة وارث قبل التقسيم) أو الوصية الواجبة (لأحفاد الابن المتوفى).",
                   isDark: isDark,
                   children: [
                     _buildCheckboxField(
@@ -525,7 +581,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                           _results = [];
                         });
                       },
-                      icon:  Icon(Icons.refresh, size: isTap?20:18),
+                      icon:  Icon(Icons.refresh, size: isTap?20:18, color: Colors.red.shade700),
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         side: BorderSide(color: Colors.red.withOpacity(0.5)),
@@ -597,10 +653,43 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
     );
   }
 
+  Widget _buildInfoButton(String title, String infoText, BuildContext context) {
+    bool isDark = context.isDark;
+    bool isTap = context.isTab;
+    
+    return IconButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (ctx) => GameDialog(
+            title: "توضيح وشرح",
+            subtitle: '$title\n\n$infoText',
+            icon: Icon(Icons.lightbulb_rounded, color: Colors.white, size: 32.sp),
+            actions: [
+              GameDialogAction(
+                label: "فهمت ذلك",
+                onPressed: () => Navigator.pop(ctx),
+                icon: Icons.check_circle_outline,
+                gradient: LinearGradient(
+                  colors: [KColors.primaryColor, KColors.primaryColor.withOpacity(0.8)],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      icon: Icon(Icons.info_outline,
+          color: KColors.primaryColor, size: 20.sp),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+    );
+  }
+
   Widget _buildSection(
       {required String title,
       required List<Widget> children,
-      required bool isDark}) {
+      required bool isDark,
+      String? infoText}) {
     final bool isTap = context.isTab;
 
     return Container(
@@ -621,19 +710,27 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-                 style: TextStyle(
-                          fontFamily: "cairo",
-                  fontWeight: FontWeight.bold,
-                  fontSize:isTap?9.5.sp: 16.sp,
-
-                  color: KColors.primaryColor)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title,
+                  style: TextStyle(
+                      fontFamily: "cairo",
+                      fontWeight: FontWeight.bold,
+                      fontSize: isTap ? 9.5.sp : 16.sp,
+                      color: KColors.primaryColor)),
+              if (infoText != null)
+                _buildInfoButton(title, infoText, context),
+            ],
+          ),
           Divider(height: 20.h, color: KColors.primaryColor.withOpacity(0.05)),
           ...children,
         ],
       ),
     );
   }
+
+
 
   Widget _buildGenderToggle(bool isDark) {
     final bool isTap = context.isTab;
@@ -698,8 +795,9 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-             style: const TextStyle(
-                          fontFamily: "cairo",fontWeight: FontWeight.bold),
+          inputFormatters: [ThousandsSeparatorInputFormatter()],
+          style: const TextStyle(
+              fontFamily: "cairo", fontWeight: FontWeight.bold),
           decoration: InputDecoration(
             filled: true,
             fillColor:
@@ -712,6 +810,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                 EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           ),
         ),
+
       ],
     );
   }
@@ -784,7 +883,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                style: TextStyle(
                           fontFamily: "cairo",
                 fontWeight: FontWeight.bold,
-                fontSize: 18.sp,
+                fontSize: context.isTab?10.sp :18.sp,
                 color: KColors.primaryColor)),
         SizedBox(height: 12.h),
         ..._results.map((res) => _buildResultCard(res, isDark)),
@@ -821,7 +920,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                    style: TextStyle(
                           fontFamily: "cairo",
                     fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                       fontSize: context.isTab?10.sp :16.sp,
                     color: Colors.white)),
           ),
         ),
@@ -869,24 +968,30 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(share.name,
-                     style: TextStyle(
-                          fontFamily: "cairo",
-                      fontWeight: FontWeight.bold, fontSize: 16.sp)),
-              Text("${intl.NumberFormat("#,##0.##").format(share.amount)} ج.م",
-                     style: TextStyle(
-                          fontFamily: "cairo",
+              Expanded(
+                child: Text(share.name,
+                    style: TextStyle(
+                        fontFamily: "cairo",
+                        fontWeight: FontWeight.bold,
+                        fontSize:context.isTab?9.sp :16.sp)),
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                  "${intl.NumberFormat("#,##0.##").format(share.amount)} ج.م",
+                  style: TextStyle(
+                      fontFamily: "cairo",
                       fontWeight: FontWeight.bold,
                       color: KColors.primaryColor,
-                      fontSize: 16.sp)),
+                      fontSize: context.isTab?9.sp :16.sp)),
             ],
           ),
           SizedBox(height: 6.h),
           Text(share.description,
                  style: TextStyle(
                           fontFamily: "cairo",
-                  fontSize: 12.sp,
+                  fontSize: context.isTab?9.sp :12.sp,
                   color: isDark ? Colors.white60 : Colors.black54)),
         ],
       ),
@@ -945,7 +1050,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
              style: TextStyle(
                           fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
+                 fontSize: context.isTab?10.sp :16.sp,
               color: KColors.primaryColor),
         ),
         SizedBox(height: 12.h),
@@ -981,21 +1086,21 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                             textAlign: TextAlign.center,
                                style: TextStyle(
                           fontFamily: "cairo",
-                                fontWeight: FontWeight.bold, fontSize: 13.sp))),
+                                fontWeight: FontWeight.bold, fontSize:context.isTab?9.sp :13.sp))),
                     Expanded(
                         flex: 1,
                         child: Text("نصيبه",
                             textAlign: TextAlign.center,
                                style: TextStyle(
                           fontFamily: "cairo",
-                                fontWeight: FontWeight.bold, fontSize: 13.sp))),
+                                fontWeight: FontWeight.bold,  fontSize:context.isTab?9.sp :13.sp))),
                     Expanded(
                         flex: 3,
                         child: Text("التوضيح",
                             textAlign: TextAlign.center,
                                style: TextStyle(
                           fontFamily: "cairo",
-                                fontWeight: FontWeight.bold, fontSize: 13.sp))),
+                                fontWeight: FontWeight.bold,  fontSize:context.isTab?9.sp :13.sp))),
                   ],
                 ),
               ),
@@ -1026,7 +1131,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                             textAlign: TextAlign.center,
                                style: TextStyle(
                           fontFamily: "cairo",
-                                fontWeight: FontWeight.w600, fontSize: 12.sp)),
+                                fontWeight: FontWeight.w600, fontSize:context.isTab?8.5.sp :12.sp)),
                       ),
                       Expanded(
                         flex: 1,
@@ -1096,7 +1201,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
              style: TextStyle(
                           fontFamily: "cairo",
               fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
+                 fontSize: context.isTab?10.sp :16.sp,
               color: KColors.primaryColor),
         ),
         SizedBox(height: 12.h),
@@ -1206,7 +1311,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                   "إجمالي ما تم تقسيمه على الورثة = ",
                      style: TextStyle(
                           fontFamily: "cairo",
-                      fontWeight: FontWeight.bold, fontSize: 13.sp),
+                      fontWeight: FontWeight.bold, fontSize:context.isTab?9.sp :13.sp ),
                 ),
                 Text(
                   "${intl.NumberFormat("#,##0").format(_results.fold(0.0, (sum, item) => sum + item.amount))} ج.م",
@@ -1228,7 +1333,7 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
     return Text(text,
         textAlign: TextAlign.center,
            style: TextStyle(
-                          fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize: 10.sp));
+                          fontFamily: "cairo",fontWeight: FontWeight.bold, fontSize:context.isTab?8.5.sp :10.sp));
   }
 
   Widget _tableCell(String text,
@@ -1237,9 +1342,35 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
         textAlign: TextAlign.center,
            style: TextStyle(
                           fontFamily: "cairo",
-          fontSize: 11.sp,
+          fontSize: context.isTab?8.5.sp :11.sp,
           fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
           color: isPrimary ? KColors.primaryColor : null,
         ));
+  }
+}
+
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) {
+      return newValue.copyWith(text: '');
+    }
+
+    // Handle special characters
+    String text = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (text.isEmpty) {
+      return newValue.copyWith(text: '');
+    }
+
+    final double val = double.parse(text);
+    final formatter = intl.NumberFormat("#,###");
+    String newText = formatter.format(val);
+
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
   }
 }

@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'hazb_nawawi_controller.dart';
 import 'widgets/hazb_nawawi_fab.dart';

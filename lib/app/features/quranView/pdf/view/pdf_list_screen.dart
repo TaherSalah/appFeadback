@@ -171,7 +171,7 @@ class _PdfListScreenState extends State<PdfListScreen> {
                         const Icon(Icons.library_books_outlined,
                             size: 80, color: Colors.grey),
                         const SizedBox(height: 16),
-                        Text(
+                        const Text(
                           'المكتبة فارغة حالياً',
                           style: TextStyle(
                   fontFamily: "cairo",
@@ -231,8 +231,9 @@ class _PdfListScreenState extends State<PdfListScreen> {
                                             fit: BoxFit.cover,
                                             loadingBuilder: (context, child,
                                                 loadingProgress) {
-                                              if (loadingProgress == null)
+                                              if (loadingProgress == null) {
                                                 return child;
+                                              }
                                               return const Center(
                                                 child:
                                                     CircularProgressIndicator(
@@ -265,7 +266,7 @@ class _PdfListScreenState extends State<PdfListScreen> {
                                     children: [
                                       Text(
                                         book.title,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                   fontFamily: "cairo",
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13,

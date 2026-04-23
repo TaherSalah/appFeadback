@@ -275,7 +275,7 @@ class BookmarkCard extends StatelessWidget {
                     ),
                   ),
                 );
-              }).toList(),
+              }),
             ],
           ),
         ),
@@ -362,14 +362,14 @@ class BookmarkCard extends StatelessWidget {
                           width: 1.2,
                         ),
                       ),
-                      child: Row(
+                      child: const Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.info_outline,
                             size: 18,
                             color: Colors.red,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               'سيتم حذف الحديث نهائيًا من قائمتك.',
@@ -426,7 +426,7 @@ class BookmarkCard extends StatelessWidget {
                               onDelete();
                             },
                             icon: const Icon(Icons.delete_outline),
-                            label: Text(
+                            label: const Text(
                               'حذف',
                               style: TextStyle(
                   fontFamily: "cairo",),

@@ -101,11 +101,11 @@ class _DailyStreakWidgetState extends State<DailyStreakWidget> {
               const SizedBox(width: 10),
               Text(
                 'لقد حصلت على $reward نجمة 🔥',
-                   style: TextStyle(
+                   style: const TextStyle(
                           fontFamily: "cairo",
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFFF59E0B),
+                  color: Color(0xFFF59E0B),
                 ),
               ),
             ],

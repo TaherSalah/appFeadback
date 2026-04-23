@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/core/cache/storage.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'app/core/cubit/centralized_cubit.dart';
+
 import 'app/core/shard/exports/all_exports.dart';
 import 'app/core/utils/app_theme/app_theme.dart';
 import 'app/core/utils/constent/router.dart';
@@ -15,14 +16,14 @@ import 'main.dart';
 
 // import 'main.dart';
 
-class MashkahApp extends StatefulWidget {
-  const MashkahApp({super.key});
+class RafiqMuslimApp extends StatefulWidget {
+  const RafiqMuslimApp({super.key});
 
   @override
-  State<MashkahApp> createState() => _MashkahAppState();
+  State<RafiqMuslimApp> createState() => _RafiqMuslimAppState();
 }
 
-class _MashkahAppState extends State<MashkahApp> {
+class _RafiqMuslimAppState extends State<RafiqMuslimApp> {
   // late final RateService rateService;
 
   @override
@@ -151,7 +152,18 @@ class _MashkahAppState extends State<MashkahApp> {
                           primaryColor: _hexToColor(
                               CentralizedCubit.dynamicPrimaryColor)),
                       themeMode: cubit.themeMode(),
+                      locale: const Locale('ar', 'EG'),
+                      supportedLocales: const [
+                        Locale('ar', 'EG'),
+                        Locale('en', 'US'),
+                      ],
+                      localizationsDelegates: const [
+                        GlobalMaterialLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                      ],
                       builder: (context, child) {
+
                         return MediaQuery(
                           data: MediaQuery.of(context).copyWith(
                             textScaler: MediaQuery.textScalerOf(context).clamp(

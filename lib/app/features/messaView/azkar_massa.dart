@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
-import 'package:muslimdaily/app/core/controller/azkar_controller.dart';
 import '../../core/shard/exports/all_exports.dart';
 import 'azkar_massa_controller.dart';
 import 'widgets/azkar_massa_fab.dart';

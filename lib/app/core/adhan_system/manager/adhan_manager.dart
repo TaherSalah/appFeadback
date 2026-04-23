@@ -62,7 +62,6 @@ class AdhanManager {
       final date = now.add(Duration(days: day));
       // We fetch from the controller logic which includes offsets, cache, etc.
       Map<String, DateTime>? times = await ctrl.getCalculatedTimesForDate(date);
-      if (times == null) continue;
 
       int prayerIndex = 0;
       for (final entry in times.entries) {

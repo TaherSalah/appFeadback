@@ -183,8 +183,9 @@ class MonthlyPrayerCache {
       final storedDate = _storage.read(MONTHLY_CACHE_DATE);
       final storedLocation = _storage.read(MONTHLY_CACHE_LOCATION);
 
-      if (storedData == null || storedDate == null || storedLocation == null)
+      if (storedData == null || storedDate == null || storedLocation == null) {
         return false;
+      }
       if (!_isLocationValid(storedLocation, currentLocation)) return false;
 
       final monthlyData = MonthlyPrayerData.fromJson(

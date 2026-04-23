@@ -27,15 +27,31 @@ class InheritancePdfService {
 
     pdf.addPage(
       pw.MultiPage(
-        theme: pw.ThemeData.withFont(base: ttf, bold: ttfBold),
-        pageFormat: PdfPageFormat.a4,
-        textDirection: pw.TextDirection.rtl,
-        margin: const pw.EdgeInsets.all(32),
+        pageTheme: pw.PageTheme(
+          theme: pw.ThemeData.withFont(base: ttf, bold: ttfBold),
+          pageFormat: PdfPageFormat.a4,
+          textDirection: pw.TextDirection.rtl,
+          margin: const pw.EdgeInsets.all(32),
+          buildBackground: (context) {
+            return pw.FullPage(
+              ignoreMargins: true,
+              child: pw.Center(
+                child: pw.Opacity(
+                  opacity: 0.15, // زيادة الوضوح لتكون 15% بدلاً من 5%
+                  child: pw.Image(logoImage, width: 450), // تكبير الحجم قليلاً وبدون دوران
+                ),
+              ),
+            );
+          },
+        ),
         header: (context) => _buildHeader(ttfBold, logoImage),
+
         footer: (context) => _buildFooter(ttf),
         build: (context) => [
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 10),
           _buildSummarySection(input, netEstate),
+          pw.SizedBox(height: 15),
+          _buildHeirsInputDetails(input),
           pw.SizedBox(height: 20),
           _buildMainResultsTable(results),
           pw.SizedBox(height: 25),
@@ -43,6 +59,7 @@ class InheritancePdfService {
           pw.SizedBox(height: 20),
           _buildFinalSummary(results),
         ],
+
       ),
     );
 
@@ -219,13 +236,99 @@ class InheritancePdfService {
     );
   }
 
+  static pw.Widget _buildHeirsInputDetails(HeirsInput input) {
+    final List<String> details = [];
+
+    // Basic Info
+    details.add(
+        "نوع المتوفى: ${input.deceasedGender == Gender.male ? "ذكر" : "أنثى"}");
+
+    // Heirs
+    if (input.wives > 0) details.add("عدد الزوجات: ${input.wives}");
+    if (input.hasHusband) details.add("الزوج موجود");
+    if (input.hasFather) details.add("الأب موجود");
+    if (input.hasMother) details.add("الأم موجودة");
+    if (input.sons > 0) details.add("عدد الأبناء: ${input.sons}");
+    if (input.daughters > 0) details.add("عدد البنات: ${input.daughters}");
+
+    if (input.sonsOfSons > 0) details.add("أبناء الابن: ${input.sonsOfSons}");
+    if (input.daughtersOfSons > 0)
+      details.add("بنات الابن: ${input.daughtersOfSons}");
+    if (input.hasPaternalGrandfather) details.add("الجد لأب موجود");
+    if (input.hasMaternalGrandmother) details.add("الجدة لأم موجودة");
+    if (input.hasPaternalGrandmother) details.add("الجدة لأب موجودة");
+
+    if (input.fullBrothers > 0) details.add("الإخوة الأشقاء: ${input.fullBrothers}");
+    if (input.fullSisters > 0)
+      details.add("الأخوات الشقيقات: ${input.fullSisters}");
+    if (input.consanguineBrothers > 0)
+      details.add("الإخوة لأب: ${input.consanguineBrothers}");
+    if (input.consanguineSisters > 0)
+      details.add("الأخوات لأب: ${input.consanguineSisters}");
+    if (input.uterineBrothers > 0)
+      details.add("الإخوة لأم: ${input.uterineBrothers}");
+    if (input.uterineSisters > 0)
+      details.add("الأخوات لأم: ${input.uterineSisters}");
+
+    // Extended Heirs (only if count > 0)
+    if (input.nephewsFull > 0) details.add("أبناء أخ شقيق: ${input.nephewsFull}");
+    if (input.nephewsConsanguine > 0)
+      details.add("أبناء أخ لأب: ${input.nephewsConsanguine}");
+    if (input.paternalUnclesFull > 0) details.add("أعمام أشقاء: ${input.paternalUnclesFull}");
+    if (input.paternalUnclesConsanguine > 0)
+      details.add("أعمام لأب: ${input.paternalUnclesConsanguine}");
+    if (input.cousinsFull > 0) details.add("أبناء عم شقيق: ${input.cousinsFull}");
+    if (input.cousinsConsanguine > 0)
+      details.add("أبناء عم لأب: ${input.cousinsConsanguine}");
+
+    // Wills
+    if (input.willFractions.isNotEmpty) {
+      details.add("الوصية: ${input.willFractions.join(" + ")}");
+      if (input.heirsConsent) details.add("موافقة الورثة على الزيادة: نعم");
+    }
+
+    if (input.hasObligatoryWill) details.add("توجد وصية واجبة");
+
+    return pw.Container(
+      width: double.infinity,
+      padding: const pw.EdgeInsets.all(12),
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(color: PdfColors.grey300),
+        borderRadius: pw.BorderRadius.circular(8),
+      ),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text("تفاصيل الورثة والمُدخلات:",
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13)),
+          pw.SizedBox(height: 8),
+          pw.Wrap(
+            spacing: 15,
+            runSpacing: 8,
+            children: details
+                .map((d) => pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: pw.BoxDecoration(
+                        color: PdfColors.grey50,
+                        borderRadius: pw.BorderRadius.circular(4),
+                      ),
+                      child: pw.Text(d, style: const pw.TextStyle(fontSize: 10)),
+                    ))
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
   static pw.Widget _buildFooter(pw.Font font) {
     return pw.Column(
       children: [
         pw.Divider(color: PdfColors.grey300),
         pw.SizedBox(height: 5),
         pw.Text(
-          "تقبل الله منكم صالح الأعمال. صادر من تطبيق رفيق المسلم.",
+          "تنويه هام: هذه النتائج استرشادية، ويُنصح بالرجوع إلى المختصين ولجان الفتوى أو المحاكم المختصة لاعتماد التقسيم النهائي.\nتقبل الله منكم صالح الأعمال. صادر من تطبيق رفيق المسلم اليومي.",
           style:
               pw.TextStyle(font: font, fontSize: 10, color: PdfColors.grey600),
           textAlign: pw.TextAlign.center,

@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/material.dart'; // Added this import as Colors and Icons are used.
-import 'dart:convert';
+// Added this import as Colors and Icons are used.
 
 import '../../../../core/localization/localization_manager.dart';
-import '../../../../core/cubit/centralized_cubit.dart';
 import '../../../../core/shard/exports/all_exports.dart';
 import '../../../../core/utils/constent/router.dart';
 import '../../../../core/utils/style/app_theme_colors.dart';
@@ -15,7 +13,6 @@ import '../../../../core/widgets/custom_divider_widget.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 import '../../../../core/widgets/head_title_item_builder.dart';
 import '../../../../core/widgets/image_widget.dart';
-import '../../../shareCard/PremiumShareCard.dart';
 import '../../hadith_details_view.dart';
 import '../controller/hadith_details_bloc.dart';
 import '../controller/hadith_details_state.dart';

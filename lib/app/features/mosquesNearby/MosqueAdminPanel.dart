@@ -62,22 +62,22 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("تأكيد الحذف",
+        title: const Text("تأكيد الحذف",
                style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
         content: Text("هل أنت متأكد من حذف ${mosque.name}؟",
-               style: TextStyle(
+               style: const TextStyle(
                           fontFamily: "cairo",)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text("إلغاء",    style: TextStyle(
+            child: const Text("إلغاء",    style: TextStyle(
                           fontFamily: "cairo",)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(context, true),
-            child: Text("حذف",    style: TextStyle(
+            child: const Text("حذف",    style: TextStyle(
                           fontFamily: "cairo",color: Colors.white)),
           ),
         ],
@@ -102,7 +102,7 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("تعديل المسجد",
+        title: const Text("تعديل المسجد",
                style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
         content: Column(
@@ -130,7 +130,7 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("إلغاء",    style: TextStyle(
+            child: const Text("إلغاء",    style: TextStyle(
                           fontFamily: "cairo",)),
           ),
           ElevatedButton(
@@ -148,7 +148,7 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
                 KHelper.showError(message: "فشل التحديث");
               }
             },
-            child: Text("حفظ",    style: TextStyle(
+            child: const Text("حفظ",    style: TextStyle(
                           fontFamily: "cairo",)),
           ),
         ],
@@ -160,7 +160,7 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("إدارة المساجد",
+        title: const Text("إدارة المساجد",
                style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold)),
         centerTitle: true,
@@ -271,7 +271,7 @@ class _MosqueAdminPanelState extends State<MosqueAdminPanel> {
                                     SizedBox(height: 4.h),
                                     Row(
                                       children: [
-                                        Icon(Icons.phone_android,
+                                        const Icon(Icons.phone_android,
                                             size: 12, color: Colors.grey),
                                         SizedBox(width: 4.w),
                                         Text(

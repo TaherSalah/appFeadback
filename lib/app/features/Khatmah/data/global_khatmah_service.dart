@@ -19,7 +19,7 @@ class GlobalKhatmahService {
           .order('created_at', ascending: false)
           .limit(10);
       
-      if (response != null && response is List) {
+      if (response is List) {
         return List<Map<String, dynamic>>.from(response);
       }
     } catch (e) {
@@ -37,7 +37,7 @@ class GlobalKhatmahService {
           .eq('campaign_id', campaignId)
           .order('item_index', ascending: true);
       
-      if (response != null && response is List) {
+      if (response is List) {
         return List<Map<String, dynamic>>.from(response);
       }
     } catch (e) {

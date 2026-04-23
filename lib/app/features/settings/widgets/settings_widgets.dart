@@ -105,7 +105,7 @@ class SettingsListTile extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         subtitle!,
-                        style: TextStyle(
+                        style: const TextStyle(
                   fontFamily: "cairo",
                           fontSize: 11,
                           color: Colors.grey,
@@ -202,7 +202,7 @@ class SettingsDropdownTile<T> extends StatelessWidget {
                 if (subtitle != null)
                   Text(
                     subtitle!,
-                    style: TextStyle(
+                    style: const TextStyle(
                   fontFamily: "cairo",fontSize: 12, color: Colors.grey),
                   ),
               ],
@@ -294,7 +294,7 @@ class SettingsSwitchTile extends StatelessWidget {
                 if (subtitle != null)
                   Text(
                     subtitle!,
-                    style: TextStyle(
+                    style: const TextStyle(
                   fontFamily: "cairo",
                       fontSize: 11,
                       color: Colors.grey,

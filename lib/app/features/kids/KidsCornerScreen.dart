@@ -1010,7 +1010,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           .length /
                       _levels.length,
                   backgroundColor: Colors.blue.withOpacity(0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
                   minHeight: 10,
                 ),
               ),
@@ -1256,7 +1256,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           ),
                           trailing: Text(
                             "+${task['points']} ⭐",
-                            style: TextStyle(
+                            style: const TextStyle(
                   fontFamily: "cairo",
                                 color: Colors.amber,
                                 fontWeight: FontWeight.bold),
@@ -1455,7 +1455,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
           child: TextButton.icon(
             onPressed: _resetProgress,
             icon: const Icon(Icons.refresh, color: Colors.red),
-            label: Text(
+            label: const Text(
               'تصفير كل التقدم',
               style: TextStyle(
                   fontFamily: "cairo",
@@ -1552,7 +1552,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      style: TextStyle(
+                      style: const TextStyle(
                   fontFamily: "cairo",),
                     ),
                     const SizedBox(height: 20),

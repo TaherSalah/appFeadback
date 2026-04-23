@@ -341,7 +341,7 @@ class NotificationTestView extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                   content: Text('تم إرسال تنبيه: $label',
-                      style: TextStyle(
+                      style: const TextStyle(
                   fontFamily: "cairo",))),
             );
           }
@@ -354,7 +354,7 @@ class NotificationTestView extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: "cairo",
                     fontSize: 14, fontWeight: FontWeight.w600),
               ),

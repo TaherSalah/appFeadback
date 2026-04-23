@@ -4,6 +4,8 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
+import '../../../core/widgets/game_dialog.dart';
 import 'base_flame_game.dart';
 import 'kids_points_service.dart';
 
@@ -52,233 +54,73 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
               overlayBuilderMap: {
                 'GameOver': (context, game) {
                   _saveScore();
-                  return Container(
-                    color: Colors.black54, // Dim background
-                    child: Center(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container(
-                          constraints: BoxConstraints(maxWidth: 400.w),
-                          padding: EdgeInsets.all(24.r),
-                          margin: EdgeInsets.symmetric(horizontal: 24.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.95),
-                            borderRadius: BorderRadius.circular(24.r),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black26, blurRadius: 15, spreadRadius: 2, offset: const Offset(0, 5))
-                            ]
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(16.r),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange[50],
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Text('🏁', style: TextStyle(fontSize: 40.sp)),
-                              ),
-                              SizedBox(height: 16.h),
-                              Text(
-                                '! انتهت اللعبة',
-                                style: TextStyle(
-                                  fontFamily: "cairo",
-                                  fontSize: 26.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 8.h),
-                               Container(
-                                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-                                 decoration: BoxDecoration(
-                                   color: Colors.amber[50],
-                                   borderRadius: BorderRadius.circular(15.r),
-                                   border: Border.all(color: Colors.amber[200]!)
-                                 ),
-                                 child: Column(
-                                   children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.star_rounded, color: Colors.amber[700], size: 28.sp),
-                                          SizedBox(width: 8.w),
-                                          Text(
-                                            '${widget.game.score}',
-                                            style: TextStyle(
-                                              fontFamily: "cairo",
-                                              fontSize: 24.sp,
-                                              color: Colors.amber[800],
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      if (widget.game.isNewHighScore) ...[
-                                        SizedBox(height: 4.h),
-                                        Text(
-                                          'رقم قياسي جديد! 🎉',
-                                          style: TextStyle(
-                                            fontFamily: "cairo",
-                                            fontSize: 14.sp,
-                                            color: Colors.green[700],
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ] else ...[
-                                        SizedBox(height: 4.h),
-                                        Text(
-                                          'أعلى نتيجة: ${widget.game.highScore}',
-                                          style: TextStyle(
-                                            fontFamily: "cairo",
-                                            fontSize: 14.sp,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                      ]
-                                   ],
-                                 ),
-                               ),
-                              SizedBox(height: 32.h),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        _hasSaved = false; // Reset for new session
-                                        widget.game.restart();
-                                        widget.game.overlays.remove('GameOver');
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF4CAF50),
-                                        foregroundColor: Colors.white,
-                                        elevation: 0,
-                                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15.r),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        'لعب مجدداً',
-                                        style: TextStyle(
-                                          fontFamily: "cairo",
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 12.w),
-                                  Expanded(
-                                    child: OutlinedButton(
-                                      onPressed: () {
-                                         _saveScore();
-                                         Navigator.pop(context);
-                                      },
-                                      style: OutlinedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                                        side: BorderSide(color: Colors.grey[300]!, width: 2),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15.r),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        'خروج',
-                                        style: TextStyle(
-                                          fontFamily: "cairo",
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[700],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                  return GameDialog(
+                    title: 'انتهت اللعبة!',
+                    subtitle: widget.game.isNewHighScore 
+                      ? 'رقم قياسي جديد: ${widget.game.score} 🎉' 
+                      : 'نتيجتك: ${widget.game.score}',
+                    icon: Text('🏁', style: TextStyle(fontSize: 32.sp)),
+                    actions: [
+                      GameDialogAction(
+                        label: 'لعب مجدداً',
+                        icon: Icons.replay_rounded,
+                        gradient: const LinearGradient(colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)]),
+                        onPressed: () {
+                          _hasSaved = false;
+                          widget.game.restart();
+                          widget.game.overlays.remove('GameOver');
+                        },
                       ),
-                    ),
+                      GameDialogAction(
+                        label: 'خروج',
+                        icon: Icons.exit_to_app_rounded,
+                        backgroundColor: Colors.grey.shade200,
+                        textColor: Colors.grey.shade700,
+                        onPressed: () {
+                          _saveScore();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
                   );
                 },
+
                 'Pause': (context, game) {
-                  return Container(
-                    color: Colors.black54,
-                    child: Center(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container(
-                          constraints: BoxConstraints(maxWidth: 400.w),
-                          padding: EdgeInsets.all(24.r),
-                          margin: EdgeInsets.symmetric(horizontal: 24.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.95),
-                            borderRadius: BorderRadius.circular(24.r),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black26, blurRadius: 15, spreadRadius: 2, offset: const Offset(0, 5))
-                            ]
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'إيقاف مؤقت',
-                                style: TextStyle(
-                                  fontFamily: "cairo",
-                                  fontSize: 26.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 32.h),
-                              ElevatedButton(
-                                onPressed: () {
-                                  widget.game.resumeEngine();
-                                  widget.game.overlays.remove('Pause');
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF4CAF50),
-                                  foregroundColor: Colors.white,
-                                  minimumSize: Size(double.infinity, 50.h),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-                                ),
-                                child: Text('استكمال', style: TextStyle(fontFamily: "cairo", fontSize: 18.sp, fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(height: 12.h),
-                              ElevatedButton(
-                                onPressed: () {
-                                  _hasSaved = false;
-                                  widget.game.restart();
-                                  widget.game.overlays.remove('Pause');
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  foregroundColor: Colors.white,
-                                  minimumSize: Size(double.infinity, 50.h),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-                                ),
-                                child: Text('إعادة اللعب', style: TextStyle(fontFamily: "cairo", fontSize: 18.sp, fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(height: 12.h),
-                              OutlinedButton(
-                                onPressed: () {
-                                  _saveScore();
-                                  Navigator.pop(context);
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: Size(double.infinity, 50.h),
-                                  side: BorderSide(color: Colors.grey[300]!, width: 2),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
-                                ),
-                                child: Text('خروج', style: TextStyle(fontFamily: "cairo", fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.grey[700])),
-                              ),
-                            ],
-                          ),
-                        ),
+                  return GameDialog(
+                    title: 'إيقاف مؤقت',
+                    subtitle: 'هل تريد الاستمرار؟',
+                    icon: const Icon(Icons.pause_rounded, color: Colors.white, size: 32),
+                    actions: [
+                      GameDialogAction(
+                        label: 'استكمال',
+                        icon: Icons.play_arrow_rounded,
+                        gradient: const LinearGradient(colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)]),
+                        onPressed: () {
+                          widget.game.resumeEngine();
+                          widget.game.overlays.remove('Pause');
+                        },
                       ),
-                    ),
+                      GameDialogAction(
+                        label: 'إعادة اللعب',
+                        icon: Icons.replay_rounded,
+                        gradient: const LinearGradient(colors: [Color(0xFF2196F3), Color(0xFF1565C0)]),
+                        onPressed: () {
+                          _hasSaved = false;
+                          widget.game.restart();
+                          widget.game.overlays.remove('Pause');
+                        },
+                      ),
+                      GameDialogAction(
+                        label: 'خروج',
+                        icon: Icons.exit_to_app_rounded,
+                        backgroundColor: Colors.grey.shade200,
+                        textColor: Colors.grey.shade700,
+                        onPressed: () {
+                          _saveScore();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
                   );
                 },
               },
@@ -349,7 +191,7 @@ class _FlameGameWrapperState extends State<FlameGameWrapper> {
                         ),
                       ),
                       
-                      Spacer(),
+                      const Spacer(),
       
                       // Pause Button
                       GestureDetector(

@@ -321,13 +321,13 @@ class RecurringCharity extends HiveObject {
     DateTime? lastDonatedDate,
   }) {
     return RecurringCharity(
-      id: this.id,
+      id: id,
       title: title ?? this.title,
       amount: amount ?? this.amount,
       categoryIndex: categoryIndex ?? this.categoryIndex,
       dayOfMonth: dayOfMonth ?? this.dayOfMonth,
       isActive: isActive ?? this.isActive,
-      currency: this.currency,
+      currency: currency,
       lastDonatedDate: lastDonatedDate ?? this.lastDonatedDate,
     );
   }

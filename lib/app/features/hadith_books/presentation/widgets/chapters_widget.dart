@@ -49,11 +49,11 @@ class HadithsPageView extends StatelessWidget {
                   }
 
                   return booksCtrl.arabicHadiths.length < index && index != 0
-                      ? Column(
+                      ? const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text('جاري التحميل...'),
-                            const CircularProgressIndicator.adaptive(),
+                            Text('جاري التحميل...'),
+                            CircularProgressIndicator.adaptive(),
                           ],
                         )
                       : ListView(

@@ -7,7 +7,9 @@ import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/utils/style/k_dialog_helper.dart';
+import '../../core/widgets/game_dialog.dart';
 import 'kids_data/sounds_helper.dart';
+
 
 enum MemoryCategory {
   symbols,
@@ -74,7 +76,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> {
   ];
 
   int _currentLevelIndex = 0;
-  List<MemoryCard> _cards = [];
+  final List<MemoryCard> _cards = [];
   int? _firstCardIndex;
   int? _secondCardIndex;
   int _matchedPairs = 0;
@@ -291,8 +293,11 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> {
           isPrimary: isLastLevel,
           onPressed: () {
             Navigator.pop(context);
-            if (isLastLevel) Navigator.pop(context);
-            else _initializeGame();
+            if (isLastLevel) {
+              Navigator.pop(context);
+            } else {
+              _initializeGame();
+            }
           },
         ),
       ],
@@ -300,38 +305,41 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> {
   }
 
   void _showPauseDialog() {
-    KDialogHelper.showCustomDialog(
+    showDialog(
       context: context,
-      type: KDialogType.info,
-      icon: Icons.pause_rounded,
-      title: 'إيقاف مؤقت',
-      description: 'هل تريد الاستمرار؟',
-      actions: [
-        KDialogHelper.buildButton(
-          context: context,
-          label: 'استكمال',
-          color: Colors.green,
-          onPressed: () => Navigator.pop(context),
-        ),
-        KDialogHelper.buildButton(
-          context: context,
-          label: 'إعادة اللعب',
-          color: Colors.blue,
-          onPressed: () {
-            Navigator.pop(context);
-            _initializeGame();
-          },
-        ),
-        KDialogHelper.buildButton(
-          context: context,
-          label: 'خروج',
-          color: Colors.grey,
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-          },
-        ),
-      ],
+      barrierDismissible: false,
+      builder: (context) => GameDialog(
+        title: 'إيقاف مؤقت',
+        subtitle: 'هل تريد الاستمرار؟',
+        icon: const Icon(Icons.pause_rounded, color: Colors.white, size: 32),
+        actions: [
+          GameDialogAction(
+            label: 'استكمال',
+            icon: Icons.play_arrow_rounded,
+            gradient: const LinearGradient(colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)]),
+            onPressed: () => Navigator.pop(context),
+          ),
+          GameDialogAction(
+            label: 'إعادة اللعب',
+            icon: Icons.replay_rounded,
+            gradient: const LinearGradient(colors: [Color(0xFF2196F3), Color(0xFF1565C0)]),
+            onPressed: () {
+              Navigator.pop(context);
+              _initializeGame();
+            },
+          ),
+          GameDialogAction(
+            label: 'خروج',
+            icon: Icons.exit_to_app_rounded,
+            backgroundColor: Colors.grey.shade200,
+            textColor: Colors.grey.shade700,
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -359,7 +367,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> {
                 children: [
                    const Icon(Icons.star, color: Colors.amber, size: 20),
                    const SizedBox(width: 4),
-                   Text('$_stars', style: TextStyle(
+                   Text('$_stars', style: const TextStyle(
                   fontFamily: "cairo",fontWeight: FontWeight.bold)),
                 ],
               ),
@@ -384,7 +392,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> {
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(15.r),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: const Offset(0, 4))],
+                boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,

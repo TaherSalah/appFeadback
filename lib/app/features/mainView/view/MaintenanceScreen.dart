@@ -17,15 +17,15 @@ class MaintenanceScreen extends StatelessWidget {
               colors: [Color(0xFF1a1a2e), Color(0xFF16213e)],
             ),
           ),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.settings_suggest_outlined,
                 size: 100,
                 color: Color(0xFFD4AF37),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
               Text(
                 'التطبيق في وضع الصيانة',
                 style: TextStyle(
@@ -35,9 +35,9 @@ class MaintenanceScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: 15),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
+                padding: EdgeInsets.symmetric(horizontal: 40),
                 child: Text(
                   'نحن الآن نقوم ببعض التحسينات لخدمتكم بشكل أفضل. سنعود للعمل قريباً إن شاء الله.',
                   textAlign: TextAlign.center,
@@ -48,8 +48,8 @@ class MaintenanceScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
-              const CircularProgressIndicator(
+              SizedBox(height: 40),
+              CircularProgressIndicator(
                 color: Color(0xFFD4AF37),
               ),
             ],

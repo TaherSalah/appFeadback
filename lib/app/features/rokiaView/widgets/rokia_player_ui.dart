@@ -95,7 +95,7 @@ class RokiaPlayerUI extends GetView<RokiaController> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'الرقية الشرعية',
                         style: TextStyle(
                   fontFamily: "cairo",

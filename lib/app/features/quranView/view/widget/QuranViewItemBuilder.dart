@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 import 'package:muslimdaily/app/core/shard/exports/all_exports.dart';
 import 'package:muslimdaily/app/core/utils/constent/router.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
@@ -351,9 +352,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   }
 
   bool _isAutoScrolling = false;
-  double _scrollSpeed = 1.0; // Seconds per pixel approx or just step
   Timer? _scrollTimer;
-  bool _showAutoScrollControls = true;
+  bool _showAutoScrollControls = false;
   Timer? _hideControlsTimer;
 
   bool _keepScreenOn = true;
@@ -464,34 +464,23 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   }
 
   void _startAutoScroll() {
-    _scrollTimer?.cancel();
-    // 16ms for ~60fps smoothness
-    _scrollTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
-      if (_verticalController != null &&
-          _verticalController!.hasClients &&
-          _isAutoScrolling) {
-        final maxScroll = _verticalController!.position.maxScrollExtent;
-        final currentPos = _verticalController!.offset;
+    final autoScrollCtrl = Get.isRegistered<AutoScrollCtrl>()
+        ? AutoScrollCtrl.instance
+        : Get.put(AutoScrollCtrl());
 
-        if (currentPos >= maxScroll) {
-          _toggleAutoScroll(); // Stop at the end
-          return;
-        }
-
-        // Adjust step for 16ms interval (prev was 100ms)
-        // Previous speed 5*speed at 100ms = 50*speed pixels per second
-        // New step at 16ms for same speed = (50*speed) / 60 frames approx = 0.8
-        double moveStep = 0.8 * _scrollSpeed;
-        _verticalController!.jumpTo(currentPos + moveStep);
-      } else if (!_isAutoScrolling) {
-        timer.cancel();
-      }
+    autoScrollCtrl.startAutoScroll(_currentPage! + 1);
+    setState(() {
+      _isAutoScrolling = true;
     });
   }
 
   void _stopAutoScroll() {
-    _scrollTimer?.cancel();
-    _scrollTimer = null;
+    if (Get.isRegistered<AutoScrollCtrl>()) {
+      AutoScrollCtrl.instance.stopAutoScroll();
+    }
+    setState(() {
+      _isAutoScrolling = false;
+    });
   }
 
   Future<void> _loadPages() async {
@@ -930,8 +919,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
           ),
         ),
         appBar: PreferredSize(
-          preferredSize:
-              Size.fromHeight(context.isTab ? 80 : 50),
+          preferredSize: Size.fromHeight(context.isTab ? 80 : 50),
           child: AppBar(
             // leading: IconButton(
             //   icon: Icon(
@@ -998,6 +986,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   }),
               FontsDownloadDialog(
                 topBarStyle: QuranTopBarStyle(
+
                   iconColor: isDark ? Colors.white : KColors.primaryColor,
                 ),
                 downloadFontsDialogStyle: DownloadFontsDialogStyle(
@@ -1016,6 +1005,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                       : const Color(0xFFF7EFE0),
                 ),
                 languageCode: 'ar',
+
                 isFontsLocal: false, // تحميل من النت
                 isDark: isDark,
               ),
@@ -1025,6 +1015,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   color: AppThemeColors.cardBackgroundColor(context),
                   tooltip: "خيارات إضافية",
                   shape: RoundedRectangleBorder(
+
                     borderRadius: BorderRadius.circular(20),
                     // side: BorderSide(
                     //   color: isDark ? Colors.teal.withOpacity(0.3) : Colors.brown.withOpacity(0.3),
@@ -1155,7 +1146,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                     _buildMenuItem(
                       context: ctx,
                       value: _QuranMenuAction.background,
-                      title: isDark ? 'الوضع الليلي' : 'الوضع النهاري',
+                      title: isDark ? 'تغيير الخلفية' : 'تغيير الخلفية',
                       subtitle: isDark
                           ? 'اختر خلفية داكنة مناسية للقرأة'
                           : 'اختر خلفية فاتحة مناسية للقرأة',
@@ -1255,12 +1246,11 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             centerTitle: true,
             title: Text(
               "القران الكريم",
-                 style: TextStyle(
-                          fontFamily: "cairo",
+              style: TextStyle(
+                  fontFamily: "cairo",
                   color: Colors.green,
                   fontWeight: FontWeight.bold,
-                  fontSize:
-                      context.isTab ? 12.sp : 18.sp),
+                  fontSize: context.isTab ? 12.sp : 18.sp),
             ),
           ),
         ),
@@ -1275,7 +1265,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         //               color: Colors.white),
         //           label: Text('تمت القراءة ✅',
         //                  style: TextStyle(
-                          //fontFamily: "cairo",
+        //fontFamily: "cairo",
         //                   color: Colors.white, fontWeight: FontWeight.bold)),
         //         ),
         //       )
@@ -1463,8 +1453,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                         const SizedBox(height: 8),
                         Text(
                           '${(_brightnessIndicatorValue * 100).toInt()}%',
-                             style: TextStyle(
-                          fontFamily: "cairo",
+                          style: const TextStyle(
+                            fontFamily: "cairo",
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -1483,63 +1473,22 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   }
 
   Widget _buildAutoScrollControls() {
-    if (!_showAutoScrollControls) return const SizedBox.shrink();
+    // نستخدم الـ Slider الخاص بالباكدج ونمرر له الإعدادات المطلوبة
+    return Obx(() {
+      final autoScrollCtrl = Get.isRegistered<AutoScrollCtrl>()
+          ? AutoScrollCtrl.instance
+          : Get.put(AutoScrollCtrl());
 
-    return Positioned(
-      bottom: 60,
-      left: 30,
-      right: 30,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.3), // مور ترانسبيرنت
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.teal.withOpacity(0.3)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.speed, color: Colors.white70, size: 16),
-                Expanded(
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 2,
-                      thumbShape:
-                          const RoundSliderThumbShape(enabledThumbRadius: 6),
-                      overlayShape:
-                          const RoundSliderOverlayShape(overlayRadius: 14),
-                    ),
-                    child: Slider(
-                      value: _scrollSpeed,
-                      min: 0.1,
-                      max: 5.0,
-                      activeColor: Colors.teal.withOpacity(0.8),
-                      inactiveColor: Colors.white12,
-                      onChangeStart: (_) => _hideControlsTimer?.cancel(),
-                      onChangeEnd: (_) => _startHideTimer(),
-                      onChanged: (value) {
-                        setState(() {
-                          _scrollSpeed = value;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  onPressed: _toggleAutoScroll,
-                  icon: const Icon(Icons.stop_circle,
-                      color: Colors.redAccent, size: 20),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+      if (!autoScrollCtrl.state.isActive.value) return const SizedBox.shrink();
+
+      return AutoScrollSpeedSlider(
+
+        isDark: isDark,
+        autoScrollStyle:
+            AutoScrollStyle.defaults(isDark: isDark, context: context),
+        languageCode: 'ar',
+      );
+    });
   }
 
 // دالة مساعدة لبناء عناصر القائمة
@@ -1630,8 +1579,8 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
             children: [
               Text(
                 'سطوع الشاشة',
-                   style: TextStyle(
-                          fontFamily: "cairo",
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.teal[800],
@@ -1770,225 +1719,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class NoteDialogWidget extends StatefulWidget {
-  final String? initialText;
-  final ValueChanged<String> onSave;
-  final VoidCallback onDelete;
-
-  const NoteDialogWidget({super.key,
-    this.initialText,
-    required this.onSave,
-    required this.onDelete,
-  });
-
-  @override
-  State<NoteDialogWidget> createState() => _NoteDialogWidgetState();
-}
-
-class _NoteDialogWidgetState extends State<NoteDialogWidget> {
-  late TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.initialText);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isDark = context.isDark;
-
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        backgroundColor: Colors.transparent,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // جسم الديالوج
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 45, 20, 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: isDark
-                      ? [const Color(0xFF0D1B2A), const Color(0xFF1B263B)]
-                      : [const Color(0xFFE8EAF6), const Color(0xFFC5CAE9)],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 18,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // العنوان
-                  Text(
-                    'خواطري حول الصفحة',
-                    style: TextStyle(
-                      fontSize: 19.sp,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : const Color(0xFF1A237E),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  // النص التوضيحي
-                  Text(
-                    'سجل ما تعلمته أو تدبرته من هذه الصفحة ليسهل عليك العودة إليه لاحقاً.',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      height: 1.4,
-                      color: isDark ? Colors.white70 : Colors.indigo.shade800,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 16.h),
-
-                  // حقل إدخال الخواطر
-                  TextField(
-                    controller: _controller,
-                    maxLines: 5,
-                    style:
-                        TextStyle(color: isDark ? Colors.white : Colors.black),
-                    decoration: InputDecoration(
-                      hintText: "اكتب ما في ذهنك هنا...",
-                      hintStyle: TextStyle(
-                          color: isDark ? Colors.grey : Colors.grey[600]),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      filled: true,
-                      fillColor: isDark
-                          ? Colors.white12
-                          : Colors.white.withOpacity(0.6),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-
-                  // الأزرار
-                  Row(
-                    children: [
-                      if (widget.initialText != null) ...[
-                        IconButton(
-                          onPressed: () {
-                            widget.onDelete();
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(Icons.delete_outline_rounded,
-                              color: Colors.redAccent),
-                          tooltip: 'حذف الخاطرة',
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              color: isDark
-                                  ? Colors.grey.shade400
-                                  : Colors.indigo.shade300,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 11),
-                          ),
-                          child: Text(
-                            'إلغاء',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: isDark
-                                  ? Colors.white
-                                  : const Color(0xFF1A237E),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            if (_controller.text.trim().isNotEmpty) {
-                              widget.onSave(_controller.text);
-                            }
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(Icons.save_rounded, size: 18),
-                          label: const Text('حفظ'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3F51B5),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 11),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // الأيقونة الدائرية أعلى الديالوج
-            Positioned(
-              top: -35,
-              left: 0,
-              right: 0,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF3F51B5), Color(0xFF7986CB)],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF3F51B5).withOpacity(0.5),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.edit_note_rounded,
-                      size: 42,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );

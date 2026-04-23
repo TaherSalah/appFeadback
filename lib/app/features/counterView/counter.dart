@@ -689,7 +689,7 @@ class AzkarCounter extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.r),
           ),
-          title: Text(
+          title: const Text(
             'حذف الذكر',
                style: TextStyle(
                           fontFamily: "cairo",
@@ -697,15 +697,15 @@ class AzkarCounter extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          content: Text(
+          content: const Text(
             'هل أنت متأكد من حذف هذا الذكر؟',
                style: TextStyle(
-                          fontFamily: "cairo",color: const Color(0xFF94A3B8)),
+                          fontFamily: "cairo",color: Color(0xFF94A3B8)),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(
+              child: const Text(
                 'إلغاء',
                    style: TextStyle(
                           fontFamily: "cairo",color: Colors.grey),
@@ -722,7 +722,7 @@ class AzkarCounter extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'حذف',
                    style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold),

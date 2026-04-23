@@ -308,7 +308,6 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
         // ),
         floatingActionButton: FloatingActionButton.small(
 
-          child: const Icon(Icons.add),
           onPressed: () {
             Navigator.push(
               context,
@@ -321,6 +320,8 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
           //   style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
           // ),
           backgroundColor: const Color(0xFF10B981),
+
+          child: const Icon(Icons.add),
         ),
       ),
     );
@@ -622,7 +623,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
               Center(
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       'لم يتم تحديد هدف لهذا الشهر',
                          style: TextStyle(
                           fontFamily: "cairo",color: Colors.grey),
@@ -635,12 +636,12 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                               builder: (_) => const MonthlyGoalScreen()),
                         ).then((_) => _loadData());
                       },
-                      child: Text(
+                      child: const Text(
                         'اضبط هدفك الآن',
                            style: TextStyle(
                           fontFamily: "cairo",
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF10B981),
+                          color: Color(0xFF10B981),
                         ),
                       ),
                     ),
@@ -655,15 +656,15 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                     children: [
                       Text(
                         '${(_stats?.totalThisMonth ?? 0).toStringAsFixed(0)} جنيه',
-                           style: TextStyle(
+                           style: const TextStyle(
                           fontFamily: "cairo",
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF10B981),
+                          color: Color(0xFF10B981),
                         ),
                       ),
                       Text(
                         'من ${goal.amount.toStringAsFixed(0)} جنيه',
-                           style: TextStyle(
+                           style: const TextStyle(
                           fontFamily: "cairo",color: Colors.grey),
                       ),
                     ],
@@ -797,7 +798,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                         .map((e) => e.value)
                         .reduce((a, b) => a > b ? a : b) *
                     1.2,
-                barTouchData: BarTouchData(enabled: false),
+                barTouchData: const BarTouchData(enabled: false),
                 titlesData: FlTitlesData(
                   show: true,
                   bottomTitles: AxisTitles(
@@ -928,7 +929,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1063,7 +1064,7 @@ class _CharityDashboardScreenState extends State<CharityDashboardScreen> {
                     ],
                   ),
                 ))
-            .toList(),
+            ,
       ],
     );
   }

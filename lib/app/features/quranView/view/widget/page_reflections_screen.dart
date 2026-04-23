@@ -266,7 +266,7 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                     }
                   },
                   itemBuilder: (context) => [
-                    PopupMenuItem(
+                    const PopupMenuItem(
                       value: 'export',
                       child: Row(
                         children: [
@@ -277,22 +277,22 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
                   fontFamily: "cairo",),
                             textAlign: TextAlign.right,
                           ),
-                          const SizedBox(width: 15),
+                          SizedBox(width: 15),
 
-                          const Icon(Icons.share, size: 20),
+                          Icon(Icons.share, size: 20),
                         ],
                       ),
                     ),
-                    PopupMenuItem(
+                    const PopupMenuItem(
                       value: 'stats',
                       child: Row(
                         children: [
                           // const SizedBox(width: 8),
                           Text('الإحصائيات', style: TextStyle(
                   fontFamily: "cairo",)),
-                          const SizedBox(width: 30),
+                          SizedBox(width: 30),
 
-                          const Icon(Icons.bar_chart, size: 20),
+                          Icon(Icons.bar_chart, size: 20),
                         ],
                       ),
                     ),
@@ -315,7 +315,7 @@ class _PageReflectionsScreenState extends State<PageReflectionsScreen> {
           onPressed: () => _showAddEditDialog(),
           backgroundColor: KColors.primaryColor,
           icon: const Icon(Icons.add, color: Colors.white),
-          label: Text(
+          label: const Text(
             'إضافة خاطرة',
             style: TextStyle(
                   fontFamily: "cairo",
@@ -974,7 +974,7 @@ class _DeleteConfirmDialog extends StatelessWidget {
                         child: ElevatedButton.icon(
                           onPressed: () => Navigator.of(context).pop(true),
                           icon: const Icon(Icons.delete_outline),
-                          label: Text(
+                          label: const Text(
                             'حذف',
                             style: TextStyle(
                   fontFamily: "cairo",),
@@ -1099,7 +1099,7 @@ class _StatisticsDialog extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('إغلاق', style: TextStyle(
+            child: const Text('إغلاق', style: TextStyle(
                   fontFamily: "cairo",color: Colors.teal)),
           ),
         ],

@@ -6,7 +6,7 @@ import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 
 class HadithTranslate extends StatelessWidget {
   final String otherLangHadithText;
-  HadithTranslate({super.key, required this.otherLangHadithText});
+  const HadithTranslate({super.key, required this.otherLangHadithText});
 
   @override
   Widget build(BuildContext context) {

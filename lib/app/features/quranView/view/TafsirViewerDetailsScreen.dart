@@ -306,11 +306,11 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                               autofocus: true,
                               keyboardType: TextInputType.number,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                   fontFamily: "cairo",
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF4CAF50),
+                                color: Color(0xFF4CAF50),
                               ),
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
@@ -332,7 +332,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                   borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 2),
                                 ),
-                                errorStyle: TextStyle(
+                                errorStyle: const TextStyle(
                   fontFamily: "cairo",fontSize: 10, height: 0.8),
                               ),
                               validator: (value) {
@@ -410,7 +410,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                                 padding: const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'انتقال',
                                 style: TextStyle(
                   fontFamily: "cairo",
@@ -665,10 +665,10 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.orange.withOpacity(0.4), width: 1),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
-                    const Icon(Icons.info_outline, size: 16, color: Colors.orange),
-                    const SizedBox(width: 8),
+                    Icon(Icons.info_outline, size: 16, color: Colors.orange),
+                    SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'قم بتنزيل التفسير أولاً للاستخدام بدون إنترنت',
@@ -681,7 +681,7 @@ class _TafsirViewerDetailsScreenState extends State<TafsirViewerDetailsScreen> {
               ),
             Expanded(
               child: _pageAyahs.isEmpty
-                  ? Center(
+                  ? const Center(
                       child: Text(
                         'لا توجد آيات لهذه الصفحة',
                         style: TextStyle(

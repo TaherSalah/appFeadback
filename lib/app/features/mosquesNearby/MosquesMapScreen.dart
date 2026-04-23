@@ -297,7 +297,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                             icon: Icon(
                                 isEditing ? Icons.check : Icons.add_location),
                             label: Text(isEditing ? 'تحديث' : 'حفظ',
-                                   style: TextStyle(
+                                   style: const TextStyle(
                           fontFamily: "cairo",)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
@@ -450,11 +450,11 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                           width: 1.2,
                         ),
                       ),
-                      child: Row(
+                      child: const Row(
                         children: [
-                          const Icon(Icons.info_outline,
+                          Icon(Icons.info_outline,
                               size: 18, color: Colors.red),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               'سيتم حذف المسجد نهائياً من قاعدة البيانات.',
@@ -514,7 +514,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                               }
                             },
                             icon: const Icon(Icons.delete_outline),
-                            label: Text('حذف',    style: TextStyle(
+                            label: const Text('حذف',    style: TextStyle(
                           fontFamily: "cairo",)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
@@ -682,7 +682,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
               color: isDark ? Colors.black45 : Colors.white70,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
+            child: const Text(
               "المساجد القريبة",
                  style: TextStyle(
                           fontFamily: "cairo",
@@ -934,7 +934,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                               heroTag: "confirm_mosque",
                               backgroundColor: Colors.blue,
                               icon: const Icon(Icons.check),
-                              label: Text("تأكيد الموقع",
+                              label: const Text("تأكيد الموقع",
                                      style: TextStyle(
                           fontFamily: "cairo",)),
                               onPressed: _confirmLocation,
@@ -956,7 +956,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                             heroTag: "show_sheet",
                             backgroundColor: Colors.green,
                             icon: const Icon(Icons.keyboard_arrow_up),
-                            label: Text(
+                            label: const Text(
                               "إظهار المساجد القريبة",
                                  style: TextStyle(
                           fontFamily: "cairo",fontWeight: FontWeight.bold),
@@ -1068,7 +1068,7 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                                         child: KLoading.progressIOSIndicator(
                                             context: context)))
                               else if (_mosques.isEmpty)
-                                Expanded(
+                                const Expanded(
                                   child: Center(
                                     child: Text("لم يتم العثور على مساجد",
                                            style: TextStyle(

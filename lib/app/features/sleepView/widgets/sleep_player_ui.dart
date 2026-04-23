@@ -95,7 +95,7 @@ class SleepPlayerUI extends GetView<SleepController> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'أذكار النوم',
                         style: TextStyle(
                   fontFamily: "cairo",

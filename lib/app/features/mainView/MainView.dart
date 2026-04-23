@@ -95,7 +95,7 @@ class _MainViewContentState extends State<MainViewContent> {
     final isDark = context.isDark;
     final primaryColor = context.theme.primaryColor;
     final navBarColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-    final selectedItemColor = const Color(0xFFD4AF37); // Gold color
+    const selectedItemColor = Color(0xFFD4AF37); // Gold color
     final unselectedItemColor =
         isDark ? Colors.grey.shade600 : Colors.grey.shade600;
 
