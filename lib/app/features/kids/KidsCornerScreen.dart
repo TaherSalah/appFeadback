@@ -1246,9 +1246,7 @@ class _KidsCornerScreenState extends State<KidsCornerScreen> {
                             task['title'],
                             style: TextStyle(
                   fontFamily: "cairo",
-                              fontWeight: task['done']
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                              fontWeight: FontWeight.normal,
                               decoration: task['done']
                                   ? TextDecoration.lineThrough
                                   : null,

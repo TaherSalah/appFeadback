@@ -162,20 +162,7 @@ ${quranicAzkar[currentIndex]}
           left: 20,
           child: InkWell(
             onTap: () {
-              final copyText = """
-📿 *أدعية من القرآن*
-
-${quranicAzkar[currentIndex]}
-
-💫 من تطبيق رفيق المسلم اليومي  
-حمل التطبيق الآن واستفد من كل الأذكار اليومية:  
-
-Android: https://play.google.com/store/apps/details?id=com.rafiq.muslimdaily  
-Huawei AppGallery: https://appgallery.huawei.com/app/C114956477  
-iOS App Store: https://apps.apple.com/us/app/%D8%B1%D9%81%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85-%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A/id6749927338
-""";
-
-              Clipboard.setData(ClipboardData(text: copyText));
+              Clipboard.setData(ClipboardData(text: quranicAzkar[currentIndex]));
               KHelper.showSuccess(message: 'تم نسخ الدعاء إلى الحافظة!');
             },
             child: Icon(

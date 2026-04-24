@@ -205,7 +205,7 @@ class _AzkerItemBuilderState extends State<AzkerItemBuilder> {
                         AzkarActionButton(
                           icon: Icons.copy_rounded,
                           label: "نسخ",
-                          onTap: () => copyText(shareFullTextFancy),
+                          onTap: () => copyText(fullText),
                         ),
 
                         // زر مشاركة الصورة

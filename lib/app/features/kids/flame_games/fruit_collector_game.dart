@@ -12,23 +12,10 @@ class FruitCollectorGame extends BaseEducationalGame with DragCallbacks {
   final Random random = Random();
 
   final List<String> halalEmojis = [
-    '🍏',
-    '🍎',
-    '🍐',
-    '🍊',
-    '🍋',
-    '🍌',
-    '🍉',
-    '🍇',
-    '🍓',
-    '🫐',
-    '🍈',
-    '🍒',
-    '🍑',
-    '🥭',
-    '🍍',
-    '🥥',
-    '🥝'
+    '🍏','🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍈',
+    '🍒','🍑','🥭','🍍','🥥','🥝','🍅','🥑',
+    '🍆','🥕','🌽','🌶️','🥒','🥬','🥦','🧄','🧅',
+    '🥔','🍠','🥜','🌰'
   ];
   final List<String> haramEmojis = ['🦗', '🐜', '🕷️', '🦂', '🐍'];
 
@@ -46,7 +33,15 @@ class FruitCollectorGame extends BaseEducationalGame with DragCallbacks {
     super.onGameResize(size);
     if (player != null && children.contains(player!)) {
       final double baseUnit = min(size.x, size.y);
-      player!.size = Vector2(baseUnit * 0.25, baseUnit * 0.15);
+      final bool isTablet = size.x > 600;
+      
+      if (isTablet) {
+        player!.size = Vector2(baseUnit * 0.25, baseUnit * 0.15);
+      } else {
+        // سلة أكبر في الموبايل
+        player!.size = Vector2(baseUnit * 0.35, baseUnit * 0.21);
+      }
+      
       player!.position =
           Vector2(player!.position.x, size.y - player!.size.y - 20);
       player!.position.x = player!.position.x
@@ -92,7 +87,8 @@ class FruitCollectorGame extends BaseEducationalGame with DragCallbacks {
         : haramEmojis[random.nextInt(haramEmojis.length)];
 
     final double baseUnit = min(size.x, size.y);
-    final itemSize = Vector2.all(baseUnit * 0.12);
+    final bool isTablet = size.x > 600;
+    final itemSize = Vector2.all(baseUnit * (isTablet ? 0.12 : 0.18));
 
     final item = GameItem(
       isHalal: isHalal,
@@ -264,7 +260,7 @@ class Player extends PositionComponent with HasGameRef<FruitCollectorGame> {
 
     _textPainter = TextPainter(
       text: TextSpan(
-        text: 'سلة الخيرات',
+        text: '',
         style: TextStyle(
           color: Colors.white, 
           fontWeight: FontWeight.bold, 
@@ -300,6 +296,8 @@ class Player extends PositionComponent with HasGameRef<FruitCollectorGame> {
     // Body
     canvas.drawPath(_bodyPath, _bodyPaint);
     
+    canvas.save();
+    canvas.clipPath(_bodyPath);
     // Texture
     for (double i = w * 0.1; i < w; i += w * 0.15) {
       canvas.drawLine(Offset(i, 0), Offset(i.clamp(w * 0.05, w * 0.95), h * 0.7), _texturePaint);
@@ -307,6 +305,7 @@ class Player extends PositionComponent with HasGameRef<FruitCollectorGame> {
     for (double j = h * 0.2; j < h * 0.8; j += h * 0.2) {
       canvas.drawArc(Rect.fromLTWH(0, -j, w, j * 2), 0.2, pi - 0.4, false, _texturePaint);
     }
+    canvas.restore();
 
     // Rim
     canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(-w * 0.05, 0, w * 1.1, h * 0.15), Radius.circular(h * 0.1)), _rimPaint);
