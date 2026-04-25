@@ -20,6 +20,8 @@ class AlarmScheduler {
         AdhanTaskHandler.alarmCallback, // Top-level callback
         wakeup: true,
         exact: true,
+        allowWhileIdle: true,
+        alarmClock: true,
         rescheduleOnReboot: true,
         // Passing payload so the callback knows which prayer it is
         params: payload,

@@ -522,6 +522,8 @@ class SystemControlService {
         revertSilentModeCallback,
         exact: true,
         wakeup: true,
+        allowWhileIdle: true,
+        alarmClock: true,
       );
     } catch (e) {
       logger.e('❌ Fail to activate silent mode: $e');

@@ -356,13 +356,27 @@ class GameItem extends PositionComponent with HasGameRef<FruitCollectorGame> {
   }
 
   void _rebuildCache() {
-    _paint.color = isHalal ? Colors.green : Colors.red;
+    _paint.shader = RadialGradient(
+      colors: isHalal 
+          ? [const Color(0xFF66BB6A), const Color(0xFF2E7D32)] // Green shades
+          : [const Color(0xFFEF5350), const Color(0xFFC62828)], // Red shades
+    ).createShader(Rect.fromLTWH(0, 0, size.x, size.y));
+
     _textPainter = TextPainter(
-      text: TextSpan(text: emoji, style: TextStyle(fontSize: size.x * 0.5)),
+      text: TextSpan(text: emoji, style: TextStyle(fontSize: size.x * 0.45)),
       textDirection: TextDirection.ltr,
     )..layout();
     _labelPainter = TextPainter(
-      text: TextSpan(text: isHalal ? 'حلال' : 'حرام', style: TextStyle(color: Colors.white, fontSize: size.x * 0.25, fontWeight: FontWeight.bold, shadows: const [Shadow(blurRadius: 2)])),
+      text: TextSpan(
+        text: isHalal ? 'حلال' : 'حرام', 
+        style: TextStyle(
+          color: Colors.white, 
+          fontSize: size.x * 0.22, 
+          fontWeight: FontWeight.bold, 
+          fontFamily: 'me',
+          shadows: const [Shadow(blurRadius: 3, color: Colors.black45, offset: Offset(1, 1))]
+        )
+      ),
       textDirection: TextDirection.rtl,
     )..layout();
   }
@@ -376,9 +390,30 @@ class GameItem extends PositionComponent with HasGameRef<FruitCollectorGame> {
       _rebuildCache();
     }
     
-    canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x / 2, _paint);
-    canvas.drawCircle(Offset(size.x * 0.35, size.y * 0.35), size.x * 0.1, _highlightPaint);
-    _textPainter?.paint(canvas, Offset((size.x - _textPainter!.width) / 2, (size.y - _textPainter!.height) / 2));
-    _labelPainter?.paint(canvas, Offset((size.x - _labelPainter!.width) / 2, size.y / 2 + size.y * 0.15));
+    final double radius = size.x / 2;
+    
+    // Draw the main circle with gradient
+    canvas.drawCircle(Offset(radius, radius), radius, _paint);
+    
+    // Draw a dark semi-circle overlay for the bottom part (label area)
+    final Paint bottomAreaPaint = Paint()
+      ..color = Colors.black.withOpacity(0.18)
+      ..style = PaintingStyle.fill;
+    
+    canvas.save();
+    // Clip to the circle shape
+    canvas.clipPath(Path()..addOval(Rect.fromLTWH(0, 0, size.x, size.y)));
+    // Draw the rectangle that becomes a semi-circle due to clipping
+    canvas.drawRect(Rect.fromLTWH(0, size.y * 0.58, size.x, size.y * 0.42), bottomAreaPaint);
+    canvas.restore();
+
+    // Subtle Shine highlight at the top
+    canvas.drawCircle(Offset(size.x * 0.3, size.y * 0.25), size.x * 0.08, _highlightPaint);
+
+    // Paint Icon (Emoji) in the top portion
+    _textPainter?.paint(canvas, Offset((size.x - _textPainter!.width) / 2, size.y * 0.12));
+
+    // Paint Label (حلال/حرام) in the bottom portion
+    _labelPainter?.paint(canvas, Offset((size.x - _labelPainter!.width) / 2, size.y * 0.65));
   }
 }
