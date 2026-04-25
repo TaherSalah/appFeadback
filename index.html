@@ -106,31 +106,46 @@
         .stat-card {
             background: var(--card-bg);
             padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid var(--border-color);
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-card h3 {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .stat-card .number {
+        .stat-icon {
             font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.2);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
         }
 
-        .stat-card .icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0;
         }
 
         /* Filters */
@@ -1067,26 +1082,48 @@
 
             <div class="analytics-section" style="display: block;">
                 <div class="charts-grid">
-                    <div class="chart-container">
-                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">🗺️ أعلى الدول
-                            استخداماً</h4>
-                        <canvas id="countriesChart"></canvas>
+                    <!-- Country Bar Chart -->
+                    <div class="chart-container" style="background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: var(--shadow-md); height: 500px;">
+                        <h4 style="text-align: right; margin-bottom: 20px; color: var(--text-primary); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.5rem;">🌍</span> أعلى الدول استخداماً
+                        </h4>
+                        <div style="height: 400px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: right;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted);">
+                                        <th style="padding: 12px;">#</th>
+                                        <th style="padding: 12px;">الدولة</th>
+                                        <th style="padding: 12px;">عدد الفتحات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="countryTableBody">
+                                    <tr>
+                                        <td colspan="3" style="text-align: center; padding: 20px;">جاري تحميل البيانات...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="chart-container">
-                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">📱 أنظمة
-                            التشغيل</h4>
-                        <canvas id="osChart"></canvas>
-                    </div>
-                    <div class="chart-container" style="grid-column: span 2; height: 350px;">
-                        <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">🎯 الأقسام
-                            الأكثر استخداماً (Feature Analytics)</h4>
-                        <canvas id="featuresUsageChart"></canvas>
+
+                    <!-- Features Usage -->
+                    <div class="chart-container" style="grid-column: span 2; background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: var(--shadow-md); height: 450px;">
+                        <h4 style="text-align: right; margin-bottom: 20px; color: var(--text-primary); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.5rem;">🎯</span> الأقسام الأكثر استخداماً (Feature Analytics)
+                        </h4>
+                        <div style="height: 350px;">
+                            <canvas id="featuresUsageChart"></canvas>
+                        </div>
                     </div>
                 </div>
-                <div class="chart-container" style="margin-top: 30px; height: 400px; padding-bottom: 40px;">
-                    <h4 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">📅 النشاط اليومي
-                        (آخر 15 يوم)</h4>
-                    <canvas id="dailyUsageChart"></canvas>
+
+                <!-- Daily Usage -->
+                <div class="chart-container" style="margin-top: 30px; height: 500px; background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: var(--shadow-md);">
+                    <h4 style="text-align: right; margin-bottom: 20px; color: var(--text-primary); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.5rem;">📅</span> النشاط اليومي (آخر 15 يوم)
+                    </h4>
+                    <div style="height: 400px;">
+                        <canvas id="dailyUsageChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>

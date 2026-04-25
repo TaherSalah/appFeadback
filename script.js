@@ -19,15 +19,21 @@ let dailyUsageChart = null;
 let featuresUsageChart = null;
 
 const APP_FEATURES = [
-    { id: 'quran', name: 'القرآن الكريم', icon: '📖' },
+    { id: 'quranView', name: 'القرآن الكريم', icon: '📖' },
     { id: 'azkar', name: 'الأذكار', icon: '📿' },
+    { id: 'sebha', name: 'السبحة الإلكترونية', icon: '🖱️' },
     { id: 'khatmah', name: 'الختمات الجماعية', icon: '🕋' },
     { id: 'zakat', name: 'حساب الزكاة', icon: '💰' },
-    { id: 'charity', name: 'الصدقة الجارية', icon: '🤝' },
-    { id: 'radio', name: 'إذاعات القرآن', icon: '📻' },
+    { id: 'inheritance', name: 'المواريث', icon: '⚖️' },
+    { id: 'expiation', name: 'الكفارات', icon: '🤲' },
+    { id: 'wird', name: 'الورد اليومي', icon: '📅' },
+    { id: 'radioView', name: 'إذاعات القرآن', icon: '📻' },
     { id: 'kids', name: 'ركن الأطفال', icon: '👶' },
     { id: 'hadith', name: 'كتب الحديث', icon: '📚' },
-    { id: 'mosques', name: 'المساجد القريبة', icon: '🕌' }
+    { id: 'mosques', name: 'المساجد القريبة', icon: '🕌' },
+    { id: 'timing', name: 'مواقيت الصلاة', icon: '🕋' },
+    { id: 'qibla', name: 'القبلة', icon: '🧭' },
+    { id: 'fajr_alarm', name: 'منبه الفجر', icon: '⏰' }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -333,12 +339,26 @@ async function saveFeedbackReply(id) {
 }
 
 async function deleteFeedback(id) {
-    if (!confirm('⚠️ حذف هذه الشكوى نهائياً؟')) return;
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذه الشكوى نهائياً؟')) return;
+    
     try {
-        const { error } = await supabaseClient.from('feedback').delete().eq('id', id);
+        const { error, count } = await supabaseClient
+            .from('feedback')
+            .delete({ count: 'exact' })
+            .eq('id', id);
+
         if (error) throw error;
-        loadFeedback();
-    } catch (e) { alert('❌ فشل الحذف: ' + e.message); }
+
+        if (count === 0) {
+            alert('⚠️ لم يتم الحذف! \n\nهذا غالباً بسبب إعدادات الحماية (RLS) في Supabase. يجب عليك تفعيل صلاحية الـ DELETE لجدول feedback من لوحة تحكم Supabase.');
+            return;
+        }
+
+        alert('✅ تم الحذف بنجاح');
+        await loadFeedback();
+    } catch (e) {
+        alert('❌ فشل الحذف: ' + e.message);
+    }
 }
 
 function updateStats() {
@@ -501,44 +521,90 @@ function displayAnalyticsStats() {
     if (document.getElementById('countriesCount')) document.getElementById('countriesCount').textContent = countries;
 }
 
+function normalizeCountryName(name) {
+    if (!name || name === 'Unknown' || name === 'أخرى' || name === 'تحديد تلقائي' || name === 'Default') return 'غير معروف';
+
+    const n = name.trim();
+    const mapping = {
+        'Egypt': 'مصر', 'EG': 'مصر',
+        'Saudi Arabia': 'السعودية', 'SA': 'السعودية', 'KSA': 'السعودية', 'المملكة العربية السعودية': 'السعودية',
+        'Algeria': 'الجزائر', 'DZ': 'الجزائر',
+        'Morocco': 'المغرب', 'Maroc': 'المغرب', 'MA': 'المغرب',
+        'Iraq': 'العراق', 'IQ': 'العراق',
+        'Jordan': 'الأردن', 'JO': 'الأردن',
+        'Palestine': 'فلسطين', 'PS': 'فلسطين',
+        'Kuwait': 'الكويت', 'KW': 'الكويت',
+        'United Arab Emirates': 'الإمارات', 'UAE': 'الإمارات', 'AE': 'الإمارات',
+        'Tunisia': 'تونس', 'TN': 'تونس',
+        'Libya': 'ليبيا', 'LY': 'ليبيا',
+        'Sudan': 'السودان', 'SD': 'السودان',
+        'Syria': 'سوريا', 'SY': 'سوريا',
+        'Lebanon': 'لبنان', 'LB': 'لبنان',
+        'Yemen': 'اليمن', 'YE': 'اليمن',
+        'Oman': 'عمان', 'OM': 'عمان',
+        'Qatar': 'قطر', 'QA': 'قطر',
+        'Bahrain': 'البحرين', 'BH': 'البحرين',
+        'Turkey': 'تركيا', 'TR': 'تركيا'
+    };
+    
+    // Check direct mapping or case-insensitive mapping
+    if (mapping[n]) return mapping[n];
+    for (let key in mapping) {
+        if (key.toLowerCase() === n.toLowerCase()) return mapping[key];
+    }
+    
+    return n;
+}
+
 function initAnalyticsCharts() {
     if (typeof Chart === 'undefined') return;
 
-    // Countries Chart
+    // --- Country Data ---
     const countryCounts = {};
-    allUsageData.forEach(u => { const c = u.country || 'أخرى'; countryCounts[c] = (countryCounts[c] || 0) + 1; });
-    const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    allUsageData.forEach(u => {
+        const c = normalizeCountryName(u.country);
+        countryCounts[c] = (countryCounts[c] || 0) + 1;
+    });
 
-    if (countriesChart) countriesChart.destroy();
-    const cCtx = document.getElementById('countriesChart')?.getContext('2d');
-    if (cCtx) {
-        countriesChart = new Chart(cCtx, {
-            type: 'bar',
-            data: {
-                labels: sortedCountries.map(c => c[0]),
-                datasets: [{ label: 'عدد الفتحات', data: sortedCountries.map(c => c[1]), backgroundColor: '#10b981' }]
-            },
-            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
-        });
+    const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]);
+    
+    // Update Top Country Badge
+    const topCountryBadge = document.getElementById('topCountryBadge');
+    if (topCountryBadge && sortedCountries.length > 0) {
+        topCountryBadge.textContent = `👑 الأكثر نشاطاً: ${sortedCountries[0][0]} (${sortedCountries[0][1]})`;
     }
 
-    // OS Chart
+    displayCountryTable(sortedCountries);
+
+    // --- OS Distribution Chart ---
     const osCounts = {};
-    allUsageData.forEach(u => { const os = u.os || 'Other'; osCounts[os] = (osCounts[os] || 0) + 1; });
+    allUsageData.forEach(u => { 
+        const os = u.os || 'Other'; 
+        osCounts[os] = (osCounts[os] || 0) + 1; 
+    });
+    
     if (osChart) osChart.destroy();
     const osCtx = document.getElementById('osChart')?.getContext('2d');
     if (osCtx) {
         osChart = new Chart(osCtx, {
-            type: 'pie',
+            type: 'doughnut',
             data: {
                 labels: Object.keys(osCounts),
-                datasets: [{ data: Object.values(osCounts), backgroundColor: ['#3b82f6', '#f59e0b', '#6b7280'] }]
+                datasets: [{ 
+                    data: Object.values(osCounts), 
+                    backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#6b7280'],
+                    borderWidth: 0
+                }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
         });
     }
 
-    // Daily Usage Chart
+    // --- Daily Usage Trend ---
     const dailyCounts = {};
     const last15Days = [...Array(15)].map((_, i) => {
         const d = new Date(); d.setDate(d.getDate() - i); return d.toISOString().split('T')[0];
@@ -556,36 +622,132 @@ function initAnalyticsCharts() {
             type: 'line',
             data: {
                 labels: last15Days.map(d => d.split('-').slice(1).join('/')),
-                datasets: [{ label: 'مرات فتح التطبيق', data: last15Days.map(date => dailyCounts[date]), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4 }]
+                datasets: [{
+                    label: 'الفتحات اليومية',
+                    data: Object.values(dailyCounts),
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#3b82f6'
+                }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
         });
     }
 
-    // Features Usage Chart
+    // Features Usage Analysis
     const fCounts = {};
-    APP_FEATURES.forEach(f => fCounts[f.name] = 0);
+    // Initialize with mapped names from APP_FEATURES
+    APP_FEATURES.forEach(f => {
+        fCounts[f.name] = 0;
+    });
+
     if (window.featureUsageData) {
         window.featureUsageData.forEach(u => {
+            // Find feature by matching ID (e.g. 'quranView' vs 'quranView')
             const feature = APP_FEATURES.find(f => f.id === u.feature_name);
-            const name = feature ? feature.name : u.feature_name;
+            const name = feature ? feature.name : (u.feature_name || 'غير معروف');
+            
+            // If the name is already in fCounts, increment it, otherwise create it
             fCounts[name] = (fCounts[name] || 0) + 1;
         });
     }
+
+    // Sort to show most used first
+    const featureEntries = Object.entries(fCounts)
+        .filter(e => e[1] > 0 || APP_FEATURES.some(f => f.name === e[0])) // Show all app features + others with data
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 12); // Top 12 features
+
     if (featuresUsageChart) featuresUsageChart.destroy();
     const fCtx = document.getElementById('featuresUsageChart')?.getContext('2d');
     if (fCtx) {
         featuresUsageChart = new Chart(fCtx, {
             type: 'bar',
             data: {
-                labels: Object.keys(fCounts),
-                datasets: [{ label: 'عدد النقرات', data: Object.values(fCounts), backgroundColor: '#6366f1' }]
+                labels: featureEntries.map(e => e[0]),
+                datasets: [{
+                    label: 'عدد النقرات',
+                    data: featureEntries.map(e => e[1]),
+                    backgroundColor: [
+                        '#6366f1', '#10b981', '#f59e0b', '#3b82f6', 
+                        '#ec4899', '#8b5cf6', '#06b6d4', '#f97316',
+                        '#84cc16', '#0ea5e9', '#d946ef', '#f43f5e'
+                    ],
+                    borderRadius: 8
+                }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { stepSize: 1 } },
+                    x: { grid: { display: false } }
+                }
+            }
         });
     }
 }
 
+function displayCountryTable(sortedCountries) {
+    const tableBody = document.getElementById('countryTableBody');
+    if (!tableBody) return;
+
+    if (sortedCountries.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">لا توجد بيانات متاحة</td></tr>';
+        return;
+    }
+
+    const totalLaunches = allUsageData.length;
+
+    tableBody.innerHTML = sortedCountries.map((c, index) => {
+        const name = c[0];
+        const count = c[1];
+        const percentage = totalLaunches > 0 ? ((count / totalLaunches) * 100).toFixed(1) : 0;
+        
+        // Simple flag emoji mapping
+        const flags = {
+            'مصر': '🇪🇬', 'السعودية': '🇸🇦', 'الجزائر': '🇩🇿', 'المغرب': '🇲🇦',
+            'العراق': '🇮🇶', 'الأردن': '🇯🇴', 'فلسطين': '🇵🇸', 'الكويت': '🇰🇼',
+            'الإمارات': '🇦🇪', 'تونس': '🇹🇳', 'ليبيا': '🇱🇾', 'السودان': '🇸🇩',
+            'سوريا': '🇸🇾', 'لبنان': '🇱🇧', 'اليمن': '🇾🇪', 'عمان': '🇴🇲',
+            'قطر': '🇶🇦', 'البحرين': '🇧🇭', 'تركيا': '🇹🇷'
+        };
+        const flag = flags[name] || '📍';
+
+        return `
+        <tr>
+            <td style="padding: 12px; color: #94a3b8; font-weight: 500;">${index + 1}</td>
+            <td style="padding: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.2rem;">${flag}</span>
+                    <span style="font-weight: 600; color: var(--text-primary);">${name}</span>
+                </div>
+            </td>
+            <td style="padding: 12px;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary);">
+                        <span>${count} فتحة</span>
+                        <span>${percentage}%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
+                        <div style="width: ${percentage}%; height: 100%; background: var(--accent-color); border-radius: 10px;"></div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `}).join('');
+}
 function initFeedbackCharts() {
     if (typeof Chart === 'undefined') return;
 
@@ -1480,7 +1642,7 @@ async function exportKhatmahParticipants() {
 // Features Management Functions
 // ============================================
 
-let allFeatures = []; // Updated for status support
+let allFeaturesData = []; 
 
 async function loadFeatures() {
     try {
@@ -1496,7 +1658,7 @@ async function loadFeatures() {
 
         if (error) throw error;
 
-        allFeatures = data || [];
+        allFeaturesData = data || [];
         displayFeatures();
     } catch (error) {
         console.error('Error loading features:', error);
@@ -1517,7 +1679,7 @@ function displayFeatures() {
     const featuresList = document.getElementById('featuresList');
     if (!featuresList) return;
 
-    if (allFeatures.length === 0) {
+    if (allFeaturesData.length === 0) {
         featuresList.innerHTML = `
             <div class="empty-state" style="grid-column: 1 / -1;">
                 <div class="empty-state-icon">📦</div>
@@ -1537,7 +1699,7 @@ function displayFeatures() {
         }
     };
 
-    featuresList.innerHTML = allFeatures.map(feature => {
+    featuresList.innerHTML = allFeaturesData.map(feature => {
         const currentStatus = feature.status || 'active';
         return `
             <div class="feature-card ${currentStatus === 'hidden' ? 'disabled' : (currentStatus === 'maintenance' ? 'maintenance' : '')}">
@@ -1575,7 +1737,7 @@ async function updateFeatureStatus(featureId, newStatus) {
         if (error) throw error;
 
         // Update local state
-        const feature = allFeatures.find(f => f.id === featureId);
+        const feature = allFeaturesData.find(f => f.id === featureId);
         if (feature) {
             feature.status = newStatus;
         }
@@ -1584,7 +1746,7 @@ async function updateFeatureStatus(featureId, newStatus) {
         displayFeatures();
 
         // Show success message
-        const featureName = allFeatures.find(f => f.id === featureId)?.display_name || 'القسم';
+        const featureName = allFeaturesData.find(f => f.id === featureId)?.display_name || 'القسم';
         let statusMsg = '';
         switch (newStatus) {
             case 'active': statusMsg = 'تنشيط'; break;
@@ -1812,3 +1974,4 @@ async function deletePdfBook(id) {
         alert('❌ فشل الحذف: ' + e.message);
     }
 }
+
