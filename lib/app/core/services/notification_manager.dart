@@ -76,9 +76,9 @@ class NotificationManager {
     // ⭐ طلب إعفاء تحسين البطارية (مطلوب لـ Infinix وRealme لتشغيل الأذان على الشاشة المقفولة)
     await _requestBatteryExemptionIfNeeded();
 
-    // 🚀 تهيئة خدمة الأذان عبر النظام الجديد (في الخلفية لعدم تعطيل الفتح)
+    // 🚀 تهيئة كل التنبيهات (الأذان، الأذكار، الصلاة على النبي، إلخ)
     Future.delayed(const Duration(seconds: 3), () {
-      AdhanManager.rescheduleAll();
+      rescheduleAll();
     });
   }
 
@@ -366,6 +366,20 @@ class NotificationManager {
         playSound: true,
         soundSource:
             Platform.isAndroid ? 'resource://raw/iqamah' : 'iqamah.mp3',
+        enableVibration: true,
+        enableLights: true,
+      ),
+      // 🤲 قناة الدعاء بين الأذان والإقامة
+      NotificationChannel(
+        channelKey: 'adhan_iqamah_channel_v1',
+        channelName: 'الدعاء بين الأذان والإقامة',
+        channelDescription: 'تذكير بالدعاء بين الأذان والإقامة',
+        importance: NotificationImportance.High,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: true,
+        soundSource:
+            Platform.isAndroid ? 'resource://raw/tasbihat' : 'tasbihat.mp3',
         enableVibration: true,
         enableLights: true,
       ),
@@ -789,10 +803,10 @@ class NotificationManager {
         await _scheduleSunnahReminder();
       }
 
-      // 🤲 الدعاء بين الأذان والإقامة
-      if (SettingsService().isBetweenAdhanIqamahEnabled) {
-        await _scheduleBetweenAdhanIqamah();
-      }
+      // 🤲 الدعاء بين الأذان والإقامة يتم الآن جدولته بدقة عبر AdhanManager
+      // if (SettingsService().isBetweenAdhanIqamahEnabled) {
+      //   await _scheduleBetweenAdhanIqamah();
+      // }
     } catch (e, stackTrace) {
       print('❌ Error in scheduling reminders: $e');
       print(stackTrace);
@@ -1376,33 +1390,8 @@ class NotificationManager {
     );
   }
 
-  // ==========================================
-  // 🤲 الدعاء بين الأذان والإقامة
-  // ==========================================
-  Future<void> _scheduleBetweenAdhanIqamah() async {
-    // We'll schedule a single general reminder for now, as precise tracking of 5 prayers is complex here
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 1103,
-        channelKey: 'sabah_athkar_channel',
-        title: 'الدعاء بين الأذان والإقامة',
-        body: 'قال ﷺ: لا يُرد الدعاء بين الأذان والإقامة؛ فادعوا',
-        category: NotificationCategory.Reminder,
-        payload: {'route': 'adhan_iqamah_reminder'},
-        largeIcon: 'resource://drawable/ic_stat_logoapp',
-        notificationLayout: NotificationLayout.BigText,
-        color: const Color(0xFF178B74),
-      ),
-      schedule: NotificationCalendar(
-        hour: 18, // 6 PM (Common time for Maghrib/Isha gap)
-        minute: 0,
-        second: 0,
-        repeats: true,
-        preciseAlarm: true,
-        allowWhileIdle: true,
-      ),
-    );
-  }
+  // 🤲 تم نقل منطق الدعاء بين الأذان والإقامة إلى AdhanManager للجدولة الدقيقة
+  // Future<void> _scheduleBetweenAdhanIqamah() async { ... }
 
   Future<void> scheduleWirdReminder(
       String wirdId, String wirdName, String timeStr, String frequency) async {

@@ -6,7 +6,7 @@ import 'package:confetti/confetti.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:muslimdaily/app/core/extensions/extensions.dart';
 import 'package:muslimdaily/app/core/services/feature_guard_service.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
@@ -1376,9 +1376,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
 
     // Extended mapping for surah names with normalization
     if (campaign['target_type'] == 'surah') {
-      final normalizedVoiceInput = _normalizeArabic(cleanText);
+      final normalizedVoiceInput = cleanText.normalizeArabic;
       for (int i = 0; i < _surahs.length; i++) {
-        final normalizedSurahName = _normalizeArabic(_surahs[i].name);
+        final normalizedSurahName = _surahs[i].name.normalizeArabic;
         if (normalizedVoiceInput.contains(normalizedSurahName)) return i + 1;
       }
     }
@@ -1941,9 +1941,9 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
       else
         label = 'صفحة $itemIndex';
 
-      final normalizedQuery = _normalizeArabic(_searchQuery);
-      final normalizedLabel = _normalizeArabic(label);
-
+      final normalizedQuery = _searchQuery.normalizeArabic;
+      final normalizedLabel = label.normalizeArabic;
+      
       return normalizedLabel.contains(normalizedQuery) ||
           itemIndex.toString().contains(_searchQuery);
     }).toList();
@@ -2786,18 +2786,6 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
         message: 'تم اختيار حملة الختمة الجارية، ابحث عن ورد متاح!');
   }
 
-  String _normalizeArabic(String text) {
-    if (text.isEmpty) return text;
-    // Normalize Alef variants
-    String normalized = text.replaceAll(RegExp(r'[أإآ]'), 'ا');
-    // Normalize Te Marbuta
-    normalized = normalized.replaceAll('ة', 'ه');
-    // Normalize Ya variants
-    normalized = normalized.replaceAll('ى', 'ي');
-    // Remove Arabic diacritics (Tashkeel)
-    normalized = normalized.replaceAll(RegExp(r'[\u064B-\u0652]'), '');
-    return normalized.trim();
-  }
 }
 
 class _AnalyticsBottomSheet extends StatelessWidget {

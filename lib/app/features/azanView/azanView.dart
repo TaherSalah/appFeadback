@@ -215,33 +215,33 @@ class _AzanViewState extends State<AzanView> {
                         const SizedBox(height: 16),
 
                         // التوقيت الصيفي
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'تفعيل التوقيت الصيفي (+ساعة)',
-                              style: TextStyle(
-                                fontFamily: "cairo",
-                                fontSize: context.isTab
-                                    ? 9.sp
-                                    : 14.sp,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Switch(
-                              value: con.isDSTEnabled,
-                              onChanged: (value) {
-                                setStateSheet(() {
-                                  con.toggleDST(value);
-                                });
-                              },
-                              activeColor: KColors.primaryColor,
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 16),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Text(
+                        //       'تفعيل التوقيت الصيفي (+ساعة)',
+                        //       style: TextStyle(
+                        //         fontFamily: "cairo",
+                        //         fontSize: context.isTab
+                        //             ? 9.sp
+                        //             : 14.sp,
+                        //         color: Colors.grey,
+                        //         fontWeight: FontWeight.bold,
+                        //       ),
+                        //     ),
+                        //     Switch(
+                        //       value: con.isDSTEnabled,
+                        //       onChanged: (value) {
+                        //         setStateSheet(() {
+                        //           con.toggleDST(value);
+                        //         });
+                        //       },
+                        //       activeColor: KColors.primaryColor,
+                        //     ),
+                        //   ],
+                        // ),
+                        //
+                        // const SizedBox(height: 16),
 
                         // تعديل الساعات (فارق التوقيت)
                         Text(

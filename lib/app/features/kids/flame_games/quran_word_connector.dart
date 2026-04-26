@@ -61,14 +61,31 @@ class QuranWordConnector extends BaseEducationalGame with TapCallbacks {
     
     final double baseUnit = min(size.x, size.y);
     final double bubbleSize = baseUnit * 0.18;
+    final double minDistance = bubbleSize * 1.1; // Ensure bubbles don't touch
 
     for (int i = 0; i < allLetters.length; i++) {
-      final x = random.nextDouble() * (size.x - bubbleSize - 40) + 20 + bubbleSize/2;
-      final y = random.nextDouble() * (size.y * 0.45) + (size.y * 0.35);
+      Vector2 pos = Vector2.zero();
+      int attempts = 0;
+      bool overlapping;
+      
+      do {
+        attempts++;
+        final x = random.nextDouble() * (size.x - bubbleSize - 40) + 20 + bubbleSize/2;
+        final y = random.nextDouble() * (size.y * 0.4) + (size.y * 0.35);
+        pos = Vector2(x, y);
+        
+        overlapping = false;
+        for (var other in bubbles) {
+          if (pos.distanceTo(other.position) < minDistance) {
+            overlapping = true;
+            break;
+          }
+        }
+      } while (overlapping && attempts < 100);
       
       final bubble = LetterBubble(
         letter: allLetters[i],
-        position: Vector2(x, y),
+        position: pos,
         size: Vector2.all(bubbleSize),
       );
       bubbles.add(bubble);
@@ -217,9 +234,12 @@ class CosmicBackground extends Component with HasGameRef<QuranWordConnector> {
 class LetterBubble extends PositionComponent with TapCallbacks, HasGameRef<QuranWordConnector> {
   final String letter;
   double _wobbleTime = 0;
+  late Vector2 _initialPosition;
   
   LetterBubble({required this.letter, required Vector2 position, required Vector2 size}) 
-      : super(position: position, size: size, anchor: Anchor.center);
+      : super(position: position, size: size, anchor: Anchor.center) {
+    _initialPosition = position.clone();
+  }
 
   @override
   void update(double dt) {
@@ -228,9 +248,9 @@ class LetterBubble extends PositionComponent with TapCallbacks, HasGameRef<Quran
     
     _wobbleTime += dt;
     
-    // Gentle floating motion
-    position.y += sin(_wobbleTime * 1.5 + position.x) * 0.3;
-    position.x += cos(_wobbleTime * 1.2 + position.y) * 0.2;
+    // Gentle floating motion around initial position
+    position.y = _initialPosition.y + sin(_wobbleTime * 1.5 + _initialPosition.x) * 10;
+    position.x = _initialPosition.x + cos(_wobbleTime * 1.2 + _initialPosition.y) * 8;
   }
 
   @override

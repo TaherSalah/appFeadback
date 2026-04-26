@@ -346,15 +346,15 @@ class RemindersSection extends StatelessWidget {
           value: controller.isSunnahReminderEnabled.value,
           onChanged: (val) => controller.updateChange(controller.isSunnahReminderEnabled, val),
         )),
-        // const SettingsDivider(),
-        // Obx(() => SettingsSwitchTile(
-        //   title: 'الدعاء بين الأذان والإقامة',
-        //   subtitle: 'تذكير بالدعاء في هذا الوقت المبارك',
-        //   icon: Icons.message_outlined,
-        //   iconColor: Colors.cyan[600]!,
-        //   value: controller.isBetweenAdhanIqamahEnabled.value,
-        //   onChanged: (val) => controller.updateChange(controller.isBetweenAdhanIqamahEnabled, val),
-        // )),
+        const SettingsDivider(),
+        Obx(() => SettingsSwitchTile(
+          title: 'الدعاء بين الأذان والإقامة',
+          subtitle: 'تذكير بالدعاء في هذا الوقت المبارك',
+          icon: Icons.message_outlined,
+          iconColor: Colors.cyan[600]!,
+          value: controller.isBetweenAdhanIqamahEnabled.value,
+          onChanged: (val) => controller.updateChange(controller.isBetweenAdhanIqamahEnabled, val),
+        )),
       ],
     );
   }

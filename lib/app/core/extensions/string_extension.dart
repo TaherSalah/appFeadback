@@ -10,6 +10,15 @@ extension StringExtension on String {
 
   // Checking for numeric values
   bool get isNumeric => double.tryParse(this) != null;
+
+  String get normalizeArabic {
+    if (isEmpty) return this;
+    String normalized = replaceAll(RegExp(r'[أإآ]'), 'ا');
+    normalized = normalized.replaceAll('ة', 'ه');
+    normalized = normalized.replaceAll('ى', 'ي');
+    normalized = normalized.replaceAll(RegExp(r'[\u064B-\u0652]'), '');
+    return normalized.trim();
+  }
 }
 
 extension StringNullExtension on String? {

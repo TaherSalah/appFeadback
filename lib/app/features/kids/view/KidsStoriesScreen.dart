@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
-import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:muslimdaily/app/core/extensions/extensions.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/achievements/services/achievement_service.dart';
 
@@ -101,10 +101,10 @@ class _KidsStoriesScreenState extends State<KidsStoriesScreen> {
 
   void _applyFilters() {
     setState(() {
-      final query = _searchController.text.toLowerCase();
+      final query = _searchController.text.toLowerCase().normalizeArabic;
       _filteredStories = _stories.where((s) {
-        final title = (s['title'] ?? '').toString().toLowerCase();
-        final content = (s['content'] ?? '').toString().toLowerCase();
+        final title = (s['title'] ?? '').toString().toLowerCase().normalizeArabic;
+        final content = (s['content'] ?? '').toString().toLowerCase().normalizeArabic;
         final category = (s['category'] ?? '').toString();
 
         bool matchesQuery = title.contains(query) || content.contains(query);

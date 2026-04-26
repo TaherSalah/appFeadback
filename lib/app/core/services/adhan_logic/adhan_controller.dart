@@ -14,6 +14,7 @@ import 'prayer_cache_manager.dart';
 import 'monthly_prayer_cache.dart';
 import 'prayer_background_manager.dart';
 import '../../services/settings_service.dart';
+import '../system_control_service.dart';
 
 /// AdhanController – lifted from almasjid-main, adapted for rafuiqElmuslim.
 /// This controller is UI-agnostic: it calculates prayer times, caches them,
@@ -237,7 +238,7 @@ class AdhanController extends GetxController {
     return p.fajr.add(const Duration(days: 1)).difference(now);
   }
 
-  Madhab _getMadhab() => state.isHanafi ? Madhab.shafi : Madhab.hanafi;
+  Madhab _getMadhab() => state.isHanafi ? Madhab.hanafi : Madhab.shafi;
 
   HighLatitudeRule _getHighLatitudeRule() {
     switch (state.highLatitudeRuleIndex.value) {
@@ -255,13 +256,17 @@ class AdhanController extends GetxController {
   // ============================================================
 
   Future<void> _readSharedPreferences() async {
-    state.isHanafi = state.box.read(SHAFI) ?? true;
-    state.highLatitudeRuleIndex.value = state.box.read(HIGH_LATITUDE_RULE) ?? 0;
-    state.autoCalculationMethod.value =
-        state.box.read(AUTO_CALCULATION) ?? true;
-
-    // Load city name from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
+    
+    // Madhab: 0 = Shafi, 1 = Hanafi
+    final madhabIndex = prefs.getInt('madhab') ?? 0;
+    state.isHanafi = madhabIndex == 1;
+    
+    state.highLatitudeRuleIndex.value = prefs.getInt('high_latitude_rule') ?? 0;
+    state.autoCalculationMethod.value =
+        prefs.getBool('auto_calculation_method') ?? true;
+
+    // Load city name
     state.location = prefs.getString('selected_city') ?? '';
   }
 
@@ -293,14 +298,42 @@ class AdhanController extends GetxController {
     state.coordinates = Coordinates(location.latitude, location.longitude);
     state.dateComponents = DateComponents.from(state.now);
 
+    final prefs = await SharedPreferences.getInstance();
     if (state.autoCalculationMethod.value) {
       state.params = await _getParamsByJson() ??
           CalculationMethod.egyptian.getParameters();
     } else {
-      state.params = CalculationMethod.egyptian.getParameters();
+      final methodIndex = prefs.getInt('calculation_method_index') ?? CalculationMethod.egyptian.index;
+      state.params = CalculationMethod.values[methodIndex].getParameters();
     }
 
-    state.adjustments = OurPrayerAdjustments.fromGetStorage();
+    // 1. Load Local Adjustments
+    final localAdjustments = await OurPrayerAdjustments.fromSharedPreferences();
+    
+    // 2. Fetch Global Offsets from Supabase
+    try {
+      final globalOffsets = await SystemControlService().getGlobalPrayerOffsets();
+      state.globalFajr = globalOffsets['fajr'] ?? 0;
+      state.globalSunrise = globalOffsets['sunrise'] ?? 0;
+      state.globalDhuhr = globalOffsets['dhuhr'] ?? 0;
+      state.globalAsr = globalOffsets['asr'] ?? 0;
+      state.globalMaghrib = globalOffsets['maghrib'] ?? 0;
+      state.globalIsha = globalOffsets['isha'] ?? 0;
+      log('Global Offsets Applied: $globalOffsets', name: 'AdhanController');
+    } catch (e) {
+      log('Error fetching global offsets: $e', name: 'AdhanController');
+    }
+
+    // 3. Combine Local + Global for calculation
+    state.adjustments = OurPrayerAdjustments(
+      fajr: localAdjustments.fajr + state.globalFajr,
+      sunrise: localAdjustments.sunrise + state.globalSunrise,
+      dhuhr: localAdjustments.dhuhr + state.globalDhuhr,
+      asr: localAdjustments.asr + state.globalAsr,
+      maghrib: localAdjustments.maghrib + state.globalMaghrib,
+      isha: localAdjustments.isha + state.globalIsha,
+    );
+
     state.params.adjustments = state.adjustments;
     state.params.madhab = _getMadhab();
     state.params.highLatitudeRule = _getHighLatitudeRule();
@@ -353,6 +386,40 @@ class AdhanController extends GetxController {
   }
 
   Future<void> _finalizePrayerTimeInitialization() async {
+    // 🌍 Refresh Global Offsets even when loading from cache
+    try {
+      final globalOffsets = await SystemControlService().getGlobalPrayerOffsets();
+      state.globalFajr = globalOffsets['fajr'] ?? 0;
+      state.globalSunrise = globalOffsets['sunrise'] ?? 0;
+      state.globalDhuhr = globalOffsets['dhuhr'] ?? 0;
+      state.globalAsr = globalOffsets['asr'] ?? 0;
+      state.globalMaghrib = globalOffsets['maghrib'] ?? 0;
+      state.globalIsha = globalOffsets['isha'] ?? 0;
+      
+      // Load Local Adjustments
+      final localAdjustments = await OurPrayerAdjustments.fromSharedPreferences();
+      
+      // Re-combine and update params
+      state.adjustments = OurPrayerAdjustments(
+        fajr: localAdjustments.fajr + state.globalFajr,
+        sunrise: localAdjustments.sunrise + state.globalSunrise,
+        dhuhr: localAdjustments.dhuhr + state.globalDhuhr,
+        asr: localAdjustments.asr + state.globalAsr,
+        maghrib: localAdjustments.maghrib + state.globalMaghrib,
+        isha: localAdjustments.isha + state.globalIsha,
+      );
+      
+      if (state.prayerTimes != null) {
+        state.params.adjustments = state.adjustments;
+        // Recalculate to reflect fresh global offsets
+        state.prayerTimesNow = PrayerTimes(state.coordinates, state.dateComponents, state.params);
+        state.prayerTimes = state.prayerTimesNow;
+        state.sunnahTimes = SunnahTimes(state.prayerTimesNow!);
+      }
+    } catch (e) {
+      log('Error refreshing offsets in finalize: $e', name: 'AdhanController');
+    }
+
     await _initTimeStrings();
     state.isPrayerTimesInitialized.value = true;
     state.isLoadingPrayerData.value = false;

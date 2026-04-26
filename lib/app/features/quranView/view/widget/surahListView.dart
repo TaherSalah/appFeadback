@@ -123,8 +123,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
     setState(() {
       _filteredJozzs = jozzs
           .where((j) =>
-              _normalizeArabic(j.toLowerCase())
-                  .contains(_normalizeArabic(query.toLowerCase())) ||
+              j.toLowerCase().normalizeArabic
+                  .contains(query.toLowerCase().normalizeArabic) ||
               (jozzs.indexOf(j) + 1).toString().contains(query))
           .toList();
     });
@@ -135,11 +135,11 @@ class _SurahListScreenState extends State<SurahListScreen> {
       setState(() => _filteredHizbItems = List.from(_allHizbItems));
       return;
     }
-    final normalizedQuery = _normalizeArabic(query.toLowerCase());
+    final normalizedQuery = query.toLowerCase().normalizeArabic;
     setState(() {
       _filteredHizbItems = _allHizbItems
           .where((h) =>
-              _normalizeArabic(h.toLowerCase()).contains(normalizedQuery) ||
+              h.toLowerCase().normalizeArabic.contains(normalizedQuery) ||
               (_allHizbItems.indexOf(h) + 1).toString().contains(query))
           .toList();
     });
@@ -212,15 +212,6 @@ class _SurahListScreenState extends State<SurahListScreen> {
     }
   }
 
-  String _normalizeArabic(String text) {
-    return text
-        .replaceAll('أ', 'ا')
-        .replaceAll('إ', 'ا')
-        .replaceAll('آ', 'ا')
-        .replaceAll('ة', 'ه')
-        .replaceAll('ى', 'ي')
-        .replaceAll(RegExp(r'[\u064B-\u0652]'), ''); // Remove harakat
-  }
 
   void _filterSurahs(String query) {
     if (query.isEmpty) {
@@ -231,13 +222,13 @@ class _SurahListScreenState extends State<SurahListScreen> {
     }
 
     final lowerQuery = query.toLowerCase();
-    final normalizedQuery = _normalizeArabic(lowerQuery);
+    final normalizedQuery = lowerQuery.normalizeArabic;
 
     setState(() {
       _filteredSurahItems = _allSurahItems.where((item) {
         final numberMatch = (item.index + 1).toString().contains(lowerQuery);
         final normalizedArabicName =
-            _normalizeArabic(item.arabicName.toLowerCase());
+            item.arabicName.toLowerCase().normalizeArabic;
         final arabicNameMatch = normalizedArabicName.contains(normalizedQuery);
         final transliterationMatch =
             item.model.transliteration.toLowerCase().contains(lowerQuery);

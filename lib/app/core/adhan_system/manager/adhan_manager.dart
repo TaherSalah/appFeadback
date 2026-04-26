@@ -42,6 +42,8 @@ class AdhanManager {
         .cancelSchedulesByChannelKey('pre_prayer_channel_v1');
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('iqamah_channel_v1');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('adhan_iqamah_channel_v1');
 
     final now = DateTime.now();
     int scheduledCount = 0;
@@ -169,6 +171,35 @@ class AdhanManager {
               ),
               schedule: NotificationCalendar.fromDate(
                 date: iqamahTime,
+                preciseAlarm: true,
+                allowWhileIdle: true,
+              ),
+            );
+          }
+        }
+
+        // ── Dua between Adhan and Iqamah (7 minutes after Adhan)
+        final bool isBetweenAdhanIqamahEnabled = prefs.getBool('is_between_adhan_iqamah_enabled') ?? true;
+        if (isBetweenAdhanIqamahEnabled && prayerKey != 'sunrise' && arabicPrayerName != 'الشروق') {
+          final duaTime = prayerTime.add(const Duration(minutes: 7));
+          if (duaTime.isAfter(now)) {
+            await AwesomeNotifications().createNotification(
+              content: NotificationContent(
+                id: 60000 + uniqueId,
+                channelKey: 'adhan_iqamah_channel_v1',
+                title: 'الدعاء بين الأذان والإقامة',
+                body: 'قال ﷺ: لا يُرد الدعاء بين الأذان والإقامة؛ فادعوا',
+                category: NotificationCategory.Reminder,
+                wakeUpScreen: true,
+                autoDismissible: true,
+                icon: 'resource://drawable/ic_stat_logoapp',
+                largeIcon: 'resource://drawable/ic_stat_logoapp',
+                notificationLayout: NotificationLayout.BigText,
+                color: const Color(0xFF178B74),
+                payload: {'prayerName': arabicPrayerName, 'type': 'adhan_iqamah_reminder'},
+              ),
+              schedule: NotificationCalendar.fromDate(
+                date: duaTime,
                 preciseAlarm: true,
                 allowWhileIdle: true,
               ),
