@@ -181,7 +181,7 @@ class _AddEventSheetState extends State<AddEventSheet> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: primaryColor, width: 1.5),
+          borderSide: const BorderSide(color: primaryColor, width: 1.5),
         ),
         contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
       );

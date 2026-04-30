@@ -13,6 +13,7 @@ import '../../../../core/utils/constent/router.dart';
 import '../../../../core/utils/style/k_color.dart';
 import '../../../../core/widgets/KLoading.dart';
 import '../../../../core/widgets/custom_divider_widget.dart';
+import '../../../../core/widgets/custom_form_faild.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 import '../../../../core/widgets/image_widget.dart';
 import '../../../../core/widgets/kButtons.dart';
@@ -44,6 +45,7 @@ class HadithViewItemBuilder extends StatelessWidget {
       crossAxisCount = 4;
       childAspectRatio = 0.7;
     }
+    CategoriesBloc bloc = CategoriesBloc.get(context);
     return CustomScrollView(
       slivers: [
         SliverAppBar(
@@ -52,11 +54,10 @@ class HadithViewItemBuilder extends StatelessWidget {
           title: Text(
             "موسوعة الاحاديث",
             style: TextStyle(
-                  fontFamily: "cairo",
+                fontFamily: "cairo",
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize:
-                    context.isTab ? 12.sp : 18.sp),
+                fontSize: context.isTab ? 12.sp : 18.sp),
           ),
           leading: const SizedBox(),
           actions: [
@@ -72,8 +73,29 @@ class HadithViewItemBuilder extends StatelessWidget {
           ],
         ),
         SliverToBoxAdapter(
-            child:
-                SizedBox(height: context.isTab ? 20 : 15)),
+            child: SizedBox(height: context.isTab ? 20 : 15)),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: CustomTextFieldWidget(
+              controller: bloc.localSearchController,
+              hint: LocalizationManager.call("search"),
+              prefixIcon: const Icon(Icons.search, color: Colors.grey),
+              suffixIcon: bloc.localSearchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.grey),
+                      onPressed: () {
+                        bloc.localSearchController.clear();
+                        bloc.searchCategories("");
+                      },
+                    )
+                  : null,
+              onchange: (value) {
+                bloc.searchCategories(value);
+              },
+            ),
+          ),
+        ),
         SliverToBoxAdapter(
             child: FadeAnimation(
           delay: const Duration(milliseconds: 100),
@@ -96,8 +118,7 @@ class HadithViewItemBuilder extends StatelessWidget {
                           ? KColors.greenColor
                           : KColors.primaryColor,
                       title: LocalizationManager.call("view-all"),
-                      fontSize:
-                          context.isTab ? 8.sp : 10.sp),
+                      fontSize: context.isTab ? 8.sp : 10.sp),
                 ),
               ],
             ),

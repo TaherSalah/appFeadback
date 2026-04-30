@@ -90,19 +90,17 @@ class SystemControlService {
           .select('feature_name, status')
           .timeout(const Duration(seconds: 10));
 
-      if (response is List) {
-        final Map<String, String> statuses = {};
-        for (var item in response) {
-          final String key = item['feature_name']?.toString() ?? '';
-          final String value = item['status']?.toString() ?? 'active';
-          if (key.isNotEmpty) {
-            statuses[key] = value;
-          }
+      final Map<String, String> statuses = {};
+      for (var item in response) {
+        final String key = item['feature_name']?.toString() ?? '';
+        final String value = item['status']?.toString() ?? 'active';
+        if (key.isNotEmpty) {
+          statuses[key] = value;
         }
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(cacheKey, jsonEncode(statuses));
       }
-    } catch (e) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(cacheKey, jsonEncode(statuses));
+        } catch (e) {
       logger.e('Error fetching feature statuses: $e');
     }
   }
@@ -156,28 +154,26 @@ class SystemControlService {
           .select('key, value')
           .timeout(const Duration(seconds: 10));
 
-      if (response is List) {
-        final targetKeys = [
-          'quote_enabled',
-          'quote_visible',
-          'show_quote',
-          'is_quote_enabled',
-          'quote_active'
-        ];
+      final targetKeys = [
+        'quote_enabled',
+        'quote_visible',
+        'show_quote',
+        'is_quote_enabled',
+        'quote_active'
+      ];
 
-        bool isVisible = false;
-        for (var item in response) {
-          if (targetKeys.contains(item['key'].toString())) {
-            final val = item['value'].toString().toLowerCase();
-            if (val == 'true' || val == '1') {
-              isVisible = true;
-            }
+      bool isVisible = false;
+      for (var item in response) {
+        if (targetKeys.contains(item['key'].toString())) {
+          final val = item['value'].toString().toLowerCase();
+          if (val == 'true' || val == '1') {
+            isVisible = true;
           }
         }
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool(cacheKey, isVisible);
       }
-    } catch (e) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(cacheKey, isVisible);
+        } catch (e) {
       logger.e('Error fetching quote visibility: $e');
     }
   }
@@ -217,26 +213,24 @@ class SystemControlService {
           .select('key, value')
           .timeout(const Duration(seconds: 10));
 
-      if (response is List) {
-        final data = response as List;
-        final newsActiveVal = _findValue(data, 'news_active')?.toLowerCase();
-        final active = newsActiveVal == 'true' ||
-            newsActiveVal == '1' ||
-            newsActiveVal == 'active';
+      final data = response as List;
+      final newsActiveVal = _findValue(data, 'news_active')?.toLowerCase();
+      final active = newsActiveVal == 'true' ||
+          newsActiveVal == '1' ||
+          newsActiveVal == 'active';
 
-        final news = _findValue(data, 'news_marquee');
-        final label = _findValue(data, 'news_marquee_label') ?? 'تنبيه عاجل';
-        final type = _findValue(data, 'news_marquee_type') ?? 'urgent';
+      final news = _findValue(data, 'news_marquee');
+      final label = _findValue(data, 'news_marquee_label') ?? 'تنبيه عاجل';
+      final type = _findValue(data, 'news_marquee_type') ?? 'urgent';
 
-        if (active && news != null && news.trim().isNotEmpty) {
-          await prefs.setString(newsKey, news);
-          await prefs.setString(labelKey, label);
-          await prefs.setString(typeKey, type);
-        } else {
-          await prefs.remove(newsKey);
-        }
+      if (active && news != null && news.trim().isNotEmpty) {
+        await prefs.setString(newsKey, news);
+        await prefs.setString(labelKey, label);
+        await prefs.setString(typeKey, type);
+      } else {
+        await prefs.remove(newsKey);
       }
-    } catch (e) {
+        } catch (e) {
       logger.e('Error fetching news: $e');
     }
   }
@@ -274,11 +268,9 @@ class SystemControlService {
           .order('created_at', ascending: false)
           .timeout(const Duration(seconds: 10));
 
-      if (response is List) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(cacheKey, jsonEncode(response));
-      }
-    } catch (e) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(cacheKey, jsonEncode(response));
+        } catch (e) {
       logger.e('Error fetching banners: $e');
     }
   }
@@ -327,17 +319,15 @@ class SystemControlService {
           .filter('key', 'in',
               '("broadcast_message", "broadcast_id", "broadcast_active")');
 
-      if (response is List) {
-        final data = response as List;
-        final active = _findValue(data, 'broadcast_active') == 'true';
-        final message = _findValue(data, 'broadcast_message');
-        final id = _findValue(data, 'broadcast_id');
+      final data = response as List;
+      final active = _findValue(data, 'broadcast_active') == 'true';
+      final message = _findValue(data, 'broadcast_message');
+      final id = _findValue(data, 'broadcast_id');
 
-        if (active && message != null && message.isNotEmpty) {
-          return {'message': message, 'id': id ?? '0'};
-        }
+      if (active && message != null && message.isNotEmpty) {
+        return {'message': message, 'id': id ?? '0'};
       }
-    } catch (e) {
+        } catch (e) {
       logger.e('Error fetching broadcast: $e');
     }
     return null;
@@ -380,15 +370,13 @@ class SystemControlService {
           .filter('key', 'in',
               '("link_facebook", "link_whatsapp", "link_appstore", "link_playstore")');
 
-      if (response is List) {
-        final Map<String, String> links = {};
-        for (var item in response) {
-          links[item['key'].toString()] = item['value'].toString();
-        }
-        await prefs.setString(cacheKey, jsonEncode(links));
-        return links;
+      final Map<String, String> links = {};
+      for (var item in response) {
+        links[item['key'].toString()] = item['value'].toString();
       }
-    } catch (e) {
+      await prefs.setString(cacheKey, jsonEncode(links));
+      return links;
+        } catch (e) {
       logger.e('Error fetching support links: $e');
     }
 
@@ -435,17 +423,15 @@ class SystemControlService {
               '("prayer_offset_fajr", "prayer_offset_sunrise", "prayer_offset_dhuhr", "prayer_offset_asr", "prayer_offset_maghrib", "prayer_offset_isha")')
           .timeout(const Duration(seconds: 10));
 
-      if (response is List) {
-        final Map<String, int> offsets = {};
-        for (var item in response) {
-          final key = item['key'].toString().replaceFirst('prayer_offset_', '');
-          final value = int.tryParse(item['value'].toString()) ?? 0;
-          offsets[key] = value;
-        }
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(cacheKey, jsonEncode(offsets));
+      final Map<String, int> offsets = {};
+      for (var item in response) {
+        final key = item['key'].toString().replaceFirst('prayer_offset_', '');
+        final value = int.tryParse(item['value'].toString()) ?? 0;
+        offsets[key] = value;
       }
-    } catch (e) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(cacheKey, jsonEncode(offsets));
+        } catch (e) {
       logger.e('Error fetching global offsets: $e');
     }
   }
@@ -462,7 +448,7 @@ class SystemControlService {
           .filter('key', 'in',
               '("social_banner_title", "social_banner_url", "social_banner_platform", "social_banner_active")');
 
-      if (response is List && response.isNotEmpty) {
+      if (response.isNotEmpty) {
         final data = response as List;
         final title = _findValue(data, 'social_banner_title');
         final url = _findValue(data, 'social_banner_url');

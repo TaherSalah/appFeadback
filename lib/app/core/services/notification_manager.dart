@@ -980,7 +980,7 @@ class NotificationManager {
         .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
 
     if (!SettingsService().isFajrAlarmEnabled) {
-      logger.e("🔕 Advanced Fajr Alarm is DISABLED.");
+      logger.i("🔕 Advanced Fajr Alarm is DISABLED.");
       return;
     }
 
@@ -1181,7 +1181,16 @@ class NotificationManager {
 
         for (int hDay in [13, 14, 15]) {
           final hDate = hijri.HijriCalendar();
-          final gregDate = hDate.hijriToGregorian(hYear, hMonth, hDay);
+          DateTime? gregDate;
+          try {
+            gregDate = hDate.hijriToGregorian(hYear, hMonth, hDay);
+          } catch (e) {
+            logger.w('⚠️ Could not convert Hijri date $hYear/$hMonth/$hDay to Gregorian: $e');
+            continue;
+          }
+
+          if (gregDate == null) continue;
+
           // Reminder on the evening BEFORE (8 PM)
           final reminderDate =
               DateTime(gregDate.year, gregDate.month, gregDate.day)
@@ -1194,7 +1203,7 @@ class NotificationManager {
                 channelKey: 'sabah_athkar_channel',
                 title: 'صيام الأيام البيض',
                 body:
-                    'غداً يوم ${hDate.hDay} $hMonth، نذكركم بصيام الأيام البيض',
+                    'غداً يوم $hDay $hMonth، نذكركم بصيام الأيام البيض',
                 category: NotificationCategory.Reminder,
                 payload: {'route': 'white_days_reminder'},
                 largeIcon: 'resource://drawable/ic_stat_logoapp',
@@ -1270,8 +1279,16 @@ class NotificationManager {
         }
 
         final hDate = hijri.HijriCalendar();
-        final gregDate = hDate.hijriToGregorian(hYear, hMonth, hDay);
-        // Remind at 8 AM on the day of occasion
+        DateTime? gregDate;
+        try {
+          gregDate = hDate.hijriToGregorian(hYear, hMonth, hDay);
+        } catch (e) {
+          logger.w('⚠️ Could not convert religious occasion date to Gregorian: $e');
+          continue;
+        }
+
+        if (gregDate == null) continue;
+
         final reminderDate =
             DateTime(gregDate.year, gregDate.month, gregDate.day, 8, 0);
 

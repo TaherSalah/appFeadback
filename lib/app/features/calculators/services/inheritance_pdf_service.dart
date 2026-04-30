@@ -252,34 +252,43 @@ class InheritancePdfService {
     if (input.daughters > 0) details.add("عدد البنات: ${input.daughters}");
 
     if (input.sonsOfSons > 0) details.add("أبناء الابن: ${input.sonsOfSons}");
-    if (input.daughtersOfSons > 0)
+    if (input.daughtersOfSons > 0) {
       details.add("بنات الابن: ${input.daughtersOfSons}");
+    }
     if (input.hasPaternalGrandfather) details.add("الجد لأب موجود");
     if (input.hasMaternalGrandmother) details.add("الجدة لأم موجودة");
     if (input.hasPaternalGrandmother) details.add("الجدة لأب موجودة");
 
     if (input.fullBrothers > 0) details.add("الإخوة الأشقاء: ${input.fullBrothers}");
-    if (input.fullSisters > 0)
+    if (input.fullSisters > 0) {
       details.add("الأخوات الشقيقات: ${input.fullSisters}");
-    if (input.consanguineBrothers > 0)
+    }
+    if (input.consanguineBrothers > 0) {
       details.add("الإخوة لأب: ${input.consanguineBrothers}");
-    if (input.consanguineSisters > 0)
+    }
+    if (input.consanguineSisters > 0) {
       details.add("الأخوات لأب: ${input.consanguineSisters}");
-    if (input.uterineBrothers > 0)
+    }
+    if (input.uterineBrothers > 0) {
       details.add("الإخوة لأم: ${input.uterineBrothers}");
-    if (input.uterineSisters > 0)
+    }
+    if (input.uterineSisters > 0) {
       details.add("الأخوات لأم: ${input.uterineSisters}");
+    }
 
     // Extended Heirs (only if count > 0)
     if (input.nephewsFull > 0) details.add("أبناء أخ شقيق: ${input.nephewsFull}");
-    if (input.nephewsConsanguine > 0)
+    if (input.nephewsConsanguine > 0) {
       details.add("أبناء أخ لأب: ${input.nephewsConsanguine}");
+    }
     if (input.paternalUnclesFull > 0) details.add("أعمام أشقاء: ${input.paternalUnclesFull}");
-    if (input.paternalUnclesConsanguine > 0)
+    if (input.paternalUnclesConsanguine > 0) {
       details.add("أعمام لأب: ${input.paternalUnclesConsanguine}");
+    }
     if (input.cousinsFull > 0) details.add("أبناء عم شقيق: ${input.cousinsFull}");
-    if (input.cousinsConsanguine > 0)
+    if (input.cousinsConsanguine > 0) {
       details.add("أبناء عم لأب: ${input.cousinsConsanguine}");
+    }
 
     // Wills
     if (input.willFractions.isNotEmpty) {

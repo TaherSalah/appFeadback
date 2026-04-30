@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/categories/data/repo/categories_repo_immp.dart';
 
@@ -10,6 +11,7 @@ import '../../../core/utils/constent/router.dart';
 import '../../../core/utils/style/app_theme_colors.dart';
 import '../../../core/utils/style/k_color.dart';
 import '../../../core/widgets/KLoading.dart';
+import '../../../core/widgets/custom_form_faild.dart';
 import '../../../core/widgets/custom_text_widget.dart';
 import '../../hadithDetails/data/repo/hadith_details_repo_immp.dart';
 import '../../hadithDetails/view/controller/hadith_details_bloc.dart';
@@ -70,6 +72,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
       child: BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (BuildContext context, state) {
           final isDark = context.isDark;
+          CategoriesBloc bloc = CategoriesBloc.get(context);
 
           return state.maybeMap(
             orElse: () {
@@ -90,17 +93,14 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                 slivers: [
                   SliverAppBar(
                       leading: CupertinoNavigationBarBackButton(
-                        color: context.isDark
-                            ? Colors.white
-                            : Colors.black,
+                        color: context.isDark ? Colors.white : Colors.black,
                       ),
                       title: TextWidget(
                         title: categoriesDetailsPrams?.subCategoriesName,
                         color: isDark ? KColors.whiteColor : KColors.blackColor,
                         fontWeight: FontWeight.bold,
                         fontFamily: "me",
-                        fontSize:
-                            context.isTab ? 8.sp : 18.sp,
+                        fontSize: context.isTab ? 8.sp : 18.sp,
                       ),
                       actions: [
                         Padding(
@@ -123,11 +123,34 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                                             : KColors.blackColor,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: "me",
-                                        fontSize:
-                                            context.isTab
-                                                ? 8.sp
-                                                : 16.sp))))
+                                        fontSize: context.isTab
+                                            ? 8.sp
+                                            : 16.sp))))
                       ]),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      child: CustomTextFieldWidget(
+                        controller: bloc.localSearchController,
+                        hint: LocalizationManager.call("search"),
+                        prefixIcon:
+                            const Icon(Icons.search, color: Colors.grey),
+                        suffixIcon: bloc.localSearchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear, color: Colors.grey),
+                                onPressed: () {
+                                  bloc.localSearchController.clear();
+                                  bloc.searchHadiths("");
+                                },
+                              )
+                            : null,
+                        onchange: (value) {
+                          bloc.searchHadiths(value);
+                        },
+                      ),
+                    ),
+                  ),
                   SliverToBoxAdapter(
                       child: Padding(
                     padding:
@@ -142,55 +165,78 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                       ],
                     ),
                   )),
-                  SliverToBoxAdapter(
-                    child: GridView.builder(
-                        padding: EdgeInsets.zero,
-                        itemCount: value.allHadithCategorieModal?.data?.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossAxisCount,
-                            childAspectRatio: childAspectRatio),
-                        itemBuilder: (context, index) {
-                          return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 2, horizontal: 2),
-                              child: InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, Routes.hadithDetailsRoute,
-                                        arguments: value.allHadithCategorieModal
-                                            ?.data?[index].id);
-                                  },
-                                  child: Card(
-                                      shape: BeveledRectangleBorder(
-                                          borderRadius:
-                                              BorderRadiusGeometry.circular(
-                                                  15)),
-                                      color: AppThemeColors.cardBackgroundColor(
-                                          context),
-                                      shadowColor:
-                                          KColors.whiteColor.withOpacity(0.6),
-                                      elevation: 2,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8, horizontal: 10),
-                                        child: TextWidget(
-                                            color: isDark
-                                                ? KColors.whiteColor
-                                                : KColors.blackColor,
-                                            maxLines: 2,
-                                            textAlign: TextAlign.justify,
-                                            title:
-                                                "${value.allHadithCategorieModal?.data?[index].title}",
-                                            fontSize:
-                                                context.isTab
-                                                    ? 7.sp
-                                                    : 14.sp,
-                                            height: 2.5),
-                                      ))));
-                        }),
-                  )
+                  if (value.allHadithCategorieModal?.data?.isEmpty ?? true)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              height: 150.h,
+                              child: Lottie.asset(
+                                  "assets/json/file-searching.json")),
+                          TextWidget(
+                            title: LocalizationManager.call("notSearchFound"),
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    SliverToBoxAdapter(
+                      child: GridView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount:
+                              value.allHadithCategorieModal?.data?.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  childAspectRatio: childAspectRatio),
+                          itemBuilder: (context, index) {
+                            return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 2),
+                                child: InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, Routes.hadithDetailsRoute,
+                                          arguments: value
+                                              .allHadithCategorieModal
+                                              ?.data?[index]
+                                              .id);
+                                    },
+                                    child: Card(
+                                        shape: BeveledRectangleBorder(
+                                            borderRadius:
+                                                BorderRadiusGeometry.circular(
+                                                    15)),
+                                        color:
+                                            AppThemeColors.cardBackgroundColor(
+                                                context),
+                                        shadowColor:
+                                            KColors.whiteColor.withOpacity(0.6),
+                                        elevation: 2,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8, horizontal: 10),
+                                          child: TextWidget(
+                                              color: isDark
+                                                  ? KColors.whiteColor
+                                                  : KColors.blackColor,
+                                              maxLines: 2,
+                                              textAlign: TextAlign.justify,
+                                              title:
+                                                  "${value.allHadithCategorieModal?.data?[index].title}",
+                                              fontSize: context.isTab
+                                                  ? 7.sp
+                                                  : 14.sp,
+                                              height: 2.5),
+                                        ))));
+                          }),
+                    )
                 ],
               );
             },

@@ -19,10 +19,8 @@ class GlobalKhatmahService {
           .order('created_at', ascending: false)
           .limit(10);
       
-      if (response is List) {
-        return List<Map<String, dynamic>>.from(response);
-      }
-    } catch (e) {
+      return List<Map<String, dynamic>>.from(response);
+        } catch (e) {
       logger.e('Error fetching active campaigns: $e');
     }
     return [];
@@ -37,10 +35,8 @@ class GlobalKhatmahService {
           .eq('campaign_id', campaignId)
           .order('item_index', ascending: true);
       
-      if (response is List) {
-        return List<Map<String, dynamic>>.from(response);
-      }
-    } catch (e) {
+      return List<Map<String, dynamic>>.from(response);
+        } catch (e) {
       logger.e('Error fetching campaign progress: $e');
     }
     return [];

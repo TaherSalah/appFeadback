@@ -1,5 +1,3 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
 import '../../../../../core/shard/exports/all_exports.dart';
