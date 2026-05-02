@@ -39,6 +39,7 @@ class AzkarProvider extends ChangeNotifier {
     currentBead = Di.sharedPreferences.getInt('tasbeeh_current_bead') ?? 0;
     cycleCount = Di.sharedPreferences.getInt('tasbeeh_cycle_count') ?? 0;
     isElectronicRosaryMode = Di.sharedPreferences.getBool('tasbeeh_is_electronic_mode') ?? false;
+    isVibrationEnabled = Di.sharedPreferences.getBool('tasbeeh_is_vibration_enabled') ?? true;
     notifyListeners();
   }
 
@@ -49,6 +50,7 @@ class AzkarProvider extends ChangeNotifier {
      Di.sharedPreferences.setInt('tasbeeh_current_bead', currentBead);
      Di.sharedPreferences.setInt('tasbeeh_cycle_count', cycleCount);
      Di.sharedPreferences.setBool('tasbeeh_is_electronic_mode', isElectronicRosaryMode);
+     Di.sharedPreferences.setBool('tasbeeh_is_vibration_enabled', isVibrationEnabled);
   }
 
   late List<int> _initialSleepRepate;
@@ -75,6 +77,8 @@ class AzkarProvider extends ChangeNotifier {
   int currentBead = 0;
   int cycleCount = 0;
   bool isElectronicRosaryMode = false;
+  bool isHiddenMode = false;
+  bool isVibrationEnabled = true;
 
   AllAzkarModel allAzkarModel = AllAzkarModel();
   List<Content> azkarMassaList = [];
@@ -172,65 +176,79 @@ class AzkarProvider extends ChangeNotifier {
   //     notifyListeners();
   //   }
   // }
-  void decrementQuran(int index) {
+  void _vibrate() {
+    if (isVibrationEnabled) {
+      HapticFeedback.mediumImpact();
+    }
+  }
+
+  void decrementQuran(int index, {bool vibrate = true}) {
     if (index < 0 || index >= Azkary.rokiaQuranRepe.length) return;
     if (Azkary.rokiaQuranRepe[index] > 0) {
+      if (vibrate) _vibrate();
       Azkary.rokiaQuranRepe[index]--;
       notifyListeners();
     }
   }
 
-  void decrementSabah(int index) {
+  void decrementSabah(int index, {bool vibrate = true}) {
     if (index < 0 || index >= Azkary.azkarSabahRepate.length) return;
     if (Azkary.azkarSabahRepate[index] > 0) {
+      if (vibrate) _vibrate();
       Azkary.azkarSabahRepate[index]--;
       notifyListeners();
     }
   }
 
-  void decrementMessa(int index) {
+  void decrementMessa(int index, {bool vibrate = true}) {
     if (index < 0 || index >= Azkary.azkarMassaRepate.length) return;
     if (Azkary.azkarMassaRepate[index] > 0) {
+      if (vibrate) _vibrate();
       Azkary.azkarMassaRepate[index]--;
       notifyListeners();
     }
   }
 
-  void decrementOther(int index) {
+  void decrementOther(int index, {bool vibrate = true}) {
     if (index < 0 || index >= Azkary.azkarRepate.length) return;
     if (Azkary.azkarRepate[index] > 0) {
+      if (vibrate) _vibrate();
       Azkary.azkarRepate[index]--;
       notifyListeners();
     }
   }
 
-  void decrementSleep(int index) {
+  void decrementSleep(int index, {bool vibrate = true}) {
     if (index < 0 || index >= Azkary.azkarSleepRepate.length) return;
     if (Azkary.azkarSleepRepate[index] > 0) {
+      if (vibrate) _vibrate();
       Azkary.azkarSleepRepate[index]--;
       notifyListeners();
     }
   }
 
-  void decrementPrayer(int index) {
+  void decrementPrayer(int index, {bool vibrate = true}) {
     if (index < 0 || index >= Azkary.azkarPrayerRepate.length) return;
     if (Azkary.azkarPrayerRepate[index] > 0) {
+      if (vibrate) _vibrate();
       Azkary.azkarPrayerRepate[index]--;
       notifyListeners();
     }
   }
 
-  void decrementHazbNawawi(int index) {
+  void decrementHazbNawawi(int index, {bool vibrate = true}) {
     if (index < 0 || index >= Azkary.azkarHazbNawawiRepate.length) return;
     if (Azkary.azkarHazbNawawiRepate[index] > 0) {
+      if (vibrate) _vibrate();
       Azkary.azkarHazbNawawiRepate[index]--;
       notifyListeners();
     }
   }
 
-  void decrementProphetic(int index) {
+  void decrementProphetic(int index, {bool vibrate = true}) {
     if (index < 0 || index >= Azkary.azkarPropheticRepate.length) return;
     if (Azkary.azkarPropheticRepate[index] > 0) {
+      if (vibrate) _vibrate();
       Azkary.azkarPropheticRepate[index]--;
       notifyListeners();
     }
@@ -293,17 +311,31 @@ class AzkarProvider extends ChangeNotifier {
 
   ///**** counter methods ****///
 
-  incrementCount() {
+  incrementCount({bool vibrate = true}) {
+    if (vibrate) _vibrate();
     counter++;
     _saveCounter();
     notifyListeners();
   }
+
 
   toggleRosaryMode(bool isElectronic) {
     isElectronicRosaryMode = isElectronic;
     _saveCounter();
     notifyListeners();
   }
+
+  toggleHiddenMode() {
+    isHiddenMode = !isHiddenMode;
+    notifyListeners();
+  }
+
+  void toggleVibration(bool value) {
+    isVibrationEnabled = value;
+    _saveCounter();
+    notifyListeners();
+  }
+
 
   updateTasbeehState({
     int? newCurrentZikrIndex,

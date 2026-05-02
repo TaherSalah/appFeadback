@@ -134,7 +134,7 @@ class CategoriesBloc extends Cubit<CategoriesState> {
 
   void searchHadiths(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () async {
+    _debounce = Timer(const Duration(milliseconds: 300), () async {
       await _performSearchHadiths(query);
     });
   }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:muslimdaily/app/core/controller/azkar_controller.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/settings/feedback_view.dart';
 import 'package:muslimdaily/app/features/settings/location_settings_view.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_view.dart';
+import 'package:provider/provider.dart';
 import '../azanView/widget/AdhanStatusBanner.dart';
 import '../userGuide/presentation/user_guide_list_screen.dart';
 import 'settings_controller.dart';
@@ -145,6 +147,20 @@ Get.put(SettingsController(context));
                           ),
                         ],
                       ),
+                      const SettingsDivider(),
+                      Consumer<AzkarProvider>(
+                        builder: (context, azkarProvider, child) {
+                          return SettingsSwitchTile(
+                            icon: Icons.vibration,
+                            title: 'الاهتزاز عند الضغط',
+                            subtitle: 'تفعيل الاهتزاز عند النقر على الأذكار',
+                            iconColor: Colors.blueGrey,
+                            value: azkarProvider.isVibrationEnabled,
+                            onChanged: (value) => azkarProvider.toggleVibration(value),
+                          );
+                        },
+                      ),
+
                       const SettingsDivider(),
                       SettingsFontSizeSlider(
                         title: 'حجم خط الأذكار',

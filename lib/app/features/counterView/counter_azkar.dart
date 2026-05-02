@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
 import '../../core/shard/exports/all_exports.dart';
 
@@ -15,31 +16,36 @@ class AzkarCounter extends StatefulWidget {
 class _AzkarCounterState extends State<AzkarCounter> {
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(
-                context.isTab ? 70 : 50),
-            child: AppBar(
-              leading: CupertinoNavigationBarBackButton(
-                color: context.isDark
-                    ? Colors.white
-                    : Colors.black,
+    return Consumer<AzkarProvider>(
+      builder: (context, provider, child) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(
+              backgroundColor: provider.isHiddenMode ? Colors.black : null,
+              appBar: provider.isHiddenMode ? null : PreferredSize(
+                preferredSize: Size.fromHeight(
+                    context.isTab ? 70 : 50),
+                child: AppBar(
+                  leading: CupertinoNavigationBarBackButton(
+                    color: context.isDark
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                  centerTitle: true,
+                  title: Text(
+                    AppString.KCounter,
+                       style: TextStyle(
+                              fontFamily: "cairo",
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize:
+                            context.isTab ? 12.sp : 18.sp),
+                  ),
+                ),
               ),
-              centerTitle: true,
-              title: Text(
-                AppString.KCounter,
-                   style: TextStyle(
-                          fontFamily: "cairo",
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                    fontSize:
-                        context.isTab ? 12.sp : 18.sp),
-              ),
-            ),
-          ),
-          body: const CounterWidgetBuilder2()),
+              body: const CounterWidgetBuilder2()),
+        );
+      },
     );
   }
 }
@@ -56,8 +62,10 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
   Widget build(BuildContext context) {
     final isTablet = context.isTab;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+    return Consumer<AzkarProvider>(
+      builder: (context, provider, child) {
+        return Scaffold(
+          backgroundColor: provider.isHiddenMode ? Colors.black : const Color(0xFF0F172A),
       body: SafeArea(
         child: SingleChildScrollView(
           child:Column(
@@ -119,79 +127,83 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                       // أزرار التبديل (Tabs)
                       Consumer<AzkarProvider>(
                         builder: (context, provider, child) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: isTablet ? 40.w : 24.w),
-                            child: Container(
-                              padding: EdgeInsets.all(4.r),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0F172A), // Darker background
-                                borderRadius: BorderRadius.circular(25.r),
-                                border: Border.all(color: const Color(0xFF334155), width: 1.w),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  )
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () => provider.toggleRosaryMode(false),
-                                      child: AnimatedContainer(
-                                        duration: const Duration(milliseconds: 200),
-                                        padding: EdgeInsets.symmetric(vertical: 10.h),
-                                        decoration: BoxDecoration(
-                                          color: !provider.isElectronicRosaryMode ? const Color(0xFF1E293B) : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(20.r),
-                                          boxShadow: !provider.isElectronicRosaryMode ? [
-                                            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2))
-                                          ] : [],
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'المسبحة التقليدية',
-                                            style: TextStyle(
-                                            fontFamily: "cairo",
-                                              fontSize: isTablet ? 14.sp : 12.sp,
-                                              color: !provider.isElectronicRosaryMode ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
-                                              fontWeight: !provider.isElectronicRosaryMode ? FontWeight.bold : FontWeight.w600,
+                          return AnimatedOpacity(
+                            duration: const Duration(milliseconds: 300),
+                            opacity: provider.isHiddenMode ? 0.0 : 1.0,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: isTablet ? 40.w : 24.w),
+                              child: Container(
+                                padding: EdgeInsets.all(4.r),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0F172A), // Darker background
+                                  borderRadius: BorderRadius.circular(25.r),
+                                  border: Border.all(color: const Color(0xFF334155), width: 1.w),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    )
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () => provider.toggleRosaryMode(false),
+                                        child: AnimatedContainer(
+                                          duration: const Duration(milliseconds: 200),
+                                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                                          decoration: BoxDecoration(
+                                            color: !provider.isElectronicRosaryMode ? const Color(0xFF1E293B) : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(20.r),
+                                            boxShadow: !provider.isElectronicRosaryMode ? [
+                                              BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2))
+                                            ] : [],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'المسبحة التقليدية',
+                                              style: TextStyle(
+                                              fontFamily: "cairo",
+                                                fontSize: isTablet ? 14.sp : 12.sp,
+                                                color: !provider.isElectronicRosaryMode ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
+                                                fontWeight: !provider.isElectronicRosaryMode ? FontWeight.bold : FontWeight.w600,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () => provider.toggleRosaryMode(true),
-                                      child: AnimatedContainer(
-                                        duration: const Duration(milliseconds: 200),
-                                        padding: EdgeInsets.symmetric(vertical: 10.h),
-                                        decoration: BoxDecoration(
-                                          color: provider.isElectronicRosaryMode ? const Color(0xFF1E293B) : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(20.r),
-                                          boxShadow: provider.isElectronicRosaryMode ? [
-                                            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2))
-                                          ] : [],
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'العداد الإلكتروني',
-                                            style: TextStyle(
-                                            fontFamily: "cairo",
-                                              fontSize: isTablet ? 14.sp : 12.sp,
-                                              color: provider.isElectronicRosaryMode ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
-                                              fontWeight: provider.isElectronicRosaryMode ? FontWeight.bold : FontWeight.w600,
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () => provider.toggleRosaryMode(true),
+                                        child: AnimatedContainer(
+                                          duration: const Duration(milliseconds: 200),
+                                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                                          decoration: BoxDecoration(
+                                            color: provider.isElectronicRosaryMode ? const Color(0xFF1E293B) : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(20.r),
+                                            boxShadow: provider.isElectronicRosaryMode ? [
+                                              BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2))
+                                            ] : [],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'العداد الإلكتروني',
+                                              style: TextStyle(
+                                              fontFamily: "cairo",
+                                                fontSize: isTablet ? 14.sp : 12.sp,
+                                                color: provider.isElectronicRosaryMode ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
+                                                fontWeight: provider.isElectronicRosaryMode ? FontWeight.bold : FontWeight.w600,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -212,10 +224,10 @@ class _CounterWidgetBuilder2State extends State<CounterWidgetBuilder2> {
                 ],
               ),
             ],
-          )
+          ),
         ),
-      ),
-    );
+      ));
+    });
   }
 
   Widget _buildAzkarBar(BuildContext context) {
@@ -659,10 +671,11 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
 
   void _moveToNextBead() {
     if (_moveController.isAnimating) return;
-    HapticFeedback.mediumImpact();
-
     final provider = Provider.of<AzkarProvider>(context, listen: false);
-    provider.incrementCount();
+    // Vibrate here with medium impact if enabled, and skip provider's light vibration
+    if (provider.isVibrationEnabled) HapticFeedback.mediumImpact();
+
+    provider.incrementCount(vibrate: false);
 
     setState(() {
       // زيادة العداد للذكر الحالي
@@ -687,7 +700,7 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
       currentBead = (currentBead + 1) % beadsCount;
       if (currentBead == 0) {
         _cycleCount++;
-        HapticFeedback.heavyImpact();
+        if (provider.isVibrationEnabled) HapticFeedback.heavyImpact();
         // تأثير خاص لإكمال دورة beads
         // _createCompletionEffect();
       }
@@ -738,8 +751,8 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
   // }
 
   void _resetCounter() {
-    HapticFeedback.heavyImpact();
     final provider = Provider.of<AzkarProvider>(context, listen: false);
+    if (provider.isVibrationEnabled) HapticFeedback.heavyImpact();
     provider.restCount();
 
     setState(() {
@@ -1729,54 +1742,57 @@ class _TasbeehRealPlusState extends State<TasbeehRealPlus>
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildControlButton(
-              icon: Icons.favorite_rounded,
-              label: 'تسبيح سريع',
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF10B981), Color(0xFF059669)],
-              ),
-              glowColor: const Color(0xFF10B981),
-              onTap: _moveToNextBead,
-              isTablet: isTablet,
-            ),
-            SizedBox(width: 12.w),
-            Container(
-              width: 2.5.w,
-              height: 60.h,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Color(0xFF334155),
-                    Color(0xFF475569),
-                    Color(0xFF334155),
-                    Colors.transparent,
-                  ],
+        child: Consumer<AzkarProvider>(
+          builder: (context, provider, child) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildControlButton(
+                  icon: Icons.favorite_rounded,
+                  label: 'سبح',
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF10B981), Color(0xFF059669)],
+                  ),
+                  glowColor: const Color(0xFF10B981),
+                  onTap: _moveToNextBead,
+                  isTablet: isTablet,
                 ),
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
-            SizedBox(width: 12.w),
-            _buildControlButton(
-              icon: Icons.refresh_rounded,
-              label: 'إعادة تعيين',
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-              ),
-              glowColor: const Color(0xFFEF4444),
-              onTap: _resetCounter,
-              isTablet: isTablet,
-            ),
-          ],
+                SizedBox(width: 8.w),
+                _buildControlButton(
+                  icon: Icons.vibration_rounded,
+                  label: 'الاهتزاز',
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: provider.isVibrationEnabled 
+                        ? [const Color(0xFF10B981), const Color(0xFF059669)]
+                        : [const Color(0xFFEF4444), const Color(0xFFDC2626)],
+                  ),
+                  glowColor: provider.isVibrationEnabled ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    provider.toggleVibration(!provider.isVibrationEnabled);
+                  },
+                  isTablet: isTablet,
+                ),
+                SizedBox(width: 8.w),
+                _buildControlButton(
+                  icon: Icons.refresh_rounded,
+                  label: 'إعادة',
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                  ),
+                  glowColor: const Color(0xFFEF4444),
+                  onTap: _resetCounter,
+                  isTablet: isTablet,
+                ),
+              ],
+            );
+          }
         ),
       ),
     );
@@ -1880,8 +1896,9 @@ class _ElectronicRosaryViewState extends State<ElectronicRosaryView> with Single
   }
 
   void _onTap() {
-    HapticFeedback.heavyImpact();
-    Provider.of<AzkarProvider>(context, listen: false).incrementCount();
+    final provider = Provider.of<AzkarProvider>(context, listen: false);
+    if (provider.isVibrationEnabled) HapticFeedback.heavyImpact();
+    provider.incrementCount(vibrate: false);
     _btnController.forward().then((value) => _btnController.reverse());
   }
 
@@ -1890,149 +1907,181 @@ class _ElectronicRosaryViewState extends State<ElectronicRosaryView> with Single
     final isTablet = context.isTab;
     final provider = Provider.of<AzkarProvider>(context);
 
-    return Column(
-      children: [
-        SizedBox(height: isTablet ? 60.h : 40.h),
-        Center(
-          child: Container(
-            width: isTablet ? 300.w : 240.w,
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height/1.2,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
 
-            padding: EdgeInsets.all(isTablet ? 32.r : 24.r),
-            decoration: BoxDecoration(
-              color: const Color(0xFF111111), // Black body
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(80.r),
-                bottom: Radius.circular(120.r),
+        children: [
+          SizedBox(height: isTablet ? 180.h : 130.h),
+          Center(
+            child: Container(
+              width: isTablet ? 300.w : 240.w,
+              padding: EdgeInsets.all(isTablet ? 32.r : 24.r),
+              decoration: BoxDecoration(
+                color: const Color(0xFF111111), // Black body
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(80.r),
+                  bottom: Radius.circular(120.r),
+                ),
+                border: Border.all(color: KColors.primaryColor, width: 8.w), // Cyan border exactly like image
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(0.6), blurRadius: 25, offset: const Offset(0, 15))
+                ],
               ),
-              border: Border.all(color: const Color(0xFF00ADB5), width: 8.w), // Cyan border exactly like image
-              boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.6), blurRadius: 25, offset: const Offset(0, 15))
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // LCD Screen displaying the counter
-                Container(
-                  width: double.infinity,
-                  height: isTablet ? 90.h : 70.h,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF90A492), // Retro LCD greenish-grey background
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: const Color(0xFFD4AF37), width: 3.w), // Gold inner border
-                    boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 5) // Simulated depth
-                    ],
-                  ),
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    '${provider.counter}',
-                    style: TextStyle(
-                      fontFamily: "cairo",
-                      fontSize: isTablet ? 55.sp : 45.sp,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w900,
-                      height: 1.0,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                // Text "تسبيح"
-                Text(
-                  'تسبيح',
-                  style: TextStyle(
-                    fontFamily: "cairo",
-                    fontSize: isTablet ? 28.sp : 22.sp,
-                    color: const Color(0xFFD4AF37), // Gold
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 15.h),
-                // Small buttons row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        Text('إعادة تعيين', style: TextStyle(color: const Color(0xFFD4AF37), fontSize: 10.sp, fontFamily: "cairo", fontWeight: FontWeight.bold)),
-                        SizedBox(height: 8.h),
-                        GestureDetector(
-                          onTap: () {
-                             HapticFeedback.heavyImpact();
-                             provider.restCount();
-                          },
-                          child: Container(
-                            width: 20.w, height: 20.w,
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade600, 
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.black, width: 2),
-                              boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 2, offset: Offset(0, 2))]
-                            ),
-                          ),
-                        ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // LCD Screen displaying the counter
+                  Container(
+                    width: double.infinity,
+                    height: isTablet ? 90.h : 70.h,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    decoration: BoxDecoration(
+                      color: provider.isHiddenMode ? const Color(0xFF1E1E1E) : const Color(0xFF90A492), // Darker background in hidden mode
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: const Color(0xFFD4AF37), width: 3.w), // Gold inner border
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 5) // Simulated depth
                       ],
                     ),
-                    Column(
-                      children: [
-                        Text('الوضع الخفي', style: TextStyle(color: const Color(0xFFD4AF37), fontSize: 10.sp, fontFamily: "cairo", fontWeight: FontWeight.bold)),
-                        SizedBox(height: 8.h),
-                        GestureDetector(
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                          },
-                          child: Container(
-                            width: 20.w, height: 20.w,
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade600, 
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.black, width: 2),
-                              boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 2, offset: Offset(0, 2))]
-                            ),
-                          ),
+                    alignment: Alignment.centerRight,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: provider.isHiddenMode ? 0.0 : 1.0,
+                      child: Text(
+                        '${provider.counter}',
+                        style: TextStyle(
+                          fontFamily: "cairo",
+                          fontSize: isTablet ? 55.sp : 45.sp,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w900,
+                          height: 1.0,
                         ),
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(height: 30.h),
-                // Big Red Tally Button
-                GestureDetector(
-                  onTap: _onTap,
-                  child: ScaleTransition(
-                    scale: Tween<double>(begin: 1.0, end: 0.92).animate(
-                      CurvedAnimation(parent: _btnController, curve: Curves.easeOut)
-                    ),
-                    child: Container(
-                      width: isTablet ? 120.w : 90.w,
-                      height: isTablet ? 120.w : 90.w,
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade600, // Vibrant red
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          center: const Alignment(-0.3, -0.5),
-                          radius: 1.0,
-                          colors: [
-                            Colors.red.shade400, // Highlight
-                            Colors.red.shade800, // Base red
-                          ],
-                        ),
-                        boxShadow: [
-                          BoxShadow(color: Colors.redAccent.withOpacity(0.4), blurRadius: 15, spreadRadius: 2),
-                          const BoxShadow(color: Colors.black87, blurRadius: 10, offset: Offset(0, 8)), // Shadow below button
-                        ],
-                        border: Border.all(color: const Color(0xFF550000), width: 3.w), // Dark red rim
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 10.h),
-              ],
+                  SizedBox(height: 20.h),
+                  // Text "تسبيح"
+                  // Text(
+                  //   'تسبيح',
+                  //   style: TextStyle(
+                  //     fontFamily: "cairo",
+                  //     fontSize: isTablet ? 28.sp : 22.sp,
+                  //     color: const Color(0xFFD4AF37), // Gold
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+                  // SizedBox(height: 15.h),
+                  // Small buttons row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        children: [
+                          Text('إعادة تعيين', style: TextStyle(color: const Color(0xFFD4AF37), fontSize: 10.sp, fontFamily: "cairo", fontWeight: FontWeight.bold)),
+                          SizedBox(height: 8.h),
+                          GestureDetector(
+                            onTap: () {
+                               HapticFeedback.heavyImpact();
+                               provider.restCount();
+                            },
+                            child: Container(
+                              width: 20.w, height: 20.w,
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade600,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.black, width: 2),
+                                boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 2, offset: Offset(0, 2))]
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text('الوضع الخفي', style: TextStyle(color: const Color(0xFFD4AF37), fontSize: 10.sp, fontFamily: "cairo", fontWeight: FontWeight.bold)),
+                          SizedBox(height: 8.h),
+                          GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              provider.toggleHiddenMode();
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              width: 20.w, height: 20.w,
+                              decoration: BoxDecoration(
+                                color: provider.isHiddenMode ? Colors.green.shade600 : Colors.red.shade600,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.black, width: 2),
+                                boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 2, offset: Offset(0, 2))]
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text('الاهتزاز', style: TextStyle(color: const Color(0xFFD4AF37), fontSize: 10.sp, fontFamily: "cairo", fontWeight: FontWeight.bold)),
+                          SizedBox(height: 8.h),
+                          GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              provider.toggleVibration(!provider.isVibrationEnabled);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              width: 20.w, height: 20.w,
+                              decoration: BoxDecoration(
+                                color: provider.isVibrationEnabled ? Colors.green.shade600 : Colors.red.shade600,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.black, width: 2),
+                                boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 2, offset: Offset(0, 2))]
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 30.h),
+                  // Big Red Tally Button
+                  GestureDetector(
+                    onTap: _onTap,
+                    child: ScaleTransition(
+                      scale: Tween<double>(begin: 1.0, end: 0.92).animate(
+                        CurvedAnimation(parent: _btnController, curve: Curves.easeOut)
+                      ),
+                      child: Container(
+                        width: isTablet ? 120.w : 90.w,
+                        height: isTablet ? 120.w : 90.w,
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade600, // Vibrant red
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            center: const Alignment(-0.3, -0.5),
+                            radius: 1.0,
+                            colors: [
+                              Colors.red.shade400, // Highlight
+                              Colors.red.shade800, // Base red
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(color: Colors.redAccent.withOpacity(0.4), blurRadius: 15, spreadRadius: 2),
+                            const BoxShadow(color: Colors.black87, blurRadius: 10, offset: Offset(0, 8)), // Shadow below button
+                          ],
+                          border: Border.all(color: const Color(0xFF550000), width: 3.w), // Dark red rim
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -14,8 +14,6 @@ import '../../../core/utils/style/k_color.dart';
 import '../../../core/widgets/KLoading.dart';
 import '../../../core/widgets/custom_form_faild.dart';
 import '../../../core/widgets/custom_text_widget.dart';
-import '../../hadithDetails/data/repo/hadith_details_repo_immp.dart';
-import '../../hadithDetails/view/controller/hadith_details_bloc.dart';
 import 'controller/categories_bloc.dart';
 import 'controller/categories_state.dart';
 
@@ -65,11 +63,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
       crossAxisCount = 4;
       childAspectRatio = 0.7;
     }
-    return BlocProvider<HadithDetailsBloc>(
-      create: (BuildContext context) {
-        return HadithDetailsBloc(HadithDetailsRepoImmp());
-      },
-      child: BlocBuilder<CategoriesBloc, CategoriesState>(
+    return BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (BuildContext context, state) {
           final isDark = context.isDark;
           CategoriesBloc bloc = CategoriesBloc.get(context);
@@ -82,12 +76,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                 KLoading.progressIOSIndicator(context: context),
             hadithCatrgoriesError: (value) => TextWidget(title: value.failure),
             hadithCatrgoriesSuccess: (value) {
-              List ids = value.allHadithCategorieModal?.data
-                      ?.map((e) => e.id)
-                      .toList() ??
-                  [];
-              HadithDetailsBloc.get(context)
-                  .getHadithDetailsList(hadithId: ids);
+
 
               return CustomScrollView(
                 slivers: [
@@ -155,7 +144,7 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: TextWidget(
-                            title: '${categoriesDetailsPrams?.subCategoriesCount} ${LocalizationManager.call("count-hadiths")}',
+                            title: ' ${LocalizationManager.call("count-hadiths")}: ${categoriesDetailsPrams?.subCategoriesCount}',
                             fontSize: context.isTab ? 6.sp : 9.sp,
                             fontWeight: FontWeight.w600,
                             color: isDark ? Colors.white70 : KColors.primaryColor,
@@ -183,66 +172,58 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                       ),
                     )
                   else
-                    SliverToBoxAdapter(
-                      child: GridView.builder(
-                          padding: EdgeInsets.zero,
-                          itemCount:
-                              value.allHadithCategorieModal?.data?.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  childAspectRatio: childAspectRatio),
-                          itemBuilder: (context, index) {
-                            return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 2, horizontal: 2),
-                                child: InkWell(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, Routes.hadithDetailsRoute,
-                                          arguments: value
-                                              .allHadithCategorieModal
-                                              ?.data?[index]
-                                              .id);
-                                    },
-                                    child: Card(
-                                        shape: BeveledRectangleBorder(
-                                            borderRadius:
-                                                BorderRadiusGeometry.circular(
-                                                    15)),
-                                        color:
-                                            AppThemeColors.cardBackgroundColor(
-                                                context),
-                                        shadowColor:
-                                            KColors.whiteColor.withOpacity(0.6),
-                                        elevation: 2,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8, horizontal: 10),
-                                          child: TextWidget(
-                                              color: isDark
-                                                  ? KColors.whiteColor
-                                                  : KColors.blackColor,
-                                              maxLines: 2,
-                                              textAlign: TextAlign.justify,
-                                              title:
-                                                  "${value.allHadithCategorieModal?.data?[index].title}",
-                                              fontSize: context.isTab
-                                                  ? 7.sp
-                                                  : 14.sp,
-                                              height: 2.5),
-                                        ))));
-                          }),
-                    )
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          childAspectRatio: childAspectRatio,
+                          mainAxisSpacing: 8,
+                          crossAxisSpacing: 8,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final item = value.allHadithCategorieModal?.data?[index];
+                            return InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.hadithDetailsRoute,
+                                  arguments: item?.id,
+                                );
+                              },
+                              child: Card(
+                                shape: BeveledRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                color: AppThemeColors.cardBackgroundColor(context),
+                                shadowColor: KColors.whiteColor.withOpacity(0.6),
+                                elevation: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 10),
+                                  child: TextWidget(
+                                    color: isDark ? KColors.whiteColor : KColors.blackColor,
+                                    maxLines: 2,
+                                    textAlign: TextAlign.justify,
+                                    title: "${item?.title}",
+                                    fontSize: context.isTab ? 7.sp : 14.sp,
+                                    height: 2.5,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          childCount: value.allHadithCategorieModal?.data?.length ?? 0,
+                        ),
+                      ),
+                    ),
                 ],
               );
             },
           );
         },
-      ),
-    );
+      );
   }
 }
 
