@@ -45,6 +45,7 @@ class SettingsService {
   static const String _kAutoSilentDuration = 'auto_silent_duration';
   static const String _kIsAutoLocationEnabled = 'is_auto_location_enabled';
   static const String _kIsHomeWidgetEnabled = 'is_home_widget_enabled';
+  static const String _kIsNightSilentModeEnabled = 'is_night_silent_mode_enabled';
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -260,4 +261,30 @@ class SettingsService {
   bool get isHomeWidgetEnabled => _prefs.getBool(_kIsHomeWidgetEnabled) ?? true;
   Future<void> setHomeWidgetEnabled(bool value) async =>
       await _prefs.setBool(_kIsHomeWidgetEnabled, value);
+
+  // --- Night Silent Mode ---
+  bool get isNightSilentModeEnabled => _prefs.getBool(_kIsNightSilentModeEnabled) ?? true;
+  Future<void> setNightSilentModeEnabled(bool value) async =>
+      await _prefs.setBool(_kIsNightSilentModeEnabled, value);
+
+  // --- Smart Tracking ---
+  static const String _kIsQuranTrackingEnabled = 'is_quran_tracking_enabled';
+  bool get isQuranTrackingEnabled => _prefs.getBool(_kIsQuranTrackingEnabled) ?? true;
+  Future<void> setQuranTrackingEnabled(bool value) async =>
+      await _prefs.setBool(_kIsQuranTrackingEnabled, value);
+
+  static const String _kIsSabahTrackingEnabled = 'is_sabah_tracking_enabled';
+  bool get isSabahTrackingEnabled => _prefs.getBool(_kIsSabahTrackingEnabled) ?? true;
+  Future<void> setSabahTrackingEnabled(bool value) async =>
+      await _prefs.setBool(_kIsSabahTrackingEnabled, value);
+
+  static const String _kIsMassaTrackingEnabled = 'is_massa_tracking_enabled';
+  bool get isMassaTrackingEnabled => _prefs.getBool(_kIsMassaTrackingEnabled) ?? true;
+  Future<void> setMassaTrackingEnabled(bool value) async =>
+      await _prefs.setBool(_kIsMassaTrackingEnabled, value);
+
+  static const String _kIsAppAbsenceTrackingEnabled = 'is_app_absence_tracking_enabled';
+  bool get isAppAbsenceTrackingEnabled => _prefs.getBool(_kIsAppAbsenceTrackingEnabled) ?? true;
+  Future<void> setAppAbsenceTrackingEnabled(bool value) async =>
+      await _prefs.setBool(_kIsAppAbsenceTrackingEnabled, value);
 }

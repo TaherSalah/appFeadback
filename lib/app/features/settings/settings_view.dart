@@ -189,7 +189,7 @@ Get.put(SettingsController(context));
                       SettingsListTile(
                         icon: Icons.info_outline,
                         title: 'حول التطبيق',
-                        subtitle: 'الإصدار 2.0.0',
+                        subtitle: 'معلومات عن التطبيق',
                         iconColor: Colors.teal[400]!,
                         onTap: () => Navigator.pushNamed(context, '/about'),
                       ),

@@ -21,6 +21,7 @@ import 'package:screen_brightness/screen_brightness.dart' as sb;
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
 
 enum _QuranMenuAction {
   audio,
@@ -278,6 +279,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     WakelockPlus.enable();
     WidgetsBinding.instance.addObserver(this);
     _startTrackingTime();
+    
+    // Register Quran Visit for Smart Tracking
+    NotificationManager().registerQuranVisit();
   }
 
   // Analytics

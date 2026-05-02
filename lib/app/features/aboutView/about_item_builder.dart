@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/services/system_control_service.dart';
 import '../../core/shard/exports/all_exports.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'RateService.dart';
 
 class AboutItemBuilder extends StatefulWidget {
@@ -16,11 +17,22 @@ class AboutItemBuilder extends StatefulWidget {
 
 class _AboutItemBuilderState extends State<AboutItemBuilder> {
   Map<String, String> supportLinks = {};
+  String version = "2.1.0"; // Default fallback
 
   @override
   void initState() {
     super.initState();
     _loadSupportLinks();
+    _loadVersionInfo();
+  }
+
+  Future<void> _loadVersionInfo() async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        version = packageInfo.version;
+      });
+    }
   }
 
   Future<void> _loadSupportLinks() async {
@@ -146,7 +158,7 @@ class _AboutItemBuilderState extends State<AboutItemBuilder> {
                   ),
                 ),
                 Text(
-                  "إصدار 2.1.0",
+                  "إصدار $version",
                      style: TextStyle(
                           fontFamily: "cairo",
                     fontSize: 12.sp,

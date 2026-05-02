@@ -3,6 +3,7 @@ import 'package:flutter/services.dart'; // Import Clipboard functionality
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/hadithDetails/view/controller/hadith_details_bloc.dart';
 import 'package:muslimdaily/app/features/hadithDetails/view/controller/hadith_details_state.dart';
 import 'package:muslimdaily/app/features/hadithDetails/view/widget/details_view_item_builder.dart';
@@ -136,7 +137,7 @@ class HadithDetailsView extends StatelessWidget {
                                 }),
                           ]);
                     }
-                    return const Text('data');
+                    return  KLoading.progressIOSIndicator(context: context);
                   },
                 ),
                 key: scaffoldState,

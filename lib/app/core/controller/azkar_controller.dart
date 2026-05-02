@@ -38,6 +38,7 @@ class AzkarProvider extends ChangeNotifier {
     currentZikrCount = Di.sharedPreferences.getInt('tasbeeh_current_zikr_count') ?? 0;
     currentBead = Di.sharedPreferences.getInt('tasbeeh_current_bead') ?? 0;
     cycleCount = Di.sharedPreferences.getInt('tasbeeh_cycle_count') ?? 0;
+    isElectronicRosaryMode = Di.sharedPreferences.getBool('tasbeeh_is_electronic_mode') ?? false;
     notifyListeners();
   }
 
@@ -47,6 +48,7 @@ class AzkarProvider extends ChangeNotifier {
      Di.sharedPreferences.setInt('tasbeeh_current_zikr_count', currentZikrCount);
      Di.sharedPreferences.setInt('tasbeeh_current_bead', currentBead);
      Di.sharedPreferences.setInt('tasbeeh_cycle_count', cycleCount);
+     Di.sharedPreferences.setBool('tasbeeh_is_electronic_mode', isElectronicRosaryMode);
   }
 
   late List<int> _initialSleepRepate;
@@ -72,6 +74,7 @@ class AzkarProvider extends ChangeNotifier {
   int currentZikrCount = 0;
   int currentBead = 0;
   int cycleCount = 0;
+  bool isElectronicRosaryMode = false;
 
   AllAzkarModel allAzkarModel = AllAzkarModel();
   List<Content> azkarMassaList = [];
@@ -292,6 +295,12 @@ class AzkarProvider extends ChangeNotifier {
 
   incrementCount() {
     counter++;
+    _saveCounter();
+    notifyListeners();
+  }
+
+  toggleRosaryMode(bool isElectronic) {
+    isElectronicRosaryMode = isElectronic;
     _saveCounter();
     notifyListeners();
   }

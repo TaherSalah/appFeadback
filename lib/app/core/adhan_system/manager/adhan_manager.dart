@@ -25,6 +25,13 @@ class AdhanManager {
       }
     }
 
+    // ⭐ [Safety Check]: If not initialized, we CANNOT calculate times.
+    if (!ctrl.state.isPrayerTimesInitialized.value) {
+      log('❌ [AdhanManager] Prayer times not initialized. Canceling existing schedules.', name: _tag);
+      await _cancelAllAdhanChannels();
+      return;
+    }
+
     // Cancel all previously scheduled adhan and shruq notifications efficiently
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
@@ -280,5 +287,17 @@ class AdhanManager {
         'cityName': 'اختبار',
       },
     );
+  }
+
+  static Future<void> _cancelAllAdhanChannels() async {
+    await AwesomeNotifications().cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
+    await AwesomeNotifications().cancelSchedulesByChannelKey('adhan_channel_v4');
+    await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_v1');
+    await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_v2');
+    await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_once');
+    await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_loop');
+    await AwesomeNotifications().cancelSchedulesByChannelKey('pre_prayer_channel_v1');
+    await AwesomeNotifications().cancelSchedulesByChannelKey('iqamah_channel_v1');
+    await AwesomeNotifications().cancelSchedulesByChannelKey('adhan_iqamah_channel_v1');
   }
 }

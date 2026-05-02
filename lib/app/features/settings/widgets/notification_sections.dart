@@ -21,15 +21,15 @@ class AdhanSection extends StatelessWidget {
           value: controller.isAdhanEnabled.value,
           onChanged: (val) => controller.updateChange(controller.isAdhanEnabled, val),
         )),
-        const SettingsDivider(),
-        Obx(() => SettingsSwitchTile(
-          title: 'شاشة الأذان المنبثقة',
-          subtitle: 'عرض شاشة كاملة عند الأذان',
-          icon: Icons.fullscreen,
-          iconColor: Colors.teal[600]!,
-          value: controller.isAdhanOverlayEnabled.value,
-          onChanged: (val) => controller.updateChange(controller.isAdhanOverlayEnabled, val),
-        )),
+        // const SettingsDivider(),
+        // Obx(() => SettingsSwitchTile(
+        //   title: 'شاشة الأذان المنبثقة',
+        //   subtitle: 'عرض شاشة كاملة عند الأذان',
+        //   icon: Icons.fullscreen,
+        //   iconColor: Colors.teal[600]!,
+        //   value: controller.isAdhanOverlayEnabled.value,
+        //   onChanged: (val) => controller.updateChange(controller.isAdhanOverlayEnabled, val),
+        // )),
         const SettingsDivider(),
         Obx(() => SettingsSwitchTile(
           title: 'الاهتزاز مع الأذان',
@@ -119,6 +119,15 @@ class FeaturesSection extends StatelessWidget {
     return SettingsSection(
       title: 'مميزات إضافية',
       children: [
+        Obx(() => SettingsSwitchTile(
+          title: 'الوضع الصامت ليلاً',
+          subtitle: 'إسكات الإشعارات (ما عدا الأذان) من 12ص إلى 6ص',
+          icon: Icons.brightness_2_outlined,
+          iconColor: Colors.deepPurple[400]!,
+          value: controller.isNightSilentModeEnabled.value,
+          onChanged: (val) => controller.updateChange(controller.isNightSilentModeEnabled, val),
+        )),
+        const SettingsDivider(),
         Obx(() => SettingsSwitchTile(
           title: 'زر إيقاف الصوت',
           subtitle: 'إضافة زر "إيقاف" في التنبيه لكتمة بسرعة',
@@ -273,8 +282,44 @@ class RemindersSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SettingsSection(
-      title: 'تذكيرات إضافية',
+      title: 'تذكيرات إضافية (متابعة الأوراد)',
       children: [
+        Obx(() => SettingsSwitchTile(
+          title: 'تتبع هجران التطبيق',
+          subtitle: 'تذكيرك في حال عدم زيارتك للتطبيق لعدة أيام',
+          icon: Icons.psychology_outlined,
+          iconColor: Colors.amber[700]!,
+          value: controller.isAppAbsenceTrackingEnabled.value,
+          onChanged: (val) => controller.updateChange(controller.isAppAbsenceTrackingEnabled, val),
+        )),
+        const SettingsDivider(),
+        Obx(() => SettingsSwitchTile(
+          title: 'تتبع ورد القرآن',
+          subtitle: 'تذكيرك مساءً إذا لم تقرأ القرآن خلال اليوم',
+          icon: Icons.menu_book,
+          iconColor: Colors.brown[400]!,
+          value: controller.isQuranTrackingEnabled.value,
+          onChanged: (val) => controller.updateChange(controller.isQuranTrackingEnabled, val),
+        )),
+        const SettingsDivider(),
+        Obx(() => SettingsSwitchTile(
+          title: 'تتبع أذكار الصباح',
+          subtitle: 'تذكيرك قبل الظهر في حال نسيت قراءة أذكار الصباح',
+          icon: Icons.wb_sunny_outlined,
+          iconColor: Colors.orange[400]!,
+          value: controller.isSabahTrackingEnabled.value,
+          onChanged: (val) => controller.updateChange(controller.isSabahTrackingEnabled, val),
+        )),
+        const SettingsDivider(),
+        Obx(() => SettingsSwitchTile(
+          title: 'تتبع أذكار المساء',
+          subtitle: 'تذكيرك ليلاً في حال نسيت قراءة أذكار المساء',
+          icon: Icons.nights_stay_outlined,
+          iconColor: Colors.indigo[400]!,
+          value: controller.isMassaTrackingEnabled.value,
+          onChanged: (val) => controller.updateChange(controller.isMassaTrackingEnabled, val),
+        )),
+        const SettingsDivider(),
         Obx(() => SettingsSwitchTile(
           title: 'تذكير صيام الاثنين والخميس',
           subtitle: 'تذكير مساء الأحد والأربعاء',

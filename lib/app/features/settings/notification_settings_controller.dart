@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
@@ -37,9 +38,21 @@ class NotificationSettingsController extends GetxController {
   final isStopActionEnabled = false.obs;
   final isAutoSilentEnabled = false.obs;
   final autoSilentDuration = 15.obs;
+  final isNightSilentModeEnabled = true.obs;
+  
+  final isQuranTrackingEnabled = true.obs;
+  final isSabahTrackingEnabled = true.obs;
+  final isMassaTrackingEnabled = true.obs;
+  final isAppAbsenceTrackingEnabled = true.obs;
 
   final hasChanges = false.obs;
   final isLoading = false.obs;
+
+  // Dirty flags for selective rescheduling
+  bool _isAdhanDirty = false;
+  bool _isAzkarDirty = false;
+  bool _isSalatAlaNabiDirty = false;
+  bool _isRemindersDirty = false;
 
   @override
   void onInit() {
@@ -78,14 +91,62 @@ class NotificationSettingsController extends GetxController {
     isStopActionEnabled.value = _settings.isStopActionEnabled;
     isAutoSilentEnabled.value = _settings.isAutoSilentEnabled;
     autoSilentDuration.value = _settings.autoSilentDuration;
+    isNightSilentModeEnabled.value = _settings.isNightSilentModeEnabled;
+    
+    isQuranTrackingEnabled.value = _settings.isQuranTrackingEnabled;
+    isSabahTrackingEnabled.value = _settings.isSabahTrackingEnabled;
+    isMassaTrackingEnabled.value = _settings.isMassaTrackingEnabled;
+    isAppAbsenceTrackingEnabled.value = _settings.isAppAbsenceTrackingEnabled;
 
     hasChanges.value = false;
+    _isAdhanDirty = false;
+    _isAzkarDirty = false;
+    _isSalatAlaNabiDirty = false;
+    _isRemindersDirty = false;
   }
 
   void updateChange(Rx<dynamic> field, dynamic newValue) {
     if (field.value != newValue) {
       field.value = newValue;
       hasChanges.value = true;
+      _markDirty(field);
+    }
+  }
+
+  void _markDirty(Rx<dynamic> field) {
+    // Categorize settings to decide what needs rescheduling
+    if (field == isAdhanEnabled || 
+        field == isAdhanVibrationEnabled || 
+        field == isAdhanOverlayEnabled ||
+        field == isPrePrayerReminderEnabled ||
+        field == isIqamahReminderEnabled ||
+        field == isSunriseReminderEnabled ||
+        field == isContinuousShuruqEnabled ||
+        field == isBetweenAdhanIqamahEnabled) {
+      _isAdhanDirty = true;
+    } else if (field == isAzkarSabahEnabled ||
+               field == isAzkarMassaEnabled ||
+               field == isAzkarSleepEnabled ||
+               field == isQiyamEnabled ||
+               field == isPostPrayerReminderEnabled ||
+               field == postReminderMinutes ||
+               field == isDuhaReminderEnabled) {
+      _isAzkarDirty = true;
+    } else if (field == isSalatAlaNabiEnabled ||
+               field == salatFrequency) {
+      _isSalatAlaNabiDirty = true;
+    } else if (field == isFastingReminderEnabled ||
+               field == isFridayRemindersEnabled ||
+               field == isDailyQuranReminderEnabled ||
+               field == isWhiteDaysReminderEnabled ||
+               field == isReligiousOccasionsEnabled ||
+               field == isMulkReminderEnabled ||
+               field == isSunnahReminderEnabled) {
+      _isRemindersDirty = true;
+    } else if (field == isNightSilentModeEnabled) {
+      // Night mode affects both Azkar and Salawat filters
+      _isAzkarDirty = true;
+      _isSalatAlaNabiDirty = true;
     }
   }
 
@@ -124,16 +185,36 @@ class NotificationSettingsController extends GetxController {
       await _settings.setStopActionEnabled(isStopActionEnabled.value);
       await _settings.setAutoSilentEnabled(isAutoSilentEnabled.value);
       await _settings.setAutoSilentDuration(autoSilentDuration.value);
+      await _settings.setNightSilentModeEnabled(isNightSilentModeEnabled.value);
+      
+      await _settings.setQuranTrackingEnabled(isQuranTrackingEnabled.value);
+      await _settings.setSabahTrackingEnabled(isSabahTrackingEnabled.value);
+      await _settings.setMassaTrackingEnabled(isMassaTrackingEnabled.value);
+      await _settings.setAppAbsenceTrackingEnabled(isAppAbsenceTrackingEnabled.value);
 
-      // Trigger notification rescheduling
-      await NotificationManager().rescheduleAll();
+      // Trigger notification rescheduling ONLY for dirty categories
+      if (_isAdhanDirty || _isAzkarDirty || _isSalatAlaNabiDirty || _isRemindersDirty) {
+        await NotificationManager().rescheduleAll(
+          adhan: _isAdhanDirty,
+          azkar: _isAzkarDirty,
+          salawat: _isSalatAlaNabiDirty,
+          reminders: _isRemindersDirty,
+        );
+      }
 
       KHelper.showSuccess(message: 'تم حفظ الإعدادات وتحديث التنبيهات بنجاح');
       hasChanges.value = false;
-    } catch (e) {
-      KHelper.showError(message: 'حدث خطأ أثناء حفظ الإعدادات');
+      _isAdhanDirty = false;
+      _isAzkarDirty = false;
+      _isSalatAlaNabiDirty = false;
+      _isRemindersDirty = false;
+    } catch (e, stack) {
+      log('❌ Error saving settings: $e', name: 'NotificationSettingsController');
+      log(stack.toString(), name: 'NotificationSettingsController');
+      KHelper.showError(message: 'حدث خطأ أثناء حفظ الإعدادات: $e');
     } finally {
       isLoading.value = false;
     }
   }
+
 }

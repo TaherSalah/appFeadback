@@ -111,6 +111,9 @@ Future<void> _initAppServices() async {
       initializeDateFormatting('en', null),
       NotificationManager().initialize(),
     ]);
+    
+    // Register App Open for Smart Tracking
+    await NotificationManager().registerAppOpen();
 
     // Stage 5: Background Tasks & Analytics (Non-blocking)
     BGServices()

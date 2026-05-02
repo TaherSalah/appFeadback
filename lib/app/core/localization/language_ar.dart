@@ -205,7 +205,7 @@ const Map<String, String> textsAr = {
   "veritificationtext": "أدخل رمز المصادقة OTP أدناه",
   "s": "ث",
   "resend": "أعد إرسال الرمز مرة أخرى",
-  "search": "ابحث عن لعبة أو منصة...",
+  "search": "ابحث عن حديث...",
   "platforms": "المنصات",
   "categories": "الاقسام",
   "ads": "إعلانات",

@@ -219,6 +219,20 @@ class NotificationManager {
         enableLights: true,
       ),
 
+      // 🔇 القناة الصامتة (الوضع الليلي)
+      NotificationChannel(
+        channelKey: 'general_silent_channel',
+        channelName: 'إشعارات صامتة (الوضع الليلي)',
+        channelDescription: 'إشعارات تظهر بدون إزعاج ليلاً',
+        importance: NotificationImportance.Low,
+        defaultColor: const Color(0xFF178B74),
+        ledColor: const Color(0xFF178B74),
+        playSound: false,
+        enableVibration: false,
+        enableLights: true,
+      ),
+
+
       // 📖 قناة القرآن
       NotificationChannel(
         channelKey: 'quran_channel',
@@ -649,169 +663,182 @@ class NotificationManager {
   /// based on current settings.
   /// Note: Adhan is handled by AdhanWorkManagerService, but we can control its 'enable' state via SettingsService
   /// which AdhanWorkManagerService should check before notifying.
-  Future<void> rescheduleAll({bool force = false}) async {
-    // print('🔄 Rescheduling all notifications based on settings...');
+  Future<void> rescheduleAll({
+    bool azkar = true,
+    bool adhan = true,
+    bool salawat = true,
+    bool reminders = true,
+  }) async {
+    // print('🔄 Rescheduling requested for categories: Azkar=$azkar, Adhan=$adhan, Salawat=$salawat, Reminders=$reminders');
 
-    // إلغاء كل التذكيرات المجدولة (ما عدا الأذان الذي يديره WorkManager مبدئياً)
-    // أو يمكننا إلغاء الأذان أيضاً إذا أردنا إيقافه تماماً
+    if (azkar) {
+      await AwesomeNotifications().cancelSchedulesByChannelKey('sabah_athkar_channel');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('mesaa_athkar_channel');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('sleep_athkar_channel');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('qiam_channel');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('general_silent_channel');
+    }
 
-    // IDs ranges:
-    // 1: Sabah
-    // 2: Massa
-    // 3: Quran
-    // 6: Sleep
-    // 7: Qiyam
-    // 100+: Salawat
+    if (reminders) {
+      await AwesomeNotifications().cancelSchedulesByChannelKey('quran_channel');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('hadith_channel');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('religious_reminders_channel');
+    }
 
-    await AwesomeNotifications().cancel(1);
-    await AwesomeNotifications().cancel(2);
-    await AwesomeNotifications().cancel(3);
-    await AwesomeNotifications().cancel(6);
-    await AwesomeNotifications().cancel(7);
-    await AwesomeNotifications()
-        .cancelSchedulesByChannelKey('salawat_channel'); // Cancel all salawat
-    await AwesomeNotifications().cancelSchedulesByChannelKey(
-        'shruq_channel_v1'); // Cancel old looping shruq
-    await AwesomeNotifications()
-        .cancelSchedulesByChannelKey('shruq_channel_v2');
-    await AwesomeNotifications()
-        .cancelSchedulesByChannelKey('shruq_channel_loop');
-    await AwesomeNotifications()
-        .cancelSchedulesByChannelKey('shruq_channel_once');
+    if (salawat) {
+      await AwesomeNotifications().cancelSchedulesByChannelKey('salawat_channel');
+    }
+    
+    if (adhan) {
+      // شروق الشمس والقنوات القديمة
+      await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_v1');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_v2');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_loop');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_once');
+      
+      // 🚀 إعادة جدولة الأذان
+      await AdhanManager.rescheduleAll();
+    }
 
-    // re-schedule if enabled
-    await _setupDailyReminders();
-
-    // 🚀 إعادة جدولة الأذان
-    // When calling rescheduleAll manually, we usually WANT to force an update (e.g. settings changed)
-    // If called from main.dart on startup, force might be false (default)
-    await AdhanManager.rescheduleAll();
+    // re-schedule requested categories
+    await _setupDailyReminders(
+      azkar: azkar,
+      salawat: salawat,
+      reminders: reminders,
+    );
 
     // print('✅ Reschedule completed.');
   }
 
-  Future<void> _setupDailyReminders() async {
+  Future<void> _setupDailyReminders({
+    bool azkar = true,
+    bool salawat = true,
+    bool reminders = true,
+  }) async {
     try {
-      // 🌅 أذكار الصباح
-      if (SettingsService().isAzkarSabahEnabled) {
-        await _scheduleDailyNotification(
-          id: 1,
-          channelKey: 'sabah_athkar_channel',
-          title: 'أذكار الصباح',
-          body: 'حان وقت أذكار الصباح، بارك الله في صباحك',
-          hour: 9,
-          minute: 0,
-          payload: {'route': 'morning_athkar'},
-        );
+      if (azkar) {
+        // 🌅 أذكار الصباح
+        if (SettingsService().isAzkarSabahEnabled) {
+          await _scheduleDailyNotification(
+            id: 1,
+            channelKey: 'sabah_athkar_channel',
+            title: 'أذكار الصباح',
+            body: 'حان وقت أذكار الصباح، بارك الله في صباحك',
+            hour: 9,
+            minute: 0,
+            payload: {'route': 'morning_athkar'},
+          );
+        }
+
+        // 🌙 أذكار المساء
+        if (SettingsService().isAzkarMassaEnabled) {
+          await _scheduleDailyNotification(
+            id: 2,
+            channelKey: 'mesaa_athkar_channel',
+            title: 'أذكار المساء',
+            body: 'حان وقت أذكار المساء، جعل الله مساءك مباركاً',
+            hour: 18,
+            minute: 0,
+            payload: {'route': 'evening_athkar'},
+          );
+        }
+
+        // 😴 أذكار النوم
+        if (SettingsService().isAzkarSleepEnabled) {
+          await _scheduleDailyNotification(
+            id: 6,
+            channelKey: 'sleep_athkar_channel',
+            title: 'أذكار النوم',
+            body: 'حان وقت أذكار النوم، تصصبح على خير',
+            hour: 22,
+            minute: 0,
+            payload: {'route': 'sleep_athkar'},
+          );
+        }
+
+        // 🌙 قيام الليل
+        if (SettingsService().isQiyamEnabled) {
+          await _scheduleDailyNotification(
+            id: 7,
+            channelKey: 'qiam_channel',
+            title: 'قيام الليل',
+            body: 'وقت قيام الليل، تقبل الله طاعاتكم',
+            hour: 23,
+            minute: 0,
+            payload: {'route': 'qiyam_reminder'},
+          );
+        }
+        
+        // ☀️ صلاة الضحى
+        if (SettingsService().isDuhaReminderEnabled) {
+          await _scheduleDuhaReminder();
+        }
       }
 
-      // 🌙 أذكار المساء
-      if (SettingsService().isAzkarMassaEnabled) {
-        await _scheduleDailyNotification(
-          id: 2,
-          channelKey: 'mesaa_athkar_channel',
-          title: 'أذكار المساء',
-          body: 'حان وقت أذكار المساء، جعل الله مساءك مباركاً',
-          hour: 18,
-          minute: 0,
-          payload: {'route': 'evening_athkar'},
-        );
+      if (reminders) {
+        // 📖 ورد القرآن
+        if (SettingsService().isDailyQuranReminderEnabled) {
+          await _scheduleDailyNotification(
+            id: 3,
+            channelKey: 'quran_channel',
+            title: 'ورد القرآن اليومي',
+            body: 'لا تانسَ وردك اليومي من القرآن الكريم',
+            hour: 20,
+            minute: 0,
+            payload: {'route': 'quran_wird'},
+          );
+        }
+
+        // 📿 حديث اليوم (متجدد يومياً)
+        await scheduleHadithSeries();
+        
+        // 🍽️ تذكير صيام الاثنين والخميس
+        if (SettingsService().isFastingReminderEnabled) {
+          await _scheduleFastingReminders();
+        }
+
+        // 🕌 سنن الجمعة (الكهف وساعة الاستجابة)
+        if (SettingsService().isFridayRemindersEnabled) {
+          await _scheduleFridayReminders();
+        }
+
+        // ⚪ الأيام البيض (13، 14، 15 هجرياً)
+        if (SettingsService().isWhiteDaysReminderEnabled) {
+          await _scheduleWhiteDaysReminders();
+        }
+
+        // ✨ المناسبات الإسلامية
+        if (SettingsService().isReligiousOccasionsEnabled) {
+          await _scheduleReligiousOccasions();
+        }
+
+        // 🌕 سورة الملك
+        if (SettingsService().isMulkReminderEnabled) {
+          await _scheduleMulkReminder();
+        }
+
+        // 💡 سنة اليوم
+        if (SettingsService().isSunnahReminderEnabled) {
+          await _scheduleSunnahReminder();
+        }
       }
 
-      // 📖 ورد القرآن
-      if (SettingsService().isDailyQuranReminderEnabled) {
-        await _scheduleDailyNotification(
-          id: 3,
-          channelKey: 'quran_channel',
-          title: 'ورد القرآن اليومي',
-          body: 'لا تنسَ وردك اليومي من القرآن الكريم',
-          hour: 20,
-          minute: 0,
-          payload: {'route': 'quran_wird'},
-        );
+      if (salawat) {
+        // 🤲 الصلاة على النبي
+        if (SettingsService().isSalatAlaNabiEnabled) {
+          await _scheduleSalawat();
+        }
       }
 
-      // 📿 حديث اليوم (متجدد يومياً)
-      await scheduleHadithSeries();
-
-      // 😴 أذكار النوم
-      if (SettingsService().isAzkarSleepEnabled) {
-        await _scheduleDailyNotification(
-          id: 6,
-          channelKey: 'sleep_athkar_channel',
-          title: 'أذكار النوم',
-          body: 'حان وقت أذكار النوم، تصبح على خير',
-          hour: 22,
-          minute: 0,
-          payload: {'route': 'sleep_athkar'},
-        );
-      }
-
-      // 🌙 قيام الليل
-      if (SettingsService().isQiyamEnabled) {
-        await _scheduleDailyNotification(
-          id: 7,
-          channelKey: 'qiam_channel',
-          title: 'قيام الليل',
-          body: 'وقت قيام الليل، تقبل الله طاعاتكم',
-          hour: 23,
-          minute: 0,
-          payload: {'route': 'qiyam_reminder'},
-        );
-      }
-
-      // 🤲 الصلاة على النبي
-      if (SettingsService().isSalatAlaNabiEnabled) {
-        await _scheduleSalawat();
-      }
-
-      // ⏰ منبه الفجر المتقدم
+      // ⏰ منبه الفجر المتقدم (Always check as it has its own enabled flag internally)
       await _scheduleAdvancedFajrAlarm();
 
-      // 🍽️ تذكير صيام الاثنين والخميس
-      if (SettingsService().isFastingReminderEnabled) {
-        await _scheduleFastingReminders();
-      }
-
-      // 🕌 سنن الجمعة (الكهف وساعة الاستجابة)
-      if (SettingsService().isFridayRemindersEnabled) {
-        await _scheduleFridayReminders();
-      }
-
-      // ⚪ الأيام البيض (13، 14، 15 هجرياً)
-      if (SettingsService().isWhiteDaysReminderEnabled) {
-        await _scheduleWhiteDaysReminders();
-      }
-
-      // ✨ المناسبات الإسلامية
-      if (SettingsService().isReligiousOccasionsEnabled) {
-        await _scheduleReligiousOccasions();
-      }
-
-      // 🌕 سورة الملك
-      if (SettingsService().isMulkReminderEnabled) {
-        await _scheduleMulkReminder();
-      }
-
-      // ☀️ صلاة الضحى
-      if (SettingsService().isDuhaReminderEnabled) {
-        await _scheduleDuhaReminder();
-      }
-
-      // 💡 سنة اليوم
-      if (SettingsService().isSunnahReminderEnabled) {
-        await _scheduleSunnahReminder();
-      }
-
-      // 🤲 الدعاء بين الأذان والإقامة يتم الآن جدولته بدقة عبر AdhanManager
-      // if (SettingsService().isBetweenAdhanIqamahEnabled) {
-      //   await _scheduleBetweenAdhanIqamah();
-      // }
     } catch (e, stackTrace) {
       print('❌ Error in scheduling reminders: $e');
       print(stackTrace);
     }
   }
+
 
   // ==========================================
   // 📅 جدولة الأحاديث
@@ -922,11 +949,16 @@ class NotificationManager {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
+    // Check custom night silent mode
+    bool isSilentTime = SettingsService().isNightSilentModeEnabled &&
+        (hour >= 0 && hour < 6);
+    String finalChannelKey = isSilentTime ? 'general_silent_channel' : channelKey;
+
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         icon: 'resource://drawable/ic_stat_logoapp',
         id: id,
-        channelKey: channelKey,
+        channelKey: finalChannelKey,
         title: '\u200F$title',
         body: '\u200F$body',
         notificationLayout: NotificationLayout
@@ -945,29 +977,86 @@ class NotificationManager {
   }
 
   Future<void> _scheduleSalawat() async {
-    int minutes = SettingsService().getSalatAlaNabiMinutes();
-    // print('Scheduling Salawat every $minutes minutes');
+    int minutesInterval = SettingsService().getSalatAlaNabiMinutes();
+    if (minutesInterval <= 0) minutesInterval = 15; // Safety fallback
+    bool isNightModeEnabled = SettingsService().isNightSilentModeEnabled;
+    int baseId = 88000;
 
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 888, // Constant ID for the repeating schedule
-        channelKey: 'salawat_channel',
-        icon: 'resource://drawable/ic_stat_logoapp',
-        title: 'ﷺ',
-        body: 'اللهم صل وسلم على نبينا محمد',
-        notificationLayout: NotificationLayout.Default,
-        largeIcon: 'resource://drawable/ic_stat_logoapp',
-        payload: {'route': 'salawat'},
-        color: const Color(0xFF178B74),
-      ),
-      schedule: NotificationInterval(
-        interval: Duration(minutes: minutes),
-        repeats: true,
-        preciseAlarm: true,
-        allowWhileIdle: true,
-      ),
-    );
+    // Optimization: if interval is very small (e.g. 1-5 mins), scheduling 1440-288 notifications
+    // might hit the OS limit (usually 500) or cause performance issues.
+    // If interval < 10 mins, we use a single repeating notification instead of the loop.
+    if (minutesInterval < 10) {
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: baseId,
+          channelKey: 'salawat_channel',
+          icon: 'resource://drawable/ic_stat_logoapp',
+          title: 'ﷺ',
+          body: 'اللهم صل وسلم على نبينا محمد',
+          notificationLayout: NotificationLayout.Default,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          payload: {'route': 'salawat'},
+          color: const Color(0xFF178B74),
+        ),
+        schedule: NotificationInterval(
+          interval: Duration(minutes: minutesInterval),
+          repeats: true,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      );
+      return;
+    }
+
+    // إجمالي دقائق اليوم = 1440. سنقوم بالمرور من دقيقة 0.
+    List<Future<bool>> futures = [];
+    for (int totalMinute = 0;
+        totalMinute < 1440;
+        totalMinute += minutesInterval) {
+      int h = totalMinute ~/ 60;
+      int m = totalMinute % 60;
+
+      bool isSilentTime = isNightModeEnabled && (h >= 0 && h < 6);
+      String channel =
+          isSilentTime ? 'general_silent_channel' : 'salawat_channel';
+
+      // معرف فريد لكل توقيت بناءً على الساعة والدقيقة
+      int uniqueId = baseId + (h * 100) + m;
+
+      futures.add(AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: uniqueId,
+          channelKey: channel,
+          icon: 'resource://drawable/ic_stat_logoapp',
+          title: 'ﷺ',
+          body: 'اللهم صل وسلم على نبينا محمد',
+          notificationLayout: NotificationLayout.Default,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          payload: {'route': 'salawat'},
+          color: const Color(0xFF178B74),
+        ),
+        schedule: NotificationCalendar(
+          hour: h,
+          minute: m,
+          second: 0,
+          repeats: true,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      ));
+
+      // Batching: processing 20 notifications at a time to avoid blocking the UI
+      if (futures.length >= 20) {
+        await Future.wait(futures);
+        futures.clear();
+      }
+    }
+
+    if (futures.isNotEmpty) {
+      await Future.wait(futures);
+    }
   }
+
 
   Future<void> scheduleAdvancedFajrAlarm() async {
     await SettingsService().init();
@@ -1161,23 +1250,26 @@ class NotificationManager {
   Future<void> _scheduleWhiteDaysReminders() async {
     try {
       final now = DateTime.now();
-      final currentHijri = hijri.HijriCalendar.fromDate(now);
+      final currentHijri = hijri.HijriCalendar(); // Safer initialization
 
       // We want to schedule for 13, 14, 15 of current month
       // AND 13, 14, 15 of next month to ensure we always have 3-6 scheduled
-      List<int> monthsToSchedule = [currentHijri.hMonth];
-      if (currentHijri.hMonth == 12) {
+      int curHMonth = currentHijri.hMonth;
+      int curHYear = currentHijri.hYear;
+
+      List<int> monthsToSchedule = [curHMonth];
+      if (curHMonth == 12) {
         monthsToSchedule.add(1);
       } else {
-        monthsToSchedule.add(currentHijri.hMonth + 1);
+        monthsToSchedule.add(curHMonth + 1);
       }
 
       int notificationIdBase = 900;
       int count = 0;
 
       for (int hMonth in monthsToSchedule) {
-        int hYear = currentHijri.hYear;
-        if (hMonth < currentHijri.hMonth) hYear++;
+        int hYear = curHYear;
+        if (hMonth < curHMonth) hYear++;
 
         for (int hDay in [13, 14, 15]) {
           final hDate = hijri.HijriCalendar();
@@ -1232,7 +1324,10 @@ class NotificationManager {
   Future<void> _scheduleReligiousOccasions() async {
     try {
       final now = DateTime.now();
-      final currentHijri = hijri.HijriCalendar.fromDate(now);
+      final currentHijri = hijri.HijriCalendar(); // Safer initialization
+      final int curHMonth = currentHijri.hMonth;
+      final int curHDay = currentHijri.hDay;
+      final int curHYear = currentHijri.hYear;
 
       // List of annual occasions (Month, Day, Title, Virtue/Info)
       final occasions = [
@@ -1271,10 +1366,10 @@ class NotificationManager {
         String title = occasion[2] as String;
         String body = occasion[3] as String;
 
-        int hYear = currentHijri.hYear;
+        int hYear = curHYear;
         // If the occasion already passed this year, schedule for next year
-        if (hMonth < currentHijri.hMonth ||
-            (hMonth == currentHijri.hMonth && hDay < currentHijri.hDay)) {
+        if (hMonth < curHMonth ||
+            (hMonth == curHMonth && hDay < curHDay)) {
           hYear++;
         }
 
@@ -1468,10 +1563,15 @@ class NotificationManager {
         );
       }
 
+      // Check custom night silent mode
+      bool isSilentTime = SettingsService().isNightSilentModeEnabled &&
+          (hour >= 0 && hour < 6);
+      String finalChannelKey = isSilentTime ? 'general_silent_channel' : 'sabah_athkar_channel';
+
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: notificationId,
-          channelKey: 'sabah_athkar_channel', // نستخدم قناة الأذكار العامة
+          channelKey: finalChannelKey, // نستخدم القناة المناسبة
           title: 'حان وقت وردك',
           body: 'تذكير بقراءة ورد: $wirdName',
           category: NotificationCategory.Reminder,
@@ -1834,5 +1934,133 @@ class NotificationManager {
     } catch (e) {
       logger.e('❌ Error scheduling basic test: $e');
     }
+  }
+
+  // ==========================================
+  // 🧭 نظام التتبع الذكي (Smart Tracking)
+  // ==========================================
+
+  Future<void> registerAppOpen() async {
+    if (!SettingsService().isAppAbsenceTrackingEnabled) return;
+
+    // إلغاء إشعارات الغياب الطويل السابقة
+    await AwesomeNotifications().cancel(8003); // غياب 3 أيام
+    await AwesomeNotifications().cancel(8004); // غياب 7 أيام
+
+    // إعادة جدولة إشعارات الغياب
+    _scheduleLongAbsenceReminder(8003, 3, 'اشتقنا لك!', 'مرت 3 أيام لم تزر فيها التطبيق، لا تنقطع عن وردك وأذكارك 🌸');
+    _scheduleLongAbsenceReminder(8004, 7, 'أين أنت يا رفيق؟', 'مر أسبوع كامل! افتح التطبيق الآن وجدد نيتك واقرأ أذكارك 📖');
+  }
+
+  Future<void> _scheduleLongAbsenceReminder(int id, int days, String title, String body) async {
+    final scheduledDate = DateTime.now().add(Duration(days: days)).copyWith(hour: 10, minute: 0, second: 0);
+    
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'religious_reminders_channel',
+        title: title,
+        body: body,
+        category: NotificationCategory.Reminder,
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+      ),
+      schedule: NotificationCalendar.fromDate(
+        date: scheduledDate,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  Future<void> registerQuranVisit() async {
+    if (!SettingsService().isQuranTrackingEnabled) return;
+
+    // تم القراءة، ألغِ تذكير اليوم
+    await AwesomeNotifications().cancel(8001);
+
+    // جدولة تذكير للغد الساعة 8:30 مساءً
+    var tomorrow = DateTime.now().add(const Duration(days: 1));
+    var scheduledDate = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 20, 30);
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 8001,
+        channelKey: 'quran_channel',
+        title: 'أين وردك القرآني؟',
+        body: 'لقد افتقدناك! لم تقم بوردك من القرآن اليوم، لا تجعل يومك يمر بدون قرأه وردك من القرآن ',
+        category: NotificationCategory.Reminder,
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+        payload: {'route': 'quran_wird'},
+      ),
+      schedule: NotificationCalendar.fromDate(
+        date: scheduledDate,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  Future<void> registerSabahAzkarVisit() async {
+    if (!SettingsService().isSabahTrackingEnabled) return;
+
+    // تم القراءة، ألغِ تذكير الصباح الاحتياطي
+    await AwesomeNotifications().cancel(8002);
+
+    // جدولة منبه للغد الساعة 2 ظهراً (إذا نسي المستخدم، سيضربه الإشعار قبل العصر)
+    var tomorrow = DateTime.now().add(const Duration(days: 1));
+    var scheduledDate = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 14, 0);
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 8002,
+        channelKey: 'sabah_athkar_channel',
+        title: 'شارف وقت أذكار الصباح على الانتهاء!',
+        body: 'هل قرأت أذكار الصباح؟ وقت الظهيرة انقضى وسيدخل وقت المساء قريباً',
+        category: NotificationCategory.Reminder,
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+        payload: {'route': 'morning_athkar'},
+      ),
+      schedule: NotificationCalendar.fromDate(
+        date: scheduledDate,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  Future<void> registerMassaAzkarVisit() async {
+    if (!SettingsService().isMassaTrackingEnabled) return;
+
+    // تم القراءة، ألغِ تذكير المساء الاحتياطي
+    await AwesomeNotifications().cancel(8005);
+
+    // جدولة منبه للغد الساعة 10 مساءً 
+    var tomorrow = DateTime.now().add(const Duration(days: 1));
+    var scheduledDate = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 22, 0);
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 8005,
+        channelKey: 'mesaa_athkar_channel',
+        title: 'شارف وقت المساء على الانتهاء!',
+        body: 'أذكار المساء حصن لك، لا تنم قبل أن تقرأها ',
+        category: NotificationCategory.Reminder,
+        largeIcon: 'resource://drawable/ic_stat_logoapp',
+        notificationLayout: NotificationLayout.BigText,
+        color: const Color(0xFF178B74),
+        payload: {'route': 'evening_athkar'},
+      ),
+      schedule: NotificationCalendar.fromDate(
+        date: scheduledDate,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
   }
 }

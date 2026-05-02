@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
@@ -35,9 +36,8 @@ class CategoriesDetailsView extends StatelessWidget {
                 : TextDirection.rtl,
             child: Scaffold(
                 // backgroundColor: AppStyle.bgColors,
-                body: SafeArea(
-                    child: CategoriesDetailsItemBuilder(
-                        categoriesDetailsPrams: categoriesDetailsPrams)))));
+                body: CategoriesDetailsItemBuilder(
+                        categoriesDetailsPrams: categoriesDetailsPrams))));
   }
 }
 
@@ -92,8 +92,16 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
               return CustomScrollView(
                 slivers: [
                   SliverAppBar(
+                      pinned: true,
+                      elevation: 0,
+                      systemOverlayStyle: SystemUiOverlayStyle(
+                        statusBarColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+                        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+                      ),
+                      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                       leading: CupertinoNavigationBarBackButton(
-                        color: context.isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Colors.black,
                       ),
                       title: TextWidget(
                         title: categoriesDetailsPrams?.subCategoriesName,
@@ -102,30 +110,8 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                         fontFamily: "me",
                         fontSize: context.isTab ? 8.sp : 18.sp,
                       ),
-                      actions: [
-                        Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Card(
-                                shape: const BeveledRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(5),
-                                        bottomLeft: Radius.circular(5))),
-                                color: isDark
-                                    ? KColors.blackColor
-                                    : KColors.lightYellowColor,
-                                child: Padding(
-                                    padding: const EdgeInsets.all(5),
-                                    child: TextWidget(
-                                        title:
-                                            '${LocalizationManager.call("count-hadiths")} : ${categoriesDetailsPrams?.subCategoriesCount}',
-                                        color: isDark
-                                            ? Colors.white
-                                            : KColors.blackColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "me",
-                                        fontSize: context.isTab
-                                            ? 8.sp
-                                            : 16.sp))))
+                      actions: const [
+                        SizedBox(width: 48), // Minimal spacing
                       ]),
                   SliverToBoxAdapter(
                     child: Padding(
@@ -162,6 +148,19 @@ class CategoriesDetailsItemBuilder extends StatelessWidget {
                             title: LocalizationManager.call("all-departments"),
                             fontSize: 10.sp),
                         const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white.withOpacity(0.05) : KColors.primaryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: TextWidget(
+                            title: '${categoriesDetailsPrams?.subCategoriesCount} ${LocalizationManager.call("count-hadiths")}',
+                            fontSize: context.isTab ? 6.sp : 9.sp,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white70 : KColors.primaryColor,
+                          ),
+                        ),
                       ],
                     ),
                   )),

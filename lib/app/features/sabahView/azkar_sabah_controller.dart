@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import '../../core/widgets/AudioManager.dart';
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
 
 class AzkarSabahController extends GetxController {
   // ================== إعدادات الصوت ==================
@@ -45,6 +46,7 @@ class AzkarSabahController extends GetxController {
   void onInit() {
     super.onInit();
     _initAudio();
+    NotificationManager().registerSabahAzkarVisit();
   }
 
   Future<void> _initAudio() async {
