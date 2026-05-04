@@ -8,7 +8,13 @@ import '../models/MosqueModel.dart';
 import 'package:muslimdaily/app/core/utils/log.dart';
 
 class MosqueService {
-  static const String overpassUrl = 'https://overpass-api.de/api/interpreter';
+  static const List<String> overpassMirrors = [
+    'https://overpass-api.de/api/interpreter',
+    'https://lz4.overpass-api.de/api/interpreter',
+    'https://z.overpass-api.de/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
+  ];
+
   final SupabaseClient _supabase = Supabase.instance.client;
 
   /// Get unique device identifier
@@ -63,50 +69,69 @@ class MosqueService {
     }
   }
 
-  /// Fetch nearby mosques using Overpass API
+  /// Fetch nearby mosques using Overpass API with fallback mirrors
   Future<List<Mosque>> _fetchOSMMosques(
       double latitude, double longitude, int radiusMeters) async {
-    try {
-      final query = '''
-[out:json];
+    final query = '''
+[out:json][timeout:25];
 (
   node["amenity"="place_of_worship"]["religion"="muslim"](around:$radiusMeters,$latitude,$longitude);
   way["amenity"="place_of_worship"]["religion"="muslim"](around:$radiusMeters,$latitude,$longitude);
+  relation["amenity"="place_of_worship"]["religion"="muslim"](around:$radiusMeters,$latitude,$longitude);
+  node["amenity"="mosque"](around:$radiusMeters,$latitude,$longitude);
+  way["amenity"="mosque"](around:$radiusMeters,$latitude,$longitude);
+  relation["amenity"="mosque"](around:$radiusMeters,$latitude,$longitude);
 );
 out center;
 ''';
 
-      final response = await http.post(
-        Uri.parse(overpassUrl),
-        body: {'data': query},
-      ).timeout(const Duration(seconds: 10));
+    for (String mirrorUrl in overpassMirrors) {
+      try {
+        final response = await http.post(
+          Uri.parse(mirrorUrl),
+          headers: {
+            'User-Agent': 'RafiqElmuslimApp/2.0 (Contact: support@rafiq.com)',
+            'Accept-Charset': 'utf-8',
+          },
+          body: {'data': query},
+        ).timeout(const Duration(seconds: 20));
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final elements = data['elements'] as List;
+        if (response.statusCode == 200) {
+          final data = json.decode(utf8.decode(response.bodyBytes));
+          final elements = data['elements'] as List;
 
-        List<Mosque> mosques = [];
+          List<Mosque> mosques = [];
 
-        for (var element in elements) {
-          try {
-            if (element['type'] == 'way' && element['center'] != null) {
-              element['lat'] = element['center']['lat'];
-              element['lon'] = element['center']['lon'];
+          for (var element in elements) {
+            try {
+              // Handle center for ways and relations
+              if ((element['type'] == 'way' || element['type'] == 'relation') &&
+                  element['center'] != null) {
+                element['lat'] = element['center']['lat'];
+                element['lon'] = element['center']['lon'];
+              }
+
+              if (element['lat'] == null || element['lon'] == null) continue;
+
+              final mosque =
+                  Mosque.fromOverpassNode(element, latitude, longitude);
+              mosques.add(mosque);
+            } catch (e) {
+              log('MosqueService', msg: 'Error parsing mosque element', error: e);
             }
-            final mosque =
-                Mosque.fromOverpassNode(element, latitude, longitude);
-            mosques.add(mosque);
-          } catch (e) {
-            log('MosqueService', msg: 'Error parsing mosque', error: e);
           }
+          return mosques;
+        } else if (response.statusCode == 429) {
+          log('MosqueService', msg: 'Rate limited by mirror: $mirrorUrl');
+          continue; // Try next mirror
         }
-        return mosques;
+      } catch (e) {
+        log('MosqueService', msg: 'Error fetching from mirror: $mirrorUrl', error: e);
+        // Continue to next mirror
       }
-      return [];
-    } catch (e) {
-      log('MosqueService', msg: 'Error fetching OSM mosques', error: e);
-      return [];
     }
+
+    return [];
   }
 
   /// Fetch mosques added by users from Supabase

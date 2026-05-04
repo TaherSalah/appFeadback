@@ -422,7 +422,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
         setState(() {
           _showAutoScrollControls = false;
         });
-        _showHintOnce();
+        // _showHintOnce();
       }
     });
   }

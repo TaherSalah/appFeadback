@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/widgets/custom_form_faild.dart';
 
 import '../../core/services/feedback_service.dart';
+import '../../core/shard/exports/all_exports.dart';
 
 /// شاشة إرسال الشكاوى والاقتراحات
 class FeedbackView extends StatefulWidget {
@@ -74,14 +77,16 @@ class _FeedbackViewState extends State<FeedbackView> {
       );
 
       if (mounted) {
-
-        KHelper.showSuccess(message:              'تم إرسال الملاحظات بنجاح ',
+        KHelper.showSuccess(
+          message: 'تم إرسال الملاحظات بنجاح ',
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        KHelper.showError(message:               'فشل إرسال الملاحظات: $e',);
+        KHelper.showError(
+          message: 'فشل إرسال الملاحظات: $e',
+        );
       }
     } finally {
       if (mounted) {
@@ -97,17 +102,35 @@ class _FeedbackViewState extends State<FeedbackView> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        // appBar: AppBar(
+        //   title: const Text(
+        //     'الشكاوى والاقتراحات',
+        //        style: TextStyle(
+        //                   fontFamily: "cairo",
+        //       color: Colors.green,
+        //       fontWeight: FontWeight.bold,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        // ),
         appBar: AppBar(
-          title: const Text(
-            'الشكاوى والاقتراحات',
-               style: TextStyle(
-                          fontFamily: "cairo",
+          // backgroundColor: Colors.transparent,
+          // elevation: 0,
+          leading: CupertinoNavigationBarBackButton(
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          centerTitle: true,
+          title: Text(
+            "الشكاوى والاقتراحات",
+            style: TextStyle(
+              fontFamily: "cairo",
               color: Colors.green,
+              fontSize: context.isTab ? 12.sp : 18.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
-          centerTitle: true,
         ),
+
         body: Form(
           key: _formKey,
           child: ListView(
@@ -136,7 +159,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                     Expanded(
                       child: Text(
                         'نسعد بتلقي ملاحظاتكم واقتراحاتكم لتحسين التطبيق',
-                           style: TextStyle(
+                        style: TextStyle(
                           fontFamily: "cairo",
                           fontSize: 13,
                           color: isDark ? Colors.white70 : Colors.black87,
@@ -147,14 +170,15 @@ class _FeedbackViewState extends State<FeedbackView> {
                 ),
               ),
               const SizedBox(height: 24),
-
               // حقل الاسم
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'الاسم *',
-                  labelStyle: const TextStyle(
-                          fontFamily: "cairo",),
+                  labelStyle: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: "cairo",
+                  ),
                   prefixIcon: const Icon(Icons.person_outline),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -164,8 +188,9 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                   style: const TextStyle(
-                          fontFamily: "cairo",),
+                style: const TextStyle(
+                  fontFamily: "cairo",
+                ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'الرجاء إدخال الاسم';
@@ -180,8 +205,10 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'البريد الإلكتروني *',
-                  labelStyle: const TextStyle(
-                          fontFamily: "cairo",),
+                  labelStyle: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: "cairo",
+                  ),
                   prefixIcon: const Icon(Icons.email_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -191,8 +218,9 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                   style: const TextStyle(
-                          fontFamily: "cairo",),
+                style: const TextStyle(
+                  fontFamily: "cairo",
+                ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -211,8 +239,10 @@ class _FeedbackViewState extends State<FeedbackView> {
                 controller: _phoneController,
                 decoration: InputDecoration(
                   labelText: 'رقم الهاتف (اختياري)',
-                  labelStyle: const TextStyle(
-                          fontFamily: "cairo",),
+                  labelStyle: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: "cairo",
+                  ),
                   prefixIcon: const Icon(Icons.phone_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -222,8 +252,9 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                   style: const TextStyle(
-                          fontFamily: "cairo",),
+                style: const TextStyle(
+                  fontFamily: "cairo",
+                ),
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 16),
@@ -233,10 +264,11 @@ class _FeedbackViewState extends State<FeedbackView> {
                 alignment: AlignmentGeometry.centerRight,
                 value: _selectedCategory,
                 decoration: InputDecoration(
-
                   labelText: 'التصنيف *',
-                  labelStyle: const TextStyle(
-                          fontFamily: "cairo",),
+                  labelStyle: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: "cairo",
+                  ),
                   prefixIcon: const Icon(Icons.category_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -246,10 +278,9 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ? Colors.white.withOpacity(0.05)
                       : Colors.grey.withOpacity(0.05),
                 ),
-                   style: TextStyle(
-                          fontFamily: "cairo",
+                style: TextStyle(
+                  fontFamily: "cairo",
                   color: isDark ? Colors.white : Colors.black87,
-
                 ),
                 dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
                 items: _categories.map((category) {
@@ -287,8 +318,14 @@ class _FeedbackViewState extends State<FeedbackView> {
                       children: [
                         Icon(icon, color: color, size: 20),
                         const SizedBox(width: 12),
-                        Text(category,    style: const TextStyle(
-                          fontFamily: "cairo",),textAlign: TextAlign.right,),
+                        Text(
+                          category,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontFamily: "cairo",
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
                       ],
                     ),
                   );
@@ -339,10 +376,14 @@ class _FeedbackViewState extends State<FeedbackView> {
                 decoration: InputDecoration(
                   labelText: 'الوصف *',
                   labelStyle: const TextStyle(
-                          fontFamily: "cairo",),
+                    fontFamily: "cairo",
+                  ),
                   hintText: 'اكتب وصفاً تفصيلياً...',
-                  hintStyle: const TextStyle(
-                          fontFamily: "cairo",color: Colors.grey),
+                  hintStyle: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: "cairo",
+                    color: Colors.grey,
+                  ),
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 60),
                     child: Icon(Icons.description_outlined),
@@ -356,8 +397,10 @@ class _FeedbackViewState extends State<FeedbackView> {
                       : Colors.grey.withOpacity(0.05),
                   alignLabelWithHint: true,
                 ),
-                   style: const TextStyle(
-                          fontFamily: "cairo",),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontFamily: "cairo",
+                ),
                 maxLines: 5,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -379,8 +422,10 @@ class _FeedbackViewState extends State<FeedbackView> {
                   _selectedImages.isEmpty
                       ? 'إضافة صور (اختياري)'
                       : 'تم اختيار ${_selectedImages.length} صورة',
-                     style: const TextStyle(
-                          fontFamily: "cairo",),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: "cairo",
+                  ),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -479,11 +524,11 @@ class _FeedbackViewState extends State<FeedbackView> {
                               AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : const Text(
+                    : Text(
                         'إرسال',
-                           style: TextStyle(
+                        style: TextStyle(
                           fontFamily: "cairo",
-                          fontSize: 16,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -495,8 +540,8 @@ class _FeedbackViewState extends State<FeedbackView> {
               const Text(
                 'ملاحظة: سيتم جمع معلومات الجهاز تلقائياً (نظام التشغيل، الإصدار، الموديل) للمساعدة في حل المشاكل التقنية.',
                 textAlign: TextAlign.center,
-                   style: TextStyle(
-                          fontFamily: "cairo",
+                style: TextStyle(
+                  fontFamily: "cairo",
                   fontSize: 11,
                   color: Colors.grey,
                   height: 1.5,

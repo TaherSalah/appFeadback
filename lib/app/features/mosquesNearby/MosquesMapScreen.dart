@@ -35,10 +35,20 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
 
   // New features state
   bool _isAddingMode = false;
-  bool _isBottomSheetVisible = true; // للتحكم في إظهار/إخفاء القائمة السفلية
+  bool _isBottomSheetVisible = false; // للتحكم في إظهار/إخفاء القائمة السفلية
   LatLng? _pickedLocation;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+
+  // Map Styles
+  String _currentMapStyle = 'street'; // street, satellite, dark
+  final Map<String, String> _mapStyleUrls = {
+    'street': 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    'satellite': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    'dark': 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // Custom filter used for dark
+  };
+
 
   @override
   void initState() {
@@ -76,8 +86,12 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
           _userPosition = position;
         });
 
-        _fetchMosques();
+        _fetchMosques(
+          lat: position.latitude,
+          lon: position.longitude,
+        );
       }
+
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -87,18 +101,20 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
     }
   }
 
-  Future<void> _fetchMosques() async {
-    if (_userPosition == null) return;
+  Future<void> _fetchMosques({double? lat, double? lon}) async {
+    final searchLat = lat ?? _mapController.camera.center.latitude;
+    final searchLon = lon ?? _mapController.camera.center.longitude;
 
     setState(() {
       _isLoading = true;
     });
 
     final mosques = await _mosqueService.fetchNearbyMosques(
-      latitude: _userPosition!.latitude,
-      longitude: _userPosition!.longitude,
+      latitude: searchLat,
+      longitude: searchLon,
       radiusMeters: _searchRadius.toInt(),
     );
+
 
     if (mounted) {
       setState(() {
@@ -126,6 +142,39 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
   }
+
+  Future<void> _searchLocation() async {
+    if (_searchController.text.isEmpty) return;
+
+    try {
+      // تعيين اللغة العربية للبحث لضمان دعم النتائج بالعربي
+      await GeocodingPlatform.instance?.setLocaleIdentifier("ar");
+      
+      List<Location> locations =
+          await locationFromAddress(_searchController.text);
+      if (locations.isNotEmpty) {
+        final loc = locations.first;
+        _mapController.move(LatLng(loc.latitude, loc.longitude), 14);
+        _fetchMosques(lat: loc.latitude, lon: loc.longitude);
+        FocusScope.of(context).unfocus();
+      }
+    } catch (e) {
+      KHelper.showError(message: "لم يتم العثور على هذا الموقع");
+    }
+  }
+
+  void _cycleMapStyle() {
+    setState(() {
+      if (_currentMapStyle == 'street') {
+        _currentMapStyle = 'satellite';
+      } else if (_currentMapStyle == 'satellite') {
+        _currentMapStyle = 'dark';
+      } else {
+        _currentMapStyle = 'street';
+      }
+    });
+  }
+
 
   Future<void> _confirmLocation() async {
     final center = _mapController.camera.center;
@@ -682,39 +731,38 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
               color: isDark ? Colors.black45 : Colors.white70,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
+            child:  Text(
               "المساجد القريبة",
                  style: TextStyle(
                           fontFamily: "cairo",
                 color: Colors.green,
+                   fontSize: context.isTab ? 12.sp : 18.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
           actions: [
-
-            //// أداره المساجد كلها
-            // Container(
-            //   margin: const EdgeInsets.all(8),
-            //   decoration: BoxDecoration(
-            //     color: isDark ? Colors.black45 : Colors.white70,
-            //     shape: BoxShape.circle,
-            //   ),
-            //   child: IconButton(
-            //     icon:
-            //         const Icon(Icons.admin_panel_settings, color: Colors.green),
-            //     onPressed: () {
-            //       Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //           builder: (context) => const MosqueAdminPanel(),
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
             Container(
-              margin: const EdgeInsets.all(8),
+              // margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.black45 : Colors.white70,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: Icon(
+                  _currentMapStyle == 'satellite'
+                      ? Icons.map
+                      : (_currentMapStyle == 'dark'
+                          ? Icons.wb_sunny
+                          : Icons.layers),
+                  color: Colors.orange,
+                ),
+                onPressed: _cycleMapStyle,
+                tooltip: "تغيير نمط الخريطة",
+              ),
+            ),
+            Container(
+              // margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isDark ? Colors.black45 : Colors.white70,
                 shape: BoxShape.circle,
@@ -727,12 +775,17 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                       LatLng(_userPosition!.latitude, _userPosition!.longitude),
                       14,
                     );
+                    _fetchMosques(
+                      lat: _userPosition!.latitude,
+                      lon: _userPosition!.longitude,
+                    );
                   }
                 },
               ),
             ),
           ],
         ),
+
         body: _userPosition == null
             ? Center(child: KLoading.progressIOSIndicator(context: context))
             : Stack(
@@ -753,37 +806,22 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                     ),
                     children: [
                       TileLayer(
-                        urlTemplate:
-                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        urlTemplate: _mapStyleUrls[_currentMapStyle]!,
                         userAgentPackageName: 'com.rafiq.muslimdaily',
-                        tileBuilder: isDark
+                        tileBuilder: _currentMapStyle == 'dark' ||
+                                (_currentMapStyle == 'street' && isDark)
                             ? (context, tileWidget, tile) => ColorFiltered(
                                   colorFilter: const ColorFilter.matrix([
-                                    -1,
-                                    0,
-                                    0,
-                                    0,
-                                    255,
-                                    0,
-                                    -1,
-                                    0,
-                                    0,
-                                    255,
-                                    0,
-                                    0,
-                                    -1,
-                                    0,
-                                    255,
-                                    0,
-                                    0,
-                                    0,
-                                    1,
-                                    0,
+                                    -1, 0, 0, 0, 255,
+                                    0, -1, 0, 0, 255,
+                                    0, 0, -1, 0, 255,
+                                    0, 0, 0, 1, 0,
                                   ]),
                                   child: tileWidget,
                                 )
                             : null,
                       ),
+
                       MarkerLayer(
                         markers: [
                           Marker(
@@ -860,41 +898,168 @@ class _MosquesMapScreenState extends State<MosquesMapScreen> {
                       alignment: Alignment.topCenter,
                       child: Column(
                         children: [
-                          const SizedBox(height: 70),
+                          const SizedBox(height: 25),
+                          // Search Bar
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: FadeInDown(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: (isDark ? Colors.black : Colors.white)
+                                      .withOpacity(0.9),
+                                  borderRadius: BorderRadius.circular(25),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 5),
+                                    ),
+                                  ],
+                                ),
+                                child: TextField(
+                                  controller: _searchController,
+                                  onSubmitted: (_) => _searchLocation(),
+                                  decoration: InputDecoration(
+                                    hintText: "ابحث عن مدينة أو منطقة...",
+                                    hintStyle: TextStyle(
+                                      fontFamily: "cairo",
+                                      fontSize: 12.sp,
+                                    ),
+                                    prefixIcon: const Icon(Icons.search,
+                                        color: Colors.green),
+                                    suffixIcon: IconButton(
+                                      icon: const Icon(Icons.send,
+                                          color: Colors.green),
+                                      onPressed: _searchLocation,
+                                    ),
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: FadeInDown(
                               child: ClipRRect(
                                 child: Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
                                   decoration: BoxDecoration(
-                                    color:
-                                        (isDark ? Colors.black : Colors.white)
-                                            .withOpacity(0.8),
-                                    borderRadius: BorderRadius.circular(20),
+                                    color: (isDark ? Colors.black : Colors.white)
+                                        .withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(25),
                                     border: Border.all(
                                         color: Colors.white.withOpacity(0.2)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 15,
+                                        offset: const Offset(0, 5),
+                                      ),
+                                    ],
                                   ),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        "نطاق البحث: ${(_searchRadius / 1000).toStringAsFixed(1)} كم",
-                                           style: TextStyle(
-                          fontFamily: "cairo",
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13.sp),
-                                      ),
-                                      Slider(
-                                        value: _searchRadius,
-                                        activeColor: Colors.green,
-                                        min: 1000,
-                                        max: 10000,
-                                        divisions: 9,
-                                        onChanged: (value) => setState(
-                                            () => _searchRadius = value),
-                                        onChangeEnd: (_) => _fetchMosques(),
-                                      ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.green.withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            "نطاق البحث",
+                                            style: TextStyle(
+                                              fontFamily: "cairo",
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12.sp,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.black87,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          "${(_searchRadius / 1000).toStringAsFixed(1)} كم",
+                                          style: TextStyle(
+                                            fontFamily: "cairo",
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 14.sp,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.location_on_outlined,
+                                            size: 16,
+                                            color: isDark
+                                                ? Colors.white54
+                                                : Colors.black45),
+                                        Expanded(
+                                          child: SliderTheme(
+                                            data: SliderTheme.of(context)
+                                                .copyWith(
+                                              activeTrackColor: Colors.green,
+                                              inactiveTrackColor: Colors.green
+                                                  .withOpacity(0.2),
+                                              trackHeight: 6.0,
+                                              thumbColor: Colors.green,
+                                              thumbShape:
+                                                  const RoundSliderThumbShape(
+                                                      enabledThumbRadius: 8.0,
+                                                      pressedElevation: 8.0),
+                                              overlayColor: Colors.green
+                                                  .withOpacity(0.2),
+                                              overlayShape:
+                                                  const RoundSliderOverlayShape(
+                                                      overlayRadius: 16.0),
+                                              tickMarkShape:
+                                                  const RoundSliderTickMarkShape(
+                                                      tickMarkRadius: 2.0),
+                                              activeTickMarkColor: Colors.white,
+                                              inactiveTickMarkColor:
+                                                  Colors.green.withOpacity(0.5),
+                                              valueIndicatorShape:
+                                                  const PaddleSliderValueIndicatorShape(),
+                                              valueIndicatorColor: Colors.green,
+                                              valueIndicatorTextStyle:
+                                                  const TextStyle(
+                                                      color: Colors.white),
+                                            ),
+                                            child: Slider(
+                                              value: _searchRadius,
+                                              min: 1000,
+                                              max: 10000,
+                                              divisions: 9,
+                                              onChanged: (value) => setState(
+                                                  () => _searchRadius = value),
+                                              onChangeEnd: (_) =>
+                                                  _fetchMosques(),
+                                            ),
+                                          ),
+                                        ),
+                                        Icon(Icons.radar,
+                                            size: 16,
+                                            color: isDark
+                                                ? Colors.white54
+                                                : Colors.black45),
+                                      ],
+                                    ),
                                     ],
                                   ),
                                 ),

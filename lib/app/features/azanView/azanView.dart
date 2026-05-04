@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:ui' as ui;
-
 import 'package:adhan/adhan.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,10 +13,11 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/mainView/controllar/MainController.dart';
 import 'package:get/get.dart';
-
 import '../../core/utils/style/app_theme_colors.dart';
 import 'adhan_callback.dart';
 import 'adhan_workmanager_service.dart';
+
+
 
 class AzanView extends StatefulWidget {
   const AzanView({super.key});
@@ -28,21 +28,16 @@ class AzanView extends StatefulWidget {
 
 class _AzanViewState extends State<AzanView> {
   final MainController con = MainController.instance;
-
   // استخدام خدمة WorkManager
   // final AdhanWorkManagerService _adhanService = AdhanWork                  ManagerService();
-
   @override
   void initState() {
     super.initState();
-
     // _adhanService.initialize();
     con.refreshPrayerTimesFromPrefs();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // ✅ فحص Battery Optimization أول ما الشاشة تفتح
       _checkBatteryOptimization();
-
       _scheduleAllPrayerNotifications();
     });
   }
