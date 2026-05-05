@@ -77,8 +77,15 @@ class NotificationManager {
     await _requestBatteryExemptionIfNeeded();
 
     // 🚀 تهيئة كل التنبيهات (الأذان، الأذكار، الصلاة على النبي، إلخ)
-    Future.delayed(const Duration(seconds: 3), () {
-      rescheduleAll();
+    Future.delayed(const Duration(seconds: 3), () async {
+      final prefs = await _getPrefs();
+      final bool alreadyCleaned = prefs.getBool('legacy_alarms_cleaned_v3') ?? false;
+      if (!alreadyCleaned) {
+        // 🛠️ [Cleanup]: مسح أي جدولة قديمة من النظام السابق (Legacy Alarms) لمنع التكرار
+        await AdhanManager.cancelAll();
+        await prefs.setBool('legacy_alarms_cleaned_v3', true);
+      }
+      await rescheduleAll();
     });
   }
 
@@ -687,6 +694,8 @@ class NotificationManager {
 
     if (salawat) {
       await AwesomeNotifications().cancelSchedulesByChannelKey('salawat_channel');
+      // 🛠️ [Fix]: مسح إشعارات الصلاة على النبي أيضاً من القناة الصامتة لضمان توقفها تماماً
+      await AwesomeNotifications().cancelSchedulesByChannelKey('general_silent_channel');
     }
     
     if (adhan) {
@@ -1030,10 +1039,11 @@ class NotificationManager {
           icon: 'resource://drawable/ic_stat_logoapp',
           title: 'ﷺ',
           body: 'اللهم صل وسلم على نبينا محمد',
-          notificationLayout: NotificationLayout.Default,
+          notificationLayout: NotificationLayout.Default, // 🛠️ [تحسين المظهر]
           largeIcon: 'resource://drawable/ic_stat_logoapp',
           payload: {'route': 'salawat'},
           color: const Color(0xFF178B74),
+          groupKey: 'salawat_group', // 🛠️ [إصلاح الازدحام]: تجميع الإشعارات لتقليل الزحمة في شريط التنبيهات
         ),
         schedule: NotificationCalendar(
           hour: h,
