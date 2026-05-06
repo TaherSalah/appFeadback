@@ -2,54 +2,109 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "main", "v5", "v5" , "master"]
   pull_request:
+    branches: [ "main", "v5", "v5" , "master"]
 
 jobs:
-  build:
+  analyze_and_test:
+    name: Analyze and Test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
-      - name: Install Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.41.x'
+          channel: 'stable'
+          cache: true # Enable caching for Flutter packages
 
-      - name: Flutter Pub Get
+      - name: Install dependencies
         run: flutter pub get
 
-      # Setup keystore from GitHub Secrets
-      - name: Setup keystore
-        run: |
-          echo ${{ secrets.KEYSTORE_BASE64 }} | base64 --decode > android/app/key.jks
+      - name: Code generation
+        run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Setup key.properties
-        run: |
-          cat <<EOF > android/key.properties
-          storePassword=${{ secrets.STORE_PASSWORD }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
-          keyAlias=${{ secrets.KEY_ALIAS }}
-          storeFile=key.jks
-          EOF
+      - name: Analyze code
+        run: flutter analyze --no-fatal-warnings --no-fatal-infos
 
-      - name: Build APK
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v5
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+
+  build_android:
+    name: Build Android
+    needs: analyze_and_test # This job will only run if analyze_and_test passes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.x'
+          channel: 'stable'
+          cache: true # Uses the cached packages from the previous job
+
+      - name: Install dependencies
+        run: flutter pub get
+
+
+      - name: Code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Android APK
         run: flutter build apk --release
 
-      - name: Build AAB
+      - name: Build Android App Bundle (AAB)
         run: flutter build appbundle --release
 
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Android APK artifact
+        uses: actions/upload-artifact@v5
         with:
-          name: release-apk
+          name: app-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Upload AAB Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Android AAB artifact
+        uses: actions/upload-artifact@v5
         with:
-          name: release-aab
+          name: app-release-aab
           path: build/app/outputs/bundle/release/app-release.aab
+
+  build_web:
+    name: Build Web
+    needs: analyze_and_test # This job will only run if analyze_and_test passes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Web
+        run: flutter build web --release
+
+      - name: Upload Web artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: web-build
+          path: build/web
