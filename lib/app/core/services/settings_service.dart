@@ -64,6 +64,12 @@ class SettingsService {
     await _prefs.setBool(_kIsAdhanVibrationEnabled, value);
   }
 
+  static const String _kIsFullAdhanEnabled = 'is_full_adhan_enabled';
+  bool get isFullAdhanEnabled => _prefs.getBool(_kIsFullAdhanEnabled) ?? true;
+  Future<void> setFullAdhanEnabled(bool value) async {
+    await _prefs.setBool(_kIsFullAdhanEnabled, value);
+  }
+
   static const String _kIsPrePrayerReminderEnabled =
       'is_pre_prayer_reminder_enabled';
   bool get isPrePrayerReminderEnabled =>

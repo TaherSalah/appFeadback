@@ -94,8 +94,8 @@ class NotificationManager {
     const fajrPath = null;
     const normalPath = null;
     final currentChannels = {
-      'fajr': 'fajr_adhan_channel_v4',
-      'normal': 'adhan_channel_v4',
+      'fajr': 'fajr_adhan_channel_v5',
+      'normal': 'adhan_channel_v6',
     };
 
     print(
@@ -107,9 +107,9 @@ class NotificationManager {
         channelKey: currentChannels['fajr']!,
         channelName: 'أذان الفجر',
         channelDescription: 'تشغيل أذان الفجر',
-        // 🛠️ [تحسين الموثوقية]: استخدام أهمية عالية (High) وتنبيهات حرجة (Critical)
+        // 🛠️ [تحسين الموثوقية]: استخدام أهمية قصوى (Max) وتنبيهات حرجة (Critical)
         // يضمن تشغيل الصوت بالكامل في iOS وAndroid حتى في وضع الصامت.
-        importance: NotificationImportance.High,
+        importance: NotificationImportance.Max,
         playSound: true,
         soundSource: fajrPath ??
             (Platform.isAndroid ? 'resource://raw/fajr' : 'fajr.mp3'),
@@ -129,12 +129,12 @@ class NotificationManager {
         channelDescription: 'تشغيل صوت الأذان',
         // 🛠️ [تحسين الموثوقية]: يضمن ظهور الإشعار كـ Reminder وليس Alarm
         // لتجنب حظر النظام للشاشات الكاملة (Full Screen Intent) على شاشة القفل.
-        importance: NotificationImportance.High,
+        importance: NotificationImportance.Max,
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
         soundSource: normalPath ??
-            (Platform.isAndroid ? 'resource://raw/athan' : 'athan.mp3'),
+            (Platform.isAndroid ? 'resource://raw/new_adan' : 'new_adan.mp3'),
         enableVibration: SettingsService().isAdhanVibrationEnabled,
         enableLights: true,
         defaultPrivacy: NotificationPrivacy.Public,
@@ -363,10 +363,10 @@ class NotificationManager {
 
       // 🔔 قناة التنبيهات قبل الصلاة
       NotificationChannel(
-        channelKey: 'pre_prayer_channel_v1',
+        channelKey: 'pre_prayer_channel_v3',
         channelName: 'تنبيهات قبل الصلاة',
         channelDescription: 'تنبيه قبل الصلاة بـ 15 دقيقة',
-        importance: NotificationImportance.High,
+        importance: NotificationImportance.Max,
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
@@ -374,14 +374,15 @@ class NotificationManager {
             Platform.isAndroid ? 'resource://raw/pre_prayer' : 'pre_prayer.mp3',
         enableVibration: true,
         enableLights: true,
+        criticalAlerts: true,
       ),
 
       // 📢 قناة إقامة الصلاة
       NotificationChannel(
-        channelKey: 'iqamah_channel_v1',
+        channelKey: 'iqamah_channel_v3',
         channelName: 'تنبيهات الإقامة',
         channelDescription: 'تنبيه بموعد إقامة الصلاة',
-        importance: NotificationImportance.High,
+        importance: NotificationImportance.Max,
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
@@ -389,6 +390,7 @@ class NotificationManager {
             Platform.isAndroid ? 'resource://raw/iqamah' : 'iqamah.mp3',
         enableVibration: true,
         enableLights: true,
+        criticalAlerts: true,
       ),
       // 🤲 قناة الدعاء بين الأذان والإقامة
       NotificationChannel(

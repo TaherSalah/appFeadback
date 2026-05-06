@@ -75,9 +75,9 @@ class GamesMenuScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildGameCard(
               context,
-              title: 'لعبة ترتيب الوضوء',
+              title: 'لعبة الترتيب',
               emoji: '💧',
-              description: 'رتب خطوات الوضوء الصحيحة',
+              description: 'رتب بالخطوات الصحيحة',
               color: const Color(0xFF00BCD4),
               reward: 30,
               onTap: () => Navigator.push(

@@ -31,6 +31,24 @@ class AdhanSection extends StatelessWidget {
         //   onChanged: (val) => controller.updateChange(controller.isAdhanOverlayEnabled, val),
         // )),
         const SettingsDivider(),
+        Obx(() {
+          if (controller.isAdhanEnabled.value) {
+            return Column(
+              children: [
+                SettingsSwitchTile(
+                  title: 'الأذان كاملاً',
+                  subtitle: 'تشغيل الأذان كاملاً أو الاكتفاء بأول 30 ثانية',
+                  icon: Icons.record_voice_over,
+                  iconColor: Colors.deepOrange[400]!,
+                  value: controller.isFullAdhanEnabled.value,
+                  onChanged: (val) => controller.updateChange(controller.isFullAdhanEnabled, val),
+                ),
+                const SettingsDivider(),
+              ],
+            );
+          }
+          return const SizedBox.shrink();
+        }),
         Obx(() => SettingsSwitchTile(
           title: 'الاهتزاز مع الأذان',
           subtitle: 'تفعيل الاهتزاز عند وقت الصلاة',

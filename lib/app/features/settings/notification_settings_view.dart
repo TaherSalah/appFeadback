@@ -6,6 +6,7 @@ import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_controller.dart';
 import 'package:muslimdaily/app/features/settings/widgets/notification_sections.dart';
+import 'package:muslimdaily/app/features/settings/view/notification_test_view.dart';
 
 class NotificationSettingsView extends StatelessWidget {
   const NotificationSettingsView({super.key});
@@ -53,25 +54,25 @@ class NotificationSettingsView extends StatelessWidget {
                   RemindersSection(controller: controller),
                    const SizedBox(height: 60),
 
-                  // // Test Button
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(vertical: 24),
-                  //   child: ElevatedButton.icon(
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                  //       foregroundColor: isDark ? Colors.white : Colors.black87,
-                  //       padding: const EdgeInsets.symmetric(vertical: 12),
-                  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  //       elevation: 0,
-                  //     ),
-                  //     onPressed: () => Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(builder: (context) => const NotificationTestView()),
-                  //     ),
-                  //     icon: const Icon(Icons.build_circle_outlined),
-                  //     label: Text('اختبار التنبيهات (للمطورين)', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
-                  //   ),
-                  // ),
+                  // Test Button
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+                        foregroundColor: isDark ? Colors.white : Colors.black87,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: 0,
+                      ),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NotificationTestView()),
+                      ),
+                      icon: const Icon(Icons.build_circle_outlined),
+                      label: const Text('اختبار التنبيهات (للمطورين)', style: TextStyle(fontFamily: "cairo", fontWeight: FontWeight.bold)),
+                    ),
+                  ),
                 ],
               ),
             ),

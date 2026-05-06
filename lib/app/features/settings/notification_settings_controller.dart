@@ -10,6 +10,7 @@ class NotificationSettingsController extends GetxController {
   // Observable states
   final isAdhanEnabled = false.obs;
   final isAdhanVibrationEnabled = false.obs;
+  final isFullAdhanEnabled = true.obs;
   final isAdhanOverlayEnabled = false.obs;
   final isPrePrayerReminderEnabled = false.obs;
   final isIqamahReminderEnabled = false.obs;
@@ -63,6 +64,7 @@ class NotificationSettingsController extends GetxController {
   void loadCurrentSettings() {
     isAdhanEnabled.value = _settings.isAdhanEnabled;
     isAdhanVibrationEnabled.value = _settings.isAdhanVibrationEnabled;
+    isFullAdhanEnabled.value = _settings.isFullAdhanEnabled;
     isAdhanOverlayEnabled.value = _settings.isAdhanOverlayEnabled;
     isPrePrayerReminderEnabled.value = _settings.isPrePrayerReminderEnabled;
     isIqamahReminderEnabled.value = _settings.isIqamahReminderEnabled;
@@ -117,6 +119,7 @@ class NotificationSettingsController extends GetxController {
     // Categorize settings to decide what needs rescheduling
     if (field == isAdhanEnabled || 
         field == isAdhanVibrationEnabled || 
+        field == isFullAdhanEnabled ||
         field == isAdhanOverlayEnabled ||
         field == isPrePrayerReminderEnabled ||
         field == isIqamahReminderEnabled ||
@@ -157,6 +160,7 @@ class NotificationSettingsController extends GetxController {
     try {
       await _settings.setAdhanEnabled(isAdhanEnabled.value);
       await _settings.setAdhanVibrationEnabled(isAdhanVibrationEnabled.value);
+      await _settings.setFullAdhanEnabled(isFullAdhanEnabled.value);
       await _settings.setAdhanOverlayEnabled(isAdhanOverlayEnabled.value);
       await _settings.setPrePrayerReminderEnabled(isPrePrayerReminderEnabled.value);
       await _settings.setIqamahReminderEnabled(isIqamahReminderEnabled.value);

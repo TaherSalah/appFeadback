@@ -34,10 +34,10 @@ class AdhanDiagnosticHelper {
   /// فحص القنوات المطلوبة للإشعارات
   static Future<Map<String, bool>> checkNotificationChannels() async {
     final requiredChannels = [
-      'fajr_adhan_channel_v4',
-      'adhan_channel_v4',
-      'pre_prayer_channel_v1',
-      'iqamah_channel_v1',
+      'fajr_adhan_channel_v5',
+      'adhan_channel_v6',
+      'pre_prayer_channel_v3',
+      'iqamah_channel_v3',
       'shruq_channel_v1',
     ];
 

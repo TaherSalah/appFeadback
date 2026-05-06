@@ -27,7 +27,8 @@ class AdhanManager {
 
     // ⭐ [Safety Check]: If not initialized, we CANNOT calculate times.
     if (!ctrl.state.isPrayerTimesInitialized.value) {
-      log('❌ [AdhanManager] Prayer times not initialized. Canceling existing schedules.', name: _tag);
+      log('❌ [AdhanManager] Prayer times not initialized. Canceling existing schedules.',
+          name: _tag);
       await _cancelAllAdhanChannels();
       return;
     }
@@ -36,7 +37,13 @@ class AdhanManager {
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
     await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('fajr_adhan_channel_v5');
+    await AwesomeNotifications()
         .cancelSchedulesByChannelKey('adhan_channel_v4');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('adhan_channel_v5');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('adhan_channel_v6');
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('shruq_channel_v1');
     await AwesomeNotifications()
@@ -48,7 +55,15 @@ class AdhanManager {
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('pre_prayer_channel_v1');
     await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('pre_prayer_channel_v2');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('pre_prayer_channel_v3');
+    await AwesomeNotifications()
         .cancelSchedulesByChannelKey('iqamah_channel_v1');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('iqamah_channel_v2');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('iqamah_channel_v3');
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('adhan_iqamah_channel_v1');
 
@@ -59,9 +74,11 @@ class AdhanManager {
     final prefs = await SharedPreferences.getInstance();
     final enableFajr = prefs.getBool('enableFajrAdhan') ?? true;
     final enableNormal = prefs.getBool('enableNormalAdhan') ?? true;
-    final isPrePrayerEnabled = prefs.getBool('is_pre_prayer_reminder_enabled') ?? true;
+    final isPrePrayerEnabled =
+        prefs.getBool('is_pre_prayer_reminder_enabled') ?? true;
     final isIqamahEnabled = prefs.getBool('is_iqamah_reminder_enabled') ?? true;
-    
+    final isFullAdhanEnabled = prefs.getBool('is_full_adhan_enabled') ?? true;
+
     // ⭐ Sync city name for notifications
     final cityName = prefs.getString('selected_city') ?? '';
     ctrl.state.location = cityName;
@@ -130,22 +147,27 @@ class AdhanManager {
         }
 
         // ── Pre-prayer reminder (15 minutes before)
-        if (isPrePrayerEnabled && prayerKey != 'sunrise' && arabicPrayerName != 'الشروق') {
-          final prePrayerTime = prayerTime.subtract(const Duration(minutes: 15));
+        if (isPrePrayerEnabled &&
+            prayerKey != 'sunrise' &&
+            arabicPrayerName != 'الشروق') {
+          final prePrayerTime =
+              prayerTime.subtract(const Duration(minutes: 15));
           if (prePrayerTime.isAfter(now)) {
             await AwesomeNotifications().createNotification(
               content: NotificationContent(
                 id: 40000 + uniqueId,
-                channelKey: 'pre_prayer_channel_v1',
+                channelKey: 'pre_prayer_channel_v3',
                 title: '\u200Fاقتربت صلاة $arabicPrayerName',
                 body: '\u200Fباقي 15 دقيقة على صلاة $arabicPrayerName',
-                category: NotificationCategory.Reminder,
+                category: NotificationCategory.Alarm,
+                timeoutAfter: const Duration(seconds: 15),
                 wakeUpScreen: true,
                 autoDismissible: true,
                 icon: 'resource://drawable/ic_stat_logoapp',
                 largeIcon: 'resource://drawable/ic_stat_logoapp',
                 notificationLayout: NotificationLayout.BigText,
                 color: const Color(0xFF178B74),
+                criticalAlert: true,
                 payload: {'prayerName': arabicPrayerName, 'type': 'pre_prayer'},
               ),
               schedule: NotificationCalendar.fromDate(
@@ -158,22 +180,26 @@ class AdhanManager {
         }
 
         // ── Iqamah reminder (15 minutes after)
-        if (isIqamahEnabled && prayerKey != 'sunrise' && arabicPrayerName != 'الشروق') {
+        if (isIqamahEnabled &&
+            prayerKey != 'sunrise' &&
+            arabicPrayerName != 'الشروق') {
           final iqamahTime = prayerTime.add(const Duration(minutes: 15));
           if (iqamahTime.isAfter(now)) {
             await AwesomeNotifications().createNotification(
               content: NotificationContent(
                 id: 50000 + uniqueId,
-                channelKey: 'iqamah_channel_v1',
+                channelKey: 'iqamah_channel_v3',
                 title: '\u200Fحان الآن موعد إقامة صلاة $arabicPrayerName',
                 body: '\u200Fلاتنسي أذكار بعد الصلاة المفروضة',
-                category: NotificationCategory.Reminder,
+                category: NotificationCategory.Alarm,
+                timeoutAfter: const Duration(seconds: 10),
                 wakeUpScreen: true,
                 autoDismissible: true,
                 icon: 'resource://drawable/ic_stat_logoapp',
                 largeIcon: 'resource://drawable/ic_stat_logoapp',
                 notificationLayout: NotificationLayout.BigText,
                 color: const Color(0xFF178B74),
+                criticalAlert: true,
                 payload: {'prayerName': arabicPrayerName, 'type': 'iqamah'},
               ),
               schedule: NotificationCalendar.fromDate(
@@ -186,8 +212,11 @@ class AdhanManager {
         }
 
         // ── Dua between Adhan and Iqamah (7 minutes after Adhan)
-        final bool isBetweenAdhanIqamahEnabled = prefs.getBool('is_between_adhan_iqamah_enabled') ?? true;
-        if (isBetweenAdhanIqamahEnabled && prayerKey != 'sunrise' && arabicPrayerName != 'الشروق') {
+        final bool isBetweenAdhanIqamahEnabled =
+            prefs.getBool('is_between_adhan_iqamah_enabled') ?? true;
+        if (isBetweenAdhanIqamahEnabled &&
+            prayerKey != 'sunrise' &&
+            arabicPrayerName != 'الشروق') {
           final duaTime = prayerTime.add(const Duration(minutes: 7));
           if (duaTime.isAfter(now)) {
             await AwesomeNotifications().createNotification(
@@ -196,14 +225,18 @@ class AdhanManager {
                 channelKey: 'adhan_iqamah_channel_v1',
                 title: 'الدعاء بين الأذان والإقامة',
                 body: 'قال ﷺ: لا يُرد الدعاء بين الأذان والإقامة؛ فادعوا',
-                category: NotificationCategory.Reminder,
+                category: NotificationCategory.Alarm,
+                timeoutAfter: const Duration(seconds: 60),
                 wakeUpScreen: true,
                 autoDismissible: true,
                 icon: 'resource://drawable/ic_stat_logoapp',
                 largeIcon: 'resource://drawable/ic_stat_logoapp',
                 notificationLayout: NotificationLayout.BigText,
                 color: const Color(0xFF178B74),
-                payload: {'prayerName': arabicPrayerName, 'type': 'adhan_iqamah_reminder'},
+                payload: {
+                  'prayerName': arabicPrayerName,
+                  'type': 'adhan_iqamah_reminder'
+                },
               ),
               schedule: NotificationCalendar.fromDate(
                 date: duaTime,
@@ -223,18 +256,26 @@ class AdhanManager {
           content: NotificationContent(
             id: uniqueId,
             channelKey: prayerKey == 'fajr'
-                ? 'fajr_adhan_channel_v4'
-                : 'adhan_channel_v4',
+                ? 'fajr_adhan_channel_v5'
+                : 'adhan_channel_v6',
             title: '\u200Fحان الآن وقت صلاة $arabicPrayerName',
             body:
                 '\u200Fفي مدينتك (${ctrl.state.location.isEmpty ? 'غير محددة' : ctrl.state.location})',
-            category: NotificationCategory.Reminder,
+            category: NotificationCategory.Alarm,
+            timeoutAfter: !isFullAdhanEnabled
+                // لو الأذان كاملاً يبقى الأذان مدة 5 دقائق والفجر 4 دقائق
+                // لو 30 ثانية يبقى 30 ثانية
+                //
+                ? const Duration(seconds: 28)
+                : (prayerKey == 'fajr'
+                    ? const Duration(minutes: 4, seconds: 54)
+                    : const Duration(minutes: 2, seconds: 16)),
             wakeUpScreen: true,
             // 🛠️ fullScreenIntent = false: هام جداً!
             // لو كان true فإن النظام يفتح واجهة التطبيق على شاشة القفل بدلاً من عرض الإشعار.
             // هذا كان سبب عدم ظهور الصوت والإشعار على شاشة القفل.
             fullScreenIntent: false,
-            criticalAlert: false,
+            criticalAlert: true,
             icon: 'resource://drawable/ic_stat_logoapp',
             largeIcon: 'resource://drawable/ic_stat_logoapp',
             notificationLayout: NotificationLayout.BigText,
@@ -290,14 +331,37 @@ class AdhanManager {
   }
 
   static Future<void> _cancelAllAdhanChannels() async {
-    await AwesomeNotifications().cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
-    await AwesomeNotifications().cancelSchedulesByChannelKey('adhan_channel_v4');
-    await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_v1');
-    await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_v2');
-    await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_once');
-    await AwesomeNotifications().cancelSchedulesByChannelKey('shruq_channel_loop');
-    await AwesomeNotifications().cancelSchedulesByChannelKey('pre_prayer_channel_v1');
-    await AwesomeNotifications().cancelSchedulesByChannelKey('iqamah_channel_v1');
-    await AwesomeNotifications().cancelSchedulesByChannelKey('adhan_iqamah_channel_v1');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('fajr_adhan_channel_v5');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('adhan_channel_v4');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('adhan_channel_v5');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('adhan_channel_v6');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('shruq_channel_v1');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('shruq_channel_v2');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('shruq_channel_once');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('shruq_channel_loop');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('pre_prayer_channel_v1');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('pre_prayer_channel_v2');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('pre_prayer_channel_v3');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('iqamah_channel_v1');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('iqamah_channel_v2');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('iqamah_channel_v3');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('adhan_iqamah_channel_v1');
   }
 }

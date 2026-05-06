@@ -375,13 +375,13 @@ class _AdhanDiagnosticScreenState extends State<AdhanDiagnosticScreen> {
 
   String _getChannelLabel(String key) {
     switch (key) {
-      case 'fajr_adhan_channel_v4':
+      case 'fajr_adhan_channel_v5':
         return 'أذان الفجر';
-      case 'adhan_channel_v4':
+      case 'adhan_channel_v6':
         return 'الأذان العادي';
-      case 'pre_prayer_channel_v1':
+      case 'pre_prayer_channel_v3':
         return 'تنبيه قبل الصلاة';
-      case 'iqamah_channel_v1':
+      case 'iqamah_channel_v3':
         return 'تنبيه الإقامة';
       case 'shruq_channel_v1':
         return 'تنبيه الشروق';

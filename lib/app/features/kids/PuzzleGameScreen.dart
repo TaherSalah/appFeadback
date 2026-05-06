@@ -62,6 +62,36 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
       correctOrder: ['1. الله أكبر (4 مرات)', '2. أشهد أن لا إله إلا الله', '3. أشهد أن محمداً رسول الله', '4. حي على الصلاة', '5. حي على الفلاح', '6. الله أكبر', '7. لا إله إلا الله'],
       colors: [const Color(0xFFE64A19), const Color(0xFFD84315)],
     ),
+    PuzzleLevel(
+      title: 'الصلوات الخمس',
+      instruction: 'رتب الصلوات الخمس بالترتيب!',
+      correctOrder: ['1. الفجر', '2. الظهر', '3. العصر', '4. المغرب', '5. العشاء'],
+      colors: [const Color(0xFF009688), const Color(0xFF00796B)],
+    ),
+    PuzzleLevel(
+      title: 'الخلفاء الراشدون',
+      instruction: 'رتب الخلفاء الراشدين حسب خلافتهم!',
+      correctOrder: ['1. أبو بكر الصديق', '2. عمر بن الخطاب', '3. عثمان بن عفان', '4. علي بن أبي طالب'],
+      colors: [const Color(0xFF607D8B), const Color(0xFF455A64)],
+    ),
+    PuzzleLevel(
+      title: 'آداب الطعام',
+      instruction: 'رتب آداب الطعام الصحيحة!',
+      correctOrder: ['1. غسل اليدين', '2. قول بسم الله', '3. الأكل باليمين', '4. الأكل مما يليك', '5. حمد الله بعد الانتهاء'],
+      colors: [const Color(0xFF795548), const Color(0xFF5D4037)],
+    ),
+    PuzzleLevel(
+      title: 'ترتيب قصار السور',
+      instruction: 'رتب سور القرآن من سورة الكافرون للناس!',
+      correctOrder: ['1. سورة الكافرون', '2. سورة النصر', '3. سورة المسد', '4. سورة الإخلاص', '5. سورة الفلق', '6. سورة الناس'],
+      colors: [const Color(0xFFC2185B), const Color(0xFFAD1457)],
+    ),
+    PuzzleLevel(
+      title: 'الأشهر الهجرية',
+      instruction: 'رتب أول 5 أشهر هجرية!',
+      correctOrder: ['1. محرم', '2. صفر', '3. ربيع الأول', '4. ربيع الآخر', '5. جمادى الأولى'],
+      colors: [const Color(0xFF3F51B5), const Color(0xFF303F9F)],
+    ),
   ];
 
   int _currentLevelIndex = 0;
@@ -113,7 +143,9 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
       KidsSoundHelper.playTada();
       _stars += 10;
       _saveProgress();
-      _showWinDialog();
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) _showWinDialog();
+      });
     }
   }
 
@@ -297,6 +329,16 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
                     final item = _currentOrder.removeAt(oldIndex);
                     _currentOrder.insert(newIndex, item);
                   });
+                  
+                  // Check if the moved item is in its correct place for a satisfying sound
+                  if (_currentOrder[newIndex] == level.correctOrder[newIndex]) {
+                    KidsSoundHelper.playSuccess();
+                  } else {
+                    KidsSoundHelper.playClick();
+                  }
+                  
+                  // Automatically check for win condition
+                  _checkOrder();
                 },
                 itemBuilder: (context, index) {
                   final step = _currentOrder[index];
@@ -335,48 +377,22 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
                       title: Text(
                         step,
                         style: TextStyle(
-                  fontFamily: "cairo",
+                          fontFamily: "cairo",
                           fontSize: 14.sp,
                           fontWeight: isCorrect ? FontWeight.bold : FontWeight.w500,
-                          color: isDark ? Colors.white : Colors.black87,
+                          color: isCorrect ? Colors.green.shade800 : (isDark ? Colors.white : Colors.black87),
                         ),
                       ),
-                      trailing: Icon(Icons.reorder, color: Colors.grey.withOpacity(0.5)),
+                      trailing: isCorrect 
+                          ? const Icon(Icons.star_rounded, color: Colors.amber) 
+                          : Icon(Icons.reorder, color: Colors.grey.withOpacity(0.5)),
                     ),
                   );
                 },
               ),
             ),
 
-            // Check button
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton.icon(
-                  onPressed: _isComplete ? null : _checkOrder,
-                  icon: const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
-                  label: Text(
-                    _isComplete ? 'إجابة رائعة! 🎉' : 'تحقق من الترتيب',
-                    style: TextStyle(
-                  fontFamily: "cairo",
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _isComplete ? Colors.green : level.colors[0],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 6,
-                    shadowColor: level.colors[0].withOpacity(0.4),
-                  ),
-                ),
-              ),
-            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
