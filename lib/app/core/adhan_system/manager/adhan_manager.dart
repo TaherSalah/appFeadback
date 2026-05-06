@@ -78,6 +78,8 @@ class AdhanManager {
         prefs.getBool('is_pre_prayer_reminder_enabled') ?? true;
     final isIqamahEnabled = prefs.getBool('is_iqamah_reminder_enabled') ?? true;
     final isFullAdhanEnabled = prefs.getBool('is_full_adhan_enabled') ?? true;
+    final isBetweenAdhanIqamahEnabled =
+        prefs.getBool('is_between_adhan_iqamah_enabled') ?? true;
 
     // ⭐ Sync city name for notifications
     final cityName = prefs.getString('selected_city') ?? '';
@@ -212,8 +214,6 @@ class AdhanManager {
         }
 
         // ── Dua between Adhan and Iqamah (7 minutes after Adhan)
-        final bool isBetweenAdhanIqamahEnabled =
-            prefs.getBool('is_between_adhan_iqamah_enabled') ?? true;
         if (isBetweenAdhanIqamahEnabled &&
             prayerKey != 'sunrise' &&
             arabicPrayerName != 'الشروق') {
@@ -225,9 +225,14 @@ class AdhanManager {
                 channelKey: 'adhan_iqamah_channel_v1',
                 title: 'الدعاء بين الأذان والإقامة',
                 body: 'قال ﷺ: لا يُرد الدعاء بين الأذان والإقامة؛ فادعوا',
+                // ⭐ Alarm = الأقوى (يوقظ الشاشة ويظهر فوق كل شيء)
+                // locked: false + autoDismissible + timeoutAfter = يمنع التكرار
                 category: NotificationCategory.Alarm,
-                timeoutAfter: const Duration(seconds: 60),
+                timeoutAfter: const Duration(seconds: 20),
+                locked: false,
                 wakeUpScreen: true,
+                criticalAlert: false,
+                fullScreenIntent: false,
                 autoDismissible: true,
                 icon: 'resource://drawable/ic_stat_logoapp',
                 largeIcon: 'resource://drawable/ic_stat_logoapp',

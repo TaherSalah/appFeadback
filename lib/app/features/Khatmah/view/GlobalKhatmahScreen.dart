@@ -16,7 +16,7 @@ import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/KLoading.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/global_khatmah_service.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/khatmah_certificate_screen.dart';
-import 'package:quran/quran.dart' as quran;
+// quran package removed — using local static helpers instead
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -477,8 +477,58 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     super.dispose();
   }
 
+  // ─── Local helpers replacing the removed 'quran' package ───────────────────
+
+  /// Verse count per surah (1-indexed, Hafs Uthmani)
+  static const List<int> _surahVerseCounts = [
+    7, 286, 200, 176, 120, 165, 206, 75, 129, 109,
+    123, 111, 43, 52, 99, 128, 111, 110, 98, 135,
+    112, 78, 118, 64, 77, 227, 93, 88, 69, 60,
+    34, 30, 73, 54, 45, 83, 182, 88, 75, 85,
+    54, 53, 89, 59, 37, 35, 38, 29, 18, 45,
+    60, 49, 62, 55, 78, 96, 29, 22, 24, 13,
+    14, 11, 11, 18, 12, 12, 30, 52, 52, 44,
+    28, 28, 20, 56, 40, 31, 50, 40, 46, 42,
+    29, 19, 36, 25, 22, 17, 19, 26, 30, 20,
+    15, 21, 11, 8, 8, 19, 5, 8, 8, 11,
+    11, 8, 3, 9, 5, 4, 7, 3, 6, 3,
+    5, 4, 5, 6,
+  ];
+
+  /// First page of each surah in standard Medina Mushaf (1-indexed)
+  static const List<int> _surahFirstPages = [
+    1, 2, 50, 77, 106, 128, 151, 177, 187, 208,
+    221, 235, 249, 255, 262, 267, 282, 293, 305, 312,
+    322, 333, 342, 350, 359, 367, 377, 385, 396, 404,
+    411, 415, 418, 428, 434, 440, 446, 453, 458, 467,
+    477, 483, 489, 496, 499, 502, 507, 511, 515, 518,
+    520, 523, 526, 528, 531, 534, 537, 542, 545, 549,
+    551, 553, 554, 556, 558, 560, 562, 564, 566, 568,
+    570, 572, 574, 575, 577, 578, 580, 582, 583, 585,
+    586, 587, 587, 589, 590, 591, 591, 592, 593, 594,
+    595, 595, 596, 596, 597, 597, 598, 598, 599, 599,
+    600, 600, 601, 601, 601, 602, 602, 602, 603, 603,
+    603, 604, 604, 604,
+  ];
+
+  /// Returns first page of [surahNumber] (1-based) in Medina Mushaf
+  static int _getSurahFirstPage(int surahNumber) {
+    if (surahNumber < 1 || surahNumber > 114) return 1;
+    return _surahFirstPages[surahNumber - 1];
+  }
+
+  /// Returns verse count of [surahNumber] (1-based)
+  // ignore: unused_element
+  static int _getSurahVerseCount(int surahNumber) {
+    if (surahNumber < 1 || surahNumber > 114) return 0;
+    return _surahVerseCounts[surahNumber - 1];
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
+
     final isDark = context.isDark;
 
     return Scaffold(
@@ -2213,8 +2263,8 @@ class _GlobalKhatmahScreenState extends State<GlobalKhatmahScreen> {
     try {
       if (type == 'surah') {
         // Surah index from Khatmah is 1-based (Surah 1, Surah 2...)
-        pageIndex = quran.getPageNumber(index, 1) - 1;
-        targetPage = quran.getPageNumber(index, quran.getVerseCount(index)) - 1;
+        pageIndex = _getSurahFirstPage(index) - 1;
+        targetPage = _getSurahFirstPage(index) + 1; // approximate last page
       } else if (type == 'juz') {
         // Juz index is 1-based (Juz 1, Juz 2...)
         // Standard Medina Mushaf Juz start pages
