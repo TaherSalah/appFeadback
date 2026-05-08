@@ -55,24 +55,24 @@ class NotificationSettingsView extends StatelessWidget {
                    const SizedBox(height: 60),
 
                   // Test Button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                        foregroundColor: isDark ? Colors.white : Colors.black87,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
-                      ),
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const NotificationTestView()),
-                      ),
-                      icon: const Icon(Icons.build_circle_outlined),
-                      label: const Text('اختبار التنبيهات (للمطورين)', style: TextStyle(fontFamily: "cairo", fontWeight: FontWeight.bold)),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(vertical: 24),
+                  //   child: ElevatedButton.icon(
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+                  //       foregroundColor: isDark ? Colors.white : Colors.black87,
+                  //       padding: const EdgeInsets.symmetric(vertical: 12),
+                  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  //       elevation: 0,
+                  //     ),
+                  //     onPressed: () => Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => const NotificationTestView()),
+                  //     ),
+                  //     icon: const Icon(Icons.build_circle_outlined),
+                  //     label: const Text('اختبار التنبيهات (للمطورين)', style: TextStyle(fontFamily: "cairo", fontWeight: FontWeight.bold)),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

@@ -25,6 +25,7 @@ class NotificationManager {
   static final NotificationManager _instance = NotificationManager._internal();
   factory NotificationManager() => _instance;
   NotificationManager._internal();
+  int _rescheduleGeneration = 0;
 
 //   final SettingsService _settingsService = SettingsService();
 
@@ -678,7 +679,10 @@ class NotificationManager {
     bool salawat = true,
     bool reminders = true,
   }) async {
-    // print('🔄 Rescheduling requested for categories: Azkar=$azkar, Adhan=$adhan, Salawat=$salawat, Reminders=$reminders');
+    _rescheduleGeneration++;
+    final int generation = _rescheduleGeneration;
+
+    // print('🔄 Rescheduling requested (Gen: $generation) for categories: Azkar=$azkar, Adhan=$adhan, Salawat=$salawat, Reminders=$reminders');
 
     if (azkar) {
       await AwesomeNotifications().cancelSchedulesByChannelKey('sabah_athkar_channel');
@@ -716,6 +720,7 @@ class NotificationManager {
       azkar: azkar,
       salawat: salawat,
       reminders: reminders,
+      generation: generation,
     );
 
     // print('✅ Reschedule completed.');
@@ -725,6 +730,7 @@ class NotificationManager {
     bool azkar = true,
     bool salawat = true,
     bool reminders = true,
+    int generation = 0,
   }) async {
     try {
       if (azkar) {
@@ -837,7 +843,7 @@ class NotificationManager {
       if (salawat) {
         // 🤲 الصلاة على النبي
         if (SettingsService().isSalatAlaNabiEnabled) {
-          await _scheduleSalawat();
+          await _scheduleSalawat(generation: generation);
         }
       }
 
@@ -987,43 +993,27 @@ class NotificationManager {
     );
   }
 
-  Future<void> _scheduleSalawat() async {
+  Future<void> _scheduleSalawat({int generation = 0}) async {
     int minutesInterval = SettingsService().getSalatAlaNabiMinutes();
     if (minutesInterval <= 0) minutesInterval = 15; // Safety fallback
     bool isNightModeEnabled = SettingsService().isNightSilentModeEnabled;
     int baseId = 88000;
 
-    // Optimization: if interval is very small (e.g. 1-5 mins), scheduling 1440-288 notifications
-    // might hit the OS limit (usually 500) or cause performance issues.
-    // If interval < 10 mins, we use a single repeating notification instead of the loop.
-    if (minutesInterval < 10) {
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: baseId,
-          channelKey: 'salawat_channel',
-          icon: 'resource://drawable/ic_stat_logoapp',
-          title: 'ﷺ',
-          body: 'اللهم صل وسلم على نبينا محمد',
-          notificationLayout: NotificationLayout.Default,
-          largeIcon: 'resource://drawable/ic_stat_logoapp',
-          payload: {'route': 'salawat'},
-          color: const Color(0xFF178B74),
-        ),
-        schedule: NotificationInterval(
-          interval: Duration(minutes: minutesInterval),
-          repeats: true,
-          preciseAlarm: true,
-          allowWhileIdle: true,
-        ),
-      );
-      return;
-    }
-
-    // إجمالي دقائق اليوم = 1440. سنقوم بالمرور من دقيقة 0.
+    // 🛠️ [تحسين]: توحيد المنطق لضمان احترام الوضع الليلي لجميع الفترات
+    // تم إلغاء التفريق بين أقل من 10 دقائق وأكثر لضمان الدقة في القنوات
+    
+    // إجمالي دقائق اليوم = 1440.
     List<Future<bool>> futures = [];
     for (int totalMinute = 0;
         totalMinute < 1440;
         totalMinute += minutesInterval) {
+      
+      // 🛑 [مهم]: التحقق مما إذا بدأت عملية إعادة جدولة جديدة للتوقف فوراً
+      if (generation != 0 && _rescheduleGeneration != generation) {
+        // print('🛑 Salawat scheduling aborted for Gen $generation (New gen detected)');
+        return;
+      }
+
       int h = totalMinute ~/ 60;
       int m = totalMinute % 60;
 
@@ -1041,11 +1031,11 @@ class NotificationManager {
           icon: 'resource://drawable/ic_stat_logoapp',
           title: 'ﷺ',
           body: 'اللهم صل وسلم على نبينا محمد',
-          notificationLayout: NotificationLayout.Default, // 🛠️ [تحسين المظهر]
+          notificationLayout: NotificationLayout.Default,
           largeIcon: 'resource://drawable/ic_stat_logoapp',
           payload: {'route': 'salawat'},
           color: const Color(0xFF178B74),
-          groupKey: 'salawat_group', // 🛠️ [إصلاح الازدحام]: تجميع الإشعارات لتقليل الزحمة في شريط التنبيهات
+          groupKey: 'salawat_group',
         ),
         schedule: NotificationCalendar(
           hour: h,
@@ -1057,7 +1047,7 @@ class NotificationManager {
         ),
       ));
 
-      // Batching: processing 20 notifications at a time to avoid blocking the UI
+      // Batching: processing 20 notifications at a time to avoid blocking
       if (futures.length >= 20) {
         await Future.wait(futures);
         futures.clear();

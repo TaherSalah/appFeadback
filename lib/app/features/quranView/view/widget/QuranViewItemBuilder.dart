@@ -279,7 +279,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     WakelockPlus.enable();
     WidgetsBinding.instance.addObserver(this);
     _startTrackingTime();
-    
+
     // Register Quran Visit for Smart Tracking
     NotificationManager().registerQuranVisit();
   }
@@ -990,7 +990,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   }),
               FontsDownloadDialog(
                 topBarStyle: QuranTopBarStyle(
-
                   iconColor: isDark ? Colors.white : KColors.primaryColor,
                 ),
                 downloadFontsDialogStyle: DownloadFontsDialogStyle(
@@ -1019,7 +1018,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
                   color: AppThemeColors.cardBackgroundColor(context),
                   tooltip: "خيارات إضافية",
                   shape: RoundedRectangleBorder(
-
                     borderRadius: BorderRadius.circular(20),
                     // side: BorderSide(
                     //   color: isDark ? Colors.teal.withOpacity(0.3) : Colors.brown.withOpacity(0.3),
@@ -1486,7 +1484,6 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       if (!autoScrollCtrl.state.isActive.value) return const SizedBox.shrink();
 
       return AutoScrollSpeedSlider(
-
         isDark: isDark,
         autoScrollStyle:
             AutoScrollStyle.defaults(isDark: isDark, context: context),

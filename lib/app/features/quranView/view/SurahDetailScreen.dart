@@ -522,14 +522,17 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
           color: isDark ? Colors.white : Colors.black,
         ),
         centerTitle: true,
-        title: Text(
-          "سورة ${widget.surah.name}",
-          style: TextStyle(
-            fontSize: isTablet ? 28 : 23.sp,
-            fontFamily: 'maja',
-            height: 2.2,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black,
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            "سورة ${widget.surah.name}",
+            style: TextStyle(
+              fontSize: isTablet ? 28 : 20.sp, // 🚀 Reduced from 23.sp
+              fontFamily: 'maja',
+              height: 2.2,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
         ),
       ),

@@ -32,15 +32,15 @@ class CategoriesViewItemBuilder extends StatelessWidget {
     if (screenWidth < 600) {
       // Mobile
       crossAxisCount = 2;
-      childAspectRatio = 2.35;
+      childAspectRatio = 2.0; // 🚀 Decreased from 2.35 to 2.0 for more height
     } else if (screenWidth < 1200) {
       // Tablet
       crossAxisCount = 3;
-      childAspectRatio = 3.40;
+      childAspectRatio = 2.8; // 🚀 Decreased from 3.40 to 2.8 for more height
     } else {
       // Desktop
       crossAxisCount = 4;
-      childAspectRatio = 0.7;
+      childAspectRatio = 0.8;
     }
     return CustomScrollView(
       slivers: [

@@ -29,10 +29,11 @@ class IslamicCardWidget extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Use the available height of the card, not the whole screen
-          final iconSize = constraints.maxHeight * 0.45; // ~45% of card height
+          final iconSize = constraints.maxHeight * 0.40; // 🚀 Reduced from 45% to 40% for more text room
 
           return Container(
             // Let the parent (Grid / Row / etc.) decide the size
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: isDark ? Theme.of(context).scaffoldBackgroundColor : null,
@@ -55,22 +56,21 @@ class IslamicCardWidget extends StatelessWidget {
                 width: 1.2,
               ),
             ),
-            child: Padding(
-              padding:  EdgeInsets.all(isTablet?8:0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Icon takes flexible space
-                  SizedBox(
-                    height: iconSize,
-                    child: Image.asset(
-                      iconPath,
-                      fit: BoxFit.contain,
-                    ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Icon takes flexible space
+                SizedBox(
+                  height: iconSize,
+                  child: Image.asset(
+                    iconPath,
+                    fit: BoxFit.contain,
                   ),
-                  const SizedBox(height: 12),
-                  // Text can wrap and will not overflow
-                  Flexible(
+                ),
+                const SizedBox(height: 8),
+                // Text can wrap and will not overflow
+                Expanded(
+                  child: Center(
                     child: Text(
                       title,
                       textAlign: TextAlign.center,
@@ -78,8 +78,9 @@ class IslamicCardWidget extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: "me",
-                        fontSize: isTablet ? 9.5.sp : 15.sp,
-                        fontWeight: FontWeight.w500,
+                        fontSize: isTablet ? 9.5.sp : 14.sp, // 🚀 Reduced slightly from 15.sp
+                        fontWeight: FontWeight.w600,
+                        height: 1.1,
                         shadows: [
                           Shadow(
                             color: Colors.black.withOpacity(0.1),
@@ -89,8 +90,8 @@ class IslamicCardWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },

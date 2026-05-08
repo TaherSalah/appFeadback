@@ -227,7 +227,7 @@ class AdhanManager {
                 body: 'قال ﷺ: لا يُرد الدعاء بين الأذان والإقامة؛ فادعوا',
                 // ⭐ Alarm = الأقوى (يوقظ الشاشة ويظهر فوق كل شيء)
                 // locked: false + autoDismissible + timeoutAfter = يمنع التكرار
-                category: NotificationCategory.Alarm,
+                category: NotificationCategory.Reminder,
                 timeoutAfter: const Duration(seconds: 20),
                 locked: false,
                 wakeUpScreen: true,

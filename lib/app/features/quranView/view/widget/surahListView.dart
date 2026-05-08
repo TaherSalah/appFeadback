@@ -285,15 +285,16 @@ class _SurahListScreenState extends State<SurahListScreen> {
                 color: isDark ? Colors.white : Colors.black,
               ),
               centerTitle: true,
-              title: Text(
-                // widget.useOldMushaf
-                //     ? "فِهْرِسُ القُرْآنِ الكَرِيم (الاصدار القديم)"
-                "فِهْرِسُ القُرْآنِ الكَرِيم",
-                style: TextStyle(
-                    fontFamily: "cairo",
-                    color: Colors.green,
-                    fontWeight: FontWeight.w900,
-                    fontSize: context.isTab ? 14.sp : 20.sp),
+              title: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  "فِهْرِسُ القُرْآنِ الكَرِيم",
+                  style: TextStyle(
+                      fontFamily: "cairo",
+                      color: Colors.green,
+                      fontWeight: FontWeight.w900,
+                      fontSize: context.isTab ? 14.sp : 18.sp),
+                ),
               ),
               bottom: widget.useOldMushaf
                   ? null
@@ -404,8 +405,8 @@ class _SurahListScreenState extends State<SurahListScreen> {
                                       boxShadow: [
                                         BoxShadow(
                                           color: (_isListening
-                                                  ? Colors.red
-                                                  : Colors.green)
+                                                   ? Colors.red
+                                                   : Colors.green)
                                               .withOpacity(0.15),
                                           blurRadius: 8,
                                           spreadRadius: 1,
@@ -534,7 +535,7 @@ class _SurahListScreenState extends State<SurahListScreen> {
                           TextWidget(
                             title: item.arabicName,
                             fontFamily: "me",
-                            fontSize: context.isTab ? 12.sp : 20.sp,
+                            fontSize: context.isTab ? 12.sp : 18.sp,
                             fontWeight: FontWeight.bold,
                           ),
                           const SizedBox(height: 4),

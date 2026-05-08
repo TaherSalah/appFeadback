@@ -68,15 +68,15 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
     if (screenWidth < 600) {
       // Mobile
       crossAxisCount = 2;
-      childAspectRatio = 2.40;
+      childAspectRatio = 2.1; // 🚀 Decreased from 2.40 to 2.1 for more height
     } else if (screenWidth < 1200) {
       // Tablet
       crossAxisCount = 3;
-      childAspectRatio = 1.70;
+      childAspectRatio = 1.5; // 🚀 Decreased from 1.70 to 1.5 for more height
     } else {
       // Desktop
       crossAxisCount = 4;
-      childAspectRatio = 0.7;
+      childAspectRatio = 0.8;
     }
 
     return BlocProvider<QuranRadioBloc>(
@@ -127,7 +127,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                     onTap: () => Navigator.pop(context),
                     child: SvgPicture.asset(
                       "assets/icons/arrow.svg",
-                      color: Colors.black,
+                      color: context.isDark ? Colors.white : Colors.black,
                       height: 25,
                     ),
                   )
@@ -185,29 +185,31 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                         },
                         child: Card(
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Image.asset(
                                   "assets/icons/radio.png",
                                   height: context.isTab
-                                      ? 80
+                                      ? 60.h
                                       : 30,
                                 ),
-                                const Spacer(),
-                                TextWidget(
-                                  color: CentralizedCubit.isDarkMode
-                                      ? KColors.scoColor
-                                      : KColors.primary2Color,
-                                  fontWeight: FontWeight.w600,
-                                  maxLines: 2,
-                                  fontSize:
-                                      context.isTab
-                                          ? 6.sp
-                                          : 10.sp,
-                                  title: item.name.toString() ?? "",
+                                const SizedBox(height: 8),
+                                Flexible(
+                                  child: TextWidget(
+                                    color: CentralizedCubit.isDarkMode
+                                        ? KColors.scoColor
+                                        : KColors.primary2Color,
+                                    fontWeight: FontWeight.w600,
+                                    maxLines: 1,
+                                    fontSize:
+                                        context.isTab
+                                            ? 7.sp
+                                            : 10.sp,
+                                    title: item.name.toString() ?? "",
+                                  ),
                                 ),
                               ],
                             ),

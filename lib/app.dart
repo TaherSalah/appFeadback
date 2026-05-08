@@ -168,7 +168,7 @@ class _RafiqMuslimAppState extends State<RafiqMuslimApp> {
                           data: MediaQuery.of(context).copyWith(
                             textScaler: MediaQuery.textScalerOf(context).clamp(
                               minScaleFactor: 0.8,
-                              maxScaleFactor: 1.2,
+                              maxScaleFactor: 1.15, // 🚀 Reduced from 1.2 to 1.15 for better UI stability
                             ),
                           ),
                           child: child!,

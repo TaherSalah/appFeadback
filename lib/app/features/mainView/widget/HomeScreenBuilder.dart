@@ -622,7 +622,7 @@ class _MainViewBuilderState extends State<MainViewBuilder> {
                               crossAxisCount: 3,
                               crossAxisSpacing: isTab ? 30 : 7,
                               mainAxisSpacing: isTab ? 20 : 15,
-                              childAspectRatio: isTab ? 1.9 : 1.20,
+                              childAspectRatio: isTab ? 1.6 : 1.08, // 🚀 Decreased from 1.15 to 1.08 for more height
                             ),
                             itemBuilder: (context, index) {
                               final item = activeIcons[index];
