@@ -11,6 +11,7 @@ import '../../services/home_widget_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:adhan/adhan.dart';
+import '../notification_manager.dart';
 
 class PrayerBackgroundManager {
   static const String _tag = 'PrayerBackgroundManager';
@@ -232,6 +233,10 @@ class PrayerBackgroundManager {
 
       // 2. Update monthly data in background
       await AdhanController.instance.updateMonthlyDataInBackground();
+
+      // 3. Refresh Azkar and Salawat notifications (To prevent them from "dying" due to OS battery optimization)
+      log('Refreshing all notifications in background...', name: _tag);
+      await NotificationManager().rescheduleAll();
 
       // 3. Update last daily task run date
       await _updateLastDailyTaskRun();

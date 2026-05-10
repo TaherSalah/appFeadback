@@ -12,6 +12,7 @@ import 'app/core/utils/constent/router.dart';
 import 'app/core/utils/style/k_color.dart';
 import 'app/features/categories/data/repo/categories_repo_immp.dart';
 import 'app/features/categories/view/controller/categories_bloc.dart';
+import 'app/core/services/notification_manager.dart';
 import 'main.dart';
 
 // import 'main.dart';
@@ -55,23 +56,11 @@ class _RafiqMuslimAppState extends State<RafiqMuslimApp> {
       final receivedAction = await AwesomeNotifications()
           .getInitialNotificationAction(removeFromActionEvents: true);
 
-      if (receivedAction != null &&
-          (receivedAction.channelKey == 'adhan_channel_v4' ||
-              receivedAction.channelKey == 'fajr_adhan_channel_v4')) {
-        print("🚀 App launched by Adhan Notification!");
-
-        // Navigate to AdhanOverlayScreen (Disabled as per user request to stick to notifications)
-        /*
-        CentralizedCubit.navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (_) => AdhanOverlayScreen(
-              prayerName: receivedAction.payload?['prayerName'],
-              cityName: receivedAction.payload?['cityName'],
-              prayerTime: receivedAction.payload?['prayer_time'],
-            ),
-          ),
-        );
-        */
+      if (receivedAction != null) {
+        print("🚀 App launched by Notification: ${receivedAction.payload}");
+        
+        // استخدام المحرك الموحد للتنقل في NotificationManager لضمان ذهاب المستخدم للمكان الصحيح
+        NotificationManager.onActionReceivedMethod(receivedAction);
       }
     } catch (e) {
       logger.e("❌ Error checking launch notification: $e");

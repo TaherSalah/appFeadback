@@ -11,6 +11,8 @@ import 'package:muslimdaily/app/core/widgets/kButtons.dart';
 import 'package:muslimdaily/app/features/Khatmah/data/khatmah_model.dart';
 import 'package:muslimdaily/app/features/Khatmah/view/KhatmahDashboard.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../core/services/notification_manager.dart';
+
 
 /// يبني خطة يومية من أرقام الأجزاء: [[1,2], [3], [4,5], ...]
 /// - days: عدد الأيام
@@ -140,7 +142,11 @@ class _CreateKhatmahScreenState extends State<CreateKhatmahScreen> {
       // }
     }
 
-    // (اختياري) جدولة إشعار… نفس كودك المعلّق
+    // 📢 جدولة إشعار للختمة الجديدة
+    NotificationManager().schedulePrivateKhatmahReminder(
+      khatmahId: khId,
+      title: _titleController.text,
+    );
 
     Navigator.pop(context);
     Navigator.push(

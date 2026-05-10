@@ -1,427 +1,227 @@
-import 'package:muslimdaily/app/features/splashView/splashView.dart';
-
-import '../../core/shard/exports/all_exports.dart';
-import '../../core/utils/style/k_color.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/features/mainView/MainView.dart';
+import 'whats_new_data.dart';
 
 class WhatsNewView extends StatefulWidget {
   final bool isFirstTime;
-  final List<AppFeature> newFeatures;
+  final List<dynamic>? newFeatures; // Added for compatibility
 
   const WhatsNewView({
     super.key,
-    required this.isFirstTime,
-    required this.newFeatures,
+    this.isFirstTime = false,
+    this.newFeatures,
   });
 
   @override
   State<WhatsNewView> createState() => _WhatsNewViewState();
 }
 
-class _WhatsNewViewState extends State<WhatsNewView>
-    with TickerProviderStateMixin {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  // ✅ Controllers للأنيميشن
-  late AnimationController _fadeController;
-  late AnimationController _slideController;
-  late AnimationController _scaleController;
-
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // ✅ تهيئة Controllers
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _slideController = AnimationController(
-      duration: const Duration(milliseconds: 700),
-      vsync: this,
-    );
-
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    // ✅ تهيئة Animations
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeIn),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.easeOutBack),
-    );
-
-    // ✅ بدء الأنيميشن
-    _startAnimations();
-  }
-
-  void _startAnimations() {
-    _fadeController.forward();
-    _slideController.forward();
-    _scaleController.forward();
-  }
-
-  void _resetAnimations() {
-    _fadeController.reset();
-    _slideController.reset();
-    _scaleController.reset();
-    _startAnimations();
-  }
-
+class _WhatsNewViewState extends State<WhatsNewView> {
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              // شريط التقدم مع أنيميشن
-              _buildAnimatedProgressIndicator(),
-
-              // منطقة المحتوى الرئيسية
-              Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: widget.newFeatures.length,
-                  onPageChanged: (int page) {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                    // ✅ إعادة تشغيل الأنيميشن عند تغيير الصفحة
-                    _resetAnimations();
-                  },
-                  itemBuilder: (context, index) {
-                    return _buildAnimatedFeaturePage(widget.newFeatures[index]);
-                  },
-                ),
-              ),
-
-              // أزرار التنقل مع أنيميشن
-              _buildAnimatedNavigationButtons(),
-
-              SizedBox(height: 10.h),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ✅ شريط التقدم مع أنيميشن
-  Widget _buildAnimatedProgressIndicator() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
-      child: Row(
-        children: List.generate(widget.newFeatures.length, (index) {
-          return Expanded(
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeInOut,
-              height: 4.h,
-              margin: EdgeInsets.symmetric(horizontal: 2.w),
-              decoration: BoxDecoration(
-                color: _currentPage >= index
-                      ? KColors.primaryColor
-
-                    : KColors.primary,
-                borderRadius: BorderRadius.circular(10),
-                // ✅ ظل خفيف للشريط النشط
-                boxShadow: _currentPage == index
-                    ? [
-                        BoxShadow(
-                          color:
-                              Theme.of(context).primaryColor.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ]
-                    : null,
+    return Scaffold(
+      backgroundColor: const Color(0xFF263222), // Dark Olive Background
+      body: Stack(
+        children: [
+          // Background subtle pattern or gradient if needed
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.05,
+              child: Image.asset(
+                'assets/images/pattern.png', // Assuming a subtle pattern exists
+                repeat: ImageRepeat.repeat,
+                errorBuilder: (context, error, stackTrace) => const SizedBox(),
               ),
             ),
-          );
-        }),
-      ),
-    );
-  }
+          ),
 
-  // ✅ صفحة عرض الميزة مع أنيميشن
-  Widget _buildAnimatedFeaturePage(AppFeature feature) {
-    final bool isDark = context.isDark;
-
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: SingleChildScrollView(
+          SafeArea(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ✅ الصورة التوضيحية مع Scale Animation
-                ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: Hero(
-                    tag: 'feature_${feature.imagePath}',
-                    child: Container(
-                      height: 510.h,
-                      width: MediaQuery.sizeOf(context).width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        // ✅ ظل جميل للصورة
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
+                // Top Bar with Skip
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => _navigateToHome(context),
+                        child: Text(
+                          'تخطي',
+                          style: GoogleFonts.cairo(
+                            color: Colors.white70,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
+                        ),
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.asset(
-                          feature.imagePath,
-                          fit: BoxFit.contain,
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 20.h),
+
+                // Title Section
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 6.w,
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD9A066), // Orange/Tan bar
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Text(
+                        'ما الجديد',
+                        style: GoogleFonts.cairo(
+                          color: Colors.white,
+                          fontSize: 28.sp,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 30.h),
+
+                // Feature List Container
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: FadeAnimation(
+                      delay: const Duration(milliseconds: 200),
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(25),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.1),
+                            width: 1,
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(25),
+                          child: ListView.separated(
+                            padding: EdgeInsets.all(25.w),
+                            itemCount: (widget.newFeatures != null && widget.newFeatures!.isNotEmpty) 
+                                ? widget.newFeatures!.length 
+                                : recentUpdates.length,
+                            separatorBuilder: (context, index) => SizedBox(height: 20.h),
+                            itemBuilder: (context, index) {
+                              final String title;
+                              final IconData icon;
+
+                              if (widget.newFeatures != null && widget.newFeatures!.isNotEmpty) {
+                                final feature = widget.newFeatures![index];
+                                // Handle both AppFeature and our internal AppUpdateFeature
+                                if (feature is AppUpdateFeature) {
+                                  title = feature.title;
+                                  icon = feature.icon;
+                                } else {
+                                  // Assuming it's AppFeature from app_updates.dart
+                                  title = feature.title;
+                                  icon = Icons.auto_awesome_outlined;
+                                }
+                              } else {
+                                final update = recentUpdates[index];
+                                title = update.title;
+                                icon = update.icon;
+                              }
+
+                              return FadeAnimation(
+                                delay: Duration(milliseconds: 300 + (index * 100)),
+                                offset: const Offset(0.2, 0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 4.h),
+                                      child: Icon(
+                                        icon,
+                                        color: const Color(0xFFD9A066),
+                                        size: 22.sp,
+                                      ),
+                                    ),
+                                    SizedBox(width: 15.w),
+                                    Expanded(
+                                      child: Text(
+                                        title,
+                                        style: GoogleFonts.cairo(
+                                          color: Colors.white.withOpacity(0.9),
+                                          fontSize: 15.sp,
+                                          height: 1.6,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 10.h),
-            
-                // ✅ عنوان الميزة مع أنيميشن
-                TweenAnimationBuilder<double>(
-                  duration: const Duration(milliseconds: 800),
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  curve: Curves.easeOut,
-                  builder: (context, value, child) {
-                    return Opacity(
-                      opacity: value,
-                      child: Transform.translate(
-                        offset: Offset(0, 20 * (1 - value)),
-                        child: child,
+
+                SizedBox(height: 40.h),
+
+                // Bottom Action Button
+                Center(
+                  child: FadeAnimation(
+                    delay: const Duration(milliseconds: 800),
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.h),
+                      child: SizedBox(
+                        width: 200.w,
+                        height: 55.h,
+                        child: ElevatedButton(
+                          onPressed: () => _navigateToHome(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFD9A066),
+                            foregroundColor: Colors.black87,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            elevation: 5,
+                            shadowColor: Colors.black45,
+                          ),
+                          child: Text(
+                            'ابدأ',
+                            style: GoogleFonts.cairo(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  child: Text(
-                    feature.title,
-                    textAlign: TextAlign.center,
-                       style: TextStyle(
-                          fontFamily: "cairo",
-                      fontSize: context.isTab ? 15.sp : 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? KColors.primaryColor : Colors.black87,
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 10.h),
-            
-                // ✅ وصف الميزة مع تأخير في الأنيميشن
-                TweenAnimationBuilder<double>(
-                  duration: const Duration(milliseconds: 1000),
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  curve: Curves.easeOut,
-                  builder: (context, value, child) {
-                    return Opacity(
-                      opacity: value,
-                      child: Transform.translate(
-                        offset: Offset(0, 30 * (1 - value)),
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: Text(
-                    feature.description,
-                    textAlign: TextAlign.center,
-                       style: TextStyle(
-                          fontFamily: "cairo",
-                      fontSize: context.isTab ? 10.sp : 15.sp,
-                      color: Colors.grey.shade700,
-                      height: 1.5,
-                    ),
-                  ),
-                ),
-            
-                SizedBox(height: 10.h),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  // ✅ أزرار التنقل مع أنيميشن
-  Widget _buildAnimatedNavigationButtons() {
-    final bool isDark = context.isDark;
-
-    return TweenAnimationBuilder<double>(
-      duration: const Duration(milliseconds: 600),
-      tween: Tween(begin: 0.0, end: 1.0),
-      curve: Curves.easeOut,
-      builder: (context, value, child) {
-        return Opacity(
-          opacity: value,
-          child: Transform.translate(
-            offset: Offset(0, 30 * (1 - value)),
-            child: child,
-          ),
-        );
-      },
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.w),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // ✅ زر تخطي مع أنيميشن
-            if (_currentPage < widget.newFeatures.length - 1)
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
-                opacity:
-                    _currentPage < widget.newFeatures.length - 1 ? 1.0 : 0.0,
-                child: TextButton(
-                  onPressed: () {
-                    _pageController.animateToPage(
-                      widget.newFeatures.length - 1,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                  ),
-                  child: Text(
-                    'تخطي',
-                       style: TextStyle(
-                          fontFamily: "cairo",
-                      fontSize:
-                          context.isTab ? 10.sp : 16.sp,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ),
-              )
-            else
-              const SizedBox(width: 80),
-
-            // ✅ مؤشر الصفحات مع أنيميشن
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Theme.of(context).primaryColor.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Text(
-                '${_currentPage + 1} / ${widget.newFeatures.length}',
-                   style: TextStyle(
-                          fontFamily: "cairo",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                  // color: Theme.of(context).primaryColor,
-                ),
-              ),
-            ),
-
-            // ✅ زر التالي/ابدأ الآن مع أنيميشن
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (_currentPage < widget.newFeatures.length - 1) {
-                    _pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  } else {
-                    Navigator.pushReplacementNamed(context, 'home');
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isDark
-                      ? Theme.of(context).primaryColor
-                      : KColors.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                      horizontal:
-                          context.isTab ? 15.w : 24.w,
-                      vertical: 12.h),
-                  elevation: 5,
-                  shadowColor: Theme.of(context).primaryColor.withOpacity(0.4),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _currentPage < widget.newFeatures.length - 1
-                          ? 'التالي'
-                          : 'ابدأ الآن',
-                         style: TextStyle(
-                          fontFamily: "cairo",
-                        fontSize:
-                            context.isTab ? 10.sp : 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    // ✅ أيقونة متحركة
-                    AnimatedRotation(
-                      duration: const Duration(milliseconds: 300),
-                      turns: _currentPage < widget.newFeatures.length - 1
-                          ? 0
-                          : 0.5,
-                      child: Icon(
-                        _currentPage < widget.newFeatures.length - 1
-                            ? Icons.arrow_forward_ios
-                            : Icons.start,
-                        color: Colors.white,
-                        size: context.isTab ? 15.sp : 18.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+  void _navigateToHome(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const MainView()),
     );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _fadeController.dispose();
-    _slideController.dispose();
-    _scaleController.dispose();
-    super.dispose();
   }
 }

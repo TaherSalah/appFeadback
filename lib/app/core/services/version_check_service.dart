@@ -104,8 +104,8 @@ class VersionCheckService {
       barrierDismissible: !isMandatory,
       builder: (context) {
         final isDark = context.isDark;
-        return WillPopScope(
-          onWillPop: () async => !isMandatory,
+        return PopScope(
+          canPop: !isMandatory,
           child: CustomGradientDialog(
             title: "تحديث جديد متوفر!",
             message:

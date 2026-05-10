@@ -196,13 +196,20 @@ class NotificationSettingsController extends GetxController {
       await _settings.setMassaTrackingEnabled(isMassaTrackingEnabled.value);
       await _settings.setAppAbsenceTrackingEnabled(isAppAbsenceTrackingEnabled.value);
 
-      // Trigger notification rescheduling ONLY for dirty categories
-      if (_isAdhanDirty || _isAzkarDirty || _isSalatAlaNabiDirty || _isRemindersDirty) {
+      // Trigger notification rescheduling. 
+      // 🛠️ [Improvement]: We now reschedule if the category is "dirty" OR if it's currently "enabled".
+      // This ensures that clicking "Save" acts as a "Repair" for any notifications the OS might have killed.
+      bool shouldRescheduleSalawat = _isSalatAlaNabiDirty || isSalatAlaNabiEnabled.value;
+      bool shouldRescheduleAzkar = _isAzkarDirty || (isAzkarSabahEnabled.value || isAzkarMassaEnabled.value || isAzkarSleepEnabled.value);
+      bool shouldRescheduleAdhan = _isAdhanDirty || isAdhanEnabled.value;
+      bool shouldRescheduleReminders = _isRemindersDirty;
+
+      if (shouldRescheduleAdhan || shouldRescheduleAzkar || shouldRescheduleSalawat || shouldRescheduleReminders) {
         await NotificationManager().rescheduleAll(
-          adhan: _isAdhanDirty,
-          azkar: _isAzkarDirty,
-          salawat: _isSalatAlaNabiDirty,
-          reminders: _isRemindersDirty,
+          adhan: shouldRescheduleAdhan,
+          azkar: shouldRescheduleAzkar,
+          salawat: shouldRescheduleSalawat,
+          reminders: shouldRescheduleReminders,
         );
       }
 

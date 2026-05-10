@@ -214,10 +214,12 @@ class NotificationManager {
 
       // 🤲 قناة الصلاة على النبي
       NotificationChannel(
-        channelKey: 'salawat_channel',
+        channelKey: 'salawat_channel_v2',
         channelName: 'الصلاة على النبي',
         channelDescription: 'تذكير بالصلاة على النبي',
-        importance: NotificationImportance.High,
+        // 🛠️ [تحسين]: تم تغيير الأهمية إلى Default بدلاً من High
+        // لكي يصدر الصوت ويظهر الإشعار في الستارة فقط دون أن ينبثق (Heads-up) ويزعج المستخدم أثناء استخدامه للهاتف.
+        importance: NotificationImportance.Default,
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
@@ -684,12 +686,16 @@ class NotificationManager {
 
     // print('🔄 Rescheduling requested (Gen: $generation) for categories: Azkar=$azkar, Adhan=$adhan, Salawat=$salawat, Reminders=$reminders');
 
+    if (azkar || salawat) {
+      // 🛠️ [Fix]: تم توحيد مسح القناة الصامتة المشتركة لضمان عدم حذف تنبيهات نوع دون الآخر
+      await AwesomeNotifications().cancelSchedulesByChannelKey('general_silent_channel');
+    }
+
     if (azkar) {
       await AwesomeNotifications().cancelSchedulesByChannelKey('sabah_athkar_channel');
       await AwesomeNotifications().cancelSchedulesByChannelKey('mesaa_athkar_channel');
       await AwesomeNotifications().cancelSchedulesByChannelKey('sleep_athkar_channel');
       await AwesomeNotifications().cancelSchedulesByChannelKey('qiam_channel');
-      await AwesomeNotifications().cancelSchedulesByChannelKey('general_silent_channel');
     }
 
     if (reminders) {
@@ -699,9 +705,7 @@ class NotificationManager {
     }
 
     if (salawat) {
-      await AwesomeNotifications().cancelSchedulesByChannelKey('salawat_channel');
-      // 🛠️ [Fix]: مسح إشعارات الصلاة على النبي أيضاً من القناة الصامتة لضمان توقفها تماماً
-      await AwesomeNotifications().cancelSchedulesByChannelKey('general_silent_channel');
+      await AwesomeNotifications().cancelSchedulesByChannelKey('salawat_channel_v2');
     }
     
     if (adhan) {
@@ -998,36 +1002,19 @@ class NotificationManager {
     if (minutesInterval <= 0) minutesInterval = 15; // Safety fallback
     bool isNightModeEnabled = SettingsService().isNightSilentModeEnabled;
     int baseId = 88000;
-
-    // 🛠️ [تحسين]: توحيد المنطق لضمان احترام الوضع الليلي لجميع الفترات
-    // تم إلغاء التفريق بين أقل من 10 دقائق وأكثر لضمان الدقة في القنوات
     
-    // إجمالي دقائق اليوم = 1440.
+    logger.i('⏳ البدء في جدولة الصلاة على النبي: الفاصل = $minutesInterval دقيقة (Gen $generation)');
+
     List<Future<bool>> futures = [];
-    for (int totalMinute = 0;
-        totalMinute < 1440;
-        totalMinute += minutesInterval) {
-      
-      // 🛑 [مهم]: التحقق مما إذا بدأت عملية إعادة جدولة جديدة للتوقف فوراً
-      if (generation != 0 && _rescheduleGeneration != generation) {
-        // print('🛑 Salawat scheduling aborted for Gen $generation (New gen detected)');
-        return;
-      }
 
-      int h = totalMinute ~/ 60;
-      int m = totalMinute % 60;
-
-      bool isSilentTime = isNightModeEnabled && (h >= 0 && h < 6);
-      String channel =
-          isSilentTime ? 'general_silent_channel' : 'salawat_channel';
-
-      // معرف فريد لكل توقيت بناءً على الساعة والدقيقة
-      int uniqueId = baseId + (h * 100) + m;
-
+    if (minutesInterval == 1) {
+      // 💡 [تطوير]: استخدام NotificationInterval بدلاً من Calendar
+      // هذا يضمن وجود إشعار واحد فقط (ID موحد) يتحدث تلقائياً كل دقيقة
+      // مما يمنع تراكم الإشعارات في الدرج ويحل مشكلة الـ 500 منبه جذرياً.
       futures.add(AwesomeNotifications().createNotification(
         content: NotificationContent(
-          id: uniqueId,
-          channelKey: channel,
+          id: baseId + 999, // معرف ثابت لمنع التراكم
+          channelKey: 'salawat_channel_v2',
           icon: 'resource://drawable/ic_stat_logoapp',
           title: 'ﷺ',
           body: 'اللهم صل وسلم على نبينا محمد',
@@ -1035,28 +1022,63 @@ class NotificationManager {
           largeIcon: 'resource://drawable/ic_stat_logoapp',
           payload: {'route': 'salawat'},
           color: const Color(0xFF178B74),
-          groupKey: 'salawat_group',
+          groupKey: 'salawat_group', // تجميع الإشعارات
         ),
-        schedule: NotificationCalendar(
-          hour: h,
-          minute: m,
-          second: 0,
+        schedule: NotificationInterval(
+          interval: const Duration(seconds: 60), // كل 60 ثانية (دقيقة واحدة)
           repeats: true,
           preciseAlarm: true,
           allowWhileIdle: true,
         ),
       ));
+    } else {
+      // للفواصل الزمنية الأخرى (5، 10، 15 دقيقة)
+      for (int totalMinute = 0; totalMinute < 1440; totalMinute += minutesInterval) {
+        if (generation != 0 && _rescheduleGeneration != generation) return;
 
-      // Batching: processing 20 notifications at a time to avoid blocking
-      if (futures.length >= 20) {
-        await Future.wait(futures);
-        futures.clear();
+        int h = totalMinute ~/ 60;
+        int m = totalMinute % 60;
+
+        if (isNightModeEnabled && (h >= 0 && h < 6)) continue;
+
+        // استخدمنا معرفات فريدة هنا للجدولة الزمنية، ولكن مع إضافة groupKey للتجميع
+        int uniqueId = baseId + (h * 100) + m;
+
+        futures.add(AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: uniqueId,
+            channelKey: 'salawat_channel_v2',
+            icon: 'resource://drawable/ic_stat_logoapp',
+            title: 'ﷺ',
+            body: 'اللهم صل وسلم على نبينا محمد',
+            notificationLayout: NotificationLayout.Default,
+            largeIcon: 'resource://drawable/ic_stat_logoapp',
+            payload: {'route': 'salawat'},
+            color: const Color(0xFF178B74),
+            groupKey: 'salawat_group', // ضمان التجميع في الدرج
+          ),
+          schedule: NotificationCalendar(
+            hour: h,
+            minute: m,
+            second: 0,
+            repeats: true,
+            preciseAlarm: true,
+            allowWhileIdle: true,
+          ),
+        ));
+
+        if (futures.length >= 20) {
+          await Future.wait(futures);
+          futures.clear();
+        }
       }
     }
 
     if (futures.isNotEmpty) {
       await Future.wait(futures);
     }
+    
+    logger.i('✅ تم الانتهاء من جدولة الصلاة على النبي بنجاح (Gen $generation)');
   }
 
 
@@ -1681,6 +1703,55 @@ class NotificationManager {
     }
   }
 
+  // ==========================================
+  // 📖 تذكير الختمة الخاصة
+  // ==========================================
+
+  Future<void> schedulePrivateKhatmahReminder({
+    required String khatmahId,
+    required String title,
+  }) async {
+    try {
+      // استخدام hashcode الـ ID لإنشاء معرف فريد للإشعار
+      final int notificationId = khatmahId.hashCode.abs() % 1000000;
+
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: notificationId,
+          channelKey: 'quran_channel',
+          title: 'ورد ختمة: $title',
+          body: 'حان وقت قراءة وردك اليومي من ختمة "$title"، تقبل الله منك.',
+          category: NotificationCategory.Reminder,
+          wakeUpScreen: true,
+          payload: {'route': 'quran_wird'},
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          color: const Color(0xFF178B74),
+        ),
+        schedule: NotificationCalendar(
+          hour: 12, // الساعة 12 ظهراً كما طلب المستخدم
+          minute: 0,
+          second: 0,
+          repeats: true,
+          preciseAlarm: true,
+          allowWhileIdle: true,
+        ),
+      );
+      logger.i('✅ تم جدولة تذكير الختمة الخاصة: $title');
+    } catch (e) {
+      logger.e('❌ خطأ في جدولة تذكير الختمة الخاصة: $e');
+    }
+  }
+
+  Future<void> cancelPrivateKhatmahReminder(String khatmahId) async {
+    try {
+      final int notificationId = khatmahId.hashCode.abs() % 1000000;
+      await AwesomeNotifications().cancel(notificationId);
+      logger.i('✅ تم إلغاء تذكير الختمة الخاصة: $khatmahId');
+    } catch (e) {
+      logger.e('❌ خطأ في إلغاء تذكير الختمة الخاصة: $e');
+    }
+  }
+
   // --- Static Listeners ---
 
   @pragma('vm:entry-point')
@@ -1726,7 +1797,14 @@ class NotificationManager {
       ReceivedAction receivedAction) async {
     logger.i('🎯 Notification Clicked: ${receivedAction.payload}');
 
-    final navigator = CentralizedCubit.navigatorKey.currentState;
+    var navigator = CentralizedCubit.navigatorKey.currentState;
+
+    // الانتظار قليلاً إذا كان الـ Navigator لم يجهز بعد (عند فتح التطبيق من حالة الإغلاق التام)
+    if (navigator == null) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      navigator = CentralizedCubit.navigatorKey.currentState;
+    }
+
     if (navigator == null) return;
 
     final route = receivedAction.payload?['route'] ?? '';

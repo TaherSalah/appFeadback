@@ -14,6 +14,8 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:quran_library/quran.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import '../../../core/services/notification_manager.dart';
+
 
 
 class KhatmahDashboard extends StatefulWidget {
@@ -251,6 +253,8 @@ class _KhatmahDashboardState extends State<KhatmahDashboard>
     if (k != null) {
       // احذف خطتها إن وُجدت
       plansBox.delete(k.id);
+      // إلغاء تذكير الإشعارات
+      NotificationManager().cancelPrivateKhatmahReminder(k.id);
     }
     box.deleteAt(index);
     KHelper.showSuccess(message: "تم حذف ${k?.title} بنجاح");
