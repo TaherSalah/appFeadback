@@ -113,18 +113,14 @@ class AdhanManager {
           continue;
         }
 
-        // Skip past prayers
-        if (prayerTime.isBefore(now)) {
-          prayerIndex++;
-          continue;
-        }
-
         final uniqueId = 1000 + (day * 10) + prayerIndex;
 
         // Schedule Shuruq using the regular, non-repeating notification
         if (prayerKey == 'sunrise' || prayerKey == 'الشروق') {
-          await NotificationManager()
-              .scheduleShruqNotification(prayerTime, uniqueId);
+          if (prayerTime.isAfter(now)) {
+            await NotificationManager()
+                .scheduleShruqNotification(prayerTime, uniqueId);
+          }
           prayerIndex++;
           continue;
         }
@@ -226,7 +222,6 @@ class AdhanManager {
                 title: 'الدعاء بين الأذان والإقامة',
                 body: 'قال ﷺ: لا يُرد الدعاء بين الأذان والإقامة؛ فادعوا',
                 // ⭐ Alarm = الأقوى (يوقظ الشاشة ويظهر فوق كل شيء)
-                // locked: false + autoDismissible + timeoutAfter = يمنع التكرار
                 category: NotificationCategory.Reminder,
                 timeoutAfter: const Duration(seconds: 20),
                 locked: false,
@@ -253,59 +248,51 @@ class AdhanManager {
         }
 
         // ⭐ Native AwesomeNotifications Scheduling (Mirrors Salawat/Azkar)
-        // 🛠️ [تعديل تقني]: تم استبدال AlarmManager بنظام جدولة النظام الأصلي (Native)
-        // هذا يضمن أن الأذان سيعمل حتى لو كان التطبيق مغلقاً تماماً والهاتف في وضع القفل (Lock Screen).
-        // تم استلهام هذا الحل من إشعار "الصلاة على النبي" الذي أثبت كفاءته.
-        // [تصحيح]: تم استخدام .toLocal() لضمان الموعد الصحيح حسب التوقيت المحلي للمستخدم.
-        await AwesomeNotifications().createNotification(
-          content: NotificationContent(
-            id: uniqueId,
-            channelKey: prayerKey == 'fajr'
-                ? 'fajr_adhan_channel_v5'
-                : 'adhan_channel_v6',
-            title: '\u200Fحان الآن وقت صلاة $arabicPrayerName',
-            body:
-                '\u200Fفي مدينتك (${ctrl.state.location.isEmpty ? 'غير محددة' : ctrl.state.location})',
-            category: NotificationCategory.Alarm,
-            timeoutAfter: !isFullAdhanEnabled
-                // لو الأذان كاملاً يبقى الأذان مدة 5 دقائق والفجر 4 دقائق
-                // لو 30 ثانية يبقى 30 ثانية
-                //
-                ? const Duration(seconds: 28)
-                : (prayerKey == 'fajr'
-                    ? const Duration(minutes: 4, seconds: 54)
-                    : const Duration(minutes: 2, seconds: 16)),
-            wakeUpScreen: true,
-            // 🛠️ fullScreenIntent = false: هام جداً!
-            // لو كان true فإن النظام يفتح واجهة التطبيق على شاشة القفل بدلاً من عرض الإشعار.
-            // هذا كان سبب عدم ظهور الصوت والإشعار على شاشة القفل.
-            fullScreenIntent: false,
-            criticalAlert: true,
-            icon: 'resource://drawable/ic_stat_logoapp',
-            largeIcon: 'resource://drawable/ic_stat_logoapp',
-            notificationLayout: NotificationLayout.BigText,
-            color: const Color(0xFF178B74),
-            payload: {
-              'prayerName': arabicPrayerName,
-              'cityName': ctrl.state.location,
-              'type': 'adhan'
-            },
-          ),
-          schedule: NotificationCalendar.fromDate(
-            date: prayerTime,
-            preciseAlarm: true,
-            allowWhileIdle: true,
-          ),
-          actionButtons: [
-            NotificationActionButton(
-              key: 'STOP_ADHAN',
-              label: 'إيقاف الصوت',
-              actionType: ActionType.DismissAction,
-              isDangerousOption: true,
+        if (prayerTime.isAfter(now)) {
+          await AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: uniqueId,
+              channelKey: prayerKey == 'fajr'
+                  ? 'fajr_adhan_channel_v5'
+                  : 'adhan_channel_v6',
+              title: '\u200Fحان الآن وقت صلاة $arabicPrayerName',
+              body:
+                  '\u200Fفي مدينتك (${ctrl.state.location.isEmpty ? 'غير محددة' : ctrl.state.location})',
+              category: NotificationCategory.Alarm,
+              timeoutAfter: !isFullAdhanEnabled
+                  ? const Duration(seconds: 28)
+                  : (prayerKey == 'fajr'
+                      ? const Duration(minutes: 4, seconds: 54)
+                      : const Duration(minutes: 2, seconds: 16)),
+              wakeUpScreen: true,
+              fullScreenIntent: false,
+              criticalAlert: true,
+              icon: 'resource://drawable/ic_stat_logoapp',
+              largeIcon: 'resource://drawable/ic_stat_logoapp',
+              notificationLayout: NotificationLayout.BigText,
+              color: const Color(0xFF178B74),
+              payload: {
+                'prayerName': arabicPrayerName,
+                'cityName': ctrl.state.location,
+                'type': 'adhan'
+              },
             ),
-          ],
-        );
-        scheduledCount++;
+            schedule: NotificationCalendar.fromDate(
+              date: prayerTime,
+              preciseAlarm: true,
+              allowWhileIdle: true,
+            ),
+            actionButtons: [
+              NotificationActionButton(
+                key: 'STOP_ADHAN',
+                label: 'إيقاف الصوت',
+                actionType: ActionType.DismissAction,
+                isDangerousOption: true,
+              ),
+            ],
+          );
+          scheduledCount++;
+        }
         prayerIndex++;
       }
     }
