@@ -160,27 +160,46 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
   bool _isCheckingPermissions = false;
 
   Future<void> _applySettings() async {
+    if (_isCheckingPermissions) return;
     setState(() => _isCheckingPermissions = true);
 
-    await NotificationManager().checkAndRequestExactAlarmPermission();
+    try {
+      final bool isPermissionAllowed = await NotificationManager()
+          .checkAndRequestExactAlarmPermission()
+          .timeout(const Duration(seconds: 12), onTimeout: () => false);
 
-    await _settingsService.setFajrAlarmEnabled(_isEnabled);
-    await _settingsService.setFajrAlarmHour(_time.hour);
-    await _settingsService.setFajrAlarmMinute(_time.minute);
-    await _settingsService.setFajrAlarmDays(_selectedDays);
-    await _settingsService.setFajrAlarmRepetitions(_repetitions);
-    await _settingsService.setFajrAlarmVibrate(_vibrate);
-    await _settingsService.setFajrAlarmFadeIn(_fadeIn);
+      await _settingsService.setFajrAlarmEnabled(_isEnabled);
+      await _settingsService.setFajrAlarmHour(_time.hour);
+      await _settingsService.setFajrAlarmMinute(_time.minute);
+      await _settingsService.setFajrAlarmDays(_selectedDays);
+      await _settingsService.setFajrAlarmRepetitions(_repetitions);
+      await _settingsService.setFajrAlarmVibrate(_vibrate);
+      await _settingsService.setFajrAlarmFadeIn(_fadeIn);
 
-    await NotificationManager().scheduleAdvancedFajrAlarm();
+      await NotificationManager()
+          .scheduleAdvancedFajrAlarm()
+          .timeout(const Duration(seconds: 15));
 
-    _updateCountdown();
+      _updateCountdown();
 
-    if (mounted) {
-      KHelper.showSuccess(message: "تم حفظ الإعدادات بنجاح ✨");
+      if (!mounted) return;
+      if (isPermissionAllowed) {
+        KHelper.showSuccess(message: "تم حفظ الإعدادات بنجاح ✨");
+      } else {
+        KHelper.showError(
+            message:
+                "تم حفظ الإعدادات، لكن يلزم السماح بالتنبيهات الدقيقة ليعمل المنبّه دائمًا");
+      }
+    } catch (_) {
+      if (mounted) {
+        KHelper.showError(
+            message: "تعذّر حفظ إعدادات منبّه الفجر، حاول مرة أخرى");
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isCheckingPermissions = false);
+      }
     }
-
-    setState(() => _isCheckingPermissions = false);
   }
 
   String _getDayAbbr(int day) {

@@ -15,22 +15,28 @@ class AdhanManager {
 
     // Using the existing AdhanController to calculate times
     final ctrl = AdhanController.instance;
-    // Check if initialized, if not wait a bit
+
+    // Wait up to 10 seconds for initialization (5 attempts × 2s)
     if (!ctrl.state.isPrayerTimesInitialized.value) {
-      log('Prayer times not initialized. Waiting...', name: _tag);
-      await Future.delayed(const Duration(seconds: 2));
-      if (!ctrl.state.isPrayerTimesInitialized.value) {
-        log('Still not initialized. Attempting manual init...', name: _tag);
-        await ctrl.initializeStoredAdhan();
+      log('Prayer times not initialized. Waiting up to 10s...', name: _tag);
+      for (int attempt = 0; attempt < 5; attempt++) {
+        await Future.delayed(const Duration(seconds: 2));
+        if (ctrl.state.isPrayerTimesInitialized.value) break;
       }
     }
 
-    // ⭐ [Safety Check]: If not initialized, we CANNOT calculate times.
+    // Last resort: manual init
     if (!ctrl.state.isPrayerTimesInitialized.value) {
-      log('❌ [AdhanManager] Prayer times not initialized. Canceling existing schedules.',
+      log('Attempting manual init...', name: _tag);
+      await ctrl.initializeStoredAdhan();
+    }
+
+    // ⭐ [Critical Fix]: Don't cancel existing schedules on failure.
+    // If init failed, keep whatever was scheduled and try again next time.
+    if (!ctrl.state.isPrayerTimesInitialized.value) {
+      log('⚠️ [AdhanManager] Prayer times not initialized. Keeping existing schedules intact.',
           name: _tag);
-      await _cancelAllAdhanChannels();
-      return;
+      return; // Return WITHOUT canceling
     }
 
     // Cancel all previously scheduled adhan and shruq notifications efficiently
@@ -89,7 +95,8 @@ class AdhanManager {
     for (int day = 0; day < 7; day++) {
       final date = now.add(Duration(days: day));
       // We fetch from the controller logic which includes offsets, cache, etc.
-      Map<String, DateTime>? times = await ctrl.getCalculatedTimesForDate(date);
+      // Use getPrayerTimesForDate → uses monthly cache first (more reliable)
+      Map<String, DateTime> times = await ctrl.getPrayerTimesForDate(date);
 
       int prayerIndex = 0;
       for (final entry in times.entries) {

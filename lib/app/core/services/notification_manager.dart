@@ -651,7 +651,7 @@ class NotificationManager {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 9999,
-        channelKey: 'fajr_adhan_channel_v4',
+        channelKey: 'fajr_adhan_channel_v5',
         title: 'اختبار فوري',
         body: 'إذا وصلك هذا الصوت، فنظام المنبهات يعمل بنجاح!',
         category: NotificationCategory.Alarm,
@@ -1091,6 +1091,8 @@ class NotificationManager {
     // 1. Cancel existing advanced fajr alarms
     await AwesomeNotifications()
         .cancelSchedulesByChannelKey('fajr_adhan_channel_v4');
+    await AwesomeNotifications()
+        .cancelSchedulesByChannelKey('fajr_adhan_channel_v5');
 
     if (!SettingsService().isFajrAlarmEnabled) {
       logger.i("🔕 Advanced Fajr Alarm is DISABLED.");
@@ -1110,12 +1112,14 @@ class NotificationManager {
 
     for (int day in days) {
       for (int r = 0; r < repetitions; r++) {
-        // Calculate offset time
-        int offsetMinutes = r * intervalMinutes;
-        int totalMin = minute + offsetMinutes;
-
-        int finalHour = (hour + (totalMin ~/ 60)) % 24;
-        int finalMinute = totalMin % 60;
+        // Calculate offset time safely, including day rollover after midnight.
+        final baseMinutes = (hour * 60) + minute;
+        final totalMinutesFromBase = baseMinutes + (r * intervalMinutes);
+        final dayOffset = totalMinutesFromBase ~/ (24 * 60);
+        final minutesOfDay = totalMinutesFromBase % (24 * 60);
+        final finalHour = minutesOfDay ~/ 60;
+        final finalMinute = minutesOfDay % 60;
+        final finalWeekday = ((day - 1 + dayOffset) % 7) + 1;
 
         // Generate unique ID:
         // Day (1-7) * 100 -> 100, 200... 700
@@ -1128,7 +1132,7 @@ class NotificationManager {
         await AwesomeNotifications().createNotification(
           content: NotificationContent(
             id: uniqueId,
-            channelKey: 'fajr_adhan_channel_v4',
+            channelKey: 'fajr_adhan_channel_v5',
             title: 'منبه الفجر المتقدم',
             body: r == 0
                 ? 'حان وقت الاستيقاظ لصلاة الفجر'
@@ -1144,7 +1148,7 @@ class NotificationManager {
             color: const Color(0xFF178B74),
           ),
           schedule: NotificationCalendar(
-            weekday: day,
+            weekday: finalWeekday,
             hour: finalHour,
             minute: finalMinute,
             second: 0,
