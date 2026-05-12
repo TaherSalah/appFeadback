@@ -14,8 +14,8 @@ import '../../core/services/system_control_service.dart';
 import '../mainView/view/MaintenanceScreen.dart';
 
 class VersionService {
-  static const String _lastVersionKey = 'last_app_version';
-  static const String _isFirstTimeKey = 'is_fir';
+  static const String _lastVersionKey = 'last_app_vin';
+  static const String _isFirstTimeKey = 'is_';
 
   /// التحقق من حالة التطبيق (أول مرة، تحديث، أو استخدام عادي)
   static Future<AppState> checkAppState() async {
@@ -75,13 +75,13 @@ enum AppState {
 class AppFeature {
   final String title;
   final String description;
-  final String imagePath;
-  final String? version; // إضافة (اختياري)
+  final IconData? icon; // Added icon field
+  final String? version;
 
   AppFeature({
     required this.title,
     required this.description,
-    required this.imagePath,
+    this.icon,
     this.version,
   });
 }
@@ -97,78 +97,104 @@ class AppUpdates {
       title: 'واجهة جديدة',
       description:
           'تصميم عصري ومريح للعين مع تجربة استخدام سلسة وانتقالات سلسة بين الشاشات',
-      imagePath: 'assets/images/1_12_11zon.jpg',
     ),
     AppFeature(
       title: 'مصحف التجويد والتفسير والقراءات ',
       description:
           'استمتع بتجربة قراءة القرآن الكريم مع خيارات البحث السريع، إضافة العلامات المرجعية، والانتقال السهل بين السور والصفحات والاستماع للقرآن الكريم',
-      imagePath: 'assets/images/4_15_11zon.jpg',
     ),
     AppFeature(
       title: 'إنشاء ختمات للقرآن الكريم',
       description:
           'نظّم ختمتك بسهولة مع تحديد الأهداف اليومية، تتبع التقدم، وتذكيرات لمساعدتك على إنهاء القرآن',
-      imagePath: 'assets/images/17_8_11zon.jpg',
     ),
     AppFeature(
       title: 'الاستماع للأذكار والرقية الشرعية',
       description:
           ' يمكنك الاستماع للأذكار والرقية الشرعية، مع خاصية التشغيل بدون انترنت',
-      imagePath: 'assets/images/3_14_11zon.webp',
     ),
     AppFeature(
       title: 'متتبع الصدقات',
       description:
           'أضف هدفك الشهري من الصدقات وقم بتسجيل صدقاتك مع تذكير بالاشعارات بالصدقات الدورية',
-      imagePath: 'assets/images/cirty.jpg',
     ),
     AppFeature(
       title: 'حاسبة الزكاة',
       description:
           'احسب زكاتك بسهولة مع حاسبة الزكاة، وتذكيرك بموعد الحول وتقرير مفصل',
-      imagePath: 'assets/images/zakat.jpg',
     ),
   ];
   static final List<AppFeature> updateFeatures = [
     AppFeature(
-      title: 'واجهة جديدة',
-      description:
-          'تصميم عصري ومريح للعين مع تجربة استخدام سلسة وانتقالات سلسة بين الشاشات',
-      imagePath: 'assets/images/1_12_11zon.jpg',
+      title: 'إضافة معلومات إضافية في المواريث',
+      description: 'تم توفير شرح مفصل وقواعد فقهية شاملة لجميع حالات المواريث لتبسيط فهم الحسابات الشرعية.',
+      icon: Icons.account_balance_outlined,
     ),
     AppFeature(
-      title: 'مصحف التجويد والتفسير والقراءات ',
-      description:
-          'استمتع بتجربة قراءة القرآن الكريم مع خيارات البحث السريع، إضافة العلامات المرجعية، والانتقال السهل بين السور والصفحات والاستماع للقرآن الكريم',
-      imagePath: 'assets/images/4_15_11zon.jpg',
+      title: 'تطوير المسبحة الإلكترونية',
+      description: 'أصبحت المسبحة تضم وضعين مختلفين: مسبحة إلكترونية حديثة ومسبحة تقليدية لتناسب جميع المستخدمين.',
+      icon: Icons.fingerprint_outlined,
     ),
     AppFeature(
-      title: 'إنشاء ختمات للقرآن الكريم',
-      description:
-          'نظّم ختمتك بسهولة مع تحديد الأهداف اليومية، تتبع التقدم، وتذكيرات لمساعدتك على إنهاء القرآن',
-      imagePath: 'assets/images/17_8_11zon.jpg',
+      title: 'إضافة الاهتزاز أثناء التسبيح',
+      description: 'تم دعم الاهتزاز أثناء العد في المسبحة لمنح تجربة تسبيح أكثر تفاعلاً وراحة.',
+      icon: Icons.vibration_outlined,
     ),
     AppFeature(
-      title: 'الاستماع للأذكار والرقية الشرعية',
-      description:
-          ' يمكنك الاستماع للأذكار والرقية الشرعية، مع خاصية التشغيل بدون انترنت',
-      imagePath: 'assets/images/3_14_11zon.webp',
+      title: 'التسبيح في الوضع الخفي',
+      description: 'يمكنك الآن استخدام المسبحة في الوضع الخفي للحفاظ على الخصوصية أثناء التسبيح.',
+      icon: Icons.visibility_off_outlined,
     ),
     AppFeature(
-      title: 'متتبع الصدقات',
-      description:
-          'أضف هدفك الشهري من الصدقات وقم بتسجيل صدقاتك مع تذكير بالاشعارات بالصدقات الدورية',
-      imagePath: 'assets/images/cirty.jpg',
+      title: 'إضافة الشيخ علي جابر للقرآن الكريم',
+      description: 'تم إضافة تلاوات القارئ الشيخ علي جابر بجودة عالية داخل قسم القرآن الكريم.',
+      icon: Icons.library_music_outlined,
     ),
     AppFeature(
-      title: 'حاسبة الزكاة',
-      description:
-          'احسب زكاتك بسهولة مع حاسبة الزكاة، وتذكيرك بموعد الحول وتقرير مفصل',
-      imagePath: 'assets/images/zakat.jpg',
+      title: 'تغيير صوت الأذان للشيخ ناصر القطامي',
+      description: 'تم اعتماد صوت الأذان بصوت الشيخ ناصر القطامي لتحسين تجربة التنبيهات والأذان.',
+      icon: Icons.record_voice_over_outlined,
+    ),
+    AppFeature(
+      title: 'تعديلات في المصحف وتحسينات',
+      description: 'تحسينات تقنية وجمالية شاملة في المصحف الشريف لتوفير تجربة قراءة مريحة وأكثر سلاسة.',
+      icon: Icons.menu_book_outlined,
+    ),
+    AppFeature(
+      title: 'تحسين وتطوير التمرير التلقائي',
+      description: 'تم تحسين التمرير التلقائي داخل المصحف ليصبح أكثر سلاسة ودقة أثناء القراءة.',
+      icon: Icons.swipe_vertical_outlined,
+    ),
+    AppFeature(
+      title: 'إضافة البحث داخل موسوعة الأحاديث',
+      description: 'يمكنك الآن البحث بسهولة في اكثر من 10 الالف حديث في موسوعة الأحاديث للوصول السريع إلى أي حديث.',
+      icon: Icons.search_outlined,
+    ),
+    AppFeature(
+      title: 'التعديل في نظام الإشعارات',
+      description: 'تطوير جذري لنظام التنبيهات لضمان دقة المواعيد وسرعة وصول الإشعارات لكافة الأجهزة.',
+      icon: Icons.notifications_active_outlined,
+    ),
+    AppFeature(
+      title: 'إضافة اختيارات للوضع الليلي الصامت للإشعارات',
+      description: 'الآن يمكنك اختيار وقت بداية ونهاية الوضع الصامت للإشعارات بما يناسب أوقات راحتك ونومك.',
+      icon: Icons.nights_stay_outlined,
+    ),
+    AppFeature(
+      title: 'تحسين وتطوير منبه الفجر',
+      description: 'تم تطوير منبه الفجر ليعمل بدقة واستقرار أكبر، مع إضافة ميزة جديدة تمنع إيقاف التنبيه إلا بعد التسبيح والصلاة على النبي ﷺ عشرين مرة للمساعدة على الاستيقاظ الكامل.',
+      icon: Icons.alarm_outlined,
+    ),    AppFeature(
+      title: 'إضافة التذكير اليومي بالورد القرآني',
+      description: 'ميزة جديدة لتذكيرك يومياً بوردك الشخصي من القرآن الكريم للمساعدة على الاستمرار والالتزام.',
+      icon: Icons.auto_stories_outlined,
+    ),
+    AppFeature(
+      title: 'تحسين وتطوير ركن الطفل المسلم',
+      description: 'تم تحسين قسم الطفل المسلم وإضافة تطويرات جديدة لتقديم تجربة تعليمية وترفيهية أفضل للأطفال.',
+      icon: Icons.child_care_outlined,
     ),
   ];
-
 
   static List<AppFeature> getFeaturesForVersion(String version) {
     // يمكنك إضافة منطق لإرجاع ميزات معينة حسب الإصدار

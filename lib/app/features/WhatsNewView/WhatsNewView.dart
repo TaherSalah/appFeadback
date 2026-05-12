@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/shard/widgets/ui_animations.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/mainView/MainView.dart';
@@ -23,150 +24,206 @@ class WhatsNewView extends StatefulWidget {
 class _WhatsNewViewState extends State<WhatsNewView> {
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.isDark;
     return Scaffold(
-      backgroundColor: const Color(0xFF263222), // Dark Olive Background
-      body: Stack(
-        children: [
-          // Background subtle pattern or gradient if needed
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.05,
-              child: Image.asset(
-                'assets/images/pattern.png', // Assuming a subtle pattern exists
-                repeat: ImageRepeat.repeat,
-                errorBuilder: (context, error, stackTrace) => const SizedBox(),
+      body: Container(
+        decoration:  BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: isDark
+                ? const [
+              Color(0xFF020617),
+              Color(0xFF0F172A),
+            ]
+                : [
+              // baseColor.withOpacity(0.06), // لمسة لون خفيفة
+              const Color(0xFFF7F1E1),
+              Colors.white,
+            ],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Decorative Background Circles
+            Positioned(
+              top: -100.h,
+              right: -50.w,
+              child: Container(
+                width: 300.w,
+                height: 300.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: (isDark ? const Color(0xFFD9A066) : KColors.primaryColor).withOpacity(0.05),
+                ),
               ),
             ),
-          ),
+            
+            Positioned.fill(
+              child: Opacity(
+                opacity: isDark ? 0.03 : 0.05,
+                child: Image.asset(
+                  'assets/images/pattern.png',
+                  repeat: ImageRepeat.repeat,
+                  errorBuilder: (context, error, stackTrace) => const SizedBox(),
+                ),
+              ),
+            ),
 
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Top Bar with Skip
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => _navigateToHome(context),
-                        child: Text(
-                          'تخطي',
-                          style: GoogleFonts.cairo(
-                            color: Colors.white70,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
+            SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Top Bar
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => _navigateToHome(context),
+                          style: TextButton.styleFrom(
+                            backgroundColor: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'تخطي',
+                            style: GoogleFonts.cairo(
+                              color: isDark ? Colors.white70 : Colors.black87,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                SizedBox(height: 20.h),
+                  SizedBox(height: 10.h),
 
-                // Title Section
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.w),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 6.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFD9A066), // Orange/Tan bar
-                          borderRadius: BorderRadius.circular(3),
+                  // Title & Header
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FadeAnimation(
+                          delay: const Duration(milliseconds: 200),
+                          child: Text(
+                            ' ما الجديد ',
+                            style: GoogleFonts.cairo(
+                                color: isDark ? Colors.white : Colors.black,
+                                fontSize: 26.sp,
+                                fontWeight: FontWeight.w800,
+                                height: 1.2,
+                            ),
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 15.w),
-                      Text(
-                        'ما الجديد',
-                        style: GoogleFonts.cairo(
-                          color: Colors.white,
-                          fontSize: 28.sp,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                SizedBox(height: 30.h),
+                  SizedBox(height: 30.h),
 
-                // Feature List Container
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  // Feature List Container
+                  Expanded(
                     child: FadeAnimation(
-                      delay: const Duration(milliseconds: 200),
+                      delay: const Duration(milliseconds: 100),
                       child: Container(
-                        width: double.infinity,
+                        margin: EdgeInsets.symmetric(horizontal: 20.w),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.25),
-                          borderRadius: BorderRadius.circular(25),
+                          color: isDark ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(30),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.1),
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
                             width: 1,
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (isDark ? Colors.black : Colors.grey).withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(30),
                           child: ListView.separated(
-                            padding: EdgeInsets.all(25.w),
+                            padding: EdgeInsets.all(20.w),
+                            physics: const BouncingScrollPhysics(),
                             itemCount: (widget.newFeatures != null && widget.newFeatures!.isNotEmpty) 
                                 ? widget.newFeatures!.length 
                                 : recentUpdates.length,
-                            separatorBuilder: (context, index) => SizedBox(height: 20.h),
+                            separatorBuilder: (context, index) => Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10.h),
+                              child: Divider(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05), thickness: 1),
+                            ),
                             itemBuilder: (context, index) {
                               final String title;
+                              final String? description;
                               final IconData icon;
 
                               if (widget.newFeatures != null && widget.newFeatures!.isNotEmpty) {
-                                final feature = widget.newFeatures![index];
-                                // Handle both AppFeature and our internal AppUpdateFeature
-                                if (feature is AppUpdateFeature) {
-                                  title = feature.title;
-                                  icon = feature.icon;
-                                } else {
-                                  // Assuming it's AppFeature from app_updates.dart
-                                  title = feature.title;
-                                  icon = Icons.auto_awesome_outlined;
-                                }
+                                final dynamic feature = widget.newFeatures![index];
+                                title = feature.title;
+                                description = (feature is AppUpdateFeature) ? null : feature.description;
+                                icon = (feature is AppUpdateFeature) ? feature.icon : (feature.icon ?? Icons.auto_awesome_outlined);
                               } else {
                                 final update = recentUpdates[index];
                                 title = update.title;
+                                description = null;
                                 icon = update.icon;
                               }
 
                               return FadeAnimation(
-                                delay: Duration(milliseconds: 300 + (index * 100)),
-                                offset: const Offset(0.2, 0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 4.h),
-                                      child: Icon(
-                                        icon,
-                                        color: const Color(0xFFD9A066),
-                                        size: 22.sp,
-                                      ),
-                                    ),
-                                    SizedBox(width: 15.w),
-                                    Expanded(
-                                      child: Text(
-                                        title,
-                                        style: GoogleFonts.cairo(
-                                          color: Colors.white.withOpacity(0.9),
-                                          fontSize: 15.sp,
-                                          height: 1.6,
-                                          fontWeight: FontWeight.w400,
+                                delay: Duration(milliseconds: 100 + (index * 150)),
+                                offset: const Offset(0.1, 0),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(10.w),
+                                        decoration: BoxDecoration(
+                                          color: (isDark ? const Color(0xFFD9A066) : KColors.primaryColor).withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Icon(
+                                          icon,
+                                          color: isDark ? const Color(0xFFD9A066) : KColors.primaryColor,
+                                          size: 20.sp,
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(width: 16.w),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              title,
+                                              style: GoogleFonts.cairo(
+                                                color: isDark ? Colors.white : Colors.black,
+                                                fontSize: 15.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            if (description != null)
+                                              Text(
+                                                description,
+                                                style: GoogleFonts.cairo(
+                                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+                                                  fontSize: 13.sp,
+                                                  height: 1.4,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -175,46 +232,67 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                       ),
                     ),
                   ),
-                ),
 
-                SizedBox(height: 40.h),
+                  SizedBox(height: 30.h),
 
-                // Bottom Action Button
-                Center(
-                  child: FadeAnimation(
-                    delay: const Duration(milliseconds: 800),
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 40.h),
-                      child: SizedBox(
-                        width: 200.w,
-                        height: 55.h,
-                        child: ElevatedButton(
-                          onPressed: () => _navigateToHome(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFD9A066),
-                            foregroundColor: Colors.black87,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
+                  // Bottom Action Button
+                  Center(
+                    child: FadeAnimation(
+                      delay: const Duration(milliseconds: 1000),
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 30.h),
+                        child: Container(
+                          width: 240.w,
+                          height: 58.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            gradient: LinearGradient(
+                              colors: isDark 
+                                ? [const Color(0xFFD9A066), const Color(0xFFB88655)]
+                                : [KColors.primaryColor, KColors.primaryColor.withOpacity(0.8)],
                             ),
-                            elevation: 5,
-                            shadowColor: Colors.black45,
+                            boxShadow: [
+                              BoxShadow(
+                                color: (isDark ? const Color(0xFFD9A066) : KColors.primaryColor).withOpacity(0.3),
+                                blurRadius: 15,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
                           ),
-                          child: Text(
-                            'ابدأ',
-                            style: GoogleFonts.cairo(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
+                          child: ElevatedButton(
+                            onPressed: () => _navigateToHome(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              foregroundColor: Colors.white,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'ابدأ الآن',
+                                  style: GoogleFonts.cairo(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: 10.w),
+                                Icon(Icons.arrow_forward_ios, size: 16.sp),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

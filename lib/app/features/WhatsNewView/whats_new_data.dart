@@ -12,27 +12,23 @@ class AppUpdateFeature {
 
 final List<AppUpdateFeature> recentUpdates = [
   AppUpdateFeature(
-    title: 'إضافة ميزة التمرير التلقائي في صفحة القرآن الكريم، مما يتيح لك قراءة مريحة دون الحاجة للتنقل اليدوي بين الصفحات.',
-    icon: Icons.auto_stories_outlined,
+    title: 'إضافة معلومات إضافية في المواريث',
+    icon: Icons.account_balance_outlined,
   ),
   AppUpdateFeature(
-    title: 'إضافة القارئ الشيخ علي جابر رحمه الله إلى قائمة القراء.',
-    icon: Icons.mic_none_outlined,
+    title: 'إضافة مسبحة إلكترونية',
+    icon: Icons.fingerprint_outlined,
   ),
   AppUpdateFeature(
-    title: 'تطوير نظام الأذان وجدولة التنبيهات لضمان العمل بدقة عالية في مواعيدها حتى في وضع السكون.',
-    icon: Icons.notifications_active_outlined,
-  ),
-  AppUpdateFeature(
-    title: 'إضافة نظام التذكيرات الذكية للورد القرآني وأذكار الصباح والمساء لضمان عدم نسيانها.',
-    icon: Icons.psychology_outlined,
-  ),
-  AppUpdateFeature(
-    title: 'تحسين نظام متابعة الختمات وإضافة تنبيهات يومية مخصصة لكل ختمة.',
+    title: 'تعديلات في المصحف وتحسينات',
     icon: Icons.menu_book_outlined,
   ),
   AppUpdateFeature(
-    title: 'تحسينات شاملة في واجهة المستخدم وسرعة التنقل بين أقسام التطبيق المختلفة.',
-    icon: Icons.speed_outlined,
+    title: 'التعديل في نظام الإشعارات',
+    icon: Icons.notifications_active_outlined,
+  ),
+  AppUpdateFeature(
+    title: 'إضافة خيارات متقدمة للوضع الليلي الصامت، للتحكم في الإشعارات خلال أوقات الراحة.',
+    icon: Icons.nights_stay_outlined,
   ),
 ];

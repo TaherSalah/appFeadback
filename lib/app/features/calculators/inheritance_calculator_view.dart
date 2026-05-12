@@ -598,6 +598,40 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
                 _buildResultsSection(isDark),
               ],
 
+              SizedBox(height: 24.h),
+
+              // 6. Jurisprudential Information Section
+              StaggeredItemAnimation(
+                index: 6,
+                child: _buildSection(
+                  title: "معلومات فقهية هامة",
+                  infoText: "مجموعة من القواعد والضوابط الشرعية المتعلقة بتقسيم المواريث.",
+                  isDark: isDark,
+                  children: [
+                    _buildInfoTile(
+                      "أركان الإرث",
+                      "أركان الميراث ثلاثة: مُوَرِّث (المتوفى)، ووارث (الحي بعده)، وحق موروث (التركة).",
+                      Icons.account_balance_outlined,
+                    ),
+                    _buildInfoTile(
+                      "أسباب الإرث",
+                      "أسباب الميراث المتفق عليها ثلاثة: النكاح (الزوجية)، والنسب (القرابة)، والولاء.",
+                      Icons.family_restroom_outlined,
+                    ),
+                    _buildInfoTile(
+                      "الحقائق المتعلقة بالتركة",
+                      "تُخرج من التركة بالترتيب: مؤن التجهيز، ثم الديون، ثم الوصايا (في حدود الثلث)، ثم تقسيم الباقي على الورثة.",
+                      Icons.list_alt_outlined,
+                    ),
+                    _buildInfoTile(
+                      "موانع الإرث",
+                      "موانع الميراث ثلاثة (عش لرزق): القتل العمد، واختلاف الدين، والرق.",
+                      Icons.block_outlined,
+                    ),
+                  ],
+                ),
+              ),
+
               SizedBox(height: 50.h),
             ],
           ),
@@ -721,6 +755,53 @@ class _InheritanceCalculatorViewState extends State<InheritanceCalculatorView> {
           ),
           Divider(height: 20.h, color: KColors.primaryColor.withOpacity(0.05)),
           ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoTile(String title, String description, IconData icon) {
+    bool isDark = context.isDark;
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: KColors.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: KColors.primaryColor, size: 20.sp),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: "cairo",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14.sp,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontFamily: "cairo",
+                    fontSize: 12.sp,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -44,7 +44,8 @@ class NotificationSettingsController extends GetxController {
   final isQuranTrackingEnabled = true.obs;
   final isSabahTrackingEnabled = true.obs;
   final isMassaTrackingEnabled = true.obs;
-  final isAppAbsenceTrackingEnabled = true.obs;
+  final nightSilentStartHour = 0.obs;
+  final nightSilentEndHour = 6.obs;
 
   final hasChanges = false.obs;
   final isLoading = false.obs;
@@ -98,7 +99,8 @@ class NotificationSettingsController extends GetxController {
     isQuranTrackingEnabled.value = _settings.isQuranTrackingEnabled;
     isSabahTrackingEnabled.value = _settings.isSabahTrackingEnabled;
     isMassaTrackingEnabled.value = _settings.isMassaTrackingEnabled;
-    isAppAbsenceTrackingEnabled.value = _settings.isAppAbsenceTrackingEnabled;
+    nightSilentStartHour.value = _settings.nightSilentStartHour;
+    nightSilentEndHour.value = _settings.nightSilentEndHour;
 
     hasChanges.value = false;
     _isAdhanDirty = false;
@@ -146,7 +148,9 @@ class NotificationSettingsController extends GetxController {
                field == isMulkReminderEnabled ||
                field == isSunnahReminderEnabled) {
       _isRemindersDirty = true;
-    } else if (field == isNightSilentModeEnabled) {
+    } else if (field == isNightSilentModeEnabled || 
+               field == nightSilentStartHour || 
+               field == nightSilentEndHour) {
       // Night mode affects both Azkar and Salawat filters
       _isAzkarDirty = true;
       _isSalatAlaNabiDirty = true;
@@ -194,7 +198,8 @@ class NotificationSettingsController extends GetxController {
       await _settings.setQuranTrackingEnabled(isQuranTrackingEnabled.value);
       await _settings.setSabahTrackingEnabled(isSabahTrackingEnabled.value);
       await _settings.setMassaTrackingEnabled(isMassaTrackingEnabled.value);
-      await _settings.setAppAbsenceTrackingEnabled(isAppAbsenceTrackingEnabled.value);
+      await _settings.setNightSilentStartHour(nightSilentStartHour.value);
+      await _settings.setNightSilentEndHour(nightSilentEndHour.value);
 
       // Trigger notification rescheduling. 
       // 🛠️ [Improvement]: We now reschedule if the category is "dirty" OR if it's currently "enabled".

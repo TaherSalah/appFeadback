@@ -139,12 +139,41 @@ class FeaturesSection extends StatelessWidget {
       children: [
         Obx(() => SettingsSwitchTile(
           title: 'الوضع الصامت ليلاً',
-          subtitle: 'إسكات الإشعارات (ما عدا الأذان) من 12ص إلى 6ص',
+          subtitle: 'إسكات الإشعارات (ما عدا الأذان) خلال ساعات محددة',
           icon: Icons.brightness_2_outlined,
           iconColor: Colors.deepPurple[400]!,
           value: controller.isNightSilentModeEnabled.value,
           onChanged: (val) => controller.updateChange(controller.isNightSilentModeEnabled, val),
         )),
+        Obx(() {
+          if (controller.isNightSilentModeEnabled.value) {
+            return Column(
+              children: [
+                SettingsSliderTile(
+                  title: 'وقت البدء (ساعة):',
+                  value: controller.nightSilentStartHour.value.toDouble(),
+                  min: 0,
+                  max: 23,
+                  divisions: 23,
+                  label: '${controller.nightSilentStartHour.value}:00',
+                  activeColor: Colors.deepPurple,
+                  onChanged: (val) => controller.updateChange(controller.nightSilentStartHour, val.toInt()),
+                ),
+                SettingsSliderTile(
+                  title: 'وقت النهاية (ساعة):',
+                  value: controller.nightSilentEndHour.value.toDouble(),
+                  min: 0,
+                  max: 23,
+                  divisions: 23,
+                  label: '${controller.nightSilentEndHour.value}:00',
+                  activeColor: Colors.deepPurple,
+                  onChanged: (val) => controller.updateChange(controller.nightSilentEndHour, val.toInt()),
+                ),
+              ],
+            );
+          }
+          return const SizedBox.shrink();
+        }),
         const SettingsDivider(),
         Obx(() => SettingsSwitchTile(
           title: 'زر إيقاف الصوت',
@@ -302,15 +331,7 @@ class RemindersSection extends StatelessWidget {
     return SettingsSection(
       title: 'تذكيرات إضافية (متابعة الأوراد)',
       children: [
-        Obx(() => SettingsSwitchTile(
-          title: 'تتبع هجران التطبيق',
-          subtitle: 'تذكيرك في حال عدم زيارتك للتطبيق لعدة أيام',
-          icon: Icons.psychology_outlined,
-          iconColor: Colors.amber[700]!,
-          value: controller.isAppAbsenceTrackingEnabled.value,
-          onChanged: (val) => controller.updateChange(controller.isAppAbsenceTrackingEnabled, val),
-        )),
-        const SettingsDivider(),
+
         Obx(() => SettingsSwitchTile(
           title: 'تتبع ورد القرآن',
           subtitle: 'تذكيرك مساءً إذا لم تقرأ القرآن خلال اليوم',

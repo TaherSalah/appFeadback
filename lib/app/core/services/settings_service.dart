@@ -269,9 +269,20 @@ class SettingsService {
       await _prefs.setBool(_kIsHomeWidgetEnabled, value);
 
   // --- Night Silent Mode ---
+  static const String _kNightSilentStartHour = 'night_silent_start_hour';
+  static const String _kNightSilentEndHour = 'night_silent_end_hour';
+
   bool get isNightSilentModeEnabled => _prefs.getBool(_kIsNightSilentModeEnabled) ?? true;
   Future<void> setNightSilentModeEnabled(bool value) async =>
       await _prefs.setBool(_kIsNightSilentModeEnabled, value);
+
+  int get nightSilentStartHour => _prefs.getInt(_kNightSilentStartHour) ?? 0;
+  Future<void> setNightSilentStartHour(int value) async =>
+      await _prefs.setInt(_kNightSilentStartHour, value);
+
+  int get nightSilentEndHour => _prefs.getInt(_kNightSilentEndHour) ?? 6;
+  Future<void> setNightSilentEndHour(int value) async =>
+      await _prefs.setInt(_kNightSilentEndHour, value);
 
   // --- Smart Tracking ---
   static const String _kIsQuranTrackingEnabled = 'is_quran_tracking_enabled';
@@ -290,7 +301,7 @@ class SettingsService {
       await _prefs.setBool(_kIsMassaTrackingEnabled, value);
 
   static const String _kIsAppAbsenceTrackingEnabled = 'is_app_absence_tracking_enabled';
-  bool get isAppAbsenceTrackingEnabled => _prefs.getBool(_kIsAppAbsenceTrackingEnabled) ?? true;
-  Future<void> setAppAbsenceTrackingEnabled(bool value) async =>
-      await _prefs.setBool(_kIsAppAbsenceTrackingEnabled, value);
+  bool get isAppAbsenceTrackingEnabled => true;
+  // Future<void> setAppAbsenceTrackingEnabled(bool value) async =>
+  //     await _prefs.setBool(_kIsAppAbsenceTrackingEnabled, value);
 }

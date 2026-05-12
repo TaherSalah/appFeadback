@@ -184,7 +184,7 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
 
       if (!mounted) return;
       if (isPermissionAllowed) {
-        KHelper.showSuccess(message: "تم حفظ الإعدادات بنجاح ✨");
+        KHelper.showSuccess(message: "تم حفظ الإعدادات بنجاح");
       } else {
         KHelper.showError(
             message:
@@ -694,6 +694,45 @@ class _AdvancedFajrAlarmWidgetState extends State<AdvancedFajrAlarmWidget> {
                             ],
                           ),
                         ),
+                        const SizedBox(height: 24),
+                        // Challenge Rule Card
+                        StaggeredItemAnimation(
+                          index: 3,
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: goldColor.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: goldColor.withOpacity(0.1)),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: goldColor.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(Icons.info_outline_rounded,
+                                      color: goldColor, size: 20),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    "تنبيه: هذا المنبه مصمم ليوقظك بذكاء؛ لن يتوقف الصوت إلا بعد فتح التطبيق وإتمام 20 صلاة على النبي ﷺ.",
+                                    style: TextStyle(
+                                      fontFamily: "cairo",
+                                      fontSize: 11.sp,
+                                      color: textColor.withOpacity(0.8),
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         const SizedBox(height: 32),
                         // Settings List
                         StaggeredItemAnimation(

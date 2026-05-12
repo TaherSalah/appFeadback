@@ -15,6 +15,7 @@ import 'package:muslimdaily/app/features/charity/AchievementsScreen.dart';
 import 'package:muslimdaily/app/features/calendar/presentation/screens/calendar_screen.dart';
 import 'package:muslimdaily/app/features/mainView/widget/AllAzkarListView.dart';
 import 'package:muslimdaily/app/features/notifications/view/notification_dialog_screen.dart';
+import 'package:muslimdaily/app/features/notifications/view/fajr_challenge_view.dart';
 import 'package:hijri/hijri_calendar.dart' as hijri;
 import 'package:muslimdaily/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -219,7 +220,7 @@ class NotificationManager {
         channelDescription: 'تذكير بالصلاة على النبي',
         // 🛠️ [تحسين]: تم تغيير الأهمية إلى Default بدلاً من High
         // لكي يصدر الصوت ويظهر الإشعار في الستارة فقط دون أن ينبثق (Heads-up) ويزعج المستخدم أثناء استخدامه للهاتف.
-        importance: NotificationImportance.Default,
+        importance: NotificationImportance.High,
         defaultColor: const Color(0xFF178B74),
         ledColor: const Color(0xFF178B74),
         playSound: true,
@@ -748,6 +749,24 @@ class NotificationManager {
             hour: 9,
             minute: 0,
             payload: {'route': 'morning_athkar'},
+            actionButtons: [
+              NotificationActionButton(
+                key: 'READ_SABAH',
+                label: 'اقرأ الآن',
+                actionType: ActionType.Default,
+                color: const Color(0xFF178B74),
+              ),
+              NotificationActionButton(
+                key: 'SNOOZE_SABAH',
+                label: 'لاحقاً',
+                actionType: ActionType.SilentAction,
+              ),
+              NotificationActionButton(
+                key: 'DISMISS',
+                label: 'إخفاء',
+                actionType: ActionType.DismissAction,
+              ),
+            ],
           );
         }
 
@@ -758,9 +777,27 @@ class NotificationManager {
             channelKey: 'mesaa_athkar_channel',
             title: 'أذكار المساء',
             body: 'حان وقت أذكار المساء، جعل الله مساءك مباركاً',
-            hour: 18,
+            hour: 19,
             minute: 0,
             payload: {'route': 'evening_athkar'},
+            actionButtons: [
+              NotificationActionButton(
+                key: 'READ_MASSA',
+                label: 'اقرأ الآن',
+                actionType: ActionType.Default,
+                color: const Color(0xFF178B74),
+              ),
+              NotificationActionButton(
+                key: 'SNOOZE_MASSA',
+                label: 'لاحقاً',
+                actionType: ActionType.SilentAction,
+              ),
+              NotificationActionButton(
+                key: 'DISMISS',
+                label: 'إخفاء',
+                actionType: ActionType.DismissAction,
+              ),
+            ],
           );
         }
 
@@ -770,10 +807,28 @@ class NotificationManager {
             id: 6,
             channelKey: 'sleep_athkar_channel',
             title: 'أذكار النوم',
-            body: 'حان وقت أذكار النوم، تصصبح على خير',
-            hour: 22,
+            body: 'حان وقت أذكار النوم، تصبح على خير',
+            hour: 23,
             minute: 0,
             payload: {'route': 'sleep_athkar'},
+            actionButtons: [
+              NotificationActionButton(
+                key: 'READ_SLEEP',
+                label: 'اقرأ الآن',
+                actionType: ActionType.Default,
+                color: const Color(0xFF178B74),
+              ),
+              NotificationActionButton(
+                key: 'SNOOZE_SLEEP',
+                label: 'لاحقاً',
+                actionType: ActionType.SilentAction,
+              ),
+              NotificationActionButton(
+                key: 'DISMISS',
+                label: 'إخفاء',
+                actionType: ActionType.DismissAction,
+              ),
+            ],
           );
         }
 
@@ -787,6 +842,24 @@ class NotificationManager {
             hour: 23,
             minute: 0,
             payload: {'route': 'qiyam_reminder'},
+            actionButtons: [
+              NotificationActionButton(
+                key: 'READ_QIYAM',
+                label: 'اقرأ الآن',
+                actionType: ActionType.Default,
+                color: const Color(0xFF178B74),
+              ),
+              NotificationActionButton(
+                key: 'SNOOZE_QIYAM',
+                label: 'لاحقاً',
+                actionType: ActionType.SilentAction,
+              ),
+              NotificationActionButton(
+                key: 'DISMISS',
+                label: 'إخفاء',
+                actionType: ActionType.DismissAction,
+              ),
+            ],
           );
         }
         
@@ -807,6 +880,24 @@ class NotificationManager {
             hour: 20,
             minute: 0,
             payload: {'route': 'quran_wird'},
+            actionButtons: [
+              NotificationActionButton(
+                key: 'READ_QURAN',
+                label: 'اقرأ الآن',
+                actionType: ActionType.Default,
+                color: const Color(0xFF178B74),
+              ),
+              NotificationActionButton(
+                key: 'SNOOZE_QURAN',
+                label: 'لاحقاً',
+                actionType: ActionType.SilentAction,
+              ),
+              NotificationActionButton(
+                key: 'DISMISS',
+                label: 'إخفاء',
+                actionType: ActionType.DismissAction,
+              ),
+            ],
           );
         }
 
@@ -962,6 +1053,7 @@ class NotificationManager {
     required int hour,
     required int minute,
     Map<String, String>? payload,
+    List<NotificationActionButton>? actionButtons,
   }) async {
     final now = DateTime.now();
     var scheduledDate = DateTime(now.year, now.month, now.day, hour, minute);
@@ -971,8 +1063,18 @@ class NotificationManager {
     }
 
     // Check custom night silent mode
-    bool isSilentTime = SettingsService().isNightSilentModeEnabled &&
-        (hour >= 0 && hour < 6);
+    final startHour = SettingsService().nightSilentStartHour;
+    final endHour = SettingsService().nightSilentEndHour;
+    
+    bool isSilentTime = false;
+    if (SettingsService().isNightSilentModeEnabled) {
+      if (startHour <= endHour) {
+        isSilentTime = hour >= startHour && hour < endHour;
+      } else {
+        // Range crosses midnight (e.g., 22:00 to 06:00)
+        isSilentTime = hour >= startHour || hour < endHour;
+      }
+    }
     String finalChannelKey = isSilentTime ? 'general_silent_channel' : channelKey;
 
     await AwesomeNotifications().createNotification(
@@ -982,10 +1084,12 @@ class NotificationManager {
         channelKey: finalChannelKey,
         title: '\u200F$title',
         body: '\u200F$body',
-        notificationLayout: NotificationLayout
-            .Default, // Changed from BigText to Default if the body is short, but user wants chic. BigText is generally safer for varying lengths. Let's stick to BigText for better appearance.
+        notificationLayout: NotificationLayout.BigText,
         largeIcon: 'resource://drawable/ic_stat_logoapp',
         payload: payload,
+        color: const Color(0xFF178B74),
+        wakeUpScreen: true,
+        category: NotificationCategory.Reminder,
       ),
       schedule: NotificationCalendar(
         hour: scheduledDate.hour,
@@ -994,6 +1098,7 @@ class NotificationManager {
         repeats: true,
         preciseAlarm: true,
       ),
+      actionButtons: actionButtons,
     );
   }
 
@@ -1008,24 +1113,24 @@ class NotificationManager {
     List<Future<bool>> futures = [];
 
     if (minutesInterval == 1) {
-      // 💡 [تطوير]: استخدام NotificationInterval بدلاً من Calendar
-      // هذا يضمن وجود إشعار واحد فقط (ID موحد) يتحدث تلقائياً كل دقيقة
-      // مما يمنع تراكم الإشعارات في الدرج ويحل مشكلة الـ 500 منبه جذرياً.
+      // 💡 [تطوير]: استخدام معرف ثابت لمنع التراكم
       futures.add(AwesomeNotifications().createNotification(
         content: NotificationContent(
-          id: baseId + 999, // معرف ثابت لمنع التراكم
+          id: baseId + 999, 
           channelKey: 'salawat_channel_v2',
           icon: 'resource://drawable/ic_stat_logoapp',
           title: 'ﷺ',
           body: 'اللهم صل وسلم على نبينا محمد',
-          notificationLayout: NotificationLayout.Default,
+          notificationLayout: NotificationLayout.BigText,
           largeIcon: 'resource://drawable/ic_stat_logoapp',
           payload: {'route': 'salawat'},
           color: const Color(0xFF178B74),
-          groupKey: 'salawat_group', // تجميع الإشعارات
+          groupKey: 'salawat_group', 
+          autoDismissible: true, // ✅ حذف عند النقر
+          category: NotificationCategory.Reminder,
         ),
         schedule: NotificationInterval(
-          interval: const Duration(seconds: 60), // كل 60 ثانية (دقيقة واحدة)
+          interval: const Duration(seconds: 60), 
           repeats: true,
           preciseAlarm: true,
           allowWhileIdle: true,
@@ -1039,7 +1144,18 @@ class NotificationManager {
         int h = totalMinute ~/ 60;
         int m = totalMinute % 60;
 
-        if (isNightModeEnabled && (h >= 0 && h < 6)) continue;
+        final startHour = SettingsService().nightSilentStartHour;
+        final endHour = SettingsService().nightSilentEndHour;
+        bool isInNightRange = false;
+        if (isNightModeEnabled) {
+          if (startHour <= endHour) {
+            isInNightRange = h >= startHour && h < endHour;
+          } else {
+            isInNightRange = h >= startHour || h < endHour;
+          }
+        }
+
+        if (isInNightRange) continue;
 
         // استخدمنا معرفات فريدة هنا للجدولة الزمنية، ولكن مع إضافة groupKey للتجميع
         int uniqueId = baseId + (h * 100) + m;
@@ -1051,11 +1167,13 @@ class NotificationManager {
             icon: 'resource://drawable/ic_stat_logoapp',
             title: 'ﷺ',
             body: 'اللهم صل وسلم على نبينا محمد',
-            notificationLayout: NotificationLayout.Default,
+            notificationLayout: NotificationLayout.BigText,
             largeIcon: 'resource://drawable/ic_stat_logoapp',
             payload: {'route': 'salawat'},
             color: const Color(0xFF178B74),
-            groupKey: 'salawat_group', // ضمان التجميع في الدرج
+            groupKey: 'salawat_group', 
+            autoDismissible: true,
+            category: NotificationCategory.Reminder,
           ),
           schedule: NotificationCalendar(
             hour: h,
@@ -1136,16 +1254,17 @@ class NotificationManager {
             title: 'منبه الفجر المتقدم',
             body: r == 0
                 ? 'حان وقت الاستيقاظ لصلاة الفجر'
-                : 'تذكير إضافي: صلاة الفجر خير من النوم ', // Different body for snoozes
+                : 'تذكير إضافي: صلاة الفجر خير من النوم ', 
             category: NotificationCategory.Alarm,
             wakeUpScreen: true,
             fullScreenIntent: true,
             criticalAlert: true,
-            autoDismissible: true, // User must dismiss it
-            locked: false, // Requires interaction
+            autoDismissible: false, // يجب الدخول للتطبيق لإيقافه
+            locked: true, // يمنع المسح السهل
             largeIcon: 'resource://drawable/ic_stat_logoapp',
             notificationLayout: NotificationLayout.BigText,
             color: const Color(0xFF178B74),
+            payload: {'route': 'fajr_challenge'},
           ),
           schedule: NotificationCalendar(
             weekday: finalWeekday,
@@ -1190,6 +1309,24 @@ class NotificationManager {
         preciseAlarm: true,
         allowWhileIdle: true,
       ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'READ_FASTING',
+          label: 'فضل الصيام',
+          actionType: ActionType.Default,
+          color: const Color(0xFF178B74),
+        ),
+        NotificationActionButton(
+          key: 'SNOOZE_FASTING',
+          label: 'لاحقاً',
+          actionType: ActionType.SilentAction,
+        ),
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'إخفاء',
+          actionType: ActionType.DismissAction,
+        ),
+      ],
     );
 
     // تذكير صيام الخميس (يوم الأربعاء الساعة 8 مساءً)
@@ -1214,6 +1351,24 @@ class NotificationManager {
         preciseAlarm: true,
         allowWhileIdle: true,
       ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'READ_FASTING',
+          label: 'فضل الصيام',
+          actionType: ActionType.Default,
+          color: const Color(0xFF178B74),
+        ),
+        NotificationActionButton(
+          key: 'SNOOZE_FASTING',
+          label: 'لاحقاً',
+          actionType: ActionType.SilentAction,
+        ),
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'إخفاء',
+          actionType: ActionType.DismissAction,
+        ),
+      ],
     );
   }
 
@@ -1244,6 +1399,24 @@ class NotificationManager {
         preciseAlarm: true,
         allowWhileIdle: true,
       ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'READ_KAHF',
+          label: 'اقرأ الكهف',
+          actionType: ActionType.Default,
+          color: const Color(0xFF178B74),
+        ),
+        NotificationActionButton(
+          key: 'SNOOZE_KAHF',
+          label: 'لاحقاً',
+          actionType: ActionType.SilentAction,
+        ),
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'إخفاء',
+          actionType: ActionType.DismissAction,
+        ),
+      ],
     );
 
     // 🤲 ساعة الاستجابة (الجمعة 4:30 عصراً)
@@ -1269,6 +1442,24 @@ class NotificationManager {
         preciseAlarm: true,
         allowWhileIdle: true,
       ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'READ_FRIDAY_HOUR',
+          label: 'دعاء مستجاب',
+          actionType: ActionType.Default,
+          color: const Color(0xFF178B74),
+        ),
+        NotificationActionButton(
+          key: 'SNOOZE_FRIDAY_HOUR',
+          label: 'لاحقاً',
+          actionType: ActionType.SilentAction,
+        ),
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'إخفاء',
+          actionType: ActionType.DismissAction,
+        ),
+      ],
     );
   }
 
@@ -1335,6 +1526,24 @@ class NotificationManager {
                 preciseAlarm: true,
                 allowWhileIdle: true,
               ),
+              actionButtons: [
+                NotificationActionButton(
+                  key: 'READ_WHITE_DAYS',
+                  label: 'فضل صيامها',
+                  actionType: ActionType.Default,
+                  color: const Color(0xFF178B74),
+                ),
+                NotificationActionButton(
+                  key: 'SNOOZE_WHITE_DAYS',
+                  label: 'لاحقاً',
+                  actionType: ActionType.SilentAction,
+                ),
+                NotificationActionButton(
+                  key: 'DISMISS',
+                  label: 'إخفاء',
+                  actionType: ActionType.DismissAction,
+                ),
+              ],
             );
             count++;
           }
@@ -1437,6 +1646,24 @@ class NotificationManager {
               preciseAlarm: true,
               allowWhileIdle: true,
             ),
+            actionButtons: [
+              NotificationActionButton(
+                key: 'READ_OCCASION',
+                label: 'التفاصيل',
+                actionType: ActionType.Default,
+                color: const Color(0xFF178B74),
+              ),
+              NotificationActionButton(
+                key: 'SNOOZE_OCCASION',
+                label: 'لاحقاً',
+                actionType: ActionType.SilentAction,
+              ),
+              NotificationActionButton(
+                key: 'DISMISS',
+                label: 'إخفاء',
+                actionType: ActionType.DismissAction,
+              ),
+            ],
           );
           count++;
         }
@@ -1472,6 +1699,24 @@ class NotificationManager {
         preciseAlarm: true,
         allowWhileIdle: true,
       ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'READ_MULK',
+          label: 'اقرأ الملك',
+          actionType: ActionType.Default,
+          color: const Color(0xFF178B74),
+        ),
+        NotificationActionButton(
+          key: 'SNOOZE_MULK',
+          label: 'لاحقاً',
+          actionType: ActionType.SilentAction,
+        ),
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'إخفاء',
+          actionType: ActionType.DismissAction,
+        ),
+      ],
     );
   }
 
@@ -1500,6 +1745,24 @@ class NotificationManager {
         preciseAlarm: true,
         allowWhileIdle: true,
       ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'READ_DUHA',
+          label: 'فضلها',
+          actionType: ActionType.Default,
+          color: const Color(0xFF178B74),
+        ),
+        NotificationActionButton(
+          key: 'SNOOZE_DUHA',
+          label: 'لاحقاً',
+          actionType: ActionType.SilentAction,
+        ),
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'إخفاء',
+          actionType: ActionType.DismissAction,
+        ),
+      ],
     );
   }
 
@@ -1527,6 +1790,24 @@ class NotificationManager {
         preciseAlarm: true,
         allowWhileIdle: true,
       ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'READ_SUNNAH',
+          label: 'تعرف عليها',
+          actionType: ActionType.Default,
+          color: const Color(0xFF178B74),
+        ),
+        NotificationActionButton(
+          key: 'SNOOZE_SUNNAH',
+          label: 'لاحقاً',
+          actionType: ActionType.SilentAction,
+        ),
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'إخفاء',
+          actionType: ActionType.DismissAction,
+        ),
+      ],
     );
   }
 
@@ -1609,6 +1890,24 @@ class NotificationManager {
           color: const Color(0xFF178B74),
         ),
         schedule: schedule,
+        actionButtons: [
+          NotificationActionButton(
+            key: 'READ_WIRD',
+            label: 'اقرأ الآن',
+            actionType: ActionType.Default,
+            color: const Color(0xFF178B74),
+          ),
+          NotificationActionButton(
+            key: 'SNOOZE_WIRD',
+            label: 'لاحقاً',
+            actionType: ActionType.SilentAction,
+          ),
+          NotificationActionButton(
+            key: 'DISMISS',
+            label: 'إخفاء',
+            actionType: ActionType.DismissAction,
+          ),
+        ],
       );
       logger
           .i('✅ تم جدولة تذكير الورد ($wirdName) الساعة $timeStr - $frequency');
@@ -1739,6 +2038,24 @@ class NotificationManager {
           preciseAlarm: true,
           allowWhileIdle: true,
         ),
+        actionButtons: [
+          NotificationActionButton(
+            key: 'READ_PRIVATE_KHATMAH',
+            label: 'اقرأ الورد',
+            actionType: ActionType.Default,
+            color: const Color(0xFF178B74),
+          ),
+          NotificationActionButton(
+            key: 'SNOOZE_PRIVATE_KHATMAH',
+            label: 'لاحقاً',
+            actionType: ActionType.SilentAction,
+          ),
+          NotificationActionButton(
+            key: 'DISMISS',
+            label: 'إخفاء',
+            actionType: ActionType.DismissAction,
+          ),
+        ],
       );
       logger.i('✅ تم جدولة تذكير الختمة الخاصة: $title');
     } catch (e) {
@@ -1770,23 +2087,41 @@ class NotificationManager {
       ReceivedNotification receivedNotification) async {
     logger.i('📱 Notification Displayed: ${receivedNotification.id}');
 
-    final route = receivedNotification.payload?['route'];
-    if (route == 'adhan_screen') {
-      // Small delay to ensure Flutter's navigator is ready
-      // await Future.delayed(const Duration(milliseconds: 300));
+    final String? channelKey = receivedNotification.channelKey;
+    final Map<String, String?>? payload = receivedNotification.payload;
 
-      // final navigator = CentralizedCubit.navigatorKey.currentState;
-      // if (navigator != null) {
-      //   // Show the adhan overlay screen whenever notification fires
-      //   // (whether app is in foreground, background, or locked screen)
-      //   navigator.push(MaterialPageRoute(
-      //     builder: (_) => AdhanOverlayScreen(
-      //       prayerName: receivedNotification.payload?['prayerName'],
-      //       cityName: receivedNotification.payload?['cityName'],
-      //       prayerTime: receivedNotification.payload?['prayer_time'],
-      //     ),
-      //   ));
-      // }
+    // 🤲 [تطوير]: معالجة خاصة للصلاة على النبي ﷺ
+    if (channelKey == 'salawat_channel_v2') {
+      try {
+        // 1. تهيئة الإعدادات للتحقق من الوضع الليلي (حتى في الخلفية)
+        final settings = SettingsService();
+        await settings.init();
+
+        // 2. التحقق من الوضع الليلي الصامت (إجراء أمان إضافي)
+        if (settings.isNightSilentModeEnabled) {
+          final int hour = DateTime.now().hour;
+          if (hour >= 0 && hour < 6) {
+            logger.i('🌙 الوضع الليلي مفعل: يتم حذف إشعار الصلاة على النبي الآن.');
+            await AwesomeNotifications().dismiss(receivedNotification.id!);
+            return;
+          }
+        }
+
+        // 3. 🚀 [ميزة الإخفاء التلقائي]: حذف الإشعار بعد 8 ثوانٍ
+        // هذا يسمح بسماع الصوت بالكامل (الصلاة على النبي) ثم يختفي الإشعار تلقائياً
+        // مما يمنع تراكم الإشعارات في "الستارة" ويحل مشكلة المستخدم تماماً.
+        Future.delayed(const Duration(seconds: 8), () async {
+          await AwesomeNotifications().dismiss(receivedNotification.id!);
+          logger.i('🧹 تم تنظيف إشعار الصلاة على النبي (ID: ${receivedNotification.id})');
+        });
+      } catch (e) {
+        logger.e('❌ خطأ في معالجة إخفاء إشعار الصلاة على النبي: $e');
+      }
+    }
+
+    final route = payload?['route'];
+    if (route == 'adhan_screen') {
+      // ... (existing adhan overlay logic if any)
     }
   }
 
@@ -1812,6 +2147,97 @@ class NotificationManager {
     if (navigator == null) return;
 
     final route = receivedAction.payload?['route'] ?? '';
+    final actionKey = receivedAction.buttonKeyPressed;
+
+    if (actionKey != null) {
+      if (actionKey.startsWith('SNOOZE_')) {
+        // Snooze logic: reschedule for 30 minutes later
+        final delay = const Duration(minutes: 30);
+        final nextTime = DateTime.now().add(delay);
+        
+        String title = 'تذكير متأخر';
+        String body = 'لا تنسَ نصيبك من الأذكار';
+        String targetRoute = '';
+        
+        if (actionKey == 'SNOOZE_SABAH') {
+          title = 'أذكار الصباح (تذكير)';
+          body = 'حان وقت أذكار الصباح، بارك الله في صباحك';
+          targetRoute = 'morning_athkar';
+        } else if (actionKey == 'SNOOZE_MASSA') {
+          title = 'أذكار المساء (تذكير)';
+          body = 'حان وقت أذكار المساء، جعل الله مساءك مباركاً';
+          targetRoute = 'evening_athkar';
+        } else if (actionKey == 'SNOOZE_SLEEP') {
+          title = 'أذكار النوم (تذكير)';
+          body = 'حان وقت أذكار النوم، تصبح على خير';
+          targetRoute = 'sleep_athkar';
+        } else if (actionKey == 'SNOOZE_QIYAM') {
+          title = 'قيام الليل (تذكير)';
+          body = 'وقت قيام الليل، تقبل الله طاعاتكم';
+          targetRoute = 'qiyam_reminder';
+        } else if (actionKey == 'SNOOZE_QURAN') {
+          title = 'ورد القرآن (تذكير)';
+          body = 'لا تانسَ وردك اليومي من القرآن الكريم';
+          targetRoute = 'quran_wird';
+        } else if (actionKey == 'SNOOZE_FASTING') {
+          title = 'صيام (تذكير)';
+          body = 'غداً صيام بإذن الله، لا تنسَ النية';
+          targetRoute = 'fasting_reminder';
+        } else if (actionKey == 'SNOOZE_KAHF') {
+          title = 'سورة الكهف (تذكير)';
+          body = 'نور ما بين الجمعتين، لا تنسَ قراءة الكهف';
+          targetRoute = 'kahf_reminder';
+        } else if (actionKey == 'SNOOZE_FRIDAY_HOUR') {
+          title = 'ساعة الاستجابة (تذكير)';
+          body = 'ساعة مباركة، لا تضيع فرصة الدعاء';
+          targetRoute = 'friday_hour_reminder';
+        } else if (actionKey == 'SNOOZE_WHITE_DAYS') {
+          title = 'الأيام البيض (تذكير)';
+          body = 'نذكركم بصيام الأيام البيض غداً';
+          targetRoute = 'white_days_reminder';
+        } else if (actionKey == 'SNOOZE_MULK') {
+          title = 'سورة الملك (تذكير)';
+          body = 'المنجية من عذاب القبر، لا تنسَ قراءتها';
+          targetRoute = 'mulk_reminder';
+        } else if (actionKey == 'SNOOZE_DUHA') {
+          title = 'صلاة الضحى (تذكير)';
+          body = 'صلاة الأوابين، لا تنسَ ركعتي الضحى';
+          targetRoute = 'duha_reminder';
+        } else if (actionKey == 'SNOOZE_SUNNAH') {
+          title = 'سنة اليوم (تذكير)';
+          body = 'إحياء سنة نبوية، اضغط للتفاصيل';
+          targetRoute = 'sunnah_reminder';
+        } else if (actionKey == 'SNOOZE_OCCASION') {
+          title = 'مناسبة إسلامية (تذكير)';
+          body = 'لا تفوت أجر هذه المناسبة المباركة';
+          targetRoute = 'religious_occasion_reminder';
+        } else if (actionKey == 'SNOOZE_WIRD') {
+          title = 'الورد الخاص (تذكير)';
+          body = 'حان وقت وردك الذي حددته، بارك الله فيك';
+          targetRoute = 'quran_wird'; // Default to quran_wird for wirds
+        } else if (actionKey == 'SNOOZE_PRIVATE_KHATMAH') {
+          title = 'ختمة القرآن (تذكير)';
+          body = 'حان وقت ورد الختمة الخاص بك';
+          targetRoute = 'quran_wird';
+        }
+
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: receivedAction.id! + 100, // Offset ID to avoid conflict with repeating one
+            channelKey: receivedAction.channelKey!,
+            title: title,
+            body: body,
+            payload: {'route': targetRoute},
+            largeIcon: 'resource://drawable/ic_stat_logoapp',
+            color: const Color(0xFF178B74),
+            notificationLayout: NotificationLayout.BigText,
+            category: NotificationCategory.Reminder,
+          ),
+          schedule: NotificationCalendar.fromDate(date: nextTime),
+        );
+        return;
+      }
+    }
 
     switch (route) {
       case 'morning_athkar':
@@ -1834,6 +2260,10 @@ class NotificationManager {
         break;
       case 'salawat':
         navigator.push(MaterialPageRoute(builder: (_) => const MainView()));
+        break;
+      case 'fajr_challenge':
+        navigator.push(
+            MaterialPageRoute(builder: (_) => const FajrChallengeView()));
         break;
       case 'charity_dashboard':
         navigator.push(
@@ -2009,6 +2439,9 @@ class NotificationManager {
           title: '🔔 اختبار النظام',
           body: 'هذا إشعار تجريبي باستخدام صوت النظام الافتراضي.',
           category: NotificationCategory.Reminder,
+          notificationLayout: NotificationLayout.BigText,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          color: const Color(0xFF178B74),
         ),
         schedule: NotificationCalendar.fromDate(
           date: DateTime.now().add(const Duration(seconds: 5)),
@@ -2146,5 +2579,47 @@ class NotificationManager {
         allowWhileIdle: true,
       ),
     );
+  }
+
+  Future<void> scheduleActionTestNotification() async {
+    try {
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 9999,
+          channelKey: 'mesaa_athkar_channel',
+          title: 'موعد قراءة أذكار المساء',
+          body: 'حان وقت أذكار المساء، جعل الله مساءك مباركاً',
+          category: NotificationCategory.Reminder,
+          wakeUpScreen: true,
+          color: const Color(0xFF178B74),
+          notificationLayout: NotificationLayout.BigText,
+          largeIcon: 'resource://drawable/ic_stat_logoapp',
+          payload: {'route': 'evening_athkar'},
+        ),
+        schedule: NotificationCalendar.fromDate(
+          date: DateTime.now().add(const Duration(seconds: 5)),
+        ),
+        actionButtons: [
+          NotificationActionButton(
+            key: 'READ_MASSA',
+            label: 'اقرأ الآن',
+            actionType: ActionType.Default,
+            color: const Color(0xFF178B74),
+          ),
+          NotificationActionButton(
+            key: 'SNOOZE_MASSA',
+            label: 'لاحقاً',
+            actionType: ActionType.SilentAction,
+          ),
+          NotificationActionButton(
+            key: 'DISMISS',
+            label: 'إخفاء',
+            actionType: ActionType.DismissAction,
+          ),
+        ],
+      );
+    } catch (e) {
+      logger.e('❌ Error scheduling action test: $e');
+    }
   }
 }

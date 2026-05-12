@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/core/utils/style/app_theme_colors.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
+import 'package:muslimdaily/app/core/services/notification_manager.dart';
 
 class NotificationTestView extends StatelessWidget {
   const NotificationTestView({super.key});
@@ -77,6 +78,11 @@ class NotificationTestView extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           _buildSectionHeader(context, 'الأذكار اليومية'),
+          _buildSpecialTestButton(
+            context,
+            label: 'اختبار أزرار الأذكار الجديدة (تجريبي)',
+            onPressed: () => NotificationManager().scheduleActionTestNotification(),
+          ),
           _buildTestButton(
             context,
             label: 'أذكار الصباح',
@@ -301,46 +307,86 @@ class NotificationTestView extends StatelessWidget {
           elevation: 0,
         ),
         onPressed: () async {
+          // Determine Action Buttons based on route or category
+          List<NotificationActionButton>? testActionButtons;
+          
+          if (payload?['route'] != null || category == NotificationCategory.Alarm) {
+            String snoozeKey = 'SNOOZE_GENERAL';
+            String readKey = 'READ_GENERAL';
+            String readLabel = 'اقرأ الآن';
+            
+            if (payload?['route'] == 'morning_athkar') {
+              snoozeKey = 'SNOOZE_SABAH';
+              readKey = 'READ_SABAH';
+            } else if (payload?['route'] == 'evening_athkar') {
+              snoozeKey = 'SNOOZE_MASSA';
+              readKey = 'READ_MASSA';
+            } else if (payload?['route'] == 'fasting_reminder') {
+              snoozeKey = 'SNOOZE_FASTING';
+              readLabel = 'فضل الصيام';
+            }
+
+            testActionButtons = [
+              NotificationActionButton(
+                key: readKey,
+                label: readLabel,
+                actionType: ActionType.Default,
+                color: const Color(0xFF178B74),
+              ),
+              NotificationActionButton(
+                key: snoozeKey,
+                label: 'لاحقاً',
+                actionType: ActionType.SilentAction,
+              ),
+              NotificationActionButton(
+                key: 'DISMISS',
+                label: 'إخفاء',
+                actionType: ActionType.DismissAction,
+              ),
+            ];
+          }
+
+          if (category == NotificationCategory.Alarm) {
+            testActionButtons = [
+              NotificationActionButton(
+                key: 'STOP_ADHAN',
+                color: const Color(0xFF178B74),
+                label: 'إيقاف',
+                actionType: ActionType.DismissAction,
+                isDangerousOption: true,
+              ),
+              NotificationActionButton(
+                key: 'MUTE_ADHAN',
+                label: 'كتم',
+                color: Colors.red,
+                actionType: ActionType.DismissAction,
+              ),
+            ];
+          }
+
           await AwesomeNotifications().createNotification(
             content: NotificationContent(
-              id: DateTime.now().millisecond, // Unique ID for testing
+              id: DateTime.now().millisecond, 
               channelKey: channelKey,
-              title: title,
-              body: body,
+              title: '\u200F$title',
+              body: '\u200F$body',
               icon: 'resource://drawable/ic_stat_logoapp',
               largeIcon: 'resource://drawable/ic_stat_logoapp',
               notificationLayout: NotificationLayout.BigText,
               color: const Color(0xFF178B74),
               category: category,
               wakeUpScreen: true,
-              // 🛠️ fullScreenIntent = false: السبب في عدم ظهور الإشعار على شاشة القفل
-              fullScreenIntent: false,
+              fullScreenIntent: category == NotificationCategory.Alarm,
               criticalAlert: true,
               timeoutAfter: timeoutAfter,
               payload: payload,
             ),
             schedule: NotificationCalendar.fromDate(
-              date: DateTime.now().add(const Duration(seconds: 15)),
+              date: DateTime.now().add(const Duration(seconds: 3)),
               preciseAlarm: true,
               allowWhileIdle: true,
             ),
-            actionButtons: category == NotificationCategory.Alarm
-                ? [
-                    NotificationActionButton(
-                      key: 'STOP_ADHAN',
-                      color: KColors.primaryColor,
-                      label: 'إيقاف الأذان',
-                      actionType: ActionType.DismissAction,
-                      isDangerousOption: true,
-                    ),
-                    NotificationActionButton(
-                      key: 'MUTE_ADHAN',
-                      label: 'كتم الصوت',
-                      color: Colors.red,
-                      actionType: ActionType.DismissAction,
-                    ),
-                  ]
-                : null,
+            actionButtons: testActionButtons,
           );
 
           if (context.mounted) {
@@ -366,6 +412,54 @@ class NotificationTestView extends StatelessWidget {
               ),
             ),
             const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSpecialTestButton(
+    BuildContext context, {
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF178B74).withOpacity(0.1),
+          foregroundColor: const Color(0xFF178B74),
+          padding: const Duration(seconds: 0) == Duration.zero ? const EdgeInsets.symmetric(horizontal: 16, vertical: 12) : null,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Color(0xFF178B74), width: 1.5),
+          ),
+          elevation: 0,
+        ),
+        onPressed: () {
+          onPressed();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('سيصلك إشعار خلال 5 ثوانٍ لاختبار الأزرار الجديدة: $label',
+                  style: const TextStyle(fontFamily: "cairo")),
+              backgroundColor: const Color(0xFF178B74),
+            ),
+          );
+        },
+        child: Row(
+          children: [
+            const Icon(Icons.auto_awesome, color: Color(0xFF178B74)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(
+                    fontFamily: "cairo",
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            const Icon(Icons.touch_app, size: 14, color: Color(0xFF178B74)),
           ],
         ),
       ),
