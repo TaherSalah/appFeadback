@@ -14,7 +14,7 @@ import '../../core/services/system_control_service.dart';
 import '../mainView/view/MaintenanceScreen.dart';
 
 class VersionService {
-  static const String _lastVersionKey = 'last_app_vin';
+  static const String _lastVersionKey = 'last_ap_vin';
   static const String _isFirstTimeKey = 'is_';
 
   /// التحقق من حالة التطبيق (أول مرة، تحديث، أو استخدام عادي)

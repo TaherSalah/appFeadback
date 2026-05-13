@@ -45,7 +45,10 @@ class NotificationSettingsController extends GetxController {
   final isSabahTrackingEnabled = true.obs;
   final isMassaTrackingEnabled = true.obs;
   final nightSilentStartHour = 0.obs;
+  final nightSilentStartMinute = 0.obs;
   final nightSilentEndHour = 6.obs;
+  final nightSilentEndMinute = 0.obs;
+  final nightSilentDays = <int>[].obs;
 
   final hasChanges = false.obs;
   final isLoading = false.obs;
@@ -100,7 +103,10 @@ class NotificationSettingsController extends GetxController {
     isSabahTrackingEnabled.value = _settings.isSabahTrackingEnabled;
     isMassaTrackingEnabled.value = _settings.isMassaTrackingEnabled;
     nightSilentStartHour.value = _settings.nightSilentStartHour;
+    nightSilentStartMinute.value = _settings.nightSilentStartMinute;
     nightSilentEndHour.value = _settings.nightSilentEndHour;
+    nightSilentEndMinute.value = _settings.nightSilentEndMinute;
+    nightSilentDays.assignAll(_settings.nightSilentDays);
 
     hasChanges.value = false;
     _isAdhanDirty = false;
@@ -109,15 +115,23 @@ class NotificationSettingsController extends GetxController {
     _isRemindersDirty = false;
   }
 
-  void updateChange(Rx<dynamic> field, dynamic newValue) {
-    if (field.value != newValue) {
+  void updateChange(dynamic field, dynamic newValue) {
+    bool changed = false;
+    if (field is RxList) {
+      // For RxList, we assume it's already modified or we just mark it dirty
+      changed = true; 
+    } else if (field is Rx && field.value != newValue) {
       field.value = newValue;
+      changed = true;
+    }
+
+    if (changed) {
       hasChanges.value = true;
       _markDirty(field);
     }
   }
 
-  void _markDirty(Rx<dynamic> field) {
+  void _markDirty(dynamic field) {
     // Categorize settings to decide what needs rescheduling
     if (field == isAdhanEnabled || 
         field == isAdhanVibrationEnabled || 
@@ -150,7 +164,10 @@ class NotificationSettingsController extends GetxController {
       _isRemindersDirty = true;
     } else if (field == isNightSilentModeEnabled || 
                field == nightSilentStartHour || 
-               field == nightSilentEndHour) {
+               field == nightSilentStartMinute ||
+               field == nightSilentEndHour ||
+               field == nightSilentEndMinute ||
+               field == nightSilentDays) {
       // Night mode affects both Azkar and Salawat filters
       _isAzkarDirty = true;
       _isSalatAlaNabiDirty = true;
@@ -199,7 +216,10 @@ class NotificationSettingsController extends GetxController {
       await _settings.setSabahTrackingEnabled(isSabahTrackingEnabled.value);
       await _settings.setMassaTrackingEnabled(isMassaTrackingEnabled.value);
       await _settings.setNightSilentStartHour(nightSilentStartHour.value);
+      await _settings.setNightSilentStartMinute(nightSilentStartMinute.value);
       await _settings.setNightSilentEndHour(nightSilentEndHour.value);
+      await _settings.setNightSilentEndMinute(nightSilentEndMinute.value);
+      await _settings.setNightSilentDays(nightSilentDays.toList());
 
       // Trigger notification rescheduling. 
       // 🛠️ [Improvement]: We now reschedule if the category is "dirty" OR if it's currently "enabled".

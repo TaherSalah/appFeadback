@@ -3,9 +3,27 @@ import 'package:get/get.dart';
 import '../../core/shard/exports/all_exports.dart';
 import 'post_prayer_azkar_controller.dart';
 import 'widgets/post_prayer_azkar_list.dart';
+import 'package:muslimdaily/app/core/services/wakelock_service.dart';
 
-class PostPrayerAzkarView extends StatelessWidget {
+class PostPrayerAzkarView extends StatefulWidget {
   const PostPrayerAzkarView({super.key});
+
+  @override
+  State<PostPrayerAzkarView> createState() => _PostPrayerAzkarViewState();
+}
+
+class _PostPrayerAzkarViewState extends State<PostPrayerAzkarView> {
+  @override
+  void initState() {
+    super.initState();
+    WakelockService.enableIfActive();
+  }
+
+  @override
+  void dispose() {
+    WakelockService.disable();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

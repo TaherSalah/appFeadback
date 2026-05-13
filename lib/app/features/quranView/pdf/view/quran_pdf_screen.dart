@@ -3,7 +3,7 @@ import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
 import 'package:muslimdaily/app/features/quranView/pdf/view/widgets/pdf_navigation_dialog.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:muslimdaily/app/core/services/wakelock_service.dart';
 
 class QuranPdfScreen extends StatefulWidget {
   final String? pdfPath;
@@ -35,12 +35,12 @@ class _QuranPdfScreenState extends State<QuranPdfScreen> {
     super.initState();
     _path = widget.pdfPath ?? '';
     _currentPage = _storage.read<int>(_storageKey) ?? 0;
-    WakelockPlus.enable();
+    WakelockService.enableIfActive();
   }
 
   @override
   void dispose() {
-    WakelockPlus.disable();
+    WakelockService.disable();
     super.dispose();
   }
 

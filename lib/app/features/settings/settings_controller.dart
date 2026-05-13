@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:muslimdaily/app/core/cubit/centralized_cubit.dart';
 import '../mainView/controllar/MainController.dart';
+import 'package:muslimdaily/app/core/services/settings_service.dart';
 
 class SettingsController extends GetxController {
   final BuildContext context;
@@ -59,5 +60,13 @@ class SettingsController extends GetxController {
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     }
+  }
+
+  // --- Screen Awake Management ---
+  bool get isKeepScreenAwake => SettingsService().isKeepScreenAwakeEnabled;
+
+  void setKeepScreenAwake(bool value) {
+    SettingsService().setKeepScreenAwakeEnabled(value);
+    update();
   }
 }

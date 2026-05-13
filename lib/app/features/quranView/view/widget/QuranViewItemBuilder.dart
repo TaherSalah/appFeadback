@@ -20,7 +20,8 @@ import 'package:quran_library/quran_library.dart';
 import 'package:screen_brightness/screen_brightness.dart' as sb;
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:muslimdaily/app/core/services/wakelock_service.dart';
+import 'package:muslimdaily/app/core/services/settings_service.dart';
 import 'package:muslimdaily/app/core/services/notification_manager.dart';
 
 enum _QuranMenuAction {
@@ -275,8 +276,9 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    // Enable wakelock by default
-    WakelockPlus.enable();
+    // Enable wakelock if active in settings
+    WakelockService.enableIfActive();
+    _keepScreenOn = SettingsService().isKeepScreenAwakeEnabled;
     WidgetsBinding.instance.addObserver(this);
     _startTrackingTime();
 
@@ -406,7 +408,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
   void _toggleWakelock() {
     setState(() {
       _keepScreenOn = !_keepScreenOn;
-      WakelockPlus.toggle(enable: _keepScreenOn);
+      WakelockService.toggle(enable: _keepScreenOn);
     });
     KHelper.showSuccess(
       message: _keepScreenOn
@@ -590,7 +592,7 @@ class _QuranViewItemBuilderState extends State<QuranViewItemBuilder>
     _scrollTimer?.cancel();
     _hideControlsTimer?.cancel();
     _verticalController?.dispose();
-    WakelockPlus.disable(); // Ensure wakelock is off when leaving
+    WakelockService.disable(); // Ensure wakelock is off when leaving
     WidgetsBinding.instance.removeObserver(this);
     _stopTrackingTime();
     super.dispose();

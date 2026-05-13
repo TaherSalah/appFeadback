@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
 import 'package:muslimdaily/app/core/widgets/custom_text_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
+// Removed direct wakelock_plus import
+
+import 'package:muslimdaily/app/core/services/wakelock_service.dart';
 
 import '../../../core/shard/exports/all_exports.dart';
 import '../../../core/utils/style/k_color.dart';
@@ -89,7 +91,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
 
     // وسم الدخول الأول للمصحف لتفعيل ميزة الاستكمال في المرات القادمة
     _initialMarkEntry();
-    WakelockPlus.enable();
+    WakelockService.enableIfActive();
   }
 
   // تحميل الإعدادات المحفوظة (المظهر وحجم الخط)
@@ -155,7 +157,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
 
   @override
   void dispose() {
-    WakelockPlus.disable();
+    WakelockService.disable();
     _saveCurrentState(); // Final save
     _scrollSaveTimer?.cancel();
     _autoScrollTimer?.cancel();

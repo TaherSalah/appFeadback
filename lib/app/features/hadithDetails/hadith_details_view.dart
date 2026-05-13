@@ -13,26 +13,43 @@ import '../../core/utils/style/k_color.dart';
 import '../../core/utils/style/k_helper.dart';
 import 'data/repo/hadith_details_repo_immp.dart';
 
-class HadithDetailsView extends StatelessWidget {
+import 'package:muslimdaily/app/core/services/wakelock_service.dart';
+
+class HadithDetailsView extends StatefulWidget {
   const HadithDetailsView({super.key, this.hadithId});
 
   final dynamic hadithId;
 
   @override
-  Widget build(BuildContext context) {
+  State<HadithDetailsView> createState() => _HadithDetailsViewState();
+}
 
+class _HadithDetailsViewState extends State<HadithDetailsView> {
+  @override
+  void initState() {
+    super.initState();
+    WakelockService.enableIfActive();
+  }
+
+  @override
+  void dispose() {
+    WakelockService.disable();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> scaffoldState = GlobalKey<ScaffoldState>();
     final key = GlobalKey<ExpandableFabState>();
     return BlocProvider<HadithDetailsBloc>(
         create: (BuildContext context) =>
             HadithDetailsBloc(HadithDetailsRepoImmp())
-              ..getHadithDetails(hadithId: hadithId!),
+              ..getHadithDetails(hadithId: widget.hadithId!),
         child: Directionality(
             textDirection: LocalizationManager.isEn
                 ? TextDirection.ltr
                 : TextDirection.rtl,
             child: Scaffold(
-                // backgroundColor: AppStyle.bgColors,
                 floatingActionButtonLocation: ExpandableFab.location,
                 floatingActionButton:
                     BlocBuilder<HadithDetailsBloc, HadithDetailsState>(
@@ -42,7 +59,6 @@ class HadithDetailsView extends StatelessWidget {
                       HadithDetailsBloc bloc =
                           BlocProvider.of<HadithDetailsBloc>(context);
                       void copyToClipboard(BuildContext context) {
-                        // Copy the text to the clipboard
                         Clipboard.setData(ClipboardData(
                                 text: bloc.hadithDetailsModal?.hadeeth))
                             .then((_) {
@@ -80,22 +96,9 @@ class HadithDetailsView extends StatelessWidget {
                           overlayStyle: ExpandableFabOverlayStyle(
                               color: Colors.black.withOpacity(0.5), blur: 5),
                           pos: ExpandableFabPos.left,
-                          onOpen: () {
-                            debugPrint('onOpen');
-                          },
-                          afterOpen: () {
-                            debugPrint('afterOpen');
-                          },
-                          onClose: () {
-                            debugPrint('onClose');
-                          },
-                          afterClose: () {
-                            debugPrint('afterClose');
-                          },
                           children: [
                             FloatingActionButton.small(
                               backgroundColor: Colors.black,
-                              // shape: const CircleBorder(),
                               heroTag: null,
                               child: const Icon(
                                 Icons.copy,
@@ -105,18 +108,8 @@ class HadithDetailsView extends StatelessWidget {
                                 copyToClipboard(context);
                               },
                             ),
-                            // FloatingActionButton.small(
-                            //     backgroundColor: KColors.greenColor,
-                            //     // shape: const CircleBorder(),
-                            //     heroTag: null,
-                            //     child: const Icon(Icons.bookmark),
-                            //     onPressed: () {
-                            //       // Navigator.of(context).push(MaterialPageRoute(
-                            //       //     builder: ((context) => const NextPage())));
-                            //     }),
                             FloatingActionButton.small(
                                 backgroundColor: Colors.black,
-                                // shape: const CircleBorder(),
                                 heroTag: null,
                                 child: const Icon(
                                   Icons.share,
@@ -125,7 +118,6 @@ class HadithDetailsView extends StatelessWidget {
                                 onPressed: () {
                                   final state = key.currentState;
                                   if (state != null) {
-                                    debugPrint('isOpen:${state.isOpen}');
                                     onShareHadith(
                                         context: context,
                                         hadithText:

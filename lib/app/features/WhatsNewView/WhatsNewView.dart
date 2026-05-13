@@ -176,7 +176,7 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                                 description = null;
                                 icon = update.icon;
                               }
-
+                              // const Color(0xFFD9A066)
                               return FadeAnimation(
                                 delay: Duration(milliseconds: 100 + (index * 150)),
                                 offset: const Offset(0.1, 0),
@@ -188,12 +188,12 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                                       Container(
                                         padding: EdgeInsets.all(10.w),
                                         decoration: BoxDecoration(
-                                          color: (isDark ? const Color(0xFFD9A066) : KColors.primaryColor).withOpacity(0.1),
+                                          color: (isDark ?KColors.primaryColor  : KColors.primaryColor).withOpacity(0.1),
                                           borderRadius: BorderRadius.circular(12),
                                         ),
                                         child: Icon(
                                           icon,
-                                          color: isDark ? const Color(0xFFD9A066) : KColors.primaryColor,
+                                          color: isDark ? KColors.primaryColor : KColors.primaryColor,
                                           size: 20.sp,
                                         ),
                                       ),
@@ -204,19 +204,29 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                                           children: [
                                             Text(
                                               title,
-                                              style: GoogleFonts.cairo(
-                                                color: isDark ? Colors.white : Colors.black,
-                                                fontSize: 15.sp,
-                                                fontWeight: FontWeight.bold,
+
+                                              style: TextStyle(
+                                                fontFamily: "me",
+                                                  color: isDark ? Colors.white : Colors.black,
+                                                  fontSize: 16.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                // letterSpacing: 1,
                                               ),
                                             ),
+                                            const SizedBox(height: 10,),
                                             if (description != null)
                                               Text(
                                                 description,
-                                                style: GoogleFonts.cairo(
-                                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
-                                                  fontSize: 13.sp,
-                                                  height: 1.4,
+                                                // style: GoogleFonts.cairo(
+                                                //   color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+                                                //   fontSize: 13.sp,
+                                                //   height: 1.4,
+                                                // ),
+                                                style: TextStyle(
+                                                  fontFamily: "cairo",
+                                                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+                                                    fontSize: 13.sp,
+                                                    height: 1.6,
                                                 ),
                                               ),
                                           ],
@@ -248,12 +258,13 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                             borderRadius: BorderRadius.circular(18),
                             gradient: LinearGradient(
                               colors: isDark 
-                                ? [const Color(0xFFD9A066), const Color(0xFFB88655)]
+                                // ? [const Color(0xFFD9A066), const Color(0xFFB88655)]
+                                ? [KColors.primaryColor, KColors.primaryColor.withOpacity(0.8)]
                                 : [KColors.primaryColor, KColors.primaryColor.withOpacity(0.8)],
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: (isDark ? const Color(0xFFD9A066) : KColors.primaryColor).withOpacity(0.3),
+                                color: (isDark ? KColors.primaryColor : KColors.primaryColor).withOpacity(0.3),
                                 blurRadius: 15,
                                 offset: const Offset(0, 8),
                               ),
@@ -274,9 +285,15 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                               children: [
                                 Text(
                                   'ابدأ الآن',
-                                  style: GoogleFonts.cairo(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
+                                  // style: GoogleFonts.cairo(
+                                  //   fontSize: 18.sp,
+                                  //   fontWeight: FontWeight.bold,
+                                  // ),
+                                  style: TextStyle(
+                                    fontFamily: "cairo",
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    // letterSpacing: 1,
                                   ),
                                 ),
                                 SizedBox(width: 10.w),

@@ -75,6 +75,15 @@ Get.put(SettingsController(context));
                         ),
                       ),
                       const SettingsDivider(),
+                      SettingsSwitchTile(
+                        icon: Icons.lightbulb_outline,
+                        title: 'بقاء الشاشة مفعلة',
+                        subtitle: 'منع انطفاء الشاشة تلقائياً أثناء القراءة',
+                        iconColor: Colors.amber[700]!,
+                        value: controller.isKeepScreenAwake,
+                        onChanged: (val) => controller.setKeepScreenAwake(val),
+                      ),
+                      const SettingsDivider(),
                       SettingsListTile(
                         icon: Icons.location_on_outlined,
                         title: 'إعدادات الموقع',
@@ -189,19 +198,19 @@ Get.put(SettingsController(context));
                   SettingsSection(
                     title: 'أخرى',
                     children: [
-                      SettingsListTile(
-                        icon: Icons.help_outline_rounded,
-                        title: 'دليل المستخدم',
-                        subtitle: 'شرح كل ميزة وكيفية استخدامها',
-                        iconColor: Colors.deepPurple[400]!,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const UserGuideListScreen(),
-                          ),
-                        ),
-                      ),
-                      const SettingsDivider(),
+                      // SettingsListTile(
+                      //   icon: Icons.help_outline_rounded,
+                      //   title: 'دليل المستخدم',
+                      //   subtitle: 'شرح كل ميزة وكيفية استخدامها',
+                      //   iconColor: Colors.deepPurple[400]!,
+                      //   onTap: () => Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => const UserGuideListScreen(),
+                      //     ),
+                      //   ),
+                      // ),
+                      // const SettingsDivider(),
                       SettingsListTile(
                         icon: Icons.info_outline,
                         title: 'حول التطبيق',

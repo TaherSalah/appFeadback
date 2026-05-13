@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:muslimdaily/app/features/settings/notification_settings_controller.dart';
 import 'package:muslimdaily/app/features/settings/widgets/settings_widgets.dart';
 import 'package:muslimdaily/app/core/extensions/context_extension.dart';
+import 'package:muslimdaily/app/core/utils/style/k_helper.dart';
+import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 
 class AdhanSection extends StatelessWidget {
   final NotificationSettingsController controller;
@@ -135,7 +137,7 @@ class FeaturesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SettingsSection(
-      title: 'مميزات إضافية',
+      title: 'التحكم في الإشعارات',
       children: [
         Obx(() => SettingsSwitchTile(
           title: 'الوضع الصامت ليلاً',
@@ -149,26 +151,81 @@ class FeaturesSection extends StatelessWidget {
           if (controller.isNightSilentModeEnabled.value) {
             return Column(
               children: [
-                SettingsSliderTile(
-                  title: 'وقت البدء (ساعة):',
-                  value: controller.nightSilentStartHour.value.toDouble(),
-                  min: 0,
-                  max: 23,
-                  divisions: 23,
-                  label: '${controller.nightSilentStartHour.value}:00',
-                  activeColor: Colors.deepPurple,
-                  onChanged: (val) => controller.updateChange(controller.nightSilentStartHour, val.toInt()),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  child: Row(
+                    children: [
+                      _buildTimePickerCard(
+                        context,
+                        title: 'يبدأ من',
+                        hour: controller.nightSilentStartHour.value,
+                        minute: controller.nightSilentStartMinute.value,
+                        icon: Icons.nights_stay_rounded,
+                        color: Colors.deepPurple,
+                        onTap: () async {
+                          final time = await KHelper.pickTime(context);
+                          controller.updateChange(controller.nightSilentStartHour, time.hour);
+                          controller.updateChange(controller.nightSilentStartMinute, time.minute);
+                        },
+                      ),
+                      const SizedBox(width: 16),
+                      _buildTimePickerCard(
+                        context,
+                        title: 'ينتهي عند',
+                        hour: controller.nightSilentEndHour.value,
+                        minute: controller.nightSilentEndMinute.value,
+                        icon: Icons.wb_sunny_rounded,
+                        color: Colors.greenAccent[700]!,
+                        onTap: () async {
+                          final time = await KHelper.pickTime(context);
+                          controller.updateChange(controller.nightSilentEndHour, time.hour);
+                          controller.updateChange(controller.nightSilentEndMinute, time.minute);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                SettingsSliderTile(
-                  title: 'وقت النهاية (ساعة):',
-                  value: controller.nightSilentEndHour.value.toDouble(),
-                  min: 0,
-                  max: 23,
-                  divisions: 23,
-                  label: '${controller.nightSilentEndHour.value}:00',
-                  activeColor: Colors.deepPurple,
-                  onChanged: (val) => controller.updateChange(controller.nightSilentEndHour, val.toInt()),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: _buildDayPicker(context, controller),
                 ),
+                Obx(() {
+                  int startH = controller.nightSilentStartHour.value;
+                  int startM = controller.nightSilentStartMinute.value;
+                  int endH = controller.nightSilentEndHour.value;
+                  int endM = controller.nightSilentEndMinute.value;
+                  
+                  int startTotal = startH * 60 + startM;
+                  int endTotal = endH * 60 + endM;
+                  int diff = endTotal - startTotal;
+                  if (diff < 0) diff += 1440; // Handles crossing midnight
+                  
+                  int h = diff ~/ 60;
+                  int m = diff % 60;
+                  
+                  String durationText = '';
+                  if (h > 0) durationText += '$h ساعة';
+                  if (m > 0) {
+                    if (durationText.isNotEmpty) durationText += ' و ';
+                    durationText += '$m دقيقة';
+                  }
+                  if (durationText.isEmpty) durationText = '0 دقيقة';
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Center(
+                      child: Text(
+                        'مدة الصمت للاشعارات: $durationText',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 12,
+                          color: context.isDark ? Colors.white60 : Colors.black45,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ],
             );
           }
@@ -209,6 +266,223 @@ class FeaturesSection extends StatelessWidget {
         }),
       ],
     );
+  }
+
+  Widget _buildTimePickerCard(
+    BuildContext context, {
+    required String title,
+    required int hour,
+    required int minute,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    bool isDark = context.isDark;
+    
+    int displayHour = hour == 0 ? 12 : (hour <= 12 ? hour : hour - 12);
+    String timeStr = '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+    String period = hour < 12 ? 'صباحاً' : 'مساءً';
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.03) : color.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: isDark ? color.withOpacity(0.4) : color.withOpacity(0.15),
+              width: 1.5,
+            ),
+            boxShadow: isDark ? [] : [
+              BoxShadow(
+                color: color.withOpacity(0.08),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 18, color: color),
+                  const SizedBox(width: 8),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 12,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                timeStr,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
+                  color: isDark ? Colors.white : color,
+                  shadows: [
+                    Shadow(
+                      color: color.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                period,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: color.withOpacity(0.8),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDayPicker(BuildContext context, NotificationSettingsController controller) {
+    final weekDays = [7, 1, 2, 3, 4, 5, 6]; // Sun to Sat
+    final labels = ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
+    bool isDark = context.isDark;
+
+    return Obx(() {
+      final selectedCount = controller.nightSilentDays.length;
+      String summary = '';
+      if (selectedCount == 7) {
+        summary = 'نشط طوال الأسبوع';
+      } else if (selectedCount == 0) {
+        summary = 'معطل تماماً';
+      } else {
+        final allDays = [7, 1, 2, 3, 4, 5, 6];
+        final labelsFull = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        final exemptDays = <String>[];
+        for (int i = 0; i < 7; i++) {
+          if (!controller.nightSilentDays.contains(allDays[i])) {
+            exemptDays.add(labelsFull[i]);
+          }
+        }
+        
+        if (exemptDays.length <= 2) {
+          summary = 'مستثنى من: ${exemptDays.join('، ')}';
+        } else {
+          summary = 'نشط في $selectedCount أيام';
+        }
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'أيام التكرار',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
+              ),
+              Text(
+                summary,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 11,
+                  color: KColors.primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(weekDays.length, (index) {
+          int day = weekDays[index];
+          bool isSelected = controller.nightSilentDays.contains(day);
+          
+          return GestureDetector(
+            onTap: () {
+              if (isSelected) {
+                if (controller.nightSilentDays.length > 1) {
+                  controller.nightSilentDays.remove(day);
+                  controller.updateChange(controller.nightSilentDays, null);
+                }
+              } else {
+                controller.nightSilentDays.add(day);
+                controller.updateChange(controller.nightSilentDays, null);
+              }
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: isSelected 
+                      ? KColors.primaryColor 
+                      : (isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100]),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isSelected ? Colors.transparent : (isDark ? Colors.white12 : Colors.grey[300]!),
+                      width: 1,
+                    ),
+                    boxShadow: isSelected ? [
+                      BoxShadow(
+                        color: KColors.primaryColor.withOpacity(0.2),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      )
+                    ] : [],
+                  ),
+                  child: Center(
+                    child: Text(
+                      labels[index][0],
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 13,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black54),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  labels[index].substring(0, labels[index].length > 2 ? 2 : labels[index].length),
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 9,
+                    color: isSelected ? KColors.primaryColor : (isDark ? Colors.white38 : Colors.grey),
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    ]);
+    });
   }
 }
 
@@ -493,13 +767,13 @@ class FrequencyChip extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+               Text(
                 'دقيقة',
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 10,
                   height: 1.0,
-                  color: Colors.grey,
+                  color:isSelected? Colors.white:Colors.grey,
                 ),
               ),
             ],

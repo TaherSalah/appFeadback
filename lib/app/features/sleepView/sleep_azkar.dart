@@ -13,8 +13,27 @@ import 'widgets/sleep_fab.dart';
 import 'widgets/sleep_list.dart';
 import 'widgets/sleep_player_ui.dart';
 
-class SleepAzkar extends StatelessWidget {
+import 'package:muslimdaily/app/core/services/wakelock_service.dart';
+
+class SleepAzkar extends StatefulWidget {
   const SleepAzkar({super.key});
+
+  @override
+  State<SleepAzkar> createState() => _SleepAzkarState();
+}
+
+class _SleepAzkarState extends State<SleepAzkar> {
+  @override
+  void initState() {
+    super.initState();
+    WakelockService.enableIfActive();
+  }
+
+  @override
+  void dispose() {
+    WakelockService.disable();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

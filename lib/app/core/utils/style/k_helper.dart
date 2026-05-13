@@ -610,18 +610,26 @@ class KHelper {
   }
 
   ///*** pick Time ***///
-  static Future<TimeOfDay> pickTime(context) async {
+  static Future<TimeOfDay> pickTime(BuildContext context) async {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: KColors.primaryColor,
-              onPrimary: KColors.whiteColor,
-              onSurface: KColors.blackColor,
-            ),
+            colorScheme: isDark 
+              ? ColorScheme.dark(
+                  primary: KColors.primaryColor,
+                  onPrimary: KColors.whiteColor,
+                  surface: const Color(0xFF1E293B),
+                  onSurface: Colors.white,
+                )
+              : ColorScheme.light(
+                  primary: KColors.primaryColor,
+                  onPrimary: KColors.whiteColor,
+                  onSurface: KColors.blackColor,
+                ),
           ),
           child: child!,
         );

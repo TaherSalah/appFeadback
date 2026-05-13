@@ -13,8 +13,27 @@ import 'widgets/azkar_sabah_fab.dart';
 import 'widgets/azkar_sabah_list.dart';
 import 'widgets/azkar_sabah_player_ui.dart';
 
-class AzkarSabah extends StatelessWidget {
+import 'package:muslimdaily/app/core/services/wakelock_service.dart';
+
+class AzkarSabah extends StatefulWidget {
   const AzkarSabah({super.key});
+
+  @override
+  State<AzkarSabah> createState() => _AzkarSabahState();
+}
+
+class _AzkarSabahState extends State<AzkarSabah> {
+  @override
+  void initState() {
+    super.initState();
+    WakelockService.enableIfActive();
+  }
+
+  @override
+  void dispose() {
+    WakelockService.disable();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

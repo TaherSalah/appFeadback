@@ -1063,18 +1063,7 @@ class NotificationManager {
     }
 
     // Check custom night silent mode
-    final startHour = SettingsService().nightSilentStartHour;
-    final endHour = SettingsService().nightSilentEndHour;
-    
-    bool isSilentTime = false;
-    if (SettingsService().isNightSilentModeEnabled) {
-      if (startHour <= endHour) {
-        isSilentTime = hour >= startHour && hour < endHour;
-      } else {
-        // Range crosses midnight (e.g., 22:00 to 06:00)
-        isSilentTime = hour >= startHour || hour < endHour;
-      }
-    }
+    bool isSilentTime = SettingsService().isInSilentPeriod(hour, minute);
     String finalChannelKey = isSilentTime ? 'general_silent_channel' : channelKey;
 
     await AwesomeNotifications().createNotification(
@@ -1144,18 +1133,7 @@ class NotificationManager {
         int h = totalMinute ~/ 60;
         int m = totalMinute % 60;
 
-        final startHour = SettingsService().nightSilentStartHour;
-        final endHour = SettingsService().nightSilentEndHour;
-        bool isInNightRange = false;
-        if (isNightModeEnabled) {
-          if (startHour <= endHour) {
-            isInNightRange = h >= startHour && h < endHour;
-          } else {
-            isInNightRange = h >= startHour || h < endHour;
-          }
-        }
-
-        if (isInNightRange) continue;
+        if (SettingsService().isInSilentPeriod(h, m)) continue;
 
         // استخدمنا معرفات فريدة هنا للجدولة الزمنية، ولكن مع إضافة groupKey للتجميع
         int uniqueId = baseId + (h * 100) + m;
@@ -1873,8 +1851,7 @@ class NotificationManager {
       }
 
       // Check custom night silent mode
-      bool isSilentTime = SettingsService().isNightSilentModeEnabled &&
-          (hour >= 0 && hour < 6);
+      bool isSilentTime = SettingsService().isInSilentPeriod(hour, minute);
       String finalChannelKey = isSilentTime ? 'general_silent_channel' : 'sabah_athkar_channel';
 
       await AwesomeNotifications().createNotification(
@@ -2098,13 +2075,11 @@ class NotificationManager {
         await settings.init();
 
         // 2. التحقق من الوضع الليلي الصامت (إجراء أمان إضافي)
-        if (settings.isNightSilentModeEnabled) {
-          final int hour = DateTime.now().hour;
-          if (hour >= 0 && hour < 6) {
-            logger.i('🌙 الوضع الليلي مفعل: يتم حذف إشعار الصلاة على النبي الآن.');
-            await AwesomeNotifications().dismiss(receivedNotification.id!);
-            return;
-          }
+        final now = DateTime.now();
+        if (settings.isInSilentPeriod(now.hour, now.minute)) {
+          logger.i('🌙 الوضع الليلي مفعل: يتم حذف إشعار الصلاة على النبي الآن.');
+          await AwesomeNotifications().dismiss(receivedNotification.id!);
+          return;
         }
 
         // 3. 🚀 [ميزة الإخفاء التلقائي]: حذف الإشعار بعد 8 ثوانٍ

@@ -46,6 +46,7 @@ class SettingsService {
   static const String _kIsAutoLocationEnabled = 'is_auto_location_enabled';
   static const String _kIsHomeWidgetEnabled = 'is_home_widget_enabled';
   static const String _kIsNightSilentModeEnabled = 'is_night_silent_mode_enabled';
+  static const String _kIsKeepScreenAwakeEnabled = 'is_keep_screen_awake_enabled';
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -270,7 +271,10 @@ class SettingsService {
 
   // --- Night Silent Mode ---
   static const String _kNightSilentStartHour = 'night_silent_start_hour';
+  static const String _kNightSilentStartMinute = 'night_silent_start_minute';
   static const String _kNightSilentEndHour = 'night_silent_end_hour';
+  static const String _kNightSilentEndMinute = 'night_silent_end_minute';
+  static const String _kNightSilentDays = 'night_silent_days';
 
   bool get isNightSilentModeEnabled => _prefs.getBool(_kIsNightSilentModeEnabled) ?? true;
   Future<void> setNightSilentModeEnabled(bool value) async =>
@@ -280,9 +284,64 @@ class SettingsService {
   Future<void> setNightSilentStartHour(int value) async =>
       await _prefs.setInt(_kNightSilentStartHour, value);
 
+  int get nightSilentStartMinute => _prefs.getInt(_kNightSilentStartMinute) ?? 0;
+  Future<void> setNightSilentStartMinute(int value) async =>
+      await _prefs.setInt(_kNightSilentStartMinute, value);
+
   int get nightSilentEndHour => _prefs.getInt(_kNightSilentEndHour) ?? 6;
   Future<void> setNightSilentEndHour(int value) async =>
       await _prefs.setInt(_kNightSilentEndHour, value);
+
+  int get nightSilentEndMinute => _prefs.getInt(_kNightSilentEndMinute) ?? 0;
+  Future<void> setNightSilentEndMinute(int value) async =>
+      await _prefs.setInt(_kNightSilentEndMinute, value);
+
+  List<int> get nightSilentDays =>
+      _prefs.getStringList(_kNightSilentDays)?.map(int.parse).toList() ??
+      [1, 2, 3, 4, 5, 6, 7]; // Default to all days
+
+  Future<void> setNightSilentDays(List<int> days) async => await _prefs
+      .setStringList(_kNightSilentDays, days.map((e) => e.toString()).toList());
+
+  bool isInSilentPeriod(int hour, [int minute = 0]) {
+    if (!isNightSilentModeEnabled) return false;
+
+    final now = DateTime.now();
+    final today = now.weekday;
+    final yesterday = today == 1 ? 7 : today - 1;
+    final selectedDays = nightSilentDays;
+
+    int startH = nightSilentStartHour;
+    int startM = nightSilentStartMinute;
+    int endH = nightSilentEndHour;
+    int endM = nightSilentEndMinute;
+
+    int currentTotal = hour * 60 + minute;
+    int startTotal = startH * 60 + startM;
+    int endTotal = endH * 60 + endM;
+
+    if (startTotal == endTotal) return false;
+
+    bool crossesMidnight = startTotal > endTotal;
+
+    // 1. Check if current time falls in a period that started TODAY
+    if (selectedDays.contains(today)) {
+      if (!crossesMidnight) {
+        if (currentTotal >= startTotal && currentTotal < endTotal) return true;
+      } else {
+        // Starts today, ends tomorrow. Current time is after start today.
+        if (currentTotal >= startTotal) return true;
+      }
+    }
+
+    // 2. Check if current time falls in a period that started YESTERDAY
+    if (crossesMidnight && selectedDays.contains(yesterday)) {
+      // Period started yesterday, ends today. Current time is before end today.
+      if (currentTotal < endTotal) return true;
+    }
+
+    return false;
+  }
 
   // --- Smart Tracking ---
   static const String _kIsQuranTrackingEnabled = 'is_quran_tracking_enabled';
@@ -304,4 +363,9 @@ class SettingsService {
   bool get isAppAbsenceTrackingEnabled => true;
   // Future<void> setAppAbsenceTrackingEnabled(bool value) async =>
   //     await _prefs.setBool(_kIsAppAbsenceTrackingEnabled, value);
+
+  // --- Keep Screen Awake ---
+  bool get isKeepScreenAwakeEnabled => _prefs.getBool(_kIsKeepScreenAwakeEnabled) ?? true;
+  Future<void> setKeepScreenAwakeEnabled(bool value) async =>
+      await _prefs.setBool(_kIsKeepScreenAwakeEnabled, value);
 }
