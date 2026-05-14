@@ -1117,6 +1117,7 @@ class NotificationManager {
           groupKey: 'salawat_group', 
           autoDismissible: true, // ✅ حذف عند النقر
           category: NotificationCategory.Reminder,
+          timeoutAfter: const Duration(seconds: 8), // 🚀 [ميزة الإخفاء التلقائي]: يختفي بعد 8 ثوانٍ
         ),
         schedule: NotificationInterval(
           interval: const Duration(seconds: 60), 
@@ -1152,6 +1153,7 @@ class NotificationManager {
             groupKey: 'salawat_group', 
             autoDismissible: true,
             category: NotificationCategory.Reminder,
+            timeoutAfter: const Duration(seconds: 8), // 🚀 [ميزة الإخفاء التلقائي]: يختفي بعد 8 ثوانٍ
           ),
           schedule: NotificationCalendar(
             hour: h,
@@ -2082,13 +2084,8 @@ class NotificationManager {
           return;
         }
 
-        // 3. 🚀 [ميزة الإخفاء التلقائي]: حذف الإشعار بعد 8 ثوانٍ
-        // هذا يسمح بسماع الصوت بالكامل (الصلاة على النبي) ثم يختفي الإشعار تلقائياً
-        // مما يمنع تراكم الإشعارات في "الستارة" ويحل مشكلة المستخدم تماماً.
-        Future.delayed(const Duration(seconds: 8), () async {
-          await AwesomeNotifications().dismiss(receivedNotification.id!);
-          logger.i('🧹 تم تنظيف إشعار الصلاة على النبي (ID: ${receivedNotification.id})');
-        });
+        // 3. تم الاستعاضة عن Future.delayed المتقطع بـ timeoutAfter في إعدادات NotificationContent
+        // مما يضمن الإخفاء التلقائي بشكل موثوق من النظام نفسه.
       } catch (e) {
         logger.e('❌ خطأ في معالجة إخفاء إشعار الصلاة على النبي: $e');
       }

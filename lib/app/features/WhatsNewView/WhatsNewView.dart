@@ -92,7 +92,7 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                             'تخطي',
                             style: GoogleFonts.cairo(
                               color: isDark ? Colors.white70 : Colors.black87,
-                              fontSize: 14.sp,
+                              fontSize:context.isTab?9.sp: 14.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -115,7 +115,7 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                             ' ما الجديد ',
                             style: GoogleFonts.cairo(
                                 color: isDark ? Colors.white : Colors.black,
-                                fontSize: 26.sp,
+                                fontSize:context.isTab?11.sp: 26.sp,
                                 fontWeight: FontWeight.w800,
                                 height: 1.2,
                             ),
@@ -194,7 +194,7 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                                         child: Icon(
                                           icon,
                                           color: isDark ? KColors.primaryColor : KColors.primaryColor,
-                                          size: 20.sp,
+                                          size: context.isTab?12.sp:20.sp,
                                         ),
                                       ),
                                       SizedBox(width: 16.w),
@@ -208,7 +208,7 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                                               style: TextStyle(
                                                 fontFamily: "me",
                                                   color: isDark ? Colors.white : Colors.black,
-                                                  fontSize: 16.sp,
+                                                  fontSize:context.isTab?12.sp: 16.sp,
                                                   fontWeight: FontWeight.bold,
                                                 // letterSpacing: 1,
                                               ),
@@ -225,7 +225,7 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                                                 style: TextStyle(
                                                   fontFamily: "cairo",
                                                     color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
-                                                    fontSize: 13.sp,
+                                                    fontSize:context.isTab?8.5.sp: 13.sp,
                                                     height: 1.6,
                                                 ),
                                               ),
@@ -291,7 +291,7 @@ class _WhatsNewViewState extends State<WhatsNewView> {
                                   // ),
                                   style: TextStyle(
                                     fontFamily: "cairo",
-                                      fontSize: 18.sp,
+                                      fontSize:context.isTab?12.sp: 18.sp,
                                       fontWeight: FontWeight.bold,
                                     // letterSpacing: 1,
                                   ),
