@@ -156,6 +156,7 @@ function switchTab(tabId) {
         case 'settings': loadSettings(); break;
         case 'mosques': loadMosques(); break;
         case 'pdfBooks': loadPdfBooks(); break;
+        case 'communities': loadCommunities(); break;
     }
 }
 
@@ -1972,6 +1973,269 @@ async function deletePdfBook(id) {
         loadPdfBooks();
     } catch (e) {
         alert('❌ فشل الحذف: ' + e.message);
+    }
+}
+
+// ==========================================
+// COMMUNITIES MANAGEMENT
+// ==========================================
+
+async function loadCommunities() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('communities')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const list = document.getElementById('communitiesList');
+        if (!list) return;
+
+        list.innerHTML = '';
+
+        if (data.length === 0) {
+            list.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1; text-align: center;">لا توجد مجتمعات حالياً.</p>';
+            return;
+        }
+
+        data.forEach(community => {
+            const card = document.createElement('div');
+            card.className = 'feedback-card';
+            card.style.background = 'var(--card-bg)';
+            card.style.padding = '20px';
+            card.style.borderRadius = '16px';
+            card.style.border = '1px solid var(--border-color)';
+            card.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+
+            let genderBadge = '';
+            if (community.target_gender === 'male') {
+                genderBadge = '👨 للرجال فقط';
+            } else if (community.target_gender === 'female') {
+                genderBadge = '👩 للنساء فقط';
+            } else {
+                genderBadge = '👥 متاح للجميع';
+            }
+
+            card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                    <h3 style="color: var(--accent-color); margin: 0;">${community.name}</h3>
+                    <span style="background: rgba(16, 185, 129, 0.1); color: var(--accent-color); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                        ${genderBadge}
+                    </span>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px; min-height: 40px;">
+                    ${community.description || 'لا يوجد وصف'}
+                </p>
+                <div style="display: flex; gap: 10px; margin-top: auto;">
+                    <button class="refresh-btn" onclick="openManageCommunityModal('${community.id}', '${community.name}')" style="flex: 1; padding: 8px;">⚙️ إدارة</button>
+                    <button class="delete-btn" onclick="deleteCommunity('${community.id}')" style="padding: 8px;">🗑️</button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+
+    } catch (e) {
+        console.error('Error loading communities:', e);
+    }
+}
+
+async function createCommunity() {
+    const name = document.getElementById('communityName').value.trim();
+    const targetGender = document.getElementById('communityTargetGender').value;
+    const description = document.getElementById('communityDescription').value.trim();
+    const inviteCode = 'COMM_' + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+    if (!name) {
+        alert('❌ يرجى إدخال اسم المجتمع');
+        return;
+    }
+
+    try {
+        const { error } = await supabaseClient
+            .from('communities')
+            .insert({
+                name: name,
+                invite_code: inviteCode,
+                description: description,
+                target_gender: targetGender,
+                created_by: '00000000-0000-0000-0000-000000000000' // Dashboard generic ID
+            });
+
+        if (error) {
+            if (error.code === '23505') throw new Error('كود الانضمام مستخدم مسبقاً، يرجى اختيار كود آخر.');
+            throw error;
+        }
+
+        document.getElementById('communityName').value = '';
+        document.getElementById('communityDescription').value = '';
+        
+        loadCommunities();
+        alert('✅ تم إنشاء المجتمع بنجاح');
+    } catch (e) {
+        alert('❌ فشل إنشاء المجتمع: ' + e.message);
+    }
+}
+
+async function deleteCommunity(id) {
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذا المجتمع نهائياً؟ سيتم حذف جميع الحلقات والتقارير المرتبطة به.')) return;
+
+    try {
+        const { error } = await supabaseClient
+            .from('communities')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        loadCommunities();
+    } catch (e) {
+        alert('❌ فشل حذف المجتمع: ' + e.message);
+    }
+}
+
+function openManageCommunityModal(id, name) {
+    document.getElementById('manageCommunityTitle').innerText = 'إدارة: ' + name;
+    document.getElementById('currentCommunityId').value = id;
+    
+    // Clear fields
+    document.getElementById('meetingTitle').value = '';
+    document.getElementById('meetingTeacher').value = '';
+    document.getElementById('meetingUrl').value = '';
+    document.getElementById('meetingDate').value = '';
+    loadCommunityMeetings(id);
+    document.getElementById('manageCommunityModal').style.display = 'flex';
+}
+
+function closeManageCommunityModal() {
+    document.getElementById('manageCommunityModal').style.display = 'none';
+}
+
+async function loadCommunityMeetings(communityId) {
+    const listEl = document.getElementById('communityMeetingsList');
+    listEl.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">جاري تحميل الحلقات...</p>';
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('meetings')
+            .select('*')
+            .eq('community_id', communityId)
+            .order('meeting_date', { ascending: false });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            listEl.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">لا توجد حلقات مسجلة حتى الآن.</p>';
+            return;
+        }
+
+        listEl.innerHTML = data.map(meeting => {
+            const date = new Date(meeting.meeting_date);
+            const formattedDate = date.toLocaleString('ar-EG');
+            return `
+                <div style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--body-bg); position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <strong>${escapeHtml(meeting.title)}</strong><br>
+                            <small style="color: var(--text-secondary);">📅 ${formattedDate}</small>
+                            ${meeting.teacher_name ? `<br><small style="color: var(--accent-color);">👤 ${escapeHtml(meeting.teacher_name)}</small>` : ''}
+                        </div>
+                        <button onclick="deleteCommunityMeeting('${meeting.id}')" style="background: #fee; color: #c00; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px;">🗑️ حذف</button>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label style="font-size: 12px; color: var(--text-secondary);">التقرير / ملخص الحلقة</label>
+                        <textarea id="report_${meeting.id}" style="width: 100%; height: 60px; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); resize: vertical; margin-top: 4px;">${escapeHtml(meeting.report_content || '')}</textarea>
+                        <button onclick="saveMeetingReport('${meeting.id}')" style="background: var(--accent-color); color: white; border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 12px; margin-top: 4px;">حفظ التقرير</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        listEl.innerHTML = '<p style="text-align: center; color: #c00;">❌ حدث خطأ في تحميل الحلقات</p>';
+    }
+}
+
+async function saveMeetingReport(meetingId) {
+    const reportContent = document.getElementById(`report_${meetingId}`).value.trim();
+    
+    try {
+        const { error } = await supabaseClient
+            .from('meetings')
+            .update({ report_content: reportContent || null })
+            .eq('id', meetingId);
+
+        if (error) throw error;
+        alert('✅ تم حفظ التقرير بنجاح');
+    } catch (e) {
+        alert('❌ فشل حفظ التقرير: ' + e.message);
+    }
+}
+
+async function deleteCommunityMeeting(meetingId) {
+    if (!confirm('هل أنت متأكد من حذف هذه الحلقة؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+
+    try {
+        const { error } = await supabaseClient
+            .from('meetings')
+            .delete()
+            .eq('id', meetingId);
+
+        if (error) throw error;
+        
+        const communityId = document.getElementById('currentCommunityId').value;
+        loadCommunityMeetings(communityId);
+    } catch (e) {
+        alert('❌ فشل حذف الحلقة: ' + e.message);
+    }
+}
+
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
+async function createCommunityMeeting() {
+    const communityId = document.getElementById('currentCommunityId').value;
+    const title = document.getElementById('meetingTitle').value.trim();
+    const teacherName = document.getElementById('meetingTeacher').value.trim();
+    const url = document.getElementById('meetingUrl').value.trim();
+    const dateStr = document.getElementById('meetingDate').value;
+
+    if (!title || !dateStr || !url) {
+        alert('❌ يرجى إدخال عنوان الحلقة، وموعدها، ورابط الاجتماع (Google Meet)');
+        return;
+    }
+
+    try {
+        const meetingDate = new Date(dateStr).toISOString();
+
+        const { error } = await supabaseClient
+            .from('meetings')
+            .insert({
+                community_id: communityId,
+                title: title,
+                meet_url: url || null,
+                meeting_date: meetingDate,
+                duration_minutes: 60,
+                teacher_name: teacherName || null,
+                created_by: '00000000-0000-0000-0000-000000000000'
+            });
+
+        if (error) throw error;
+
+        document.getElementById('meetingTitle').value = '';
+        document.getElementById('meetingTeacher').value = '';
+        document.getElementById('meetingUrl').value = '';
+        document.getElementById('meetingDate').value = '';
+        alert('✅ تم جدولة الحلقة بنجاح');
+        
+        loadCommunityMeetings(communityId);
+    } catch (e) {
+        alert('❌ فشل جدولة الحلقة: ' + e.message);
     }
 }
 

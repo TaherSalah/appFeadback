@@ -885,6 +885,7 @@
             <div id="errorsTabBtn" class="tab" onclick="switchTab('errors')">⚠️ الأعطال</div>
             <div id="mosquesTabBtn" class="tab" onclick="switchTab('mosques')">🕌 المساجد</div>
             <div id="pdfBooksTabBtn" class="tab" onclick="switchTab('pdfBooks')">📚 مكتبة الـ PDF</div>
+            <div id="communitiesTabBtn" class="tab" onclick="switchTab('communities')">🕌 مجتمعات القرآن والحلقات</div>
         </div>
 
         <div id="feedbackTab" class="tab-content active">
@@ -1782,6 +1783,49 @@
         </div>
     </div>
 
+        <!-- Communities Tab -->
+        <div id="communitiesTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">🕌 إدارة مجتمعات القرآن والحلقات</h3>
+                    <button class="refresh-btn" onclick="loadCommunities()" style="padding: 8px 20px; font-size: 0.9rem;">🔄 تحديث</button>
+                </div>
+
+                <!-- Add New Community -->
+                <div class="filter-group" style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px; background: rgba(16, 185, 129, 0.05);">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إنشاء مجتمع جديد</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">اسم المجتمع</label>
+                            <input type="text" id="communityName" placeholder="مثلاً: حلقة التحفيظ المكثفة" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">الفئة المستهدفة</label>
+                            <select id="communityTargetGender" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="both">للجميع 👥</option>
+                                <option value="male">للرجال فقط 👨</option>
+                                <option value="female">للنساء فقط 👩</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; display: none;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">كود الانضمام (يجب أن يكون فريداً)</label>
+                        <input type="text" id="communityInviteCode" placeholder="سيتم توليده تلقائياً" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">الوصف (اختياري)</label>
+                        <textarea id="communityDescription" placeholder="وصف للهدف من المجتمع..." style="width: 100%; height: 60px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
+                    </div>
+                    <button class="refresh-btn" onclick="createCommunity()" style="margin-top: 20px; width: 100%; font-weight: bold;">💾 إنشاء المجتمع</button>
+                </div>
+
+                <!-- Communities List -->
+                <div id="communitiesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                    <!-- Community cards will be populated here -->
+                </div>
+            </div>
+        </div>
+
     <!-- Error Overlay -->
     <div id="errorOverlay" class="auth-overlay" style="display: none; background: rgba(0,0,0,0.7);">
         <div class="auth-card" style="border-top: 5px solid #ef4444;">
@@ -1878,6 +1922,53 @@
             </div>
         </div>
     </div>
-</body>
 
+    <!-- Manage Community Modal -->
+    <div id="manageCommunityModal" class="modal">
+        <div class="modal-content" style="max-width: 800px; width: 95%;">
+            <div class="modal-header">
+                <h3 id="manageCommunityTitle">إدارة المجتمع</h3>
+                <button class="close-btn" onclick="closeManageCommunityModal()">×</button>
+            </div>
+            
+            <input type="hidden" id="currentCommunityId">
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">                <!-- Add Meeting Section -->
+                <div style="padding: 15px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--card-bg);">
+                    <h4 style="margin-bottom: 15px; color: var(--accent-color);">🎥 جدولة حلقة (اجتماع)</h4>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">عنوان الحلقة</label>
+                        <input type="text" id="meetingTitle" placeholder="مثلاً: حلقة التسميع ليوم السبت" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--body-bg); color: var(--text-primary);">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">اسم المعلم/المعلمة (اختياري)</label>
+                        <input type="text" id="meetingTeacher" placeholder="مثلاً: الشيخة فاطمة" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--body-bg); color: var(--text-primary);">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">رابط الاجتماع (Google Meet, Zoom...)</label>
+                        <input type="url" id="meetingUrl" placeholder="https://meet.google.com/..." style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--body-bg); color: var(--text-primary);">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">موعد الحلقة</label>
+                        <input type="datetime-local" id="meetingDate" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--body-bg); color: var(--text-primary);">
+                    </div>
+                    <button class="refresh-btn" onclick="createCommunityMeeting()" style="width: 100%; background: #3b82f6;">جدولة الحلقة</button>
+                </div>
+                
+                <!-- Meetings List Section -->
+                <div style="padding: 15px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--card-bg);">
+                    <h4 style="margin-bottom: 15px; color: var(--accent-color);">📋 جدول الحلقات السابقة والقادمة</h4>
+                    <div id="communityMeetingsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto;">
+                        <!-- Meetings will be populated here -->
+                        <p style="text-align: center; color: var(--text-secondary);">جاري تحميل الحلقات...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="delete-btn" onclick="closeManageCommunityModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</body>
 </html>
