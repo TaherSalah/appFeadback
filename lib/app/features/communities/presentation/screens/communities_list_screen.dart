@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
@@ -37,74 +38,247 @@ class _CommunitiesListScreenState extends State<CommunitiesListScreen> {
         }
 
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('المجتمعات والحلقات'),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.logout),
-                tooltip: 'تسجيل الخروج',
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('تسجيل الخروج'),
-                      content: const Text('هل أنت متأكد من رغبتك في تسجيل الخروج من المجتمعات وحذف بياناتك من هذا الجهاز؟'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('إلغاء'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            context.read<CommunitiesCubit>().logout();
-                          },
-                          child: const Text('تسجيل الخروج', style: TextStyle(color: Colors.red)),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.add_link_rounded),
-                tooltip: 'الانضمام بكود الدعوة',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const JoinCommunityScreen()),
-                  );
-                },
-              ),
-              FutureBuilder(
-                future: context.read<CommunitiesCubit>().repository.getProfile(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data!.fold(
-                      (failure) => const SizedBox.shrink(),
-                      (profile) {
-                        if (profile['is_teacher'] == 'true') {
-                          return IconButton(
-                            icon: const Icon(Icons.bar_chart),
-                            tooltip: 'الإحصائيات',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => const CommunityStatisticsScreen()),
-                              );
-                            },
+          // appBar: AppBar(
+          //   title: const Text('المجتمعات والحلقات'),
+          //   centerTitle: true,
+          //   actions: [
+          //     IconButton(
+          //       icon: const Icon(Icons.logout),
+          //       tooltip: 'تسجيل الخروج',
+          //       onPressed: () {
+          //         showDialog(
+          //           context: context,
+          //           builder: (context) => AlertDialog(
+          //             title: const Text('تسجيل الخروج'),
+          //             content: const Text('هل أنت متأكد من رغبتك في تسجيل الخروج من المجتمعات وحذف بياناتك من هذا الجهاز؟'),
+          //             actions: [
+          //               TextButton(
+          //                 onPressed: () => Navigator.pop(context),
+          //                 child: const Text('إلغاء'),
+          //               ),
+          //               TextButton(
+          //                 onPressed: () {
+          //                   Navigator.pop(context);
+          //                   context.read<CommunitiesCubit>().logout();
+          //                 },
+          //                 child: const Text('تسجيل الخروج', style: TextStyle(color: Colors.red)),
+          //               ),
+          //             ],
+          //           ),
+          //         );
+          //       },
+          //     ),
+          //     IconButton(
+          //       icon: const Icon(Icons.add_link_rounded),
+          //       tooltip: 'الانضمام بكود الدعوة',
+          //       onPressed: () {
+          //         Navigator.push(
+          //           context,
+          //           MaterialPageRoute(builder: (_) => const JoinCommunityScreen()),
+          //         );
+          //       },
+          //     ),
+          //     FutureBuilder(
+          //       future: context.read<CommunitiesCubit>().repository.getProfile(),
+          //       builder: (context, snapshot) {
+          //         if (snapshot.hasData) {
+          //           return snapshot.data!.fold(
+          //             (failure) => const SizedBox.shrink(),
+          //             (profile) {
+          //               if (profile['is_teacher'] == 'true') {
+          //                 return IconButton(
+          //                   icon: const Icon(Icons.bar_chart),
+          //                   tooltip: 'الإحصائيات',
+          //                   onPressed: () {
+          //                     Navigator.push(
+          //                       context,
+          //                       MaterialPageRoute(builder: (_) => const CommunityStatisticsScreen()),
+          //                     );
+          //                   },
+          //                 );
+          //               }
+          //               return const SizedBox.shrink();
+          //             },
+          //           );
+          //         }
+          //         return const SizedBox.shrink();
+          //       },
+          //     ),
+          //   ],
+          // ),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(
+              context.isTab ? 70 : 50,
+            ),
+            child: AppBar(
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.logout,color: Colors.red,),
+                    tooltip: 'تسجيل الخروج',
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (dialogContext) {
+                          final isDark = Theme.of(context).brightness == Brightness.dark;
+                          return Directionality(
+                            textDirection: TextDirection.rtl,
+                            child: Dialog(
+                              insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                              backgroundColor: Colors.transparent,
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(24),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topRight,
+                                        end: Alignment.bottomLeft,
+                                        colors: isDark
+                                            ? [const Color(0xFF2B0B0B), const Color(0xFF200505)]
+                                            : [const Color(0xFFFFF2F2), const Color(0xFFFFE1E1)],
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.3),
+                                          blurRadius: 18,
+                                          offset: const Offset(0, 8),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'تسجيل الخروج؟',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: isDark ? Colors.white : Colors.black87,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          'هل أنت متأكد من رغبتك في تسجيل الخروج من المقرأة القرآنية وحذف بياناتك من هذا الجهاز؟\nلن تتمكن من رؤية منشورات المقرأة حتى تعود.',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            height: 1.4,
+                                            color: isDark ? Colors.white70 : Colors.black87,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        const SizedBox(height: 24),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: OutlinedButton(
+                                                onPressed: () => Navigator.of(dialogContext).pop(),
+                                                style: OutlinedButton.styleFrom(
+                                                  side: BorderSide(
+                                                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(14),
+                                                  ),
+                                                  padding: const EdgeInsets.symmetric(vertical: 11),
+                                                ),
+                                                child: Text(
+                                                  'إلغاء',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: isDark ? Colors.white : Colors.grey.shade800,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: ElevatedButton.icon(
+                                                onPressed: () {
+                                                  Navigator.of(dialogContext).pop();
+                                                  context.read<CommunitiesCubit>().logout();
+                                                },
+                                                icon: const Icon(Icons.logout, size: 20),
+                                                label: const Text('تسجيل الخروج', style: TextStyle(fontSize: 11)),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.red,
+                                                  foregroundColor: Colors.white,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(14),
+                                                  ),
+                                                  padding: const EdgeInsets.symmetric(vertical: 11),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
+                        },
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add_link_rounded),
+                    tooltip: 'الانضمام بكود الدعوة',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const JoinCommunityScreen()),
+                      );
+                    },
+                  ),
+                  FutureBuilder(
+                    future: context.read<CommunitiesCubit>().repository.getProfile(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data!.fold(
+                          (failure) => const SizedBox.shrink(),
+                          (profile) {
+                            if (profile['is_teacher'] == 'true') {
+                              return IconButton(
+                                icon: const Icon(Icons.bar_chart),
+                                tooltip: 'الإحصائيات',
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const CommunityStatisticsScreen()),
+                                  );
+                                },
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+              leading: CupertinoNavigationBarBackButton(
+                color:context.isDark ? Colors.white : Colors.black,
               ),
-            ],
+              centerTitle: true,
+              title: Text(
+                'المقرأة القرآنية',
+                style: TextStyle(
+                  fontFamily: "cairo",
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize: context.isTab ? 12.sp : 18.sp,
+                ),
+              ),
+            ),
           ),
+
           body: Column(
             children: [
               // Profile Header Section
@@ -261,7 +435,7 @@ class _CommunitiesListScreenState extends State<CommunitiesListScreen> {
                                     Padding(
                                       padding: EdgeInsets.symmetric(horizontal: 40.w),
                                       child: Text(
-                                        'ابدأ رحلتك الآن وانضم إلى الحلقات والمجتمعات القرآنية المتاحة',
+                                        'ابدأ رحلتك الآن وانضم إلى الحلقات القرآنية المتاحة في المقرأة',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(fontSize: 14.sp, color: Colors.grey, height: 1.5),
                                       ),
@@ -397,7 +571,7 @@ class _CommunitiesListScreenState extends State<CommunitiesListScreen> {
               );
             },
             icon: const Icon(Icons.explore),
-            label: const Text('استكشاف المجتمعات'),
+            label: const Text('استكشاف المقرأة القرآنية'),
           ),
         );
       },

@@ -154,10 +154,10 @@ class MainController extends GetxController {
       "title": "الْخَتْمَةُ الْجَمَاعِيَّةُ",
       "icon": "assets/images/viral-marketing.png",
       "navigate": "/globalKhatmah",
-      "subtitle": "شَارِكِ الْمُجْتَمَعَ فِي الْخَتْمِ"
+      "subtitle": "شَارِكِ الْمَقْرَأَةَ فِي الْخَتْمِ"
     },
     {
-      "title": "الْمُجْتَمَعَاتُ",
+      "title": "الْمَقْرَأَةُ الْقُرْآنِيَّةُ",
       "icon": "assets/images/halakat.png",
       "navigate": Routes.communitiesRoute,
     },

@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
 import 'package:muslimdaily/app/features/communities/presentation/cubit/communities_cubit.dart';
 import 'package:muslimdaily/app/features/communities/presentation/cubit/communities_state.dart';
+
+import '../../../../core/extensions/context_extension.dart';
 
 class CommunityStatisticsScreen extends StatefulWidget {
   const CommunityStatisticsScreen({super.key});
@@ -22,10 +25,31 @@ class _CommunityStatisticsScreenState extends State<CommunityStatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('إحصائيات المستخدمين'),
-        centerTitle: true,
+      // appBar: AppBar(
+      //   title: const Text('إحصائيات المستخدمين'),
+      //   centerTitle: true,
+      // ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+          context.isTab ? 70 : 50,
+        ),
+        child: AppBar(
+          leading: CupertinoNavigationBarBackButton(
+            color:context.isDark ? Colors.white : Colors.black,
+          ),
+          centerTitle: true,
+          title: Text(
+          "إحصائيات المستخدمين",
+            style: TextStyle(
+              fontFamily: "cairo",
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: context.isTab ? 12.sp : 18.sp,
+            ),
+          ),
+        ),
       ),
+
       body: BlocBuilder<CommunitiesCubit, CommunitiesState>(
         builder: (context, state) {
           if (state is CommunitiesLoading) {

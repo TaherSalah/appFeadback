@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslimdaily/app/core/utils/style/k_color.dart';
@@ -9,6 +10,8 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../../../../core/extensions/context_extension.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
   final Community community;
@@ -37,123 +40,139 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.community.name),
-        centerTitle: true,
-
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {
-              // Share community code
-              showDialog(
-                context: context,
-                builder: (context) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
-                  return Dialog(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-                    backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.all(24.w),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(16.w),
-                            decoration: BoxDecoration(
-                              color: KColors.primaryColor.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(Icons.people_alt_rounded, color: KColors.primaryColor, size: 40.w),
-                          ),
-                          SizedBox(height: 16.h),
-                          Text(
-                            'دعوة للحصول على الأجر',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            'شارك هذا الكود مع من تحب لينضموا إلى هذا المجتمع وتشاركهم الأجر.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 13.sp, color: Colors.grey, height: 1.5),
-                          ),
-                          SizedBox(height: 24.h),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                            decoration: BoxDecoration(
-                              color: isDark ? Colors.black.withOpacity(0.3) : Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(12.r),
-                              border: Border.all(color: KColors.primaryColor.withOpacity(0.3)),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: SelectableText(
-                                    widget.community.inviteCode,
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 2,
-                                      color: KColors.primaryColor,
-                                      fontFamily: 'monospace',
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.copy_rounded, color: Colors.grey),
-                                  onPressed: () {
-                                    Clipboard.setData(ClipboardData(text: widget.community.inviteCode));
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('تم نسخ الكود بنجاح!'), backgroundColor: Colors.green),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 24.h),
-                          Row(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+          context.isTab ? 70 : 50,
+        ),
+        child: AppBar(
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () {
+                  // Share community code
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      final isDark = Theme.of(context).brightness == Brightness.dark;
+                      return Dialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+                        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.all(24.w),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-                                  ),
-                                  child: Text('إغلاق', style: TextStyle(color: Colors.grey, fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                              Container(
+                                padding: EdgeInsets.all(16.w),
+                                decoration: BoxDecoration(
+                                  color: KColors.primaryColor.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(Icons.people_alt_rounded, color: KColors.primaryColor, size: 40.w),
+                              ),
+                              SizedBox(height: 16.h),
+                              Text(
+                                'دعوة للحصول على الأجر',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                'شارك هذا الكود مع من تحب لينضموا إلى هذا المجتمع وتشاركهم الأجر.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 13.sp, color: Colors.grey, height: 1.5),
+                              ),
+                              SizedBox(height: 24.h),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                decoration: BoxDecoration(
+                                  color: isDark ? Colors.black.withOpacity(0.3) : Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(color: KColors.primaryColor.withOpacity(0.3)),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: SelectableText(
+                                        widget.community.inviteCode,
+                                        style: TextStyle(
+                                          fontSize: 18.sp,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 2,
+                                          color: KColors.primaryColor,
+                                          fontFamily: 'monospace',
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.copy_rounded, color: Colors.grey),
+                                      onPressed: () {
+                                        Clipboard.setData(ClipboardData(text: widget.community.inviteCode));
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('تم نسخ الكود بنجاح!'), backgroundColor: Colors.green),
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    Share.share('انضم إلينا في مجتمع "${widget.community.name}" على تطبيق رفيق المسلم اليومي!\n\nاستخدم كود الدعوة التالي للانضمام:\n${widget.community.inviteCode}');
-                                  },
-                                  icon: const Icon(Icons.share_rounded, color: Colors.white, size: 20),
-                                  label: Text('مشاركة', style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold)),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: KColors.primaryColor,
-                                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                              SizedBox(height: 24.h),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                                      ),
+                                      child: Text('إغلاق', style: TextStyle(color: Colors.grey, fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                                    ),
                                   ),
-                                ),
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        Share.share('انضم إلينا في مجتمع "${widget.community.name}" على تطبيق رفيق المسلم اليومي!\n\nاستخدم كود الدعوة التالي للانضمام:\n${widget.community.inviteCode}');
+                                      },
+                                      icon: const Icon(Icons.share_rounded, color: Colors.white, size: 20),
+                                      label: Text('مشاركة', style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: KColors.primaryColor,
+                                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
-              );
-            },
+              ),
+            ],
+          leading: CupertinoNavigationBarBackButton(
+            color:context.isDark ? Colors.white : Colors.black,
           ),
-        ],
+          centerTitle: true,
+          title: Text(
+            widget.community.name,
+            style: TextStyle(
+              fontFamily: "cairo",
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: context.isTab ? 12.sp : 18.sp,
+            ),
+          ),
+        ),
       ),
+
       body: BlocBuilder<CommunityDetailsCubit, CommunityDetailsState>(
         builder: (context, state) {
           if (state is CommunityDetailsLoading) {

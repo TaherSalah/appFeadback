@@ -12,7 +12,7 @@ import 'push_notification_logger.dart';
 /// | المفتاح | الوصف | الأهمية |
 /// |---------|-------|---------|
 /// | push_general_channel | إشعارات عامة | High |
-/// | push_community_channel | إشعارات المجتمعات | Default |
+/// | push_community_channel | إشعارات المقرأة القرآنية | Default |
 /// | push_silent_channel | تحديثات صامتة | Low |
 class NotificationChannelsManager {
   static const String generalChannelKey = 'push_general_channel';
@@ -68,8 +68,8 @@ class NotificationChannelsManager {
     await AwesomeNotifications().setChannel(
       NotificationChannel(
         channelKey: communityChannelKey,
-        channelName: 'المجتمعات',
-        channelDescription: 'إشعارات المجتمعات والتعليقات والتفاعل',
+        channelName: 'المقرأة القرآنية',
+        channelDescription: 'إشعارات المقرأة القرآنية والتعليقات والتفاعل',
         importance: NotificationImportance.Default,
         defaultColor: _green,
         ledColor: _green,

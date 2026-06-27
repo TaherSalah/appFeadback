@@ -245,7 +245,7 @@ class _CommunityProfileSetupScreenState extends State<CommunityProfileSetupScree
             ),
             SizedBox(height: 10.h),
             Text(
-              'يرجى كتابة اسمك وتحديد جنسك لنعرض لك\nالمجتمعات المخصصة لك',
+              'يرجى كتابة اسمك وتحديد جنسك لنعرض لك\nحلقات المقرأة المخصصة لك',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14.sp, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600, height: 1.5),
             ),

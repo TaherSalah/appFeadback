@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:muslimdaily/app/features/radioView/data/repo/QuranRadioRepoImmp.dart';
 import 'package:muslimdaily/app/features/radioView/view/controller/QuranRadioBloc.dart';
 import 'package:muslimdaily/app/features/radioView/view/controller/QuranRadioState.dart';
@@ -8,6 +10,7 @@ import '../../../../core/shard/exports/all_exports.dart';
 import '../../../../core/utils/constent/router.dart';
 import '../../../../core/utils/style/app_theme_colors.dart';
 import '../../../../core/utils/style/k_color.dart';
+import '../../../../core/utils/style/k_helper.dart';
 import '../../../../core/widgets/KLoading.dart';
 import '../../../../core/widgets/custom_text_widget.dart';
 
@@ -26,10 +29,35 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
   int _visibleCount = _pageSize;
   bool _isLoadingMore = false;
 
+  List<String> _favUrls = [];
+  bool _showFavoritesOnly = false;
+
   @override
   void initState() {
     super.initState();
     _scrollCtrl.addListener(_onScroll);
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _favUrls = prefs.getStringList('favorite_radios') ?? [];
+    });
+  }
+
+  Future<void> _toggleFavorite(String url) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (_favUrls.contains(url)) {
+        _favUrls.remove(url);
+        KHelper.showSuccess(message: "تم الإزالة من المفضلة");
+      } else {
+        _favUrls.add(url);
+        KHelper.showSuccess(message: "تمت الإضافة للمفضلة ");
+      }
+    });
+    await prefs.setStringList('favorite_radios', _favUrls);
   }
 
   @override
@@ -88,9 +116,15 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
         builder: (context, state) {
           final bloc = QuranRadioBloc.get(context);
           final allRadios = bloc.quranRadioModel?.radios ?? [];
-          final filteredRadios = _searchQuery.isEmpty 
-              ? allRadios 
-              : allRadios.where((r) => (r.name.toString()).contains(_searchQuery)).toList();
+          
+          var filteredRadios = _showFavoritesOnly 
+              ? allRadios.where((r) => _favUrls.contains(r.url.toString())).toList()
+              : allRadios;
+
+          if (_searchQuery.isNotEmpty) {
+             filteredRadios = filteredRadios.where((r) => (r.name.toString()).contains(_searchQuery)).toList();
+          }
+
           final total = filteredRadios.length;
 
           // حدّ أقصى لما نعرضه حسب الإجمالي
@@ -117,21 +151,9 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
                         context.isTab ? 12.sp : 18.sp,
                   ),
                 ),
-                // leading:                   InkWell(
-                //   onTap: () {
-                //     Navigator.pushNamed(context, "/ayaSearchScreen");
-                //   },
-                //   child: const Padding(
-                //     padding: EdgeInsets.symmetric(horizontal: 10),
-                //     child: Icon(
-                //       Icons.search,
-                //       size: 30,
-                //     ),
-                //   ),
-                // ),
                 leading: const SizedBox(),
                 actions: [
-Navigator.canPop(context)
+                  Navigator.canPop(context)
                       ? InkWell(
                           onTap: () => Navigator.pop(context),
                           child: SvgPicture.asset(
@@ -171,6 +193,39 @@ Navigator.canPop(context)
               ),
 
               SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      ChoiceChip(
+                        label: const Text('الكل', style: TextStyle(fontFamily: "cairo")),
+                        selected: !_showFavoritesOnly,
+                        selectedColor: Colors.green.withOpacity(0.2),
+                        onSelected: (val) {
+                          setState(() {
+                            _showFavoritesOnly = false;
+                            _visibleCount = _pageSize;
+                          });
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: const Text('المفضلة', style: TextStyle(fontFamily: "cairo")),
+                        selected: _showFavoritesOnly,
+                        selectedColor: Colors.green.withOpacity(0.2),
+                        onSelected: (val) {
+                          setState(() {
+                            _showFavoritesOnly = true;
+                            _visibleCount = _pageSize;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              SliverToBoxAdapter(
                 child: SizedBox(
                     height: context.isTab ? 20 : 15),
               ),
@@ -187,7 +242,7 @@ Navigator.canPop(context)
                   child: Center(
                     child: Padding(
                       padding: EdgeInsets.all(24.0),
-                      child: Text("لا توجد بيانات متاحة حالياً."),
+                      child: Text("لا توجد بيانات متاحة حالياً.", style: TextStyle(fontFamily: "cairo")),
                     ),
                   ),
                 ),
@@ -207,7 +262,6 @@ Navigator.canPop(context)
                       final item = filteredRadios[index];
                       return InkWell(
                         onTap: () {
-                          // TODO: اكتب تنقلك هنا
                           Navigator.pushNamed(context, "/QuranRadioPlayerView",
                               arguments: QuranRadioPlayerArgs(
                                   title: item.name.toString() ?? "",
@@ -218,30 +272,51 @@ Navigator.canPop(context)
                           color: AppThemeColors.cardBackgroundColor(context),
                           shape: BeveledRectangleBorder(
                               borderRadius: BorderRadiusGeometry.circular(15)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center, // 🚀 Center alignment
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/icons/radio.png",
-                                  height: context.isTab ? 60.h : 30, // 🚀 Using .h for tablet
-                                ),
-                                const SizedBox(height: 8),
-                                Flexible( // 🚀 Using Flexible instead of Spacer
-                                  child: TextWidget(
-                                    color: isDark
-                                        ? KColors.scoColor
-                                        : KColors.primary2Color,
-                                    fontWeight: FontWeight.w600,
-                                    maxLines: 1,
-                                    fontSize: context.isTab ? 7.sp : 10.sp,
-                                    title: item.name.toString() ?? "",
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/radio.png",
+                                        height: context.isTab ? 60.h : 30,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Flexible(
+                                        child: TextWidget(
+                                          color: isDark
+                                              ? KColors.scoColor
+                                              : KColors.primary2Color,
+                                          fontWeight: FontWeight.w600,
+                                          maxLines: 1,
+                                          fontSize: context.isTab ? 7.sp : 10.sp,
+                                          title: item.name.toString() ?? "",
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              Positioned(
+                                top: 4,
+                                left: 4,
+                                child: InkWell(
+                                  onTap: () => _toggleFavorite(item.url.toString() ?? ""),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Icon(
+                                      _favUrls.contains(item.url.toString()) ? Icons.favorite : Icons.favorite_border,
+                                      color: _favUrls.contains(item.url.toString()) ? Colors.red : Colors.grey.withOpacity(0.5),
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );

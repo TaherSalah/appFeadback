@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,8 @@ import 'package:muslimdaily/app/features/communities/presentation/cubit/communit
 import 'package:muslimdaily/app/features/communities/presentation/cubit/explore_communities_cubit.dart';
 import 'package:muslimdaily/app/features/communities/presentation/cubit/explore_communities_state.dart';
 import 'package:shimmer/shimmer.dart';
+
+import '../../../../core/extensions/context_extension.dart';
 
 class ExploreCommunitiesScreen extends StatelessWidget {
   const ExploreCommunitiesScreen({super.key});
@@ -31,10 +34,28 @@ class _ExploreCommunitiesView extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('استكشاف المجتمعات'),
-        centerTitle: true,
+
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+          context.isTab ? 70 : 50,
+        ),
+        child: AppBar(
+          leading: CupertinoNavigationBarBackButton(
+            color:context.isDark ? Colors.white : Colors.black,
+          ),
+          centerTitle: true,
+          title: Text(
+            'استكشاف المقرأة القرآنية',
+            style: TextStyle(
+              fontFamily: "cairo",
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: context.isTab ? 12.sp : 18.sp,
+            ),
+          ),
+        ),
       ),
+
       body: BlocConsumer<ExploreCommunitiesCubit, ExploreCommunitiesState>(
         listener: (context, state) {
           if (state is ExploreCommunityJoinSuccess) {
