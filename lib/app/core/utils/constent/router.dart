@@ -58,6 +58,9 @@ import '../../../features/achievements/ChallengesManagementScreen.dart';
 import '../../../features/achievements/LeaderboardScreen.dart';
 import '../../../features/duas/DuasMainScreen.dart';
 import '../../../features/calendar/presentation/screens/calendar_screen.dart';
+import '../../../features/communities/presentation/screens/communities_list_screen.dart'; // [NEW]
+import '../../../features/communities/presentation/screens/community_details_screen.dart'; // [NEW]
+import '../../../features/communities/domain/entities/community.dart'; // [NEW]
 import '../../shard/exports/all_exports.dart';
 
 class Routes {
@@ -104,6 +107,8 @@ class Routes {
   static const String kidsStoriesRoute = "/kidsStories";
   static const String hazbNawawiRoute = "/hazbNawawi";
   static const String propheticDuaRoute = "/propheticDua";
+  static const String communitiesRoute = "/communities"; // [NEW]
+  static const String communityDetails = "/communityDetails"; // [NEW]
 }
 
 class QuranRadioPlayerArgs {
@@ -308,6 +313,16 @@ class RouteGenerator {
 
       case '/reflectionsList':
         return MaterialPageRoute(builder: (_) => const ReflectionsListScreen());
+
+      // === Communities ===
+      case Routes.communitiesRoute:
+        return MaterialPageRoute(builder: (_) => const CommunitiesListScreen());
+      case Routes.communityDetails:
+        if (arguments is Community) {
+          return MaterialPageRoute(
+              builder: (_) => CommunityDetailsScreen(community: arguments));
+        }
+        return _badArgsRoute("Community arguments missing");
 
       default:
         return unDefinedRoute();

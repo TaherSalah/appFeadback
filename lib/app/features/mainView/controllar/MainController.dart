@@ -157,6 +157,11 @@ class MainController extends GetxController {
       "subtitle": "شَارِكِ الْمُجْتَمَعَ فِي الْخَتْمِ"
     },
     {
+      "title": "الْمُجْتَمَعَاتُ",
+      "icon": "assets/images/halakat.png",
+      "navigate": Routes.communitiesRoute,
+    },
+    {
       "title": "حَاسِبَةُ الْمَوَارِيثِ",
       "icon": "assets/images/claculator.png",
       "navigate": Routes.inheritanceCalculatorRoute

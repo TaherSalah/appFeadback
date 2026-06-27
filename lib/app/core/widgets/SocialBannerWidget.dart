@@ -41,7 +41,7 @@ class _SocialBannerWidgetState extends State<SocialBannerWidget> {
     final isTelegram = platform == 'telegram';
 
     final Color bgColor = isTelegram ? const Color(0xFF229ED9) : const Color(0xFF25D366);
-    final IconData icon = isTelegram ? FontAwesomeIcons.telegram : FontAwesomeIcons.whatsapp;
+    final FaIconData icon = isTelegram ? FontAwesomeIcons.telegram : FontAwesomeIcons.whatsapp;
 
     return Container(
       width: double.infinity,

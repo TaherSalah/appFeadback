@@ -10,6 +10,7 @@ import 'package:muslimdaily/app/core/services/analytics_service.dart';
 import 'package:muslimdaily/app/core/services/system_control_service.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'app.dart';
 import 'app/core/cubit/centralized_cubit.dart';
@@ -78,6 +79,7 @@ Future<void> _initAppServices() async {
   try {
     // Stage 1: Critical Infrastructure (Parallel)
     await Future.wait([
+      Firebase.initializeApp(),
       Supabase.initialize(
         url: 'https://kghwboxevphvxtsagrer.supabase.co',
         anonKey:

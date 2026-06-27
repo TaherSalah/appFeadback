@@ -15,22 +15,18 @@ import '../../features/hadith_books/controllers/books_controller.dart';
 import '../../features/achievements/services/achievement_service.dart';
 import '../services/content_service.dart';
 
-// final sl = GetIt.instance;
+// Communities imports
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:muslimdaily/app/features/communities/data/datasources/communities_remote_data_source.dart';
+import 'package:muslimdaily/app/features/communities/data/datasources/communities_local_data_source.dart';
+import 'package:muslimdaily/app/features/communities/data/repositories/communities_repository_impl.dart';
+import '../../features/communities/domain/repositories/communities_repository.dart';
+import '../../features/communities/presentation/cubit/communities_cubit.dart';
+import '../../features/communities/presentation/cubit/community_details_cubit.dart';
 
-// Future<void> servicesInit() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   Bloc.observer = MyBlocObserver();
-//   await GetStorage.init();
-//
-//   await SharedObj().init();
-//   sl.registerSingleton<ApiServicess>(ApiServicess());
-//   final SharedPreferences sharedPreferences =
-//       await SharedPreferences.getInstance();
-//   sl.registerLazySingleton(() => sharedPreferences);
-//   static DioClientImpl get dioClient => _i.get<DioClientImpl>();
-//
-//   static ApiClientBloc get apiClientBloc => _i.get<ApiClientBloc>();
-// }
+// Push Notifications imports
+import '../services/push_notifications/unified_push_service.dart';
+import '../services/push_notifications/presentation/cubit/notification_cubit.dart';
 
 abstract class Di {
   static final GetIt _i = GetIt.instance;
@@ -72,11 +68,42 @@ abstract class Di {
     // Content Service
     final contentService = ContentService();
     _i.registerSingleton<ContentService>(contentService);
+
+    // Communities
+    _i.registerLazySingleton<CommunitiesRemoteDataSource>(
+      () => CommunitiesRemoteDataSourceImpl(supabase: Supabase.instance.client),
+    );
+    _i.registerLazySingleton<CommunitiesLocalDataSource>(
+      () => CommunitiesLocalDataSource(),
+    );
+    _i.registerLazySingleton<CommunitiesRepository>(
+      () => CommunitiesRepositoryImpl(
+        remoteDataSource: _i(),
+        localDataSource: _i(),
+      ),
+    );
+
+    // ─────────────────────────────────────────────────────────────
+    // 🔔 Push Notifications — FCM + HMS + iOS
+    // ─────────────────────────────────────────────────────────────
+    await UnifiedPushService.setup(
+      sharedPreferences: sharedPreferences,
+      supabaseClient: Supabase.instance.client,
+    );
+
+    // تسجيل الـ NotificationCubit في GetIt ليمكن الوصول إليه من أي مكان
+    _i.registerSingleton<NotificationCubit>(UnifiedPushService.cubit);
   }
 
+  // ─────────────────────────────────────────────────────────────────
+  //  Accessors
+  // ─────────────────────────────────────────────────────────────────
+
   static DioClientImpl get dioClient => _i.get<DioClientImpl>();
-
   static ApiClientBloc get apiClientBloc => _i.get<ApiClientBloc>();
-
   static SharedPreferences get sharedPreferences => _i.get<SharedPreferences>();
+
+  /// الـ Cubit الجاهز للاستخدام في BlocProvider
+  static NotificationCubit get notificationCubit =>
+      _i.get<NotificationCubit>();
 }

@@ -44,6 +44,38 @@ class FirebaseFailure extends Failure {
   FirebaseFailure({required super.errorMessage});
 }
 
+/// فشل خاص بنظام Push Notifications (FCM أو HMS)
+class PushNotificationFailure extends Failure {
+  final String? code;
+
+  PushNotificationFailure({
+    required super.errorMessage,
+    this.code,
+  });
+}
+
+/// فشل خاص بـ Huawei Mobile Services
+class HmsFailure extends Failure {
+  final int? hmsErrorCode;
+
+  HmsFailure({
+    required super.errorMessage,
+    this.hmsErrorCode,
+  });
+}
+
+/// فشل ناتج عن رفض المستخدم لإذن الإشعارات
+class PermissionFailure extends Failure {
+  PermissionFailure({super.errorMessage = 'Notification permission denied'});
+}
+
+/// فشل عند عدم توفر خدمة Push على الجهاز
+class NoPushServiceFailure extends Failure {
+  NoPushServiceFailure({
+    super.errorMessage = 'No push notification service available on this device',
+  });
+}
+
 String generateErrorMessage(PlatformException e) {
   String authError = "";
   switch (e.code) {

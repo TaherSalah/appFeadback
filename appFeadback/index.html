@@ -1,0 +1,2880 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم رفيق المسلم اليومي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Gradients */
+            --bg-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --bg-gradient-alt: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+
+            /* Colors - Light Mode */
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --accent-color: #059669;
+            --accent-hover: #047857;
+            --accent-light: #d1fae5;
+            --body-bg: #f9fafb;
+            --feedback-card-bg: #f3f4f6;
+
+            /* Status Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 24px;
+            --spacing-2xl: 32px;
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
+            --card-bg: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+            --accent-color: #10b981;
+            --accent-hover: #34d399;
+            --accent-light: #064e3b;
+            --body-bg: #111827;
+            --feedback-card-bg: #1f2937;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+            color: var(--text-primary);
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: var(--spacing-2xl);
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: var(--spacing-md);
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Theme Toggle & Logout */
+        .header-actions {
+            position: absolute;
+            top: var(--spacing-lg);
+            left: var(--spacing-lg);
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-toggle, .logout-btn {
+            background: var(--bg-gradient);
+            color: white;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logout-btn {
+            background: #ef4444; /* Red for logout */
+        }
+
+        .theme-toggle:hover, .logout-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: var(--accent-light);
+            border-radius: 50%;
+            opacity: 0.05;
+            transform: translate(30%, -30%);
+            z-index: 0;
+        }
+
+        .stat-card:nth-child(1)::before {
+            background: linear-gradient(135deg, #10b981, #059669);
+            opacity: 0.08;
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            opacity: 0.08;
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            opacity: 0.08;
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            opacity: 0.08;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            background: rgba(16, 185, 129, 0.15);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .stat-card:nth-child(4) .stat-icon {
+            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Filters */
+        .filters {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-2xl);
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group select,
+        .filter-group input:not([type="checkbox"]) {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-md);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        /* Feedback Table */
+        .feedback-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .feedback-grid {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+
+        .feedback-card {
+            background: var(--feedback-card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feedback-card:hover {
+            border-color: var(--accent-color);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .feedback-info h3 {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .feedback-info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .category-badge {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-مشكلة {
+            background: rgba(239, 68, 68, 0.15);
+            color: #dc2626;
+        }
+
+        .category-تحديث {
+            background: rgba(59, 130, 246, 0.15);
+            color: #2563eb;
+        }
+
+        .category-اقتراح {
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+        }
+
+        .category-استفسار {
+            background: rgba(139, 92, 246, 0.15);
+            color: #7c3aed;
+        }
+
+        .category-أخرى {
+            background: rgba(107, 114, 128, 0.15);
+            color: #4b5563;
+        }
+
+        .feedback-description {
+            color: var(--text-primary);
+            line-height: 1.7;
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        .feedback-meta {
+            display: flex;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-tabs {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            background: var(--card-bg);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .status-tab {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+            border: 2px solid transparent;
+        }
+
+        .status-tab.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .status-tab:hover:not(.active) {
+            background: var(--accent-light);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .images-grid {
+            
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .images-grid img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+        }
+
+        .images-grid img:hover {
+            transform: scale(1.08);
+            box-shadow: var(--shadow-md);
+        }
+
+        .device_info {
+            background: var(--body-bg);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-lg);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        .admin-notes {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .admin-notes textarea,
+        .reply-section textarea {
+            width: 100%;
+            height: 100px;
+            padding: var(--spacing-lg);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-lg) 0;
+            font-family: 'Cairo', sans-serif;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            resize: vertical;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .admin-notes textarea:focus,
+        .reply-section textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .save-notes-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .save-notes-btn:hover {
+            background: var(--accent-hover);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .save-notes-btn:active {
+            transform: translateY(0);
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #dc2626;
+            border: 2px solid #dc2626;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .reply-section {
+            margin-top: var(--spacing-lg);
+            padding: var(--spacing-xl);
+            border-top: 1px solid var(--border-color);
+            background: var(--body-bg);
+            border-radius: var(--radius-lg);
+        }
+
+        .reply-section textarea {
+            width: 100%;
+            height: 80px;
+            padding: var(--spacing-lg);
+            border: 2px solid var(--accent-color);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            resize: vertical;
+            margin-bottom: var(--spacing-lg);
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-primary);
+            background: var(--card-bg);
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #dc2626;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            border: 2px solid #dc2626;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        /* Modal for images */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 0; overflow-x: hidden; }
+            .container { max-width: 100%; }
+            .header {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+                margin-top: 40px;
+            }
+            
+            .header p {
+                font-size: 0.95rem;
+            }
+
+            .header-actions {
+                top: 15px;
+                left: 15px;
+            }
+            
+            .theme-toggle, .logout-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-md);
+            }
+
+            .stat-card {
+                padding: var(--spacing-md);
+                gap: var(--spacing-sm);
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+
+            .stat-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.8rem;
+            }
+
+            .stat-value {
+                font-size: 1.6rem;
+            }
+            
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .filters {
+                flex-direction: column;
+                padding: var(--spacing-md);
+                gap: var(--spacing-md);
+            }
+
+            .filter-group {
+                width: 100%;
+                min-width: 100%;
+            }
+
+            .feedback-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-sm);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .update-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feedback-container {
+                padding: 10px;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            .feedback-card {
+                padding: 12px;
+            }
+
+            .status-tabs {
+                padding: var(--spacing-sm);
+                gap: var(--spacing-xs);
+            }
+
+            .status-tab {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+            
+            .tabs {
+                padding: var(--spacing-sm);
+            }
+            
+            .tab {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .export-btn, .refresh-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Analytics Section */
+        .analytics-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-2xl);
+            display: none;
+            /* Hidden until data loads */
+        }
+
+        .charts-grid {
+            
+            gap: var(--spacing-2xl);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            padding: var(--spacing-lg);
+            background: var(--body-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Export Button */
+        .export-btn {
+            background: var(--card-bg);
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .export-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        /* Auth Overlay */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-card h2 {
+            color: var(--accent-color);
+            margin-bottom: var(--spacing-lg);
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: var(--spacing-lg);
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            font-size: 1.1rem;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .auth-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.95rem;
+        }
+
+        .auth-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Tabs Styling */
+        .tabs {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            background: var(--card-bg);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) transparent;
+        }
+
+        .tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .tabs::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tabs::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .tab {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .tab.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--accent-light);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Update Form Styling */
+        .update-form {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .update-grid {
+            
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .update-item {
+            background: var(--feedback-card-bg);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .update-item:hover {
+            border-color: var(--accent-color);
+            background: var(--card-bg);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .badge-mandatory {
+            background: rgba(239, 68, 68, 0.15);
+            color: #dc2626;
+            border: 2px solid #dc2626;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-optional {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 2px solid var(--success);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: var(--feedback-card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-color);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+        }
+
+        .feature-card.disabled {
+            opacity: 0.6;
+            border-color: var(--border-color);
+            background: var(--body-bg);
+        }
+
+        .feature-card.maintenance {
+            border-color: var(--warning);
+            background: rgba(245, 158, 11, 0.08);
+            border-width: 2px;
+        }
+
+        .feature-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .feature-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .feature-emoji {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .feature-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 28px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background-color: var(--accent-color);
+        }
+
+        .toggle-switch input:checked+.toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-slider:hover {
+            box-shadow: 0 0 8px var(--accent-light);
+        }
+
+        .feature-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: var(--spacing-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .feature-status.active {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .feature-status.maintenance {
+            color: var(--warning);
+            font-weight: 700;
+        }
+
+        .feature-status.hidden {
+            color: var(--error);
+            font-weight: 700;
+        }
+
+        .status-select {
+            padding: var(--spacing-md) var(--spacing-md);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .status-select:hover {
+            border-color: var(--accent-color);
+        }
+
+        /* Sidebar Navigation */
+        .sidebar-wrapper {
+            display: flex;
+            gap: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--card-bg);
+            border-left: 1px solid var(--border-color);
+            padding: var(--spacing-lg) 0;
+            overflow-y: auto;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--accent-color);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .sidebar-header h3 {
+            display: none;
+        }
+
+        .sidebar-toggle {
+            background: var(--bg-gradient);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .sidebar-item {
+            padding: var(--spacing-lg) var(--spacing-md);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-right: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            white-space: nowrap;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-item:hover {
+            background: var(--accent-light);
+            color: var(--accent-color);
+            border-right-color: var(--accent-color);
+        }
+
+        .sidebar-item.active {
+            background: var(--accent-light);
+            color: var(--accent-color);
+            border-right-color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .sidebar-item .emoji {
+            font-size: 1.2rem;
+            min-width: 24px;
+        }
+
+        .sidebar-item .label {
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar.collapsed .sidebar-item {
+            justify-content: center;
+            padding: var(--spacing-lg) var(--spacing-md);
+        }
+
+        .sidebar.collapsed .sidebar-item .label {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-item .emoji {
+            min-width: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: var(--spacing-lg);
+            transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-content.sidebar-collapsed {
+            margin-right: 80px;
+        }
+
+        /* Mobile Sidebar */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--bg-gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            z-index: 9999;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                margin-right: 240px;
+            }
+
+            .main-content.sidebar-collapsed {
+                margin-right: 70px;
+            }
+
+            .sidebar.collapsed {
+                width: 70px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                right: -280px;
+                width: 260px;
+                height: 100vh;
+                z-index: 999;
+                border-left: 1px solid var(--border-color);
+            }
+
+            .sidebar.active {
+                right: 0;
+            }
+
+            .sidebar.collapsed {
+                width: 260px;
+                right: -260px;
+            }
+
+            .sidebar.collapsed.active {
+                right: 0;
+            }
+
+            .sidebar-toggle {
+                display: flex;
+            }
+
+            .main-content {
+                margin-right: 0;
+                padding: 10px;
+            }
+
+            .main-content.sidebar-collapsed {
+                margin-right: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                bottom: 20px;
+                left: 20px;
+            }
+
+            .header {
+                margin-bottom: var(--spacing-lg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .sidebar.active {
+                right: 0;
+            }
+
+            .sidebar-header {
+                padding: var(--spacing-lg) var(--spacing-lg);
+            }
+
+            .mobile-menu-btn {
+                bottom: 20px;
+                left: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+            }
+            .chart-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            table {
+                display: block !important;
+                width: 100% !important;
+                overflow-x: auto !important;
+                white-space: nowrap !important;
+            }
+        }
+    </style>
+
+    <style>
+        .responsive-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        @media (max-width: 768px) {
+            .responsive-form-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()">☰</button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>القائمة</h3>
+            <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebarCollapse()">⟨</button>
+        </div>
+        <nav class="sidebar-nav">
+            <div id="feedbackTabBtn" class="sidebar-item active" onclick="switchTab('feedback')">
+                <span class="emoji">📋</span>
+                <span class="label">الشكاوى والاقتراحات</span>
+            </div>
+            <div id="updatesTabBtn" class="sidebar-item" onclick="switchTab('updates')">
+                <span class="emoji">🚀</span>
+                <span class="label">تحديثات التطبيق</span>
+            </div>
+            <div id="analyticsTabBtn" class="sidebar-item" onclick="switchTab('analytics')">
+                <span class="emoji">📊</span>
+                <span class="label">الإحصائيات</span>
+            </div>
+            <div id="bannersTabBtn" class="sidebar-item" onclick="switchTab('banners')">
+                <span class="emoji">🖼️</span>
+                <span class="label">الإعلانات</span>
+            </div>
+            <div id="khatmahTabBtn" class="sidebar-item" onclick="switchTab('khatmah')">
+                <span class="emoji">🕋</span>
+                <span class="label">الختمات الجماعية</span>
+            </div>
+            <div id="radioTabBtn" class="sidebar-item" onclick="switchTab('radio')">
+                <span class="emoji">📻</span>
+                <span class="label">راديو القرآن</span>
+            </div>
+            <div id="featuresTabBtn" class="sidebar-item" onclick="switchTab('features')">
+                <span class="emoji">🎮</span>
+                <span class="label">المميزات</span>
+            </div>
+            <div id="settingsTabBtn" class="sidebar-item" onclick="switchTab('settings')">
+                <span class="emoji">⚙️</span>
+                <span class="label">الإعدادات</span>
+            </div>
+            <div id="contentTabBtn" class="sidebar-item" onclick="switchTab('content')">
+                <span class="emoji">✍️</span>
+                <span class="label">إدارة المحتوى</span>
+            </div>
+            <div id="kidsStoriesTabBtn" class="sidebar-item" onclick="switchTab('kidsStories')">
+                <span class="emoji">👶</span>
+                <span class="label">قصص ركن الطفل</span>
+            </div>
+            <div id="charityStoriesTabBtn" class="sidebar-item" onclick="switchTab('charityStories')">
+                <span class="emoji">🤲</span>
+                <span class="label">قصص الصدقات</span>
+            </div>
+            <div id="errorsTabBtn" class="sidebar-item" onclick="switchTab('errors')">
+                <span class="emoji">⚠️</span>
+                <span class="label">الأعطال</span>
+            </div>
+            <div id="mosquesTabBtn" class="sidebar-item" onclick="switchTab('mosques')">
+                <span class="emoji">🕌</span>
+                <span class="label">المساجد</span>
+            </div>
+            <div id="pdfBooksTabBtn" class="sidebar-item" onclick="switchTab('pdfBooks')">
+                <span class="emoji">📚</span>
+                <span class="label">مكتبة الـ PDF</span>
+            </div>
+            <div id="communitiesTabBtn" class="sidebar-item" onclick="switchTab('communities')">
+                <span class="emoji">🕌</span>
+                <span class="label">مجتمعات القرآن والحلقات</span>
+            </div>
+            <div id="communityUsersTabBtn" class="sidebar-item" onclick="switchTab('communityUsers')">
+                <span class="emoji">👥</span>
+                <span class="label">مستخدمي المجتمعات</span>
+            </div>
+            <div id="notificationsTabBtn" class="sidebar-item" onclick="switchTab('notifications')">
+                <span class="emoji">🔔</span>
+                <span class="label">الإشعارات (Push)</span>
+            </div>
+        </nav>
+    </div>
+
+    <div class="sidebar-wrapper">
+        <!-- Header -->
+        <div style="width: 100%;">
+            <div class="header">
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع">🌓</button>
+                    <button class="logout-btn" onclick="logoutAdmin()" title="تسجيل الخروج">🚪</button>
+                </div>
+                <h1>لوحة تحكم رفيق المسلم اليومي</h1>
+                <p>إدارة البلاغات والاقتراحات وتحديثات التطبيق</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content" id="mainContent">
+
+        <div id="feedbackTab" class="tab-content active">
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">📝</div>
+                    <h3>إجمالي الشكاوى</h3>
+                    <div class="number" id="totalCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🐛</div>
+                    <h3>المشاكل</h3>
+                    <div class="number" id="problemCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💡</div>
+                    <h3>الاقتراحات</h3>
+                    <div class="number" id="suggestionCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📅</div>
+                    <h3>آخر 7 أيام</h3>
+                    <div class="number" id="recentCount">0</div>
+                </div>
+            </div>
+
+            <!-- Analytics Toggle Button -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: var(--text-primary); font-size: 1.3rem;">📋 البيانات المفصلة</h2>
+                <button class="refresh-btn" id="analyticsToggle" onclick="toggleAnalytics()" style="padding: 8px 20px; font-size: 0.9rem;">📊 عرض الإحصائيات</button>
+            </div>
+
+            <!-- Analytics -->
+            <div id="analyticsSection" class="analytics-section" style="display: none;">
+                <h2 style="margin-bottom: 20px; color: var(--text-primary); font-size: 1.5rem;">📊 تحليلات البيانات</h2>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="frequencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label>التصنيف</label>
+                    <select id="categoryFilter">
+                        <option value="">الكل</option>
+                        <option value="مشكلة" selected>مشكلة</option>
+                        <option value="تحديث">تحديث</option>
+                        <option value="اقتراح">اقتراح</option>
+                        <option value="استفسار">استفسار</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>الحالة</label>
+                    <select id="statusFilter">
+                        <option value="">الكل</option>
+                        <option value="جديد">جديد</option>
+                        <option value="تم استقبال المشكلة">تم استقبال المشكلة</option>
+                        <option value="قيد المعالجة">قيد المعالجة</option>
+                        <option value="تم الحل">تم الحل</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>التقييم</label>
+                    <select id="ratingFilter">
+                        <option value="">الكل</option>
+                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                        <option value="4">⭐⭐⭐⭐ (4+)</option>
+                        <option value="3">⭐⭐⭐ (3+)</option>
+                        <option value="2">⭐⭐ (2+)</option>
+                        <option value="1">⭐ (1+)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>البحث</label>
+                    <input type="text" id="searchInput" placeholder="ابحث في الاسم أو البريد أو الوصف...">
+                </div>
+                <div class="filter-group">
+                    <label>من تاريخ</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="filter-group">
+                    <label>إلى تاريخ</label>
+                    <input type="date" id="endDate">
+                </div>
+                <div class="filter-group" style="min-width: 150px; display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="unrepliedFilter" onchange="filterFeedback()"
+                        style="width: 20px; height: 20px; cursor: pointer;">
+                    <label for="unrepliedFilter" style="margin-bottom: 0; cursor: pointer;">📩 لم يتم الرد</label>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="refresh-btn" onclick="loadFeedback()">🔄 تحديث</button>
+                        <button class="export-btn" onclick="exportToCSV()">📥 تصدير CSV</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Container -->
+            <div class="feedback-container">
+                <div class="status-tabs" id="statusTabs">
+                    <div class="status-tab active" onclick="setStatusFilter('', this)">الكل</div>
+                    <div class="status-tab" onclick="setStatusFilter('جديد', this)">🆕 جديد</div>
+                    <div class="status-tab" onclick="setStatusFilter('تم استقبال المشكلة', this)">📩 تم الاستقبال</div>
+                    <div class="status-tab" onclick="setStatusFilter('قيد المعالجة', this)">⏳ قيد المعالجة</div>
+                    <div class="status-tab" onclick="setStatusFilter('تم الحل', this)">✅ تم الحل</div>
+                </div>
+                <div id="feedbackList" class="feedback-grid">
+                    <div class="loading">⏳ جاري تحميل البيانات...</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="updatesTab" class="tab-content">
+            <div class="update-form">
+                <h3 style="color: var(--accent-color); margin-bottom: 10px;">🚀 إرسال تحديث جديد</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.9rem;">أدخل تفاصيل الإصدار
+                    الجديد ليتم إخطار المستخدمين في التطبيق بشكل تلقائي.</p>
+
+                <div class="update-grid">
+                    <div class="filter-group">
+                        <label>اسم الإصدار (e.g. 2.1.0)</label>
+                        <input type="text" id="versionName" placeholder="مثال: 1.0.5">
+                    </div>
+                    <div class="filter-group">
+                        <label>رقم البناء (Build Code)</label>
+                        <input type="number" id="versionCode" placeholder="مثال: 5">
+                    </div>
+                    <div class="filter-group">
+                        <label>نوع التحديث</label>
+                        <select id="isMandatory">
+                            <option value="false">اختياري (يمكن تخطيه)</option>
+                            <option value="true">إجباري (لا يمكن تخطيه)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-group" style="margin-bottom: 20px;">
+                    <label>روابط التحديث (Direct Links / Store Links)</label>
+                    <div style="display: grid; gap: 10px;">
+                        <input type="text" id="urlAndroid" placeholder="Google Play / Direct APK (Android)"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        <input type="text" id="urlIos" placeholder="App Store Link (iOS)"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        <input type="text" id="urlHuawei" placeholder="AppGallery Link (Huawei)"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+                </div>
+
+                <div class="filter-group" style="margin-bottom: 25px;">
+                    <label>ما الجديد في هذا الإصدار؟ (Release Notes)</label>
+                    <textarea id="releaseNotes"
+                        style="width: 100%; height: 100px; padding: 15px; border-radius: 12px; border: 2px solid #e0e0e0; font-family: inherit;"
+                        placeholder="مثال: إصلاح أخطاء وتحسين الأداء..."></textarea>
+                </div>
+
+                <button class="refresh-btn" onclick="pushUpdate()"
+                    style="width: 100%; height: 55px; font-size: 1.1rem;">🚀 نشر التحديث الآن للمستخدمين</button>
+            </div>
+
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: #333;">📜 سجل التحديثات المرسلة</h3>
+                    <button class="refresh-btn" onclick="loadUpdates()" style="padding: 5px 15px; font-size: 0.8rem;">🔄
+                        تحديث السجل</button>
+                </div>
+                <div id="updatesList">
+                    <div class="loading">⏳ جاري تحميل التحديثات...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="analyticsTab" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">🚀</div>
+                    <h3>إجمالي فتح التطبيق</h3>
+                    <div class="number" id="totalLaunches">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <h3>المستخدمون الفريدون</h3>
+                    <div class="number" id="uniqueUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🌍</div>
+                    <h3>عدد الدول</h3>
+                    <div class="number" id="countriesCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🏆</div>
+                    <h3>أعلى دولة</h3>
+                    <div class="number" id="topCountryBadge">-</div>
+                </div>
+            </div>
+
+            <div class="analytics-section" style="display: block;">
+                <div class="charts-grid">
+                    <!-- OS Distribution Chart -->
+                    <div class="chart-container" style="background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: var(--shadow-md); height: 350px;">
+                        <h4 style="text-align: right; margin-bottom: 20px; color: var(--text-primary); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.5rem;">📱</span> توزيع نظام التشغيل
+                        </h4>
+                        <div style="height: 280px;">
+                            <canvas id="osChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Country Bar Chart -->
+                    <div class="chart-container" style="background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: var(--shadow-md); height: 500px;">
+                        <h4 style="text-align: right; margin-bottom: 20px; color: var(--text-primary); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.5rem;">🌍</span> أعلى الدول استخداماً
+                        </h4>
+                        <div style="height: 400px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: right;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted);">
+                                        <th style="padding: 12px;">#</th>
+                                        <th style="padding: 12px;">الدولة</th>
+                                        <th style="padding: 12px;">عدد الفتحات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="countryTableBody">
+                                    <tr>
+                                        <td colspan="3" style="text-align: center; padding: 20px;">جاري تحميل البيانات...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Features Usage -->
+                    <div class="chart-container" style="grid-column: span 2; background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: var(--shadow-md); height: 450px;">
+                        <h4 style="text-align: right; margin-bottom: 20px; color: var(--text-primary); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.5rem;">🎯</span> الأقسام الأكثر استخداماً (Feature Analytics)
+                        </h4>
+                        <div style="height: 350px;">
+                            <canvas id="featuresUsageChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Usage -->
+                <div class="chart-container" style="margin-top: 30px; height: 500px; background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: var(--shadow-md);">
+                    <h4 style="text-align: right; margin-bottom: 20px; color: var(--text-primary); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.5rem;">📅</span> النشاط اليومي (آخر 15 يوم)
+                    </h4>
+                    <div style="height: 400px;">
+                        <canvas id="dailyUsageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Feature Control Tab -->
+        <div id="featuresTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">🎮 المميزات (التحكم بالأقسام)</h3>
+                    <button class="refresh-btn" onclick="loadFeatures()"
+                        style="padding: 8px 20px; font-size: 0.9rem;">🔄 تحديث</button>
+                </div>
+
+                <div
+                    style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--accent-color);">
+                    <p style="margin: 0; color: var(--text-primary); font-size: 0.95rem;">
+                        💡 <strong>ملاحظة:</strong> يمكنك إظهار أو إخفاء الأقسام المختلفة في التطبيق من هنا. الأقسام
+                        المعطلة لن تظهر للمستخدمين.
+                    </p>
+                </div>
+
+                <!-- Features Grid -->
+                <div id="featuresList"
+                    class="responsive-form-grid">
+                    <div class="loading">⏳ جاري تحميل الأقسام...</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="settingsTab" class="tab-content">
+            <div class="feedback-container">
+                <h3 style="margin-bottom: 25px; color: var(--text-primary);">🛠️ التحكم في التطبيق</h3>
+
+                <div class="filter-group"
+                    style="margin-bottom: 30px; display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.05); padding: 20px; border-radius: 12px;">
+                    <label style="margin: 0; flex: 1; color: var(--text-primary);">وضع الصيانة (تفعيل سيمنع المستخدمين
+                        من الدخول)</label>
+                    <input type="checkbox" id="maintenanceToggle" onchange="updateMaintenanceMode(this.checked)"
+                        style="width: 25px; height: 25px; cursor: pointer;">
+                </div>
+
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px;">
+                    <label
+                        style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">📢
+                        شريط الأنباء المتحرك</label>
+
+                    <div class="responsive-form-grid">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; color: var(--text-secondary);">العنوان الجانبي (مثلاً:
+                                تنبيه)</label>
+                            <input type="text" id="newsLabelInput" placeholder="تنبيه عاجل"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 20px;">
+                            <input type="checkbox" id="newsActiveToggle"
+                                style="width: 20px; height: 20px; cursor: pointer;">
+                            <label style="font-size: 13px; font-weight: bold;">تفعيل الظهور</label>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: var(--text-secondary);">نوع التنبيه (اللون)</label>
+                            <select id="newsTypeInput"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="urgent">🔴 عاجل (أحمر)</option>
+                                <option value="info">🔵 معلومة (أزرق)</option>
+                                <option value="success">🟢 نجاح (أخضر)</option>
+                                <option value="warning">🟠 تحذير (برتقالي)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label style="font-size: 12px; color: var(--text-secondary);">نص الخبر (اتركه فارغاً
+                        للإخفاء)</label>
+                    <input type="text" id="newsInput" placeholder="أدخل نص التنبيه هنا..."
+                        style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); margin-top: 5px;">
+
+                    <button class="refresh-btn" onclick="updateNewsMarquee()"
+                        style="margin-top: 15px; width: 100%; background: #ef4444; font-weight: bold;">📢 تحديث شريط
+                        الأنباء</button>
+                </div>
+
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.02);">
+                    <label
+                        style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">🎨
+                        لون التطبيق الرئيسي (Theme Color)</label>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <input type="color" id="themeColorInput"
+                            style="width: 60px; height: 40px; border: none; padding: 0; cursor: pointer; background: none;">
+                        <input type="text" id="themeColorHex" placeholder="#178B74"
+                            style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        <button class="refresh-btn" onclick="updateThemeColor()" style="padding: 10px 20px;">حفظ
+                            اللون</button>
+                        <button class="refresh-btn" onclick="resetThemeColor()"
+                            style="padding: 10px 20px; background: #6b7280;">استعادة الأصلي</button>
+                    </div>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin-top: 8px;">سيتم تغيير لون الأزرار
+                        والواجهات في التطبيق لهذا اللون فوراً.</p>
+                </div>
+
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1px solid #6366f1; padding: 20px; border-radius: 16px; background: rgba(99, 102, 241, 0.05);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                        <div>
+                            <label style="color: #4f46e5; font-weight: bold; display: block; margin-bottom: 5px;">📢
+                                الرسائل العامة (Broadcast)</label>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary);">رسالة تظهر للجميع عند فتح
+                                التطبيق (بديلة للإشعارات).</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="font-size: 12px;">تفعيل:</label>
+                            <input type="checkbox" id="broadcastToggle"
+                                style="width: 20px; height: 20px; cursor: pointer;">
+                        </div>
+                    </div>
+
+                    <textarea id="broadcastInput"
+                        style="width: 100%; height: 80px; padding: 12px; border-radius: 12px; border: 1.5px solid #6366f1; background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-bottom: 15px;"
+                        placeholder="اكتب الرسالة التي ستظهر للمستخدمين هنا..."></textarea>
+
+                    <button class="refresh-btn" onclick="updateBroadcast()"
+                        style="width: 100%; background: #6366f1; font-weight: bold; height: 45px;">🚀 نشر الرسالة
+                        الآن</button>
+                </div>
+
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1.5px solid var(--accent-color); padding: 20px; border-radius: 16px; background: rgba(16, 185, 129, 0.05);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <label style="color: var(--accent-color); font-weight: bold; margin: 0;">📜 خاطرة / حديث اليوم
+                            (يظهر في الواجهه الرئيسية)</label>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="font-size: 13px; color: var(--text-secondary);">تفعيل الظهور:</label>
+                            <input type="checkbox" id="quoteToggle" style="width: 20px; height: 20px; cursor: pointer;">
+                        </div>
+                    </div>
+                    <textarea id="quoteInput"
+                        style="width: 100%; height: 100px; padding: 15px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit;"
+                        placeholder="اكتب الخاطرة أو الحديث الذي سيظهر في الصفحة الرئيسية..."></textarea>
+                    <button class="refresh-btn" onclick="updateDailyQuote()"
+                        style="margin-top: 15px; width: 100%; font-weight: bold;">💾 حفظ وتحديث الخاطرة</button>
+                </div>
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1.5px solid #f59e0b; padding: 20px; border-radius: 16px; background: rgba(245, 158, 11, 0.05);">
+                    <label style="color: #d97706; font-weight: bold; display: block; margin-bottom: 15px;">🔗 روابط
+                        التواصل والدعم</label>
+                    <div class="responsive-form-grid">
+                        <div>
+                            <label style="font-size: 13px;">فيسبوك</label>
+                            <input type="text" id="linkFacebook" class="auth-input"
+                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px;">واتساب</label>
+                            <input type="text" id="linkWhatsapp" class="auth-input"
+                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px;">رابط App Store</label>
+                            <input type="text" id="linkAppStore" class="auth-input"
+                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px;">رابط Play Store</label>
+                            <input type="text" id="linkPlayStore" class="auth-input"
+                                style="padding: 10px; font-size: 0.9rem; text-align: left;" dir="ltr">
+                        </div>
+                    </div>
+                    <button class="refresh-btn" onclick="updateSupportLinks()"
+                        style="width: 100%; background: #f59e0b; font-weight: bold; margin-top: 15px;">💾 حفظ
+                        الروابط</button>
+                </div>
+
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1.5px solid #ec4899; padding: 20px; border-radius: 16px; background: rgba(236, 72, 153, 0.05);">
+                    <label style="color: #db2777; font-weight: bold; display: block; margin-bottom: 15px;">🕋 تعديل
+                        مواقيت الصلاة (دقائق +/-)</label>
+                    <div class="responsive-form-grid">
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">الفجر</label>
+                            <input type="number" id="offsetFajr" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">الشروق</label>
+                            <input type="number" id="offsetSunrise" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">الظهر</label>
+                            <input type="number" id="offsetDhuhr" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">العصر</label>
+                            <input type="number" id="offsetAsr" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">المغرب</label>
+                            <input type="number" id="offsetMaghrib" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 12px; display: block;">العشاء</label>
+                            <input type="number" id="offsetIsha" value="0"
+                                style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                        </div>
+                    </div>
+                    <button class="refresh-btn" onclick="updatePrayerOffsets()"
+                        style="width: 100%; background: #ec4899; font-weight: bold; margin-top: 15px;">💾 حفظ تعديلات
+                        المواقيت</button>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin-top: 10px; text-align: center;">هذه
+                        القيم تضاف أو تخصم من التوقيت المحسوب لكل المستخدمين.</p>
+                </div>
+
+                <!-- App Version Management -->
+                <div class="filter-group"
+                    style="margin-bottom: 30px; border: 1.5px solid #6366f1; padding: 20px; border-radius: 16px; background: rgba(99, 102, 241, 0.05);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                        <div>
+                            <label style="color: #4f46e5; font-weight: bold; display: block; margin-bottom: 5px;">🆙
+                                تحديث التطبيق الإجباري</label>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary);">أقل رقم إصدار مسموح به. إذا كان
+                                إصدار المستخدم أقل من هذا الرقم سيطلب منه التحديث.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="minAppVersion" placeholder="مثلاً: 2.0.0"
+                            style="flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid #6366f1; background: var(--card-bg); color: var(--text-primary);">
+                        <button class="refresh-btn" onclick="updateMinVersion()"
+                            style="background: #6366f1; font-weight: bold; height: 45px; padding: 0 25px;">💾
+                            حفظ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banners Tab -->
+
+        <div id="bannersTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">🖼️ إدارة البانرات الإعلانية</h3>
+                </div>
+
+                <!-- Add New Banner -->
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة بانر جديد</h4>
+                    <div class="responsive-form-grid">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">عنوان البانر (اختياري)</label>
+                            <input type="text" id="bannerTitle"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">الرابط عند الضغط
+                                (اختياري)</label>
+                            <input type="text" id="bannerLink" placeholder="https://..."
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">اختر الصورة</label>
+                        <input type="file" id="bannerFile" accept="image/*"
+                            style="display: block; width: 100%; padding: 10px; margin-top: 5px; color: var(--text-primary);">
+                    </div>
+
+                    <div id="uploadProgress"
+                        style="display: none; height: 4px; background: #eee; border-radius: 2px; margin-top: 15px; overflow: hidden;">
+                        <div id="progressBar"
+                            style="width: 0%; height: 100%; background: var(--accent-color); transition: width 0.3s;">
+                        </div>
+                    </div>
+
+                    <button class="refresh-btn" onclick="uploadBanner()"
+                        style="margin-top: 20px; width: 100%; font-weight: bold;">➕ رفع البانر ونشره</button>
+                </div>
+
+                <!-- Banners List -->
+                <div id="bannersList">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <div id="contentTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">✍️ إدارة المحتوى الديناميكي (CMS)</h3>
+                </div>
+
+                <!-- Add New Content -->
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة محتوى جديد</h4>
+                    <div class="responsive-form-grid">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">العنوان</label>
+                            <input type="text" id="contentTitle" placeholder="مثال: فضل صيام الاثنين"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">النوع</label>
+                            <select id="contentType"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="article">مقال / خاطرة</option>
+                                <option value="tip">نصيحة يومية</option>
+                                <option value="announcement">إعلان هام</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">المحتوى (النص)</label>
+                        <textarea id="contentBody" placeholder="اكتب المحتوى هنا..."
+                            style="width: 100%; height: 120px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">رابط صورة (اختياري)</label>
+                        <input type="text" id="contentImage" placeholder="https://..."
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+
+                    <button class="refresh-btn" onclick="publishContent()"
+                        style="margin-top: 20px; width: 100%; font-weight: bold;">📝 نشر المحتوى</button>
+                </div>
+
+                <!-- Content List -->
+                <div id="contentList">
+                    <div class="loading">⏳ جاري تحميل المحتوى...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Radio Tab -->
+        <div id="khatmahTab" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: var(--text-primary);">🕋 إدارة الختمات الجماعية</h2>
+
+            <div class="update-form">
+                <h3 style="margin-bottom: 15px;">➕ إنشاء حملة جديدة</h3>
+                <div class="update-grid">
+                    <div class="filter-group">
+                        <label>عنوان الحملة</label>
+                        <input type="text" id="khatmahTitle" placeholder="مثلاً: ختمة رمضان الكبرى">
+                    </div>
+                    <div class="filter-group">
+                        <label>نوع الختمة</label>
+                        <select id="khatmahTargetType">
+                            <option value="juz">بالأجزاء (30)</option>
+                            <option value="surah">بالسور (114)</option>
+                            <option value="page">بالصفحات (604)</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>تفعيل</label>
+                        <select id="khatmahIsActive">
+                            <option value="true">نعم (نشطة حالياً)</option>
+                            <option value="false">لا (مسودة)</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="refresh-btn" onclick="createKhatmahCampaign()">حفظ الحملة ✅</button>
+            </div>
+
+            <!-- Khatmah Stats -->
+            <div class="stats-grid" id="khatmahStatsArea" style="margin-bottom: 25px;">
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <h3>إجمالي المتسابقين</h3>
+                    <div class="number" id="khatmahTotalUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📖</div>
+                    <h3>أوراد تُقرأ حالياً</h3>
+                    <div class="number" id="khatmahCurrentReading">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">✅</div>
+                    <h3>أوراد مكتملة (اليوم)</h3>
+                    <div class="number" id="khatmahTodayDone">0</div>
+                </div>
+            </div>
+
+            <div class="feedback-container" style="margin-bottom: 30px; padding: 25px;">
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <!-- Leaderboard -->
+                    <div style="flex: 1; min-width: 300px;">
+                        <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.5rem;">🏆</span> لوحة المتصدرين (الأكثر قراءة)
+                        </h3>
+                        <div id="khatmahLeaderboard" style="display: grid; gap: 10px;">
+                            <div class="empty-state">⏳ جاري التحميل...</div>
+                        </div>
+                    </div>
+
+                    <!-- Participants List -->
+                    <div
+                        style="flex: 1; min-width: 300px; border-right: 1px solid var(--border-color); padding-right: 20px;">
+                        <h3
+                            style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+                            <span style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.5rem;">👥</span> جميع المشاركين
+                            </span>
+                            <button class="status-btn" onclick="exportKhatmahParticipants()"
+                                style="padding: 5px 12px; font-size: 0.8rem; background: #10b981; border: none;">📥
+                                تصدير CSV</button>
+                        </h3>
+                        <div id="khatmahAllParticipants"
+                            style="display: grid; gap: 8px; max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                            <div class="empty-state">⏳ جاري التحميل...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">📁 الحملات الحالية</h3>
+            <div id="khatmahCampaignsList">
+                <div class="loading">⏳ جاري تحميل الحملات...</div>
+            </div>
+        </div>
+
+        <div id="radioTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">📻 إدارة إذاعات القرآن المخصصة</h3>
+                </div>
+
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px; background: rgba(59, 130, 246, 0.05);">
+                    <h4 style="margin-top: 0; color: #3b82f6;">✨ إضافة إذاعة جديدة</h4>
+                    <div class="responsive-form-grid">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">اسم الإذاعة</label>
+                            <input type="text" id="radioName" placeholder="مثلاً: إذاعة كبار العلماء"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">رابط البث (URL)</label>
+                            <input type="text" id="radioUrl" placeholder="https://..."
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+                    <button class="refresh-btn" onclick="addCustomRadio()"
+                        style="margin-top: 15px; width: 100%; background: #3b82f6; font-weight: bold;">💾 إضافة
+                        الإذاعة</button>
+                </div>
+
+                <div id="radioList">
+                    <!-- Radio items will load here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="kidsStoriesTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">👶 إدارة قصص ركن الطفل</h3>
+                </div>
+
+                <!-- Add New Kids Story -->
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة قصة جديدة للأطفال</h4>
+                    <div class="responsive-form-grid">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">العنوان</label>
+                            <input type="text" id="kidsStoryTitle" placeholder="مثال: قصة الصدق"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">التصنيف</label>
+                            <select id="kidsStoryCategory"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="منوع">منوع</option>
+                                <option value="قصص الأنبياء">قصص الأنبياء</option>
+                                <option value="صحابة">صحابة</option>
+                                <option value="أخلاق">أخلاق</option>
+                                <option value="قرآن">قرآن</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">إيموجي</label>
+                            <input type="text" id="kidsStoryEmoji" placeholder="📖"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">النجوم</label>
+                            <input type="number" id="kidsStoryStars" value="20"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">محتوى القصة (فقرات - كل سطر
+                            فقرة)</label>
+                        <textarea id="kidsStoryParagraphs" placeholder="اكتب فقرات القصة هنا، كل فقرة في سطر جديد..."
+                            style="width: 100%; height: 150px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">الحكمة / الدرس المستفاد</label>
+                        <input type="text" id="kidsStoryMoral" placeholder="مثال: الصدق ينجي صاحبه"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+
+                    <button class="refresh-btn" onclick="addKidsStory()"
+                        style="margin-top: 20px; width: 100%; font-weight: bold;">📝 إضافة القصة</button>
+                </div>
+
+                <!-- Kids Stories List -->
+                <div id="kidsStoriesList">
+                    <div class="loading">⏳ جاري تحميل القصص...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="charityStoriesTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">🤲 إدارة قصص الصدقات</h3>
+                </div>
+
+                <!-- Add New Charity Story -->
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px;">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة قصة صدقة جديدة</h4>
+                    <div class="responsive-form-grid">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">العنوان</label>
+                            <input type="text" id="charityStoryTitle" placeholder="مثال: فضل الصدقة"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">التصنيف</label>
+                            <select id="charityStoryCategory"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="سيرة">سيرة</option>
+                                <option value="حديث">حديث</option>
+                                <option value="معاصر">معاصر</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">إيموجي</label>
+                            <input type="text" id="charityStoryEmoji" placeholder="💰"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">نص القصة</label>
+                        <textarea id="charityStoryContent" placeholder="اكتب نص القصة هنا..."
+                            style="width: 100%; height: 150px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">المصدر</label>
+                        <input type="text" id="charityStorySource" placeholder="مثال: رواه البخاري / قصة واقعية"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+
+                    <button class="refresh-btn" onclick="addCharityStory()"
+                        style="margin-top: 20px; width: 100%; font-weight: bold;">📝 إضافة القصة</button>
+                </div>
+
+                <!-- Charity Stories List -->
+                <div id="charityStoriesList">
+                    <div class="loading">⏳ جاري تحميل القصص...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorsTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: var(--text-primary);">⚠️ سجل أعطال التطبيق</h3>
+                    <button class="refresh-btn" onclick="loadErrors()" style="padding: 5px 15px; font-size: 0.8rem;">🔄
+                        تحديث السجل</button>
+                </div>
+                <div id="errorsList">
+                    <div class="loading">⏳ جاري تحميل السجلات...</div>
+                </div>
+            </div>
+        </div>
+        <div id="pdfBooksTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">📚 إدارة مكتبة الكتب (PDF)</h3>
+                    <button class="refresh-btn" onclick="loadPdfBooks()"
+                        style="padding: 8px 20px; font-size: 0.9rem;">🔄 تحديث</button>
+                </div>
+
+                <!-- Add New PDF Book -->
+                <div class="filter-group"
+                    style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px; background: rgba(16, 185, 129, 0.05);">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إضافة كتاب جديد</h4>
+                    <div class="responsive-form-grid">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">عنوان الكتاب</label>
+                            <input type="text" id="pdfTitle" placeholder="مثلاً: مصحف المدينة"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">رابط التحميل (PDF URL)</label>
+                            <input type="text" id="pdfUrl" placeholder="https://..."
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">وصف الكتاب</label>
+                        <textarea id="pdfDescription" placeholder="وصف مختصر للكتاب يظهر للمستخدم..."
+                            style="width: 100%; height: 80px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
+                    </div>
+
+                    <div class="responsive-form-grid">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">رابط صورة الغلاف
+                                (اختياري)</label>
+                            <input type="text" id="pdfCoverUrl" placeholder="https://..."
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">اسم الملف المحلي (Local
+                                FileName)</label>
+                            <input type="text" id="pdfFileName" placeholder="quran.pdf"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+
+                    <button class="refresh-btn" onclick="addPdfBook()"
+                        style="margin-top: 20px; width: 100%; font-weight: bold;">💾 إضافة الكتاب للمكتبة</button>
+                </div>
+
+                <!-- PDF Books List -->
+                <div id="pdfBooksList">
+                    <div class="loading">⏳ جاري تحميل الكتب...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mosques Tab -->
+        <div id="mosquesTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">🕌 المساجد المضافة من المستخدمين</h3>
+                    <button class="refresh-btn" onclick="loadMosques()" style="padding: 8px 20px; font-size: 0.9rem;">🔄 تحديث</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="icon">🕌</div>
+                        <h3>إجمالي المساجد</h3>
+                        <div class="number" id="totalMosques">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">📍</div>
+                        <h3>مدينة متكررة</h3>
+                        <div class="number" id="topMosqueCity">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon">📱</div>
+                        <h3>أجهزة أضافت</h3>
+                        <div class="number" id="uniqueDevicesMosques">0</div>
+                    </div>
+                </div>
+
+                <!-- Mosques List -->
+                <div id="mosquesList">
+                    <div class="loading">⏳ جاري تحميل المساجد...</div>
+                </div>
+            </div>
+        </div>
+
+<!-- Communities Tab -->
+        <div id="communitiesTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">🕌 إدارة مجتمعات القرآن والحلقات</h3>
+                    <button class="refresh-btn" onclick="loadCommunities()" style="padding: 8px 20px; font-size: 0.9rem;">🔄 تحديث</button>
+                </div>
+
+                <!-- Add New Community -->
+                <div class="filter-group" style="padding: 20px; border: 1.5px solid var(--border-color); border-radius: 16px; margin-bottom: 30px; background: rgba(16, 185, 129, 0.05);">
+                    <h4 style="margin-top: 0; color: var(--accent-color);">✨ إنشاء مجتمع جديد</h4>
+                    <div class="responsive-form-grid">
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">اسم المجتمع</label>
+                            <input type="text" id="communityName" placeholder="مثلاً: حلقة التحفيظ المكثفة" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; color: var(--text-secondary);">الفئة المستهدفة</label>
+                            <select id="communityTargetGender" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="both">للجميع 👥</option>
+                                <option value="male">للرجال فقط 👨</option>
+                                <option value="female">للنساء فقط 👩</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; display: none;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">كود الانضمام (يجب أن يكون فريداً)</label>
+                        <input type="text" id="communityInviteCode" placeholder="سيتم توليده تلقائياً" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label style="font-size: 13px; color: var(--text-secondary);">الوصف (اختياري)</label>
+                        <textarea id="communityDescription" placeholder="وصف للهدف من المجتمع..." style="width: 100%; height: 60px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-top: 5px;"></textarea>
+                    </div>
+                    <button class="refresh-btn" onclick="createCommunity()" style="margin-top: 20px; width: 100%; font-weight: bold;">💾 إنشاء المجتمع</button>
+                </div>
+
+                <!-- Communities List -->
+                <div id="communitiesList" class="responsive-form-grid">
+                    <!-- Community cards will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Users Tab -->
+        <div id="communityUsersTab" class="tab-content">
+            <div class="feedback-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: var(--text-primary);">👥 مستخدمي المجتمعات (المسجلين)</h3>
+                    <button class="refresh-btn" onclick="loadCommunityUsers()" style="padding: 8px 20px; font-size: 0.9rem;">🔄 تحديث</button>
+                </div>
+                
+                <div class="stats-grid" style="margin-bottom: 20px;">
+                    <div class="stat-card" style="padding: 15px;">
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-color); font-size: 1.5rem; width: 40px; height: 40px;">👥</div>
+                        <div class="stat-info">
+                            <div class="stat-label">الإجمالي</div>
+                            <div class="stat-value" id="cuTotal" style="font-size: 1.2rem;">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="padding: 15px;">
+                        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; font-size: 1.5rem; width: 40px; height: 40px;">👨</div>
+                        <div class="stat-info">
+                            <div class="stat-label">الرجال</div>
+                            <div class="stat-value" id="cuMale" style="font-size: 1.2rem;">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="padding: 15px;">
+                        <div class="stat-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899; font-size: 1.5rem; width: 40px; height: 40px;">👩</div>
+                        <div class="stat-info">
+                            <div class="stat-label">النساء</div>
+                            <div class="stat-value" id="cuFemale" style="font-size: 1.2rem;">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color);">
+                    <table style="width: 100%; border-collapse: collapse; text-align: right;">
+                        <thead style="background: rgba(0,0,0,0.02); border-bottom: 2px solid var(--border-color);">
+                            <tr>
+                                <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">الاسم</th>
+                                <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">النوع</th>
+                                <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">رقم الهاتف</th>
+                                <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">البريد الإلكتروني</th>
+                                <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">الصلاحية</th>
+                                <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">الموقع</th>
+                                <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">تاريخ التسجيل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="communityUsersList">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Tab -->
+        <div id="notificationsTab" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                    🔔 إرسال الإشعارات (Push Notifications)
+                </h2>
+            </div>
+            
+            <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-width: 600px;">
+                <form id="notificationForm" onsubmit="event.preventDefault(); sendPushNotification();">
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #334155;">عنوان الإشعار *</label>
+                        <input type="text" id="notifTitle" required placeholder="مثال: تحديث جديد متاح!" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; font-family: inherit;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #334155;">محتوى الإشعار *</label>
+                        <textarea id="notifBody" required placeholder="اكتب نص الإشعار هنا..." rows="4" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #334155;">صورة (اختياري)</label>
+                        <input type="url" id="notifImage" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; font-family: inherit;">
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #334155;">الإجراء عند الضغط (اختياري)</label>
+                        <select id="notifRoute" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; font-family: inherit;">
+                            <option value="">الرئيسية (افتراضي)</option>
+                            <option value="/timingScreen">مواقيت الصلاة والأذان</option>
+                            <option value="/surahListScreen">القرآن الكريم</option>
+                            <option value="/allAhadith">موسوعة الأحاديث</option>
+                            <option value="/communities">المجتمعات الإسلامية</option>
+                            <option value="/charityDashboard">الصدقة الجارية</option>
+                            <option value="/azkarSabah">أذكار الصباح</option>
+                            <option value="/azkarMassa">أذكار المساء</option>
+                            <option value="/KhatmahHome">الختمات</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" id="sendNotifBtn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 14px 24px; font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; transition: all 0.2s;">
+                        <span>إرسال الإشعار للجميع</span>
+                        <span id="sendNotifSpinner" class="spinner" style="display: none; width: 20px; height: 20px;"></span>
+                    </button>
+                    
+                    <div id="notifStatusMsg" style="margin-top: 15px; padding: 12px; border-radius: 8px; display: none; text-align: center; font-weight: bold;"></div>
+                </form>
+            </div>
+        </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Overlay -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-card">
+            <h2>🔐 تسجيل الدخول</h2>
+            <p style="color: #666; margin-bottom: 20px;">يرجى إدخال بيانات الدخول للوصول إلى لوحة التحكم</p>
+            <input type="text" id="authUsername" class="auth-input" placeholder="اسم المستخدم" style="margin-bottom: 10px;">
+            <input type="password" id="authPassword" class="auth-input" placeholder="كلمة المرور">
+            <button class="auth-btn" onclick="checkAuth()">دخول</button>
+            <p id="authError" style="color: #c00; margin-top: 15px; display: none;">❌ بيانات الدخول غير صحيحة</p>
+        </div>
+    </div>
+
+
+    <!-- Error Overlay -->
+    <div id="errorOverlay" class="auth-overlay" style="display: none; background: rgba(0,0,0,0.7);">
+        <div class="auth-card" style="border-top: 5px solid #ef4444;">
+            <h2 style="color: #ef4444;">⚠️ خطأ في الاتصال</h2>
+            <p id="errorMessage" style="margin-bottom: 20px; color: var(--text-primary);"></p>
+            <button class="auth-btn" onclick="location.reload()">🔄 إعادة تحميل الصفحة</button>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal" onclick="closeModal()">
+        <img id="modalImage" src="" alt="صورة">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <!-- Edit Mosque Modal -->
+    <div id="editMosqueModal" class="modal">
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+            <h2 style="color: var(--accent-color); margin-bottom: 20px;">تعديل بيانات المسجد</h2>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">اسم المسجد</label>
+                <input type="text" id="editMosqueName"
+                    style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary);">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">العنوان</label>
+                <input type="text" id="editMosqueAddress"
+                    style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary);">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="refresh-btn" onclick="saveMosqueEdit()" style="flex: 1;">💾 حفظ</button>
+                <button class="delete-btn" onclick="closeMosqueModal()" style="flex: 1;">❌ إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Kids Story Modal -->
+    <div id="editKidsStoryModal" class="modal">
+        <div
+            style="background: var(--card-bg); padding: 30px; border-radius: 15px; max-width: 700px; width: 95%; max-height: 90vh; overflow-y: auto;">
+            <h2 style="color: var(--accent-color); margin-bottom: 20px;">تعديل القصة</h2>
+            <input type="hidden" id="editStoryId">
+
+            <div class="responsive-form-grid">
+                <div>
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">العنوان</label>
+                    <input type="text" id="editStoryTitle"
+                        style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary);">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">التصنيف</label>
+                    <select id="editStoryCategory"
+                        style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary);">
+                        <option value="منوع">منوع</option>
+                        <option value="قصص الأنبياء">قصص الأنبياء</option>
+                        <option value="صحابة">صحابة</option>
+                        <option value="أخلاق">أخلاق</option>
+                        <option value="قرآن">قرآن</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="responsive-form-grid">
+                <div>
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">إيموجي</label>
+                    <input type="text" id="editStoryEmoji"
+                        style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary);">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">النجوم</label>
+                    <input type="number" id="editStoryStars"
+                        style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary);">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">محتوى القصة
+                    (فقرات)</label>
+                <textarea id="editStoryParagraphs"
+                    style="width: 100%; height: 200px; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">الحكمة / الدرس</label>
+                <input type="text" id="editStoryMoral"
+                    style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-primary);">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="refresh-btn" onclick="saveKidsStoryEdit()" style="flex: 1;">💾 حفظ التغييرات</button>
+                <button class="delete-btn" onclick="closeKidsStoryModal()" style="flex: 1;">❌ إلغاء</button>
+            </div>
+        </div>
+    </div>
+    <!-- Manage Community Modal -->
+    <div id="manageCommunityModal" class="modal">
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 id="manageCommunityTitle" style="color: var(--accent-color); margin: 0;">إدارة المجتمع</h2>
+                <button onclick="closeManageCommunityModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary);">×</button>
+            </div>
+            
+            <input type="hidden" id="currentCommunityId">
+            
+            <div style="background: rgba(16, 185, 129, 0.05); padding: 20px; border-radius: 12px; border: 1px solid var(--accent-color); margin-bottom: 25px;">
+                <h3 style="margin-top: 0; color: var(--accent-color); margin-bottom: 15px;">جدولة حلقة جديدة</h3>
+                
+                <div class="responsive-form-grid">
+                    <div>
+                        <label style="font-size: 13px; color: var(--text-secondary);">عنوان الحلقة</label>
+                        <input type="text" id="meetingTitle" placeholder="مثلاً: حلقة التسميع اليومية" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+                    <div>
+                        <label style="font-size: 13px; color: var(--text-secondary);">موعد الحلقة</label>
+                        <input type="datetime-local" id="meetingDate" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+                </div>
+                
+                <div class="responsive-form-grid">
+                    <div>
+                        <label style="font-size: 13px; color: var(--text-secondary);">المعلم / المعلمة (اختياري)</label>
+                        <input type="text" id="meetingTeacher" placeholder="اسم المعلم" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+                    <div>
+                        <label style="font-size: 13px; color: var(--text-secondary);">الفئة المستهدفة</label>
+                        <select id="meetingGender" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                            <option value="both">للجميع 👥</option>
+                            <option value="male">للرجال فقط 👨</option>
+                            <option value="female">للنساء فقط 👩</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 13px; color: var(--text-secondary);">رابط الاجتماع (Google Meet / Zoom)</label>
+                    <input type="url" id="meetingUrl" placeholder="https://meet.google.com/..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); text-align: left;" dir="ltr">
+                </div>
+                
+                <button class="refresh-btn" onclick="createCommunityMeeting()" style="width: 100%; font-weight: bold;">➕ جدولة الحلقة</button>
+            </div>
+
+            <h3 style="margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">الحلقات المجدولة والسابقة</h3>
+            <div id="communityMeetingsList" style="display: grid; gap: 15px;">
+                <!-- Meetings will load here -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+

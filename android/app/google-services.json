@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "543856486750",
-    "project_id": "azkary-83082",
-    "storage_bucket": "azkary-83082.firebasestorage.app"
+    "project_number": "730878551081",
+    "project_id": "rafiqmuslimdaily",
+    "storage_bucket": "rafiqmuslimdaily.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:543856486750:android:9d2bf0f590f2a3d037c7cf",
+        "mobilesdk_app_id": "1:730878551081:android:b1e3a23fe506c800626838",
         "android_client_info": {
           "package_name": "com.rafiq.muslimdaily"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCicNELepzcEYhWCLbVkC2JJGO_odWb3Oc"
+          "current_key": "AIzaSyB_SqecOOKRzG1kqecQCscwlsSfx_HKSDA"
         }
       ],
       "services": {

@@ -13,6 +13,8 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        // ✅ Huawei Maven للـ HMS SDK
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 

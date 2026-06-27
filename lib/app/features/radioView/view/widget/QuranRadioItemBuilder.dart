@@ -20,6 +20,8 @@ class QuranRadioItemBuilder extends StatefulWidget {
 
 class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
   final _scrollCtrl = ScrollController();
+  final _searchCtrl = TextEditingController();
+  String _searchQuery = '';
   static const int _pageSize = 30;
   int _visibleCount = _pageSize;
   bool _isLoadingMore = false;
@@ -34,6 +36,7 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
   void dispose() {
     _scrollCtrl.removeListener(_onScroll);
     _scrollCtrl.dispose();
+    _searchCtrl.dispose();
     super.dispose();
   }
 
@@ -84,7 +87,11 @@ class _QuranRadioItemBuilderState extends State<QuranRadioItemBuilder> {
       child: BlocBuilder<QuranRadioBloc, QuranRadioState>(
         builder: (context, state) {
           final bloc = QuranRadioBloc.get(context);
-          final total = bloc.quranRadioModel?.radios.length ?? 0;
+          final allRadios = bloc.quranRadioModel?.radios ?? [];
+          final filteredRadios = _searchQuery.isEmpty 
+              ? allRadios 
+              : allRadios.where((r) => (r.name.toString()).contains(_searchQuery)).toList();
+          final total = filteredRadios.length;
 
           // حدّ أقصى لما نعرضه حسب الإجمالي
           final itemCount =
@@ -138,6 +145,32 @@ Navigator.canPop(context)
               ),
 
               SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: TextField(
+                    controller: _searchCtrl,
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                        _visibleCount = _pageSize; // Reset pagination on search
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: "ابحث عن إذاعة...",
+                      prefixIcon: const Icon(Icons.search, color: Colors.green),
+                      filled: true,
+                      fillColor: isDark ? Colors.grey[800] : Colors.grey[200],
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              SliverToBoxAdapter(
                 child: SizedBox(
                     height: context.isTab ? 20 : 15),
               ),
@@ -171,20 +204,14 @@ Navigator.canPop(context)
                       childAspectRatio: childAspectRatio,
                     ),
                     itemBuilder: (context, index) {
-                      final item = bloc.quranRadioModel!.radios[index];
+                      final item = filteredRadios[index];
                       return InkWell(
                         onTap: () {
                           // TODO: اكتب تنقلك هنا
                           Navigator.pushNamed(context, "/QuranRadioPlayerView",
                               arguments: QuranRadioPlayerArgs(
-                                  title: bloc
-                                          .quranRadioModel?.radios[index].name
-                                          .toString() ??
-                                      "",
-                                  streamUrl: bloc
-                                          .quranRadioModel?.radios[index].url
-                                          .toString() ??
-                                      ""));
+                                  title: item.name.toString() ?? "",
+                                  streamUrl: item.url.toString() ?? ""));
                         },
                         child: Card(
                           elevation: 4,

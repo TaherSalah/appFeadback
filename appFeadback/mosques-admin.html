@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المساجد - رفيق المسلم</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #2ecc71;
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #2ecc71;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-refresh {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-refresh:hover {
+            background: #2980b9;
+        }
+
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .device-id {
+            font-family: monospace;
+            background: #ecf0f1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .btn-edit:hover {
+            background: #2980b9;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2ecc71;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #27ae60;
+        }
+
+        .btn-cancel:hover {
+            background: #7f8c8d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: 1fr 1fr;
+                padding: 15px;
+                gap: 15px;
+            }
+            .header {
+                padding: 20px 15px;
+            }
+            .header h1 {
+                font-size: 1.5em;
+            }
+            .controls {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+            .stat-card {
+                padding: 15px;
+            }
+            .stat-card h3 {
+                font-size: 1.8em;
+            }
+            .table-container {
+                padding: 15px;
+            }
+            .modal-content {
+                padding: 20px;
+            }
+            .actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕌 إدارة المساجد</h1>
+            <p>لوحة تحكم المشرفين - رفيق المسلم اليومي</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="totalMosques">0</h3>
+                <p>إجمالي المساجد</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalDevices">0</h3>
+                <p>عدد الأجهزة</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="todayMosques">0</h3>
+                <p>مضافة اليوم</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 ابحث عن مسجد...">
+            <button class="btn btn-refresh" onclick="loadMosques()">🔄 تحديث</button>
+        </div>
+
+        <div class="table-container">
+            <div id="loading" class="loading">جاري التحميل...</div>
+            <table id="mosquesTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>اسم المسجد</th>
+                        <th>العنوان</th>
+                        <th>الإحداثيات</th>
+                        <th>معرف الجهاز</th>
+                        <th>تاريخ الإضافة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="mosquesBody">
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z" />
+                </svg>
+                <h3>لا توجد مساجد مضافة</h3>
+                <p>سيظهر هنا المساجد المضافة من قبل المستخدمين</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2>تعديل بيانات المسجد</h2>
+            <div class="form-group">
+                <label>اسم المسجد</label>
+                <input type="text" id="editName">
+            </div>
+            <div class="form-group">
+                <label>العنوان</label>
+                <input type="text" id="editAddress">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-save" onclick="saveMosque()">💾 حفظ</button>
+                <button class="btn btn-cancel" onclick="closeModal()">❌ إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://kghwboxevphvxtsagrer.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaHdib3hldnBodnh0c2FncmVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxMjcwNzUsImV4cCI6MjA4MTcwMzA3NX0.PPh6rwxDbHGHHyHBUjdEz1WWdF_psdygbtF0nY5hNR4';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let allMosques = [];
+        let currentEditId = null;
+
+        async function loadMosques() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('mosquesTable').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+
+            try {
+                const { data, error } = await supabase
+                    .from('user_mosques')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allMosques = data || [];
+                updateStats();
+                displayMosques(allMosques);
+            } catch (error) {
+                console.error('Error loading mosques:', error);
+                alert('حدث خطأ أثناء تحميل البيانات');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function updateStats() {
+            const total = allMosques.length;
+            const devices = new Set(allMosques.map(m => m.device_id)).size;
+            const today = allMosques.filter(m => {
+                const created = new Date(m.created_at);
+                const now = new Date();
+                return created.toDateString() === now.toDateString();
+            }).length;
+
+            document.getElementById('totalMosques').textContent = total;
+            document.getElementById('totalDevices').textContent = devices;
+            document.getElementById('todayMosques').textContent = today;
+        }
+
+        function displayMosques(mosques) {
+            const tbody = document.getElementById('mosquesBody');
+            tbody.innerHTML = '';
+
+            if (mosques.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('mosquesTable').style.display = 'table';
+
+            mosques.forEach(mosque => {
+                const row = document.createElement('tr');
+                const deviceId = mosque.device_id || 'unknown';
+                const shortDeviceId = deviceId.substring(0, 8);
+                const date = new Date(mosque.created_at).toLocaleDateString('ar-EG');
+
+                row.innerHTML = `
+                    <td><strong>${mosque.name}</strong></td>
+                    <td>${mosque.address || 'غير محدد'}</td>
+                    <td style="font-size: 0.85em;">${mosque.latitude.toFixed(6)}, ${mosque.longitude.toFixed(6)}</td>
+                    <td><span class="device-id">${shortDeviceId}</span></td>
+                    <td>${date}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-edit" onclick="editMosque('${mosque.id}')">✏️ تعديل</button>
+                            <button class="btn-delete" onclick="deleteMosque('${mosque.id}', '${mosque.name}')">🗑️ حذف</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function editMosque(id) {
+            const mosque = allMosques.find(m => m.id === id);
+            if (!mosque) return;
+
+            currentEditId = id;
+            document.getElementById('editName').value = mosque.name;
+            document.getElementById('editAddress').value = mosque.address || '';
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        async function saveMosque() {
+            const name = document.getElementById('editName').value.trim();
+            const address = document.getElementById('editAddress').value.trim();
+
+            if (!name) {
+                alert('يرجى إدخال اسم المسجد');
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('user_mosques')
+                    .update({ name, address })
+                    .eq('id', currentEditId);
+
+                if (error) throw error;
+
+                alert('تم التحديث بنجاح ✅');
+                closeModal();
+                loadMosques();
+            } catch (error) {
+                console.error('Error updating mosque:', error);
+                alert('حدث خطأ أثناء التحديث');
+            }
+        }
+
+        async function deleteMosque(id, name) {
+            if (!confirm(`هل أنت متأكد من حذف "${name}"؟\n\nلا يمكن التراجع عن هذا الإجراء.`)) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('user_mosques')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('تم الحذف بنجاح ✅');
+                loadMosques();
+            } catch (error) {
+                console.error('Error deleting mosque:', error);
+                alert('حدث خطأ أثناء الحذف');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+            currentEditId = null;
+        }
+
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allMosques.filter(m =>
+                m.name.toLowerCase().includes(query) ||
+                (m.address && m.address.toLowerCase().includes(query))
+            );
+            displayMosques(filtered);
+        });
+
+        // Load on page load
+        loadMosques();
+    </script>
+</body>
+
+</html>
