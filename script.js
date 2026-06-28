@@ -18,6 +18,19 @@ let osChart = null;
 let dailyUsageChart = null;
 let featuresUsageChart = null;
 
+// Security: HTML Escape Function to prevent XSS
+function escapeHtml(text) {
+    if (!text) return '';
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+}
+
 const APP_FEATURES = [
     { id: 'quranView', name: 'القرآن الكريم', icon: '📖' },
     { id: 'azkar', name: 'الأذكار', icon: '📿' },
@@ -51,7 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('dashboardAuth') === 'true') {
         const authOverlay = document.getElementById('authOverlay');
         if (authOverlay) authOverlay.style.display = 'none';
-        initializeDashboard();
+        
+        const role = localStorage.getItem('dashboardRole') || 'admin';
+        applyUserPermissions(role);
+        
+        if (role === 'admin') {
+            initializeDashboard();
+        } else {
+            switchTab('communities');
+            loadCommunities();
+        }
     }
 
     // Initialize UI listeners
@@ -80,6 +102,48 @@ function setupEventListeners() {
     });
 }
 
+// Sidebar Navigation Functions
+function toggleSidebarCollapse() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    if (sidebar) {
+        sidebar.classList.toggle('collapsed');
+    }
+    if (mainContent) {
+        mainContent.classList.toggle('sidebar-collapsed');
+    }
+}
+
+function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+    }
+}
+
+function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && window.innerWidth <= 768) {
+        sidebar.classList.remove('active');
+    }
+}
+
+// Analytics Toggle
+function toggleAnalytics() {
+    const section = document.getElementById('analyticsSection');
+    const btn = document.getElementById('analyticsToggle');
+    if (section) {
+        const isHidden = section.style.display === 'none';
+        section.style.display = isHidden ? 'block' : 'none';
+        if (btn) {
+            btn.textContent = isHidden ? '📊 إخفاء الإحصائيات' : '📊 عرض الإحصائيات';
+        }
+        if (isHidden) {
+            initFeedbackCharts();
+        }
+    }
+}
+
 function initializeDashboard() {
     loadFeedback();
     loadUpdates();
@@ -93,25 +157,61 @@ function initializeDashboard() {
     // Auto-refresh every 60 seconds
     setInterval(() => {
         if (localStorage.getItem('dashboardAuth') === 'true') {
-            loadFeedback();
-            loadUpdates();
+            const role = localStorage.getItem('dashboardRole') || 'admin';
+            if (role === 'admin') {
+                loadFeedback();
+                loadUpdates();
+            } else {
+                loadCommunities();
+            }
         }
     }, 60000);
 }
 
 // --- AUTHENTICATION ---
+
+function applyUserPermissions(role) {
+    const allTabs = document.querySelectorAll('.sidebar-item');
+    if (role === 'admin') {
+        allTabs.forEach(tab => tab.style.display = 'flex');
+    } else if (role === 'user') {
+        allTabs.forEach(tab => {
+            if (tab.id === 'communitiesTabBtn' || tab.id === 'communityUsersTabBtn') {
+                tab.style.display = 'flex';
+            } else {
+                tab.style.display = 'none';
+            }
+        });
+    }
+}
+
 function checkAuth() {
+    const usernameInput = document.getElementById('authUsername');
     const passwordInput = document.getElementById('authPassword');
-    if (!passwordInput) return;
+    if (!passwordInput || !usernameInput) return;
 
+    const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
-    const correctPassword = 'Taher';
 
-    if (password === correctPassword) {
+    let role = null;
+    if (username.toUpperCase() === 'TAHER' && password === 'Taher') {
+        role = 'admin';
+    } else if (username.toLowerCase() === 'user' && password === 'user') {
+        role = 'user';
+    }
+
+    if (role) {
         try {
             document.getElementById('authOverlay').style.display = 'none';
             localStorage.setItem('dashboardAuth', 'true');
-            initializeDashboard();
+            localStorage.setItem('dashboardRole', role);
+            applyUserPermissions(role);
+            if (role === 'admin') {
+                initializeDashboard();
+            } else {
+                switchTab('communities');
+                loadCommunities();
+            }
         } catch (e) {
             console.error('Initial load failure:', e);
             alert('⚠️ فشل تحميل بعض البيانات بعد الدخول: ' + e.message);
@@ -122,13 +222,20 @@ function checkAuth() {
     }
 }
 
+function logoutAdmin() {
+    if (confirm('هل أنت متأكد من رغبتك في تسجيل الخروج؟')) {
+        localStorage.removeItem('dashboardAuth');
+        location.reload();
+    }
+}
+
 // --- NAVIGATION ---
 function switchTab(tabId) {
     console.log('Switching to tab:', tabId);
 
     // Hide all tabs
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active'));
 
     // Show selected tab
     const content = document.getElementById(tabId + 'Tab');
@@ -140,6 +247,9 @@ function switchTab(tabId) {
     } else {
         console.warn('Tab elements not found for:', tabId);
     }
+
+    // Close mobile sidebar after tab selection
+    closeMobileSidebar();
 
     // Load specific data per tab if needed
     switch (tabId) {
@@ -157,6 +267,7 @@ function switchTab(tabId) {
         case 'mosques': loadMosques(); break;
         case 'pdfBooks': loadPdfBooks(); break;
         case 'communities': loadCommunities(); break;
+        case 'communityUsers': loadCommunityUsers(); break;
     }
 }
 
@@ -195,6 +306,8 @@ function filterFeedback() {
     const rating = document.getElementById('ratingFilter')?.value || '';
     const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
     const unrepliedOnly = document.getElementById('unrepliedFilter')?.checked;
+    const startDate = document.getElementById('startDate')?.value || '';
+    const endDate = document.getElementById('endDate')?.value || '';
 
     let filtered = allFeedback;
 
@@ -216,6 +329,15 @@ function filterFeedback() {
             f.email.toLowerCase().includes(search) ||
             f.description.toLowerCase().includes(search)
         );
+    }
+    if (startDate) {
+        const start = new Date(startDate);
+        filtered = filtered.filter(f => new Date(f.created_at) >= start);
+    }
+    if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        filtered = filtered.filter(f => new Date(f.created_at) <= end);
     }
 
     displayFeedback(filtered);
@@ -240,8 +362,8 @@ function displayFeedback(feedback) {
         <div class="feedback-card">
             <div class="feedback-header">
                 <div class="feedback-info">
-                    <h3>${item.name || 'مستخدم'}</h3>
-                    <p>📧 ${item.email || 'بدون بريد'}</p>
+                    <h3>${escapeHtml(item.name) || 'مستخدم'}</h3>
+                    <p>📧 ${escapeHtml(item.email) || 'بدون بريد'}</p>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <select onchange="updateFeedbackStatus('${item.id}', this.value)" style="padding: 5px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.8rem;">
@@ -250,19 +372,19 @@ function displayFeedback(feedback) {
                         <option value="قيد المعالجة" ${item.status === 'قيد المعالجة' ? 'selected' : ''}>⏳ قيد المعالجة</option>
                         <option value="تم الحل" ${item.status === 'تم الحل' ? 'selected' : ''}>✅ تم الحل</option>
                     </select>
-                    <span class="category-badge category-${item.category}">${item.category || 'عام'}</span>
+                    <span class="category-badge category-${item.category}">${escapeHtml(item.category) || 'عام'}</span>
                     <button class="delete-btn" onclick="deleteFeedback('${item.id}')">🗑️ حذف</button>
                 </div>
             </div>
-            
+
             <div class="feedback-description">
-                ${item.description || ''}
+                ${escapeHtml(item.description) || ''}
             </div>
 
             ${item.image_urls && item.image_urls.length > 0 ? `
                 <div class="images-grid">
                     ${item.image_urls.map(url => `
-                        <img src="${url}" alt="صورة" onclick="openModal('${url}')">
+                        <img src="${escapeHtml(url)}" alt="صورة" onclick="openModal('${escapeHtml(url)}')">
                     `).join('')}
                 </div>
             ` : ''}
@@ -281,21 +403,21 @@ function displayFeedback(feedback) {
             ${item.device_info ? `
                 <div class="device-info" style="font-size: 0.8rem; background: rgba(0,0,0,0.05); padding: 8px; border-radius: 6px; margin-top: 10px;">
                     <strong>📱 معلومات الجهاز:</strong>
-                    ${item.device_info.os || ''} ${item.device_info.os_version || ''} • 
-                    ${item.device_info.model || ''} • 
-                    إصدار التطبيق: ${item.device_info.app_version || ''}
+                    ${escapeHtml(item.device_info.os || '')} ${escapeHtml(item.device_info.os_version || '')} •
+                    ${escapeHtml(item.device_info.model || '')} •
+                    إصدار التطبيق: ${escapeHtml(item.device_info.app_version || '')}
                 </div>
             ` : ''}
 
             <div class="admin-notes" style="margin-top: 15px;">
                 <strong>📝 ملاحظات الإدارة (داخلية):</strong>
-                <textarea id="notes-${item.id}" style="width:100%; height:60px; margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">${item.admin_notes || ''}</textarea>
+                <textarea id="notes-${item.id}" style="width:100%; height:60px; margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">${escapeHtml(item.admin_notes) || ''}</textarea>
                 <button class="refresh-btn" style="margin-top:5px; padding:5px 15px; font-size:0.8rem;" onclick="saveAdminNotes('${item.id}')">حفظ الملاحظات</button>
             </div>
 
             <div class="reply-section" style="margin-top: 15px; border-top: 1px dashed #ddd; padding-top: 10px;">
                 <strong>💬 الرد على المستخدم (سيظهر في التطبيق):</strong>
-                <textarea id="reply-${item.id}" style="width:100%; height:60px; margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">${item.reply || ''}</textarea>
+                <textarea id="reply-${item.id}" style="width:100%; height:60px; margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">${escapeHtml(item.reply) || ''}</textarea>
                 <button class="refresh-btn" style="margin-top:5px; padding:5px 15px; font-size:0.8rem; background:#4f46e5;" onclick="saveFeedbackReply('${item.id}')">إرسال الرد</button>
             </div>
         </div>
@@ -328,13 +450,25 @@ async function saveAdminNotes(id) {
 
 async function saveFeedbackReply(id) {
     const reply = document.getElementById(`reply-${id}`).value;
+    if (!reply.trim()) {
+        alert('⚠️ يرجى كتابة الرد أولاً');
+        return;
+    }
     try {
         const { error } = await supabaseClient
             .from('feedback')
             .update({ reply: reply, status: 'تم استقبال المشكلة' })
             .eq('id', id);
         if (error) throw error;
-        alert('✅ تم حفظ الرد');
+
+        // تحديث البيانات محلياً مباشرة
+        const feedbackItem = allFeedback.find(f => f.id === id);
+        if (feedbackItem) {
+            feedbackItem.reply = reply;
+            feedbackItem.status = 'تم استقبال المشكلة';
+        }
+
+        alert('✅ تم إرسال الرد للمستخدم');
         loadFeedback();
     } catch (e) { alert('❌ فشل الرد: ' + e.message); }
 }
@@ -493,8 +627,51 @@ async function deleteUpdate(id) {
     try {
         const { error } = await supabaseClient.from('app_updates').delete().eq('id', id);
         if (error) throw error;
+        alert('✅ تم حذف التحديث بنجاح');
         loadUpdates();
     } catch (e) { alert('❌ فشل الحذف: ' + e.message); }
+}
+
+async function updateAppUpdate(id) {
+    const versionName = document.getElementById('editVersionName')?.value;
+    const versionCode = document.getElementById('editVersionCode')?.value;
+    const isMandatory = document.getElementById('editIsMandatory')?.value === 'true';
+    const releaseNotes = document.getElementById('editReleaseNotes')?.value;
+    const urlAndroid = document.getElementById('editUrlAndroid')?.value.trim();
+    const urlIos = document.getElementById('editUrlIos')?.value.trim();
+    const urlHuawei = document.getElementById('editUrlHuawei')?.value.trim();
+
+    if (!versionName || !versionCode || (!urlAndroid && !urlIos && !urlHuawei)) {
+        alert('⚠️ يرجى إكمال الحقول الأساسية ورابط واحد على الأقل');
+        return;
+    }
+
+    const updateUrlObj = {
+        android: urlAndroid,
+        ios: urlIos,
+        huawei: urlHuawei
+    };
+    const updateUrl = JSON.stringify(updateUrlObj);
+
+    try {
+        const { error } = await supabaseClient
+            .from('app_updates')
+            .update({
+                version_name: versionName,
+                version_code: parseInt(versionCode),
+                is_mandatory: isMandatory,
+                update_url: updateUrl,
+                release_notes: releaseNotes
+            })
+            .eq('id', id);
+
+        if (error) throw error;
+
+        alert('✅ تم تحديث البيانات بنجاح');
+        loadUpdates();
+    } catch (error) {
+        alert('❌ فشل التحديث: ' + error.message);
+    }
 }
 
 // --- ANALYTICS ---
@@ -504,7 +681,9 @@ async function loadAnalytics() {
         const { data: features, error: fError } = await supabaseClient.from('feature_usage').select('*');
 
         if (uError) throw uError;
-        allUsageData = usage || [];
+
+        // تنظيف البيانات: إزالة العناصر بدون معلومات أساسية
+        allUsageData = (usage || []).filter(u => u.device_id && u.created_at);
         window.featureUsageData = features || [];
 
         displayAnalyticsStats();
@@ -515,7 +694,10 @@ async function loadAnalytics() {
 function displayAnalyticsStats() {
     const total = allUsageData.length;
     const uniqueUsers = new Set(allUsageData.map(u => u.device_id)).size;
-    const countries = new Set(allUsageData.map(u => u.country)).size;
+
+    // احسب الدول بعد تطبيع الأسماء (حتى يكون دقيقاً)
+    const normalizedCountries = new Set(allUsageData.map(u => normalizeCountryName(u.country)));
+    const countries = normalizedCountries.size;
 
     if (document.getElementById('totalLaunches')) document.getElementById('totalLaunches').textContent = total;
     if (document.getElementById('uniqueUsers')) document.getElementById('uniqueUsers').textContent = uniqueUsers;
@@ -523,38 +705,38 @@ function displayAnalyticsStats() {
 }
 
 function normalizeCountryName(name) {
-    if (!name || name === 'Unknown' || name === 'أخرى' || name === 'تحديد تلقائي' || name === 'Default') return 'غير معروف';
+    if (!name || name === 'Unknown' || name === 'أخرى' || name === 'تحديد تلقائي' || name === 'Default' || name.trim() === '') return 'غير معروف';
 
     const n = name.trim();
     const mapping = {
-        'Egypt': 'مصر', 'EG': 'مصر',
-        'Saudi Arabia': 'السعودية', 'SA': 'السعودية', 'KSA': 'السعودية', 'المملكة العربية السعودية': 'السعودية',
-        'Algeria': 'الجزائر', 'DZ': 'الجزائر',
-        'Morocco': 'المغرب', 'Maroc': 'المغرب', 'MA': 'المغرب',
-        'Iraq': 'العراق', 'IQ': 'العراق',
-        'Jordan': 'الأردن', 'JO': 'الأردن',
-        'Palestine': 'فلسطين', 'PS': 'فلسطين',
-        'Kuwait': 'الكويت', 'KW': 'الكويت',
-        'United Arab Emirates': 'الإمارات', 'UAE': 'الإمارات', 'AE': 'الإمارات',
-        'Tunisia': 'تونس', 'TN': 'تونس',
-        'Libya': 'ليبيا', 'LY': 'ليبيا',
-        'Sudan': 'السودان', 'SD': 'السودان',
-        'Syria': 'سوريا', 'SY': 'سوريا',
-        'Lebanon': 'لبنان', 'LB': 'لبنان',
-        'Yemen': 'اليمن', 'YE': 'اليمن',
-        'Oman': 'عمان', 'OM': 'عمان',
-        'Qatar': 'قطر', 'QA': 'قطر',
-        'Bahrain': 'البحرين', 'BH': 'البحرين',
-        'Turkey': 'تركيا', 'TR': 'تركيا'
+        'Egypt': 'مصر', 'EG': 'مصر', 'egypt': 'مصر',
+        'Saudi Arabia': 'السعودية', 'SA': 'السعودية', 'KSA': 'السعودية', 'المملكة العربية السعودية': 'السعودية', 'saudi': 'السعودية',
+        'Algeria': 'الجزائر', 'DZ': 'الجزائر', 'algeria': 'الجزائر',
+        'Morocco': 'المغرب', 'Maroc': 'المغرب', 'MA': 'المغرب', 'morocco': 'المغرب',
+        'Iraq': 'العراق', 'IQ': 'العراق', 'iraq': 'العراق',
+        'Jordan': 'الأردن', 'JO': 'الأردن', 'jordan': 'الأردن',
+        'Palestine': 'فلسطين', 'PS': 'فلسطين', 'palestine': 'فلسطين',
+        'Kuwait': 'الكويت', 'KW': 'الكويت', 'kuwait': 'الكويت',
+        'United Arab Emirates': 'الإمارات', 'UAE': 'الإمارات', 'AE': 'الإمارات', 'uae': 'الإمارات',
+        'Tunisia': 'تونس', 'TN': 'تونس', 'tunisia': 'تونس',
+        'Libya': 'ليبيا', 'LY': 'ليبيا', 'libya': 'ليبيا',
+        'Sudan': 'السودان', 'SD': 'السودان', 'sudan': 'السودان',
+        'Syria': 'سوريا', 'SY': 'سوريا', 'syria': 'سوريا',
+        'Lebanon': 'لبنان', 'LB': 'لبنان', 'lebanon': 'لبنان',
+        'Yemen': 'اليمن', 'YE': 'اليمن', 'yemen': 'اليمن',
+        'Oman': 'عمان', 'OM': 'عمان', 'oman': 'عمان',
+        'Qatar': 'قطر', 'QA': 'قطر', 'qatar': 'قطر',
+        'Bahrain': 'البحرين', 'BH': 'البحرين', 'bahrain': 'البحرين',
+        'Turkey': 'تركيا', 'TR': 'تركيا', 'turkey': 'تركيا'
     };
-    
+
     // Check direct mapping or case-insensitive mapping
     if (mapping[n]) return mapping[n];
     for (let key in mapping) {
         if (key.toLowerCase() === n.toLowerCase()) return mapping[key];
     }
-    
-    return n;
+
+    return n || 'غير معروف';
 }
 
 function initAnalyticsCharts() {
@@ -1008,42 +1190,6 @@ async function toggleBannerActive(id, currentStatus) {
 }
 
 // --- FEATURE CONTROL ---
-async function loadFeatures() {
-    const grid = document.getElementById('featuresGrid');
-    if (!grid) return;
-    grid.innerHTML = '<div class="loading">⏳ جاري التحميل...</div>';
-    try {
-        const { data, error } = await supabaseClient.from('app_settings').select('key, value').filter('key', 'like', 'section_%');
-        if (error) throw error;
-        grid.innerHTML = APP_FEATURES.map(f => {
-            const status = data.find(s => s.key === `section_${f.id}_status`)?.value || 'active';
-            return `
-                <div class="update-item" style="flex-direction: column; align-items: flex-start; gap: 15px;">
-                    <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-                        <span style="font-size: 1.5rem;">${f.icon}</span>
-                        <span style="font-weight: bold; flex: 1; color: var(--text-primary); text-align:right;">${f.name}</span>
-                        <span class="category-badge" style="background: ${status === 'active' ? '#d1fae5' : status === 'maintenance' ? '#fef3c7' : '#f3f4f6'}; color: ${status === 'active' ? '#065f46' : status === 'maintenance' ? '#92400e' : '#374151'};">
-                            ${status === 'active' ? 'نشط' : status === 'maintenance' ? 'صيانة' : 'مخفي'}
-                        </span>
-                    </div>
-                    <select onchange="updateFeatureStatus('${f.id}', this.value)" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        <option value="active" ${status === 'active' ? 'selected' : ''}>🟢 نشط</option>
-                        <option value="maintenance" ${status === 'maintenance' ? 'selected' : ''}>🟠 صيانة</option>
-                        <option value="hidden" ${status === 'hidden' ? 'selected' : ''}>⚪ مخفي</option>
-                    </select>
-                </div>
-            `;
-        }).join('');
-    } catch (e) { grid.innerHTML = '<div class="no-data">❌ فشل تحميل البيانات</div>'; }
-}
-
-async function updateFeatureStatus(featureId, newStatus) {
-    try {
-        await supabaseClient.from('app_settings').upsert({ key: `section_${featureId}_status`, value: newStatus });
-        loadFeatures();
-    } catch (e) { alert('❌ فشل: ' + e.message); }
-}
-
 // --- RADIOS MANAGEMENT ---
 async function loadRadios() {
     const list = document.getElementById('radioList');
@@ -1109,8 +1255,8 @@ async function loadContent() {
             <div class="feedback-card" style="border-right: 5px solid ${item.is_active ? 'var(--accent-color)' : '#ccc'};">
                 <div style="display: flex; justify-content: space-between; align-items: start;">
                     <div>
-                        <h3 style="margin-bottom: 5px;">${item.title}</h3>
-                        <span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${item.type}</span>
+                        <h3 style="margin-bottom: 5px;">${escapeHtml(item.title)}</h3>
+                        <span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${escapeHtml(item.type)}</span>
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="refresh-btn" onclick="toggleContentActive('${item.id}', ${item.is_active})" style="padding: 5px 10px; font-size: 0.8rem; background: ${item.is_active ? '#6b7280' : 'var(--accent-color)'};">
@@ -1119,8 +1265,8 @@ async function loadContent() {
                         <button class="delete-btn" onclick="deleteContent('${item.id}')">🗑️ حذف</button>
                     </div>
                 </div>
-                <p style="margin-top: 10px; color: var(--text-secondary); line-height: 1.6;">${item.body}</p>
-                ${item.image_url ? `<img src="${item.image_url}" style="margin-top: 10px; height: 100px; border-radius: 8px;">` : ''}
+                <p style="margin-top: 10px; color: var(--text-secondary); line-height: 1.6;">${escapeHtml(item.body)}</p>
+                ${item.image_url ? `<img src="${escapeHtml(item.image_url)}" style="margin-top: 10px; height: 100px; border-radius: 8px;">` : ''}
             </div>
         `).join('');
     } catch (e) { console.error(e); }
@@ -1157,6 +1303,37 @@ async function toggleContentActive(id, currentStatus) {
     } catch (e) { alert('❌ فشل: ' + e.message); }
 }
 
+async function updateContent(id) {
+    const title = document.getElementById('editContentTitle')?.value;
+    const body = document.getElementById('editContentBody')?.value;
+    const type = document.getElementById('editContentType')?.value;
+    const image = document.getElementById('editContentImage')?.value;
+
+    if (!title || !body) {
+        alert('⚠️ يرجى إكمال العنوان والمحتوى');
+        return;
+    }
+
+    try {
+        const { error } = await supabaseClient
+            .from('app_content')
+            .update({
+                title,
+                body,
+                type,
+                image_url: image || null
+            })
+            .eq('id', id);
+
+        if (error) throw error;
+
+        alert('✅ تم تحديث المحتوى بنجاح');
+        loadContent();
+    } catch (e) {
+        alert('❌ فشل التحديث: ' + e.message);
+    }
+}
+
 // --- KIDS STORIES ---
 async function loadKidsStories() {
     const list = document.getElementById('kidsStoriesList');
@@ -1169,11 +1346,11 @@ async function loadKidsStories() {
             <div class="feedback-card" style="border-right: 5px solid ${story.is_visible ? 'var(--accent-color)' : '#ccc'};">
                 <div style="display: flex; justify-content: space-between; align-items: start;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 2rem;">${story.emoji}</span>
+                        <span style="font-size: 2rem;">${escapeHtml(story.emoji)}</span>
                         <div>
-                            <h3>${story.title}</h3>
+                            <h3>${escapeHtml(story.title)}</h3>
                             <div style="display: flex; gap: 5px;">
-                                <span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${story.category || 'منوع'}</span>
+                                <span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${escapeHtml(story.category) || 'منوع'}</span>
                                 <span class="category-badge" style="background: #fef3c7; color: #d97706;">⭐ ${story.stars_reward} نجمة</span>
                             </div>
                         </div>
@@ -1307,8 +1484,8 @@ async function loadCharityStories() {
             <div class="feedback-card" style="border-right: 5px solid ${story.is_visible ? 'var(--accent-color)' : '#ccc'};">
                 <div style="display: flex; justify-content: space-between; align-items: start;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 2rem;">${story.emoji}</span>
-                        <div><h3>${story.title}</h3><span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${story.category}</span></div>
+                        <span style="font-size: 2rem;">${escapeHtml(story.emoji)}</span>
+                        <div><h3>${escapeHtml(story.title)}</h3><span class="category-badge" style="background: #e0f2fe; color: #0284c7;">${escapeHtml(story.category)}</span></div>
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="refresh-btn" onclick="toggleCharityStoryVisibility('${story.id}', ${story.is_visible})" style="padding: 5px 10px; font-size: 0.8rem; background: ${story.is_visible ? '#6b7280' : 'var(--accent-color)'};">
@@ -1317,7 +1494,7 @@ async function loadCharityStories() {
                         <button class="delete-btn" onclick="deleteCharityStory('${story.id}')">🗑️ حذف</button>
                     </div>
                 </div>
-                <p style="margin-top: 15px; color: var(--text-primary); line-height: 1.8;">${story.content}</p>
+                <p style="margin-top: 15px; color: var(--text-primary); line-height: 1.8;">${escapeHtml(story.content)}</p>
             </div>
         `).join('');
     } catch (e) { console.error(e); }
@@ -1346,11 +1523,45 @@ async function toggleCharityStoryVisibility(id, currentStatus) {
 }
 
 async function deleteCharityStory(id) {
-    if (!confirm('حذف القصة؟')) return;
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذه القصة؟')) return;
     try {
         await supabaseClient.from('charity_stories').delete().eq('id', id);
+        alert('✅ تم حذف القصة بنجاح');
         loadCharityStories();
     } catch (e) { alert('❌ فشل: ' + e.message); }
+}
+
+async function updateCharityStory(id) {
+    const title = document.getElementById('editCharityTitle')?.value;
+    const category = document.getElementById('editCharityCategory')?.value;
+    const emoji = document.getElementById('editCharityEmoji')?.value;
+    const content = document.getElementById('editCharityContent')?.value;
+    const source = document.getElementById('editCharitySource')?.value;
+
+    if (!title || !content) {
+        alert('⚠️ يرجى إكمال العنوان والمحتوى');
+        return;
+    }
+
+    try {
+        const { error } = await supabaseClient
+            .from('charity_stories')
+            .update({
+                title,
+                category,
+                emoji: emoji || '🤲',
+                content,
+                source
+            })
+            .eq('id', id);
+
+        if (error) throw error;
+
+        alert('✅ تم تحديث القصة بنجاح');
+        loadCharityStories();
+    } catch (e) {
+        alert('❌ فشل التحديث: ' + e.message);
+    }
 }
 
 // --- ERROR LOGS ---
@@ -1376,8 +1587,12 @@ async function loadErrors() {
 }
 
 async function deleteError(id) {
-    if (!confirm('⚠️ حذف السجل؟')) return;
-    try { await supabaseClient.from('error_logs').delete().eq('id', id); loadErrors(); } catch (e) { alert('❌ فشل: ' + e.message); }
+    if (!confirm('⚠️ حذف سجل الخطأ؟')) return;
+    try {
+        await supabaseClient.from('error_logs').delete().eq('id', id);
+        alert('✅ تم حذف السجل بنجاح');
+        loadErrors();
+    } catch (e) { alert('❌ فشل: ' + e.message); }
 }
 
 // --- MODALS & UTILS ---
@@ -1976,6 +2191,7 @@ async function deletePdfBook(id) {
     }
 }
 
+
 // ==========================================
 // COMMUNITIES MANAGEMENT
 // ==========================================
@@ -2100,6 +2316,7 @@ function openManageCommunityModal(id, name) {
     // Clear fields
     document.getElementById('meetingTitle').value = '';
     document.getElementById('meetingTeacher').value = '';
+    document.getElementById('meetingGender').value = 'both';
     document.getElementById('meetingUrl').value = '';
     document.getElementById('meetingDate').value = '';
     loadCommunityMeetings(id);
@@ -2202,6 +2419,7 @@ async function createCommunityMeeting() {
     const communityId = document.getElementById('currentCommunityId').value;
     const title = document.getElementById('meetingTitle').value.trim();
     const teacherName = document.getElementById('meetingTeacher').value.trim();
+    const targetGender = document.getElementById('meetingGender').value;
     const url = document.getElementById('meetingUrl').value.trim();
     const dateStr = document.getElementById('meetingDate').value;
 
@@ -2221,6 +2439,7 @@ async function createCommunityMeeting() {
                 meet_url: url || null,
                 meeting_date: meetingDate,
                 duration_minutes: 60,
+                target_gender: targetGender,
                 teacher_name: teacherName || null,
                 created_by: '00000000-0000-0000-0000-000000000000'
             });
@@ -2229,6 +2448,7 @@ async function createCommunityMeeting() {
 
         document.getElementById('meetingTitle').value = '';
         document.getElementById('meetingTeacher').value = '';
+        document.getElementById('meetingGender').value = 'both';
         document.getElementById('meetingUrl').value = '';
         document.getElementById('meetingDate').value = '';
         alert('✅ تم جدولة الحلقة بنجاح');
@@ -2239,3 +2459,166 @@ async function createCommunityMeeting() {
     }
 }
 
+
+// --- COMMUNITY USERS MANAGEMENT ---
+async function loadCommunityUsers() {
+    const list = document.getElementById('communityUsersList');
+    if (!list) return;
+
+    list.innerHTML = '<tr><td colspan="6" class="loading">⏳ جاري تحميل البيانات...</td></tr>';
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('community_users')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Update stats
+        const total = data.length;
+        const male = data.filter(u => u.gender === 'male').length;
+        const female = data.filter(u => u.gender === 'female').length;
+
+        if (document.getElementById('cuTotal')) document.getElementById('cuTotal').textContent = total;
+        if (document.getElementById('cuMale')) document.getElementById('cuMale').textContent = male;
+        if (document.getElementById('cuFemale')) document.getElementById('cuFemale').textContent = female;
+
+        if (data.length === 0) {
+            list.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">لا يوجد مستخدمين مسجلين بعد.</td></tr>';
+            return;
+        }
+
+        list.innerHTML = data.map(user => `
+            <tr style="border-bottom: 1px solid var(--border-color); transition: background-color 0.2s;">
+                <td style="padding: 12px; color: var(--text-primary); font-weight: 500;">
+                    ${user.name || 'بدون اسم'}
+                </td>
+                <td style="padding: 12px;">
+                    ${user.gender === 'male' ? '👨 رجل' : '👩 امرأة'}
+                </td>
+                <td style="padding: 12px; color: var(--text-secondary);" dir="ltr">
+                    ${user.phone || '-'}
+                </td>
+                <td style="padding: 12px; color: var(--text-secondary);">
+                    ${user.email || '-'}
+                </td>
+                <td style="padding: 12px;">
+                    <select onchange="toggleCommunityUserRole('${user.id}', this.value)" style="padding: 5px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-size: 0.85rem;">
+                        <option value="false" ${!user.is_teacher ? 'selected' : ''}>مستخدم عادي</option>
+                        <option value="true" ${user.is_teacher ? 'selected' : ''}>👨‍🏫 مدرس</option>
+                    </select>
+                </td>
+                <td style="padding: 12px; color: var(--text-secondary);">
+                    <span class="category-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-color);">
+                        ${user.location || 'غير محدد'}
+                    </span>
+                </td>
+                <td style="padding: 12px; color: var(--text-secondary); font-size: 0.9rem;">
+                    ${new Date(user.created_at).toLocaleDateString('ar-EG')}
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (e) {
+        console.error('Error loading community users:', e);
+        list.innerHTML = `<tr><td colspan="6" class="error">❌ حدث خطأ: ${e.message}</td></tr>`;
+    }
+}
+
+async function toggleCommunityUserRole(userId, isTeacherValue) {
+    try {
+        const isTeacher = isTeacherValue === 'true';
+        const { error } = await supabaseClient
+            .from('community_users')
+            .update({ is_teacher: isTeacher })
+            .eq('id', userId);
+
+        if (error) throw error;
+        
+        // Optional: show a small toast or just reload
+        loadCommunityUsers();
+    } catch (e) {
+        alert('❌ فشل تغيير الصلاحية: ' + e.message);
+        loadCommunityUsers(); // reset select
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Push Notifications Logic
+// ─────────────────────────────────────────────────────────────────
+
+async function sendPushNotification() {
+    const title = document.getElementById('notifTitle').value;
+    const body = document.getElementById('notifBody').value;
+    const image = document.getElementById('notifImage').value;
+    const route = document.getElementById('notifRoute').value;
+    const btn = document.getElementById('sendNotifBtn');
+    const spinner = document.getElementById('sendNotifSpinner');
+    const statusMsg = document.getElementById('notifStatusMsg');
+
+    if (!title || !body) {
+        showStatus(statusMsg, 'الرجاء إدخال العنوان والمحتوى', 'error');
+        return;
+    }
+
+    // إظهار حالة التحميل
+    btn.disabled = true;
+    spinner.style.display = 'inline-block';
+    statusMsg.style.display = 'none';
+
+    try {
+        // استدعاء الـ Edge Function
+        const { data, error } = await supabaseClient.functions.invoke('send-notification', {
+            body: {
+                title: title,
+                body: body,
+                imageUrl: image || null,
+                routePath: route || null
+            }
+        });
+
+        if (error) {
+            console.error("Supabase Function Error:", error);
+            throw error;
+        }
+
+        if (data && data.error) {
+            console.error("Function Data Error:", data.error);
+            throw new Error(data.error);
+        }
+
+        // نجاح
+        showStatus(statusMsg, 'تم إرسال الإشعار بنجاح! 🎉', 'success');
+        
+        // تفريغ الحقول
+        document.getElementById('notifTitle').value = '';
+        document.getElementById('notifBody').value = '';
+        document.getElementById('notifImage').value = '';
+        document.getElementById('notifRoute').value = '';
+
+    } catch (err) {
+        console.error('Error sending notification:', err);
+        showStatus(statusMsg, 'حدث خطأ أثناء الإرسال: ' + (err.message || 'خطأ غير معروف'), 'error');
+    } finally {
+        // إعادة الزر لحالته الطبيعية
+        btn.disabled = false;
+        spinner.style.display = 'none';
+    }
+}
+
+function showStatus(element, message, type) {
+    element.textContent = message;
+    element.style.display = 'block';
+    if (type === 'success') {
+        element.style.backgroundColor = '#d1fae5';
+        element.style.color = '#065f46';
+        element.style.border = '1px solid #10b981';
+    } else {
+        element.style.backgroundColor = '#fee2e2';
+        element.style.color = '#991b1b';
+        element.style.border = '1px solid #ef4444';
+    }
+}
+
+window.sendPushNotification = sendPushNotification;
