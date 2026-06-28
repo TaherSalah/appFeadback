@@ -30,7 +30,7 @@ function applyUserPermissions(role) {
         allTabs.forEach(tab => tab.style.display = 'flex');
     } else if (role === 'user') {
         allTabs.forEach(tab => {
-            if (tab.id === 'communitiesTabBtn' || tab.id === 'communityUsersTabBtn') {
+            if (tab.id === 'communitiesTabBtn' || tab.id === 'communityUsersTabBtn' || tab.id === 'notificationsTabBtn') {
                 tab.style.display = 'flex';
             } else {
                 tab.style.display = 'none';
