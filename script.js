@@ -176,7 +176,7 @@ function applyUserPermissions(role) {
         allTabs.forEach(tab => tab.style.display = 'flex');
     } else if (role === 'user') {
         allTabs.forEach(tab => {
-            if (tab.id === 'communitiesTabBtn' || tab.id === 'communityUsersTabBtn') {
+            if (tab.id === 'communitiesTabBtn' || tab.id === 'communityUsersTabBtn' || tab.id === 'notificationsTabBtn') {
                 tab.style.display = 'flex';
             } else {
                 tab.style.display = 'none';
@@ -1144,34 +1144,50 @@ async function loadBanners() {
 
 async function uploadBanner() {
     const fileInput = document.getElementById('bannerFile');
+    const urlInput = document.getElementById('bannerImageUrl');
     const title = document.getElementById('bannerTitle').value;
     const link = document.getElementById('bannerLink').value;
     const progressBar = document.getElementById('progressBar');
     const pContainer = document.getElementById('uploadProgress');
 
-    if (fileInput.files.length === 0) { alert('⚠️ يرجى اختيار صورة'); return; }
+    const imageUrlValue = urlInput ? urlInput.value.trim() : '';
 
-    const file = fileInput.files[0];
-    const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${file.name.split('.').pop()}`;
-    const filePath = `ads/${fileName}`;
+    if (fileInput.files.length === 0 && !imageUrlValue) {
+        alert('⚠️ يرجى اختيار صورة أو إدخال رابط للصورة');
+        return;
+    }
 
     if (pContainer) pContainer.style.display = 'block';
     if (progressBar) progressBar.style.width = '10%';
 
     try {
-        const { error: uError } = await supabaseClient.storage.from('banners_storage').upload(filePath, file);
-        if (uError) throw uError;
-        if (progressBar) progressBar.style.width = '60%';
+        let finalImageUrl = imageUrlValue;
 
-        const { data: { publicUrl } } = supabaseClient.storage.from('banners_storage').getPublicUrl(filePath);
-        await supabaseClient.from('banners').insert([{ title, image_url: publicUrl, link_url: link, is_active: true }]);
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${file.name.split('.').pop()}`;
+            const filePath = `ads/${fileName}`;
+
+            const { error: uError } = await supabaseClient.storage.from('banners_storage').upload(filePath, file);
+            if (uError) throw uError;
+            if (progressBar) progressBar.style.width = '60%';
+
+            const { data: { publicUrl } } = supabaseClient.storage.from('banners_storage').getPublicUrl(filePath);
+            finalImageUrl = publicUrl;
+        }
+
+        await supabaseClient.from('banners').insert([{ title, image_url: finalImageUrl, link_url: link, is_active: true }]);
 
         if (progressBar) progressBar.style.width = '100%';
         setTimeout(() => { if (pContainer) pContainer.style.display = 'none'; }, 1000);
-        alert('✅ تم رفع البانر بنجاح');
+        alert('✅ تم نشر البانر بنجاح');
+        
         fileInput.value = '';
+        if (urlInput) urlInput.value = '';
+        document.getElementById('bannerTitle').value = '';
+        document.getElementById('bannerLink').value = '';
         loadBanners();
-    } catch (e) { alert('❌ فشل الرفع: ' + e.message); if (pContainer) pContainer.style.display = 'none'; }
+    } catch (e) { alert('❌ فشل النشر: ' + e.message); if (pContainer) pContainer.style.display = 'none'; }
 }
 
 async function deleteBanner(id) {
@@ -2042,10 +2058,10 @@ async function loadMosques() {
         }).length;
 
         // Update stats UI
-        if (document.getElementById('totalMosquesCount'))
-            document.getElementById('totalMosquesCount').textContent = total;
-        if (document.getElementById('mosquesDevicesCount'))
-            document.getElementById('mosquesDevicesCount').textContent = devicesCount || '-';
+        if (document.getElementById('totalMosques'))
+            document.getElementById('totalMosques').textContent = total;
+        if (document.getElementById('uniqueDevicesMosques'))
+            document.getElementById('uniqueDevicesMosques').textContent = devicesCount || '-';
         if (document.getElementById('mosquesTodayCount'))
             document.getElementById('mosquesTodayCount').textContent = today;
 
@@ -2318,7 +2334,10 @@ function openManageCommunityModal(id, name) {
     document.getElementById('meetingTeacher').value = '';
     document.getElementById('meetingGender').value = 'both';
     document.getElementById('meetingUrl').value = '';
-    document.getElementById('meetingDate').value = '';
+    document.getElementById('meetingDateOnly').value = '';
+    document.getElementById('meetingHour').value = '01';
+    document.getElementById('meetingMinute').value = '00';
+    document.getElementById('meetingAmPm').value = 'AM';
     loadCommunityMeetings(id);
     document.getElementById('manageCommunityModal').style.display = 'flex';
 }
@@ -2339,6 +2358,7 @@ async function loadCommunityMeetings(communityId) {
             .order('meeting_date', { ascending: false });
 
         if (error) throw error;
+        window.currentMeetingsList = data;
 
         if (!data || data.length === 0) {
             listEl.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">لا توجد حلقات مسجلة حتى الآن.</p>';
@@ -2356,7 +2376,11 @@ async function loadCommunityMeetings(communityId) {
                             <small style="color: var(--text-secondary);">📅 ${formattedDate}</small>
                             ${meeting.teacher_name ? `<br><small style="color: var(--accent-color);">👤 ${escapeHtml(meeting.teacher_name)}</small>` : ''}
                         </div>
-                        <button onclick="deleteCommunityMeeting('${meeting.id}')" style="background: #fee; color: #c00; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px;">🗑️ حذف</button>
+                        <div>
+                            <button onclick="duplicateCommunityMeeting('${meeting.id}')" style="background: #eff6ff; color: #3b82f6; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px; margin-left: 5px;">🔄 تكرار</button>
+                            <button onclick="editCommunityMeeting('${meeting.id}')" style="background: #eef; color: var(--accent-color); border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px; margin-left: 5px;">✏️ تعديل</button>
+                            <button onclick="deleteCommunityMeeting('${meeting.id}')" style="background: #fee; color: #c00; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px;">🗑️ حذف</button>
+                        </div>
                     </div>
                     <div style="margin-top: 10px;">
                         <label style="font-size: 12px; color: var(--text-secondary);">التقرير / ملخص الحلقة</label>
@@ -2415,47 +2439,164 @@ function escapeHtml(unsafe) {
          .replace(/'/g, "&#039;");
 }
 
-async function createCommunityMeeting() {
+function duplicateCommunityMeeting(meetingId) {
+    if (!window.currentMeetingsList) return;
+    const meeting = window.currentMeetingsList.find(m => m.id === meetingId);
+    if (!meeting) return;
+
+    cancelEditMeeting(); // Ensure we are in create mode
+
+    document.getElementById('meetingTitle').value = meeting.title || '';
+    document.getElementById('meetingTeacher').value = meeting.teacher_name || '';
+    document.getElementById('meetingGender').value = meeting.target_gender || 'both';
+    document.getElementById('meetingUrl').value = meeting.meet_url || '';
+    
+    if (meeting.meeting_date) {
+        const d = new Date(meeting.meeting_date);
+        
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        document.getElementById('meetingDateOnly').value = `${year}-${month}-${day}`;
+        
+        let hours = d.getHours();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        document.getElementById('meetingHour').value = String(hours).padStart(2, '0');
+        
+        let minutes = d.getMinutes();
+        if (minutes < 15) minutes = '00';
+        else if (minutes < 30) minutes = '15';
+        else if (minutes < 45) minutes = '30';
+        else minutes = '45';
+        document.getElementById('meetingMinute').value = minutes;
+        
+        document.getElementById('meetingAmPm').value = ampm;
+    }
+
+    document.getElementById('manageCommunityModal').querySelector('div').scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function editCommunityMeeting(meetingId) {
+    if (!window.currentMeetingsList) return;
+    const meeting = window.currentMeetingsList.find(m => m.id === meetingId);
+    if (!meeting) return;
+
+    document.getElementById('editingMeetingId').value = meeting.id;
+    document.getElementById('meetingTitle').value = meeting.title || '';
+    document.getElementById('meetingTeacher').value = meeting.teacher_name || '';
+    document.getElementById('meetingGender').value = meeting.target_gender || 'both';
+    document.getElementById('meetingUrl').value = meeting.meet_url || '';
+    
+    if (meeting.meeting_date) {
+        const d = new Date(meeting.meeting_date);
+        
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        document.getElementById('meetingDateOnly').value = `${year}-${month}-${day}`;
+        
+        let hours = d.getHours();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        document.getElementById('meetingHour').value = String(hours).padStart(2, '0');
+        
+        let minutes = d.getMinutes();
+        if (minutes < 15) minutes = '00';
+        else if (minutes < 30) minutes = '15';
+        else if (minutes < 45) minutes = '30';
+        else minutes = '45';
+        document.getElementById('meetingMinute').value = minutes;
+        
+        document.getElementById('meetingAmPm').value = ampm;
+    }
+
+    document.getElementById('meetingFormTitle').innerText = 'تعديل الحلقة';
+    document.getElementById('meetingSubmitBtn').innerText = '💾 تحديث الحلقة';
+    document.getElementById('meetingCancelBtn').style.display = 'block';
+    
+    document.getElementById('manageCommunityModal').querySelector('div').scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function cancelEditMeeting() {
+    document.getElementById('editingMeetingId').value = '';
+    document.getElementById('meetingTitle').value = '';
+    document.getElementById('meetingTeacher').value = '';
+    document.getElementById('meetingGender').value = 'both';
+    document.getElementById('meetingUrl').value = '';
+    document.getElementById('meetingDateOnly').value = '';
+    document.getElementById('meetingHour').value = '01';
+    document.getElementById('meetingMinute').value = '00';
+    document.getElementById('meetingAmPm').value = 'AM';
+    
+    document.getElementById('meetingFormTitle').innerText = 'جدولة حلقة جديدة';
+    document.getElementById('meetingSubmitBtn').innerHTML = '➕ جدولة الحلقة';
+    document.getElementById('meetingCancelBtn').style.display = 'none';
+}
+
+async function saveCommunityMeeting() {
     const communityId = document.getElementById('currentCommunityId').value;
     const title = document.getElementById('meetingTitle').value.trim();
     const teacherName = document.getElementById('meetingTeacher').value.trim();
     const targetGender = document.getElementById('meetingGender').value;
     const url = document.getElementById('meetingUrl').value.trim();
-    const dateStr = document.getElementById('meetingDate').value;
+    const dateOnly = document.getElementById('meetingDateOnly').value;
+    const hour = parseInt(document.getElementById('meetingHour').value);
+    const minute = document.getElementById('meetingMinute').value;
+    const ampm = document.getElementById('meetingAmPm').value;
+    const editingId = document.getElementById('editingMeetingId').value;
 
-    if (!title || !dateStr || !url) {
+    if (!title || !dateOnly || !url) {
         alert('❌ يرجى إدخال عنوان الحلقة، وموعدها، ورابط الاجتماع (Google Meet)');
         return;
     }
 
     try {
-        const meetingDate = new Date(dateStr).toISOString();
+        let hours24 = hour;
+        if (ampm === 'PM' && hour !== 12) hours24 += 12;
+        if (ampm === 'AM' && hour === 12) hours24 = 0;
+        
+        const meetingDate = new Date(`${dateOnly}T${String(hours24).padStart(2, '0')}:${minute}:00`).toISOString();
 
-        const { error } = await supabaseClient
-            .from('meetings')
-            .insert({
-                community_id: communityId,
-                title: title,
-                meet_url: url || null,
-                meeting_date: meetingDate,
-                duration_minutes: 60,
-                target_gender: targetGender,
-                teacher_name: teacherName || null,
-                created_by: '00000000-0000-0000-0000-000000000000'
-            });
+        if (editingId) {
+            const { error } = await supabaseClient
+                .from('meetings')
+                .update({
+                    title: title,
+                    meet_url: url || null,
+                    meeting_date: meetingDate,
+                    target_gender: targetGender,
+                    teacher_name: teacherName || null
+                })
+                .eq('id', editingId);
 
-        if (error) throw error;
+            if (error) throw error;
+            alert('✅ تم تحديث الحلقة بنجاح');
+            cancelEditMeeting();
+        } else {
+            const { error } = await supabaseClient
+                .from('meetings')
+                .insert({
+                    community_id: communityId,
+                    title: title,
+                    meet_url: url || null,
+                    meeting_date: meetingDate,
+                    duration_minutes: 60,
+                    target_gender: targetGender,
+                    teacher_name: teacherName || null,
+                    created_by: '00000000-0000-0000-0000-000000000000'
+                });
 
-        document.getElementById('meetingTitle').value = '';
-        document.getElementById('meetingTeacher').value = '';
-        document.getElementById('meetingGender').value = 'both';
-        document.getElementById('meetingUrl').value = '';
-        document.getElementById('meetingDate').value = '';
-        alert('✅ تم جدولة الحلقة بنجاح');
+            if (error) throw error;
+            alert('✅ تم جدولة الحلقة بنجاح');
+            cancelEditMeeting();
+        }
         
         loadCommunityMeetings(communityId);
     } catch (e) {
-        alert('❌ فشل جدولة الحلقة: ' + e.message);
+        alert('❌ فشل حفظ الحلقة: ' + e.message);
     }
 }
 
@@ -2465,7 +2606,7 @@ async function loadCommunityUsers() {
     const list = document.getElementById('communityUsersList');
     if (!list) return;
 
-    list.innerHTML = '<tr><td colspan="6" class="loading">⏳ جاري تحميل البيانات...</td></tr>';
+    list.innerHTML = '<tr><td colspan="8" class="loading">⏳ جاري تحميل البيانات...</td></tr>';
 
     try {
         const { data, error } = await supabaseClient
@@ -2485,7 +2626,7 @@ async function loadCommunityUsers() {
         if (document.getElementById('cuFemale')) document.getElementById('cuFemale').textContent = female;
 
         if (data.length === 0) {
-            list.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">لا يوجد مستخدمين مسجلين بعد.</td></tr>';
+            list.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">لا يوجد مستخدمين مسجلين بعد.</td></tr>';
             return;
         }
 
@@ -2517,12 +2658,20 @@ async function loadCommunityUsers() {
                 <td style="padding: 12px; color: var(--text-secondary); font-size: 0.9rem;">
                     ${new Date(user.created_at).toLocaleDateString('ar-EG')}
                 </td>
+                <td style="padding: 12px; display: flex; gap: 8px;">
+                    <button onclick="openDirectMessageModal('${user.id}', '${(user.name || 'بدون اسم').replace(/'/g, "\\'")}')" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;" title="إرسال رسالة">
+                        📨
+                    </button>
+                    <button onclick="deleteCommunityUser('${user.id}')" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;" title="حذف المستخدم">
+                        🗑️
+                    </button>
+                </td>
             </tr>
         `).join('');
 
     } catch (e) {
         console.error('Error loading community users:', e);
-        list.innerHTML = `<tr><td colspan="6" class="error">❌ حدث خطأ: ${e.message}</td></tr>`;
+        list.innerHTML = `<tr><td colspan="8" class="error">❌ حدث خطأ: ${e.message}</td></tr>`;
     }
 }
 
@@ -2536,7 +2685,6 @@ async function toggleCommunityUserRole(userId, isTeacherValue) {
 
         if (error) throw error;
         
-        // Optional: show a small toast or just reload
         loadCommunityUsers();
     } catch (e) {
         alert('❌ فشل تغيير الصلاحية: ' + e.message);
@@ -2544,8 +2692,130 @@ async function toggleCommunityUserRole(userId, isTeacherValue) {
     }
 }
 
+async function deleteCommunityUser(userId) {
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذا المستخدم نهائياً؟')) return;
+    try {
+        const { error } = await supabaseClient
+            .from('community_users')
+            .delete()
+            .eq('id', userId);
+        
+        if (error) throw error;
+        alert('✅ تم حذف المستخدم بنجاح');
+        loadCommunityUsers();
+    } catch (e) {
+        alert('❌ فشل حذف المستخدم: ' + e.message);
+    }
+}
+
 // ─────────────────────────────────────────────────────────────────
-// Push Notifications Logic
+// Direct Message Logic (Send to Specific User)
+// ─────────────────────────────────────────────────────────────────
+
+function openDirectMessageModal(userId, userName) {
+    let modal = document.getElementById('directMessageModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'directMessageModal';
+        modal.className = 'modal-overlay';
+        modal.style.cssText = 'display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;';
+        modal.innerHTML = `
+            <div style="background: var(--card-bg); width: 90%; max-width: 500px; border-radius: 16px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 id="dmModalTitle" style="margin: 0; color: var(--text-primary);"></h3>
+                    <button onclick="closeDirectMessageModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary);">&times;</button>
+                </div>
+                
+                <input type="hidden" id="dmUserId">
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 13px; color: var(--text-secondary);">عنوان الرسالة</label>
+                    <input type="text" id="dmTitle" placeholder="مثلاً: تنبيه هام" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); margin-top: 5px;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 13px; color: var(--text-secondary);">نص الرسالة</label>
+                    <textarea id="dmBody" rows="4" placeholder="اكتب محتوى رسالتك هنا..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); margin-top: 5px; resize: vertical;"></textarea>
+                </div>
+                
+                <div id="dmStatusMsg" style="display: none; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;"></div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button onclick="closeDirectMessageModal()" style="padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; color: var(--text-primary); cursor: pointer;">إلغاء</button>
+                    <button id="dmSendBtn" onclick="sendDirectMessage()" class="refresh-btn" style="padding: 10px 20px; display: flex; align-items: center; gap: 8px;">
+                        إرسال الآن 🚀
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    document.getElementById('dmUserId').value = userId;
+    document.getElementById('dmModalTitle').textContent = `📨 رسالة إلى: ${userName}`;
+    document.getElementById('dmTitle').value = '';
+    document.getElementById('dmBody').value = '';
+    document.getElementById('dmStatusMsg').style.display = 'none';
+    modal.style.display = 'flex';
+}
+
+function closeDirectMessageModal() {
+    document.getElementById('directMessageModal').style.display = 'none';
+}
+
+async function sendDirectMessage() {
+    const userId = document.getElementById('dmUserId').value;
+    const title = document.getElementById('dmTitle').value.trim();
+    const body = document.getElementById('dmBody').value.trim();
+    const btn = document.getElementById('dmSendBtn');
+    const statusMsg = document.getElementById('dmStatusMsg');
+
+    if (!title || !body) {
+        statusMsg.textContent = '⚠️ الرجاء إدخال عنوان ومحتوى الرسالة';
+        statusMsg.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+        statusMsg.style.color = '#ef4444';
+        statusMsg.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ جاري الإرسال...';
+    statusMsg.style.display = 'none';
+
+    try {
+        const { data, error } = await supabaseClient.functions.invoke('send-notification', {
+            body: {
+                title: title,
+                body: body,
+                userId: userId
+            }
+        });
+
+        if (error) throw error;
+        if (data && data.error) throw new Error(data.error);
+
+        statusMsg.textContent = '✅ تم إرسال الرسالة بنجاح!';
+        statusMsg.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+        statusMsg.style.color = '#10b981';
+        statusMsg.style.display = 'block';
+        
+        setTimeout(() => {
+            closeDirectMessageModal();
+        }, 2000);
+
+    } catch (e) {
+        statusMsg.textContent = '❌ فشل الإرسال: ' + e.message;
+        statusMsg.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+        statusMsg.style.color = '#ef4444';
+        statusMsg.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'إرسال الآن 🚀';
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Push Notifications Logic (Broadcast)
 // ─────────────────────────────────────────────────────────────────
 
 async function sendPushNotification() {
@@ -2553,6 +2823,7 @@ async function sendPushNotification() {
     const body = document.getElementById('notifBody').value;
     const image = document.getElementById('notifImage').value;
     const route = document.getElementById('notifRoute').value;
+    const targetUrl = document.getElementById('notifUrl')?.value;
     const btn = document.getElementById('sendNotifBtn');
     const spinner = document.getElementById('sendNotifSpinner');
     const statusMsg = document.getElementById('notifStatusMsg');
@@ -2574,7 +2845,8 @@ async function sendPushNotification() {
                 title: title,
                 body: body,
                 imageUrl: image || null,
-                routePath: route || null
+                routePath: route || null,
+                targetUrl: targetUrl || null
             }
         });
 
@@ -2596,6 +2868,9 @@ async function sendPushNotification() {
         document.getElementById('notifBody').value = '';
         document.getElementById('notifImage').value = '';
         document.getElementById('notifRoute').value = '';
+        if (document.getElementById('notifUrl')) {
+            document.getElementById('notifUrl').value = '';
+        }
 
     } catch (err) {
         console.error('Error sending notification:', err);

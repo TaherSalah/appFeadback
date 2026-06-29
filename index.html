@@ -1598,6 +1598,10 @@
                 <span class="emoji">👥</span>
                 <span class="label">مستخدمي المجتمعات</span>
             </div>
+            <div id="newsAndBroadcastTabBtn" class="sidebar-item" onclick="switchTab('newsAndBroadcast')">
+                <span class="emoji">📢</span>
+                <span class="label">الأنباء والرسائل</span>
+            </div>
             <div id="notificationsTabBtn" class="sidebar-item" onclick="switchTab('notifications')">
                 <span class="emoji">🔔</span>
                 <span class="label">الإشعارات (Push)</span>
@@ -1919,45 +1923,6 @@
                         style="width: 25px; height: 25px; cursor: pointer;">
                 </div>
 
-                <div class="filter-group"
-                    style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px;">
-                    <label
-                        style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">📢
-                        شريط الأنباء المتحرك</label>
-
-                    <div class="responsive-form-grid">
-                        <div style="flex: 1;">
-                            <label style="font-size: 12px; color: var(--text-secondary);">العنوان الجانبي (مثلاً:
-                                تنبيه)</label>
-                            <input type="text" id="newsLabelInput" placeholder="تنبيه عاجل"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 20px;">
-                            <input type="checkbox" id="newsActiveToggle"
-                                style="width: 20px; height: 20px; cursor: pointer;">
-                            <label style="font-size: 13px; font-weight: bold;">تفعيل الظهور</label>
-                        </div>
-                        <div>
-                            <label style="font-size: 12px; color: var(--text-secondary);">نوع التنبيه (اللون)</label>
-                            <select id="newsTypeInput"
-                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
-                                <option value="urgent">🔴 عاجل (أحمر)</option>
-                                <option value="info">🔵 معلومة (أزرق)</option>
-                                <option value="success">🟢 نجاح (أخضر)</option>
-                                <option value="warning">🟠 تحذير (برتقالي)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <label style="font-size: 12px; color: var(--text-secondary);">نص الخبر (اتركه فارغاً
-                        للإخفاء)</label>
-                    <input type="text" id="newsInput" placeholder="أدخل نص التنبيه هنا..."
-                        style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); margin-top: 5px;">
-
-                    <button class="refresh-btn" onclick="updateNewsMarquee()"
-                        style="margin-top: 15px; width: 100%; background: #ef4444; font-weight: bold;">📢 تحديث شريط
-                        الأنباء</button>
-                </div>
 
                 <div class="filter-group"
                     style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.02);">
@@ -1978,31 +1943,6 @@
                         والواجهات في التطبيق لهذا اللون فوراً.</p>
                 </div>
 
-                <div class="filter-group"
-                    style="margin-bottom: 30px; border: 1px solid #6366f1; padding: 20px; border-radius: 16px; background: rgba(99, 102, 241, 0.05);">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                        <div>
-                            <label style="color: #4f46e5; font-weight: bold; display: block; margin-bottom: 5px;">📢
-                                الرسائل العامة (Broadcast)</label>
-                            <p style="font-size: 0.8rem; color: var(--text-secondary);">رسالة تظهر للجميع عند فتح
-                                التطبيق (بديلة للإشعارات).</p>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <label style="font-size: 12px;">تفعيل:</label>
-                            <input type="checkbox" id="broadcastToggle"
-                                style="width: 20px; height: 20px; cursor: pointer;">
-                        </div>
-                    </div>
-
-                    <textarea id="broadcastInput"
-                        style="width: 100%; height: 80px; padding: 12px; border-radius: 12px; border: 1.5px solid #6366f1; background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-bottom: 15px;"
-                        placeholder="اكتب الرسالة التي ستظهر للمستخدمين هنا..."></textarea>
-
-                    <button class="refresh-btn" onclick="updateBroadcast()"
-                        style="width: 100%; background: #6366f1; font-weight: bold; height: 45px;">🚀 نشر الرسالة
-                        الآن</button>
-                </div>
 
                 <div class="filter-group"
                     style="margin-bottom: 30px; border: 1.5px solid var(--accent-color); padding: 20px; border-radius: 16px; background: rgba(16, 185, 129, 0.05);">
@@ -2144,10 +2084,17 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 15px;">
-                        <label style="font-size: 13px; color: var(--text-secondary);">اختر الصورة</label>
-                        <input type="file" id="bannerFile" accept="image/*"
-                            style="display: block; width: 100%; padding: 10px; margin-top: 5px; color: var(--text-primary);">
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 250px;">
+                            <label style="font-size: 13px; color: var(--text-secondary);">اختر الصورة من جهازك</label>
+                            <input type="file" id="bannerFile" accept="image/*"
+                                style="display: block; width: 100%; padding: 10px; margin-top: 5px; color: var(--text-primary);">
+                        </div>
+                        <div style="flex: 1; min-width: 250px;">
+                            <label style="font-size: 13px; color: var(--text-secondary);">أو رابط مباشر للصورة (URL)</label>
+                            <input type="url" id="bannerImageUrl" placeholder="https://example.com/image.jpg"
+                                style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); margin-top: 5px;">
+                        </div>
                     </div>
 
                     <div id="uploadProgress"
@@ -2539,9 +2486,9 @@
                         <div class="number" id="totalMosques">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="icon">📍</div>
-                        <h3>مدينة متكررة</h3>
-                        <div class="number" id="topMosqueCity">-</div>
+                        <div class="icon">📅</div>
+                        <h3>المضافة اليوم</h3>
+                        <div class="number" id="mosquesTodayCount">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="icon">📱</div>
@@ -2643,6 +2590,7 @@
                                 <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">الصلاحية</th>
                                 <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">الموقع</th>
                                 <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">تاريخ التسجيل</th>
+                                <th style="padding: 15px; color: var(--text-secondary); font-weight: 600;">إجراء</th>
                             </tr>
                         </thead>
                         <tbody id="communityUsersList">
@@ -2650,6 +2598,77 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- News and Broadcast Tab -->
+        <div id="newsAndBroadcastTab" class="tab-content">
+            <h3 style="margin-bottom: 25px; color: var(--text-primary);">📢 الأنباء والإشعارات</h3>
+
+            <div class="filter-group"
+                style="margin-bottom: 30px; border: 1px dashed var(--border-color); padding: 15px; border-radius: 12px;">
+                <label
+                    style="color: var(--text-primary); font-weight: bold; display: block; margin-bottom: 10px;">📢
+                    شريط الأنباء المتحرك</label>
+
+                <div class="responsive-form-grid">
+                    <div style="flex: 1;">
+                        <label style="font-size: 12px; color: var(--text-secondary);">العنوان الجانبي (مثلاً:
+                            تنبيه)</label>
+                        <input type="text" id="newsLabelInput" placeholder="تنبيه عاجل"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 20px;">
+                        <input type="checkbox" id="newsActiveToggle"
+                            style="width: 20px; height: 20px; cursor: pointer;">
+                        <label style="font-size: 13px; font-weight: bold;">تفعيل الظهور</label>
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; color: var(--text-secondary);">نوع التنبيه (اللون)</label>
+                        <select id="newsTypeInput"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                            <option value="urgent">🔴 عاجل (أحمر)</option>
+                            <option value="info">🔵 معلومة (أزرق)</option>
+                            <option value="success">🟢 نجاح (أخضر)</option>
+                            <option value="warning">🟠 تحذير (برتقالي)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label style="font-size: 12px; color: var(--text-secondary);">نص الخبر (اتركه فارغاً
+                    للإخفاء)</label>
+                <input type="text" id="newsInput" placeholder="أدخل نص التنبيه هنا..."
+                    style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); margin-top: 5px;">
+
+                <button class="refresh-btn" onclick="updateNewsMarquee()"
+                    style="margin-top: 15px; width: 100%; background: #ef4444; font-weight: bold;">📢 تحديث شريط
+                    الأنباء</button>
+            </div>
+
+            <div class="filter-group"
+                style="margin-bottom: 30px; border: 1px solid #6366f1; padding: 20px; border-radius: 16px; background: rgba(99, 102, 241, 0.05);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <div>
+                        <label style="color: #4f46e5; font-weight: bold; display: block; margin-bottom: 5px;">📢
+                            الرسائل العامة (Broadcast)</label>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">رسالة تظهر للجميع عند فتح
+                            التطبيق (بديلة للإشعارات).</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 12px;">تفعيل:</label>
+                        <input type="checkbox" id="broadcastToggle"
+                            style="width: 20px; height: 20px; cursor: pointer;">
+                    </div>
+                </div>
+
+                <textarea id="broadcastInput"
+                    style="width: 100%; height: 80px; padding: 12px; border-radius: 12px; border: 1.5px solid #6366f1; background: var(--card-bg); color: var(--text-primary); font-family: inherit; margin-bottom: 15px;"
+                    placeholder="اكتب الرسالة التي ستظهر للمستخدمين هنا..."></textarea>
+
+                <button class="refresh-btn" onclick="updateBroadcast()"
+                    style="width: 100%; background: #6366f1; font-weight: bold; height: 45px;">🚀 نشر الرسالة
+                    الآن</button>
             </div>
         </div>
 
@@ -2692,6 +2711,12 @@
                             <option value="/azkarMassa">أذكار المساء</option>
                             <option value="/KhatmahHome">الختمات</option>
                         </select>
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #334155;">رابط خارجي للفتح المباشر (اختياري)</label>
+                        <input type="url" id="notifUrl" placeholder="https://example.com/post" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; font-family: inherit; direction: ltr;">
+                        <small style="color: #64748b; font-size: 0.85rem; margin-top: 4px; display: block;">إذا قمت بوضع رابط هنا، سيتم فتحه في المتصفح فوراً ولن يتم فتح صفحة التطبيق.</small>
                     </div>
 
                     <button type="submit" id="sendNotifBtn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; padding: 14px 24px; font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; transition: all 0.2s;">
@@ -2828,7 +2853,8 @@
             <input type="hidden" id="currentCommunityId">
             
             <div style="background: rgba(16, 185, 129, 0.05); padding: 20px; border-radius: 12px; border: 1px solid var(--accent-color); margin-bottom: 25px;">
-                <h3 style="margin-top: 0; color: var(--accent-color); margin-bottom: 15px;">جدولة حلقة جديدة</h3>
+                <h3 id="meetingFormTitle" style="margin-top: 0; color: var(--accent-color); margin-bottom: 15px;">جدولة حلقة جديدة</h3>
+                <input type="hidden" id="editingMeetingId">
                 
                 <div class="responsive-form-grid">
                     <div>
@@ -2837,7 +2863,21 @@
                     </div>
                     <div>
                         <label style="font-size: 13px; color: var(--text-secondary);">موعد الحلقة</label>
-                        <input type="datetime-local" id="meetingDate" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        <div style="display: flex; gap: 5px;">
+                            <input type="date" id="meetingDateOnly" style="flex: 2; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                            <select id="meetingHour" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option>
+                                <option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                            </select>
+                            <span style="display:flex; align-items:center;">:</span>
+                            <select id="meetingMinute" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>
+                            </select>
+                            <select id="meetingAmPm" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                                <option value="AM">ص</option>
+                                <option value="PM">م</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 
@@ -2861,7 +2901,10 @@
                     <input type="url" id="meetingUrl" placeholder="https://meet.google.com/..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); text-align: left;" dir="ltr">
                 </div>
                 
-                <button class="refresh-btn" onclick="createCommunityMeeting()" style="width: 100%; font-weight: bold;">➕ جدولة الحلقة</button>
+                <div style="display: flex; gap: 10px;">
+                    <button id="meetingSubmitBtn" class="refresh-btn" onclick="saveCommunityMeeting()" style="flex: 1; font-weight: bold;">➕ جدولة الحلقة</button>
+                    <button id="meetingCancelBtn" class="delete-btn" onclick="cancelEditMeeting()" style="display: none; padding: 10px; border-radius: 8px;">إلغاء التعديل</button>
+                </div>
             </div>
 
             <h3 style="margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">الحلقات المجدولة والسابقة</h3>
